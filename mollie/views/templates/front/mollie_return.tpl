@@ -1,3 +1,3 @@
-<h2>Welcome back</h2>
-<p>{$msg_details}</p>
-<p>{$msg_continue}</p>
+<h2>{l s='Welcome back' mod='mollie'|escape}</h2>
+<p>{$msg_details|escape}</p>
+<p>{$msg_continue|escape}</p>

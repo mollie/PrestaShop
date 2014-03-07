@@ -48,25 +48,25 @@
 {foreach $methods as $method}
     <p class="payment_module">
         <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id], true)|escape:'html'}"
-           title="{l s='Pay with ' mod='mollie'}{l s=$method->description mod='mollie'}"
-           id="mollie_link_{$method->id}"
-           onclick="mollie_pay('{$method->id}'); return false;"
+           title="{l s='Pay with ' mod='mollie'|escape}{l s=$method->description mod='mollie'|escape}"
+           id="mollie_link_{$method->id|escape}"
+           onclick="mollie_pay('{$method->id|escape}'); return false;"
         >
             {if isset($method->image) && $images !== 'hide'}
                 {if $images === 'big'}
-                    <img src="{$method->image->bigger}" alt="{l s='' mod='mollie'}" />
+                    <img src="{$method->image->bigger|escape:'url'}" alt="{l s='' mod='mollie'|escape}" />
                 {else}
-                    <img src="{$method->image->normal}" alt="{l s='' mod='mollie'}" />
+                    <img src="{$method->image->normal|escape:'url'}" alt="{l s='' mod='mollie'|escape}" />
                 {/if}
             {/if}
-            {l s=$method->description mod='mollie'}
+            {l s=$method->description mod='mollie'|escape}
         </a>
         <br />
         {if count($issuers[$method->id])}
-            <select id="mollie_issuer_{$method->id}">
-                <option value="">{l s='Select your bank:' mod='mollie'}</option>
+            <select id="mollie_issuer_{$method->id|escape}">
+                <option value="">{l s='Select your bank:' mod='mollie'|escape}</option>
                 {foreach $issuers[$method->id] as $id => $name}
-                    <option value="{$id}">{l s={$name} mod='mollie'}</option>
+                    <option value="{$id}">{l s={$name} mod='mollie'|escape}</option>
                 {/foreach}
             </select>
         {/if}
