@@ -1,0 +1,61 @@
+![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
+
+# Prestashop plugin voor [betalingen via Mollie](https://www.mollie.nl/betaaldiensten/). #
+
+## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases).
+* Pak het archief uit
+* Kopieer de map 'Mollie' naar de map 'modules' in uw Prestashop installatie
+* Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
+* Klik op de 'install' knop rechts van de Mollie Payment Module
+* Vul uw _API-key_ in en sla de gegevens vervolgens op.
+
+# Ondersteunde betaalmethodes #
+### iDEAL ###
+Met iDEAL kunt u vertrouwd, veilig en gemakkelijk uw online aankopen afrekenen. iDEAL is het systeem dat u direct koppelt aan uw internetbankierprogramma bij een online aankoop.
+Via [Mollie](https://www.mollie.nl/) is iDEAL gemakkelijk aan te sluiten zonder de gebruikelijke technische en administratieve rompslomp. Mollie geeft u op ieder moment toegang tot uw transactieoverzichten en andere statistieken. Tevens is het mogelijk per e-mail of SMS een notificatie te ontvangen bij elke gelukte betaling. [Mollie](https://www.mollie.nl/) is hierdoor dus een perfecte partner op het gebied van iDEAL en is het dan ook niet verbazingwekkend dat [Mollie](https://www.mollie.nl/) ondertussen op meer dan 20.000 websites iDEAL-betalingen mag verzorgen.
+
+### Creditcard ###
+Creditcard is vrijwel de bekendste methode voor het ontvangen van betalingen met wereldwijde dekking. Doordat we onder andere de bekende merken Mastercard en Visa ondersteunen, zorgt dit direct voor veel potentiële kopers.
+
+### Mister Cash ###
+Mister Cash maakt gebruik van een fysieke kaart die gekoppeld is aan tegoed op een Belgische bankrekening. Betalingen via Mister Cash zijn gegarandeerd en lijkt daarmee sterk op iDEAL in Nederland. Daarom is het uitermate geschikt voor uw webwinkel.
+
+### PayPal ###
+PayPal is wereldwijd een zeer populaire betaalmethode. In enkele klikken kunt u betalingen ontvangen via een bankoverschrijving, creditcard of het PayPal-saldo.
+
+### paysafecard ###
+paysafecard is de populairste prepaidcard voor online betalingen die veel door ouders voor hun kinderen wordt gekocht.
+
+### Overboeking ###
+Overboekingen binnen de SEPA zone ontvangen via Mollie. Hiermee kun je betalingen ontvangen van zowel particulieren als zakelijke klanten in meer dan 35 Europese landen.
+
+# Veel gestelde vragen #
+
+**Ik heb alles ingesteld, maar de module verschijnt niet bij het afrekenen.**
+
+Controleert u alstublieft of de module ingeschakeld is. Ook moeten euro's als valuta zijn ingesteld in uw winkel.
+
+**Moet ik ook een return- en / of webhook-URL instellen?**
+
+Het is niet nodig een redirect URL of webhook in te stellen. Dat doet de module zelf automatisch bij elke order.
+
+**Ik heb een probleem met deze module.**
+
+Neemt u alstublieft contact op met info@mollie.nl voor ondersteuning.
+
+# Licentie #
+[BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
+Copyright (c) 2013, Mollie B.V.
+
+# Ondersteuning #
+Contact: [www.mollie.nl](https://www.mollie.nl) — info@mollie.nl — +31 20-612 88 55
+
++ [Meer informatie over iDEAL via Mollie](https://www.mollie.nl/betaaldiensten/ideal/)
++ [Meer informatie over Creditcard via Mollie](https://www.mollie.nl/betaaldiensten/creditcard/)
++ [Meer informatie over Mister Cash via Mollie](https://www.mollie.nl/betaaldiensten/mistercash/)
++ [Meer informatie over Overboeking via Mollie](https://www.mollie.nl/betaaldiensten/overboeking/)
++ [Meer informatie over PayPal via Mollie](https://www.mollie.nl/betaaldiensten/paypal/)
++ [Meer informatie over paysafecard via Mollie](https://www.mollie.nl/betaaldiensten/paysafecard/)
+
+![Powered By Mollie](https://www.mollie.nl/images/badge-betaling-medium.png)
