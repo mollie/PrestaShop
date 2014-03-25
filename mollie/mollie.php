@@ -90,8 +90,8 @@ class Mollie extends PaymentModule
 		{
 			$this->api = new Mollie_API_Client;
 			$this->api->setApiKey($this->getConfigValue('MOLLIE_API_KEY'));
-			$this->api->addVersionString('Prestashop/' . defined(_PS_VERSION_) ? _PS_VERSION_ : 'Unknown');
-			$this->api->addVersionString('MolliePrestashop/' . isset($this->version) ? $this->version : 'Unknown');
+			$this->api->addVersionString('Prestashop/' . (defined('_PS_VERSION_') ? _PS_VERSION_ : 'Unknown'));
+			$this->api->addVersionString('MolliePrestashop/' . (isset($this->version) ? $this->version : 'Unknown'));
 		}
 		catch (Mollie_API_Exception $e)
 		{
