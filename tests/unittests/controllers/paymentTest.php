@@ -11,6 +11,7 @@ class paymentTest extends PHPUnit_Framework_TestCase
 		$this->mollie = $this->getMock('Mollie', array(
 			'getConfigValue',
 			'validateOrder',
+			'reinstall',
 		));
 		$this->controller = $this->getMock('MolliePaymentModuleFrontController', array(
 			'_getIssuerList',

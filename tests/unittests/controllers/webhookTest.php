@@ -11,6 +11,7 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		$this->mollie = $this->getMock('Mollie', array(
 			'getConfigValue',
 			'setOrderStatus',
+			'reinstall',
 		));
 		$this->controller = new Mollie_Testing_Impostor($this->getMock('MollieWebhookModuleFrontController', array(
 			'_saveOrderStatus',

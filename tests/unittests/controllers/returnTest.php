@@ -9,7 +9,8 @@ class returnTest extends PHPUnit_Framework_TestCase
 		parent::setUp();
 		$this->mollie = $this->getMock('Mollie', array(
 			'lang',
-			'getConfigValue'
+			'getConfigValue',
+			'reinstall',
 		));
 		$this->mollie->version = '1.0.0';
 		$this->controller = $this->getMock('MollieReturnModuleFrontController', array(
