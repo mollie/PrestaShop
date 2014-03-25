@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
 	public $statuses               = array();
 	public $name                   = 'mollie';
 	public $tab                    = 'payments_gateways';
-	public $version                = '1.0.0';
+	public $version                = '1.0.1';
 	public $author                 = 'Mollie B.V.';
 	public $need_instance          = TRUE;
 	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
@@ -149,9 +149,10 @@ class Mollie extends PaymentModule
 		// This would cause all config values to reset and the Mollie table to be cleared.
 		// $this->reinstall() fixes the hook registration without those sad side effects.
 		$version = $this->getConfigValue('MOLLIE_VERSION');
-		if ($version === FALSE || !version_compare($this->version, $version, '>='))
+		if ($version === FALSE || version_compare($version, $this->version, '<'))
 		{
 			$this->reinstall();
+			$this->updateConfigValue('MOLLIE_VERSION', $this->version);
 		}
 	}
 

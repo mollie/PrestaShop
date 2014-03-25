@@ -117,6 +117,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		$payment_data = $this->_getPaymentData($amount, $method, $issuer, $order_id);
 		$payment      = $this->_createPayment($payment_data);
 
+		// Save initial status
+		$this->module->setOrderStatus($order_id, Mollie_API_Object_Payment::STATUS_OPEN);
+
 		// Store payment
 		Db::getInstance()->insert(
 			'mollie_payments',
