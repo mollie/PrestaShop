@@ -102,7 +102,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		// Validate
 		$this->module->validateOrder(
 			(int) $cart->id,
-			$this->module->getConfigValue('PS_OS_PREPARATION'),
+			/* Set initial status to the status selected in the admin, in case of custom status definitions */
+			$this->module->statuses[Mollie_API_Object_Payment::STATUS_OPEN],
 			$orig_amount,
 			$method,
 			NULL,
