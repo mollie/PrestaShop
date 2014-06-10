@@ -93,7 +93,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 						break;
 					default:
 						$data['msg_details'] = $this->module->lang('The transaction has an unexpected status.');
-						if (Configuration::get('MOLLIE_DEBUG_LOG'))
+						if (Configuration::get('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 						{
 							Logger::addLog(__METHOD__ . 'said: The transaction has an unexpected status ('.$data['mollie_info']['bank_status'].')', Mollie::WARNING);
 						}

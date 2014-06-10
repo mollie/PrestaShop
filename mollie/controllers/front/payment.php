@@ -73,7 +73,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		$issuer = !empty($_GET['issuer']) ? $_GET['issuer'] : NULL;
 
 		// If no issuer was set yet and the issuer list has its own page, show issuer list here
-		if ($issuer === null && $this->module->getConfigValue('MOLLIE_ISSUERS') === 'own-page')
+		if ($issuer === null && $this->module->getConfigValue('MOLLIE_ISSUERS') === Mollie::ISSUERS_OWN_PAGE)
 		{
 			$tpl_data = array();
 			$tpl_data['issuers'] = $this->_getIssuerList($method);
@@ -204,7 +204,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		}
 		catch (Mollie_API_Exception $e)
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::NOTICE);
 			}
@@ -223,7 +223,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		if (!$currency_euro)
 		{
 			// No Euro currency available!
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . ' said: In order to use this module, you need to enable Euros as currency.', Mollie::CRASH);
 			}
@@ -316,7 +316,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			{
 				if ($e->getField() == "webhookUrl")
 				{
-					if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+					if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 					{
 						Logger::addLog(__METHOD__ . ' said: Could not reach generated webhook url, falling back to profile webhook url.', Mollie::WARNING);
 					}
@@ -330,7 +330,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			}
 			catch (Mollie_API_Exception $e)
 			{
-				if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+				if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 				{
 					Logger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::CRASH);
 				}

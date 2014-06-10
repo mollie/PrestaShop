@@ -35,12 +35,12 @@ class paymentTest extends PHPUnit_Framework_TestCase
 
 	public function testShowModuleList()
 	{
-		// test if the module list is shown when applicable (config.MOLLIE_ISSUERS == own-page)
+		// test if the module list is shown when applicable (config.MOLLIE_ISSUERS == Mollie::ISSUERS_OWN_PAGE)
 
 		// make module list apply
 		$this->mollie->expects($this->atLeastOnce())
 			->method('getConfigValue')
-			->will($this->returnValue('own-page'));
+			->will($this->returnValue(Mollie::ISSUERS_OWN_PAGE));
 
 		// needs a method
 		$_GET['method'] = 'ideal';
@@ -66,7 +66,7 @@ class paymentTest extends PHPUnit_Framework_TestCase
 		// make module list not apply
 		$this->mollie->expects($this->atLeastOnce())
 			->method('getConfigValue')
-			->will($this->returnValue('payment-page'));
+			->will($this->returnValue(Mollie::ISSUERS_PAYMENT_PAGE));
 
 		// needs a method
 		$_GET['method'] = 'ideal';

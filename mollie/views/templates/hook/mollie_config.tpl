@@ -121,8 +121,8 @@
                 </td>
                 <td class="mollie_input">
                     <select name="Mollie_Images" id="Mollie_Images">
-                        {foreach $image_options as $option}
-                            <option value="{$option|escape}" {if $option == $val_images}selected="selected"{/if}>{$option|escape}</option>
+                        {foreach $image_options AS $value => $title}
+                            <option value="{$value|escape}" {if $value == $val_images}selected="selected"{/if}>{$title|escape}</option>
                         {/foreach}
                     </select><br />
                     <label for="Mollie_Images"><i>{$desc_images}</i></label>
@@ -134,8 +134,8 @@
                 </td>
                 <td class="mollie_input">
                     <select name="Mollie_Issuers" id="Mollie_Issuers">
-                        {foreach $issuer_options as $option}
-                            <option value="{$option|escape}" {if $option == $val_issuers}selected="selected"{/if}>{$option|replace:'-':' '|ucfirst|escape}</option>
+                        {foreach $issuer_options AS $value => $title}
+                            <option value="{$value|escape}" {if $value == $val_issuers}selected="selected"{/if}>{$title|escape}</option>
                         {/foreach}
                     </select><br />
                     <label for="Mollie_Issuers"><i>{$desc_issuers}</i></label>
@@ -199,8 +199,8 @@
                 </td>
                 <td class="mollie_input">
                     <select name="Mollie_Logger" id="Mollie_Logger">
-                        {foreach $logger_options as $option}
-                            <option value="{$option}" {if $option === $logger_options[$val_logger]}selected="selected"{/if}>{$option|escape}</option>
+                        {foreach $logger_options AS $value => $title}
+                            <option value="{$value}" {if $value === $val_logger}selected="selected"{/if}>{$title|escape}</option>
                         {/foreach}
                     </select><br />
                     <label for="Mollie_Logger"><i>{$desc_logger}</i></label>

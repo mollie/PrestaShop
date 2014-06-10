@@ -57,16 +57,14 @@
         </a>
         <br />
         {if isset($issuers[$method->id]) && count($issuers[$method->id])}
-            <span id="mollie_issuer_box_{$method->id|escape}"{if $issuer_setting === 'on-click'} class="mollie_hidden"{else} class="mollie_issuers"{/if}>
+            <span id="mollie_issuer_box_{$method->id|escape}"{if $issuer_setting === Mollie::ISSUERS_ON_CLICK} class="mollie_hidden"{else} class="mollie_issuers"{/if}>
                 <select id="mollie_issuer_{$method->id|escape}">
                     <option value="">{$msg_bankselect|escape}</option>
                     {foreach $issuers[$method->id] as $id => $name}
                         <option value="{$id}">{$module->lang($name)|escape}</option>
                     {/foreach}
                 </select>
-                {*if $issuer_setting === 'on-click'*}
-                    <input type="button" onclick="mollie_pay('{$method->id|escape}')" value="OK" />
-                {*/if*}
+                <input type="button" onclick="mollie_pay('{$method->id|escape}')" value="OK" />
             </span>
         {/if}
     </p>

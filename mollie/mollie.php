@@ -75,6 +75,19 @@ class Mollie extends PaymentModule
 
 	const NAME = 'mollie';
 
+	CONST LOGOS_BIG    = 'big';
+	const LOGOS_NORMAL = 'normal';
+	const LOGOS_HIDE   = 'hide';
+
+	const ISSUERS_ALWAYS_VISIBLE = 'always-visible';
+	const ISSUERS_ON_CLICK       = 'on-click';
+	const ISSUERS_OWN_PAGE       = 'own-page';
+	const ISSUERS_PAYMENT_PAGE   = 'payment-page';
+
+	const DEBUG_LOG_NONE   = 0;
+	const DEBUG_LOG_ERRORS = 1;
+	const DEBUG_LOG_ALL    = 2;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -173,7 +186,7 @@ class Mollie extends PaymentModule
 			return FALSE;
 		}
 		if (
-			!$this->_initConfig()
+		!$this->_initConfig()
 		)
 		{
 			$this->_errors[] = 'Unable to set config values';
@@ -257,7 +270,7 @@ class Mollie extends PaymentModule
 			$this->_unregisterHooks() &&
 			$this->_registerHooks() &&
 			$this->_initConfig()
-		;
+			;
 	}
 
 
@@ -271,7 +284,7 @@ class Mollie extends PaymentModule
 			$this->registerHook('displayAdminOrder') &&
 			$this->registerHook('displayHeader') &&
 			$this->registerHook('displayBackOfficeHeader')
-		;
+			;
 	}
 
 	/**
@@ -284,7 +297,7 @@ class Mollie extends PaymentModule
 			$this->unregisterHook('displayAdminOrder') &&
 			$this->unregisterHook('displayHeader') &&
 			$this->unregisterHook('displayBackOfficeHeader')
-		;
+			;
 	}
 
 	/**
@@ -296,10 +309,10 @@ class Mollie extends PaymentModule
 			$this->initConfigValue('MOLLIE_VERSION', $this->version) &&
 			$this->initConfigValue('MOLLIE_API_KEY', '') &&
 			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Order %') &&
-			$this->initConfigValue('MOLLIE_IMAGES', 'normal') &&
-			$this->initConfigValue('MOLLIE_ISSUERS', 'on-click') &&
+			$this->initConfigValue('MOLLIE_IMAGES', self::LOGOS_NORMAL) &&
+			$this->initConfigValue('MOLLIE_ISSUERS', self::ISSUERS_ON_CLICK) &&
 			$this->initConfigValue('MOLLIE_CSS', '') &&
-			$this->initConfigValue('MOLLIE_DEBUG_LOG', 1) &&
+			$this->initConfigValue('MOLLIE_DEBUG_LOG', self::DEBUG_LOG_ERRORS) &&
 			$this->initConfigValue('MOLLIE_DISPLAY_ERRORS', FALSE) &&
 			$this->initConfigValue('MOLLIE_USE_PROFILE_WEBHOOK', FALSE) &&
 			$this->initConfigValue('MOLLIE_STATUS_OPEN', 3) &&
@@ -312,7 +325,7 @@ class Mollie extends PaymentModule
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_CANCELLED', FALSE) &&
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_EXPIRED', FALSE) &&
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_REFUNDED', TRUE)
-		;
+			;
 	}
 
 	/**
@@ -334,13 +347,27 @@ class Mollie extends PaymentModule
 
 		$update_message = $this->_getUpdateMessage('https://github.com/mollie/Prestashop');
 		$result_msg     = '';
-		$image_options  = array($this->l('big'), $this->l('normal'), $this->l('hide'));
-		$issuer_options = array($this->l('always-visible'), $this->l('on-click'), $this->l('own-page'), $this->l('payment-page'));
-		$logger_options = array($this->l('Nothing'), $this->l('Errors'), $this->l('Everything'));
+
+		$image_options = array(
+			self::LOGOS_BIG              => $this->l('big'),
+			self::LOGOS_NORMAL           => $this->l('normal'),
+			self::LOGOS_HIDE             => $this->l('hide')
+		);
+		$issuer_options = array(
+			self::ISSUERS_ALWAYS_VISIBLE => $this->l('Always visible'),
+			self::ISSUERS_ON_CLICK       => $this->l('On click'),
+			self::ISSUERS_OWN_PAGE       => $this->l('Own page'),
+			self::ISSUERS_PAYMENT_PAGE   => $this->l('Payment page')
+		);
+		$logger_options = array(
+			self::DEBUG_LOG_NONE         => $this->l('Nothing'),
+			self::DEBUG_LOG_ERRORS       => $this->l('Errors'),
+			self::DEBUG_LOG_ALL          => $this->l('Everything')
+		);
 
 		if (Tools::isSubmit('Mollie_Config_Save'))
 		{
-			$result_msg = $this->_getSaveResult($image_options, $issuer_options, $logger_options);
+			$result_msg = $this->_getSaveResult(array_keys($image_options), array_keys($issuer_options), array_keys($logger_options));
 		}
 
 		$data = array(
@@ -392,9 +419,9 @@ class Mollie extends PaymentModule
 			$val                          = (int) $val;
 			$data['msg_status_' . $name]  = sprintf($msg_status, $this->lang[$name]);
 			$data['desc_status_' . $name] = ucfirst(sprintf($desc_status,
-				$this->lang[$name],
-				$db->getValue('SELECT `name` FROM `' . _DB_PREFIX_ . 'order_state_lang` WHERE `id_order_state` = ' . (int) $val . ' AND `id_lang` = ' . (int) $lang)
-			));
+					$this->lang[$name],
+					$db->getValue('SELECT `name` FROM `' . _DB_PREFIX_ . 'order_state_lang` WHERE `id_order_state` = ' . (int) $val . ' AND `id_lang` = ' . (int) $lang)
+				));
 			$data['val_status_' . $name]  = $val;
 			$data['msg_mail_' . $name]    = sprintf($msg_mail, $this->lang[$name]);
 			$data['desc_mail_' . $name]   = sprintf($desc_mail, $this->lang[$name]);
@@ -406,8 +433,6 @@ class Mollie extends PaymentModule
 
 		return $this->display(__FILE__, 'mollie_config.tpl');
 	}
-
-
 
 	/**
 	 * @param $field
@@ -511,28 +536,9 @@ class Mollie extends PaymentModule
 		{
 			$_POST['Mollie_Css'] = '';
 		}
-		if (!is_numeric($_POST['Mollie_Logger']))
+		if (!in_array($_POST['Mollie_Logger'], $logger_options))
 		{
-			if (in_array($_POST['Mollie_Logger'], $logger_options))
-			{
-				$i = 0;
-				while (($opt = current($logger_options)) !== FALSE) {
-					if ($opt == $_POST['Mollie_Logger']) {
-						$_POST['Mollie_Logger'] = key($logger_options);
-						break;
-					}
-					if ($i++ > sizeof($logger_options))
-					{
-						$errors[] = $this->l('Invalid debug log setting.');
-						break;
-					}
-					next($logger_options);
-				}
-			}
-			else
-			{
-				$errors[] = $this->l('Invalid debug log setting.');
-			}
+			$errors[] = $this->l('Invalid debug log setting.');
 		}
 		if (!isset($_POST['Mollie_Errors']))
 		{
@@ -734,10 +740,10 @@ class Mollie extends PaymentModule
 	public function hookDisplayAdminOrder($params)
 	{
 		$mollie_data = Db::getInstance()->getRow(sprintf(
-			'SELECT * FROM `%s` WHERE `order_id` = %s;',
-			_DB_PREFIX_ . 'mollie_payments',
-			(int) $params['id_order']
-		));
+				'SELECT * FROM `%s` WHERE `order_id` = %s;',
+				_DB_PREFIX_ . 'mollie_payments',
+				(int) $params['id_order']
+			));
 
 		// Do not show refund option if it's not a successfully paid Mollie transaction
 		if ($mollie_data === FALSE || $mollie_data['bank_status'] !== Mollie_API_Object_Payment::STATUS_PAID)
@@ -772,21 +778,20 @@ class Mollie extends PaymentModule
 		if (!Currency::exists('EUR', 0))
 		{
 			return	'<p class="payment_module" style="color:red;">' .
-						$this->l('Mollie Payment Methods are only available when Euros are activated.') .
-					'</p>';
+			$this->l('Mollie Payment Methods are only available when Euros are activated.') .
+			'</p>';
 		}
 
 		$issuer_setting = $this->getConfigValue('MOLLIE_ISSUERS');
-		$show_issuers_here = in_array($issuer_setting, array('always-visible', 'on-click'));
 
 		try {
 			$methods = $this->api->methods->all();
-			$issuer_list = in_array($issuer_setting, array('always-visible', 'on-click')) ? $this->_getIssuerList($show_issuers_here) : array();
+			$issuer_list = in_array($issuer_setting, array(self::ISSUERS_ALWAYS_VISIBLE, self::ISSUERS_ON_CLICK)) ? $this->_getIssuerList() : array();
 		} catch (Mollie_API_Exception $e) {
 			$methods = array();
 			$issuer_list = array();
 
-			if ($this->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->getConfigValue('MOLLIE_DEBUG_LOG') == self::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
 			}
@@ -794,22 +799,22 @@ class Mollie extends PaymentModule
 			{
 				return
 					'<p class="payment_module" style="color:red;">' .
-						$e->getMessage() .
+					$e->getMessage() .
 					'</p>'
-				;
+					;
 			}
 		}
 
 		$this->smarty->assign(array(
-			'methods'        => $methods,
-			'issuers'        => $issuer_list,
-			'issuer_setting' => $issuer_setting,
-			'images'         => $this->getConfigValue('MOLLIE_IMAGES'),
-			'warning'        => $this->warning,
-			'msg_pay_with'   => $this->lang['Pay with %s'],
-			'msg_bankselect' => $this->lang['Select your bank:'],
-			'module'         => $this,
-		));
+				'methods'        => $methods,
+				'issuers'        => $issuer_list,
+				'issuer_setting' => $issuer_setting,
+				'images'         => $this->getConfigValue('MOLLIE_IMAGES'),
+				'warning'        => $this->warning,
+				'msg_pay_with'   => $this->lang['Pay with %s'],
+				'msg_bankselect' => $this->lang['Select your bank:'],
+				'module'         => $this,
+			));
 
 		return $this->display(__FILE__, 'mollie_methods.tpl');
 	}

@@ -1,2 +1,2 @@
 #!/bin/sh
-zip -9 -r release.zip mollie README.mdown -x mollie/*.git* mollie/*.DS_Store
+zip -9 -r mollie-prestashop-x.x.x.zip mollie README.mdown -x mollie/*.git* mollie/*.DS_Store

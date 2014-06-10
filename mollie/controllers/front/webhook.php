@@ -66,7 +66,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	{
 		if (Tools::getValue('testByMollie'))
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . 'said: Mollie webhook tester successfully communicated with the shop.', Mollie::NOTICE);
 			}
@@ -77,7 +77,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 		if (empty($id))
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . 'said: Received webhook request without proper transaction ID.', Mollie::WARNING);
 			}
@@ -93,7 +93,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		}
 		catch (Exception $e)
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . 'said: Could not retrieve payment details for id "' . $id . '". Reason: ' . $e->getMessage(), Mollie::WARNING);
 			}
@@ -103,7 +103,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		// Store status in database
 		if (!$this->_saveOrderStatus($order_id, $status))
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG'))
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . 'said: Could not save order status for payment "' . $id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie::WARNING);
 			}
@@ -113,7 +113,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		$this->module->setOrderStatus($order_id, $status);
 
 		// Log successful webhook requests in extended log mode only
-		if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') > 1)
+		if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ALL)
 		{
 			Logger::addLog(__METHOD__ . 'said: Received webhook request for order ' . (int) $order_id . ' / transaction ' . htmlentities($id), Mollie::NOTICE);
 		}
