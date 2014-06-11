@@ -171,15 +171,17 @@
                     <label for="Mollie_Status_{$name|escape}"><i>{$desc_status_{$name|escape}}</i></label>
                 </td>
             </tr>
-            <tr>
-                <td class="mollie_msg">
-                    <label for="Mollie_Mail_When_{$name|escape}"><b>{$msg_mail_{$name|escape}}</b></label>
-                </td>
-                <td class="mollie_input">
-                    <input name="Mollie_Mail_When_{$name|escape}" id="Mollie_Mail_When_{$name|escape}" type="checkbox" value="1" {if $val_mail_{$name|escape}}checked="checked"{/if} style="width: auto;" /> <br />
-                    <label for="Mollie_Mail_When_{$name|escape}"><i>{$desc_mail_{$name|escape}}</i></label>
-                </td>
-            </tr>
+            {if $name != Mollie_API_Object_Payment::STATUS_OPEN}
+                <tr>
+                    <td class="mollie_msg">
+                        <label for="Mollie_Mail_When_{$name|escape}"><b>{$msg_mail_{$name|escape}}</b></label>
+                    </td>
+                    <td class="mollie_input">
+                        <input name="Mollie_Mail_When_{$name|escape}" id="Mollie_Mail_When_{$name|escape}" type="checkbox" value="1" {if $val_mail_{$name|escape}}checked="checked"{/if} style="width: auto;" /> <br />
+                        <label for="Mollie_Mail_When_{$name|escape}"><i>{$desc_mail_{$name|escape}}</i></label>
+                    </td>
+                </tr>
+            {/if}
             {/foreach}
             <tr>
                 <td colspan="2" class="mollie_title">{$title_debug}</td>

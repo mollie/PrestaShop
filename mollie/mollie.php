@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
 	public $statuses               = array();
 	public $name                   = 'mollie';
 	public $tab                    = 'payments_gateways';
-	public $version                = '1.0.1';
+	public $version                = '1.0.2';
 	public $author                 = 'Mollie B.V.';
 	public $need_instance          = TRUE;
 	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
@@ -193,6 +193,12 @@ class Mollie extends PaymentModule
 			return FALSE;
 		}
 
+		if (!$this->installOpenState())
+		{
+			$this->_errors[] = 'Unable to install new OPEN state.';
+			return FALSE;
+		}
+
 		$sql = sprintf('
 			CREATE TABLE IF NOT EXISTS `%s` (
 				`order_id` INT(64) NOT NULL PRIMARY KEY,
@@ -320,7 +326,6 @@ class Mollie extends PaymentModule
 			$this->initConfigValue('MOLLIE_STATUS_CANCELLED', 6) &&
 			$this->initConfigValue('MOLLIE_STATUS_EXPIRED', 8) &&
 			$this->initConfigValue('MOLLIE_STATUS_REFUNDED', 7) &&
-			$this->initConfigValue('MOLLIE_MAIL_WHEN_OPEN', FALSE) &&
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_PAID', TRUE) &&
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_CANCELLED', FALSE) &&
 			$this->initConfigValue('MOLLIE_MAIL_WHEN_EXPIRED', FALSE) &&
@@ -565,15 +570,20 @@ class Mollie extends PaymentModule
 			$this->updateConfigValue('MOLLIE_CSS', $_POST['Mollie_Css']);
 			$this->updateConfigValue('MOLLIE_DISPLAY_ERRORS', (int) $_POST['Mollie_Errors']);
 			$this->updateConfigValue('MOLLIE_DEBUG_LOG', (int) $_POST['Mollie_Logger']);
+
 			foreach ($this->statuses as $name => $old)
 			{
 				$new                   = (int) $_POST['Mollie_Status_' . $name];
 				$this->statuses[$name] = $new;
 				$this->updateConfigValue('MOLLIE_STATUS_' . strtoupper($name), $new);
-				$this->updateConfigValue(
-					'MOLLIE_MAIL_WHEN_' . strtoupper($name),
-					!empty($_POST['Mollie_Mail_When_' . $name]) ? TRUE : FALSE
-				);
+
+				if ($name != Mollie_API_Object_Payment::STATUS_OPEN)
+				{
+					$this->updateConfigValue(
+						'MOLLIE_MAIL_WHEN_' . strtoupper($name),
+						!empty($_POST['Mollie_Mail_When_' . $name]) ? TRUE : FALSE
+					);
+				}
 			}
 			$result_msg = $this->l('The configuration has been saved!');
 		}
@@ -817,5 +827,46 @@ class Mollie extends PaymentModule
 			));
 
 		return $this->display(__FILE__, 'mollie_methods.tpl');
+	}
+
+	public function installOpenState ()
+	{
+		$order_state = new OrderState();
+		$order_state->name = array();
+
+		foreach (Language::getLanguages() as $language)
+		{
+			switch (Tools::strtolower($language['iso_code']))
+			{
+				case 'nl':
+					$translation = 'Wachten op betaling';
+					break;
+
+				case 'fr':
+					$translation = 'En attente de paiement';
+					break;
+
+				default:
+					$translation = 'Pending payment';
+					break;
+			}
+
+			$order_state->name[$language['id_lang']] = $translation;
+		}
+
+		$order_state->send_email = FALSE;
+		$order_state->color      = '#CCCCCC';
+		$order_state->hidden     = FALSE;
+		$order_state->delivery   = FALSE;
+		$order_state->logable    = FALSE;
+		$order_state->invoice    = FALSE;
+		$order_state->paid       = FALSE;
+
+		if(!$order_state->add())
+			return FALSE;
+
+		Configuration::updateValue('MOLLIE_STATUS_OPEN', (int)$order_state->id);
+
+		return TRUE;
 	}
 }
