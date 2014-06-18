@@ -5,7 +5,7 @@
 ## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
 * Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases).
 * Pak het archief uit
-* Kopieer de map 'Mollie' naar de map 'modules' in uw Prestashop installatie
+* Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
 * Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
 * Klik op de 'install' knop rechts van de Mollie Payment Module
 * Vul uw _API-key_ in en sla de gegevens vervolgens op.
