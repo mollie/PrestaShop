@@ -64,7 +64,7 @@
                         <option value="{$id}">{$module->lang($name)|escape}</option>
                     {/foreach}
                 </select>
-                <input type="button" onclick="mollie_pay('{$method->id|escape}')" value="OK" />
+                <input type="button" onclick="this.disabled=true;mollie_pay('{$method->id|escape}')" value="OK" />
             </span>
         {/if}
     </p>

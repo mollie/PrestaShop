@@ -12,7 +12,7 @@
                 <option value="{$id}">{$module->lang($name)|escape}</option>
             {/foreach}
         </select>
-        <input type="button" value="{$msg_ok}" onclick="mollie_issuer_submit()" />
+        <input type="button" value="{$msg_ok}" onclick="if(document.getElementById('mollie_issuer').options[document.getElementById('mollie_issuer').selectedIndex].value){this.disabled=true;}mollie_issuer_submit()" />
     {/if}
     <br /><br />
     <a href="{$smarty.const._PS_BASE_URL_}{$smarty.const.__PS_BASE_URI__}">{$msg_return}</a>
