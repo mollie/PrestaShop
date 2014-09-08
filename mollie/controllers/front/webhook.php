@@ -73,9 +73,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			return 'OK';
 		}
 
-		$id = Tools::getValue('id');
+		$transaction_id = Tools::getValue('id');
 
-		if (empty($id))
+		if (empty($transaction_id))
 		{
 			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
@@ -86,36 +86,66 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 		try
 		{
-			/** @var Mollie_API_Object_Payment $payment */
-			$payment  = $this->module->api->payments->get($id);
-			$order_id = $payment->metadata->order_id;
-			$status   = $payment->status;
+			/** @var Mollie_API_Object_Payment $api_payment */
+			$api_payment  = $this->module->api->payments->get($transaction_id);
+			$transaction_id = $api_payment->id;
 		}
 		catch (Exception $e)
 		{
 			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
-				Logger::addLog(__METHOD__ . 'said: Could not retrieve payment details for id "' . $id . '". Reason: ' . $e->getMessage(), Mollie::WARNING);
+				Logger::addLog(__METHOD__ . 'said: Could not retrieve payment details for transaction_id "' . $transaction_id . '". Reason: ' . $e->getMessage(), Mollie::WARNING);
 			}
 			return 'NOT OK';
 		}
 
-		// Store status in database
-		if (!$this->_saveOrderStatus($order_id, $status))
+		$ps_payment = $this->module->getPaymentBy('transaction_id', $transaction_id);
+
+		if (isset($api_payment->metadata->cart_id))
 		{
-			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
+			if (
+				 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
+				 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
 			{
-				Logger::addLog(__METHOD__ . 'said: Could not save order status for payment "' . $id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie::WARNING);
+				// Misnomer ahead: think of validateOrder as "createOrderFromCart"
+				$this->module->validateOrder(
+					(int) $api_payment->metadata->cart_id,
+					$this->module->statuses[$api_payment->status],
+					$api_payment->amount,
+					$api_payment->method
+				);
+
+				$order_id = $this->module->currentOrder;
 			}
 		}
 
-		// Tell status to Shop
-		$this->module->setOrderStatus($order_id, $status);
+		/**
+		 * Older versions tie payments to orders, and create a cart upon payment creation.
+		 * In order to support the transition between these two cases we check for the
+		 * occurrence of order_id in the metadata. In these cases we only update the order status
+		 */
+
+		elseif (isset($api_payment->metadata->order_id))
+		{
+
+			$order_id = $api_payment->metadata->order_id;
+
+			$this->module->setOrderStatus($order_id, $api_payment->status);
+		}
+
+		// Store status in database
+		if (!$this->_savePaymentStatus($transaction_id, $api_payment->status))
+		{
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
+			{
+				Logger::addLog(__METHOD__ . 'said: Could not save Mollie payment status for transaction "' . $transaction_id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie::WARNING);
+			}
+		}
 
 		// Log successful webhook requests in extended log mode only
 		if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ALL)
 		{
-			Logger::addLog(__METHOD__ . 'said: Received webhook request for order ' . (int) $order_id . ' / transaction ' . htmlentities($id), Mollie::NOTICE);
+			Logger::addLog(__METHOD__ . 'said: Received webhook request for order ' . (int) $order_id . ' / transaction ' . $transaction_id, Mollie::NOTICE);
 		}
 		return 'OK';
 	}
@@ -126,13 +156,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	 * @param $status
 	 * @return bool
 	 */
-	protected function _saveOrderStatus($order_id, $status)
+	protected function _savePaymentStatus($transaction_id, $status)
 	{
 		$data = array(
 			'updated_at' => date("Y-m-d H:i:s"),
 			'bank_status' => $status,
 		);
 
-		return Db::getInstance()->update('mollie_payments', $data, '`order_id` = ' . (int)$order_id);
+		return Db::getInstance()->update('mollie_payments', $data, '`transaction_id` = \'' . Db::getInstance()->escape($transaction_id) . '\'');
 	}
 }

@@ -14,7 +14,6 @@ class mollieTest extends PHPUnit_Framework_TestCase
 			'updateConfigValue',
 			'display',
 			'_getUpdateXML',
-			'installOpenState',
 		));
 
 		$this->mollie->version = '1.0.0';
@@ -35,10 +34,6 @@ class mollieTest extends PHPUnit_Framework_TestCase
 		// test if initConfigValue is called
 		$this->mollie->expects($this->atLeastOnce())
 			->method('initConfigValue')
-			->will($this->returnValue(TRUE));
-
-		$this->mollie->expects($this->once())
-			->method("installOpenState")
 			->will($this->returnValue(TRUE));
 
 		// execute

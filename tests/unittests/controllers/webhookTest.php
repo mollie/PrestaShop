@@ -8,18 +8,31 @@ class webhookTest extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		parent::setUp();
+		/*
+		$this->context = new stdClass();
+		$this->context->cart = $this->getMock('Cart');
+		*/
 		$this->mollie = $this->getMock('Mollie', array(
 			'getConfigValue',
 			'setOrderStatus',
 			'reinstall',
+			'validateOrder'
 		));
 		$this->controller = new Mollie_Testing_Impostor($this->getMock('MollieWebhookModuleFrontController', array(
-			'_saveOrderStatus',
+			'_savePaymentStatus',
 		)));
 		$this->controller->module = $this->mollie;
+		$this->controller->module->currentOrder = 666;
+		$this->controller->module->active = TRUE;
+
+		$this->controller->context = new stdClass();
+		$this->controller->context->link = new Link();
+		$this->controller->context->smarty = new Smarty();
+		$this->controller->context->cart = new Cart();
+
 		$this->payment = $this->getMock('Mollie_API_Object_Payment');
 		$this->payment->metadata = new stdClass();
-		$this->payment->metadata->order_id = 666;
+		$this->payment->metadata->cart_id = 777;
 		$this->mollie->api = $this->getMock('Mollie_API_Client');
 		$this->mollie->api->payments = $this->getMock('Mollie_API_Resource_Payments', array(
 			'get',
@@ -52,19 +65,43 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('NO ID', $this->controller->_executeWebhook());
 	}
 
-	public function testEverythingGoesGreat()
+	public function testWebhookGivenCartId()
 	{
+		$this->payment->metadata->cart_id = 777;
+
 		// test if _saveOrderStatus is called correctly
 		$_GET['id'] = 'tr_q2cLW9pxMT';
 		$this->payment->status = 'paid';
+		$this->payment->id = $_GET['id'];
+
+		// somehow pass the validation
+		$this->mollie->expects($this->once())
+			->method('validateOrder');
 
 		$this->controller->expects($this->once())
-			->method('_saveOrderStatus')
-			->with(666, 'paid');
+			->method('_savePaymentStatus')
+			->with('tr_q2cLW9pxMT', 'paid');
+
+		$this->assertEquals('OK', $this->controller->_executeWebhook());
+	}
+
+	public function testWebhookGivenOrderId()
+	{
+		$this->payment->metadata->order_id = 777;
+		$this->payment->metadata->cart_id = NULL;
+
+		// test if _saveOrderStatus is called correctly
+		$_GET['id'] = 'tr_q2cLW9pxMT';
+		$this->payment->status = 'paid';
+		$this->payment->id = $_GET['id'];
+
+		$this->controller->expects($this->once())
+			->method('_savePaymentStatus')
+			->with('tr_q2cLW9pxMT', 'paid');
 
 		$this->mollie->expects($this->once())
 			->method('setOrderStatus')
-			->with(666, 'paid');
+			->with(777, 'paid');
 
 		$this->assertEquals('OK', $this->controller->_executeWebhook());
 	}

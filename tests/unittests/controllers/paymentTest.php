@@ -71,15 +71,6 @@ class paymentTest extends PHPUnit_Framework_TestCase
 		// needs a method
 		$_GET['method'] = 'ideal';
 
-		// use mocked conversion (1:1 rate)
-		$this->controller->expects($this->once())
-			->method('_convertCurrencyToEuro')
-			->will($this->returnValue(13.37));
-
-		// somehow pass the validation
-		$this->mollie->expects($this->once())
-			->method('validateOrder');
-
 		// set payment data
 		$this->controller->expects($this->once())
 			->method('_getPaymentData')

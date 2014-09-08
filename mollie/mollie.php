@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
 	public $statuses               = array();
 	public $name                   = 'mollie';
 	public $tab                    = 'payments_gateways';
-	public $version                = '1.0.2';
+	public $version                = '1.0.3';
 	public $author                 = 'Mollie B.V.';
 	public $need_instance          = TRUE;
 	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
@@ -113,7 +113,6 @@ class Mollie extends PaymentModule
 		}
 
 		$this->statuses = array(
-			Mollie_API_Object_Payment::STATUS_OPEN      => $this->getConfigValue('MOLLIE_STATUS_OPEN'),
 			Mollie_API_Object_Payment::STATUS_PAID      => $this->getConfigValue('MOLLIE_STATUS_PAID'),
 			Mollie_API_Object_Payment::STATUS_CANCELLED => $this->getConfigValue('MOLLIE_STATUS_CANCELLED'),
 			Mollie_API_Object_Payment::STATUS_EXPIRED   => $this->getConfigValue('MOLLIE_STATUS_EXPIRED'),
@@ -122,7 +121,6 @@ class Mollie extends PaymentModule
 
 		// Load all translatable text here so we have a single translation point
 		$this->lang = array(
-			Mollie_API_Object_Payment::STATUS_OPEN               => $this->l('open'),
 			Mollie_API_Object_Payment::STATUS_PAID               => $this->l('paid'),
 			Mollie_API_Object_Payment::STATUS_CANCELLED          => $this->l('cancelled'),
 			Mollie_API_Object_Payment::STATUS_EXPIRED            => $this->l('expired'),
@@ -134,9 +132,9 @@ class Mollie extends PaymentModule
 			'The order with this id does not exist.'             => $this->l('The order with this id does not exist.'),
 			'We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.' =>
 				$this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'),
-			'You have cancelled your order.'                     => $this->l('You have cancelled your order.'),
-			'Unfortunately your order was expired.'              => $this->l('Unfortunately your order was expired.'),
-			'Thank you. Your order has been received.'           => $this->l('Thank you. Your order has been received.'),
+			'You have cancelled your payment.'                     => $this->l('You have cancelled your payment.'),
+			'Unfortunately your payment was expired.'              => $this->l('Unfortunately your payment was expired.'),
+			'Thank you. Your payment has been received.'           => $this->l('Thank you. Your payment has been received.'),
 			'The transaction has an unexpected status.'          => $this->l('The transaction has an unexpected status.'),
 			'You are not authorised to see this page.'           => $this->l('You are not authorised to see this page.'),
 			'Continue shopping'                                  => $this->l('Continue shopping'),
@@ -193,21 +191,16 @@ class Mollie extends PaymentModule
 			return FALSE;
 		}
 
-		if (!$this->installOpenState())
-		{
-			$this->_errors[] = 'Unable to install new OPEN state.';
-			return FALSE;
-		}
-
 		$sql = sprintf('
 			CREATE TABLE IF NOT EXISTS `%s` (
-				`order_id` INT(64) NOT NULL PRIMARY KEY,
+				`transaction_id` VARCHAR(64) NOT NULL PRIMARY KEY,
+				`cart_id` INT(64),
+				`order_id` INT(64),
 				`method` VARCHAR(128) NOT NULL,
-				`transaction_id` VARCHAR(64) NOT NULL,
 				`bank_status` VARCHAR(64) NOT NULL,
 				`created_at` DATETIME NOT NULL,
 				`updated_at` DATETIME DEFAULT NULL,
-				UNIQUE KEY `transaction_id` (`transaction_id`)
+				 INDEX (cart_id)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
 			_DB_PREFIX_ . 'mollie_payments'
 		);
@@ -273,12 +266,18 @@ class Mollie extends PaymentModule
 	public function reinstall()
 	{
 		return
-			$this->_unregisterHooks() &&
-			$this->_registerHooks() &&
+			$this->reinstallHooks() &&
 			$this->_initConfig()
 			;
 	}
 
+	public function reinstallHooks()
+	{
+		return
+			$this->_unregisterHooks() &&
+			$this->_registerHooks()
+			;
+	}
 
 	/**
 	 * @return bool
@@ -287,9 +286,11 @@ class Mollie extends PaymentModule
 	{
 		return
 			$this->registerHook('displayPayment') &&
+			$this->registerHook('displayPaymentTop') &&
 			$this->registerHook('displayAdminOrder') &&
 			$this->registerHook('displayHeader') &&
-			$this->registerHook('displayBackOfficeHeader')
+			$this->registerHook('displayBackOfficeHeader') &&
+			$this->registerHook('displayOrderConfirmation')
 			;
 	}
 
@@ -300,9 +301,11 @@ class Mollie extends PaymentModule
 	{
 		return
 			$this->unregisterHook('displayPayment') &&
+			$this->unregisterHook('displayPaymentTop') &&
 			$this->unregisterHook('displayAdminOrder') &&
 			$this->unregisterHook('displayHeader') &&
-			$this->unregisterHook('displayBackOfficeHeader')
+			$this->unregisterHook('displayBackOfficeHeader') &&
+			$this->unregisterHook('displayOrderConfirmation')
 			;
 	}
 
@@ -314,7 +317,7 @@ class Mollie extends PaymentModule
 		return
 			$this->initConfigValue('MOLLIE_VERSION', $this->version) &&
 			$this->initConfigValue('MOLLIE_API_KEY', '') &&
-			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Order %') &&
+			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Order') &&
 			$this->initConfigValue('MOLLIE_IMAGES', self::LOGOS_NORMAL) &&
 			$this->initConfigValue('MOLLIE_ISSUERS', self::ISSUERS_ON_CLICK) &&
 			$this->initConfigValue('MOLLIE_CSS', '') &&
@@ -514,6 +517,40 @@ class Mollie extends PaymentModule
 		}
 
 		return $history;
+	}
+
+	/**
+	 * @param $order_id
+	 * @return array
+	 */
+
+	public function getPaymentBy($column,$id)
+	{
+		$paid_payment = Db::getInstance()->getRow(
+			sprintf(
+				'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND bank_status = \'%s\'',
+				_DB_PREFIX_ . 'mollie_payments',
+				$column,
+				$id,
+				Mollie_API_Object_Payment::STATUS_PAID
+			)
+		);
+
+		if ($paid_payment)
+		{
+			return $paid_payment;
+		}
+
+		$non_paid_payment = Db::getInstance()->getRow(
+			sprintf(
+				'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY created_at DESC',
+				_DB_PREFIX_ . 'mollie_payments',
+				$column,
+				$id
+			)
+		);
+
+		return $non_paid_payment;
 	}
 
 	/**
@@ -829,44 +866,40 @@ class Mollie extends PaymentModule
 		return $this->display(__FILE__, 'mollie_methods.tpl');
 	}
 
-	public function installOpenState ()
+	public function hookDisplayPaymentTop()
 	{
-		$order_state = new OrderState();
-		$order_state->name = array();
-
-		foreach (Language::getLanguages() as $language)
+		$payment = $this->getPaymentBy('cart_id',(int)$this->context->cart->id);
+		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_CANCELLED)
 		{
-			switch (Tools::strtolower($language['iso_code']))
-			{
-				case 'nl':
-					$translation = 'Wachten op betaling';
-					break;
-
-				case 'fr':
-					$translation = 'En attente de paiement';
-					break;
-
-				default:
-					$translation = 'Pending payment';
-					break;
-			}
-
-			$order_state->name[$language['id_lang']] = $translation;
+			return '<h4>'.$this->lang('You have cancelled your payment.').'</h4>';
 		}
+	}
 
-		$order_state->send_email = FALSE;
-		$order_state->color      = '#CCCCCC';
-		$order_state->hidden     = FALSE;
-		$order_state->delivery   = FALSE;
-		$order_state->logable    = FALSE;
-		$order_state->invoice    = FALSE;
-		$order_state->paid       = FALSE;
+	public function hookDisplayOrderConfirmation()
+	{
+		$payment = $this->getPaymentBy('cart_id',(int)Tools::getValue('id_cart'));
+		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_PAID)
+		{
+			return '<h4>'.$this->lang('Thank you. Your payment has been received.').'</h4>';
+		}
+	}
 
-		if(!$order_state->add())
+	public function addCartIdChangePrimaryKey()
+	{
+		$sql = sprintf('
+			ALTER TABLE `%1$s` DROP PRIMARY KEY;
+			ALTER TABLE `%1$s` ADD PRIMARY KEY (transaction_id),
+				ADD COLUMN `cart_id` INT(64),
+				ADD KEY (cart_id);',
+			_DB_PREFIX_ . 'mollie_payments');
+
+		if (!Db::getInstance()->execute($sql))
+		{
+			$this->_errors[] = 'Database error: ' . Db::getInstance()->getMsgError();
 			return FALSE;
-
-		Configuration::updateValue('MOLLIE_STATUS_OPEN', (int)$order_state->id);
+		}
 
 		return TRUE;
 	}
+
 }

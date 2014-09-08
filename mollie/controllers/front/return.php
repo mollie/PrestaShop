@@ -53,22 +53,38 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 	public function initContent()
 	{
 		parent::initContent();
-
-		$order_id = (int) $_GET['id'];
-
-		// Check if user is allowed to be on the return page
-		$data['auth'] = Order::getUniqReferenceOf($order_id) === $_GET['ref'];
-
-		// Get order information (if user is allowed to see it)
-		if ($data['auth'])
+		$data = array();
+		/**
+		 * Set ref is indicative of a payment that is tied to an order instead of a cart, which
+		 * we still support for transitional reasons.
+		 */
+		if (isset($_GET['ref']))
 		{
-			$data['mollie_info'] = Db::getInstance()->getRow(
-				sprintf(
-					'SELECT * FROM `%s` WHERE `order_id` = %d',
-					_DB_PREFIX_ . 'mollie_payments',
-					$order_id
-				)
-			);
+			$order_id = (int) $_GET['id'];
+
+			// Check if user is allowed to be on the return page
+			$data['auth'] = Order::getUniqReferenceOf($order_id) === $_GET['ref'];
+			if ($data['auth'])
+			{
+				$data['mollie_info'] = $this->module->getPaymentBy('order_id', (int)$order_id);
+			}
+		}
+		elseif (isset($_GET['cart_id']))
+		{
+			$cart_id = (int) $_GET['cart_id'];
+
+			// Check if user that's seeing this is the cart-owner
+			$cart = new Cart($cart_id);
+			$data['auth'] = (int)$cart->id_customer === $this->context->customer->id;
+			if ($data['auth'])
+			{
+				$data['mollie_info'] = $this->module->getPaymentBy('cart_id', (int)$cart_id);
+			}
+		}
+
+		if (isset($data['auth']) && $data['auth'])
+		{
+			// any paid payments for this cart?
 
 			if ($data['mollie_info'] === FALSE)
 			{
@@ -83,12 +99,16 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 						$data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
 						break;
 					case Mollie_API_Object_Payment::STATUS_CANCELLED:
-						$data['msg_details'] = $this->module->lang('You have cancelled your order.');
+						Tools::redirect('/index.php?controller=order&step=3');
 						break;
 					case Mollie_API_Object_Payment::STATUS_EXPIRED:
 						$data['msg_details'] = $this->module->lang('Unfortunately your order was expired.');
 						break;
 					case Mollie_API_Object_Payment::STATUS_PAID:
+						if(isset($cart_id))
+						{
+							Tools::redirectLink(__PS_BASE_URI__ . 'index.php?controller=order-confirmation&id_cart=' . $cart_id .'&id_module='. $this->module->id .'&id_order=' . Order::getOrderByCartId(intval($cart_id)) . '&key=' . $this->context->customer->secure_key);
+						}
 						$data['msg_details'] = $this->module->lang('Thank you. Your order has been received.');
 						break;
 					default:

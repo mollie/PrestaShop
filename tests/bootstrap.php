@@ -26,6 +26,7 @@ class ModuleFrontController
 {
 	public $module;
 	public $_path;
+	public $context;
 	function initContent() {}
 }
 
@@ -103,6 +104,7 @@ class Db
 	function insert() { return TRUE; }
 	function update() { return TRUE; }
 	function getMsgError() { return ''; }
+	function escape($a) { return $a; }
 }
 
 class Smarty

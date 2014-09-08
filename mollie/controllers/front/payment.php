@@ -53,7 +53,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	public function initContent()
 	{
 		parent::initContent();
-
 		/** @var Cart $cart */
 		$cart     = $this->context->cart;
 		$customer = new Customer($cart->id_customer);
@@ -99,30 +98,16 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		$orig_amount = $cart->getOrderTotal(TRUE, Cart::BOTH);
 		$amount      = $this->_convertCurrencyToEuro($orig_amount);
 
-		// Validate
-		$this->module->validateOrder(
-			(int) $cart->id,
-			/* Set initial status to the status selected in the admin, in case of custom status definitions */
-			$this->module->statuses[Mollie_API_Object_Payment::STATUS_OPEN],
-			$orig_amount,
-			$method,
-			NULL,
-			array(),
-			NULL,
-			FALSE,
-			$customer->secure_key
-		);
-
 		// Prepare payment
-		$order_id     = $this->module->currentOrder;
-		$payment_data = $this->_getPaymentData($amount, $method, $issuer, $order_id);
+		$payment_data = $this->_getPaymentData($amount, $method, $issuer, (int) $cart->id);
 		$payment      = $this->_createPayment($payment_data);
 
-		// Store payment
+
+		// Store payment linked to cart
 		Db::getInstance()->insert(
 			'mollie_payments',
 			array(
-				'order_id'       => $order_id,
+				'cart_id'        => (int) $cart->id,
 				'method'         => $payment->method,
 				'transaction_id' => $payment->id,
 				'bank_status'    => Mollie_API_Object_Payment::STATUS_OPEN,
@@ -247,24 +232,19 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	 * @param float $amount
 	 * @param string $method
 	 * @param string|null $issuer
-	 * @param int $order_id
+	 * @param int $cart_id
 	 * @return array
 	 */
-	protected function _getPaymentData($amount, $method, $issuer, $order_id)
+	protected function _getPaymentData($amount, $method, $issuer, $cart_id)
 	{
 		$payment_data = array(
 			"amount"      => $amount,
 			"method"      => $method,
 			"issuer"      => $issuer,
-			"description" => str_replace('%', $order_id, $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
-			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array(
-						'id' => $order_id,
-						'ref' => Order::getUniqReferenceOf($order_id))
-				),
+			"description" => str_replace('%', '', $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
+			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array('cart_id' => $cart_id)),
 			"webhookUrl"  => $this->context->link->getModuleLink('mollie', 'webhook'),
-			"metadata"    => array(
-				"order_id" => $order_id,
-			),
+			"metadata"    => array("cart_id" => $cart_id)
 		);
 
 		if (isset($this->context, $this->context->cart))
