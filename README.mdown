@@ -43,7 +43,11 @@ Controleert u alstublieft of de module ingeschakeld is. Ook moeten euro's als va
 
 Het is niet nodig een redirect URL of webhook in te stellen. Dat doet de module zelf automatisch bij elke order.
 
-**Ik heb een probleem met deze module.**
+**Na een succesvolle betaling krijgen mijn klanten de order history te zien in plaats van de order confirmation. Hoe los ik dat op?**
+
+Dit is in feite een bug in Prestashop die is gefixt vanaf versie 1.6.0.7. Om dit op te lossen zou u Prestashop moeten updaten. Als u dat niet wilt of kunt zou u ook middels aanpassing van één regel code de bug zelf kunnen fixen. In het relevante [github issue](https://github.com/mollie/Prestashop/issues/3) staat precies hoe u dit moet doen.
+
+**Ik heb een ander probleem met deze module.**
 
 Neemt u alstublieft contact op met info@mollie.nl voor ondersteuning.
 
