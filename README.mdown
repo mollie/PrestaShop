@@ -21,6 +21,9 @@ Via [Mollie](https://www.mollie.nl/) is iDEAL gemakkelijk aan te sluiten zonder 
 ### Mister Cash ###
 [Mister Cash](https://www.mollie.nl/betaaldiensten/mistercash/) maakt gebruik van een fysieke kaart die gekoppeld is aan tegoed op een Belgische bankrekening. Betalingen via Mister Cash zijn gegarandeerd en lijkt daarmee sterk op iDEAL in Nederland. Daarom is het uitermate geschikt voor uw webwinkel.
 
+### SOFORT Banking ###
+[SOFORT Banking](https://www.mollie.nl/betaaldiensten/sofort/) is een in Duitsland zeer populaire betaalmethode. Betalingen zijn direct en niet storneerbaar, waarmee het sterk op het Nederlandse iDEAL lijkt. Daarom is het uitermate geschikt voor uw webwinkel.
+
 ### Overboekingen ###
 [Overboekingen](https://www.mollie.nl/betaaldiensten/overboeking/) binnen de SEPA zone ontvangen via Mollie. Hiermee kun je betalingen ontvangen van zowel particulieren als zakelijke klanten in meer dan 35 Europese landen.
 
