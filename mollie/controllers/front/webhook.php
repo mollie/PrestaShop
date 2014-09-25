@@ -112,7 +112,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 					(int) $api_payment->metadata->cart_id,
 					$this->module->statuses[$api_payment->status],
 					$api_payment->amount,
-					$api_payment->method
+					$api_payment->method,
+					NULL,
+					array(),
+					NULL,
+					FALSE,
+					$api_payment->metadata->secure_key
 				);
 
 				$order_id = $this->module->currentOrder;

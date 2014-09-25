@@ -99,7 +99,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		$amount      = $this->_convertCurrencyToEuro($orig_amount);
 
 		// Prepare payment
-		$payment_data = $this->_getPaymentData($amount, $method, $issuer, (int) $cart->id);
+		$payment_data = $this->_getPaymentData($amount, $method, $issuer, (int) $cart->id, $customer->secure_key);
 		$payment      = $this->_createPayment($payment_data);
 
 
@@ -235,16 +235,16 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	 * @param int $cart_id
 	 * @return array
 	 */
-	protected function _getPaymentData($amount, $method, $issuer, $cart_id)
+	protected function _getPaymentData($amount, $method, $issuer, $cart_id, $secure_key)
 	{
 		$payment_data = array(
 			"amount"      => $amount,
 			"method"      => $method,
 			"issuer"      => $issuer,
-			"description" => str_replace('%', '', $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
+			"description" => str_replace('%', $cart_id, $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
 			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array('cart_id' => $cart_id)),
 			"webhookUrl"  => $this->context->link->getModuleLink('mollie', 'webhook'),
-			"metadata"    => array("cart_id" => $cart_id)
+			"metadata"    => array("cart_id" => $cart_id,"secure_key" => $secure_key)
 		);
 
 		if (isset($this->context, $this->context->cart))

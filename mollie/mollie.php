@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
 	public $statuses               = array();
 	public $name                   = 'mollie';
 	public $tab                    = 'payments_gateways';
-	public $version                = '1.0.3';
+	public $version                = '1.0.4';
 	public $author                 = 'Mollie B.V.';
 	public $need_instance          = TRUE;
 	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
@@ -317,7 +317,7 @@ class Mollie extends PaymentModule
 		return
 			$this->initConfigValue('MOLLIE_VERSION', $this->version) &&
 			$this->initConfigValue('MOLLIE_API_KEY', '') &&
-			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Order') &&
+			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Cart %') &&
 			$this->initConfigValue('MOLLIE_IMAGES', self::LOGOS_NORMAL) &&
 			$this->initConfigValue('MOLLIE_ISSUERS', self::ISSUERS_ON_CLICK) &&
 			$this->initConfigValue('MOLLIE_CSS', '') &&
