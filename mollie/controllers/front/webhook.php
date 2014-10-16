@@ -111,7 +111,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 				$this->module->validateOrder(
 					(int) $api_payment->metadata->cart_id,
 					$this->module->statuses[$api_payment->status],
-					$api_payment->amount,
+					$this->_convertEuroToCartCurrency($api_payment->amount,(int) $api_payment->metadata->cart_id),
 					$api_payment->method,
 					NULL,
 					array(),
@@ -169,5 +169,34 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		);
 
 		return Db::getInstance()->update('mollie_payments', $data, '`transaction_id` = \'' . Db::getInstance()->escape($transaction_id) . '\'');
+	}
+
+	/**
+	 * Transforms euro prices from mollie back to the currency of the Cart (order)
+	 * @param float $amount in euros
+	 * @param int $cart_id
+	 * @return float in the currency of the cart
+	 */
+	protected function _convertEuroToCartCurrency($amount, $cart_id)
+	{
+		$cart = new Cart($cart_id);
+		$currency_euro = Currency::getIdByIsoCode('EUR');
+		if (!$currency_euro)
+		{
+			// No Euro currency available!
+			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
+			{
+				Logger::addLog(__METHOD__ . ' said: In order to use this module, you need to enable Euros as currency.', Mollie::CRASH);
+			}
+			die($this->module->lang['This payment method is only available for Euros.']);
+		}
+
+		if ($cart->id_currency !== $currency_euro)
+		{
+			// Convert euro currency to cart currency
+			$amount = Tools::convertPriceFull($amount, Currency::getCurrencyInstance($currency_euro), Currency::getCurrencyInstance($cart->id_currency));
+		}
+
+		return round($amount, 2);
 	}
 }
