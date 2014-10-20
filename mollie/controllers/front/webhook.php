@@ -124,12 +124,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			}
 		}
 
-		/**
+		/*
 		 * Older versions tie payments to orders, and create a cart upon payment creation.
 		 * In order to support the transition between these two cases we check for the
 		 * occurrence of order_id in the metadata. In these cases we only update the order status
 		 */
-
 		elseif (isset($api_payment->metadata->order_id))
 		{
 
@@ -157,7 +156,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 
 	/**
-	 * @param $order_id
+	 * @param $transaction_id
 	 * @param $status
 	 * @return bool
 	 */
@@ -179,14 +178,15 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	 */
 	protected function _convertEuroToCartCurrency($amount, $cart_id)
 	{
-		$cart = new Cart($cart_id);
+		$cart          = new Cart($cart_id);
 		$currency_euro = Currency::getIdByIsoCode('EUR');
+
 		if (!$currency_euro)
 		{
 			// No Euro currency available!
 			if ($this->module->getConfigValue('MOLLIE_DEBUG_LOG') == Mollie::DEBUG_LOG_ERRORS)
 			{
-				Logger::addLog(__METHOD__ . ' said: In order to use this module, you need to enable Euros as currency.', Mollie::CRASH);
+				Logger::addLog(__METHOD__ . ' said: In order to use this module, you need to enable Euros as currency. Cart ID: ' . $cart_id, Mollie::CRASH);
 			}
 			die($this->module->lang['This payment method is only available for Euros.']);
 		}

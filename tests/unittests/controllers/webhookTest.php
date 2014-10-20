@@ -20,6 +20,7 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		));
 		$this->controller = new Mollie_Testing_Impostor($this->getMock('MollieWebhookModuleFrontController', array(
 			'_savePaymentStatus',
+			'_convertEuroToCartCurrency',
 		)));
 		$this->controller->module = $this->mollie;
 		$this->controller->module->currentOrder = 666;
@@ -29,10 +30,12 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		$this->controller->context->link = new Link();
 		$this->controller->context->smarty = new Smarty();
 		$this->controller->context->cart = new Cart();
+		$this->controller->context->cart->id_currency = 1;
 
 		$this->payment = $this->getMock('Mollie_API_Object_Payment');
 		$this->payment->metadata = new stdClass();
-		$this->payment->metadata->cart_id = 777;
+		$this->payment->metadata->cart_id    = 777;
+		$this->payment->metadata->secure_key = "-secure-key-";
 		$this->mollie->api = $this->getMock('Mollie_API_Client');
 		$this->mollie->api->payments = $this->getMock('Mollie_API_Resource_Payments', array(
 			'get',
@@ -68,6 +71,7 @@ class webhookTest extends PHPUnit_Framework_TestCase
 	public function testWebhookGivenCartId()
 	{
 		$this->payment->metadata->cart_id = 777;
+		$this->payment->amount            = 15.95;
 
 		// test if _saveOrderStatus is called correctly
 		$_GET['id'] = 'tr_q2cLW9pxMT';
@@ -81,6 +85,10 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		$this->controller->expects($this->once())
 			->method('_savePaymentStatus')
 			->with('tr_q2cLW9pxMT', 'paid');
+
+		$this->controller->expects($this->once())
+			->method('_convertEuroToCartCurrency')
+			->with(15.95, 777);
 
 		$this->assertEquals('OK', $this->controller->_executeWebhook());
 	}
