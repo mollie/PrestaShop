@@ -99,7 +99,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 						$data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
 						break;
 					case Mollie_API_Object_Payment::STATUS_CANCELLED:
-						Tools::redirect('/index.php?controller=order&step=3');
+						Tools::redirect('order&step=3');
 						break;
 					case Mollie_API_Object_Payment::STATUS_EXPIRED:
 						$data['msg_details'] = $this->module->lang('Unfortunately your order was expired.');
