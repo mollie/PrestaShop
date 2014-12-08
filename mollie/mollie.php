@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
 	public $statuses               = array();
 	public $name                   = 'mollie';
 	public $tab                    = 'payments_gateways';
-	public $version                = '1.0.5';
+	public $version                = '1.0.6';
 	public $author                 = 'Mollie B.V.';
 	public $need_instance          = TRUE;
 	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
