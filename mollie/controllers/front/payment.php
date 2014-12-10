@@ -242,7 +242,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			"method"      => $method,
 			"issuer"      => $issuer,
 			"description" => str_replace('%', $cart_id, $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
-			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array('cart_id' => $cart_id)),
+			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array('cart_id' => $cart_id, 'utm_nooverride' => 1)),
 			"webhookUrl"  => $this->context->link->getModuleLink('mollie', 'webhook'),
 			"metadata"    => array("cart_id" => $cart_id,"secure_key" => $secure_key)
 		);
