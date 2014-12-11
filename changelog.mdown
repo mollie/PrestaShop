@@ -1,0 +1,32 @@
+![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
+
+# Changelog #
+
+## Changes in release 1.0.7 ##
++ Stop Google Analytics from listing payment provider as referrer.
+
+## Changes in release 1.0.6 ##
++ Fixed redirect issue for cancelled payments.
+
+## Changes in release 1.0.5 ##
++ Fixed currency issue on return page.
+
+## Changes in release 1.0.4 ##
++ Added cart ID to payment descriptions.
++ Fixed missing keys warning.
+
+## Changes in release 1.0.3 ##
++ Fixed error in payment method selection.
++ Prevent customers from returning to an empty cart after cancelling a payment.
++ Fixed issues with Google Analytics by using Prestashop's default return page.
+
+## Changes in release 1.0.2 ##
++ Added 'open' order status.
++ Fixed bug where order updated twice.
++ Fixed iDEAL bank list not showing.
+
+## Changes in release 1.0.1 ##
++ Fixed issue with custom statuses for open payments.
+
+## Changes in release 1.0.0 ##
++ Initial release.
