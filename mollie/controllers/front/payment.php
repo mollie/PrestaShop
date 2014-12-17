@@ -115,6 +115,21 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			)
 		);
 
+		if ($payment->method == "banktransfer")
+		{
+			$this->module->validateOrder(
+					(int) $cart->id,
+					$this->module->statuses[$payment->status],
+					$orig_amount,
+					$payment->method,
+					NULL,
+					array(),
+					NULL,
+					FALSE,
+					$customer->secure_key
+				);
+		}
+
 		// Go to payment url
 		Tools::redirect($payment->getPaymentUrl());
 	}

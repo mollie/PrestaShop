@@ -117,6 +117,7 @@ class Mollie extends PaymentModule
 			Mollie_API_Object_Payment::STATUS_CANCELLED => $this->getConfigValue('MOLLIE_STATUS_CANCELLED'),
 			Mollie_API_Object_Payment::STATUS_EXPIRED   => $this->getConfigValue('MOLLIE_STATUS_EXPIRED'),
 			Mollie_API_Object_Payment::STATUS_REFUNDED  => $this->getConfigValue('MOLLIE_STATUS_REFUNDED'),
+			Mollie_API_Object_Payment::STATUS_OPEN      => $this->getConfigValue('MOLLIE_STATUS_OPEN'),
 		);
 
 		// Load all translatable text here so we have a single translation point
@@ -125,6 +126,7 @@ class Mollie extends PaymentModule
 			Mollie_API_Object_Payment::STATUS_CANCELLED          => $this->l('cancelled'),
 			Mollie_API_Object_Payment::STATUS_EXPIRED            => $this->l('expired'),
 			Mollie_API_Object_Payment::STATUS_REFUNDED           => $this->l('refunded'),
+			Mollie_API_Object_Payment::STATUS_OPEN               => $this->l('bankwire pending'),
 			'This payment method is not available.'              => $this->l('This payment method is not available.'),
 			'Click here to continue'                             => $this->l('Click here to continue'),
 			'This payment method is only available for Euros.'   => $this->l('This payment method is only available for Euros.'),
@@ -324,7 +326,7 @@ class Mollie extends PaymentModule
 			$this->initConfigValue('MOLLIE_DEBUG_LOG', self::DEBUG_LOG_ERRORS) &&
 			$this->initConfigValue('MOLLIE_DISPLAY_ERRORS', FALSE) &&
 			$this->initConfigValue('MOLLIE_USE_PROFILE_WEBHOOK', FALSE) &&
-			$this->initConfigValue('MOLLIE_STATUS_OPEN', 3) &&
+			$this->initConfigValue('MOLLIE_STATUS_OPEN', 10) &&
 			$this->initConfigValue('MOLLIE_STATUS_PAID', 2) &&
 			$this->initConfigValue('MOLLIE_STATUS_CANCELLED', 6) &&
 			$this->initConfigValue('MOLLIE_STATUS_EXPIRED', 8) &&
