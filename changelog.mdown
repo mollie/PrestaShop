@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 1.0.8 ##
++ Create the order before the payment is finished when payment method is banktransfer.
+
 ## Changes in release 1.0.7 ##
 + Stop Google Analytics from listing payment provider as referrer.
 
