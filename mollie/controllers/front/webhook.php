@@ -101,40 +101,70 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 		$ps_payment = $this->module->getPaymentBy('transaction_id', $transaction_id);
 
-		if (isset($api_payment->metadata->cart_id))
+		if ($api_payment->method == "banktransfer")
 		{
-			if (
-				 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
-				 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
+			if (isset($api_payment->metadata->cart_id))
 			{
-				// Misnomer ahead: think of validateOrder as "createOrderFromCart"
-				$this->module->validateOrder(
-					(int) $api_payment->metadata->cart_id,
-					$this->module->statuses[$api_payment->status],
-					$this->_convertEuroToCartCurrency($api_payment->amount,(int) $api_payment->metadata->cart_id),
-					$api_payment->method,
-					NULL,
-					array(),
-					NULL,
-					FALSE,
-					$api_payment->metadata->secure_key
-				);
+				// Possible failure because of old modules. So we check if order exists. if not, validateOrder
+				$order_id = Order::getOrderByCartId($api_payment->metadata->cart_id);
+				if (!$order_id)
+				{
+					$this->module->validateOrder(
+						(int) $api_payment->metadata->cart_id,
+						$this->module->statuses[$api_payment->status],
+						$this->_convertEuroToCartCurrency($api_payment->amount,(int) $api_payment->metadata->cart_id),
+						$api_payment->method,
+						NULL,
+						array(),
+						NULL,
+						FALSE,
+						$api_payment->metadata->secure_key
+					);
+				}
+			}
+			elseif (isset($api_payment->metadata->order_id))
+			{
+				$order_id = $api_payment->metadata->order_id;
+				$this->module->setOrderStatus($order_id, $api_payment->status);
+			}			
+		}
+		else
+		{
+			if (isset($api_payment->metadata->cart_id))
+			{
+				if (
+					 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
+					 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
+				{
+					// Misnomer ahead: think of validateOrder as "createOrderFromCart"
+					$this->module->validateOrder(
+						(int) $api_payment->metadata->cart_id,
+						$this->module->statuses[$api_payment->status],
+						$this->_convertEuroToCartCurrency($api_payment->amount,(int) $api_payment->metadata->cart_id),
+						$api_payment->method,
+						NULL,
+						array(),
+						NULL,
+						FALSE,
+						$api_payment->metadata->secure_key
+					);
+				}
 
 				$order_id = $this->module->currentOrder;
 			}
-		}
 
-		/*
-		 * Older versions tie payments to orders, and create a cart upon payment creation.
-		 * In order to support the transition between these two cases we check for the
-		 * occurrence of order_id in the metadata. In these cases we only update the order status
-		 */
-		elseif (isset($api_payment->metadata->order_id))
-		{
+			/**
+			 * Older versions tie payments to orders, and create a cart upon payment creation.
+			 * In order to support the transition between these two cases we check for the
+			 * occurrence of order_id in the metadata. In these cases we only update the order status
+			 */
 
-			$order_id = $api_payment->metadata->order_id;
+			elseif (isset($api_payment->metadata->order_id))
+			{
+				$order_id = $api_payment->metadata->order_id;
+				$this->module->setOrderStatus($order_id, $api_payment->status);
+			}
 
-			$this->module->setOrderStatus($order_id, $api_payment->status);
 		}
 
 		// Store status in database
