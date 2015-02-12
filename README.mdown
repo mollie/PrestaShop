@@ -40,7 +40,9 @@ Via [Mollie](https://www.mollie.nl/) is iDEAL gemakkelijk aan te sluiten zonder 
 
 **Ik heb alles ingesteld, maar de module verschijnt niet bij het afrekenen.**
 
-Controleert u alstublieft of de module ingeschakeld is. Ook moeten euro's als valuta zijn ingesteld in uw winkel.
+* Controleer of de module staat ingeschakeld en of er een juiste API key staat ingesteld. Zie de installatie-instructies.
+* Controleer of euro's als valuta staat ingesteld in uw winkel. Mollie ondersteunt alleen euro's.
+* Controleer via "Geavanceerde paramters" -> "Prestatie" of "HTML minimaliseren" staat uigeschakeld.
 
 **Moet ik ook een return- en / of webhook-URL instellen?**
 
