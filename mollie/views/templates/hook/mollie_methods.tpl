@@ -36,8 +36,9 @@
 {/if}
 
 <div class="mollie_methods">
+{$counter = 0}
 {foreach $methods as $method}
-    <p class="payment_module">
+    <p class="payment_module{if $counter == 1} payment_module_right {/if}">
         <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id], true)|escape:'html'}"
            title="{$msg_pay_with|sprintf:$method->description|escape}"
            id="mollie_link_{$method->id|escape}"
@@ -68,5 +69,10 @@
             </span>
         {/if}
     </p>
+    {if $counter == 0}
+        {$counter = 1}
+    {elseif $counter == 1}
+        {$counter = 0}
+    {/if}
 {/foreach}
 </div>
