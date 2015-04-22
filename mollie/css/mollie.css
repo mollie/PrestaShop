@@ -18,6 +18,12 @@
     }
 }
 
+.mollie_methods p.payment_module:only-of-type 
+{
+    width: 100%;
+    padding-right: 0%;
+} 
+
 .mollie_methods p.payment_module a
 {
     padding-left: 1px;
