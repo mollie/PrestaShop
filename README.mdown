@@ -3,6 +3,8 @@
 # Prestashop plugin voor [betalingen via Mollie](https://www.mollie.com/). #
 
 ## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
+**Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+
 * Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases).
 * Pak het archief uit
 * Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
