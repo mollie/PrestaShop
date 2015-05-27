@@ -120,6 +120,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 						FALSE,
 						$api_payment->metadata->secure_key
 					);
+
+					$this->save_order_transaction_id($api_payment->id);
 				}
 			}
 			elseif (isset($api_payment->metadata->order_id))
@@ -148,6 +150,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 						FALSE,
 						$api_payment->metadata->secure_key
 					);
+
+					$this->save_order_transaction_id($api_payment->id);
+					
 				}
 
 				$order_id = $this->module->currentOrder;
@@ -182,6 +187,30 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			Logger::addLog(__METHOD__ . 'said: Received webhook request for order ' . (int) $order_id . ' / transaction ' . $transaction_id, Mollie::NOTICE);
 		}
 		return 'OK';
+	}
+
+	/**
+	 * Retrieves the OrderPayment object, created at validateOrder. And add transaction id.
+	 * @param $transaction_id
+	 * @return bool
+	 */
+	public function save_order_transaction_id($id)
+	{
+		// retrieve ALL payments of order. 
+		// in the case of a cancel or expired on banktransfer, this will fire too.
+		// if no OrderPayment objects is retrieved in the collection, do nothing.
+		$collection = OrderPayment::getByOrderId($this->module->currentOrder);
+		if (count($collection) > 0)
+		{
+			$order_payment = $collection[0];
+			
+			// for older versions (1.5) , we check if it hasn't been filled yet.
+			if (!$order_payment->transaction_id)
+			{
+				$order_payment->transaction_id = $id;
+				$order_payment->update();
+			}
+		}
 	}
 
 
