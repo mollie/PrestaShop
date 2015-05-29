@@ -21,6 +21,7 @@ class webhookTest extends PHPUnit_Framework_TestCase
 		$this->controller = new Mollie_Testing_Impostor($this->getMock('MollieWebhookModuleFrontController', array(
 			'_savePaymentStatus',
 			'_convertEuroToCartCurrency',
+			'save_order_transaction_id',
 		)));
 		$this->controller->module = $this->mollie;
 		$this->controller->module->currentOrder = 666;

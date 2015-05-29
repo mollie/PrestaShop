@@ -191,10 +191,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 	/**
 	 * Retrieves the OrderPayment object, created at validateOrder. And add transaction id.
-	 * @param $transaction_id
+	 * @param string $mollie_payment_id
 	 * @return bool
 	 */
-	public function save_order_transaction_id($id)
+	public function save_order_transaction_id($mollie_payment_id)
 	{
 		// retrieve ALL payments of order. 
 		// in the case of a cancel or expired on banktransfer, this will fire too.
@@ -207,7 +207,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			// for older versions (1.5) , we check if it hasn't been filled yet.
 			if (!$order_payment->transaction_id)
 			{
-				$order_payment->transaction_id = $id;
+				$order_payment->transaction_id = $mollie_payment_id;
 				$order_payment->update();
 			}
 		}
