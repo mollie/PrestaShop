@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 1.1.0 ##
++ Add English and German translations
++ Save Mollie payment id (tr_xxxx) in order payment
++ Update Mollie API client to version 1.2.5, contains system compatibility checker
+
 ## Changes in release 1.0.8 ##
 + Create the order before the payment is finished when payment method is banktransfer.
 
