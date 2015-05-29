@@ -106,6 +106,10 @@ class Mollie extends PaymentModule
 			$this->api->addVersionString('Prestashop/' . (defined('_PS_VERSION_') ? _PS_VERSION_ : 'Unknown'));
 			$this->api->addVersionString('MolliePrestashop/' . (isset($this->version) ? $this->version : 'Unknown'));
 		}
+		catch (Mollie_API_Exception_IncompatiblePlatform $e)
+		{
+			Logger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie::CRASH);
+		}
 		catch (Mollie_API_Exception $e)
 		{
 			$this->warning = $this->l('Payment error:') . $e->getMessage();
