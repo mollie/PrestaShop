@@ -62,18 +62,19 @@ class mollieTest extends PHPUnit_Framework_TestCase
 
 		// create post array
 		$_POST = array(
-			'Mollie_Config_Save'      => TRUE,
-			'Mollie_Api_Key'          => 'test_something',
-			'Mollie_Description'      => 'Order %',
-			'Mollie_Images'           => Mollie::LOGOS_NORMAL,
-			'Mollie_Issuers'          => Mollie::ISSUERS_ON_CLICK,
-			'Mollie_Logger'           => 1,
-			'Mollie_Errors'           => FALSE,
-			'Mollie_Status_open'      => 3,
-			'Mollie_Status_paid'      => 2,
-			'Mollie_Status_cancelled' => 6,
-			'Mollie_Status_expired'   => 8,
-			'Mollie_Status_refunded'  => 7,
+			'Mollie_Config_Save'          => TRUE,
+			'Mollie_Api_Key'              => 'test_something',
+			'Mollie_Description'          => 'Order %',
+			'Mollie_Paymentscreen_Locale' => Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+			'Mollie_Images'               => Mollie::LOGOS_NORMAL,
+			'Mollie_Issuers'              => Mollie::ISSUERS_ON_CLICK,
+			'Mollie_Logger'               => 1,
+			'Mollie_Errors'               => FALSE,
+			'Mollie_Status_open'          => 3,
+			'Mollie_Status_paid'          => 2,
+			'Mollie_Status_cancelled'     => 6,
+			'Mollie_Status_expired'       => 8,
+			'Mollie_Status_refunded'      => 7,
 		);
 
 		// create valueMap to check if post values are passed to updateConfigValue
