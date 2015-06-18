@@ -202,7 +202,7 @@
                 <td class="mollie_input">
                     <select name="Mollie_Logger" id="Mollie_Logger">
                         {foreach $logger_options AS $value => $title}
-                            <option value="{$value}" {if $value === $val_logger}selected="selected"{/if}>{$title|escape}</option>
+                            <option value="{$value}" {if $value == $val_logger}selected="selected"{/if}>{$title|escape}</option>
                         {/foreach}
                     </select><br />
                     <label for="Mollie_Logger"><i>{$desc_logger}</i></label>
