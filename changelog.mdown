@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 1.2.0 ##
++ Add option to send webshop locale to Mollie to use in payment screens. This will use the
+current language and country locale (In admin: Localization -> Advanced)
+
 ## Changes in release 1.1.0 ##
 + Add English and German translations
 + Save Mollie payment id (tr_xxxx) in order payment
