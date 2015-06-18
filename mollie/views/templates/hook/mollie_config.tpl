@@ -113,6 +113,19 @@
                 </td>
             </tr>
             <tr>
+                <td class="mollie_msg">
+                    <label for="Mollie_Paymentscreen_Locale"><b>{$msg_payscreen_locale}</b></label>
+                </td>
+                <td class="mollie_input">
+                    <select name="Mollie_Paymentscreen_Locale" id="Mollie_Paymentscreen_Locale">
+                        {foreach $payscreen_locale_options AS $value => $title}
+                            <option value="{$value|escape}"{if $value == $payscreen_locale_value} selected="selected"{/if}>{$title|escape}</option>
+                        {/foreach}
+                    </select><br />
+                    <label for="Mollie_Paymentscreen_Locale"><i>{$desc_payscreen_locale}</i></label>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2" class="mollie_title">{$title_visual}</td>
             </tr>
             <tr>

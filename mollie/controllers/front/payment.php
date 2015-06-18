@@ -262,6 +262,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			"metadata"    => array("cart_id" => $cart_id,"secure_key" => $secure_key)
 		);
 
+		// Send webshop locale
+		if ($this->module->getConfigValue('MOLLIE_PAYMENTSCREEN_LOCALE') === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
+		{
+			$locale = $this->_getWebshopLocale();
+
+			if (preg_match('/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu', $locale))
+			{
+				$payment_data['locale'] = $locale;
+			}
+		}
+
 		if (isset($this->context, $this->context->cart))
 		{
 			if (isset($this->context->cart->id_address_invoice))
@@ -283,6 +294,25 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		}
 
 		return $payment_data;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function _getWebshopLocale ()
+	{
+		if ($this->context->language)
+		{
+			// Current language
+			$language = $this->context->language->iso_code;
+		}
+		else
+		{
+			// Default locale language
+			$language = Configuration::get('PS_LOCALE_LANGUAGE');
+		}
+
+		return strtolower($language).'_'.strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
 	}
 
 	/**

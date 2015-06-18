@@ -75,7 +75,10 @@ class Mollie extends PaymentModule
 
 	const NAME = 'mollie';
 
-	CONST LOGOS_BIG    = 'big';
+	const PAYMENTSCREEN_LOCALE_BROWSER_LOCALE      = 'browser_locale';
+	const PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE = 'website_locale';
+
+	const LOGOS_BIG    = 'big';
 	const LOGOS_NORMAL = 'normal';
 	const LOGOS_HIDE   = 'hide';
 
@@ -234,6 +237,7 @@ class Mollie extends PaymentModule
 			!$this->deleteConfigValue('MOLLIE_VERSION') ||
 			!$this->deleteConfigValue('MOLLIE_API_KEY') ||
 			!$this->deleteConfigValue('MOLLIE_DESCRIPTION') ||
+			!$this->deleteConfigValue('MOLLIE_PAYMENTSCREEN_LOCALE') ||
 			!$this->deleteConfigValue('MOLLIE_IMAGES') ||
 			!$this->deleteConfigValue('MOLLIE_ISSUERS') ||
 			!$this->deleteConfigValue('MOLLIE_CSS') ||
@@ -324,6 +328,7 @@ class Mollie extends PaymentModule
 			$this->initConfigValue('MOLLIE_VERSION', $this->version) &&
 			$this->initConfigValue('MOLLIE_API_KEY', '') &&
 			$this->initConfigValue('MOLLIE_DESCRIPTION', 'Cart %') &&
+			$this->initConfigValue('MOLLIE_PAYMENTSCREEN_LOCALE', self::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE) &&
 			$this->initConfigValue('MOLLIE_IMAGES', self::LOGOS_NORMAL) &&
 			$this->initConfigValue('MOLLIE_ISSUERS', self::ISSUERS_ON_CLICK) &&
 			$this->initConfigValue('MOLLIE_CSS', '') &&
@@ -362,6 +367,11 @@ class Mollie extends PaymentModule
 		$update_message = $this->_getUpdateMessage('https://github.com/mollie/Prestashop');
 		$result_msg     = '';
 
+		$payscreen_locale_options = array(
+			self::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE      => $this->l('Do not send locale, use browser language'),
+			self::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE => $this->l('Send webshop locale'),
+		);
+
 		$image_options = array(
 			self::LOGOS_BIG              => $this->l('big'),
 			self::LOGOS_NORMAL           => $this->l('normal'),
@@ -381,46 +391,64 @@ class Mollie extends PaymentModule
 
 		if (Tools::isSubmit('Mollie_Config_Save'))
 		{
-			$result_msg = $this->_getSaveResult(array_keys($image_options), array_keys($issuer_options), array_keys($logger_options));
+			$result_msg = $this->_getSaveResult(array_keys($payscreen_locale_options), array_keys($image_options), array_keys($issuer_options), array_keys($logger_options));
 		}
 
 		$data = array(
-			'form_action'    => Tools::htmlentitiesUTF8($_SERVER['REQUEST_URI']),
-			'config_title'   => $this->l('Mollie Configuration'),
-			'config_legend'  => $this->l('Mollie Settings'),
-			'update_message' => $update_message,
-			'all_statuses'   => OrderState::getOrderStates($lang),
-			'image_options'  => $image_options,
-			'issuer_options' => $issuer_options,
-			'logger_options' => $logger_options,
-			'title_status'   => $this->l('%s statuses:'),
-			'title_visual'   => $this->l('Visual settings:'),
-			'title_debug'    => $this->l('Debug info:'),
-			'msg_result'     => $result_msg,
-			'msg_api_key'    => $this->l('API key:'),
-			'msg_desc'       => $this->l('Description:'),
-			'msg_images'     => $this->l('Images:'),
-			'msg_issuers'    => $this->l('Issuer list:'),
-			'msg_css'        => $this->l('Css file:'),
-			'msg_errors'     => $this->l('Display errors:'),
-			'msg_logger'     => $this->l('Log level:'),
-			'msg_save'       => $this->l('Save settings:'),
-			'desc_api_key'   => sprintf($this->l('You can find your API key in your %sMollie Profile%s; it starts with test or live.'), '<a href="https://www.mollie.nl/beheer/account/profielen/">', '</a>'),
-			'desc_desc'      => $this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters.'),
-			'desc_images'    => $this->l('Show big, normal or no payment method logos on checkout.'),
-			'desc_issuers'   => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
-			'desc_css'       => $this->l('Leave empty for default stylesheet. Should include file path when set.') . '<br />' . $this->l('Hint: You can use {BASE}, {THEME}, {CSS}, {MOBILE}, {MOBILE_CSS} and {OVERRIDE} for easy folder mapping.'),
-			'desc_errors'    => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
-			'desc_logger'    => sprintf($this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s'), '<a href='.$this->context->link->getAdminLink('AdminLogs').'>', '</a>'),
-			'val_api_key'    => $this->getConfigValue('MOLLIE_API_KEY'),
-			'val_desc'       => $this->getConfigValue('MOLLIE_DESCRIPTION'),
-			'val_images'     => $this->getConfigValue('MOLLIE_IMAGES'),
-			'val_issuers'    => $this->getConfigValue('MOLLIE_ISSUERS'),
-			'val_css'        => $this->getConfigValue('MOLLIE_CSS'),
-			'val_errors'     => $this->getConfigValue('MOLLIE_DISPLAY_ERRORS'),
-			'val_logger'     => $this->getConfigValue('MOLLIE_DEBUG_LOG'),
-			'val_save'       => $this->l('Save'),
-			'lang'           => $this->lang,
+			'form_action'              => Tools::htmlentitiesUTF8($_SERVER['REQUEST_URI']),
+			'config_title'             => $this->l('Mollie Configuration'),
+			'config_legend'            => $this->l('Mollie Settings'),
+			'update_message'           => $update_message,
+			'all_statuses'             => OrderState::getOrderStates($lang),
+			'payscreen_locale_options' => $payscreen_locale_options,
+			'image_options'            => $image_options,
+			'issuer_options'           => $issuer_options,
+			'logger_options'           => $logger_options,
+			'title_status'             => $this->l('%s statuses:'),
+			'title_visual'             => $this->l('Visual settings:'),
+			'title_debug'              => $this->l('Debug info:'),
+			'msg_result'               => $result_msg,
+			'msg_api_key'              => $this->l('API key:'),
+			'msg_desc'                 => $this->l('Description:'),
+			'msg_payscreen_locale'     => $this->l('Send locale for payment screen'),
+			'msg_images'               => $this->l('Images:'),
+			'msg_issuers'              => $this->l('Issuer list:'),
+			'msg_css'                  => $this->l('Css file:'),
+			'msg_errors'               => $this->l('Display errors:'),
+			'msg_logger'               => $this->l('Log level:'),
+			'msg_save'                 => $this->l('Save settings:'),
+			'desc_api_key'             => sprintf(
+				$this->l('You can find your API key in your %sMollie Profile%s; it starts with test or live.'),
+				'<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank">',
+				'</a>'
+			),
+			'desc_desc'                => $this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters.'),
+			'desc_payscreen_locale'    => sprintf(
+				$this->l('Should the plugin send the current webshop %slocale%s to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
+				'<a href="https://en.wikipedia.org/wiki/Locale" target="_blank">',
+				'</a>'
+			),
+			'desc_images'              => $this->l('Show big, normal or no payment method logos on checkout.'),
+			'desc_issuers'             => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
+			'desc_css'                 => $this->l('Leave empty for default stylesheet. Should include file path when set.')
+										. '<br />'
+										. $this->l('Hint: You can use {BASE}, {THEME}, {CSS}, {MOBILE}, {MOBILE_CSS} and {OVERRIDE} for easy folder mapping.'),
+			'desc_errors'              => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
+			'desc_logger'              => sprintf(
+				$this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s'),
+				'<a href=' . $this->context->link->getAdminLink('AdminLogs') . '>',
+				'</a>'
+			),
+			'val_api_key'              => $this->getConfigValue('MOLLIE_API_KEY'),
+			'val_desc'                 => $this->getConfigValue('MOLLIE_DESCRIPTION'),
+			'payscreen_locale_value'   => $this->getConfigValue('MOLLIE_PAYMENTSCREEN_LOCALE'),
+			'val_images'               => $this->getConfigValue('MOLLIE_IMAGES'),
+			'val_issuers'              => $this->getConfigValue('MOLLIE_ISSUERS'),
+			'val_css'                  => $this->getConfigValue('MOLLIE_CSS'),
+			'val_errors'               => $this->getConfigValue('MOLLIE_DISPLAY_ERRORS'),
+			'val_logger'               => $this->getConfigValue('MOLLIE_DEBUG_LOG'),
+			'val_save'                 => $this->l('Save'),
+			'lang'                     => $this->lang,
 		);
 
 		$db = Db::getInstance();
@@ -560,17 +588,22 @@ class Mollie extends PaymentModule
 	}
 
 	/**
+	 * @param array $payscreen_locale_options
 	 * @param array $image_options
 	 * @param array $issuer_options
 	 * @param array $logger_options
 	 * @return string
 	 */
-	protected function _getSaveResult($image_options = array(), $issuer_options = array(), $logger_options = array())
+	protected function _getSaveResult(array $payscreen_locale_options = array(), array $image_options = array(), array $issuer_options = array(), array $logger_options = array())
 	{
 		$errors = array();
 		if (!empty($_POST['Mollie_Api_Key']) && strpos($_POST['Mollie_Api_Key'], 'live') !== 0 && strpos($_POST['Mollie_Api_Key'], 'test') !== 0)
 		{
 			$errors[] = $this->l('The API key needs to start with test or live.');
+		}
+		if (!in_array($_POST['Mollie_Paymentscreen_Locale'], $payscreen_locale_options))
+		{
+			$errors[] = $this->l('Invalid locale setting.');
 		}
 		if (!in_array($_POST['Mollie_Images'], $image_options))
 		{
@@ -608,6 +641,7 @@ class Mollie extends PaymentModule
 		{
 			$this->updateConfigValue('MOLLIE_API_KEY', $_POST['Mollie_Api_Key']);
 			$this->updateConfigValue('MOLLIE_DESCRIPTION', $_POST['Mollie_Description']);
+			$this->updateConfigValue('MOLLIE_PAYMENTSCREEN_LOCALE', $_POST['Mollie_Paymentscreen_Locale']);
 			$this->updateConfigValue('MOLLIE_IMAGES', $_POST['Mollie_Images']);
 			$this->updateConfigValue('MOLLIE_ISSUERS', $_POST['Mollie_Issuers']);
 			$this->updateConfigValue('MOLLIE_CSS', $_POST['Mollie_Css']);
