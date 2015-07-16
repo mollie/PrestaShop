@@ -44,7 +44,7 @@ Via [Mollie](https://www.mollie.com/) is iDEAL gemakkelijk aan te sluiten zonder
 
 * Controleer of de module staat ingeschakeld en of er een juiste API key staat ingesteld. Zie de installatie-instructies.
 * Controleer of euro's als valuta staat ingesteld in uw winkel. Mollie ondersteunt alleen euro's.
-* Controleer via "Geavanceerde paramters" -> "Prestatie" of "HTML minimaliseren" staat uigeschakeld.
+* Controleer via "Geavanceerde parameters" -> "Prestatie" of "HTML minimaliseren" staat uigeschakeld.
 
 **Moet ik ook een return- en / of webhook-URL instellen?**
 
@@ -53,6 +53,13 @@ Het is niet nodig een redirect URL of webhook in te stellen. Dat doet de module 
 **Na een succesvolle betaling krijgen mijn klanten de order history te zien in plaats van de order confirmation. Hoe los ik dat op?**
 
 Dit is in feite een bug in Prestashop die is gefixt vanaf versie 1.6.0.7. Om dit op te lossen zou u Prestashop moeten updaten. Als u dat niet wilt of kunt zou u ook middels aanpassing van één regel code de bug zelf kunnen fixen. In het relevante [github issue](https://github.com/mollie/Prestashop/issues/3) staat precies hoe u dit moet doen.
+
+**De status van mijn bestelling wordt niet bijgewerkt**
+
+Mollie stuurt een bericht aan je website wanneer de status van de betaling veranderd. Het kan zijn dat Mollie je website niet kon bereiken of dat je website de status niet heeft kunnen verwerken.
+
+* Controleer in je [Mollie beheer](https://www.mollie.com/beheer/) of er gefaalde rapportages zijn. [Meer informatie](https://www.mollie.com/nl/support/post/ik-krijg-een-e-mail-over-gefaalde-http-rapportages-wat-nu/)
+* Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in maintenance mode draait.
 
 # Licentie #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
