@@ -105,6 +105,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
+				$this->_setContextCountryByDeliveryAddress($api_payment->metadata->cart_id);
 				// Possible failure because of old modules. So we check if order exists. if not, validateOrder
 				$order_id = Order::getOrderByCartId($api_payment->metadata->cart_id);
 				if (!$order_id)
@@ -134,6 +135,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
+				$this->_setContextCountryByDeliveryAddress($api_payment->metadata->cart_id);
+				
 				if (
 					 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
 					 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
@@ -257,5 +260,19 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		}
 
 		return round($amount, 2);
+	}
+
+	/**
+	 * (Re)sets the controller country context. 
+	 * When Prestashop receives a call from Mollie (without context)
+	 * @param float $amount in euros
+	 * @param int $cart_id
+	 * @return float in the currency of the cart
+	 */
+	private function _setContextCountryByDeliveryAddress($cart_id)
+	{
+		$cart = new Cart($cart_id);
+		$address = new Address($cart->id_address_delivery);
+		$this->context->country = new Country($address->id_country);
 	}
 }
