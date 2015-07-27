@@ -272,9 +272,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	 */
 	private function _setCountryContextIfNotSet($payment)
 	{
-		if (!empty($this->context->country))
+		if (!empty($this->context->country) || !$this->context->country->active)
 		{
-			if (!$this->context->country->active && isset($payment->metadata->cart_id))
+			if (isset($payment->metadata->cart_id))
 			{
 				$cart = new Cart((int)$payment->metadata->cart_id);
 				if (!empty($cart))
