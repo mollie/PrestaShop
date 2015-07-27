@@ -13,6 +13,7 @@
     }
     function mollie_pay(method)
     {
+        console.log('pay');
         var link = document.getElementById('mollie_link_'+method),
             select = document.getElementById('mollie_issuer_'+method),
             target = link.href;
@@ -24,6 +25,7 @@
         window.location = target;
     }
 </script>
+
 <style type="text/css">
     .mollie_hidden
     {
@@ -42,7 +44,9 @@
            title="{$msg_pay_with|sprintf:$method->description|escape}"
            id="mollie_link_{$method->id|escape}"
            class="mollie_method"
-           onclick="mollie_click('{$method->id|escape}'); return false;"
+           {if !Module::isEnabled('onepagecheckout')} 
+                onclick="mollie_click('{$method->id|escape}'); return false;" 
+           {/if}
         >
             {if isset($method->image) && $images !== 'hide'}
                 {if $images === 'big'}
