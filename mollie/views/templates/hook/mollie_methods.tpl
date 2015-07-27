@@ -13,7 +13,6 @@
     }
     function mollie_pay(method)
     {
-        console.log('pay');
         var link = document.getElementById('mollie_link_'+method),
             select = document.getElementById('mollie_issuer_'+method),
             target = link.href;
