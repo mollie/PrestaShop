@@ -202,7 +202,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		// retrieve ALL payments of order. 
 		// in the case of a cancel or expired on banktransfer, this will fire too.
 		// if no OrderPayment objects is retrieved in the collection, do nothing.
-		$collection = OrderPayment::getByOrderId($this->module->currentOrder);
+		$order = new Order($this->module->currentOrder);
+		$collection = OrderPayment::getByOrderReference($order->reference);
 		if (count($collection) > 0)
 		{
 			$order_payment = $collection[0];
