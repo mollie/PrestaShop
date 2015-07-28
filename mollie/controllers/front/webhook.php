@@ -101,11 +101,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 		$ps_payment = $this->module->getPaymentBy('transaction_id', $transaction_id);
 
+		$this->_setCountryContextIfNotSet($api_payment);
+
 		if ($api_payment->method == "banktransfer")
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
-				$this->_setCountryContextIfNotSet($api_payment);
 				// Possible failure because of old modules. So we check if order exists. if not, validateOrder
 				$order_id = Order::getOrderByCartId($api_payment->metadata->cart_id);
 				if (!$order_id)
@@ -129,14 +130,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			{
 				$order_id = $api_payment->metadata->order_id;
 				$this->module->setOrderStatus($order_id, $api_payment->status);
-			}			
+			}
 		}
 		else
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
-				$this->_setCountryContextIfNotSet($api_payment);
-				
 				if (
 					 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
 					 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
@@ -155,7 +154,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 					);
 
 					$this->save_order_transaction_id($api_payment->id);
-					
 				}
 
 				$order_id = $this->module->currentOrder;
