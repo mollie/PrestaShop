@@ -24,6 +24,7 @@
         window.location = target;
     }
 </script>
+
 <style type="text/css">
     .mollie_hidden
     {
@@ -42,7 +43,9 @@
            title="{$msg_pay_with|sprintf:$method->description|escape}"
            id="mollie_link_{$method->id|escape}"
            class="mollie_method"
-           onclick="mollie_click('{$method->id|escape}'); return false;"
+           {if !Module::isEnabled('onepagecheckout')} 
+                onclick="mollie_click('{$method->id|escape}'); return false;" 
+           {/if}
         >
             {if isset($method->image) && $images !== 'hide'}
                 {if $images === 'big'}

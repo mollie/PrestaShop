@@ -105,6 +105,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
+				$this->_setCountryContextIfNotSet($api_payment);
 				// Possible failure because of old modules. So we check if order exists. if not, validateOrder
 				$order_id = Order::getOrderByCartId($api_payment->metadata->cart_id);
 				if (!$order_id)
@@ -134,6 +135,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		{
 			if (isset($api_payment->metadata->cart_id))
 			{
+				$this->_setCountryContextIfNotSet($api_payment);
+				
 				if (
 					 $ps_payment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
 					 $api_payment->status === Mollie_API_Object_Payment::STATUS_PAID )
@@ -199,7 +202,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 		// retrieve ALL payments of order. 
 		// in the case of a cancel or expired on banktransfer, this will fire too.
 		// if no OrderPayment objects is retrieved in the collection, do nothing.
-		$collection = OrderPayment::getByOrderId($this->module->currentOrder);
+		$order = new Order($this->module->currentOrder);
+		$collection = OrderPayment::getByOrderReference($order->reference);
 		if (count($collection) > 0)
 		{
 			$order_payment = $collection[0];
@@ -258,4 +262,35 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 		return round($amount, 2);
 	}
+
+	/**
+	 * (Re)sets the controller country context. 
+	 * When Prestashop receives a call from Mollie (without context)
+	 * Prestashop allways has default context to fall back on, so context->country
+	 * is allways Set before executing any controller methods
+	 * @param Mollie_API_Object_Payment 
+	 */
+	private function _setCountryContextIfNotSet($payment)
+	{
+		if (!empty($this->context->country) || !$this->context->country->active)
+		{
+			if (isset($payment->metadata->cart_id))
+			{
+				$cart = new Cart((int)$payment->metadata->cart_id);
+				if (!empty($cart))
+				{
+					$address = new Address($cart->id_address_delivery);
+					if (!empty($address))
+					{
+						$country = new Country($address->id_country);
+						if (!empty($country))
+						{
+							$this->context->country = $country;
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
