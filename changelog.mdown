@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 1.2.1 ##
++ Fixed an issue where the country context is not set when Mollie calls the PrestaShop webhook.
++ Fixed an issue where the iDEAL issuers are not displayed correctly when using module OnePageCheckout.
++ Update submodule mollie-api-php to version 1.2.7
+
 ## Changes in release 1.2.0 ##
 + Add option to send webshop locale to Mollie to use in payment screens. This will use the
 current language and country locale (In admin: Localization -> Advanced)
