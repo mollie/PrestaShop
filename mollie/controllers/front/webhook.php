@@ -262,15 +262,16 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * (Re)sets the controller country context. 
+	 * (Re)sets the controller country context.
 	 * When Prestashop receives a call from Mollie (without context)
 	 * Prestashop allways has default context to fall back on, so context->country
 	 * is allways Set before executing any controller methods
-	 * @param Mollie_API_Object_Payment 
+	 *
+	 * @param Mollie_API_Object_Payment $payment
 	 */
-	private function _setCountryContextIfNotSet($payment)
+	private function _setCountryContextIfNotSet(Mollie_API_Object_Payment $payment)
 	{
-		if (!empty($this->context->country) || !$this->context->country->active)
+		if (empty($this->context->country) || !$this->context->country->active)
 		{
 			if (isset($payment->metadata->cart_id))
 			{
