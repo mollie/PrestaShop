@@ -60,6 +60,7 @@ Mollie stuurt een bericht aan je website wanneer de status van de betaling veran
 
 * Controleer in je [Mollie beheer](https://www.mollie.com/beheer/) of er gefaalde rapportages zijn. [Meer informatie](https://www.mollie.com/nl/support/post/ik-krijg-een-e-mail-over-gefaalde-http-rapportages-wat-nu/)
 * Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in maintenance mode draait.
+* Soms gaat er iets fout bij het aanmaken van de factuur. Controleer of de optie "Afbeelding voor het product inschakelen" uit staat in "Bestellingen" -> "Facturen" -> "Factuur opties" (vanaf PrestaShop 1.6.1.0) of in "Voorkeuren" -> "Bestellingen" -> "PDF instellingen" (in PrestaShop 1.6.0.12 tot 1.6.0.14).
 
 # Licentie #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
