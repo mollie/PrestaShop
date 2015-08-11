@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 1.2.2 ##
++ Fixed issue where banktransfer status didn't get updated correctly
++ Update submodule mollie-api-php to version 1.2.8
+
 ## Changes in release 1.2.1 ##
 + Fixed an issue where the country context is not set when Mollie calls the PrestaShop webhook.
 + Fixed an issue where the iDEAL issuers are not displayed correctly when using module OnePageCheckout.
