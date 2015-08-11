@@ -109,7 +109,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			{
 				// Possible failure because of old modules. So we check if order exists. if not, validateOrder
 				$order_id = Order::getOrderByCartId($api_payment->metadata->cart_id);
-				if (!$order_id)
+				if ($order_id)
+				{
+					$this->module->setOrderStatus($order_id, $api_payment->status);
+				}
+				else
 				{
 					$this->module->validateOrder(
 						(int) $api_payment->metadata->cart_id,
