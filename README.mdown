@@ -62,6 +62,12 @@ Mollie stuurt een bericht aan je website wanneer de status van de betaling veran
 * Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in maintenance mode draait.
 * Soms gaat er iets fout bij het aanmaken van de factuur. Controleer of de optie "Afbeelding voor het product inschakelen" uit staat in "Bestellingen" -> "Facturen" -> "Factuur opties" (vanaf PrestaShop 1.6.1.0) of in "Voorkeuren" -> "Bestellingen" -> "PDF instellingen" (in PrestaShop 1.6.0.12 tot 1.6.0.14).
 
+# Wil je meewerken aan deze module? #
+
+Wil je helpen om onze plugin voor PrestaShop nog beter te maken? Wij staan open voor [pull requests](https://github.com/mollie/Prestashop/pulls?utf8=%E2%9C%93&q=is%3Apr) voor onze module. 
+
+Maar wat denk je er over om bij een [technology driven organisatie](https://www.mollie.com/nl/blog/post/werken-bij-mollie-sfeer-kansen-en-mogelijkheden/) aan de slag te gaan? Mollie is altijd op zoek naar developers en system engineers. [Check onze vacatures](https://www.mollie.com/nl/jobs) of [neem contact met ons op](mailto:personeel@mollie.com).
+
 # Licentie #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
 Copyright (c) 2013, Mollie B.V.
