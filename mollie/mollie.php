@@ -362,7 +362,8 @@ class Mollie extends PaymentModule
 	public function getContent()
 	{
 		global $cookie;
-		$lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : 1;
+		$lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
+		$lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
 
 		$update_message = $this->_getUpdateMessage('https://github.com/mollie/Prestashop');
 		$result_msg     = '';
