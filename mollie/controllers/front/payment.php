@@ -244,6 +244,37 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	}
 
 	/**
+	 * @param int $cart_id
+	 * @return string
+	 */
+	protected function _generateDescriptionFromCart($cart_id)
+	{
+		$cart = new Cart($cart_id);
+
+		$buyer = null;
+		if ($cart->id_customer)
+		{
+			$buyer = new Customer($cart->id_customer);
+		}
+
+		$filters = array(
+			'cart.id' => $cart_id,
+			'customer.firstname' => $buyer == null ? '' : $buyer->firstname,
+			'customer.lastname' => $buyer == null ? '' : $buyer->lastname,
+			'customer.company' => $buyer == null ? '' : $buyer->company,
+		);
+		
+		$content = $this->module->getConfigValue('MOLLIE_DESCRIPTION');
+		
+		foreach($filters as $key => $value)
+		{
+			$content = str_replace("{".$key."}", $value, $content);
+		}
+
+		return $content;
+	}
+
+	/**
 	 * @param float $amount
 	 * @param string $method
 	 * @param string|null $issuer
@@ -252,11 +283,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	 */
 	protected function _getPaymentData($amount, $method, $issuer, $cart_id, $secure_key)
 	{
+		$description = $this->_generateDescriptionFromCart($cart_id);
+
 		$payment_data = array(
 			"amount"      => $amount,
 			"method"      => $method,
 			"issuer"      => $issuer,
-			"description" => str_replace('%', $cart_id, $this->module->getConfigValue('MOLLIE_DESCRIPTION')),
+			"description" => str_replace('%', $cart_id, $description),
 			"redirectUrl" => $this->context->link->getModuleLink('mollie','return', array('cart_id' => $cart_id, 'utm_nooverride' => 1)),
 			"webhookUrl"  => $this->context->link->getModuleLink('mollie', 'webhook'),
 			"metadata"    => array("cart_id" => $cart_id,"secure_key" => $secure_key)
