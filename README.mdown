@@ -79,12 +79,4 @@ naar prestashopsupport@mollie.com met een zo precies mogelijke omschrijving van 
 dan direct geholpen door onze Prestashop-expert. Heeft u andere vragen? Neemt u dan contact met ons
 op via info@mollie.com.
 
-+ [Meer informatie over iDEAL via Mollie](https://www.mollie.com/ideal/)
-+ [Meer informatie over Creditcard via Mollie](https://www.mollie.com/creditcard/)
-+ [Meer informatie over Bancontact/Mister Cash via Mollie](https://www.mollie.com/mistercash/)
-+ [Meer informatie over Overboeking via Mollie](https://www.mollie.com/banktransfer/)
-+ [Meer informatie over PayPal via Mollie](https://www.mollie.com/paypal/)
-+ [Meer informatie over Bitcoin via Mollie](https://www.mollie.com/bitcoin/)
-+ [Meer informatie over paysafecard via Mollie](https://www.mollie.com/paysafecard/)
-
 ![Powered By Mollie](https://www.mollie.com/images/badge-betaling-medium.png)
