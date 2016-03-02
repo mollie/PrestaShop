@@ -301,6 +301,7 @@ class Mollie extends PaymentModule
 	{
 		return
 			$this->registerHook('displayPayment') &&
+			$this->registerHook('displayPaymentEU') &&
 			$this->registerHook('displayPaymentTop') &&
 			$this->registerHook('displayAdminOrder') &&
 			$this->registerHook('displayHeader') &&
@@ -316,6 +317,7 @@ class Mollie extends PaymentModule
 	{
 		return
 			$this->unregisterHook('displayPayment') &&
+			$this->unregisterHook('displayPaymentEU') &&
 			$this->unregisterHook('displayPaymentTop') &&
 			$this->unregisterHook('displayAdminOrder') &&
 			$this->unregisterHook('displayHeader') &&
@@ -861,6 +863,44 @@ class Mollie extends PaymentModule
 		$tpl_data['img_src'] = $this->_path . 'logo_small.png';
 		$this->smarty->assign($tpl_data);
 		return $this->display(__FILE__, 'mollie_refund.tpl');
+	}
+
+	/**
+	 * EU Advanced Compliance module (prestahop module) Advanced Checkout option enabled
+	 * @param $params
+	 * @return array|void
+	 */
+	public function hookDisplayPaymentEU($params)
+	{
+		if (!Currency::exists('EUR', 0))
+		{
+			return;
+		}
+
+		try {
+			$methods = $this->api->methods->all();
+		} catch (Mollie_API_Exception $e) {
+			$methods = array();
+
+			if ($this->getConfigValue('MOLLIE_DEBUG_LOG') == self::DEBUG_LOG_ERRORS)
+			{
+				PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
+			}
+			
+			return;
+		}
+
+		$payment_options = array();
+		foreach($methods as $method)
+		{
+			$payment_options[] = array(
+				'cta_text' => $this->lang[$method->description],
+				'logo' => $method->image->normal,
+				'action' => $this->context->link->getModuleLink('mollie', 'payment', array('method' => $method->id), true)
+			);
+		}
+
+		return $payment_options;
 	}
 
 	/**
