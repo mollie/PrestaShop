@@ -4,7 +4,7 @@ global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{mollie}prestashop>mollie_09748ce33c8a71296b20ba8c3bd1d13e'] = 'Module de Paiement Mollie';
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Paiements Mollie';
-$_MODULE['<{mollie}prestashop>mollie_48dedcf43487615c84c1bbbf6fe76c76'] = 'Etes-vous sÃ»r de vouloir dÃ©sinstaller le Module de Paiement Mollie?';
+$_MODULE['<{mollie}prestashop>mollie_48dedcf43487615c84c1bbbf6fe76c76'] = 'Etes-vous sür de vouloir désinstallation le Module de Paiement Mollie?';
 $_MODULE['<{mollie}prestashop>mollie_ab552f085567bbe63872c10a3596cd27'] = 'Erreur de paiement:';
 $_MODULE['<{mollie}prestashop>mollie_76e084771e78c194efd0e2d5b8920bea'] = 'payé';
 $_MODULE['<{mollie}prestashop>mollie_38881e0a24039dc2621e1d6f86cb71f7'] = 'annulé';
