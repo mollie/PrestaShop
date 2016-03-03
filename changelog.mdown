@@ -5,6 +5,7 @@
 ## Changes in release 1.2.5 ##
 + Added some new translations.
 + EU Compliance module has been added.
++ Update submodule mollie-api-php to version 1.4.0.
 
 ## Changes in release 1.2.4 ##
 + Added payment description filters ({cart.id} {customer.firstname} {customer.lastname} {customer.company})
