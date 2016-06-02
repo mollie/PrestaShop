@@ -300,13 +300,13 @@ class Mollie extends PaymentModule
 	protected function _registerHooks()
 	{
 		return
-			$this->registerHook('displayPayment') &&
-			$this->registerHook('displayPaymentEU') &&
-			$this->registerHook('displayPaymentTop') &&
-			$this->registerHook('displayAdminOrder') &&
-			$this->registerHook('displayHeader') &&
-			$this->registerHook('displayBackOfficeHeader') &&
-			$this->registerHook('displayOrderConfirmation')
+			$this->_registerHook('displayPayment') &&
+			$this->_registerHook('displayPaymentEU', false) &&   // not standard presta hook
+			$this->_registerHook('displayPaymentTop') &&
+			$this->_registerHook('displayAdminOrder') &&
+			$this->_registerHook('displayHeader') &&
+			$this->_registerHook('displayBackOfficeHeader') &&
+			$this->_registerHook('displayOrderConfirmation')
 			;
 	}
 
@@ -316,14 +316,50 @@ class Mollie extends PaymentModule
 	protected function _unregisterHooks()
 	{
 		return
-			$this->unregisterHook('displayPayment') &&
-			$this->unregisterHook('displayPaymentEU') &&
-			$this->unregisterHook('displayPaymentTop') &&
-			$this->unregisterHook('displayAdminOrder') &&
-			$this->unregisterHook('displayHeader') &&
-			$this->unregisterHook('displayBackOfficeHeader') &&
-			$this->unregisterHook('displayOrderConfirmation')
+			$this->_unregisterHook('displayPayment') &&
+			$this->_unregisterHook('displayPaymentEU', false) &&   // not standard presta hook
+			$this->_unregisterHook('displayPaymentTop') &&
+			$this->_unregisterHook('displayAdminOrder') &&
+			$this->_unregisterHook('displayHeader') &&
+			$this->_unregisterHook('displayBackOfficeHeader') &&
+			$this->_unregisterHook('displayOrderConfirmation')
 			;
+	}
+
+	/**
+	 * Override Registering, check hook existence first.
+	 * On false return register completion, so installation doesn't fail if the Hook doesn't exist.
+	 * For example the PaymentEU hook doesn't exist in every prestashop, and can therefore produce an unstallation error.
+	 * @param string $name Name of the hook to register
+	 * @param bool $standard If the hook is standard prestashop, therefore we can assume the hook exists
+	 * @return bool
+	 */
+	protected function _registerHook($name, $standard = true)
+	{
+		if (!$standard && !Hook::getIdByName($name))
+		{
+			return true;
+		}
+
+		return $this->registerHook($name);
+	}
+
+	/**
+	 * Override Unregistering, check hook existence first.
+	 * On false return unregister completion, so uninstallation doesn't fail if the Hook doesn't exist.
+	 * For example the PaymentEU hook doesn't exist in every prestashop, and can therefore produce a uninstallation error.
+	 * @param string $name Name of the hook to unregister
+	 * @param bool $standard If the hook is standard prestashop, therefore we can assume the hook exists
+	 * @return bool
+	 */
+	protected function _unregisterHook($name, $standard = true)
+	{
+		if (!$standard && !Hook::getIdByName($name))
+		{
+			return true;
+		}
+
+		return $this->unregisterHook($name);
 	}
 
 	/**
