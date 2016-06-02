@@ -7,8 +7,8 @@ class mollieTest extends PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 		$this->mollie = $this->getMock('Mollie', array(
-			'registerHook',
-			'unregisterHook',
+			'_registerHook',
+			'_unregisterHook',
 			'initConfigValue',
 			'deleteConfigValue',
 			'updateConfigValue',
@@ -28,7 +28,7 @@ class mollieTest extends PHPUnit_Framework_TestCase
 	{
 		// test if registerHook is called
 		$this->mollie->expects($this->atLeastOnce())
-			->method('registerHook')
+			->method('_registerHook')
 			->will($this->returnValue(TRUE));
 
 		// test if initConfigValue is called
@@ -44,7 +44,7 @@ class mollieTest extends PHPUnit_Framework_TestCase
 	{
 		// test if unregisterHook is called
 		$this->mollie->expects($this->atLeastOnce())
-			->method('unregisterHook')
+			->method('_unregisterHook')
 			->will($this->returnValue(TRUE));
 
 		// test if deleteConfigValue is called
