@@ -75,8 +75,6 @@ Copyright (c) 2013, Mollie B.V.
 # Ondersteuning #
 
 Heeft u problemen met de installatie of bevat de module volgens u een bug? Stuurt u dan een email 
-naar prestashopsupport@mollie.com met een zo precies mogelijke omschrijving van het probleem. U wordt 
-dan direct geholpen door onze Prestashop-expert. Heeft u andere vragen? Neemt u dan contact met ons
-op via info@mollie.com.
+naar info@mollie.com met een zo precies mogelijke omschrijving van het probleem.
 
 ![Powered By Mollie](https://www.mollie.com/images/badge-betaling-medium.png)
