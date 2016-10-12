@@ -308,6 +308,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 		if (isset($this->context, $this->context->cart))
 		{
+			if (isset($this->context->cart->id_customer))
+			{
+				$buyer = new Customer($this->context->cart->id_customer);
+				$payment_data['billingEmail']   = $buyer->email;
+			}
 			if (isset($this->context->cart->id_address_invoice))
 			{
 				$billing                        = new Address(intval($this->context->cart->id_address_invoice));
