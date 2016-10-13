@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 1.3.0 ##
++ Automatically pass along the customer's email address for banktransfer payment instructions, when available.
+
 ## Changes in release 1.2.6 ##
 + Fixed incorrect install/de-install hooks.
 + Update submodule [mollie-api-php](https://github.com/mollie/mollie-api-php) to `v1.5.1`
