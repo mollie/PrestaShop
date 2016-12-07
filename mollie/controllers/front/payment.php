@@ -156,12 +156,26 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 		$authorized = FALSE;
 
-		foreach (Module::getPaymentModules() as $module)
-		{
-			if ($module['name'] == 'mollie')
+		// PrestaShop versions 1.7.0.0 - 1.7.0.2 (and perhaps more) do support
+		// the displayPaymentEU hook, but the hook is not included in the payment module check.
+		// Therefore we need to perform a check that targets the specific hook itself.
+		if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+			foreach (Hook::getHookModuleExecList('displayPaymentEU') as $module)
 			{
-				$authorized = TRUE;
-				break;
+				if ($module['module'] == 'mollie')
+				{
+					$authorized = TRUE;
+					break;
+				}
+			}
+		} else {
+			foreach (Module::getPaymentModules() as $module)
+			{
+				if ($module['name'] == 'mollie')
+				{
+					$authorized = TRUE;
+					break;
+				}
 			}
 		}
 

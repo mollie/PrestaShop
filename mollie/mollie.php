@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2012-2014, Mollie B.V.
  * All rights reserved.
@@ -33,11 +32,6 @@
  * @link        https://www.mollie.nl
  */
 
-if (!defined('_PS_VERSION_'))
-{
-	die('No direct script access');
-}
-
 /**
  * Class Mollie
  * @method l
@@ -58,15 +52,8 @@ class Mollie extends PaymentModule
 {
 	/** @var Mollie_API_Client|null */
 	public $api                    = NULL;
-	public $statuses               = array();
-	public $name                   = 'mollie';
-	public $tab                    = 'payments_gateways';
-	public $version                = '1.3.0';
-	public $author                 = 'Mollie B.V.';
-	public $need_instance          = TRUE;
-	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
-	public $dependencies           = array('blockcart');
 	public $lang                   = array();
+	public $statuses               = array();
 
 	const NOTICE  = 1;
 	const WARNING = 2;
@@ -93,12 +80,20 @@ class Mollie extends PaymentModule
 
 	public function __construct()
 	{
+		$this->name                   = 'mollie';
+		$this->author                 = 'Mollie B.V.';
+		$this->tab                    = 'payments_gateways';
+		$this->version                = '1.3.0';
+		$this->need_instance          = true;
+
 		parent::__construct();
 
 		$this->displayName = $this->l('Mollie Payment Module');
 		$this->description = $this->l('Mollie Payments');
 
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall the Mollie Payment Module?');
+
+		$this->controllers = array('payment', 'return', 'webhook');
 
 		require_once(dirname(__FILE__) . '/lib/src/Mollie/API/Autoloader.php');
 
@@ -404,7 +399,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getContent()
 	{
-		global $cookie;
+		$cookie = Context::getContext()->cookie;
 		$lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
 		$lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
 
@@ -829,12 +824,12 @@ class Mollie extends PaymentModule
 			if (strpos(_PS_THEME_DIR_, '/default-bootstrap/') !== FALSE)
 			{
 				// Use a modified css file for the new 1.6 default layout
-				$file = $this->_path . 'css/mollie_bootstrap.css';
+				$file = $this->_path . 'views/css/mollie_bootstrap.css';
 			}
 			else
 			{
 				// Use default css file
-				$file = $this->_path . 'css/mollie.css';
+				$file = $this->_path . 'views/css/mollie.css';
 			}
 		}
 		else
@@ -920,7 +915,7 @@ class Mollie extends PaymentModule
 
 			if ($this->getConfigValue('MOLLIE_DEBUG_LOG') == self::DEBUG_LOG_ERRORS)
 			{
-				PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
+				Logger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
 			}
 			
 			return;
