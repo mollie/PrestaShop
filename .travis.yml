@@ -12,4 +12,4 @@ sudo: false
 
 script:
 - find mollie tests -name *.php | xargs -n 1 -P4 php -l
-- vendor/bin/phpunit -c tests/phpunit.xml
+- phpunit -c tests/phpunit.xml
