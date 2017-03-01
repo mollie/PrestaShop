@@ -993,7 +993,7 @@ class Mollie extends PaymentModule
 		$payment = $this->getPaymentBy('cart_id',(int)$this->context->cart->id);
 		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_CANCELLED)
 		{
-			return '<h4>'.$this->lang('You have cancelled your payment.').'</h4>';
+			return '<h4 id="mollie-cancel">'.$this->lang('You have cancelled your payment.').'</h4>';
 		}
 	}
 
@@ -1002,7 +1002,7 @@ class Mollie extends PaymentModule
 		$payment = $this->getPaymentBy('cart_id',(int)Tools::getValue('id_cart'));
 		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_PAID)
 		{
-			return '<h4>'.$this->lang('Thank you. Your payment has been received.').'</h4>';
+			return '<h4 id="mollie-ok">'.$this->lang('Thank you. Your payment has been received.').'</h4>';
 		}
 	}
 
