@@ -10,6 +10,14 @@ php:
 
 sudo: false
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+install:
+- travis_retry composer install --no-interaction
+
 script:
+- composer validate --strict
 - find mollie tests -name *.php | xargs -n 1 -P4 php -l
-- phpunit -c tests/phpunit.xml
+- vendor/bin/phpunit -c tests/phpunit.xml
