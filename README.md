@@ -76,5 +76,3 @@ Copyright (c) 2013, Mollie B.V.
 
 Heeft u problemen met de installatie of bevat de module volgens u een bug? Stuurt u dan een email 
 naar info@mollie.com met een zo precies mogelijke omschrijving van het probleem.
-
-![Powered By Mollie](https://www.mollie.com/images/badge-betaling-medium.png)
