@@ -1,13 +1,41 @@
 .mollie_methods
 {
-    width: 50%;
-    padding-right: 15px;
+    width: 100%;
+    padding-right: 0px;
     margin-top: 15px;
 }
 .mollie_methods p.payment_module
 {
     margin-top: -15px;
+    width: 100%;
+    padding-right: 0px;
 }
+
+.mollie_methods p.payment_module:only-of-type 
+{
+    width: 100%;
+    padding-right: 0%;
+} 
+
+@media screen and (min-width: 768px) 
+{
+    .mollie_methods
+    {
+        overflow: hidden;
+    }
+    .mollie_methods p.payment_module
+    {
+        margin-top: 0px;
+        width: 50%;
+        padding-right: 1%;
+        float: left;
+    }
+    .mollie_methods p.payment_module_right 
+    {
+        padding-right: 0px;
+    }
+}
+
 .mollie_methods p.payment_module a:after
 {
     display: block;

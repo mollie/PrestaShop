@@ -1,8 +1,33 @@
+@media screen and (min-width: 768px) 
+{
+    .mollie_methods
+    {
+        overflow: hidden;
+        width: 100%;
+    }
+    .mollie_methods p.payment_module
+    {
+        margin-top: 0px;
+        width: 49%;
+        padding-right: 1%;
+        float: left;
+    }
+    .mollie_methods p.payment_module_right 
+    {
+        padding-right: 0px;
+    }
+}
+
+.mollie_methods p.payment_module:only-of-type 
+{
+    width: 100%;
+    padding-right: 0%;
+} 
+
 .mollie_methods p.payment_module a
 {
     padding-left: 1px;
     padding-right: 40px;
-    background: #FBFBFB;
 }
 .mollie_image
 {
