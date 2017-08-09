@@ -132,6 +132,6 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 		$data['msg_welcome'] = $this->module->lang('Welcome back');
 
 		$this->context->smarty->assign($data);
-		$this->setTemplate('mollie_return.tpl');
+		$this->setTemplate('module:mollie/views/templates/front/mollie_return.tpl');
 	}
 }

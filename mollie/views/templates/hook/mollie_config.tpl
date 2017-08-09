@@ -99,7 +99,7 @@
                     <label for="Mollie_Api_Key"><b>{$msg_api_key}</b></label>
                 </td>
                 <td class="mollie_input">
-                    <input name="Mollie_Api_Key" id="Mollie_Api_Key" value="{$val_api_key}" /> <br />
+                    <input name="Mollie_Api_Key" id="Mollie_Api_Key" value="{$val_api_key|escape:'htmlall':'UTF-8'}" /> <br />
                     <label for="Mollie_Api_Key"><i>{$desc_api_key}</i></label>
                 </td>
             </tr>
@@ -108,7 +108,7 @@
                     <label for="Mollie_Description"><b>{$msg_desc}</b></label>
                 </td>
                 <td class="mollie_input">
-                    <input name="Mollie_Description" id="Mollie_Description" value="{$val_desc}" /> <br />
+                    <input name="Mollie_Description" id="Mollie_Description" value="{$val_desc|escape:'htmlall':'UTF-8'}" /> <br />
                     <label for="Mollie_Description"><i>{$desc_desc}</i></label>
                 </td>
             </tr>

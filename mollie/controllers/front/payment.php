@@ -89,7 +89,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 				$tpl_data['msg_return']     = $this->module->lang['Return to the homepage'];
 				$tpl_data['module']         = $this->module;
 				$this->context->smarty->assign($tpl_data);
-				$this->setTemplate('mollie_issuers.tpl');
+				$this->setTemplate('module:mollie/views/templates/front/mollie_issuers.tpl');
 				return;
 			}
 		}
@@ -156,14 +156,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 		$authorized = FALSE;
 
-		foreach (Module::getPaymentModules() as $module)
-		{
-			if ($module['name'] == 'mollie')
+			foreach (Module::getPaymentModules() as $module)
 			{
-				$authorized = TRUE;
-				break;
+				if ($module['name'] == 'mollie')
+				{
+					$authorized = TRUE;
+					break;
+				}
 			}
-		}
 
 		if (!$authorized)
 		{

@@ -33,6 +33,8 @@
  * @link        https://www.mollie.nl
  */
 
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+
 if (!defined('_PS_VERSION_'))
 {
 	die('No direct script access');
@@ -58,15 +60,8 @@ class Mollie extends PaymentModule
 {
 	/** @var Mollie_API_Client|null */
 	public $api                    = NULL;
-	public $statuses               = array();
-	public $name                   = 'mollie';
-	public $tab                    = 'payments_gateways';
-	public $version                = '1.3.0';
-	public $author                 = 'Mollie B.V.';
-	public $need_instance          = TRUE;
-	public $ps_versions_compliancy = array('min' => '1.5', 'max' => '2');
-	public $dependencies           = array('blockcart');
 	public $lang                   = array();
+	public $statuses               = array();
 
 	const NOTICE  = 1;
 	const WARNING = 2;
@@ -93,12 +88,21 @@ class Mollie extends PaymentModule
 
 	public function __construct()
 	{
+		$this->name                   = 'mollie';
+		$this->author                 = 'Mollie B.V.';
+		$this->tab                    = 'payments_gateways';
+		$this->version                = '1.3.0';
+		$this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+		$this->need_instance          = true;
+
 		parent::__construct();
 
 		$this->displayName = $this->l('Mollie Payment Module');
 		$this->description = $this->l('Mollie Payments');
 
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall the Mollie Payment Module?');
+
+		$this->controllers = array('payment', 'return', 'webhook');
 
 		require_once(dirname(__FILE__) . '/lib/src/Mollie/API/Autoloader.php');
 
@@ -300,13 +304,12 @@ class Mollie extends PaymentModule
 	protected function _registerHooks()
 	{
 		return
-			$this->_registerHook('displayPayment') &&
-			$this->_registerHook('displayPaymentEU', false) &&   // not standard presta hook
+			$this->_registerHook('paymentOptions') &&
 			$this->_registerHook('displayPaymentTop') &&
 			$this->_registerHook('displayAdminOrder') &&
 			$this->_registerHook('displayHeader') &&
 			$this->_registerHook('displayBackOfficeHeader') &&
-			$this->_registerHook('displayOrderConfirmation')
+			$this->_registerHook('paymentReturn')
 			;
 	}
 
@@ -316,13 +319,12 @@ class Mollie extends PaymentModule
 	protected function _unregisterHooks()
 	{
 		return
-			$this->_unregisterHook('displayPayment') &&
-			$this->_unregisterHook('displayPaymentEU', false) &&   // not standard presta hook
+			$this->_unregisterHook('paymentOptions') &&
 			$this->_unregisterHook('displayPaymentTop') &&
 			$this->_unregisterHook('displayAdminOrder') &&
 			$this->_unregisterHook('displayHeader') &&
 			$this->_unregisterHook('displayBackOfficeHeader') &&
-			$this->_unregisterHook('displayOrderConfirmation')
+			$this->_unregisterHook('paymentReturn')
 			;
 	}
 
@@ -404,7 +406,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getContent()
 	{
-		global $cookie;
+		$cookie = Context::getContext()->cookie;
 		$lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
 		$lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
 
@@ -422,8 +424,8 @@ class Mollie extends PaymentModule
 			self::LOGOS_HIDE             => $this->l('hide')
 		);
 		$issuer_options = array(
-			self::ISSUERS_ALWAYS_VISIBLE => $this->l('Always visible'),
-			self::ISSUERS_ON_CLICK       => $this->l('On click'),
+			//self::ISSUERS_ALWAYS_VISIBLE => $this->l('Always visible'), temporarily removed for 1.7 ->todo: improve layout
+			//self::ISSUERS_ON_CLICK       => $this->l('On click'), temporarily removed for 1.7 ->todo: improve layout
 			self::ISSUERS_OWN_PAGE       => $this->l('Own page'),
 			self::ISSUERS_PAYMENT_PAGE   => $this->l('Payment page')
 		);
@@ -829,12 +831,12 @@ class Mollie extends PaymentModule
 			if (strpos(_PS_THEME_DIR_, '/default-bootstrap/') !== FALSE)
 			{
 				// Use a modified css file for the new 1.6 default layout
-				$file = $this->_path . 'css/mollie_bootstrap.css';
+				$file = $this->_path . 'views/css/mollie_bootstrap.css';
 			}
 			else
 			{
 				// Use default css file
-				$file = $this->_path . 'css/mollie.css';
+				$file = $this->_path . 'views/css/mollie.css';
 			}
 		}
 		else
@@ -900,13 +902,13 @@ class Mollie extends PaymentModule
 		$this->smarty->assign($tpl_data);
 		return $this->display(__FILE__, 'mollie_refund.tpl');
 	}
-
-	/**
-	 * EU Advanced Compliance module (prestahop module) Advanced Checkout option enabled
+	
+	 /**
+	 * PaymentOptions (prestahop module) Advanced Checkout option enabled
 	 * @param $params
 	 * @return array|void
 	 */
-	public function hookDisplayPaymentEU($params)
+	public function hookPaymentOptions($params)
 	{
 		if (!Currency::exists('EUR', 0))
 		{
@@ -917,92 +919,44 @@ class Mollie extends PaymentModule
 			$methods = $this->api->methods->all();
 		} catch (Mollie_API_Exception $e) {
 			$methods = array();
-
-			if ($this->getConfigValue('MOLLIE_DEBUG_LOG') == self::DEBUG_LOG_ERRORS)
-			{
-				PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
-			}
-			
-			return;
-		}
-
-		$payment_options = array();
-		foreach($methods as $method)
-		{
-			$payment_options[] = array(
-				'cta_text' => $this->lang[$method->description],
-				'logo' => $method->image->normal,
-				'action' => $this->context->link->getModuleLink('mollie', 'payment', array('method' => $method->id), true)
-			);
-		}
-
-		return $payment_options;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function hookDisplayPayment()
-	{
-		if (!Currency::exists('EUR', 0))
-		{
-			return	'<p class="payment_module" style="color:red;">' .
-			$this->l('Mollie Payment Methods are only available when Euros are activated.') .
-			'</p>';
-		}
-
-		$issuer_setting = $this->getConfigValue('MOLLIE_ISSUERS');
-
-		try {
-			$methods = $this->api->methods->all();
-			$issuer_list = in_array($issuer_setting, array(self::ISSUERS_ALWAYS_VISIBLE, self::ISSUERS_ON_CLICK)) ? $this->_getIssuerList() : array();
-		} catch (Mollie_API_Exception $e) {
-			$methods = array();
-			$issuer_list = array();
 
 			if ($this->getConfigValue('MOLLIE_DEBUG_LOG') == self::DEBUG_LOG_ERRORS)
 			{
 				Logger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie::ERROR);
 			}
-			if ($this->getConfigValue('MOLLIE_DISPLAY_ERRORS'))
-			{
-				return
-					'<p class="payment_module" style="color:red;">' .
-					$e->getMessage() .
-					'</p>'
-					;
-			}
+			
+			return;
+		}
+		
+		$payment_options = array();
+		foreach($methods as $method)
+		{
+			$newOption = new PaymentOption();
+			$newOption->setCallToActionText($this->lang($method->description))
+			->setAction($this->context->link->getModuleLink('mollie', 'payment', array('method' => $method->id), true))
+			->setLogo($method->image->normal);
+			
+			$payment_options[] = $newOption;
 		}
 
-		$this->smarty->assign(array(
-				'methods'        => $methods,
-				'issuers'        => $issuer_list,
-				'issuer_setting' => $issuer_setting,
-				'images'         => $this->getConfigValue('MOLLIE_IMAGES'),
-				'warning'        => $this->warning,
-				'msg_pay_with'   => $this->lang['Pay with %s'],
-				'msg_bankselect' => $this->lang['Select your bank:'],
-				'module'         => $this,
-			));
-
-		return $this->display(__FILE__, 'mollie_methods.tpl');
-	}
+        return $payment_options;
+    }
 
 	public function hookDisplayPaymentTop()
 	{
 		$payment = $this->getPaymentBy('cart_id',(int)$this->context->cart->id);
 		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_CANCELLED)
 		{
-			return '<h4 id="mollie-cancel">'.$this->lang('You have cancelled your payment.').'</h4>';
+			return '<h4>'.$this->lang('You have cancelled your payment.').'</h4>';
 		}
 	}
 
-	public function hookDisplayOrderConfirmation()
+	public function hookPaymentReturn()
 	{
 		$payment = $this->getPaymentBy('cart_id',(int)Tools::getValue('id_cart'));
 		if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_PAID)
 		{
-			return '<h4 id="mollie-ok">'.$this->lang('Thank you. Your payment has been received.').'</h4>';
+			return '<h4>'.$this->lang('Thank you. Your payment has been received.').'</h4>';
 		}
 	}
 

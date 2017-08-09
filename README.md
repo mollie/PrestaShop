@@ -3,9 +3,23 @@
 # Prestashop plugin voor [betalingen via Mollie](https://www.mollie.com/). #
 
 ## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
+
+## Prestashop 1.7+ - verzorgd door [Trendweb](https://www.trendweb.nl/). ##
+
+**Let op:** voor de installatie van deze module is eventueel FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.7.
+* Ga naar het administratiepaneel van uw Prestashop webwinkel
+* In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
+* Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
+* Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
+* Vul uw _API-key_ in en sla de gegevens vervolgens op.
+
+## Prestashop 1.5 en 1.6 ##
+
 **Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases).
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 en 1.6.
 * Pak het archief uit
 * Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
 * Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
@@ -39,6 +53,12 @@ Via [Mollie](https://www.mollie.com/) is iDEAL gemakkelijk aan te sluiten zonder
 [paysafecard](https://www.mollie.com/paysafecard/) is de populairste prepaidcard voor online betalingen die veel door ouders voor hun kinderen wordt gekocht.
 
 # Veel gestelde vragen #
+
+**De module kan niet geïnstalleerd worden in Prestashop 1.7.**
+
+* Ga via de FTP naar de hoofdmap van uw website en open vervolgens de map 'modules'.
+* Verwijder de map met de naam 'mollie'.
+* Doorloop wederom het installatieproces voor Prestashop 1.7.
 
 **Ik heb alles ingesteld, maar de module verschijnt niet bij het afrekenen.**
 
@@ -76,3 +96,5 @@ Copyright (c) 2013, Mollie B.V.
 
 Heeft u problemen met de installatie of bevat de module volgens u een bug? Stuurt u dan een email 
 naar info@mollie.com met een zo precies mogelijke omschrijving van het probleem.
+
+![Powered By Mollie](https://www.mollie.com/images/badge-betaling-medium.png)
