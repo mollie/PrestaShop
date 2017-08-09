@@ -91,7 +91,7 @@ class Mollie extends PaymentModule
 		$this->name                   = 'mollie';
 		$this->author                 = 'Mollie B.V.';
 		$this->tab                    = 'payments_gateways';
-		$this->version                = '1.3.0';
+		$this->version                = '2.0.0';
 		$this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 		$this->need_instance          = true;
 
