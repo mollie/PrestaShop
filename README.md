@@ -8,7 +8,7 @@
 
 **Let op:** voor de installatie van deze module is eventueel FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.7.
+* Download de laatste versie van de module via de [website van onze partner Trendweb](https://trendweb.nl/modules/mollie-betaalmodule-voor-prestashop-1-7/) welke geschikt is voor Prestashop 1.7.
 * Ga naar het administratiepaneel van uw Prestashop webwinkel
 * In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
 * Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
