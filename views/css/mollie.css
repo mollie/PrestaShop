@@ -1,0 +1,481 @@
+/****Mollie config****/
+
+.mollie_config {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 660px;
+}
+
+.mollie_config_page {
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, .2);
+    background: #fff;
+    padding: 1.25rem 1.875rem;
+}
+
+.mollie_config h2 {
+    text-align: center;
+}
+
+.mollie_config label {
+    text-align: left;
+    font-weight: normal;
+    width: 100%;
+}
+
+.mollie_config input {
+    display: block;
+    border: 1px solid #0c95fd;
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 3px;
+}
+
+.mollie_config input:hover, .mollie_config select:hover {
+    background: #0c95fd;
+    color: #FFFFFF;
+}
+
+.mollie_config option {
+    background: #FFFFFF;
+    color: #585A69;
+}
+
+.mollie_update_msg {
+    background: #ee7600;
+    color: #fff;
+    font-weight: bolder;
+}
+
+.mollie_update_msg {
+    padding: 10px;
+}
+
+.mollie_update_msg a {
+    color: #FFFFFF;
+}
+
+.mollie_update_msg a:hover {
+    color: #CCCED7;
+    text-decoration: underline;
+}
+
+.mollie_result_msg {
+    background: #0c95fd;
+    color: #fff;
+    font-weight: bolder;
+    font-size: 16px;
+}
+
+.mollie_result_msg {
+    padding: 10px;
+}
+
+.mollie_msg {
+    width: 200px;
+    vertical-align: top;
+    padding-right: 10px;
+    padding-top: 6px;
+    color: #0c95fd;
+}
+
+.mollie_hidden {
+    display: none;
+}
+
+.mollie_input {
+    font-weight: bolder;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.mollie_input_btn {
+    width: 450px;
+    height: 50px;
+}
+
+.mollie_title {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-weight: bolder;
+    font-size: 16px;
+    color: #0c95fd;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.bootstrap select {
+    display: block;
+    width: 100%;
+    height: 31px;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.42857;
+    color: #000;
+    background-color: #F5F8F9;
+    background-image: none;
+    border: 1px solid #0c95fd;
+    border-radius: 3px;
+    -webkit-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    -o-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.bootstrap legend {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 17px;
+    font-size: 18px;
+    line-height: inherit;
+    color: #333;
+    border: 0;
+    border-bottom: 1px solid #0c95fd;
+}
+
+.mollie_methods p.payment_module a {
+    padding-left: 1px;
+    padding-right: 40px;
+    background: #FBFBFB;
+}
+
+.mollie_image {
+    margin-left: 26px;
+    padding-right: 20px;
+}
+
+.mollie_image_big {
+    margin-left: 6px;
+}
+
+.mollie_margin {
+    display: block;
+    float: left;
+    width: 96px;
+}
+
+.mollie_p {
+    color: #747474;
+}
+
+/****Mollie issuers****/
+
+.mollie_issuer {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 400px;
+}
+
+.mollie_issuer_page {
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, .2);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: #fff;
+    padding: 1.25rem 1.875rem;
+}
+
+.mollie_issuers {
+    font-size: 16px;
+    margin-top: 1.25rem;
+}
+
+.mollie_issuers select, .mollie_issuers input {
+    border: 1px solid #D6D4D4;
+    border-radius: 4px;
+    background: #FBFBFB;
+    height: 20px;
+}
+
+/****Mollie refund****/
+
+.mollie_refund {
+    background-color: #EBEDF4;
+    border: 1px solid #CCCED7;
+    color: #585A69;
+    font-size: 1.1em;
+    margin: 0;
+    margin-top: 25px;
+    padding: 1em;
+    padding-top: 20px;
+    position: relative;
+}
+
+.mollie_refund_message {
+    background: none repeat scroll 0 0 #EBEDF4;
+    border: 1px solid #CCCED7;
+    font-weight: 700;
+    padding: 0.2em 0.5em;
+    text-align: left;
+    display: inline;
+    margin: 0;
+    position: absolute;
+    top: -10px;
+}
+
+.mollie_refund_message img {
+    margin-right: 10px;
+}
+
+.mollie_refund_button {
+    background: -moz-linear-gradient(center top, #F9F9F9, #E3E3E3) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border-color: #CCCCCC #BBBBBB #A0A0A0;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #000000;
+    cursor: pointer;
+    margin: 0;
+    outline: medium none;
+    padding: 3px 8px;
+    text-align: center;
+    text-shadow: 0 1px 0 #FFFFFF;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.mollie_refund_button:hover {
+    border: 1px solid #939393;
+}
+
+.mollie_refund_fail {
+    font-weight: bold;
+    color: #e9322d;
+}
+
+.mollie_refund_success {
+    font-weight: bold;
+    color: #46a546;
+}
+
+.mollie_refund_details {
+    font-size: small;
+}
+
+.mollie_refund_desc {
+    margin-bottom: 10px;
+}
+
+/****Mollie buttons****/
+
+.mollie_button {
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
+    text-ansform: uppercase;
+    font-weight: 600;
+    padding: .5rem 1.25rem;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 2px solid;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0;
+    border-color: #fff;
+    background: border-box;
+}
+
+.mollie_button:hover {
+    /*border-color: #0c95fd;*/
+    border: 2px solid #0c95fd;
+}
+
+.mollie_btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0;
+}
+
+.mollie_btn_primary {
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: .5rem 1.25rem;
+    color: #fff;
+    background-color: #2fb5d2;
+    border-color: transparent;
+}
+
+.mollie_ideal_ABNANL2A:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ABNANL2A%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_ASNBNL21:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ASNBNL21%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_BUNQNL2A:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/BUNQNL2A%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_INGBNL2A:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/INGBNL2A%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_KNABNL2H:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/KNABNL2H%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_RABONL2U:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RABONL2U%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_RBRBNL21:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RBRBNL21%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_SNSBNL2A:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/SNSBNL2A%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_IONL2U:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/IONL2U%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+.mollie_ideal_FVLBNL22:before select {
+    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/FVLBNL22%402x.png');
+    background-position: 0px -346px;
+    width: 55px;
+    height: 37px;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: inline-block;
+    display: block;
+}
+
+/****Mollie switch****/
+
+label.mollie_switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 24px;
+}
+
+.mollie_switch input {
+    display: none;
+}
+
+.mollie_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.mollie_slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.mollie_desc {
+    font-weight: 400!important;
+}
+
+input:checked + .mollie_slider {
+    background-color: #0c95fd;
+}
+
+input:focus + .mollie_slider {
+    box-shadow: 0 0 1px #0c95fd;
+}
+
+input:checked + .mollie_slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}

@@ -1,0 +1,26 @@
+{
+  "env": {
+    "es6": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "eqeqeq": "off",
+    "no-undef": "off",
+    "no-plusplus": "off",
+    "max-len": [
+      "error",
+      300
+    ],
+    "no-nested-ternary": "off",
+    "no-param-reassign": "off",
+    "arrow-parens": "off",
+    "arrow-body-style": [
+      "off",
+      "always"
+    ],
+    "class-methods-use-this": "off",
+    "react/prefer-stateless-function": "off",
+    "react/forbid-prop-types": "off",
+    "react/jsx-boolean-value": "off"
+  }
+}
