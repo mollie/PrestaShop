@@ -2,6 +2,15 @@
 
 # Changelog #
 
+## Changes in release 2.0.0 ##
++ Compatibility with Prestashop 1.7+
++ Fix for "Frontcontroller::init - cart cannot be loaded".
++ Fix for recieving payment multiple times.
++ Added option to send customer order to Mollie metadata 
++ Mollie now works in maintenance mode.
++ Improved configuration page.
++ Improved User Experience.
+
 ## Changes in release 1.3.0 ##
 + Automatically pass along the customer's email address for banktransfer payment instructions, when available.
 
