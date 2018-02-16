@@ -19,7 +19,7 @@
 * Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
 * Vul uw _API-key_ in en sla de gegevens vervolgens op.
 
-## Prestashop 1.5 en 1.6 ##
+## Installatie Prestashop 1.5 en 1.6 ##
 
 * Download de laatste versie (2.0.0) van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
 * Ga naar het administratiepaneel van uw Prestashop webwinkel
