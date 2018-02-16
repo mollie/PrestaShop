@@ -4,11 +4,15 @@
 
 ## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
 
-## Prestashop 1.7+ - verzorgd door [Trendweb](https://www.trendweb.nl/). ##
+## Verzorgd door [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
 
-**Let op:** voor de installatie van deze module is eventueel FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+## Voor Prestashop 1.5 tot en met 1.7 ##
 
-* Download de laatste versie van de module via de [website van onze partner Trendweb](https://trendweb.nl/modules/mollie-betaalmodule-voor-prestashop-1-7/) welke geschikt is voor Prestashop 1.7.
+**Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+
+## Installatie Prestashop 1.7 ##
+
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
 * Ga naar het administratiepaneel van uw Prestashop webwinkel
 * In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
 * Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
@@ -17,9 +21,16 @@
 
 ## Prestashop 1.5 en 1.6 ##
 
-**Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+* Download de laatste versie (2.0.0) van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
+* Ga naar het administratiepaneel van uw Prestashop webwinkel
+* In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
+* Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
+* Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
+* Vul uw _API-key_ in en sla de gegevens vervolgens op.
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 en 1.6.
+## of ##
+
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
 * Pak het archief uit
 * Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
 * Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
@@ -92,7 +103,7 @@ Dit is in feite een bug in Prestashop die is gefixt vanaf versie 1.6.0.7. Om dit
 Mollie stuurt een bericht aan je website wanneer de status van de betaling veranderd. Het kan zijn dat Mollie je website niet kon bereiken of dat je website de status niet heeft kunnen verwerken.
 
 * Controleer in je [Mollie beheer](https://www.mollie.com/beheer/) of er gefaalde rapportages zijn. [Meer informatie](https://www.mollie.com/nl/support/post/ik-krijg-een-e-mail-over-gefaalde-http-rapportages-wat-nu/)
-* Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in maintenance mode draait.
+* Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in onderhoudsmodus draait. Vanaf versie 2.0.0 werkt de Mollie module wél in de onderhoudsmodus. 
 * Soms gaat er iets fout bij het aanmaken van de factuur. Controleer of de optie "Afbeelding voor het product inschakelen" uit staat in "Bestellingen" -> "Facturen" -> "Factuur opties" (vanaf PrestaShop 1.6.1.0) of in "Voorkeuren" -> "Bestellingen" -> "PDF instellingen" (in PrestaShop 1.6.0.12 tot 1.6.0.14).
 
 # Wil je meewerken aan deze module? #
