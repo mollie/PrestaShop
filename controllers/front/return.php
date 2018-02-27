@@ -156,6 +156,10 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign($data);
         $this->context->smarty->assign('link', $this->context->link);
-        $this->setTemplate('mollie_return.tpl');
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
+            $this->setTemplate('mollie_return.tpl');
+        } else {
+            $this->setTemplate('module:mollie/views/templates/front/mollie_return.tpl');
+        }
     }
 }
