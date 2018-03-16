@@ -537,7 +537,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 if (Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)) {
                     $this->errors[] = $this->module->lang['There was an error while processing your request: '].'<br /><em>'.$e->getMessage().'</em>';
 
-                    $this->setTemplate('error.tpl');
+                    if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
+                        $this->setTemplate('error.tpl');
+                    } else {
+                        $this->setTemplate('module:mollie/views/templates/front/error.tpl');
+                    }
 
                     return null;
                 } else {
