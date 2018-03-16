@@ -39,11 +39,11 @@ if (!defined('_PS_VERSION_')) {
 $mollie = Module::getInstanceByName('mollie');
 
 if (!$mollie->active) {
-    return null;
+    return array();
 }
 
 if (!Currency::exists('EUR', 0)) {
-    return null;
+    return array();
 }
 
 try {
@@ -53,7 +53,7 @@ try {
         Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
     }
 
-    return null;
+    return array();
 }
 
 $idealIssuers = array();
@@ -94,8 +94,13 @@ foreach ($methods as $method) {
         $paymentOptions[] = $newOption;
     } else {
         $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+        if (isset($mollie->lang[$method->description])) {
+            $description = $mollie->lang[$method->description];
+        } else {
+            $description = $method->description;
+        }
         $newOption
-            ->setCallToActionText($mollie->lang[$method->description])
+            ->setCallToActionText($description)
             ->setAction(Context::getContext()->link->getModuleLink(
                 'mollie', 'payment',
                 array('method' => $method->id), true

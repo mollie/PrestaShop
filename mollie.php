@@ -948,8 +948,8 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayPaymentEU()
     {
-        if (!Currency::exists('EUR', 0)) {
-            return null;
+        if (!Currency::exists('EUR', 0) || version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return array();
         }
 
         try {
@@ -959,7 +959,7 @@ class Mollie extends PaymentModule
                 Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
             }
 
-            return null;
+            return array();
         }
 
         $paymentOptions = array();
@@ -988,7 +988,7 @@ class Mollie extends PaymentModule
     public function hookPaymentOptions()
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-            return null;
+            return array();
         }
 
         return include dirname(__FILE__).'/lib/paymentoptions.php';
