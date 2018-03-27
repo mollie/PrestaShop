@@ -12,7 +12,7 @@
 
 ## Installatie Prestashop 1.7 ##
 
-* Download de laatste versie (2.0.0) van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
 * Ga naar het administratiepaneel van uw Prestashop webwinkel
 * In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
 * Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
@@ -21,7 +21,7 @@
 
 ## Installatie Prestashop 1.5 en 1.6 ##
 
-* Download de laatste versie (2.0.0) van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
 * Ga naar het administratiepaneel van uw Prestashop webwinkel
 * In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
 * Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
@@ -30,7 +30,7 @@
 
 ## of ##
 
-* Download de laatste versie (2.0.0) van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
 * Pak het archief uit
 * Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
 * Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
