@@ -830,7 +830,7 @@ class Mollie extends PaymentModule
 
         $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
             sprintf(
-                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\';',
+                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
                 _DB_PREFIX_.'mollie_payments',
                 (int) $cartId
             )
@@ -846,7 +846,7 @@ class Mollie extends PaymentModule
             if ($tplData['status'] === 'success') {
                 Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true).'&vieworder&id_order='.(int) $params['id_order']);
             }
-        } elseif (isset($mollieData['bank_status']) && $mollieData['bank_status'] !== Mollie_API_Object_Payment::STATUS_PAID) {
+        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], [Mollie_API_Object_Payment::STATUS_REFUNDED, Mollie_API_Object_Payment::STATUS_CHARGED_BACK])) {
             $tplData = array(
                 'status'      => 'success',
                 'msg_success' => $this->lang('The order has been refunded!'),
@@ -854,7 +854,7 @@ class Mollie extends PaymentModule
                     'Mollie B.V. will transfer the money back to the customer on the next business day.'
                 ),
             );
-        } else {
+        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], [Mollie_API_Object_Payment::STATUS_PAID, Mollie_API_Object_Payment::STATUS_PAIDOUT])) {
             $tplData = array(
                 'status'          => 'form',
                 'msg_button'      => $this->lang['Refund this order'],
@@ -863,6 +863,8 @@ class Mollie extends PaymentModule
                     (int) $mollieData['order_id']
                 ),
             );
+        } else {
+            return '';
         }
 
         $tplData['msg_title'] = $this->lang['Mollie refund'];
