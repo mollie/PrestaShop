@@ -4,7 +4,7 @@ Describe the expected behavior here (replace this line).
 ### Actual behavior
 Describe the actual behavior here (replace this line).
 
-### Stepts to reproduce the behavior
+### Steps to reproduce the behavior
 Describe the steps to reproduce the behavior here (replace this line).
 
 ### Environment
