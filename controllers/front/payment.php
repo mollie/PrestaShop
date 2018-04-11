@@ -485,15 +485,56 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      */
     private function getWebshopLocale()
     {
-        if ($this->context->language) {
-            // Current language
-            $language = $this->context->language->iso_code;
+        // Current language
+        if (Context::getContext()->language instanceof Language) {
+            $language = Context::getContext()->language->iso_code;
         } else {
-            // Default locale language
-            $language = Configuration::get('PS_LOCALE_LANGUAGE');
+            $language = 'en';
+        }
+        $supportedLanguages = [
+            'de',
+            'en',
+            'es',
+            'fr',
+            'nl',
+        ];
+        $supportedLocales = [
+            'en_US',
+            'de_AT',
+            'de_CH',
+            'de_DE',
+            'es_ES',
+            'fr_BE',
+            'fr_FR',
+            'nl_BE',
+            'nl_NL',
+        ];
+
+        $langIso = Tools::strtolower($language);
+        if (!in_array($langIso, $supportedLanguages)) {
+            $langIso = 'en';
+        }
+        $countryIso = Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
+        if (!in_array("{$langIso}_{$countryIso}", $supportedLocales)) {
+            switch ($langIso) {
+                case 'de':
+                    $countryIso = 'DE';
+                    break;
+                case 'es':
+                    $countryIso = 'ES';
+                    break;
+                case 'fr':
+                    $countryIso = 'FR';
+                    break;
+                case 'nl':
+                    $countryIso = 'NL';
+                    break;
+                default:
+                    $countryIso = 'US';
+            }
         }
 
-        return Tools::strtolower($language).'_'.Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
+        return "{$langIso}_{$countryIso}";
     }
 
     /**
