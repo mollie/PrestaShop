@@ -1,124 +1,167 @@
 ![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
 
-# Prestashop plugin voor [betalingen via Mollie](https://www.mollie.com/). #
+[Dutch](LEESMIJ.md)
 
-## Installatie [![Build Status](https://travis-ci.org/mollie/Prestashop.png)](https://travis-ci.org/mollie/Prestashop) ##
+# PrestaShop payment service provider [Mollie](https://www.mollie.com/). #
 
-## Verzorgd door [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
+Download the [Mollie](https://www.mollie.com/) module for PrestaShop. Mollie is a payment service provider (PSP) which provides your online store with the most popular online payment methods. 
 
-## Voor Prestashop 1.5 tot en met 1.7 ##
+Receive payments from European customers with ease. Mollie provides payment methods at higly competitive rates. Only pay per transaction and no hidden fees.
 
-**Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
+Choose the best payment provider available for your online PrestaShop store. Create your merchant account at [Mollie.com](https://www.mollie.com/). 
+Download and install the Mollie PrestaShop payment module and start receiving online payments now!
 
-## Installatie Prestashop 1.7 ##
+<!-- # PrestaShop payment service provider [Mollie](https://www.mollie.com/). #
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.7.
-* Ga naar het administratiepaneel van uw Prestashop webwinkel
-* In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
-* Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
-* Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
-* Vul uw _API-key_ in en sla de gegevens vervolgens op.
+Download the [Mollie](https://www.mollie.com/) module for PrestaShop. Mollie is a payment service provider (PSP) which provides your online store with the most popular online payment methods. 
 
-## Installatie Prestashop 1.5 en 1.6 ##
+Our Multi-currency system allows you to receive payments from customers worldwide with ease. Mollie provides payment methods at higly competitive rates. Only pay per transaction and no hidden fees.
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
-* Ga naar het administratiepaneel van uw Prestashop webwinkel
-* In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
-* Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
-* Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
-* Vul uw _API-key_ in en sla de gegevens vervolgens op.
+Choose the best payment provider available for your online PrestaShop store. Create your new merchant account at [Mollie.com](https://www.mollie.com/). 
+Download and install the Mollie PrestaShop payment module and start receiving online payments now! -->
 
-## of ##
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor Prestashop 1.5 tot en met 1.6.
-* Pak het archief uit
-* Kopieer de map `mollie` naar de map `modules` in uw Prestashop installatie
-* Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
-* Klik op de 'install' knop rechts van de Mollie Payment Module
-* Vul uw _API-key_ in en sla de gegevens vervolgens op.
+## Made and maintained by [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
 
-# Ondersteunde betaalmethodes
+## Compatible with PrestaShop 1.5 to 1.7 ##
 
-### iDEAL
-Met [iDEAL via Mollie](https://www.mollie.com/nl/payments/ideal) kunt u vertrouwd, veilig en gemakkelijk uw online aankopen afrekenen. iDEAL is het systeem dat u direct koppelt aan uw internetbankierprogramma bij een online aankoop.
-Via [Mollie](https://www.mollie.com/) is iDEAL gemakkelijk aan te sluiten zonder de gebruikelijke technische en administratieve rompslomp. Mollie geeft u op ieder moment toegang tot uw transactieoverzichten en andere statistieken. Tevens is het mogelijk per e-mail of SMS een notificatie te ontvangen bij elke gelukte betaling. [Mollie](https://www.mollie.com/) is hierdoor dus een perfecte partner op het gebied van iDEAL en is het dan ook niet verbazingwekkend dat [Mollie](https://www.mollie.com/) ondertussen op meer dan 30.000 websites iDEAL-betalingen mag verzorgen.
+** Please note: ** FTP access to your web server could be required for the installation of this module.
+If you have no experience with this, then leave the installation of this module to your website developer or server administrator.
 
-### Creditcard
-[Creditcard](https://www.mollie.com/nl/payments/credit-card) is vrijwel de bekendste methode voor het ontvangen van betalingen met wereldwijde dekking. Doordat we onder andere de bekende merken Mastercard, VISA en American Express ondersteunen, zorgt dit direct voor veel potentiële kopers.
+## Installation PrestaShop 1.7 ##
+
+* Download the latest version of the module (the '.zip' file) via the [Releases page](https://github.com/mollie/Prestashop/releases) which is compatible 
+with PrestaShop 1.5 to 1.7.
+* Go to the administration panel of your PrestaShop webshop
+* In your administration panel, select the 'Modules' tab and then choose 'upload a module' at the top right of your screen
+* Select 'select file' and then upload the '.zip' file which you downloaded earlier
+* After the module has been installed, choose 'configure'
+* Enter your _API-key_ and save the data.
+
+## Installation PrestaShop 1.5 and 1.6 ##
+
+* Download the latest version of the module (the '.zip' file) via the [Releases-page](https://github.com/mollie/Prestashop/releases) which is compatible 
+with PrestaShop 1.5 to 1.7.
+* Go to the administration panel of your PrestaShop webshop
+* In your administration panel, select the 'Modules' tab and then choose 'upload a module' at the top right of your screen
+* Select 'select file' and then upload the '.zip' file which you downloaded earlier
+* After the module has been installed, choose 'configure'
+* Enter your _API-key_ and save the data.
+
+## or ##
+
+* Download the latest version of the module (the '.zip' file) via the [Releases-page](https://github.com/mollie/Prestashop/releases) which is compatible 
+with PrestaShop 1.5 to 1.7.
+* Extract the archive
+* Copy the `mollie` folder to the` modules` folder via FTP in your PrestaShop installation
+* Go to the tab 'Modules' in your administration panel and choose 'Payments and Gateways' in the 'Categories' list.
+* Click on the 'install' button on the right of the Mollie Payment Module
+* Enter your _API-key_ and save the data.
+
+# Supported payment methods
+
+### iDeal 
+
+[iDEAL](https://www.mollie.com/en/payments/ideal) makes paying for your online purchases safe, secure and easy.
+iDEAL is a Dutch payment system which links customers directly to their online banking program when making an online purchase.
+
+[Mollie](https://www.mollie.com/) makes it easy to connect with iDEAL,  without the usual technical and administrative hassle.
+Mollie gives you access to your transaction overviews and other statistics at any time. It is also possible to receive a notification by e-mail or SMS after every successful payment.
+
+[Mollie](https://www.mollie.com/) is the perfect partner for recieving iDEAL payments and it is not surprising that [Mollie](https://www.mollie.com/) provides iDEAL payments 
+for more than 40,000 websites.
+
+### Credit card
+[Credit card](https://www.mollie.com/en/payments/credit-card) is virtually the best-known method for receiving payments with global coverage. 
+
+Because [Mollie](https://www.mollie.com/) supports the biggest credit card brands like Mastercard, VISA and American Express, your store will attract a lot more potential buyers.
 
 ### Bancontact
-[Bancontact](https://www.mollie.com/nl/payments/bancontact) maakt gebruik van een fysieke kaart die gekoppeld is aan tegoed op een Belgische bankrekening. Betalingen via Bancontact/Mister Cash zijn gegarandeerd en lijkt daarmee sterk op iDEAL in Nederland. Daarom is het uitermate geschikt voor uw webwinkel.
+[Bancontact](https://www.mollie.com/en/payments/bancontact) uses a physical card that is linked to credit on a Belgian bank account. Payments via Bancontact / Mister Cash are guaranteed and strongly resemble the iDEAL payment system for the Netherlands.
+
+Because payments are guaranteed, this payment method is a huge surplus for your online store.
 
 ### SOFORT Banking
-[SOFORT Banking](https://www.mollie.com/nl/payments/sofort) is één van de populairste betaalmethodes in Duitsland en actief in 11 landen. Betalingen zijn direct en niet storneerbaar, waarmee het sterk op het Nederlandse iDEAL lijkt. Daarom is het uitermate geschikt voor uw webwinkel.
+[SOFORT Banking](https://www.mollie.com/en/payments/sofort) is one of the most popular payment methods in Germany and active in 9 European countries:
 
-### Overboekingen
-[Overboekingen](https://www.mollie.com/nl/payments/bank-transfer) binnen de SEPA zone ontvangen via Mollie. Hiermee kun je betalingen ontvangen van zowel particulieren als zakelijke klanten in meer dan 35 Europese landen.
+Germany, Belgium, the Netherlands, Italy, Austria, Poland, Switzerland, Spain and the United Kingdom.
+
+Payments are direct, non-reversible and this payment method opens up a huge market potential for your online store.
+
+### Bank transfers
+[Bank transfers](https://www.mollie.com/en/payments/bank-transfer) received in the SEPA zone via [Mollie](https://www.mollie.com/). This allows you to receive payments from both individuals and business customers in more than 35 European countries.
 
 ### PayPal
-[PayPal](https://www.mollie.com/nl/payments/paypal) is wereldwijd een zeer populaire betaalmethode. In enkele klikken kunt u betalingen ontvangen via een bankoverschrijving, creditcard of het PayPal-saldo.
+[PayPal](https://www.mollie.com/en/payments/paypal) is a very popular payment method which is used worldwide. In a just few clicks, you can receive payments by bank transfer, credit card or PayPal balance.
 
 ### Bitcoin
-[Bitcoin](https://www.mollie.com/nl/payments/bitcoin) is een vorm van elektronisch geld. De bitcoin-euro wisselkoers wordt vastgesteld op het moment van de transactie waardoor het bedrag en de uitbetaling zijn gegarandeerd.
+[Bitcoin](https://www.mollie.com/en/payments/bitcoin) is a form of electronic money. The exchange rate is determined at the time of the transaction, so the amount and the payment are guaranteed.
 
 ### paysafecard
-[paysafecard](https://www.mollie.com/nl/payments/paysafecard) is de populairste prepaidcard voor online betalingen die veel door ouders voor hun kinderen wordt gekocht.
+[paysafecard](https://www.mollie.com/en/payments/paysafecard) is the most popular prepaid card for online payments. With paysafecard you can receive prepaid payments from 43 countries.
 
 ### KBC/CBC-Betaalknop
-De [KBC/CBC-Betaalknop](https://www.mollie.com/nl/payments/kbc-cbc) is een online betaalmethode voor de klanten van de KBC en CBC, samen de grootste bank van België. KBC richt zich op Vlaanderen en CBC op Wallonië.
+The [KBC / CBC Payment Button](https://www.mollie.com/en/payments/kbc-cbc) is an online payment method for KBC and CBC customers, together the largest bank in Belgium. 
+
+KBC focuses on Flanders and CBC on Wallonia.
 
 ### Belfius Pay Button
-[Belfius](https://www.mollie.com/nl/payments/belfius) is een van de grootste banken van België. Met de Belfius Pay Button voorziet de bank haar klanten van een eigen betaaloplossing.
+[Belfius](https://www.mollie.com/en/payments/belfius) is one of the largest banks in Belgium. By introducing the Belfius Pay Button, the bank provides its customers with their own payment solution.
 
 ### CartaSi
-[CartaSi](https://www.mollie.com/nl/payments/cartasi) is een van de meest gebruikte betaalmethoden in Italië. Er zijn ruim 13 miljoen CartaSi-creditcards in circulatie en het is een van de meest gebruikte betaalmethoden in Italië. 
+[CartaSi](https://www.mollie.com/en/payments/cartasi) is one of the most widely used payment methods in Italy. 
+
+There are over 13 million CartaSi credit cards in circulation.
 
 ### Cartes Bancaires
-[Cartes Bancaires](https://www.mollie.com/nl/payments/cartes-bancaires) zijn de meest gebruikte creditcards in Frankrijk, met meer dan 64 miljoen kaarten in circulatie. De kaarten zijn co-branded met Visa.
+[Cartes Bancaires](https://www.mollie.com/en/payments/cartes-bancaires) are the most used credit cards in France, with more than 64 million cards in circulation. 
 
-# Veel gestelde vragen #
+The cards are co-branded with Visa.
 
-**De module kan niet geïnstalleerd worden in Prestashop 1.7.**
+# Frequently Asked Questions #
 
-* Ga via de FTP naar de hoofdmap van uw website en open vervolgens de map 'modules'.
-* Verwijder de map met de naam 'mollie'.
-* Doorloop wederom het installatieproces voor Prestashop 1.7.
+**The module can not be installed in PrestaShop 1.7.**
 
-**Ik heb alles ingesteld, maar de module verschijnt niet bij het afrekenen.**
+* Go to the root of your website via FTP and then open the 'modules' folder.
+* Delete the folder named 'mollie'.
+* Re-install the Mollie module for PrestaShop 1.7.
 
-* Controleer of de module staat ingeschakeld en of er een juiste API key staat ingesteld. Zie de installatie-instructies.
-* Controleer of euro's als valuta staat ingesteld in uw winkel. Mollie ondersteunt alleen euro's.
-* Controleer via "Geavanceerde parameters" -> "Prestatie" of "HTML minimaliseren" staat uigeschakeld.
+**I have installed the module, but the module does not appear during checkout.**
 
-**Moet ik ook een return- en / of webhook-URL instellen?**
+* Check if the module is switched on and the correct API key is set. See the installation instructions.
+* Check if euros is set as currency in your store. Mollie only supports euros.
+* Check via "Advanced parameters" -> "Performance" if "Minimize HTML" is disabled.
 
-Het is niet nodig een redirect URL of webhook in te stellen. Dat doet de module zelf automatisch bij elke order.
+**Do I also need to set a return and / or webhook URL?**
 
-**Na een succesvolle betaling krijgen mijn klanten de order history te zien in plaats van de order confirmation. Hoe los ik dat op?**
+There is no need to set a redirect URL or webhook. The module automatically does this with every order.
 
-Dit is in feite een bug in Prestashop die is gefixt vanaf versie 1.6.0.7. Om dit op te lossen zou u Prestashop moeten updaten. Als u dat niet wilt of kunt zou u ook middels aanpassing van één regel code de bug zelf kunnen fixen. In het relevante [github issue](https://github.com/mollie/Prestashop/issues/3) staat precies hoe u dit moet doen.
+**After a successful payment, my customers will see the order history instead of the order confirmation.**
 
-**De status van mijn bestelling wordt niet bijgewerkt**
+This is a bug in PrestaShop which has been fixed from version 1.6.0.7. To resolve this, you should update your PrestaShop version. If you do not want to do this, you could also fix the bug yourself by adjusting one line of code. 
 
-Mollie stuurt een bericht aan je website wanneer de status van de betaling veranderd. Het kan zijn dat Mollie je website niet kon bereiken of dat je website de status niet heeft kunnen verwerken.
+The relevant [github issue](https://github.com/mollie/Prestashop/issues/3) tells you exactly how to do this.
 
-* Controleer in je [Mollie beheer](https://www.mollie.com/beheer/) of er gefaalde rapportages zijn. [Meer informatie](https://www.mollie.com/nl/support/post/ik-krijg-een-e-mail-over-gefaalde-http-rapportages-wat-nu/)
-* Controleer of je website in 'maintenance mode' draait. Mollie kan je website niet bereiken als je website in onderhoudsmodus draait. Vanaf versie 2.0.0 werkt de Mollie module wél in de onderhoudsmodus. 
-* Soms gaat er iets fout bij het aanmaken van de factuur. Controleer of de optie "Afbeelding voor het product inschakelen" uit staat in "Bestellingen" -> "Facturen" -> "Factuur opties" (vanaf PrestaShop 1.6.1.0) of in "Voorkeuren" -> "Bestellingen" -> "PDF instellingen" (in PrestaShop 1.6.0.12 tot 1.6.0.14).
+**The order status is not updated**
 
-# Wil je meewerken aan deze module? #
+Mollie sends a message to your website when the status of the payment changes. It is possible that Mollie could not reach your website or that your website could not process the status.
 
-Wil je helpen om onze plugin voor PrestaShop nog beter te maken? Wij staan open voor [pull requests](https://github.com/mollie/Prestashop/pulls?utf8=%E2%9C%93&q=is%3Apr) voor onze module. 
+* Check your [Mollie management](https://www.mollie.com/beheer/) whether there are failed reports. <!-- [More information](https://www.mollie.com/nl/support/post/ik-krijg-een-e-mail-over-gefaalde-http-rapportages-wat-nu/)-->
+* Check if your website is running in 'maintenance mode'. Mollie can not reach your website if your website is running in maintenance mode if the Mollie module version is below 2.0.0. 
+From version 2.0.0 and up, the Mollie module does work in maintenance mode.
+* Sometimes something goes wrong when creating the invoice. Check if the "Enable image for product" option is turned off in "Orders" -> "Invoices" -> "Invoice options" (from PrestaShop 1.6.1.0) or in "Preferences" -> "Orders" -> "PDF settings "(in PrestaShop 1.6.0.12 to 1.6.0.14).
 
-Maar wat denk je er over om bij een [technology driven organisatie](https://www.mollie.com/nl/blog/post/werken-bij-mollie-sfeer-kansen-en-mogelijkheden/) aan de slag te gaan? Mollie is altijd op zoek naar developers en system engineers. [Check onze vacatures](https://www.mollie.com/nl/jobs) of [neem contact met ons op](mailto:personeel@mollie.com).
+# Would you like to help improve this module? #
 
-# Licentie #
+Would you like to help make this module for PrestaShop even better? We are always open to [pull requests](https://github.com/mollie/Prestashop/pulls?utf8=%E2%9C%93&q=is%3Apr).
+
+And how about working at a [technology driven organization](https://jobs.mollie.com/)? Mollie is always looking for developers and system engineers. [Check our vacancies](https://jobs.mollie.com/) or [contact us](mailto:personeel@mollie.com).
+
+# License #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
 Copyright (c) 2013, Mollie B.V.
 
-# Ondersteuning #
+# Support #
 
-Heeft u problemen met de installatie of bevat de module volgens u een bug? Stuurt u dan een email 
-naar info@mollie.com met een zo precies mogelijke omschrijving van het probleem.
-
-![Powered By Mollie](https://www.mollie.com/images/badge-betaling-medium.png)
+Do you have problems with the installation or do you think the module contains a bug? Send an email
+to info@mollie.com with a accurate description of the problem.
