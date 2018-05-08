@@ -1,6 +1,6 @@
-![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
-
 [English](README.md)
+
+![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
 
 # PrestaShop betaalprovider [Mollie](https://www.mollie.com/). #
 
