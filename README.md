@@ -1,6 +1,6 @@
-![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
-
 [Dutch](LEESMIJ.md)
+
+![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
 
 # PrestaShop payment service provider [Mollie](https://www.mollie.com/). #
 
