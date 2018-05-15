@@ -347,98 +347,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             ),
         );
 
-        if (!Configuration::get(Mollie::MOLLIE_CREDENTIALS)) {
-            $paymentData['metadata'] = array(
-                "cart_id"    => $cartId,
-                "secure_key" => $secureKey,
-            );
-        } else {
-            $paymentData['metadata'] = array(
-                'cart_id'              => $cartId,
-                'secure_key'           => $secureKey,
-                'customerEmailAddress' => $customer->email,
-                'ipAddress'            => $ipAddress,
-                'billingAddress'       => array(
-                    'language'    => Language::getIsoById((int) $this->context->cookie->id_lang),
-                    'firstName'   => $billingAddress->firstname,
-                    'lastName'    => $billingAddress->lastname,
-                    'phoneNumber' => $billingAddress->phone,
-                    'address'     => array(
-                        'postcode' => $billingAddress->postcode,
-                        'address1' => $billingAddress->address1,
-                        'address2' => $billingAddress->address2,
-                        'city'     => $billingAddress->city,
-                        'country'  => $billingAddress->country,
-                    ),
-                ),
-                'shippingAddress'      => array(
-                    'firstName'   => $shippingAddress->firstname,
-                    'lastName'    => $shippingAddress->lastname,
-                    'phoneNumber' => $shippingAddress->phone,
-                    'address'     => array(
-                        'postcode' => $shippingAddress->postcode,
-                        'address1' => $shippingAddress->address1,
-                        'address2' => $shippingAddress->address2,
-                        'city'     => $shippingAddress->city,
-                        'country'  => $shippingAddress->country,
-                    ),
-                ),
-                'products'             => array(),
-            );
-
-
-            $orderProducts = $this->context->cart->getProducts();
-
-            foreach ($orderProducts as $orderProduct) {
-                $paymentData['metadata']['products'][] = array(
-                    'price'       => str_replace(',', '.', round($orderProduct['total_wt'], 2)),
-                    'quantity'    => $orderProduct['cart_quantity'],
-                    'identifier'  => $orderProduct['id_product'],
-                    'description' => $orderProduct['name'],
-                );
-            }
-
-            $discounts = $this->context->cart->getCartRules();
-
-            foreach ($discounts as $discount) {
-                $priceDiscount = -1 * str_replace(',', '.', round($discount['value_tax_exc'], 2));
-                $taxDiscount = -1 * str_replace(
-                        ',',
-                        '.',
-                        round($discount['value_real'] - $discount['value_tax_exc'], 2)
-                    );
-
-                $paymentData['metadata']['products'][] = array(
-                    'price'       => $priceDiscount + $taxDiscount,
-                    'quantity'    => 1,
-                    'identifier'  => $discount['name'],
-                    'description' => strip_tags($discount['description']),
-                );
-            }
-
-            $giftWrapping = $this->context->cart->getGiftWrappingPrice();
-
-            if ($this->context->cart->gift == 1) {
-                $giftWrappingPrice = str_replace(',', '.', round($giftWrapping, 2));
-
-                $paymentData['metadata']['products'][] = array(
-                    'price'       => $giftWrappingPrice,
-                    'quantity'    => 1,
-                    'identifier'  => $this->module->l('Gift wrapping'),
-                    'description' => $this->module->l('Gift wrapping'),
-                );
-            }
-
-            $shippingCost = $this->context->cart->getPackageShippingCost();
-            $carrier = new Carrier($this->context->cart->id_carrier, $this->context->cart->id_lang);
-
-            $paymentData['metadata']['products'][] = array(
-                'price'       => str_replace(',', '.', round($shippingCost, 2)),
-                'quantity'    => 1,
-                'identifier'  => $carrier->name,
-                'description' => $carrier->name,
-            );
-        }
+        $paymentData['metadata'] = array(
+            "cart_id"    => $cartId,
+            "secure_key" => $secureKey,
+        );
 
         // Send webshop locale
         if (Configuration::get(
