@@ -1,5 +1,6 @@
 *mollie*.zip
 lib/vendor/
+lib/composer.lock
 views/js/app/dist/**
 views/js/app/node_modules/**
 yarn.lock
