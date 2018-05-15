@@ -77,7 +77,6 @@ class Mollie extends PaymentModule
     const MOLLIE_ISSUERS = 'MOLLIE_ISSUERS';
     const MOLLIE_CSS = 'MOLLIE_CSS';
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';
-    const MOLLIE_CREDENTIALS = 'MOLLIE_CREDENTIALS';
     const MOLLIE_DISPLAY_ERRORS = 'MOLLIE_DISPLAY_ERRORS';
     const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
     const MOLLIE_PENDING = 'MOLLIE_PENDING';
@@ -133,7 +132,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.5';
+        $this->version = '2.0.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -272,7 +271,6 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(Mollie::MOLLIE_ISSUERS);
         Configuration::deleteByName(Mollie::MOLLIE_CSS);
         Configuration::deleteByName(Mollie::MOLLIE_DEBUG_LOG);
-        Configuration::deleteByName(Mollie::MOLLIE_CREDENTIALS);
         Configuration::deleteByName(Mollie::MOLLIE_DISPLAY_ERRORS);
         Configuration::deleteByName(Mollie::MOLLIE_USE_PROFILE_WEBHOOK);
         Configuration::deleteByName(Mollie::MOLLIE_PENDING);
@@ -321,7 +319,6 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(Mollie::MOLLIE_ISSUERS, Mollie::ISSUERS_ON_CLICK);
         Configuration::updateGlobalValue(Mollie::MOLLIE_CSS, '');
         Configuration::updateGlobalValue(Mollie::MOLLIE_DEBUG_LOG, Mollie::DEBUG_LOG_ERRORS);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_CREDENTIALS, false);
         Configuration::updateGlobalValue(Mollie::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateGlobalValue(Mollie::MOLLIE_USE_PROFILE_WEBHOOK, false);
         Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_OPEN, Configuration::get(Mollie::MOLLIE_PENDING));
@@ -414,7 +411,6 @@ class Mollie extends PaymentModule
             'val_images'               => Configuration::get(Mollie::MOLLIE_IMAGES),
             'val_issuers'              => Configuration::get(Mollie::MOLLIE_ISSUERS),
             'val_css'                  => Configuration::get(Mollie::MOLLIE_CSS),
-            'val_credentials'          => Configuration::get(Mollie::MOLLIE_CREDENTIALS),
             'val_errors'               => Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS),
             'val_logger'               => Configuration::get(Mollie::MOLLIE_DEBUG_LOG),
             'val_save'                 => $this->l('Save'),
@@ -592,14 +588,6 @@ class Mollie extends PaymentModule
             $errors[] = $this->l('Invalid debug log setting.');
         }
 
-        $mollieCredentials = Tools::getValue('Mollie_Credentials');
-
-        if (!isset($mollieCredentials)) {
-            $mollieCredentials = false;
-        } else {
-            $mollieCredentials = ($mollieCredentials == 1);
-        }
-
         $mollieErrors = Tools::getValue('Mollie_Errors');
 
         if (!isset($mollieErrors)) {
@@ -621,7 +609,6 @@ class Mollie extends PaymentModule
             Configuration::updateValue(Mollie::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(Mollie::MOLLIE_ISSUERS, $mollieIssuers);
             Configuration::updateValue(Mollie::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(Mollie::MOLLIE_CREDENTIALS, (int) $mollieCredentials);
             Configuration::updateValue(Mollie::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(Mollie::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
 
