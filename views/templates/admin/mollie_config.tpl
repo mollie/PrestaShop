@@ -138,34 +138,6 @@
     </div>
     <!--/ Mollie locale settings-->
 
-    <!-- Mollie send customer credentials-->
-    <div class="form-group row">
-      <div class="col-sm-12 col-md-4 mollie_msg">
-        <label for="Mollie_Paymentscreen_Locale">
-          <strong>{l s='Send customer credentials to Mollie.' mod='mollie'}</strong>
-        </label>
-      </div>
-      <div class="col-sm-12 col-md-8 mollie_input">
-        <label class="mollie_switch">
-          <input name="Mollie_Credentials"
-                 id="Mollie_Credentials"
-                 type="checkbox"
-                 value="1"
-                  {if $val_credentials}
-                    checked="checked"
-                  {/if}
-                 style="width: auto;"
-          >
-        <span class="mollie_slider"></span>
-        </label>
-        <br />
-        <em class="mollie_desc">
-          {l s='By enabling this option, the module will send your customer\'s data to Mollie. Please double-check if this complies with your local laws, policies and/or regulations.' mod='mollie'}
-        </em>
-      </div>
-    </div>
-    <!--/ Mollie send customer credentials-->
-
     <!--Mollie image options-->
     <div class="form-group row">
       <div class="col-md-12 mollie_title">
