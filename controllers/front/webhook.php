@@ -116,19 +116,22 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $this->setCountryContextIfNotSet($apiPayment);
 
         $orderId = (int) Order::getOrderByCartId($apiPayment->metadata->cart_id);
+        $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
             if (in_array($apiPayment->status, array(Mollie_API_Object_Payment::STATUS_CHARGED_BACK, Mollie_API_Object_Payment::STATUS_REFUNDED))) {
                 $this->module->setOrderStatus($orderId, Mollie_API_Object_Payment::STATUS_REFUNDED);
             } elseif ($psPayment['method'] == 'banktransfer' &&
-                $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
-                $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
+                $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN
+                && $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
             ) {
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
-            } elseif ($psPayment['method'] != 'banktransfer' &&
-                $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN &&
-                $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
+            } elseif ($psPayment['method'] != 'banktransfer'
+                && $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN
+                && $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
+                && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
-                $this->module->validateOrder((int) $apiPayment->metadata->cart_id,
+                $this->module->validateOrder(
+                    (int) $apiPayment->metadata->cart_id,
                     $this->module->statuses[$apiPayment->status],
                     $this->convertEuroToCartCurrency($apiPayment->amount, (int) $apiPayment->metadata->cart_id),
                     isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
@@ -136,7 +139,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     array(),
                     null,
                     false,
-                    $apiPayment->metadata->secure_key
+                    $cart->secure_key
                 );
 
                 $orderId = Order::getOrderByCartId($apiPayment->metadata->cart_id);

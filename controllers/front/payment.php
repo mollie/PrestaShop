@@ -315,6 +315,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @param string      $method
      * @param string|null $issuer
      * @param int         $cartId
+     * @param string      $secureKey
      *
      * @return array
      * @throws PrestaShopException
@@ -322,34 +323,30 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     private function getPaymentData($amount, $method, $issuer, $cartId, $secureKey)
     {
         $description = $this->generateDescriptionFromCart($cartId);
-        $shippingAddress = new Address($this->context->cart->id_address_delivery);
-        $billingAddress = new Address($this->context->cart->id_address_invoice);
-        $customer = new Customer((int) $this->context->cart->id_customer);
-        $ipAddress = Tools::getRemoteAddr();
 
         $paymentData = array(
-            "amount"      => $amount,
-            "method"      => $method,
-            "issuer"      => $issuer,
-            "description" => str_replace(
+            'amount'      => $amount,
+            'method'      => $method,
+            'issuer'      => $issuer,
+            'description' => str_replace(
                 '%',
                 $cartId,
                 $description
             ),
-            "redirectUrl" => $this->context->link->getModuleLink(
+            'redirectUrl' => $this->context->link->getModuleLink(
                 'mollie',
                 'return',
                 array('cart_id' => $cartId, 'utm_nooverride' => 1)
             ),
-            "webhookUrl"  => $this->context->link->getModuleLink(
+            'webhookUrl'  => $this->context->link->getModuleLink(
                 'mollie',
                 'webhook'
             ),
         );
 
         $paymentData['metadata'] = array(
-            "cart_id"    => $cartId,
-            "secure_key" => $secureKey,
+            'cart_id'    => $cartId,
+            'secure_key' => Tools::encrypt($secureKey),
         );
 
         // Send webshop locale
@@ -468,7 +465,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $payment = $this->module->api->payments->create($data);
         } catch (Mollie_API_Exception $e) {
             try {
-                if ($e->getField() == "webhookUrl") {
+                if ($e->getField() === 'webhookUrl') {
                     if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                         Logger::addLog(
                             __METHOD__.' said: Could not reach generated webhook url, falling back to profile webhook url.',
