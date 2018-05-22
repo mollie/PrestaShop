@@ -33,7 +33,7 @@
  */
 
 if (!defined('_PS_VERSION_')) {
-    die('No direct script access');
+    exit;
 }
 
 /**
@@ -100,7 +100,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         try {
-            /** @var Mollie_API_Object_Payment $apiPayment */
+            /** @var \Mollie\Api\Resources\Payment $apiPayment */
             $apiPayment = $this->module->api->payments->get($transactionId);
             $transactionId = $apiPayment->id;
         } catch (Exception $e) {
@@ -118,16 +118,16 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $orderId = (int) Order::getOrderByCartId($apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
-            if (in_array($apiPayment->status, array(Mollie_API_Object_Payment::STATUS_CHARGED_BACK, Mollie_API_Object_Payment::STATUS_REFUNDED))) {
-                $this->module->setOrderStatus($orderId, Mollie_API_Object_Payment::STATUS_REFUNDED);
+            if (in_array($apiPayment->status, array(\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED))) {
+                $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
             } elseif ($psPayment['method'] == 'banktransfer' &&
-                $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN
-                && $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
+                $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+                && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             ) {
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] != 'banktransfer'
-                && $psPayment['bank_status'] === Mollie_API_Object_Payment::STATUS_OPEN
-                && $apiPayment->status === Mollie_API_Object_Payment::STATUS_PAID
+                && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+                && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $this->module->validateOrder(
@@ -183,6 +183,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $order = new Order((int) $orderId);
         $collection = OrderPayment::getByOrderReference($order->reference);
         if (count($collection) > 0) {
+            /** @var OrderPayment $orderPayment */
             $orderPayment = $collection[0];
 
             // for older versions (1.5) , we check if it hasn't been filled yet.
@@ -250,12 +251,16 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     /**
      * (Re)sets the controller country context.
      * When Prestashop receives a call from Mollie (without context)
-     * Prestashop allways has default context to fall back on, so context->country
+     * Prestashop always has default context to fall back on, so context->country
      * is allways Set before executing any controller methods
      *
-     * @param Mollie_API_Object_Payment $payment
+     * @param \Mollie\Api\Resources\Payment $payment
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    private function setCountryContextIfNotSet(Mollie_API_Object_Payment $payment)
+    private function setCountryContextIfNotSet(\Mollie\Api\Resources\Payment $payment)
     {
         if (empty($this->context->country) || !$this->context->country->active) {
             if ($payment->metadata->cart_id) {

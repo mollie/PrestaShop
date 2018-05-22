@@ -33,7 +33,7 @@
  */
 
 if (!defined('_PS_VERSION_')) {
-    die('No direct script access');
+    exit;
 }
 
 /**

@@ -54,7 +54,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     // @codingStandardsIgnoreEnd
 
     /**
-     * @throws Mollie_API_Exception
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
@@ -124,7 +124,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'cart_id'        => (int) $cart->id,
                     'method'         => $payment->method,
                     'transaction_id' => $payment->id,
-                    'bank_status'    => Mollie_API_Object_Payment::STATUS_OPEN,
+                    'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'     => date("Y-m-d H:i:s"),
                 )
             );
@@ -152,7 +152,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'order_id'       => $orderId,
                     'method'         => $payment->method,
                     'transaction_id' => $payment->id,
-                    'bank_status'    => Mollie_API_Object_Payment::STATUS_OPEN,
+                    'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'     => date("Y-m-d H:i:s"),
                 )
             );
@@ -221,7 +221,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 }
             }
             return $issuerList;
-        } catch (Mollie_API_Exception $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::NOTICE);
             }
@@ -406,14 +406,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         } else {
             $language = 'en';
         }
-        $supportedLanguages = [
+        $supportedLanguages = array(
             'de',
             'en',
             'es',
             'fr',
             'nl',
-        ];
-        $supportedLocales = [
+        );
+        $supportedLocales = array(
             'en_US',
             'de_AT',
             'de_CH',
@@ -423,7 +423,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             'fr_FR',
             'nl_BE',
             'nl_NL',
-        ];
+        );
 
         $langIso = Tools::strtolower($language);
         if (!in_array($langIso, $supportedLanguages)) {
@@ -455,7 +455,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @param array $data
      *
-     * @return Mollie_API_Object_Payment|null
+     * @return \Mollie\Api\Resources\Payment|null
      *
      * @throws PrestaShopException
      */
@@ -467,9 +467,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            /** @var Mollie_API_Object_Payment $payment */
+            /** @var \Mollie\Api\Resources\Payment $payment */
             $payment = $this->module->api->payments->create($data);
-        } catch (Mollie_API_Exception $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             try {
                 if ($e->getField() === 'webhookUrl') {
                     if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
@@ -483,7 +483,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 } else {
                     throw $e;
                 }
-            } catch (Mollie_API_Exception $e) {
+            } catch (\Mollie\Api\Exceptions\ApiException $e) {
                 if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                     Logger::addLog(
                         __METHOD__.' said: '.$e->getMessage(),

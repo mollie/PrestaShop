@@ -43,9 +43,11 @@ if (!defined('_PS_VERSION_')) {
  */
 class Mollie extends PaymentModule
 {
-    /** @var Mollie_API_Client|null */
+    /** @var \Mollie\Api\MollieApiClient|null */
     public $api = null;
+    /** @var array $statuses */
     public $statuses = array();
+    /** @var array $lang */
     public $lang = array();
 
     const NOTICE = 1;
@@ -148,9 +150,9 @@ class Mollie extends PaymentModule
         $this->controllers = array('payment', 'return', 'webhook');
 
         try {
-            $this->api = new Mollie_API_Client;
-            if (Configuration::get(Mollie::MOLLIE_API_KEY)) {
-                $this->api->setApiKey(Configuration::get(Mollie::MOLLIE_API_KEY));
+            $this->api = new \Mollie\Api\MollieApiClient();
+            if (Configuration::get(static::MOLLIE_API_KEY)) {
+                $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
             }
             if (defined('_TB_VERSION_')) {
                 $this->api->addVersionString('ThirtyBees/'._TB_VERSION_);
@@ -160,28 +162,28 @@ class Mollie extends PaymentModule
                 $this->api->addVersionString("MolliePrestaShop/{$this->version}");
             }
 
-        } catch (Mollie_API_Exception_IncompatiblePlatform $e) {
-            Logger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), Mollie::CRASH);
-        } catch (Mollie_API_Exception $e) {
+        } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+            Logger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $this->warning = $this->l('Payment error:').$e->getMessage();
-            Logger::addLog(__METHOD__.' said: '.$this->warning, Mollie::CRASH);
+            Logger::addLog(__METHOD__.' said: '.$this->warning, static::CRASH);
         }
 
         $this->statuses = array(
-            Mollie_API_Object_Payment::STATUS_PAID         => Configuration::get(Mollie::MOLLIE_STATUS_PAID),
-            Mollie_API_Object_Payment::STATUS_CANCELLED    => Configuration::get(Mollie::MOLLIE_STATUS_CANCELLED),
-            Mollie_API_Object_Payment::STATUS_EXPIRED      => Configuration::get(Mollie::MOLLIE_STATUS_EXPIRED),
-            Mollie_API_Object_Payment::STATUS_REFUNDED     => Configuration::get(Mollie::MOLLIE_STATUS_REFUNDED),
-            Mollie_API_Object_Payment::STATUS_OPEN         => Configuration::get(Mollie::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID     => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELLED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED  => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED  => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN     => Configuration::get(static::MOLLIE_STATUS_OPEN),
         );
 
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
-            Mollie_API_Object_Payment::STATUS_PAID                                                                                                 => $this->l('paid'),
-            Mollie_API_Object_Payment::STATUS_CANCELLED                                                                                            => $this->l('cancelled'),
-            Mollie_API_Object_Payment::STATUS_EXPIRED                                                                                              => $this->l('expired'),
-            Mollie_API_Object_Payment::STATUS_REFUNDED                                                                                             => $this->l('refunded'),
-            Mollie_API_Object_Payment::STATUS_OPEN                                                                                                 => $this->l('bankwire pending'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                                           => $this->l('paid'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                       => $this->l('cancelled'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                        => $this->l('expired'),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                        => $this->l('refunded'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                                           => $this->l('bankwire pending'),
             'This payment method is not available.'                                                                                                => $this->l('This payment method is not available.'),
             'Click here to continue'                                                                                                               => $this->l('Click here to continue'),
             'This payment method is only available for Euros.'                                                                                     => $this->l('This payment method is only available for Euros.'),
@@ -272,27 +274,27 @@ class Mollie extends PaymentModule
             $this->unregisterHook($hook);
         }
 
-        Configuration::deleteByName(Mollie::MOLLIE_API_KEY);
-        Configuration::deleteByName(Mollie::MOLLIE_DESCRIPTION);
-        Configuration::deleteByName(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE);
-        Configuration::deleteByName(Mollie::MOLLIE_IMAGES);
-        Configuration::deleteByName(Mollie::MOLLIE_ISSUERS);
-        Configuration::deleteByName(Mollie::MOLLIE_CSS);
-        Configuration::deleteByName(Mollie::MOLLIE_DEBUG_LOG);
-        Configuration::deleteByName(Mollie::MOLLIE_DISPLAY_ERRORS);
-        Configuration::deleteByName(Mollie::MOLLIE_USE_PROFILE_WEBHOOK);
-        Configuration::deleteByName(Mollie::MOLLIE_PENDING);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_OPEN);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_PAID);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_CANCELLED);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_EXPIRED);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_PARTIAL_REFUND);
-        Configuration::deleteByName(Mollie::MOLLIE_STATUS_REFUNDED);
-        Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_OPEN);
-        Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_PAID);
-        Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_CANCELLED);
-        Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_EXPIRED);
-        Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_REFUNDED);
+        Configuration::deleteByName(static::MOLLIE_API_KEY);
+        Configuration::deleteByName(static::MOLLIE_DESCRIPTION);
+        Configuration::deleteByName(static::MOLLIE_PAYMENTSCREEN_LOCALE);
+        Configuration::deleteByName(static::MOLLIE_IMAGES);
+        Configuration::deleteByName(static::MOLLIE_ISSUERS);
+        Configuration::deleteByName(static::MOLLIE_CSS);
+        Configuration::deleteByName(static::MOLLIE_DEBUG_LOG);
+        Configuration::deleteByName(static::MOLLIE_DISPLAY_ERRORS);
+        Configuration::deleteByName(static::MOLLIE_USE_PROFILE_WEBHOOK);
+        Configuration::deleteByName(static::MOLLIE_PENDING);
+        Configuration::deleteByName(static::MOLLIE_STATUS_OPEN);
+        Configuration::deleteByName(static::MOLLIE_STATUS_PAID);
+        Configuration::deleteByName(static::MOLLIE_STATUS_CANCELLED);
+        Configuration::deleteByName(static::MOLLIE_STATUS_EXPIRED);
+        Configuration::deleteByName(static::MOLLIE_STATUS_PARTIAL_REFUND);
+        Configuration::deleteByName(static::MOLLIE_STATUS_REFUNDED);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_OPEN);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_PAID);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_CANCELLED);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_EXPIRED);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_REFUNDED);
 
         return parent::uninstall();
     }
@@ -321,25 +323,25 @@ class Mollie extends PaymentModule
      */
     protected function initConfig()
     {
-        Configuration::updateGlobalValue(Mollie::MOLLIE_API_KEY, '');
-        Configuration::updateGlobalValue(Mollie::MOLLIE_DESCRIPTION, 'Cart %');
-        Configuration::updateGlobalValue(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE, Mollie::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_IMAGES, Mollie::LOGOS_NORMAL);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_ISSUERS, Mollie::ISSUERS_ON_CLICK);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_CSS, '');
-        Configuration::updateGlobalValue(Mollie::MOLLIE_DEBUG_LOG, Mollie::DEBUG_LOG_ERRORS);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_USE_PROFILE_WEBHOOK, false);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_OPEN, Configuration::get(Mollie::MOLLIE_PENDING));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_CANCELLED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_PARTIAL_REFUND, Configuration::get(Mollie::MOLLIE_STATUS_PARTIAL_REFUND));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
-        Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_PAID, true);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_CANCELLED, true);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_EXPIRED, true);
-        Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        Configuration::updateGlobalValue(static::MOLLIE_API_KEY, '');
+        Configuration::updateGlobalValue(static::MOLLIE_DESCRIPTION, 'Cart %');
+        Configuration::updateGlobalValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
+        Configuration::updateGlobalValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
+        Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
+        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
+        Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
+        Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
+        Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get(static::MOLLIE_PENDING));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELLED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_PARTIAL_REFUND, Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_PAID, true);
+        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELLED, true);
+        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
+        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
     }
 
     /**
@@ -372,24 +374,24 @@ class Mollie extends PaymentModule
         $warningMessage = '';
 
         $payscreenLocaleOptions = array(
-            Mollie::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE      => $this->l('Do not send locale, use browser language'),
-            Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE => $this->l('Send webshop locale'),
+            static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE      => $this->l('Do not send locale, use browser language'),
+            static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE => $this->l('Send webshop locale'),
         );
 
         $imageOptions = array(
-            Mollie::LOGOS_BIG    => $this->l('big'),
-            Mollie::LOGOS_NORMAL => $this->l('normal'),
-            Mollie::LOGOS_HIDE   => $this->l('hide'),
+            static::LOGOS_BIG    => $this->l('big'),
+            static::LOGOS_NORMAL => $this->l('normal'),
+            static::LOGOS_HIDE   => $this->l('hide'),
         );
         $issuerOptions = array(
-            Mollie::ISSUERS_ON_CLICK       => $this->l('On click'),
-            Mollie::ISSUERS_OWN_PAGE       => $this->l('Own page'),
-            Mollie::ISSUERS_PAYMENT_PAGE   => $this->l('Payment page'),
+            static::ISSUERS_ON_CLICK       => $this->l('On click'),
+            static::ISSUERS_OWN_PAGE       => $this->l('Own page'),
+            static::ISSUERS_PAYMENT_PAGE   => $this->l('Payment page'),
         );
         $loggerOptions = array(
-            Mollie::DEBUG_LOG_NONE   => $this->l('Nothing'),
-            Mollie::DEBUG_LOG_ERRORS => $this->l('Errors'),
-            Mollie::DEBUG_LOG_ALL    => $this->l('Everything'),
+            static::DEBUG_LOG_NONE   => $this->l('Nothing'),
+            static::DEBUG_LOG_ERRORS => $this->l('Errors'),
+            static::DEBUG_LOG_ALL    => $this->l('Everything'),
         );
 
         if (Tools::isSubmit('Mollie_Config_Save')) {
@@ -415,14 +417,14 @@ class Mollie extends PaymentModule
             'msg_result'               => $resultMessage,
             'msg_warning'              => $warningMessage,
             'path'                     => $this->_path,
-            'val_api_key'              => Configuration::get(Mollie::MOLLIE_API_KEY),
-            'val_desc'                 => Configuration::get(Mollie::MOLLIE_DESCRIPTION),
-            'payscreen_locale_value'   => Configuration::get(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE),
-            'val_images'               => Configuration::get(Mollie::MOLLIE_IMAGES),
-            'val_issuers'              => Configuration::get(Mollie::MOLLIE_ISSUERS),
-            'val_css'                  => Configuration::get(Mollie::MOLLIE_CSS),
-            'val_errors'               => Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS),
-            'val_logger'               => Configuration::get(Mollie::MOLLIE_DEBUG_LOG),
+            'val_api_key'              => Configuration::get(static::MOLLIE_API_KEY),
+            'val_desc'                 => Configuration::get(static::MOLLIE_DESCRIPTION),
+            'payscreen_locale_value'   => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
+            'val_images'               => Configuration::get(static::MOLLIE_IMAGES),
+            'val_issuers'              => Configuration::get(static::MOLLIE_ISSUERS),
+            'val_css'                  => Configuration::get(static::MOLLIE_CSS),
+            'val_errors'               => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+            'val_logger'               => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'                 => $this->l('Save'),
             'lang'                     => $this->lang,
         );
@@ -522,7 +524,7 @@ class Mollie extends PaymentModule
                 _DB_PREFIX_.'mollie_payments',
                 bqSQL($column),
                 pSQL($id),
-                Mollie_API_Object_Payment::STATUS_PAID
+                \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             )
         );
 
@@ -613,21 +615,21 @@ class Mollie extends PaymentModule
         }
 
         if (empty($errors)) {
-            Configuration::updateValue(Mollie::MOLLIE_API_KEY, $mollieApiKey);
-            Configuration::updateValue(Mollie::MOLLIE_DESCRIPTION, $mollieDescription);
-            Configuration::updateValue(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
-            Configuration::updateValue(Mollie::MOLLIE_IMAGES, $mollieImages);
-            Configuration::updateValue(Mollie::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(Mollie::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(Mollie::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
-            Configuration::updateValue(Mollie::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
+            Configuration::updateValue(static::MOLLIE_API_KEY, $mollieApiKey);
+            Configuration::updateValue(static::MOLLIE_DESCRIPTION, $mollieDescription);
+            Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
+            Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
+            Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
+            Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
+            Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
+            Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
 
             foreach (array_keys($this->statuses) as $name) {
                 $new = (int) Tools::getValue('Mollie_Status_'.$name);
                 $this->statuses[$name] = $new;
                 Configuration::updateValue('MOLLIE_STATUS_'.Tools::strtoupper($name), $new);
 
-                if ($name != Mollie_API_Object_Payment::STATUS_OPEN) {
+                if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
                     Configuration::updateValue(
                         'MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name),
                         Tools::getValue('Mollie_Mail_When_'.$name) ? true : false
@@ -706,7 +708,7 @@ class Mollie extends PaymentModule
         try {
             $payment = $this->api->payments->get($transactionId);
             $this->api->payments->refund($payment);
-        } catch (Mollie_API_Exception $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'status'      => 'fail',
                 'msg_fail'    => $this->lang('The order could not be refunded!'),
@@ -715,12 +717,12 @@ class Mollie extends PaymentModule
         }
 
         // Tell status to shop
-        $this->setOrderStatus($orderId, Mollie_API_Object_Payment::STATUS_REFUNDED);
+        $this->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
 
         // Save status in mollie_payments table
         $updateData = array(
             'updated_at'  => date('Y-m-d H:i:s'),
-            'bank_status' => Mollie_API_Object_Payment::STATUS_REFUNDED,
+            'bank_status' => \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
         );
 
         Db::getInstance(_PS_USE_SQL_SLAVE_)->update('mollie_payments', $updateData, '`order_id` = '.(int) $orderId);
@@ -737,7 +739,7 @@ class Mollie extends PaymentModule
     /**
      * @return array
      *
-     * @throws Mollie_API_Exception
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws PrestaShopException
      */
     public function getIssuerList()
@@ -767,7 +769,7 @@ class Mollie extends PaymentModule
     protected function addCSSFile($file = null)
     {
         if (is_null($file)) {
-            $file = Configuration::get(Mollie::MOLLIE_CSS);
+            $file = Configuration::get(static::MOLLIE_CSS);
         }
 
         if (empty($file)) {
@@ -796,7 +798,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayHeader()
     {
-        $this->addCSSFile(Configuration::get(Mollie::MOLLIE_CSS));
+        $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
     }
 
     /**
@@ -807,7 +809,7 @@ class Mollie extends PaymentModule
         if ($this->context->controller instanceof AdminOrdersController && version_compare(_PS_VERSION_, '1.6.0.0', '<')
             || $this->context->controller instanceof AdminModulesController && Tools::getValue('configure') === $this->name
         ) {
-            $this->addCSSFile(Configuration::get(Mollie::MOLLIE_CSS));
+            $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
         }
     }
 
@@ -843,7 +845,7 @@ class Mollie extends PaymentModule
             if ($tplData['status'] === 'success') {
                 Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true).'&vieworder&id_order='.(int) $params['id_order']);
             }
-        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], [Mollie_API_Object_Payment::STATUS_REFUNDED, Mollie_API_Object_Payment::STATUS_CHARGED_BACK])) {
+        } elseif (isset($mollieData['bank_status']) && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED) {
             $tplData = array(
                 'status'      => 'success',
                 'msg_success' => $this->lang('The order has been refunded!'),
@@ -851,7 +853,8 @@ class Mollie extends PaymentModule
                     'Mollie B.V. will transfer the money back to the customer on the next business day.'
                 ),
             );
-        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], [Mollie_API_Object_Payment::STATUS_PAID, Mollie_API_Object_Payment::STATUS_PAIDOUT])) {
+        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], array(
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT))) {
             $tplData = array(
                 'status'          => 'form',
                 'msg_button'      => $this->lang['Refund this order'],
@@ -892,24 +895,24 @@ class Mollie extends PaymentModule
             return $this->display(__FILE__, 'error_message.tpl');
         }*/
 
-        $issuerSetting = Configuration::get(Mollie::MOLLIE_ISSUERS);
+        $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
 
         try {
             $methods = $this->api->methods->all();
             $issuerList = in_array(
                 $issuerSetting,
-                array(Mollie::ISSUERS_ON_CLICK)
+                array(static::ISSUERS_ON_CLICK)
             )
                 ? $this->getIssuerList()
                 : array();
-        } catch (Mollie_API_Exception $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $methods = array();
             $issuerList = array();
 
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
+            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
+                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
             }
-            if (Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)) {
+            if (Configuration::get(static::MOLLIE_DISPLAY_ERRORS)) {
                 $smarty->assign('message', $e->getMessage());
 
                 return $this->display(__FILE__, 'error_message.tpl');
@@ -921,12 +924,12 @@ class Mollie extends PaymentModule
                 'methods'               => $methods,
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
-                'images'                => Configuration::get(Mollie::MOLLIE_IMAGES),
+                'images'                => Configuration::get(static::MOLLIE_IMAGES),
                 'warning'               => $this->warning,
                 'msg_pay_with'          => $this->lang['Pay with %s'],
                 'msg_bankselect'        => $this->lang['Select your bank:'],
                 'module'                => $this,
-                'mollie_banks_app_path' => Mollie::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
+                'mollie_banks_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
                 'mollie_translations'   => array(
                     'chooseYourBank' => $this->l('Choose your bank'),
                     'choose'         => $this->l('Choose'),
@@ -953,9 +956,9 @@ class Mollie extends PaymentModule
 
         try {
             $methods = $this->api->methods->all();
-        } catch (Mollie_API_Exception $e) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
+                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
             }
 
             return array();
@@ -1004,7 +1007,7 @@ class Mollie extends PaymentModule
     public function hookDisplayOrderConfirmation()
     {
         $payment = $this->getPaymentBy('cart_id', (int) Tools::getValue('id_cart'));
-        if ($payment && $payment['bank_status'] == Mollie_API_Object_Payment::STATUS_PAID) {
+        if ($payment && $payment['bank_status'] == \Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
             $this->context->smarty->assign('okMessage', $this->lang('Thank you. Your payment has been received.'));
 
             return $this->display(__FILE__, 'ok.tpl');
@@ -1080,7 +1083,7 @@ class Mollie extends PaymentModule
                 $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
                 @copy($source, $destination);
             }
-            Configuration::updateValue(Mollie::MOLLIE_PENDING, (int) $orderState->id);
+            Configuration::updateValue(static::MOLLIE_PENDING, (int) $orderState->id);
         }
 
         return true;
@@ -1124,7 +1127,7 @@ class Mollie extends PaymentModule
                 $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
                 @copy($source, $destination);
             }
-            Configuration::updateValue(Mollie::MOLLIE_PARTIAL_REFUND, (int) $orderState->id);
+            Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
         }
 
         return true;
