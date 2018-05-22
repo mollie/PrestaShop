@@ -76,7 +76,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        $issuer = Tools::getValue('issuer') ? Tools::getValue('issuer') : null;
+        $issuer = Tools::getValue('issuer') ?: null;
 
         // If no issuer was set yet and the issuer list has its own page, show issuer list here
         if (!$issuer && Configuration::get(Mollie::MOLLIE_ISSUERS) == Mollie::ISSUERS_OWN_PAGE && $method === 'ideal') {
