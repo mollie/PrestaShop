@@ -886,11 +886,11 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
 
-        if (!Currency::exists('EUR', 0)) {
+        /*if (!Currency::exists('EUR', 0)) {
             $smarty->assign('message', $this->l('Mollie Payment Methods are only available when Euros are activated.'));
 
             return $this->display(__FILE__, 'error_message.tpl');
-        }
+        }*/
 
         $issuerSetting = Configuration::get(Mollie::MOLLIE_ISSUERS);
 
@@ -947,7 +947,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayPaymentEU()
     {
-        if (!Currency::exists('EUR', 0) || version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        if (/*!Currency::exists('EUR', 0) ||*/ version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             return array();
         }
 
