@@ -161,7 +161,6 @@ class Mollie extends PaymentModule
                 $this->api->addVersionString('PrestaShop/'._PS_VERSION_);
                 $this->api->addVersionString("MolliePrestaShop/{$this->version}");
             }
-
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             Logger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
@@ -230,6 +229,7 @@ class Mollie extends PaymentModule
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     public function install()
     {
