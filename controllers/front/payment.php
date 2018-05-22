@@ -103,7 +103,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             true,
             Cart::BOTH
         );
-        $amount = $this->convertCurrencyToEuro($originalAmount);
+        $amount = $originalAmount;
 
         // Prepare payment
         $paymentData = $this->getPaymentData(
@@ -236,7 +236,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      *
      * @throws PrestaShopException
      */
-    private function convertCurrencyToEuro($amount)
+   /* private function convertCurrencyToEuro($amount)
     {
         $cart = $this->context->cart;
         $currencyEuro = Currency::getIdByIsoCode('EUR');
@@ -273,7 +273,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $amount,
             2
         );
-    }
+    }*/
 
     /**
      * @param int $cartId
