@@ -126,6 +126,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             ) {
+                $order = new Order($orderId);
+                $order->payment = isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : $this->module->displayName;
+                $order->update();
+
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== 'banktransfer'
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
