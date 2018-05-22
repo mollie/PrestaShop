@@ -133,7 +133,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $this->module->validateOrder(
                     (int) $apiPayment->metadata->cart_id,
                     $this->module->statuses[$apiPayment->status],
-                    $this->convertEuroToCartCurrency($apiPayment->amount, (int) $apiPayment->metadata->cart_id),
+                    $apiPayment->amount['value'],
                     isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
                     null,
                     array(),
@@ -225,7 +225,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @return float in the currency of the cart
      * @throws PrestaShopException
      */
-    private function convertEuroToCartCurrency($amount, $cartId)
+    /*private function convertEuroToCartCurrency($amount, $cartId)
     {
         $cart = new Cart($cartId);
         $currencyEuro = Currency::getIdByIsoCode('EUR');
@@ -245,7 +245,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         return round($amount, 2);
-    }
+    }*/
 
     /**
      * (Re)sets the controller country context.
