@@ -707,7 +707,14 @@ class Mollie extends PaymentModule
     {
         try {
             $payment = $this->api->payments->get($transactionId);
-            $this->api->payments->refund($payment);
+            if ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
+                $payment->refund(array(
+                    'amount' => array(
+                        'currency' => (string) $payment->amount->currency,
+                        'value'    => (string) ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value),
+                    ),
+                ));
+            }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'status'      => 'fail',
