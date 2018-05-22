@@ -84,6 +84,7 @@ class Mollie extends PaymentModule
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
     const MOLLIE_STATUS_CANCELLED = 'MOLLIE_STATUS_CANCELLED';
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
+    const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_PARTIAL_REFUND';
     const MOLLIE_STATUS_REFUNDED = 'MOLLIE_STATUS_REFUNDED';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
@@ -203,6 +204,7 @@ class Mollie extends PaymentModule
             'The order has been refunded!'                                                                                                         => $this->l('The order has been refunded!'),
             'Mollie B.V. will transfer the money back to the customer on the next business day.'                                                   => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
             'Awaiting Mollie payment'                                                                                                              => $this->l('Awaiting Mollie payment'),
+            'Mollie partially refunded'                                                                                                            => $this->l('Mollie partially refunded'),
             'iDEAL'                                                                                                                                => $this->l('iDEAL'),
             'Credit card'                                                                                                                          => $this->l('Credit card'),
             'Bancontact'                                                                                                                           => $this->l('Bancontact'),
@@ -245,6 +247,12 @@ class Mollie extends PaymentModule
             return false;
         }
 
+        if (!$this->partialRefundOrderState()) {
+            $this->_errors[] = 'Unable to install Mollie partially refunded order state';
+
+            return false;
+        }
+
         $this->initConfig();
 
         include(dirname(__FILE__).'/sql/install.php');
@@ -278,6 +286,7 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(Mollie::MOLLIE_STATUS_PAID);
         Configuration::deleteByName(Mollie::MOLLIE_STATUS_CANCELLED);
         Configuration::deleteByName(Mollie::MOLLIE_STATUS_EXPIRED);
+        Configuration::deleteByName(Mollie::MOLLIE_STATUS_PARTIAL_REFUND);
         Configuration::deleteByName(Mollie::MOLLIE_STATUS_REFUNDED);
         Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_OPEN);
         Configuration::deleteByName(Mollie::MOLLIE_MAIL_WHEN_PAID);
@@ -325,6 +334,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_CANCELLED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_PARTIAL_REFUND, Configuration::get(Mollie::MOLLIE_STATUS_PARTIAL_REFUND));
         Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
         Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_PAID, true);
         Configuration::updateGlobalValue(Mollie::MOLLIE_MAIL_WHEN_CANCELLED, true);
@@ -1071,6 +1081,50 @@ class Mollie extends PaymentModule
                 @copy($source, $destination);
             }
             Configuration::updateValue(Mollie::MOLLIE_PENDING, (int) $orderState->id);
+        }
+
+        return true;
+    }
+
+    /**
+     * Create new order state for partial refunds.
+     *
+     * @since 2.0.0
+     *
+     * @return boolean
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function partialRefundOrderState()
+    {
+        $stateExist = false;
+        $states = OrderState::getOrderStates((int)$this->context->language->id);
+        foreach ($states as $state) {
+            if (in_array($this->lang('Mollie Partially Refunded'), $state)) {
+                $stateExist = true;
+                break;
+            }
+        }
+        if (!$stateExist) {
+            $orderState = new OrderState();
+            $orderState->send_email = false;
+            $orderState->color = '#6F8C9F';
+            $orderState->hidden = false;
+            $orderState->delivery = false;
+            $orderState->logable = false;
+            $orderState->invoice = false;
+            $orderState->module_name = $this->name;
+            $orderState->name = array();
+            $languages = Language::getLanguages(false);
+            foreach ($languages as $language) {
+                $orderState->name[$language['id_lang']] = $this->lang('Mollie partially refunded');
+            }
+            if ($orderState->add()) {
+                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+                @copy($source, $destination);
+            }
+            Configuration::updateValue(Mollie::MOLLIE_PARTIAL_REFUND, (int) $orderState->id);
         }
 
         return true;
