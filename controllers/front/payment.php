@@ -324,8 +324,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     {
         $description = $this->generateDescriptionFromCart($cartId);
 
+        $currency = Currency::getCurrency((int) $this->context->cart->id_currency);
+        $currencyIso = $currency['iso_code'];
+
         $paymentData = array(
-            'amount'      => $amount,
+            'amount'      => array(
+                'currency' => $currencyIso,
+                'value'    => $amount,
+            ),
             'method'      => $method,
             'issuer'      => $issuer,
             'description' => str_replace(
