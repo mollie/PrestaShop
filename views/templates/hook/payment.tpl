@@ -45,9 +45,9 @@
       >
         {if isset($method->image) && $images !== 'hide'}
           {if $images === 'big'}
-            <img class="mollie_image_big" src="{$method->image->bigger|escape:'htmlall':'UTF-8' nofilter}" alt="">
+            <img class="mollie_image_big" src="{$method->image->size2x|escape:'htmlall':'UTF-8' nofilter}" alt="">
           {else}
-            <img class="mollie_image" src="{$method->image->normal|escape:'htmlall':'UTF-8' nofilter}" alt="">
+            <img class="mollie_image" src="{$method->image->size1x|escape:'htmlall':'UTF-8' nofilter}" alt="">
           {/if}
         {else}
           <span class="mollie_margin">&nbsp;</span>

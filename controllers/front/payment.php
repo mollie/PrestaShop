@@ -113,6 +113,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             $customer->secure_key
         );
+        unset($paymentData['metadata']);
         $payment = $this->createPayment($paymentData);
 
 
@@ -159,7 +160,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         // Go to payment url
-        Tools::redirect($payment->getPaymentUrl());
+        Tools::redirect($payment->getCheckoutUrl());
     }
 
     /**
@@ -311,11 +312,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param float       $amount
-     * @param string      $method
-     * @param string|null $issuer
-     * @param int         $cartId
-     * @param string      $secureKey
+     * @param float|string $amount
+     * @param string       $method
+     * @param string|null  $issuer
+     * @param int          $cartId
+     * @param string       $secureKey
      *
      * @return array
      * @throws PrestaShopException
@@ -329,8 +330,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $paymentData = array(
             'amount'      => array(
-                'currency' => $currencyIso,
-                'value'    => $amount,
+                'currency' => $currencyIso ? strtoupper($currencyIso) : 'EUR',
+                'value'    => number_format(str_replace(',', '.', $amount), 2),
             ),
             'method'      => $method,
             'issuer'      => $issuer,
@@ -373,21 +374,27 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if (isset($this->context, $this->context->cart)) {
             if (isset($this->context->cart->id_customer)) {
                 $buyer = new Customer($this->context->cart->id_customer);
-                $paymentData['billingEmail'] = $buyer->email;
+                $paymentData['billingEmail'] = (string) $buyer->email;
             }
             if (isset($this->context->cart->id_address_invoice)) {
                 $billing = new Address((int) $this->context->cart->id_address_invoice);
-                $paymentData['billingCity'] = $billing->city;
-                $paymentData['billingRegion'] = State::getNameById($billing->id_state);
-                $paymentData['billingPostal'] = $billing->postcode;
-                $paymentData['billingCountry'] = Country::getIsoById($billing->id_country);
+                $paymentData['billingAddress'] = array(
+                    'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
+                    'city'            => (string) $billing->city,
+                    'region'          => (string) State::getNameById($billing->id_state),
+                    'postalCode'      => (string) $billing->postcode,
+                    'country'         => (string) Country::getIsoById($billing->id_country),
+                );
             }
             if (isset($this->context->cart->id_address_delivery)) {
                 $shipping = new Address((int) $this->context->cart->id_address_delivery);
-                $paymentData['shippingCity'] = $shipping->city;
-                $paymentData['shippingRegion'] = State::getNameById($shipping->id_state);
-                $paymentData['shippingPostal'] = $shipping->postcode;
-                $paymentData['shippingCountry'] = Country::getIsoById($shipping->id_country);
+                $paymentData['billingAddress'] = array(
+                    'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
+                    'city'            => (string) $shipping->city,
+                    'region'          => (string) State::getNameById($shipping->id_state),
+                    'postalCode'      => (string) $shipping->postcode,
+                    'country'         => (string) Country::getIsoById($shipping->id_country),
+                );
             }
         }
 
@@ -466,45 +473,45 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             unset($data['webhookUrl']);
         }
 
-        try {
+//        try {
             /** @var \Mollie\Api\Resources\Payment $payment */
             $payment = $this->module->api->payments->create($data);
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            try {
-                if ($e->getField() === 'webhookUrl') {
-                    if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                        Logger::addLog(
-                            __METHOD__.' said: Could not reach generated webhook url, falling back to profile webhook url.',
-                            Mollie::WARNING
-                        );
-                    }
-                    unset($data['webhookUrl']);
-                    $payment = $this->module->api->payments->create($data);
-                } else {
-                    throw $e;
-                }
-            } catch (\Mollie\Api\Exceptions\ApiException $e) {
-                if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                    Logger::addLog(
-                        __METHOD__.' said: '.$e->getMessage(),
-                        Mollie::CRASH
-                    );
-                }
-                if (Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)) {
-                    $this->errors[] = $this->module->lang['There was an error while processing your request: '].'<br /><em>'.$e->getMessage().'</em>';
-
-                    if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-                        $this->setTemplate('error.tpl');
-                    } else {
-                        $this->setTemplate('module:mollie/views/templates/front/error.tpl');
-                    }
-
-                    return null;
-                } else {
-                    Tools::redirect(Context::getContext()->link->getPageLink('index', true));
-                }
-            }
-        }
+//        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+//            try {
+//                if ($e->getField() === 'webhookUrl') {
+//                    if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
+//                        Logger::addLog(
+//                            __METHOD__.' said: Could not reach generated webhook url, falling back to profile webhook url.',
+//                            Mollie::WARNING
+//                        );
+//                    }
+//                    unset($data['webhookUrl']);
+//                    $payment = $this->module->api->payments->create($data);
+//                } else {
+//                    throw $e;
+//                }
+//            } catch (\Mollie\Api\Exceptions\ApiException $e) {
+//                if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
+//                    Logger::addLog(
+//                        __METHOD__.' said: '.$e->getMessage(),
+//                        Mollie::CRASH
+//                    );
+//                }
+//                if (Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)) {
+//                    $this->errors[] = $this->module->lang['There was an error while processing your request: '].'<br /><em>'.$e->getMessage().'</em>';
+//
+//                    if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
+//                        $this->setTemplate('error.tpl');
+//                    } else {
+//                        $this->setTemplate('module:mollie/views/templates/front/error.tpl');
+//                    }
+//
+//                    return null;
+//                } else {
+//                    Tools::redirect(Context::getContext()->link->getPageLink('index', true));
+//                }
+//            }
+//        }
         return $payment;
     }
 }

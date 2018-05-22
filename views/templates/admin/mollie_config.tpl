@@ -238,7 +238,7 @@
           <br/>
           <em class="mollie_desc">{$desc_status_{$name}|escape:'htmlall':'UTF-8' nofilter}</em>
         </div>
-        {if $name != Mollie_API_Object_Payment::STATUS_OPEN}
+        {if $name != constant('\\Mollie\\Api\\Types\\PaymentStatus::STATUS_PAID')}
           <div class="col-sm-12 col-md-4 mollie_msg">
             <label for="Mollie_Mail_When_{$name|escape:'htmlall':'UTF-8' nofilter}">
               <strong>{$msg_mail_{$name}|escape:'htmlall':'UTF-8' nofilter}</strong>

@@ -921,7 +921,7 @@ class Mollie extends PaymentModule
 
         $smarty->assign(
             array(
-                'methods'               => $methods,
+                'methods'               => $methods->getArrayCopy(),
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
                 'images'                => Configuration::get(static::MOLLIE_IMAGES),
