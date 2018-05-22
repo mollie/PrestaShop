@@ -118,7 +118,7 @@ class Mollie extends PaymentModule
         'ideal'        => 'iDEAL',
         'inghomepay '  => 'ING Homepay',
         'kbc'          => 'KBC',
-        'mistercash'   => 'Bancontact',
+        'bancontact'   => 'Bancontact',
         'paypal'       => 'PayPal',
         'paysafecard'  => 'Paysafecard',
         'sofort'       => 'Sofort Banking',
