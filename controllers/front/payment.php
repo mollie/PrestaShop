@@ -113,9 +113,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             $customer->secure_key
         );
-        unset($paymentData['metadata']);
         $payment = $this->createPayment($paymentData);
-
 
         // Store payment linked to cart
         if ($payment->method != 'banktransfer') {

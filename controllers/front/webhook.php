@@ -120,12 +120,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if ($apiPayment->metadata->cart_id) {
             if (in_array($apiPayment->status, array(\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED))) {
                 $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
-            } elseif ($psPayment['method'] == 'banktransfer' &&
+            } elseif ($psPayment['method'] === 'banktransfer' &&
                 $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             ) {
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
-            } elseif ($psPayment['method'] != 'banktransfer'
+            } elseif ($psPayment['method'] !== 'banktransfer'
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
@@ -133,7 +133,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $this->module->validateOrder(
                     (int) $apiPayment->metadata->cart_id,
                     $this->module->statuses[$apiPayment->status],
-                    $apiPayment->amount['value'],
+                    $apiPayment->amount->value,
                     isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
                     null,
                     array(),
