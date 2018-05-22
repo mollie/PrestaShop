@@ -1,5 +1,11 @@
 {
     "require": {
-        "mollie/mollie-api-php": "^1.9"
-    }
+        "firstred/mollie-api-php": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/firstred/mollie-api-php"
+        }
+    ]
 }
