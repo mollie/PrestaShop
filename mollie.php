@@ -745,17 +745,25 @@ class Mollie extends PaymentModule
     public function getIssuerList()
     {
         $methods = array();
-        foreach ($this->api->issuers->all() as $method) {
-            $method->href = $this->context->link->getModuleLink(
-                $this->name,
-                'payment',
-                array('method' => $method->method, 'issuer' => $method->id),
-                true
-            );
-            if (!isset($methods[$method->method])) {
-                $methods[$method->method] = array();
+        foreach ($this->api->methods->all(array('include' => 'issuers')) as $method) {
+            /** @var \Mollie\Api\Resources\Method $method */
+            foreach ((array) $method->issuers as $issuer) {
+                if (!$issuer) {
+                    continue;
+                }
+
+                $issuer->href = $this->context->link->getModuleLink(
+                    $this->name,
+                    'payment',
+                    array('method' => $method->id, 'issuer' => $issuer->id),
+                    true
+                );
+
+                if (!isset($methods[$method->id])) {
+                    $methods[$method->id] = array();
+                }
+                $methods[$method->id][$issuer->id] = $issuer;
             }
-            $methods[$method->method][$method->id] = $method;
         }
 
         return $methods;
@@ -1053,6 +1061,7 @@ class Mollie extends PaymentModule
      * @return boolean
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     public function pendingOrderState()
     {
@@ -1097,6 +1106,7 @@ class Mollie extends PaymentModule
      * @return boolean
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     public function partialRefundOrderState()
     {

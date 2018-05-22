@@ -70,6 +70,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
+        Logger::addLog(file_get_contents('php://input'));
+
         die($this->executeWebhook());
     }
 
@@ -118,7 +120,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $orderId = (int) Order::getOrderByCartId($apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
-            if (in_array($apiPayment->status, array(\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED))) {
+            if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
             } elseif ($psPayment['method'] === 'banktransfer' &&
                 $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN

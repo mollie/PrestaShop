@@ -21,7 +21,7 @@ export default class MollieBanks {
       content += `<div class="${styles.radio} ${styles['radio-primary']}">
             <input type="radio" id="${xss(bank.id)}" name="mollie-bank" value="${xss(bank.id)}">
             <label for="${xss(bank.id)}">
-                <img src="${xss(bank.image.normal)}" alt="${xss(bank.name)}"> ${xss(bank.name)}
+                <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}"> ${xss(bank.name)}
             </label>
         </div>`;
     });
@@ -39,6 +39,8 @@ export default class MollieBanks {
     }).then((value) => {
       if (value) {
         const issuer = elem.querySelector('input[name="mollie-bank"]:checked').value;
+
+        console.log(this.banks[issuer]);
 
         window.open(this.banks[issuer].href, '_self');
       } else {
