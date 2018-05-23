@@ -33,6 +33,9 @@
  */
 
 require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
+if (!function_exists('\\Hough\\Psr7\\str')) {
+    require_once __DIR__.'/lib/vendor/ehough/psr7/src/functions.php';
+}
 
 if (!defined('_PS_VERSION_')) {
     return;
