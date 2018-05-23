@@ -93,6 +93,7 @@ class Mollie extends PaymentModule
     const MOLLIE_MAIL_WHEN_CANCELLED = 'MOLLIE_MAIL_WHEN_CANCELLED';
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
+    const PARTIAL_REFUND_CODE = 'partial_refund';
 
     /**
      * Hooks for this module
@@ -172,6 +173,7 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID     => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELLED),
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED  => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            static::PARTIAL_REFUND_CODE                      => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED  => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN     => Configuration::get(static::MOLLIE_STATUS_OPEN),
         );
@@ -183,6 +185,7 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                        => $this->l('expired'),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                        => $this->l('refunded'),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                                           => $this->l('bankwire pending'),
+            static::PARTIAL_REFUND_CODE                                                                                                            => $this->l('partially refunded'),
             'This payment method is not available.'                                                                                                => $this->l('This payment method is not available.'),
             'Click here to continue'                                                                                                               => $this->l('Click here to continue'),
             'This payment method is only available for Euros.'                                                                                     => $this->l('This payment method is only available for Euros.'),
@@ -406,7 +409,7 @@ class Mollie extends PaymentModule
             'config_title'             => $this->l('Mollie Configuration'),
             'config_legend'            => $this->l('Mollie Settings'),
             'update_message'           => $updateMessage,
-            'all_statuses'             => OrderState::getOrderStates($lang),
+            'all_statuses'             => array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang)),
             'payscreen_locale_options' => $payscreenLocaleOptions,
             'image_options'            => $imageOptions,
             'issuer_options'           => $issuerOptions,
@@ -490,6 +493,9 @@ class Mollie extends PaymentModule
      */
     public function setOrderStatus($orderId, $status)
     {
+        if (empty($this->statuses[$status])) {
+            return;
+        }
         $statusId = (int) $this->statuses[$status];
         $order = new Order((int) $orderId);
         if ($statusId === (int) $order->current_state) {

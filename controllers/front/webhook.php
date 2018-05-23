@@ -121,7 +121,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
+                && (float) $apiPayment->settlementAmount->value - (float) $apiPayment->amountRefunded->value > 0
+                ) {
+                    $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
+                } else {
+                    $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                }
             } elseif ($psPayment['method'] === 'banktransfer' &&
                 $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
