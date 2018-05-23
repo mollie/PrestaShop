@@ -369,10 +369,18 @@ class Mollie extends PaymentModule
         $cookie = Context::getContext()->cookie;
         $lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
         $lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
+        $this->context->smarty->assign(array(
+            'link'       => Context::getContext()->link,
+            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
+        ));
 
         $updateMessage = defined('_TB_VERSION_')
             ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
             : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
+        $updateMessage = 'update plz ';
+        if ($updateMessage) {
+            $updateMessage .= $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
+        }
         $resultMessage = '';
         $warningMessage = '';
 
@@ -459,10 +467,6 @@ class Mollie extends PaymentModule
         }
 
         $this->context->smarty->assign($data);
-        $this->context->smarty->assign(array(
-            'link'       => Context::getContext()->link,
-            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
-        ));
 
         return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');
     }
@@ -649,6 +653,34 @@ class Mollie extends PaymentModule
         return $resultMessage;
     }
 
+    /**
+     * @param string|null $url
+     *
+     * @return bool|null|string|string[]
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
+    protected function getLatestVersion($url = null)
+    {
+        if (!$url) {
+            $url = (defined('_TB_VERSION_')
+                ? 'https://api.github.com/repos/mollie/thirtybees/releases/latest'
+                : 'https://api.github.com/repos/mollie/PrestaShop/releases/latest');
+        }
+        $curl = new \Curl\Curl();
+        $response = $curl->get($url);
+        if (!is_object($response)) {
+            throw new PrestaShopException($this->l('Warning: Could not retrieve update file from github.'));
+        }
+        if (empty($response->assets[0]->browser_download_url)) {
+            throw new PrestaShopException($this->l('No download package found for the latest release.'));
+        }
+
+        return array(
+            'version'  => $response->tag_name,
+            'download' => $response->assets[0]->browser_download_url,
+        );
+    }
 
     /**
      * @param string $url
@@ -1392,5 +1424,206 @@ class Mollie extends PaymentModule
         }
 
         return "{$langIso}_{$countryIso}";
+    }
+
+    /**
+     * Ajax process download module update
+     *
+     * @since 3.0.0
+     */
+    public function ajaxProcessDownloadUpdate()
+    {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
+        try {
+            $latestVersion = $this->getLatestVersion();
+        } catch (PrestaShopException $e) {
+            die(json_encode(array(
+                'success' => false,
+            )));
+        } catch (SmartyException $e) {
+            die(json_encode(array(
+                'success' => false,
+            )));
+        }
+        if (version_compare($latestVersion['version'], $this->version, '>')) {
+            // Then update
+            die(json_encode(array(
+                'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
+            )));
+        }
+
+        die(json_encode(array(
+            'success' => true,
+        )));
+    }
+
+    /**
+     * Ajax process install module update
+     *
+     * @since 3.0.0
+     */
+    public function ajaxProcessInstallUpdate()
+    {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
+        try {
+            $result = $this->unzipModule();
+        } catch (Adapter_Exception $e) {
+            $result = false;
+        } catch (PrestaShopDatabaseException $e) {
+            $result = false;
+        } catch (PrestaShopException $e) {
+            $result = false;
+        }
+
+        die(json_encode(array(
+            'success' => $result,
+            'errors'  => $this->context->controller->errors,
+        )));
+    }
+
+    /**
+     * Download the latest module from the given location
+     *
+     * @param string $moduleName
+     * @param string $location
+     *
+     * @return bool
+     */
+    protected function downloadModuleFromLocation($moduleName, $location)
+    {
+        $zipLocation = _PS_MODULE_DIR_.$moduleName.'.zip';
+        if (@!file_exists($zipLocation)) {
+            $curl = new \Curl\Curl();
+            $curl->setOpt(CURLOPT_ENCODING , '');
+            $curl->setOpt(CURLOPT_FOLLOWLOCATION, 1);
+            if (!$curl->download($location, _PS_MODULE_DIR_.'mollie-update.zip')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Unzip the module
+     *
+     * @return bool Whether the module has been successfully extracted
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    protected function unzipModule()
+    {
+        if (@file_exists(_PS_MODULE_DIR_.'mollie-update.zip')) {
+            return $this->extractModuleArchive($this->name, _PS_MODULE_DIR_.'mollie-update.zip');
+        }
+
+        return false;
+    }
+
+    /**
+     * Extracts a module archive to the `modules` folder
+     *
+     * @param string $moduleName Module name
+     * @param string $file       File source location
+     *
+     * @return bool
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 1.0.0
+     */
+    protected function extractModuleArchive($moduleName, $file)
+    {
+        $zipFolders = array();
+        $tmpFolder = _PS_MODULE_DIR_.$moduleName.md5(time());
+
+        if (@!file_exists($file)) {
+            $this->context->controller->errors[] = $this->l('Module archive could not be downloaded');
+
+            return false;
+        }
+
+        $success = false;
+        if (substr($file, -4) == '.zip') {
+            if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder.DIRECTORY_SEPARATOR.$moduleName)) {
+                if (file_exists(_PS_MODULE_DIR_.$moduleName)) {
+                    if (!ConfigurationTest::testDir(_PS_MODULE_DIR_.$moduleName, true, $report, true)) {
+                        $this->context->controller->errors[] = sprintf($this->l('Could not update module `%s`: module directory not writable (`%s`).'), $moduleName, $report);
+                        $this->recursiveDeleteOnDisk($tmpFolder);
+                        @unlink(_PS_MODULE_DIR_.$moduleName.'.zip');
+
+                        return false;
+                    }
+                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_.$moduleName);
+                }
+                if (@rename($tmpFolder.DIRECTORY_SEPARATOR.$moduleName, _PS_MODULE_DIR_.$moduleName)) {
+                    $success = true;
+                }
+            }
+        }
+
+        if (!$success) {
+            $this->context->controller->errors[] = $this->l('There was an error while extracting the module file (file may be corrupted).');
+            // Force a new check
+        } else {
+            //check if it's a real module
+            foreach ($zipFolders as $folder) {
+                if (!in_array($folder, array('.', '..', '.svn', '.git', '__MACOSX')) && !Module::getInstanceByName($folder)) {
+                    $this->context->controller->errors[] = sprintf($this->l('The module %1$s that you uploaded is not a valid module.'), $folder);
+                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_.$folder);
+                }
+            }
+        }
+
+        @unlink($file);
+        @unlink(_PS_MODULE_DIR_.$moduleName.'backup');
+        $this->recursiveDeleteOnDisk($tmpFolder);
+
+//        if ($success) {
+//            Configuration::updateGlobalValue(static::LAST_UPDATE, (int) time());
+//            if ($redirect) {
+//                Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true).'&doNotAutoUpdate=1');
+//            }
+//        }
+
+        die(json_encode(array(
+            'success' => $success,
+        )));
+    }
+
+    /**
+     * Delete folder recursively
+     *
+     * @param string $dir Directory
+     *
+     * @since 1.0.0
+     */
+    protected function recursiveDeleteOnDisk($dir)
+    {
+        if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false) {
+            return;
+        }
+
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (filetype($dir.'/'.$object) == 'dir') {
+                        $this->recursiveDeleteOnDisk($dir.'/'.$object);
+                    } else {
+                        @unlink($dir.'/'.$object);
+                    }
+                }
+            }
+            reset($objects);
+            rmdir($dir);
+        }
     }
 }

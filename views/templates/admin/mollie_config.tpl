@@ -56,7 +56,7 @@
       {if $update_message}
         <div class="mollie_update_msg col-md-12">
           <span id="mollie_update_msg">
-            {$update_message|escape:'htmlall':'UTF-8'}
+            {$update_message}
           </span>
         </div>
       {/if}
