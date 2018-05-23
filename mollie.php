@@ -1257,10 +1257,12 @@ class Mollie extends PaymentModule
      * Get payment data
      *
      * @param float|string $amount
+     * @param              $currency
      * @param string       $method
      * @param string|null  $issuer
      * @param int|Cart     $cartId
      * @param string       $secureKey
+     * @param bool         $qrCode
      *
      * @return array
      * @throws PrestaShopException
@@ -1282,10 +1284,17 @@ class Mollie extends PaymentModule
                 $cartId,
                 $description
             ),
-            'redirectUrl' => $context->link->getModuleLink(
-                'mollie',
-                'return',
-                array('cart_id' => $cartId, 'utm_nooverride' => 1, 'qr_code' => (int) $qrCode)
+            'redirectUrl' => ($qrCode
+                ? $context->link->getModuleLink(
+                    'mollie',
+                    'qrcode',
+                    array('done' => 1)
+                )
+                : $context->link->getModuleLink(
+                    'mollie',
+                    'return',
+                    array('cart_id' => $cartId, 'utm_nooverride' => 1)
+                )
             ),
             'webhookUrl'  => $context->link->getModuleLink(
                 'mollie',

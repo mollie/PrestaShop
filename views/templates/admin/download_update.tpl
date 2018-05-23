@@ -5,7 +5,7 @@
     if (button) {
       button.onclick = function (e) {
         var downloadRequest = new XMLHttpRequest();
-        downloadRequest.open('GET', '{$link->getAdminLink('AdminModules', true)|escape:'javscript':'UTF-8'}&configure=mollie&module_name=mollie' + '&ajax=1&action=downloadUpdate', true);
+        downloadRequest.open('GET', '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie' + '&ajax=1&action=downloadUpdate', true);
 
         downloadRequest.onreadystatechange = function () {
           if (this.readyState === 4) {
@@ -14,7 +14,7 @@
                 var data = JSON.parse(this.responseText);
                 if (data.success) {
                   var unzipRequest = new XMLHttpRequest();
-                  unzipRequest.open('GET', '{$link->getAdminLink('AdminModules', true)|escape:'javscript':'UTF-8'}&configure=mollie&module_name=mollie' + '&ajax=1&action=installUpdate', true);
+                  unzipRequest.open('GET', '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie' + '&ajax=1&action=installUpdate', true);
 
                   unzipRequest.onreadystatechange = function () {
                     if (this.readyState === 4) {

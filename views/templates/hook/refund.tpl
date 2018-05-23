@@ -33,30 +33,30 @@
 {if $smarty.const._PS_VERSION_|@addcslashes:'\'' >= '1.6'}
     <div class="panel">
       <div class="panel-heading">
-        <img src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/mollie_panel_icon.png" height="32" width="32" style="height: 14px; width: 14px"> {$msg_title|escape:'htmlall':'UTF-8'}
+        <img src="{$module_dir|escape:'htmlall':'UTF-8' nofilter}views/img/mollie_panel_icon.png" height="32" width="32" style="height: 14px; width: 14px"> {$msg_title|escape:'htmlall':'UTF-8' nofilter}
       </div>
       <div class="mollie_refund_button_box">
         {if $status === 'form'}
-          <form action="{$link->getAdminLink('AdminOrders', true)|escape:'htmlall':'UTF-8'}&id_order={$smarty.get.id_order|intval}&vieworder&Mollie_Refund"
+          <form action="{$link->getAdminLink('AdminOrders', true)|escape:'htmlall':'UTF-8' nofilter}&id_order={$smarty.get.id_order|intval}&vieworder&Mollie_Refund"
                 method="post"
                 id="mollie_refund_form"
           >
-            <div class="mollie_refund_desc">{$msg_description|escape:'htmlall':'UTF-8'}</div>
+            <div class="mollie_refund_desc">{$msg_description|escape:'htmlall':'UTF-8' nofilter}</div>
             <input id="mollie_refund"
                    name="Mollie_Refund"
                    type="submit"
                    class="btn btn-default"
-                   value="{$msg_button|escape:'htmlall':'UTF-8'}"
+                   value="{$msg_button|escape:'htmlall':'UTF-8' nofilter}"
                    onclick="window.MollieModule.refund(); return false;"
             >
           </form>
         {elseif $status === 'fail'}
-          <div class="mollie_refund_fail">{$msg_fail|escape:'htmlall':'UTF-8'}</div>
-          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_fail">{$msg_fail|escape:'htmlall':'UTF-8' nofilter}</div>
+          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8' nofilter}</div>
         {elseif $status === 'success'}
-          <div class="mollie_refund_success">{$msg_success|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_success">{$msg_success|escape:'htmlall':'UTF-8' nofilter}</div>
           <br/>
-          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8' nofilter}</div>
         {/if}
       </div>
     </div>
@@ -64,30 +64,30 @@
   <div class="mollie_refund">
     <div class="mollie_panel">
       <div class="mollie_refund_message">
-        <img src="{$img_src|escape:'htmlall':'UTF-8'}" alt=""/>{$msg_title|escape:'htmlall':'UTF-8'}
+        <img src="{$img_src|escape:'htmlall':'UTF-8' nofilter}" alt=""/>{$msg_title|escape:'htmlall':'UTF-8' nofilter}
       </div>
       <div class="mollie_refund_button_box">
         {if $status === 'form'}
-          <form action="{$link->getAdminLink('AdminOrders', true)|escape:'htmlall':'UTF-8'}&id_order={$smarty.get.id_order|intval}&vieworder&Mollie_Refund"
+          <form action="{$link->getAdminLink('AdminOrders', true)|escape:'htmlall':'UTF-8' nofilter}&id_order={$smarty.get.id_order|intval}&vieworder&Mollie_Refund"
                 method="post"
                 id="mollie_refund_form"
           >
-            <div class="mollie_refund_desc">{$msg_description|escape:'htmlall':'UTF-8'}</div>
+            <div class="mollie_refund_desc">{$msg_description|escape:'htmlall':'UTF-8' nofilter}</div>
             <input id="mollie_refund"
                    name="Mollie_Refund"
                    type="submit"
                    class="mollie_refund_button"
-                   value="{$msg_button|escape:'htmlall':'UTF-8'}"
+                   value="{$msg_button|escape:'htmlall':'UTF-8' nofilter}"
                    onclick="window.MollieModule.refund(); return false;"
             >
           </form>
         {elseif $status === 'fail'}
-          <div class="mollie_refund_fail">{$msg_fail|escape:'htmlall':'UTF-8'}</div>
-          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_fail">{$msg_fail|escape:'htmlall':'UTF-8' nofilter}</div>
+          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8' nofilter}</div>
         {elseif $status === 'success'}
-          <div class="mollie_refund_success">{$msg_success|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_success">{$msg_success|escape:'htmlall':'UTF-8' nofilter}</div>
           <br/>
-          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8'}</div>
+          <div class="mollie_refund_details">{$msg_details|escape:'htmlall':'UTF-8' nofilter}</div>
         {/if}
       </div>
     </div>

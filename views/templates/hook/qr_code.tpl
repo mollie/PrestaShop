@@ -15,7 +15,7 @@
     function pollStatus(idTransaction) {
       setTimeout(function () {
         var request = new XMLHttpRequest();
-        request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javscript':'UTF-8'}' + '&transaction_id=' + idTransaction, true);
+        request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}' + '&transaction_id=' + idTransaction, true);
 
         request.onreadystatechange = function () {
           if (this.readyState === 4) {
@@ -52,7 +52,7 @@
       var self = this;
       elem.style.display = 'none';
       var request = new XMLHttpRequest();
-      request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'])|escape:'javascript':'UTF-8'}', true);
+      request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'])|escape:'javascript':'UTF-8' nofilter}', true);
 
       request.onreadystatechange = function() {
         if (this.readyState === 4) {

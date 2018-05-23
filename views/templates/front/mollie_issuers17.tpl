@@ -72,13 +72,10 @@
                         <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
                       </button>
                     {/foreach}
-                    <input type="hidden"
-                           name="method"
-                           value="ideal"
-                    >
+                    <input type="hidden" name="method" value="ideal">
                   {/if}
                   
-                  {include file='module:mollie/views/templates/hook/qr_code17.tpl'}
+                  {include file='module:mollie/views/templates/hook/qr_code.tpl'}
 
                   <a href="{$urls.pages.order|escape:'htmlall':'UTF-8' nofilter}"
                      class="btn btn-primary"

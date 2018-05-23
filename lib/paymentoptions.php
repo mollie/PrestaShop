@@ -87,7 +87,7 @@ foreach ($methods as $method) {
                     'value' => '',
                 ),
             ))
-            ->setLogo($method->image->normal)
+            ->setLogo($method->image->size1x)
             ->setAdditionalInformation($mollie->display($reflection->getFileName(), 'ideal_dropdown.tpl'))
         ;
 
@@ -105,7 +105,7 @@ foreach ($methods as $method) {
                 'mollie', 'payment',
                 array('method' => $method->id), true
             ))
-            ->setLogo($method->image->normal)
+            ->setLogo($method->image->size1x)
         ;
 
         $paymentOptions[] = $newOption;

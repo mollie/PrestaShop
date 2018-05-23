@@ -31,29 +31,35 @@
 * @link       https://www.mollie.nl
 *}
 
-{capture name=path}
-  <a href="{$orderLink|escape:'html':'UTF-8' nofilter}">
-    {l s='Payment' mod='mollie'}
-  </a>
-  <span class="navigation-pipe">
-        {$navigationPipe|escape:'htmlall':'UTF-8' nofilter}
-    </span>
-  <span class="navigation_page">
-        {l s='Payment error' mod='mollie'}
-    </span>
-{/capture}
-<div class="alert alert-danger">
-  <strong>{l s='An error occurred' mod='mollie'}:</strong>
-  <ul>
-    {foreach from=$errors item='error'}
-      <li>{$error|escape:'htmlall':'UTF-8' nofilter}</li>
-    {/foreach}
-  </ul>
-</div>
-<ul class="footer_links clearfix">
-  <li>
-    <a class="btn btn-default button button-small" href="{$orderLink|escape:'html':'UTF-8' nofilter}" title="{l s='Back to your shopping cart' mod='mollie'}">
-      <span><i class="icon-chevron-left"></i> {l s='Back to your shopping cart' mod='mollie'}</span>
-    </a>
-  </li>
-</ul>
+<!doctype html>
+<html>
+<head>
+  <title>{l s='Mollie iDEAL QR' mod='mollie'}</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial, Sans-Serif;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.6em;
+    }
+    p {
+      font-size: 1.2em;
+    }
+    .ideal-container {
+      width: 100%;
+    }
+    .ideal-logo {
+      margin: 0 auto;
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="ideal-container">
+    <img class="ideal-logo" src="{$ideal_logo}" alt="">
+  </div>
+  <h1>{l s='Welcome back' mod='mollie'}</h1>
+  <p>{l s='The payment has been completed. Thank you for your order!' mod='mollie'}</p>
+</body>
+</html>

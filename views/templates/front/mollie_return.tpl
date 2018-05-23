@@ -32,7 +32,7 @@
 *}
 
 <h2>{l s='Welcome back' mod='mollie'}</h2>
-<p>{$msg_details|escape:'htmlall':'UTF-8'}</p>
-<a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8'}">
+<p>{$msg_details|escape:'htmlall':'UTF-8' nofilter}</p>
+<a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8' nofilter}">
   <i class="icon icon-chevron-left"></i> {l s='Continue shopping' mod='mollie'}
 </a>

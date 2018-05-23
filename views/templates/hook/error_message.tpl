@@ -31,5 +31,5 @@
 * @link       https://www.mollie.nl
 *}
 <p class="payment_module" style="color:red;">
-  {$message|escape:'html':'UTF-8'}
+  {$message|escape:'html':'UTF-8' nofilter}
 </p>

@@ -92,7 +92,7 @@
         >
         <br/>
         <em class="mollie_desc">
-          {{{l s='You can find your API key in your %sMollie Profile%s; it starts with test or live.' mod='mollie'}|escape:'htmlall':'UTF-8'}|sprintf:'<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank">':'</a>'}
+          {{{l s='You can find your API key in your %sMollie Profile%s; it starts with test or live.' mod='mollie'}|escape:'htmlall':'UTF-8' nofilter}|sprintf:'<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank">':'</a>'}
         </em>
       </div>
     </div>
@@ -305,7 +305,7 @@
             </option>
           {/foreach}
         </select><br/>
-        <em class="mollie_desc">{{l s='Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:"<a href=\"%s\">":'</a>'|sprintf:{$link->getAdminLink('AdminLogs')|escape:'htmlall':'UTF-8'}}</em>
+        <em class="mollie_desc">{{l s='Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:"<a href=\"%s\">":'</a>'|sprintf:{$link->getAdminLink('AdminLogs')|escape:'htmlall':'UTF-8' nofilter}}</em>
       </div>
     </div>
     <!--/ Mollie debug settings-->

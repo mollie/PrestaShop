@@ -18,6 +18,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws SmartyException
      */
     public function initContent()
     {
@@ -26,7 +27,14 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         if (Tools::getValue('done')) {
-            $this->setTemplate('qr-done.tpl');
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                header('Content-Type: text/html');
+                $this->context->smarty->assign('ideal_logo', Media::getMediaPath(_PS_MODULE_DIR_.'mollie/views/img/ideal_logo.png'));
+                echo $this->context->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/front/qr_done.tpl');
+                exit;
+            } else {
+                $this->setTemplate('qr_done.tpl');
+            }
         }
     }
 

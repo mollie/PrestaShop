@@ -32,7 +32,7 @@
 *}
 
 {if $warning != ''}
-  <p class="payment_module" style="color:red;">{$warning|escape:'htmlall':'UTF-8'}</p>
+  <p class="payment_module" style="color:red;">{$warning|escape:'htmlall':'UTF-8' nofilter}</p>
 {/if}
 
 <div class="mollie_methods">
@@ -63,14 +63,14 @@
     (function () {
       window.MollieModule = window.MollieModule || { };
       window.MollieModule.urls = window.MollieModule.urls || { };
-      window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'], Tools::usingSecureMode())|escape:'javascript':'UTF-8'}';
-      window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8'}';
+      window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+      window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
 
       if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.banks === 'undefined') {
         var elem = document.createElement('script');
         elem.type = 'text/javascript';
         document.querySelector('head').appendChild(elem);
-        elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8'}';
+        elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8' nofilter}';
       }
 
       function showBanks(event) {
@@ -86,7 +86,7 @@
             new window.MollieModule.banks.default(banks, translations);
           };
           document.querySelector('head').appendChild(elem);
-          elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8'}';
+          elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8' nofilter}';
         } else {
           new window.MollieModule.banks.default(banks, translations);
         }
