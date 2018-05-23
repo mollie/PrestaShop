@@ -265,6 +265,8 @@
     padding: .5rem 1.25rem;
     display: inline-block;
     font-weight: 400;
+    min-width: 500px;
+    max-width: 800px;
     line-height: 1.25;
     text-align: center;
     white-space: nowrap;
