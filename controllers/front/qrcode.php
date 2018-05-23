@@ -7,10 +7,12 @@
  */
 class MollieQrcodeModuleFrontController extends ModuleFrontController
 {
+    /** @var bool $ssl */
+    public $ssl = true;
     /** @var bool If false, does not build left page column content and hides it. */
-    public $display_column_left = true;
+    public $display_column_left = false;
     /** @var bool If false, does not build right page column content and hides it. */
-    public $display_column_right = true;
+    public $display_column_right = false;
 
     /**
      * @throws Adapter_Exception
