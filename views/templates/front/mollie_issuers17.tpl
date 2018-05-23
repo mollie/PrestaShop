@@ -77,6 +77,8 @@
                            value="ideal"
                     >
                   {/if}
+                  
+                  {include file='module:mollie/views/templates/hook/qr_code17.tpl'}
 
                   <a href="{$urls.pages.order|escape:'htmlall':'UTF-8' nofilter}"
                      class="btn btn-primary"
