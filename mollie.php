@@ -147,7 +147,7 @@ class Mollie extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the Mollie Payment Module?');
 
-        $this->controllers = array('payment', 'return', 'webhook');
+        $this->controllers = array('payment', 'return', 'webhook', 'qrcode');
 
         try {
             $this->api = new \Mollie\Api\MollieApiClient();
@@ -936,6 +936,7 @@ class Mollie extends PaymentModule
 
         $smarty->assign(
             array(
+                'link'                  => $this->context->link,
                 'methods'               => $methods->getArrayCopy(),
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
@@ -947,6 +948,7 @@ class Mollie extends PaymentModule
                 'mollie_banks_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
                 'mollie_translations'   => array(
                     'chooseYourBank' => $this->l('Choose your bank'),
+                    'orPayByIdealQr'    => $this->l('or pay by iDEAL QR'),
                     'choose'         => $this->l('Choose'),
                     'cancel'         => $this->l('Cancel'),
                 ),
@@ -1187,5 +1189,202 @@ class Mollie extends PaymentModule
         }
 
         return $mediaUri;
+    }
+
+    /**
+     * Get payment data
+     *
+     * @param float|string $amount
+     * @param string       $method
+     * @param string|null  $issuer
+     * @param int|Cart     $cartId
+     * @param string       $secureKey
+     *
+     * @return array
+     * @throws PrestaShopException
+     */
+    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey)
+    {
+        $description = static::generateDescriptionFromCart($cartId);
+        $context = Context::getContext();
+
+        $paymentData = array(
+            'amount'      => array(
+                'currency' => $currency ? strtoupper($currency) : 'EUR',
+                'value'    => number_format(str_replace(',', '.', $amount), 2),
+            ),
+            'method'      => $method,
+            'issuer'      => $issuer,
+            'description' => str_replace(
+                '%',
+                $cartId,
+                $description
+            ),
+            'redirectUrl' => $context->link->getModuleLink(
+                'mollie',
+                'return',
+                array('cart_id' => $cartId, 'utm_nooverride' => 1)
+            ),
+            'webhookUrl'  => $context->link->getModuleLink(
+                'mollie',
+                'webhook'
+            ),
+        );
+
+        $paymentData['metadata'] = array(
+            'cart_id'    => $cartId,
+            'secure_key' => Tools::encrypt($secureKey),
+        );
+
+        // Send webshop locale
+        if (Configuration::get(
+                Mollie::MOLLIE_PAYMENTSCREEN_LOCALE
+            ) === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE
+        ) {
+            $locale = static::getWebshopLocale();
+
+            if (preg_match(
+                '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
+                $locale
+            )) {
+                $paymentData['locale'] = $locale;
+            }
+        }
+
+        if (isset($context->cart)) {
+            if (isset($context->cart->id_customer)) {
+                $buyer = new Customer($context->cart->id_customer);
+                $paymentData['billingEmail'] = (string) $buyer->email;
+            }
+            if (isset($context->cart->id_address_invoice)) {
+                $billing = new Address((int) $context->cart->id_address_invoice);
+                $paymentData['billingAddress'] = array(
+                    'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
+                    'city'            => (string) $billing->city,
+                    'region'          => (string) State::getNameById($billing->id_state),
+                    'postalCode'      => (string) $billing->postcode,
+                    'country'         => (string) Country::getIsoById($billing->id_country),
+                );
+            }
+            if (isset($context->cart->id_address_delivery)) {
+                $shipping = new Address((int) $context->cart->id_address_delivery);
+                $paymentData['billingAddress'] = array(
+                    'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
+                    'city'            => (string) $shipping->city,
+                    'region'          => (string) State::getNameById($shipping->id_state),
+                    'postalCode'      => (string) $shipping->postcode,
+                    'country'         => (string) Country::getIsoById($shipping->id_country),
+                );
+            }
+        }
+
+        return $paymentData;
+    }
+
+    /**
+     * Generate a description from the Cart
+     *
+     * @param Cart|int $cartId Cart or Cart ID
+     *
+     * @return string Description
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.0.0
+     */
+    public static function generateDescriptionFromCart($cartId)
+    {
+        if ($cartId instanceof Cart) {
+            $cart = $cartId;
+        } else {
+            $cart = new Cart($cartId);
+        }
+
+        $buyer = null;
+        if ($cart->id_customer) {
+            $buyer = new Customer($cart->id_customer);
+        }
+
+        $filters = array(
+            'cart.id'            => $cartId,
+            'customer.firstname' => $buyer == null ? '' : $buyer->firstname,
+            'customer.lastname'  => $buyer == null ? '' : $buyer->lastname,
+            'customer.company'   => $buyer == null ? '' : $buyer->company,
+        );
+
+        $content = Configuration::get(Mollie::MOLLIE_DESCRIPTION);
+
+        foreach ($filters as $key => $value) {
+            $content = str_replace(
+                "{".$key."}",
+                $value,
+                $content
+            );
+        }
+
+        return $content;
+    }
+
+    /**
+     * Get webshop locale
+     *
+     * @return string
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.0.0
+     */
+    public static function getWebshopLocale()
+    {
+        // Current language
+        if (Context::getContext()->language instanceof Language) {
+            $language = Context::getContext()->language->iso_code;
+        } else {
+            $language = 'en';
+        }
+        $supportedLanguages = array(
+            'de',
+            'en',
+            'es',
+            'fr',
+            'nl',
+        );
+        $supportedLocales = array(
+            'en_US',
+            'de_AT',
+            'de_CH',
+            'de_DE',
+            'es_ES',
+            'fr_BE',
+            'fr_FR',
+            'nl_BE',
+            'nl_NL',
+        );
+
+        $langIso = Tools::strtolower($language);
+        if (!in_array($langIso, $supportedLanguages)) {
+            $langIso = 'en';
+        }
+        $countryIso = Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
+        if (!in_array("{$langIso}_{$countryIso}", $supportedLocales)) {
+            switch ($langIso) {
+                case 'de':
+                    $countryIso = 'DE';
+                    break;
+                case 'es':
+                    $countryIso = 'ES';
+                    break;
+                case 'fr':
+                    $countryIso = 'FR';
+                    break;
+                case 'nl':
+                    $countryIso = 'NL';
+                    break;
+                default:
+                    $countryIso = 'US';
+            }
+        }
+
+        return "{$langIso}_{$countryIso}";
     }
 }

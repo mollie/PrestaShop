@@ -106,8 +106,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $amount = $originalAmount;
 
         // Prepare payment
-        $paymentData = $this->getPaymentData(
+        $paymentData = Mollie::getPaymentData(
             $amount,
+            strtoupper($this->context->currency->iso_code),
             $method,
             $issuer,
             (int) $cart->id,
@@ -201,80 +202,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Retrieves a list of issuers for the selected method
-     *
-     * @param string $method
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     */
-    private function getIssuerListByMethod($method)
-    {
-        try {
-            $issuers = $this->module->api->issuers->all();
-            $issuerList = array();
-            foreach ($issuers as $issuer) {
-                if ($issuer->method === $method) {
-                    $issuerList[$issuer->id] = $issuer->name;
-                }
-            }
-            return $issuerList;
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::NOTICE);
-            }
-        }
-        return array();
-    }
-
-    /**
-     * @param float $amount
-     *
-     * @return float
-     *
-     * @throws PrestaShopException
-     */
-   /* private function convertCurrencyToEuro($amount)
-    {
-        $cart = $this->context->cart;
-        $currencyEuro = Currency::getIdByIsoCode('EUR');
-        if (!$currencyEuro) {
-            // No Euro currency available!
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(
-                    __METHOD__.' said: In order to use this module, you need to enable Euros as currency.',
-                    Mollie::CRASH
-                );
-            }
-            die($this->module->lang['This payment method is only available for Euros.']);
-        }
-
-        if ($cart->id_currency !== $currencyEuro) {
-            // Convert non-euro currency to default
-            $amount = Tools::convertPrice(
-                $amount,
-                $cart->id_currency,
-                false
-            );
-
-            if (Currency::getDefaultCurrency() !== $currencyEuro) {
-                // If default is not euro, convert to euro
-                $amount = Tools::convertPrice(
-                    $amount,
-                    $currencyEuro,
-                    true
-                );
-            }
-        }
-
-        return round(
-            $amount,
-            2
-        );
-    }*/
-
-    /**
      * @param int $cartId
      *
      * @return string
@@ -310,154 +237,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param float|string $amount
-     * @param string       $method
-     * @param string|null  $issuer
-     * @param int          $cartId
-     * @param string       $secureKey
-     *
-     * @return array
-     * @throws PrestaShopException
-     */
-    private function getPaymentData($amount, $method, $issuer, $cartId, $secureKey)
-    {
-        $description = $this->generateDescriptionFromCart($cartId);
-
-        $currency = Currency::getCurrency((int) $this->context->cart->id_currency);
-        $currencyIso = $currency['iso_code'];
-
-        $paymentData = array(
-            'amount'      => array(
-                'currency' => $currencyIso ? strtoupper($currencyIso) : 'EUR',
-                'value'    => number_format(str_replace(',', '.', $amount), 2),
-            ),
-            'method'      => $method,
-            'issuer'      => $issuer,
-            'description' => str_replace(
-                '%',
-                $cartId,
-                $description
-            ),
-            'redirectUrl' => $this->context->link->getModuleLink(
-                'mollie',
-                'return',
-                array('cart_id' => $cartId, 'utm_nooverride' => 1)
-            ),
-            'webhookUrl'  => $this->context->link->getModuleLink(
-                'mollie',
-                'webhook'
-            ),
-        );
-
-        $paymentData['metadata'] = array(
-            'cart_id'    => $cartId,
-            'secure_key' => Tools::encrypt($secureKey),
-        );
-
-        // Send webshop locale
-        if (Configuration::get(
-                Mollie::MOLLIE_PAYMENTSCREEN_LOCALE
-            ) === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE
-        ) {
-            $locale = $this->getWebshopLocale();
-
-            if (preg_match(
-                '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
-                $locale
-            )) {
-                $paymentData['locale'] = $locale;
-            }
-        }
-
-        if (isset($this->context, $this->context->cart)) {
-            if (isset($this->context->cart->id_customer)) {
-                $buyer = new Customer($this->context->cart->id_customer);
-                $paymentData['billingEmail'] = (string) $buyer->email;
-            }
-            if (isset($this->context->cart->id_address_invoice)) {
-                $billing = new Address((int) $this->context->cart->id_address_invoice);
-                $paymentData['billingAddress'] = array(
-                    'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
-                    'city'            => (string) $billing->city,
-                    'region'          => (string) State::getNameById($billing->id_state),
-                    'postalCode'      => (string) $billing->postcode,
-                    'country'         => (string) Country::getIsoById($billing->id_country),
-                );
-            }
-            if (isset($this->context->cart->id_address_delivery)) {
-                $shipping = new Address((int) $this->context->cart->id_address_delivery);
-                $paymentData['billingAddress'] = array(
-                    'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
-                    'city'            => (string) $shipping->city,
-                    'region'          => (string) State::getNameById($shipping->id_state),
-                    'postalCode'      => (string) $shipping->postcode,
-                    'country'         => (string) Country::getIsoById($shipping->id_country),
-                );
-            }
-        }
-
-        return $paymentData;
-    }
-
-    /**
-     * @return string
-     * @throws PrestaShopException
-     */
-    private function getWebshopLocale()
-    {
-        // Current language
-        if (Context::getContext()->language instanceof Language) {
-            $language = Context::getContext()->language->iso_code;
-        } else {
-            $language = 'en';
-        }
-        $supportedLanguages = array(
-            'de',
-            'en',
-            'es',
-            'fr',
-            'nl',
-        );
-        $supportedLocales = array(
-            'en_US',
-            'de_AT',
-            'de_CH',
-            'de_DE',
-            'es_ES',
-            'fr_BE',
-            'fr_FR',
-            'nl_BE',
-            'nl_NL',
-        );
-
-        $langIso = Tools::strtolower($language);
-        if (!in_array($langIso, $supportedLanguages)) {
-            $langIso = 'en';
-        }
-        $countryIso = Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
-        if (!in_array("{$langIso}_{$countryIso}", $supportedLocales)) {
-            switch ($langIso) {
-                case 'de':
-                    $countryIso = 'DE';
-                    break;
-                case 'es':
-                    $countryIso = 'ES';
-                    break;
-                case 'fr':
-                    $countryIso = 'FR';
-                    break;
-                case 'nl':
-                    $countryIso = 'NL';
-                    break;
-                default:
-                    $countryIso = 'US';
-            }
-        }
-
-        return "{$langIso}_{$countryIso}";
-    }
-
-    /**
      * @param array $data
      *
      * @return \Mollie\Api\Resources\Payment|null
@@ -466,50 +245,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      */
     private function createPayment($data)
     {
-        $payment = null;
         if (Configuration::get(Mollie::MOLLIE_USE_PROFILE_WEBHOOK)) {
             unset($data['webhookUrl']);
         }
 
-//        try {
-            /** @var \Mollie\Api\Resources\Payment $payment */
-            $payment = $this->module->api->payments->create($data);
-//        } catch (\Mollie\Api\Exceptions\ApiException $e) {
-//            try {
-//                if ($e->getField() === 'webhookUrl') {
-//                    if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-//                        Logger::addLog(
-//                            __METHOD__.' said: Could not reach generated webhook url, falling back to profile webhook url.',
-//                            Mollie::WARNING
-//                        );
-//                    }
-//                    unset($data['webhookUrl']);
-//                    $payment = $this->module->api->payments->create($data);
-//                } else {
-//                    throw $e;
-//                }
-//            } catch (\Mollie\Api\Exceptions\ApiException $e) {
-//                if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-//                    Logger::addLog(
-//                        __METHOD__.' said: '.$e->getMessage(),
-//                        Mollie::CRASH
-//                    );
-//                }
-//                if (Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)) {
-//                    $this->errors[] = $this->module->lang['There was an error while processing your request: '].'<br /><em>'.$e->getMessage().'</em>';
-//
-//                    if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-//                        $this->setTemplate('error.tpl');
-//                    } else {
-//                        $this->setTemplate('module:mollie/views/templates/front/error.tpl');
-//                    }
-//
-//                    return null;
-//                } else {
-//                    Tools::redirect(Context::getContext()->link->getPageLink('index', true));
-//                }
-//            }
-//        }
+        /** @var \Mollie\Api\Resources\Payment $payment */
+        $payment = $this->module->api->payments->create($data);
+
         return $payment;
     }
 }

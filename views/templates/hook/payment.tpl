@@ -61,6 +61,11 @@
 {if !empty($issuers['ideal']) && $issuer_setting == Mollie::ISSUERS_ON_CLICK}
   <script type="text/javascript">
     (function () {
+      window.MollieModule = window.MollieModule || { };
+      window.MollieModule.urls = window.MollieModule.urls || { };
+      window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'], Tools::usingSecureMode())|escape:'javascript':'UTF-8'}';
+      window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8'}';
+
       if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.banks === 'undefined') {
         var elem = document.createElement('script');
         elem.type = 'text/javascript';

@@ -25,6 +25,7 @@
     "xss": "^0.3.4"
   },
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "uglifyjs-webpack-plugin": "^1.1.8"
   }
 }
