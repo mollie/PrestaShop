@@ -87,6 +87,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $tplData['msg_bankselect'] = $this->module->lang['Select your bank:'];
                 $tplData['msg_ok'] = $this->module->lang['OK'];
                 $tplData['msg_return'] = $this->module->lang['Different payment method'];
+                $tplData['link'] = $this->context->link;
                 $this->context->smarty->assign($tplData);
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
                     $this->setTemplate('mollie_issuers.tpl');

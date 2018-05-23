@@ -682,6 +682,7 @@ class Mollie extends PaymentModule
      * @return bool|null|string|string[]
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws ErrorException
      */
     protected function getLatestVersion($url = null)
     {
@@ -1453,6 +1454,7 @@ class Mollie extends PaymentModule
      * Ajax process download module update
      *
      * @since 3.0.0
+     * @throws ErrorException
      */
     public function ajaxProcessDownloadUpdate()
     {
@@ -1515,6 +1517,7 @@ class Mollie extends PaymentModule
      * @param string $location
      *
      * @return bool
+     * @throws ErrorException
      */
     protected function downloadModuleFromLocation($moduleName, $location)
     {
