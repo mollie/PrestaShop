@@ -52,6 +52,26 @@ class Mollie extends PaymentModule
     public $statuses = array();
     /** @var array $lang */
     public $lang = array();
+    /**
+    * Currency restrictions per payment method
+    *
+    * @var array
+    */
+    public static $methodCurrencies = array(
+        'banktransfer' => array('eur'),
+        'belfius '     => array('eur'),
+        'bitcoin '     => array('eur'),
+        'creditcard'   => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
+        'directdebit'  => array('eur'),
+        'giftcard'     => array('eur'),
+        'ideal'        => array('eur'),
+        'inghomepay '  => array('eur'),
+        'kbc'          => array('eur'),
+        'bancontact'   => array('eur'),
+        'paypal'       => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
+        'paysafecard'  => array('eur'),
+        'sofort'       => array('eur'),
+    );
 
     const NOTICE = 1;
     const WARNING = 2;
