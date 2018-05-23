@@ -51,7 +51,9 @@
                    name="method"
                    value="ideal"
             >
+            {include file="../hook/qr_code.tpl"}
           {/if}
+          <span class="clearfix" style="font-size: 20px">{l s='or choose a different payment method' mod='mollie'}</span>
           <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}"
              class="mollie_btn mollie_btn_primary">
             {$msg_return|escape:'htmlall':'UTF-8' nofilter}

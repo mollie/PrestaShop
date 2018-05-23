@@ -73,7 +73,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             'ideal',
             null,
             (int) $cart->id,
-            $customer->secure_key
+            $customer->secure_key,
+            $qrCode = true
         ), array(
             'include' => 'details.qrCode',
         ));

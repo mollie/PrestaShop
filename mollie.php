@@ -1203,7 +1203,7 @@ class Mollie extends PaymentModule
      * @return array
      * @throws PrestaShopException
      */
-    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey)
+    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey, $qrCode = false)
     {
         $description = static::generateDescriptionFromCart($cartId);
         $context = Context::getContext();
@@ -1223,7 +1223,7 @@ class Mollie extends PaymentModule
             'redirectUrl' => $context->link->getModuleLink(
                 'mollie',
                 'return',
-                array('cart_id' => $cartId, 'utm_nooverride' => 1)
+                array('cart_id' => $cartId, 'utm_nooverride' => 1, 'qr_code' => (int) $qrCode)
             ),
             'webhookUrl'  => $context->link->getModuleLink(
                 'mollie',
