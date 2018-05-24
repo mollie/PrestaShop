@@ -14,7 +14,7 @@ export default class MollieBanks {
     this.grabAmount().then(this.initQrImage);
     window.addEventListener('resize', this.constructor.throttle(() => {
       this.constructor.checkWindowSize();
-    }, 200))
+    }, 200));
   }
 
   initBanks = () => {

@@ -13,6 +13,42 @@
 
 <script type="text/javascript">
   (function () {
+    function throttle(callback, delay) {
+      var isThrottled = false, args, context;
+
+      function wrapper() {
+        if (isThrottled) {
+          args = arguments;
+          context = this;
+          return;
+        }
+
+        isThrottled = true;
+        callback.apply(this, arguments);
+
+        setTimeout(() => {
+          isThrottled = false;
+          if (args) {
+            wrapper.apply(context, args);
+            args = context = null;
+          }
+        }, delay);
+      }
+
+      return wrapper;
+    }
+
+    function checkWindowSize() {
+      var elem = document.getElementById('mollie-qr-code');
+      if (elem) {
+        if (window.innerWidth > 800 && window.innerHeight > 860) {
+          elem.style.display = 'block';
+        } else {
+          elem.style.display = 'none';
+        }
+      }
+    }
+
     function clearCache() {
       Object.keys(window.localStorage).forEach(function (key) {
         if (key.indexOf('mollieqrcache') > -1) {
@@ -42,7 +78,7 @@
                   }
                 } else if (parseInt(data.status, 10) === 3) {
                   clearCache();
-                  initQrImage();
+                  grabNewUrl();
                 }
                 else {
                   pollStatus(idTransaction);
@@ -125,6 +161,10 @@
     function initQrImage() {
       var elem = document.getElementById('mollie-qr-image');
       elem.style.display = 'none';
+
+      window.addEventListener('resize', throttle(() => {
+        checkWindowSize();
+      }, 200));
 
       var url = null;
       var idTransaction = null;
