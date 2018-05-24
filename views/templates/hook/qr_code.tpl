@@ -204,6 +204,7 @@
         changes.forEach(function (change) {
           if (change.intersectionRatio > 0) {
             initQrImage();
+            observer.disconnect();
           }
         });
       }, {
