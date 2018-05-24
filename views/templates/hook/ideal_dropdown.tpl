@@ -42,7 +42,7 @@
   </button>
   <div class="dropdown-menu">
     {foreach $idealIssuers as $issuer}
-      <a class="dropdown-item mollie-issuer-item" data-ideal-issuer="{$issuer->id}" href="#">
+      <a class="dropdown-item mollie-issuer-item" data-ideal-issuer="{$issuer->id}" style="cursor: pointer">
         <img src="{$issuer->image->size2x}" style="height: 24px; width: auto;"> {$issuer->name}
       </a>
     {/foreach}
