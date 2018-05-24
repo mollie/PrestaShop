@@ -11,10 +11,12 @@ export default class MollieBanks {
     this.translations = translations;
 
     this.initBanks();
-    this.grabAmount().then(this.initQrImage);
-    window.addEventListener('resize', this.constructor.throttle(() => {
-      this.constructor.checkWindowSize();
-    }, 200));
+    if (window.mollieQrEnabled) {
+      this.grabAmount().then(this.initQrImage);
+      window.addEventListener('resize', this.constructor.throttle(() => {
+        this.constructor.checkWindowSize();
+      }, 200));
+    }
   }
 
   initBanks = () => {
@@ -30,7 +32,8 @@ export default class MollieBanks {
         </div>`;
     });
     content += '</ul>';
-    content += `<div id="mollie-qr-code" style="width: 100%; height: 280px; align-content: center; text-align: center">
+    if (window.mollieQrEnabled) {
+      content += `<div id="mollie-qr-code" style="width: 100%; height: 280px; align-content: center; text-align: center">
   <div id="mollie-spinner" class="${styles.spinner}" style="height: 100px">
     <div class="${styles.bounce1}"></div>
     <div class="${styles.bounce2}"></div>
@@ -41,6 +44,7 @@ export default class MollieBanks {
     <img id="mollie-qr-image" width="320" height="320" style="height: 240px; width: 240px; margin: 0 auto; visibility: hidden">
   </div>
 </div>`;
+    }
     elem.innerHTML = content;
     elem.querySelector('input').checked = true;
 

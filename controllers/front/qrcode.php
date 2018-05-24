@@ -28,6 +28,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     {
         if (Tools::getValue('ajax')) {
             $this->processAjax();
+            exit;
         }
 
         if (Tools::getValue('done')) {
@@ -58,8 +59,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      */
     protected function processAjax()
     {
-        header('Content-Type: application/json;charset=UTF-8');
-
         switch (Tools::getValue('action')) {
             case 'qrCodeNew':
                 return $this->processNewQrCode();
@@ -79,7 +78,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      */
     protected function processNewQrCode()
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json;charset=UTF-8');
+        @ob_clean();
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
         $context = Context::getContext();
@@ -132,6 +132,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      */
     protected function processGetStatus()
     {
+        header('Content-Type: application/json;charset=UTF-8');
+        @ob_clean();
         if (empty($this->context->cart)) {
             die(json_encode(array(
                 'success' => false,

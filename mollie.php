@@ -309,7 +309,7 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_ISSUERS);
         Configuration::deleteByName(static::MOLLIE_CSS);
         Configuration::deleteByName(static::MOLLIE_DEBUG_LOG);
-	Configuration::deleteByName(static::MOLLIE_QRENABLED);
+        Configuration::deleteByName(static::MOLLIE_QRENABLED);
         Configuration::deleteByName(static::MOLLIE_DISPLAY_ERRORS);
         Configuration::deleteByName(static::MOLLIE_USE_PROFILE_WEBHOOK);
         Configuration::deleteByName(static::MOLLIE_PENDING);
@@ -359,7 +359,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
         Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
         Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
-	Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
+        Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get(static::MOLLIE_PENDING));
@@ -644,13 +644,7 @@ class Mollie extends PaymentModule
             $errors[] = $this->l('Invalid debug log setting.');
         }
 
-        $mollieQrEnabled = Tools::getValue('Mollie_Qrenabled');
-
-        if (!isset($mollieQrEnabled)) {
-            $mollieQrEnabled = false;
-        } else {
-            $mollieQrEnabled = ($mollieQrEnabled == 1);
-        }
+        $mollieQrEnabled = (bool) Tools::getValue('Mollie_Qrenabled');
 
         $mollieErrors = Tools::getValue('Mollie_Errors');
 
@@ -672,7 +666,7 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(static::MOLLIE_QRENABLED, (int) $mollieQrEnabled);
+            Configuration::updateValue(static::MOLLIE_QRENABLED, (bool) $mollieQrEnabled);
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
             Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
@@ -1021,6 +1015,7 @@ class Mollie extends PaymentModule
             }
         }
 
+        Media::addJsDef(array('mollieQrEnabled' => (bool) Configuration::get(static::MOLLIE_QRENABLED)));
         $cart = Context::getContext()->cart;
         $smarty->assign(
             array(
@@ -1048,7 +1043,7 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * EU Advanced Compliance module (prestahop module) Advanced Checkout option enabled
+     * EU Advanced Compliance module (PrestaShop module) Advanced Checkout option enabled
      *
      * @return array|null
      *

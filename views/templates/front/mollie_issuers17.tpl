@@ -74,9 +74,7 @@
                     {/foreach}
                     <input type="hidden" name="method" value="ideal">
                   {/if}
-                  
                   {include file='module:mollie/views/templates/hook/qr_code.tpl'}
-
                   <a href="{$urls.pages.order|escape:'htmlall':'UTF-8' nofilter}"
                      class="btn btn-primary"
                      style="margin-top: 10px"

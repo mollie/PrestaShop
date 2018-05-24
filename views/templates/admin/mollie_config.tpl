@@ -231,7 +231,7 @@
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">
-          {l s='Enable or disable iDEAL payments via a mobile divice using a QR code.' mod='mollie'}
+          {l s='Enable or disable iDEAL payments via a mobile device using a QR code.' mod='mollie'}
         </em>
       </div>
     </div>

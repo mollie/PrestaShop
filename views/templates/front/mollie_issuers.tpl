@@ -51,7 +51,7 @@
                    value="ideal"
             >
             {block name='content'}
-              {include file=$qrCodeTemplate}
+              {include file="../hook/qr_code.tpl"}
             {/block}
           {/if}
           <span class="clearfix" style="font-size: 20px">{l s='or choose a different payment method' mod='mollie'}</span>
