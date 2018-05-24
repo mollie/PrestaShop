@@ -105,3 +105,8 @@
 .mollie-reset-this script, .mollie-reset-this style {
     display: none;
 }
+
+.mollie-title {
+    font-size: 16px;
+    font-weight: 700;
+}

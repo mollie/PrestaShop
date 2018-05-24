@@ -90,7 +90,8 @@
                id="Mollie_Api_Key"
                value="{$val_api_key|escape:'htmlall':'UTF-8' nofilter}"
         >
-        <br/>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">
           {{{l s='You can find your API key in your %sMollie Profile%s; it starts with test or live.' mod='mollie'}|escape:'htmlall':'UTF-8' nofilter}|sprintf:'<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank">':'</a>'}
         </em>
@@ -110,7 +111,8 @@
                id="Mollie_Description"
                value="{$val_desc|escape:'htmlall':'UTF-8' nofilter}"
         >
-        <br/>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{l s='Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters.' mod='mollie'}</em>
       </div>
     </div>
@@ -132,7 +134,8 @@
             </option>
           {/foreach}
         </select>
-        <br/>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{{l s='Should the plugin send the current webshop %slocale%s to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:'<a href="https://en.wikipedia.org/wiki/Locale" target="_blank">':'</a>'}</em>
       </div>
     </div>
@@ -179,7 +182,9 @@
               {$title|escape:'htmlall':'UTF-8' nofilter}
             </option>
           {/foreach}
-        </select> <br/>
+        </select>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{l s='Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.' mod='mollie'}</em>
       </div>
     </div>
@@ -195,7 +200,8 @@
                id="Mollie_Css"
                value="{$val_css|escape:'htmlall':'UTF-8' nofilter}"
         >
-        <br/>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{l s='Leave empty for default stylesheet. Should include file path when set.' mod='mollie'}</em>
         <em class="mollie_desc">{{l s='Hint: You can use %s{BASE}%s, %s{THEME}%s, %s{CSS}%s, %s{MOBILE}%s, %s{MOBILE_CSS}%s and %s{OVERRIDE}%s for easy folder mapping.' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>'}</em>
       </div>
@@ -222,7 +228,8 @@
                   >
           <span class="mollie_slider"></span>
         </label>
-        <br />
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">
           {l s='Enable or disable iDEAL payments via a mobile divice using a QR code.' mod='mollie'}
         </em>
@@ -323,7 +330,8 @@
               {/if}
             {/foreach}
           </select>
-          <br/>
+          <br>
+          {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
           <em class="mollie_desc">{$desc_status_{$name}|escape:'htmlall':'UTF-8' nofilter}</em>
         </div>
         {if $name != constant('\\Mollie\\Api\\Types\\PaymentStatus::STATUS_PAID')}
@@ -345,7 +353,8 @@
               >
               <span class="mollie_slider"></span>
             </label>
-            <br/>
+            <br>
+            {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
             <em class="mollie_desc">{$desc_mail_{$name}|escape:'htmlall':'UTF-8' nofilter}</em>
           </div>
         {/if}
@@ -378,7 +387,8 @@
           >
         <span class="mollie_slider"></span>
         </label>
-        <br />
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{l s='Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!' mod='mollie'}</em>
       </div>
       <div class="col-sm-12 col-md-4 mollie_msg">
@@ -392,7 +402,9 @@
               {$title|escape:'htmlall':'UTF-8' nofilter}
             </option>
           {/foreach}
-        </select><br/>
+        </select>
+        <br>
+        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{{l s='Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:"<a href=\"%s\">":'</a>'|sprintf:{$link->getAdminLink('AdminLogs')|escape:'htmlall':'UTF-8' nofilter}}</em>
       </div>
     </div>

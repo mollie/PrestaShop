@@ -33,6 +33,7 @@
 .row {
     margin-left: -15px;
     margin-right: -15px;
+    background-color: transparent!important;
 }
 
 .text-center {
@@ -544,4 +545,8 @@ input:checked + .mollie_slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
+}
+
+.mollie-slider {
+    height: 24px;
 }

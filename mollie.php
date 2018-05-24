@@ -868,7 +868,7 @@ class Mollie extends PaymentModule
         if (empty($file)) {
             if (version_compare(_PS_VERSION_, '1.6.0.0', '<')) {
                 // Use a modified css file to display the new 1.6 default layout
-                $file = $this->_path.'views/css/mollie_bootstrap.css';
+                $file = $this->_path.'views/css/mollie_15.css';
             } else {
                 // Use default css file
                 $file = $this->_path.'views/css/mollie.css';
