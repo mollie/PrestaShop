@@ -493,6 +493,7 @@ class Mollie extends PaymentModule
         }
 
         $this->context->controller->addJS($this->_path.'views/js/sweetalert-2.1.0.min.js');
+        $this->context->controller->addJS(_PS_JS_DIR_.'jquery/plugins/jquery.sortable.js');
         $this->context->smarty->assign($data);
 
         return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');

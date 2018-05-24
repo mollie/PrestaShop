@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2018, Mollie B.V.
+* Copyright (c) 2012-2018, mollie-ui b.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,8 +23,8 @@
 * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 * DAMAGE.
 *
-* @author     Mollie B.V. <info@mollie.nl>
-* @copyright  Mollie B.V.
+* @author     mollie-ui b.V. <info@mollie.nl>
+* @copyright  mollie-ui b.V.
 * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
 * @category   Mollie
 * @package    Mollie
@@ -230,6 +230,95 @@
     </div>
     <!--/ Mollie qrenabled checkbox-->
 
+    <section class="module_list">
+      <ul class="list-unstyled sortable">
+
+        <li id="21_478" class="module_position_478 module_list_item draggable" draggable="true">
+          <div class="module_col_position dragHandle" id="td_21_478">
+            <span class="positions">1</span>
+            <div class="btn-group-vertical">
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=478&amp;id_hook=21&amp;direction=0&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-up"></i>
+              </a>
+
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=478&amp;id_hook=21&amp;direction=1&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-down"></i>
+              </a>
+            </div>
+          </div>
+          <div class="module_col_icon">
+            <img width="57" src="../modules/myparcel/logo.png" alt="myparcel">
+          </div>
+          <div class="module_col_infos">
+            <span class="module_name">
+              MyParcel <small class="text-muted">&nbsp;-&nbsp;v2.2</small>
+            </span>
+            <div class="module_description">Gemakkelijk pakketten verzenden via MyParcel.nl</div>
+          </div>
+        </li>
+        <li id="21_481" class="module_position_481 module_list_item draggable" draggable="true">
+          <div class="module_col_position dragHandle" id="td_21_481">
+            <span class="positions">2</span>
+            <div class="btn-group-vertical">
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=481&amp;id_hook=21&amp;direction=0&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-up"></i>
+              </a>
+
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=481&amp;id_hook=21&amp;direction=1&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-down"></i>
+              </a>
+            </div>
+          </div>
+          <div class="module_col_icon">
+            <img width="57" src="../modules/myparcelbpost/logo.png" alt="myparcelbpost">
+          </div>
+          <div class="module_col_infos">
+            <span class="module_name">
+              MyParcel België <small class="text-muted">&nbsp;-&nbsp;v2.2</small>
+            </span>
+            <div class="module_description">Gemakkelijk pakketten verzenden via SendMyParcel.be</div>
+          </div>
+        </li>
+        <li id="21_479" class="module_position_479 module_list_item draggable" draggable="true">
+          <div class="module_col_position dragHandle" id="td_21_479">
+            <span class="positions">3</span>
+            <div class="btn-group-vertical">
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=479&amp;id_hook=21&amp;direction=0&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-up"></i>
+              </a>
+              <a class="mollie-ui btn btn-primary btn-xs" href="index.php?controller=AdminModulesPositions&amp;id_module=479&amp;id_hook=21&amp;direction=1&amp;token=3ba5e8388623c3ef2f34553a98d4a92a&amp;changePosition#displayAdminOrder">
+                <i class="icon-chevron-down"></i>
+              </a>
+            </div>
+          </div>
+          <div class="module_col_icon">
+            <img width="57" src="../modules/mollie/logo.png" alt="mollie">
+          </div>
+          <div class="module_col_infos">
+            <div style="display: inline-block">
+              <span class="module_name">
+                Mollie Payment Module <small class="text-muted">&nbsp;-&nbsp;v3.0</small>
+              </span>
+              <div class="module_description">betalingen</div>
+            </div>
+            <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
+              <input name="Mollie_Qrenabled" id="Mollie_Qrenabled" type="checkbox" value="1" style="width: auto;">
+              <span class="mollie_slider"></span>
+            </label>
+          </div>
+        </li>
+      </ul>
+    </section>
+    <script type="text/javascript">
+      (function ($) {
+        $(document).ready(function () {
+          $('.sortable').sortable({
+            forcePlaceholderSize: true
+          });
+        });
+      }(jQuery))
+    </script>
+
     <!--Mollie status settings-->
     {foreach $statuses as $i => $name}
       <div class="form-group row">
@@ -347,7 +436,7 @@
       </div>
       <div class="col-sm-12 col-md-8 mollie_input">
         <input type="submit"
-               class="btn btn-primary"
+               class="mollie-ui btn btn-primary"
                name="Mollie_Config_Save"
                value="{$val_save|escape:'htmlall':'UTF-8' nofilter}"
         >

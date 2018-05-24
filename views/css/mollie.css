@@ -122,6 +122,24 @@
     ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
+.bootstrap .mollie-ui.btn.btn-primary {
+    background-color: #0c95fd;
+    border-radius: 0!important;
+}
+
+.bootstrap .mollie-ui.btn.btn-xs {
+    background-color: #0c95fd;
+    border-radius: 0!important;
+}
+
+.mollie-ui.sortable {
+    border: 1px solid #0c95fd;
+}
+
+.bootstrap .module_list .module_list_item {
+    border: 1px solid #0c95fd;
+}
+
 .bootstrap legend {
     display: block;
     width: 100%;
@@ -464,7 +482,7 @@ label.mollie_switch {
 }
 
 .mollie_desc {
-    font-weight: 400!important;
+    font-weight: 400 !important;
 }
 
 input:checked + .mollie_slider {

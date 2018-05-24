@@ -1,6 +1,6 @@
 /****add Bootstrap for PS 1.5****/
 
-.btn {
+.mollie-ui.btn {
     display: inline-block;
     font-weight: 400;
     line-height: 1.25;
@@ -16,9 +16,10 @@
     padding: .5rem 1rem;
     font-size: 1rem;
     border-radius: 0;
+    background-color: #0c95fd;
 }
 
-.btn-primary, .btn-secondary, .btn-tertiary {
+.mollie-ui.btn-primary, .btn-secondary, .btn-tertiary {
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
     text-transform: uppercase;
     font-weight: 600;
