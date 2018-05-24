@@ -172,7 +172,7 @@
         Object.keys(window.localStorage).forEach(function (key) {
           if (key.indexOf('mollieqrcache') > -1) {
             var cacheInfo = window.localStorage[key].split('-');
-            if (cacheInfo[1] > (+ new Date() + 60 * 1000) && cacheInfo[2] == {$cartAmount|intval}) {
+            if (cacheInfo[1] > (+ new Date() + 60 * 1000) && parseInt(cacheInfo[2], 10) === {$cartAmount|intval}) {
               var item = JSON.parse(window.localStorage.getItem(key));
               var a = document.createElement('A');
               a.href = item.url;
