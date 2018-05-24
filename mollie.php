@@ -472,18 +472,22 @@ class Mollie extends PaymentModule
         foreach ($this->statuses as $name => $val) {
             $val = (int) $val;
             $data['msg_status_'.$name] = sprintf($messageStatus, $this->lang[$name]);
-            $data['desc_status_'.$name] = Tools::strtolower(
-                sprintf(
-                    $descriptionStatus,
-                    $this->lang[$name],
-                    Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
-                        'SELECT `name`
+            if ($val) {
+                $data['desc_status_'.$name] = Tools::strtolower(
+                    sprintf(
+                        $descriptionStatus,
+                        $this->lang[$name],
+                        Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                            'SELECT `name`
                             FROM `'._DB_PREFIX_.'order_state_lang`
                             WHERE `id_order_state` = '.(int) $val.'
                             AND `id_lang` = '.(int) $lang
+                        )
                     )
-                )
-            );
+                );
+            } else {
+                $data['desc_status_'.$name] = sprintf($this->l('`%s` payments do not get a status'), $this->lang[$name]);
+            }
             $data['val_status_'.$name] = $val;
             $data['msg_mail_'.$name] = sprintf($messageMail, $this->lang[$name]);
             $data['desc_mail_'.$name] = sprintf($descriptionMail, $this->lang[$name]);
