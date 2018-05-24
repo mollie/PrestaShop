@@ -201,6 +201,34 @@
       </div>
     </div>
     <!--/ Mollie issuer settings-->
+    
+    <!-- Mollie qrenabled checkbox-->
+    <div class="form-group row">
+      <div class="col-sm-12 col-md-4 mollie_msg">
+        <label for="Mollie_Paymentscreen_Locale">
+          <strong>{l s='Send customer credentials to Mollie.' mod='mollie'}</strong>
+        </label>
+      </div>
+      <div class="col-sm-12 col-md-8 mollie_input">
+        <label class="mollie_switch">
+          <input name="Mollie_Qrenabled"
+                 id="Mollie_Qrenabled"
+                 type="checkbox"
+                 value="1"
+                  {if $val_qrenabled}
+                    checked="checked"
+                  {/if}
+                 style="width: auto;"
+                  >
+          <span class="mollie_slider"></span>
+        </label>
+        <br />
+        <em class="mollie_desc">
+          {l s='Enable or disable iDEAL payments via a mobile divice using a QR code.' mod='mollie'}
+        </em>
+      </div>
+    </div>
+    <!--/ Mollie qrenabled checkbox-->
 
     <!--Mollie status settings-->
     {foreach $statuses as $i => $name}
