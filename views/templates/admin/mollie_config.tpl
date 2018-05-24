@@ -148,22 +148,6 @@
           {l s='Visual settings' mod='mollie'}
         </h3>
       </div>
-      <div class="col-sm-12 col-md-4 mollie_msg">
-        <label for="Mollie_Images">
-          <strong>{l s='Images' mod='mollie'}</strong>
-        </label>
-      </div>
-      <div class="col-sm-12 col-md-8 mollie_input">
-        <select name="Mollie_Images"
-                id="Mollie_Images">
-          {foreach $image_options as $value => $title}
-            <option value="{$value|escape:'htmlall':'UTF-8' nofilter}"{if $value == $val_images} selected="selected"{/if}>
-              {$title|escape:'htmlall':'UTF-8' nofilter}
-            </option>
-          {/foreach}
-        </select>
-        <em class="mollie_desc">{l s='Show big, normal or no payment method logos on checkout.' mod='mollie'}</em>
-      </div>
     </div>
     <!--/ Mollie image options-->
 

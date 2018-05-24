@@ -305,7 +305,6 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_API_KEY);
         Configuration::deleteByName(static::MOLLIE_DESCRIPTION);
         Configuration::deleteByName(static::MOLLIE_PAYMENTSCREEN_LOCALE);
-        Configuration::deleteByName(static::MOLLIE_IMAGES);
         Configuration::deleteByName(static::MOLLIE_ISSUERS);
         Configuration::deleteByName(static::MOLLIE_CSS);
         Configuration::deleteByName(static::MOLLIE_DEBUG_LOG);
@@ -355,7 +354,6 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_API_KEY, '');
         Configuration::updateGlobalValue(static::MOLLIE_DESCRIPTION, 'Cart %');
         Configuration::updateGlobalValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-        Configuration::updateGlobalValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
         Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
         Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
         Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
@@ -457,7 +455,6 @@ class Mollie extends PaymentModule
             'val_api_key'              => Configuration::get(static::MOLLIE_API_KEY),
             'val_desc'                 => Configuration::get(static::MOLLIE_DESCRIPTION),
             'payscreen_locale_value'   => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
-            'val_images'               => Configuration::get(static::MOLLIE_IMAGES),
             'val_issuers'              => Configuration::get(static::MOLLIE_ISSUERS),
             'val_css'                  => Configuration::get(static::MOLLIE_CSS),
             'val_errors'               => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
@@ -664,7 +661,6 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(static::MOLLIE_DESCRIPTION, $mollieDescription);
             Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
-            Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
             Configuration::updateValue(static::MOLLIE_QRENABLED, (bool) $mollieQrEnabled);
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
@@ -1024,7 +1020,6 @@ class Mollie extends PaymentModule
                 'methods'               => $apiMethods,
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
-                'images'                => Configuration::get(static::MOLLIE_IMAGES),
                 'warning'               => $this->warning,
                 'msg_pay_with'          => $this->lang['Pay with %s'],
                 'msg_bankselect'        => $this->lang['Select your bank:'],
