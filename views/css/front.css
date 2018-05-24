@@ -62,7 +62,7 @@
     min-width: 0;
     opacity: 1;
     orphans: 0;
-    outline: invert none medium;
+    outline: none;
     overflow: visible;
     padding: 0;
     page-break-after: auto;
@@ -109,4 +109,27 @@
 .mollie-title {
     font-size: 16px;
     font-weight: 700;
+}
+
+.mollie_btn_primary {
+    font-size: 16px!important;
+    color: white!important;
+    text-decoration: none!important;
+    font-weight: 700!important;
+}
+
+.mollie_btn_primary:hover {
+    background-color: #2592a9!important;
+}
+
+.mollie_button {
+    text-align: center;
+}
+
+.mollie_button > img {
+    margin: 0 auto;
+}
+
+.mollie_button * {
+    cursor: pointer;
 }
