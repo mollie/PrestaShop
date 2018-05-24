@@ -1078,8 +1078,8 @@ class Mollie extends PaymentModule
             if (in_array($iso, static::$methodCurrencies[$method->id])) {
                 continue;
             }
-            
-            $paymentOptions[] = array(
+
+            $paymentOption = array(
                 'cta_text' => $this->lang[$method->description],
                 'logo'     => $method->image->size1x,
                 'action'   => $this->context->link->getModuleLink(
@@ -1089,6 +1089,13 @@ class Mollie extends PaymentModule
                     true
                 ),
             );
+            $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
+            if ($imageConfig === static::LOGOS_NORMAL) {
+                $paymentOption['logo'] = $method->image->size1x;
+            } elseif ($imageConfig === static::LOGOS_NORMAL) {
+                $paymentOption['logo'] = $method->image->size2x;
+            }
+            $paymentOptions[] = $paymentOption;
         }
 
         return $paymentOptions;
@@ -1164,9 +1171,16 @@ class Mollie extends PaymentModule
                             'value' => '',
                         ),
                     ))
-                    ->setLogo($method->image->size1x)
+
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'))
                 ;
+
+                $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
+                if ($imageConfig === static::LOGOS_NORMAL) {
+                    $newOption->setLogo($method->image->size1x);
+                } elseif ($imageConfig === static::LOGOS_BIG) {
+                    $newOption->setLogo($method->image->size2x);
+                }
 
                 $paymentOptions[] = $newOption;
             } else {
@@ -1182,8 +1196,14 @@ class Mollie extends PaymentModule
                         'mollie', 'payment',
                         array('method' => $method->id), true
                     ))
-                    ->setLogo($method->image->size1x)
                 ;
+
+                $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
+                if ($imageConfig === static::LOGOS_NORMAL) {
+                    $newOption->setLogo($method->image->size1x);
+                } elseif ($imageConfig === static::LOGOS_BIG) {
+                    $newOption->setLogo($method->image->size2x);
+                }
 
                 $paymentOptions[] = $newOption;
             }
