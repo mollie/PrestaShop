@@ -639,8 +639,8 @@ class Mollie extends PaymentModule
         if (!in_array($mollieLogger, $loggerOptions)) {
             $errors[] = $this->l('Invalid debug log setting.');
         }
-	    
-	$mollieQrEnabled = Tools::getValue('Mollie_Qrenabled');
+
+        $mollieQrEnabled = Tools::getValue('Mollie_Qrenabled');
 
         if (!isset($mollieQrEnabled)) {
             $mollieQrEnabled = false;
@@ -668,7 +668,7 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
-	    Configuration::updateValue(Mollie::MOLLIE_QRENABLED, (int) $mollieQrEnabled);
+            Configuration::updateValue(static::MOLLIE_QRENABLED, (int) $mollieQrEnabled);
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
             Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
@@ -875,12 +875,24 @@ class Mollie extends PaymentModule
             }
         } else {
             // Use a custom css file
-            $file = str_replace('{BASE}', _PS_BASE_URL_, $file);
-            $file = str_replace('{THEME}', _PS_THEME_DIR_, $file);
-            $file = str_replace('{CSS}', _PS_CSS_DIR_, $file);
-            $file = str_replace('{MOBILE}', _THEME_MOBILE_DIR_, $file);
-            $file = str_replace('{MOBILE_CSS}', _THEME_MOBILE_CSS_DIR_, $file);
-            $file = str_replace('{OVERRIDE}', _PS_THEME_OVERRIDE_DIR_, $file);
+            if (defined('_PS_BASE_URL_')) {
+                $file = str_replace('{BASE}', _PS_BASE_URL_, $file);
+            }
+            if (defined('_PS_THEME_DIR_')) {
+                $file = str_replace('{THEME}', _PS_THEME_DIR_, $file);
+            }
+            if (defined('_PS_CSS_DIR_')) {
+                $file = str_replace('{CSS}', _PS_CSS_DIR_, $file);
+            }
+            if (defined('_THEME_MOBILE_DIR_')) {
+                $file = str_replace('{MOBILE}', _THEME_MOBILE_DIR_, $file);
+            }
+            if (defined('_THEME_MOBILE_CSS_DIR_')) {
+                $file = str_replace('{MOBILE_CSS}', _THEME_MOBILE_CSS_DIR_, $file);
+            }
+            if (defined('_PS_THEME_OVERRIDE_DIR_')) {
+                $file = str_replace('{OVERRIDE}', _PS_THEME_OVERRIDE_DIR_, $file);
+            }
         }
         $this->context->controller->addCSS($file);
     }

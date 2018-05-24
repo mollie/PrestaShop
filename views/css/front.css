@@ -102,6 +102,6 @@
     z-index: auto;
 }
 
-.mollie-reset-this script {
+.mollie-reset-this script, .mollie-reset-this style {
     display: none;
 }

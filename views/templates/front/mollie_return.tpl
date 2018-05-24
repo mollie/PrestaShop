@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <h2>{l s='Welcome back' mod='mollie'}</h2>
 <p>{$msg_details|escape:'htmlall':'UTF-8' nofilter}</p>
 <a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8' nofilter}">

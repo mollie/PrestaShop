@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <section class="mollie_issuer_page mollie-reset-this">
   <form method="post" action="">
     <div class="form-group row">
@@ -43,7 +42,7 @@
                       name="issuer"
                       class="mollie_button"
                       value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}">
-                <img src="{$issuer->image->size2x|escape:'htmlall':'UTF-8' nofilter}"/>
+                <img src="{$issuer->image->size2x|escape:'htmlall':'UTF-8' nofilter}">
                 <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
               </button>
             {/foreach}
@@ -51,11 +50,14 @@
                    name="method"
                    value="ideal"
             >
-            {include file="../hook/qr_code.tpl"}
+            {block name='content'}
+              {include file=$qrCodeTemplate}
+            {/block}
           {/if}
           <span class="clearfix" style="font-size: 20px">{l s='or choose a different payment method' mod='mollie'}</span>
           <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}"
-             class="mollie_btn mollie_btn_primary">
+             class="mollie_btn mollie_btn_primary"
+          >
             {$msg_return|escape:'htmlall':'UTF-8' nofilter}
           </a>
         </div>

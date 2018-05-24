@@ -128,7 +128,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'method'         => $payment->method,
                     'transaction_id' => $payment->id,
                     'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'     => date("Y-m-d H:i:s"),
+                    'created_at'     => date('Y-m-d H:i:s'),
                 )
             );
         }

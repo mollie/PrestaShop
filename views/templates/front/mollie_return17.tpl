@@ -30,8 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 {extends file='page.tpl'}
 {block name='page_content'}
-  {include file="./mollie_return.tpl"}
+  {include file="module:mollie/views/templates/front/mollie_return.tpl"}
 {/block}
