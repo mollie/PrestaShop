@@ -1622,6 +1622,32 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * Ajax process run module upgrade
+     *
+     * @since 3.0.0
+     */
+    public function ajaxProcessRunUpgrade()
+    {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
+        try {
+            $result = $this->runUpgradeModule();
+        } catch (PrestaShopDatabaseException $e) {
+            $error = $e->getMessage();
+            $result = false;
+        } catch (PrestaShopException $e) {
+            $error = $e->getMessage();
+            $result = false;
+        }
+
+        die(json_encode(array(
+            'success' => $result,
+            'errors'  => isset($error) ? $error : null,
+        )));
+    }
+
+    /**
      * Download the latest module from the given location
      *
      * @param string $moduleName

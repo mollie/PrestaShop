@@ -22,7 +22,31 @@
                         // Success!
                         var data = JSON.parse(this.responseText);
                         if (data.success) {
-                          jAlert('{l s='The module has been updated!' mod='mollie' js=1}');
+                          var upgradeRequest = new XMLHttpRequest();
+                          upgradeRequest.open('GET', '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie' + '&ajax=1&action=runUpgrade', true);
+
+                          upgradeRequest.onreadystatechange = function () {
+                            if (this.readyState === 4) {
+                              if (this.status >= 200 && this.status < 400) {
+                                // Success!
+                                var data = JSON.parse(this.responseText);
+                                if (data.success) {
+                                  jAlert('{l s='The module has been updated!' mod='mollie' js=1}');
+                                } else if (data.errors) {
+                                  var message = 'Error: ';
+                                  data.errors.forEach(function (error) {
+                                    message +=  '\n' + error;
+                                  });
+                                  jAlert('Error: ' + message);
+                                }
+                              } else {
+                                jAlert('Error: unable to connect');
+                              }
+                            }
+                          };
+
+                          upgradeRequest.send();
+                          upgradeRequest = null;
                         } else if (data.errors) {
                           var message = 'Error: ';
                           data.errors.forEach(function (error) {
