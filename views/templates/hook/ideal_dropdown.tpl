@@ -63,6 +63,9 @@
       [].slice.call(document.querySelectorAll('.mollie-issuer-item')).forEach(function (item) {
         item.addEventListener('click', function (event) {
           var elem = event.target;
+          if (elem.nodeName === 'IMG') {
+            elem = elem.parentNode;
+          }
           hiddenInput.value = elem.getAttribute('data-ideal-issuer');
           var dropdownButton = document.getElementById('mollie-issuer-dropdown-button');
           if (dropdownButton) {
