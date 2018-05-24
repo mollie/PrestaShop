@@ -30,12 +30,10 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-{if isset($this_version) && isset($release_url) && isset($release_version)}
+{if isset($this_version) && isset($release_version)}
   <div class="mollie_update_msg col-md-12">
     <span id="mollie_update_msg">
-      <a href="{$release_url|escape:'html':'UTF-8' nofilter}/releases" target="_blank">
-        {l s='You are currently using version %s. We strongly recommend you to upgrade to the new version %s!' mod='mollie' sprintf=[$this_version, $release_version]}
-      </a>
+  {l s='You are currently using version %s. We strongly recommend you to upgrade to the new version %s!' mod='mollie' sprintf=[$this_version, $release_version]}
     </span>
   </div>
 {/if}

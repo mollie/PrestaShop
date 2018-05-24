@@ -403,9 +403,8 @@ class Mollie extends PaymentModule
         $updateMessage = defined('_TB_VERSION_')
             ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
             : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
-        $updateMessage = 'update plz ';
-        if ($updateMessage) {
-            $updateMessage .= $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
+        if ($updateMessage === 'updateAvailable') {
+            $updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
         }
         $resultMessage = '';
         $warningMessage = '';
@@ -461,7 +460,7 @@ class Mollie extends PaymentModule
             'val_issuers'              => Configuration::get(static::MOLLIE_ISSUERS),
             'val_css'                  => Configuration::get(static::MOLLIE_CSS),
             'val_errors'               => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-	    'val_qrenabled'            => Configuration::get(Mollie::MOLLIE_QRENABLED),
+            'val_qrenabled'            => Configuration::get(Mollie::MOLLIE_QRENABLED),
             'val_logger'               => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'                 => $this->l('Save'),
             'lang'                     => $this->lang,
@@ -493,6 +492,7 @@ class Mollie extends PaymentModule
             $data['statuses'][] = $name;
         }
 
+        $this->context->controller->addJS($this->_path.'views/js/sweetalert-2.1.0.min.js');
         $this->context->smarty->assign($data);
 
         return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');
@@ -722,14 +722,13 @@ class Mollie extends PaymentModule
     /**
      * @param string $url
      *
-     * @return string
+     * @return string|true
      * @throws Exception
      * @throws PrestaShopException
      * @throws SmartyException
      */
     protected function getUpdateMessage($url)
     {
-        $updateMessage = '';
         $updateXml = $this->getUpdateXML($url);
         if ($updateXml === false) {
             $updateMessage = $this->l('Warning: Could not retrieve update xml file from github.');
@@ -739,14 +738,14 @@ class Mollie extends PaymentModule
                 @$tags = new SimpleXMLElement($updateXml);
                 if (!empty($tags) && isset($tags->entry, $tags->entry[0], $tags->entry[0]->id)) {
                     $title = $tags->entry[0]->id;
-                    $latestVersion = preg_replace("/[^0-9,.]/", "", Tools::substr($title, strrpos($title, '/')));
+                    $latestVersion = preg_replace("/[^0-9,.]/", '', Tools::substr($title, strrpos($title, '/')));
                     if (!version_compare($this->version, $latestVersion, '>=')) {
                         $this->context->smarty->assign(array(
-                            'release_url'     => $url,
                             'this_version'    => $this->version,
                             'release_version' => $latestVersion,
                         ));
                     }
+                    $updateMessage = 'updateAvailable';
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
                 }
@@ -1584,28 +1583,30 @@ class Mollie extends PaymentModule
     {
         @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
-
         try {
             $latestVersion = $this->getLatestVersion();
         } catch (PrestaShopException $e) {
             die(json_encode(array(
                 'success' => false,
+                'message' => $this->l('Unable to retieve info about the latest version'),
             )));
         } catch (SmartyException $e) {
             die(json_encode(array(
                 'success' => false,
+                'message' => $this->l('Unable to retieve info about the latest version'),
             )));
         }
-        if (version_compare($latestVersion['version'], $this->version, '>')) {
+        if (version_compare(substr($latestVersion['version'], 1, strlen($latestVersion['version']) - 1), $this->version, '>')) {
             // Then update
             die(json_encode(array(
                 'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
             )));
+        } else {
+            die(json_encode(array(
+                'success' => false,
+                'message' => $this->l('You are already running the latest version!'),
+            )));
         }
-
-        die(json_encode(array(
-            'success' => true,
-        )));
     }
 
     /**
@@ -1630,7 +1631,7 @@ class Mollie extends PaymentModule
 
         die(json_encode(array(
             'success' => $result,
-            'errors'  => $this->context->controller->errors,
+            'message'  => isset($this->context->controller->errors[0]) ? $this->context->controller->errors[0] : '',
         )));
     }
 
@@ -1656,7 +1657,7 @@ class Mollie extends PaymentModule
 
         die(json_encode(array(
             'success' => $result,
-            'errors'  => isset($error) ? $error : null,
+            'message' => isset($error) ? $error : '',
         )));
     }
 
