@@ -102,6 +102,7 @@ class Mollie extends PaymentModule
     const MOLLIE_ISSUERS = 'MOLLIE_ISSUERS';
     const MOLLIE_CSS = 'MOLLIE_CSS';
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';
+    const MOLLIE_QRENABLED = 'MOLLIE_QRENABLED';
     const MOLLIE_DISPLAY_ERRORS = 'MOLLIE_DISPLAY_ERRORS';
     const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
     const MOLLIE_PENDING = 'MOLLIE_PENDING';
@@ -307,6 +308,7 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_ISSUERS);
         Configuration::deleteByName(static::MOLLIE_CSS);
         Configuration::deleteByName(static::MOLLIE_DEBUG_LOG);
+	Configuration::deleteByName(static::MOLLIE_QRENABLED);
         Configuration::deleteByName(static::MOLLIE_DISPLAY_ERRORS);
         Configuration::deleteByName(static::MOLLIE_USE_PROFILE_WEBHOOK);
         Configuration::deleteByName(static::MOLLIE_PENDING);
@@ -356,6 +358,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
         Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
         Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
+	Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get(static::MOLLIE_PENDING));
@@ -458,6 +461,7 @@ class Mollie extends PaymentModule
             'val_issuers'              => Configuration::get(static::MOLLIE_ISSUERS),
             'val_css'                  => Configuration::get(static::MOLLIE_CSS),
             'val_errors'               => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+	    'val_qrenabled'            => Configuration::get(Mollie::MOLLIE_QRENABLED),
             'val_logger'               => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'                 => $this->l('Save'),
             'lang'                     => $this->lang,
@@ -632,6 +636,14 @@ class Mollie extends PaymentModule
         if (!in_array($mollieLogger, $loggerOptions)) {
             $errors[] = $this->l('Invalid debug log setting.');
         }
+	    
+	$mollieQrEnabled = Tools::getValue('Mollie_Qrenabled');
+
+        if (!isset($mollieQrEnabled)) {
+            $mollieQrEnabled = false;
+        } else {
+            $mollieQrEnabled = ($mollieQrEnabled == 1);
+        }
 
         $mollieErrors = Tools::getValue('Mollie_Errors');
 
@@ -653,6 +665,7 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
+	    Configuration::updateValue(Mollie::MOLLIE_QRENABLED, (int) $mollieQrEnabled);
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
             Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
