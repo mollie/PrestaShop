@@ -1034,7 +1034,7 @@ class Mollie extends PaymentModule
                 'mollie_banks_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
                 'mollie_translations'   => array(
                     'chooseYourBank' => $this->l('Choose your bank'),
-                    'orPayByIdealQr'    => $this->l('or pay by iDEAL QR'),
+                    'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
                     'choose'         => $this->l('Choose'),
                     'cancel'         => $this->l('Cancel'),
                 ),
