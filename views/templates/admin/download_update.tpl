@@ -103,7 +103,7 @@
                       swal({
                         icon: 'error',
                         title: 'Error',
-                        text: '{l s='Unable to unzip new smodule' mod='mollie' js=1}'
+                        text: '{l s='Unable to unzip new module' mod='mollie' js=1}'
                       });
                     }
                     unzipRequest = null;

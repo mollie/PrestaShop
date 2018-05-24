@@ -1765,7 +1765,6 @@ class Mollie extends PaymentModule
             if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder.DIRECTORY_SEPARATOR.$moduleName)) {
                 if (file_exists(_PS_MODULE_DIR_.$moduleName)) {
                     if (!ConfigurationTest::testDir(_PS_MODULE_DIR_.$moduleName, true, $report, true)) {
-                        $this->context->controller->errors[] = sprintf($this->l('Could not update module `%s`: module directory not writable (`%s`).'), $moduleName, $report);
                         $this->recursiveDeleteOnDisk($tmpFolder);
                         @unlink(_PS_MODULE_DIR_.$moduleName.'.zip');
 
@@ -1786,7 +1785,6 @@ class Mollie extends PaymentModule
             //check if it's a real module
             foreach ($zipFolders as $folder) {
                 if (!in_array($folder, array('.', '..', '.svn', '.git', '__MACOSX')) && !Module::getInstanceByName($folder)) {
-                    $this->context->controller->errors[] = sprintf($this->l('The module %1$s that you uploaded is not a valid module.'), $folder);
                     $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_.$folder);
                 }
             }
