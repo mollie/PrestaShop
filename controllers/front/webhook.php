@@ -70,7 +70,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        Logger::addLog(file_get_contents('php://input'));
+        if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
+            Logger::addLog('Mollie incoming webhook: '.file_get_contents('php://input'));
+        }
 
         die($this->executeWebhook());
     }
