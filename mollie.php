@@ -729,6 +729,7 @@ class Mollie extends PaymentModule
      */
     protected function getUpdateMessage($url)
     {
+        $updateMessage = '';
         $updateXml = $this->getUpdateXML($url);
         if ($updateXml === false) {
             $updateMessage = $this->l('Warning: Could not retrieve update xml file from github.');
@@ -744,8 +745,8 @@ class Mollie extends PaymentModule
                             'this_version'    => $this->version,
                             'release_version' => $latestVersion,
                         ));
+                        $updateMessage = 'updateAvailable';
                     }
-                    $updateMessage = 'updateAvailable';
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
                 }
