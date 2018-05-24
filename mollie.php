@@ -90,6 +90,7 @@ class Mollie extends PaymentModule
     const ISSUERS_ON_CLICK = 'on-click';
     const ISSUERS_OWN_PAGE = 'own-page';
     const ISSUERS_PAYMENT_PAGE = 'payment-page';
+    const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
     const DEBUG_LOG_NONE = 0;
     const DEBUG_LOG_ERRORS = 1;
@@ -464,6 +465,7 @@ class Mollie extends PaymentModule
             'val_logger'               => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'                 => $this->l('Save'),
             'lang'                     => $this->lang,
+            'methods'                  => $this->getMethodsForConfig(),
         );
 
         $messageStatus = $this->l('Status for %s payments');
@@ -787,7 +789,7 @@ class Mollie extends PaymentModule
                 $payment->refund(array(
                     'amount' => array(
                         'currency' => (string) $payment->amount->currency,
-                        'value'    => (string) ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value),
+                        'value'    => (string) number_format(((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value), 2),
                     ),
                 ));
             }
@@ -1797,5 +1799,58 @@ class Mollie extends PaymentModule
             reset($objects);
             rmdir($dir);
         }
+    }
+
+    /**
+     * Get payment methods to show on the configuration page
+     *
+     * @return array
+     *
+     * @throws PrestaShopException
+     */
+    protected function getMethodsForConfig()
+    {
+        try {
+            $apiMethods = $this->api->methods->all();
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            $apiMethods = array();
+        } catch (Exception $e) {
+            $apiMethods = array();
+        }
+        if (!count($apiMethods)) {
+            return array();
+        }
+
+        $configMethods = @json_decode(Configuration::get(static::METHODS_CONFIG));
+        if (!is_array($configMethods)) {
+            $configMethods = array();
+        }
+        $methodsFromDb = array_keys($configMethods);
+        $methods = array();
+        $deferredMethods = array();
+        foreach ($apiMethods as $apiMethod) {
+            if (!in_array($apiMethod->id, $methodsFromDb)) {
+                $deferredMethods[] = array(
+                    'id'      => $apiMethod->id,
+                    'name'    => $apiMethod->description,
+                    'image'   => $apiMethod->image->size2x,
+                    'enabled' => true,
+                );
+            } else {
+                $methods[$configMethods[$apiMethod->id]['position']] = array(
+                    'id'      => $apiMethod->id,
+                    'name'    => $apiMethod->description,
+                    'enabled' => $configMethods[$apiMethod->id]['enabled'],
+                    'image'   => $apiMethod->image->size2x,
+                );
+            }
+        }
+        ksort($methods);
+        $methods = array_values($methods);
+        foreach ($deferredMethods as $deferredMethod) {
+            $methods[] = $deferredMethod;
+        }
+
+        return $methods;
     }
 }
