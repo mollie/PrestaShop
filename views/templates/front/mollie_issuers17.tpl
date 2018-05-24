@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <!doctype html>
 <html lang="{$language.iso_code|escape:'htmlall':'UTF-8' nofilter}">
 <head>

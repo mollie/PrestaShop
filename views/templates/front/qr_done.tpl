@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <!doctype html>
 <html>
 <head>

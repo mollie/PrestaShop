@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 {if $warning != ''}
   <p class="payment_module" style="color:red;">{$warning|escape:'htmlall':'UTF-8' nofilter}</p>
 {/if}

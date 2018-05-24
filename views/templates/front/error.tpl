@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 {capture name=path}
   <a href="{$orderLink|escape:'html':'UTF-8' nofilter}">
     {l s='Payment' mod='mollie'}

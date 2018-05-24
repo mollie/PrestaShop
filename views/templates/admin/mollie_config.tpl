@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <div class="mollie_config_page">
   <form action="{$link->getAdminLink('AdminModules', true)|escape:'htmlall':'UTF-8' nofilter}&configure=mollie"
         method="post"

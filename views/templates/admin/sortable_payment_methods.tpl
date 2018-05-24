@@ -30,7 +30,6 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
 <script type="text/javascript">
   (function () {
     function setInput() {
