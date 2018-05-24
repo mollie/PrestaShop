@@ -610,6 +610,10 @@ class Mollie extends PaymentModule
 
         $mollieDescription = Tools::getValue('Mollie_Description');
 
+        if (Tools::getValue('Mollie_Payment_Methods') && @json_decode(Tools::getValue('Mollie_Payment_Methods'))) {
+            Configuration::updateValue(static::METHODS_CONFIG, json_encode(@json_decode(Tools::getValue('Mollie_Payment_Methods'))));
+        }
+
         $molliePaymentscreenLocale = Tools::getValue('Mollie_Paymentscreen_Locale');
 
         if (!in_array($molliePaymentscreenLocale, $payscreenLocaleOptions)) {
@@ -864,7 +868,6 @@ class Mollie extends PaymentModule
         if (is_null($file)) {
             $file = Configuration::get(static::MOLLIE_CSS);
         }
-
         if (empty($file)) {
             if (version_compare(_PS_VERSION_, '1.6.0.0', '<')) {
                 // Use a modified css file to display the new 1.6 default layout
@@ -995,26 +998,17 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
-        $iso = strtolower($this->context->currency->iso_code);
+        $issuerList = in_array(
+            $issuerSetting,
+            array(static::ISSUERS_ON_CLICK)
+        )
+            ? $this->getIssuerList()
+            : array();
 
         try {
-            $methods = $this->api->methods->all()->getArrayCopy();
-            $issuerList = in_array(
-                $issuerSetting,
-                array(static::ISSUERS_ON_CLICK)
-            )
-                ? $this->getIssuerList()
-                : array();
-            foreach ($methods as $index => $method) {
-                if (!isset(static::$methodCurrencies[$method->id])) {
-                    continue;
-                }
-                if (!in_array($iso, static::$methodCurrencies[$method->id])) {
-                    unset($methods[$index]);
-                }
-            }
+            $apiMethods = $this->getFilteredApiMethods();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            $methods = array();
+            $apiMethods = array();
             $issuerList = array();
 
             if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
@@ -1032,7 +1026,7 @@ class Mollie extends PaymentModule
             array(
                 'link'                  => $this->context->link,
                 'cartAmount'            => (int) ($cart->getOrderTotal(true) * 100),
-                'methods'               => $methods,
+                'methods'               => $apiMethods,
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
                 'images'                => Configuration::get(static::MOLLIE_IMAGES),
@@ -1067,7 +1061,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $methods = $this->api->methods->all();
+            $methods = $this->getFilteredApiMethods();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__." said: {$e->getMessage()}", static::ERROR);
@@ -1116,7 +1110,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $methods = $this->api->methods->all();
+            $methods = $this->getFilteredApiMethods();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
@@ -1628,7 +1622,6 @@ class Mollie extends PaymentModule
     {
         @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
-
         try {
             $result = $this->unzipModule();
         } catch (Adapter_Exception $e) {
@@ -1654,7 +1647,6 @@ class Mollie extends PaymentModule
     {
         @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
-
         try {
             $result = $this->runUpgradeModule();
         } catch (PrestaShopDatabaseException $e) {
@@ -1703,6 +1695,8 @@ class Mollie extends PaymentModule
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
+     * @since 3.0.0
      */
     protected function unzipModule()
     {
@@ -1724,7 +1718,8 @@ class Mollie extends PaymentModule
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @since 1.0.0
+     *
+     * @since 3.0.0
      */
     protected function extractModuleArchive($moduleName, $file)
     {
@@ -1773,13 +1768,6 @@ class Mollie extends PaymentModule
         @unlink(_PS_MODULE_DIR_.$moduleName.'backup');
         $this->recursiveDeleteOnDisk($tmpFolder);
 
-//        if ($success) {
-//            Configuration::updateGlobalValue(static::LAST_UPDATE, (int) time());
-//            if ($redirect) {
-//                Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true).'&doNotAutoUpdate=1');
-//            }
-//        }
-
         die(json_encode(array(
             'success' => $success,
         )));
@@ -1790,7 +1778,7 @@ class Mollie extends PaymentModule
      *
      * @param string $dir Directory
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     protected function recursiveDeleteOnDisk($dir)
     {
@@ -1817,11 +1805,14 @@ class Mollie extends PaymentModule
     /**
      * Get payment methods to show on the configuration page
      *
+     * @param bool $active Active methods only
+     *
      * @return array
      *
      * @throws PrestaShopException
+     * @since 3.0.0
      */
-    protected function getMethodsForConfig()
+    protected function getMethodsForConfig($active = false)
     {
         try {
             $apiMethods = $this->api->methods->all();
@@ -1834,10 +1825,16 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        $configMethods = @json_decode(Configuration::get(static::METHODS_CONFIG));
-        if (!is_array($configMethods)) {
+        $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        if (!is_array($dbMethods)) {
             $configMethods = array();
+        } else {
+            $configMethods = array();
+            foreach ($dbMethods as $dbMethod) {
+                $configMethods[$dbMethod['id']] = $dbMethod;
+            }
         }
+
         $methodsFromDb = array_keys($configMethods);
         $methods = array();
         $deferredMethods = array();
@@ -1862,6 +1859,49 @@ class Mollie extends PaymentModule
         $methods = array_values($methods);
         foreach ($deferredMethods as $deferredMethod) {
             $methods[] = $deferredMethod;
+        }
+        if ($active) {
+            foreach ($methods as $index => $method) {
+                if (!$method['enabled']) {
+                    unset($methods[$index]);
+                }
+            }
+        }
+
+        return $methods;
+    }
+
+    /**
+     * Get filtered API method
+     *
+     * @return array
+     *
+     * @throws PrestaShopException
+     * @throws \Mollie\Api\Exceptions\ApiException
+     *
+     * @since 3.0.0
+     */
+    protected function getFilteredApiMethods()
+    {
+        $iso = strtolower($this->context->currency->iso_code);
+        $dbMethods = $this->getMethodsForConfig(true);
+        $methods = array();
+        $apiMethods = $this->api->methods->all()->getArrayCopy();
+        foreach ($dbMethods as $method) {
+            foreach ($apiMethods as $apiMethod) {
+                if ($apiMethod->id === $method['id']) {
+                    $methods[] = $apiMethod;
+                    break;
+                }
+            }
+        }
+        foreach ($methods as $index => $method) {
+            if (!isset(static::$methodCurrencies[$method->id])) {
+                continue;
+            }
+            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
+                unset($methods[$index]);
+            }
         }
 
         return $methods;

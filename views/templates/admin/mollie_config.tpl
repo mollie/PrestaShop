@@ -248,14 +248,18 @@
         <section class="module_list col-sm-12 col-md-8">
           <ul class="list-unstyled sortable">
             {foreach $methods as $index => $method}
-              <li id="21_479" class="module_position_479 module_list_item draggable" draggable="true">
-                <div class="module_col_position dragHandle" id="td_21_479">
+              <li class="module_list_item draggable"
+                  draggable="true"
+                  data-pos="{$index|intval}"
+                  data-method="{$method['id']|escape:'htmlall':'UTF-8'}"
+              >
+                <div class="module_col_position dragHandle">
                   <span class="positions">{{$index|intval} + 1}</span>
                   <div class="btn-group-vertical">
-                    <a class="mollie-ui btn btn-primary btn-xs">
+                    <a class="mollie-ui btn btn-primary btn-xs mollie-up">
                       <i class="icon-chevron-up"></i>
                     </a>
-                    <a class="mollie-ui btn btn-primary btn-xs">
+                    <a class="mollie-ui btn btn-primary btn-xs mollie-down">
                       <i class="icon-chevron-down"></i>
                     </a>
                   </div>
@@ -270,9 +274,7 @@
                     </span>
                   </div>
                   <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
-                    <input name="Mollie_Qrenabled"
-                           id="Mollie_Qrenabled"
-                           type="checkbox"
+                    <input type="checkbox"
                            value="1"
                            style="width: auto;"
                            {if !empty($method['enabled'])}checked="checked"{/if}
@@ -284,16 +286,9 @@
             {/foreach}
           </ul>
         </section>
+        <input type="hidden" name="Mollie_Payment_Methods" id="Mollie_Payment_Methods">
       </div>
-      <script type="text/javascript">
-        (function ($) {
-          $(document).ready(function () {
-            $('.sortable').sortable({
-              forcePlaceholderSize: true
-            });
-          });
-        }(jQuery))
-      </script>
+      {include file="./sortable_payment_methods.tpl"}
     {/if}
     <!--/ Mollie payment method list-->
 
