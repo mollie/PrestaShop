@@ -977,13 +977,6 @@ class Mollie extends PaymentModule
     public function hookDisplayPayment()
     {
         $smarty = $this->context->smarty;
-
-        /*if (!Currency::exists('EUR', 0)) {
-            $smarty->assign('message', $this->l('Mollie Payment Methods are only available when Euros are activated.'));
-
-            return $this->display(__FILE__, 'error_message.tpl');
-        }*/
-
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
         $iso = strtolower($this->context->currency->iso_code);
 
