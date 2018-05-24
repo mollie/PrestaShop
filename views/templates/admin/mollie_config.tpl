@@ -191,12 +191,70 @@
       </div>
     </div>
     <!--/ Mollie issuer settings-->
-    
+
+    <!-- Mollie payment method list-->
+    {if count($methods) && version_compare($smarty.const._PS_VERSION_, '1.6.0.3', '>=')}
+      <div class="form-group row">
+        <div class="col-sm-12 col-md-4 mollie_msg">
+          <label for="Mollie_Css">
+            <strong>{l s='Payment methods' mod='mollie'}</strong>
+          </label>
+        </div>
+        <div class="col-sm-12 col-md-8 mollie_input">
+          <section class="module_list">
+            <ul class="list-unstyled sortable">
+              {foreach $methods as $index => $method}
+                <li class="module_list_item draggable"
+                    draggable="true"
+                    data-pos="{$index|intval}"
+                    data-method="{$method['id']|escape:'htmlall':'UTF-8'}"
+                >
+                  <div class="module_col_position dragHandle">
+                    <span class="positions">{{$index|intval} + 1}</span>
+                    <div class="btn-group-vertical">
+                      <a class="mollie-ui btn btn-primary btn-xs mollie-up">
+                        <i class="icon-chevron-up"></i>
+                      </a>
+                      <a class="mollie-ui btn btn-primary btn-xs mollie-down">
+                        <i class="icon-chevron-down"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="module_col_icon">
+                    <img width="57" src="{$method['image']}" alt="mollie">
+                  </div>
+                  <div class="module_col_infos">
+                    <div style="display: inline-block">
+                      <span class="module_name">
+                        {$method['name']|escape:'htmlall':'UTF-8'}
+                      </span>
+                    </div>
+                    <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
+                      <input type="checkbox"
+                             value="1"
+                             style="width: auto;"
+                             {if !empty($method['enabled'])}checked="checked"{/if}
+                      >
+                      <span class="mollie_slider"></span>
+                    </label>
+                  </div>
+                </li>
+              {/foreach}
+            </ul>
+          </section>
+          <em class="mollie_desc">{l s='Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.' mod='mollie'}</em>
+          <input type="hidden" name="Mollie_Payment_Methods" id="Mollie_Payment_Methods">
+        </div>
+      </div>
+      {include file="./sortable_payment_methods.tpl"}
+    {/if}
+    <!--/ Mollie payment method list-->
+
     <!-- Mollie qrenabled checkbox-->
     <div class="form-group row">
       <div class="col-sm-12 col-md-4 mollie_msg">
         <label for="Mollie_Paymentscreen_Locale">
-          <strong>{l s='Enable or disable QR code.' mod='mollie'}</strong>
+          <strong>{l s='Enable iDEAL QR' mod='mollie'}</strong>
         </label>
       </div>
       <div class="col-sm-12 col-md-8 mollie_input">
@@ -209,72 +267,17 @@
                     checked="checked"
                   {/if}
                  style="width: auto;"
-                  >
+          >
           <span class="mollie_slider"></span>
         </label>
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">
-          {l s='Enable or disable iDEAL payments via a mobile device using a QR code.' mod='mollie'}
+          {l s='Enable iDEAL payments via a mobile device using a QR code.' mod='mollie'}
         </em>
       </div>
     </div>
     <!--/ Mollie qrenabled checkbox-->
-
-    <!-- Mollie payment method list-->
-    {if count($methods) && version_compare($smarty.const._PS_VERSION_, '1.6.0.3', '>=')}
-      <div class="form-group row">
-        <div class="col-sm-12 col-md-4 mollie_msg">
-          <label for="Mollie_Css">
-            <strong>{l s='Payment methods' mod='mollie'}</strong>
-          </label>
-        </div>
-        <section class="module_list col-sm-12 col-md-8">
-          <ul class="list-unstyled sortable">
-            {foreach $methods as $index => $method}
-              <li class="module_list_item draggable"
-                  draggable="true"
-                  data-pos="{$index|intval}"
-                  data-method="{$method['id']|escape:'htmlall':'UTF-8'}"
-              >
-                <div class="module_col_position dragHandle">
-                  <span class="positions">{{$index|intval} + 1}</span>
-                  <div class="btn-group-vertical">
-                    <a class="mollie-ui btn btn-primary btn-xs mollie-up">
-                      <i class="icon-chevron-up"></i>
-                    </a>
-                    <a class="mollie-ui btn btn-primary btn-xs mollie-down">
-                      <i class="icon-chevron-down"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="module_col_icon">
-                  <img width="57" src="{$method['image']}" alt="mollie">
-                </div>
-                <div class="module_col_infos">
-                  <div style="display: inline-block">
-                    <span class="module_name">
-                      {$method['name']|escape:'htmlall':'UTF-8'}
-                    </span>
-                  </div>
-                  <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
-                    <input type="checkbox"
-                           value="1"
-                           style="width: auto;"
-                           {if !empty($method['enabled'])}checked="checked"{/if}
-                    >
-                    <span class="mollie_slider"></span>
-                  </label>
-                </div>
-              </li>
-            {/foreach}
-          </ul>
-        </section>
-        <input type="hidden" name="Mollie_Payment_Methods" id="Mollie_Payment_Methods">
-      </div>
-      {include file="./sortable_payment_methods.tpl"}
-    {/if}
-    <!--/ Mollie payment method list-->
 
     <!--Mollie status settings-->
     {foreach $statuses as $i => $name}
