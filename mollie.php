@@ -891,6 +891,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayHeader()
     {
+        $this->addCSSFile($this->_path.'views/css/front.css');
         $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
     }
 

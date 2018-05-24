@@ -7,7 +7,11 @@
 
   <div id="mollie-qr-image-container" style="text-align: {if !empty($qrAlign)}{$qrAlign}{else}center{/if}">
     <span id="mollie-qr-title" style="font-size: 20px">{l s='or scan the iDEAL QR code' mod='mollie'}</span>
-    <img id="mollie-qr-image" width="320" height="320" style="height: 240px; width: 240px; visibility: hidden;{if !empty($qrAlign) && $qrAlign === 'center'} margin: 0 auto;{/if}">
+    <img id="mollie-qr-image"
+         width="320"
+         height="320"
+         style="height: 240px; width: 240px; visibility: hidden;{if !empty($qrAlign) && $qrAlign === 'center'} margin: 0 auto;{/if}"
+    >
   </div>
 </div>
 
@@ -129,7 +133,7 @@
       var request = new XMLHttpRequest();
       request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'])|escape:'javascript':'UTF-8' nofilter}', true);
 
-      request.onreadystatechange = function() {
+      request.onreadystatechange = function () {
         if (this.readyState === 4) {
           if (this.status >= 200 && this.status < 400) {
             // Success!
@@ -172,7 +176,7 @@
         Object.keys(window.localStorage).forEach(function (key) {
           if (key.indexOf('mollieqrcache') > -1) {
             var cacheInfo = window.localStorage[key].split('-');
-            if (cacheInfo[1] > (+ new Date() + 60 * 1000) && parseInt(cacheInfo[2], 10) === {$cartAmount|intval}) {
+            if (cacheInfo[1] > (+new Date() + 60 * 1000) && parseInt(cacheInfo[2], 10) === {$cartAmount|intval}) {
               var item = JSON.parse(window.localStorage.getItem(key));
               var a = document.createElement('A');
               a.href = item.url;

@@ -31,7 +31,7 @@
 * @link       https://www.mollie.nl
 *}
 
-<section class="mollie_issuer_page">
+<section class="mollie_issuer_page mollie-reset-this">
   <form method="post" action="">
     <div class="form-group row">
       <div class="mollie_issuer">

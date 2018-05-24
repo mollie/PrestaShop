@@ -42,56 +42,9 @@
 <body>
   <section id="wrapper">
     <div class="container">
-
       {block name='content'}
-        <section class="mollie_issuer_page">
-          <form method="post"
-                action="">
-            <div class="form-group row">
-              <div class="col-md-4">
-              </div>
-              <div class="col-sm-12 col-md-4">
-                <div class="text-sm-center">
-                  {if count($issuers)}
-                    <a href="{$urls.base_url|escape:'htmlall':'UTF-8' nofilter}">
-                      <img class="logo img-responsive"
-                           src="{$shop.logo|escape:'htmlall':'UTF-8' nofilter}"
-                           alt="{$shop.name|escape:'htmlall':'UTF-8' nofilter}"
-                      >
-                    </a>
-                    <br/>
-                    <br/>
-                    <h4>{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</h4>
-                    {foreach $issuers as $issuer}
-                      <button type="submit"
-                              name="issuer"
-                              class="mollie_button"
-                              value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}"
-                      >
-                        <img src="{$issuer->image->size2x|escape:'htmlall':'UTF-8' nofilter}" >
-                        <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
-                      </button>
-                    {/foreach}
-                    <input type="hidden" name="method" value="ideal">
-                  {/if}
-                  
-                  {include file='module:mollie/views/templates/hook/qr_code.tpl'}
-
-                  <a href="{$urls.pages.order|escape:'htmlall':'UTF-8' nofilter}"
-                     class="btn btn-primary"
-                     style="margin-top: 10px"
-                  >
-                    {$msg_return|escape:'htmlall':'UTF-8' nofilter}
-                  </a>
-                </div>
-              </div>
-              <div class="col-md-4">
-              </div>
-            </div>
-          </form>
-        </section>
+        {include file="./mollie_issuers.tpl"}
       {/block}
-
     </div>
   </section>
 
