@@ -7,6 +7,10 @@
  */
 class MollieQrcodeModuleFrontController extends ModuleFrontController
 {
+    const PENDING = 1;
+    const SUCCESS = 2;
+    const REFRESH = 3;
+
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool If false, does not build left page column content and hides it. */
@@ -27,14 +31,23 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         if (Tools::getValue('done')) {
-            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-                header('Content-Type: text/html');
-                $this->context->smarty->assign('ideal_logo', Media::getMediaPath(_PS_MODULE_DIR_.'mollie/views/img/ideal_logo.png'));
-                echo $this->context->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/front/qr_done.tpl');
-                exit;
-            } else {
-                $this->setTemplate('qr_done.tpl');
+            $canceled = true;
+            $dbPayment = $this->module->getPaymentBy('cart_id', Tools::getValue('cart_id'));
+            if (is_array($dbPayment)) {
+                try {
+                    $apiPayment = $this->module->api->payments->get($dbPayment['transaction_id']);
+                    $canceled = $apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_PAID;
+                } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                }
             }
+
+            header('Content-Type: text/html');
+            $this->context->smarty->assign(array(
+                'ideal_logo' => __PS_BASE_URI__.'modules/mollie/views/img/ideal_logo.png',
+                'canceled'   => $canceled,
+            ));
+            echo $this->context->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/front/qr_done.tpl');
+            exit;
         }
     }
 
@@ -98,7 +111,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'method'         => $payment->method,
                 'transaction_id' => $payment->id,
                 'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                'created_at'     => date("Y-m-d H:i:s"),
+                'created_at'     => date('Y-m-d H:i:s'),
             )
         );
 
@@ -123,6 +136,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             die(json_encode(array(
                 'success' => false,
                 'status'  => false,
+                'amount'  => null,
             )));
         }
 
@@ -132,18 +146,34 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             die(json_encode(array(
                 'success' => false,
                 'status'  => false,
+                'amount'  => null,
             )));
         } catch (PrestaShopException $e) {
             die(json_encode(array(
                 'success' => false,
                 'status'  => false,
+                'amount'  => null,
             )));
         }
 
+        switch ($payment['bank_status']) {
+            case  \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+                $status = static::SUCCESS;
+                break;
+            case  \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
+                $status = static::PENDING;
+                break;
+            default:
+                $status = static::REFRESH;
+                break;
+        }
+
         $cart = new Cart($payment['cart_id']);
+        $amount = (int) ($cart->getOrderTotal(true) * 100);
         die(json_encode(array(
             'success' => true,
-            'status'  => $payment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+            'status'  => $status,
+            'amount'  => $amount,
             'href'    => $this->context->link->getPageLink(
                 'order-confirmation',
                 true,

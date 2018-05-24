@@ -59,7 +59,12 @@
   <div class="ideal-container">
     <img class="ideal-logo" src="{$ideal_logo}" alt="">
   </div>
-  <h1>{l s='Welcome back' mod='mollie'}</h1>
-  <p>{l s='The payment has been completed. Thank you for your order!' mod='mollie'}</p>
+  {if !empty($canceled)}
+    <h1>{l s='Welcome back' mod='mollie'}</h1>
+    <p>{l s='The payment has been canceled.' mod='mollie'}</p>
+  {else}
+    <h1>{l s='Welcome back' mod='mollie'}</h1>
+    <p>{l s='The payment has been completed. Thank you for your order!' mod='mollie'}</p>
+  {/if}
 </body>
 </html>

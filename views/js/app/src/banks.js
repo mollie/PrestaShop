@@ -17,83 +17,6 @@ export default class MollieBanks {
     }, 200))
   }
 
-  static throttle(callback, delay) {
-    let isThrottled = false, args, context;
-
-    function wrapper() {
-      if (isThrottled) {
-        args = arguments;
-        context = this;
-        return;
-      }
-
-      isThrottled = true;
-      callback.apply(this, arguments);
-
-      setTimeout(() => {
-        isThrottled = false;
-        if (args) {
-          wrapper.apply(context, args);
-          args = context = null;
-        }
-      }, delay);
-    }
-
-    return wrapper;
-  }
-
-  static checkWindowSize() {
-    const elem = document.getElementById('mollie-qr-code');
-    if (elem) {
-      if (window.innerWidth > 800 && window.innerHeight > 860) {
-        elem.style.display = 'block';
-      } else {
-        elem.style.display = 'none';
-      }
-    }
-  }
-
-  static pollStatus = (idTransaction) => {
-    setTimeout(() => {
-      let request = new XMLHttpRequest();
-      request.open('GET', window.MollieModule.urls.qrCodeStatus + '&transaction_id=' + idTransaction, true);
-
-      request.onreadystatechange = () => {
-        if (this.readyState === 4) {
-          if (this.status >= 200 && this.status < 400) {
-            // Success!
-            try {
-              const data = JSON.parse(this.responseText);
-              if (data.status) {
-                Object.keys(window.localStorage).forEach((key) => {
-                  if (key.indexOf('mollieqrcache') > -1) {
-                    window.localStorage.removeItem(key);
-                  }
-                });
-
-                // Never redirect to a different domain
-                const a = document.createElement('A');
-                a.href = data.href;
-                if (a.hostname === window.location.hostname) {
-                  window.location.href = data.href;
-                }
-              } else {
-                MollieBanks.pollStatus(idTransaction);
-              }
-            } catch (e) {
-              MollieBanks.pollStatus(idTransaction);
-            }
-          } else {
-            MollieBanks.pollStatus(idTransaction);
-          }
-        }
-      };
-
-      request.send();
-      request = null;
-    }, 5000);
-  };
-
   initBanks = () => {
     const elem = document.createElement('div');
     elem.id = 'mollie-banks-list';
@@ -131,8 +54,7 @@ export default class MollieBanks {
     }).then((value) => {
       if (value) {
         const issuer = elem.querySelector('input[name="mollie-bank"]:checked').value;
-
-        var win = window.open(this.banks[issuer].href, '_self');
+        const win = window.open(this.banks[issuer].href, '_self');
         win.opener = null;
       } else {
         [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((item) => {
@@ -142,28 +64,116 @@ export default class MollieBanks {
     });
   };
 
+  static throttle(callback, delay) {
+    let isThrottled = false, args, context;
+
+    function wrapper() {
+      if (isThrottled) {
+        args = arguments;
+        context = this;
+        return;
+      }
+
+      isThrottled = true;
+      callback.apply(this, arguments);
+
+      setTimeout(() => {
+        isThrottled = false;
+        if (args) {
+          wrapper.apply(context, args);
+          args = context = null;
+        }
+      }, delay);
+    }
+
+    return wrapper;
+  }
+
+  static clearCache = () => {
+    Object.keys(window.localStorage).forEach((key) => {
+      if (key.indexOf('mollieqrcache') > -1) {
+        window.localStorage.removeItem(key);
+      }
+    });
+  };
+
+  static checkWindowSize() {
+    const elem = document.getElementById('mollie-qr-code');
+    if (elem) {
+      if (window.innerWidth > 800 && window.innerHeight > 860) {
+        elem.style.display = 'block';
+      } else {
+        elem.style.display = 'none';
+      }
+    }
+  }
+
+  pollStatus = (idTransaction) => {
+    const self = this;
+
+    setTimeout(() => {
+      let request = new XMLHttpRequest();
+      request.open('GET', window.MollieModule.urls.qrCodeStatus + '&transaction_id=' + idTransaction, true);
+
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status >= 200 && request.status < 400) {
+            // Success!
+            try {
+              const data = JSON.parse(request.responseText);
+              if (parseInt(data.status, 10) === 2) {
+                MollieBanks.clearCache();
+
+                // Never redirect to a different domain
+                const a = document.createElement('A');
+                a.href = data.href;
+                if (a.hostname === window.location.hostname) {
+                  window.location.href = data.href;
+                }
+              } else if (parseInt(data.status, 10) === 3) {
+                MollieBanks.clearCache();
+                self.grabNewUrl();
+              } else {
+                self.pollStatus(idTransaction);
+              }
+            } catch (e) {
+              self.pollStatus(idTransaction);
+            }
+          } else {
+            self.pollStatus(idTransaction);
+          }
+          request = null;
+        }
+      };
+
+      request.send();
+    }, 5000);
+  };
+
   grabAmount = () => {
     return new Promise((resolve) => {
       let request = new XMLHttpRequest();
       request.open('GET', window.MollieModule.urls.cartAmount, true);
 
-      request.onreadystatechange = function () {
-        if (this.readyState === 4) {
-          if (this.status >= 200 && this.status < 400) {
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status >= 200 && request.status < 400) {
             // Success!
-            // try {
-              const data = JSON.parse(this.responseText);
+            try {
+              const data = JSON.parse(request.responseText);
               resolve(data.amount);
-            // } catch (e) {
-            // }
+            } catch (e) {
+              console.log(JSON.stringify(e));
+            }
           } else {
-            // Error :(
+            console.log(JSON.stringify(e));
           }
+
+          request = null;
         }
       };
 
       request.send();
-      request = null;
     });
   };
 
@@ -172,13 +182,12 @@ export default class MollieBanks {
     let request = new XMLHttpRequest();
     request.open('GET', window.MollieModule.urls.qrCodeNew, true);
 
-    request.onreadystatechange = function () {
-      if (this.readyState === 4) {
-        if (this.status >= 200 && this.status < 400) {
+    request.onreadystatechange = () => {
+      if (request.readyState === 4) {
+        if (request.status >= 200 && request.status < 400) {
           // Success!
           try {
-            const data = JSON.parse(this.responseText);
-            console.log(data);
+            const data = JSON.parse(request.responseText);
             window.localStorage.setItem('mollieqrcache-' + data.expires + '-' + data.amount, JSON.stringify({
               url: data.href,
               idTransaction: data.idTransaction,
@@ -192,7 +201,7 @@ export default class MollieBanks {
                 elem.style.display = 'block';
                 document.getElementById('mollie-spinner').style.display = 'none';
                 document.getElementById('mollie-qr-image').style.visibility = 'visible';
-                self.constructor.pollStatus(data.idTransaction);
+                self.pollStatus(data.idTransaction);
               } else {
                 document.getElementById('mollie-qr-code').style.display = 'none';
               }
@@ -206,11 +215,11 @@ export default class MollieBanks {
         } else {
           // Error :(
         }
+        request = null;
       }
     };
 
     request.send();
-    request = null;
   };
 
   initQrImage = (amount) => {
@@ -224,8 +233,15 @@ export default class MollieBanks {
       Object.keys(window.localStorage).forEach((key) => {
         if (key.indexOf('mollieqrcache') > -1) {
           const cacheInfo = key.split('-');
-          if (cacheInfo[1] > (+ new Date() + 60 * 1000) && cacheInfo[2] == amount) {
+          if (cacheInfo[1] > (+ new Date() + 60 * 1000) && parseInt(cacheInfo[2], 10) === amount) {
             const item = JSON.parse(window.localStorage.getItem(key));
+            const a = document.createElement('A');
+            a.href = item.url;
+            if (a.hostname !== 'qr2.ideal.nl' || a.protocol !== 'https:') {
+              window.localStorage.removeItem(key);
+              return;
+            }
+            // Valid
             url = item.url;
             idTransaction = item.idTransaction;
             return false;
@@ -242,7 +258,7 @@ export default class MollieBanks {
             elem.style.display = 'block';
             document.getElementById('mollie-spinner').style.display = 'none';
             document.getElementById('mollie-qr-image').style.visibility = 'visible';
-            self.constructor.pollStatus(idTransaction);
+            self.pollStatus(idTransaction);
           } else {
             document.getElementById('mollie-qr-code').style.display = 'none';
           }

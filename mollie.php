@@ -1252,7 +1252,7 @@ class Mollie extends PaymentModule
     public function pendingOrderState()
     {
         $stateExist = false;
-        $states = OrderState::getOrderStates((int)$this->context->language->id);
+        $states = OrderState::getOrderStates((int) $this->context->language->id);
         foreach ($states as $state) {
             if (in_array($this->lang('Awaiting Mollie payment'), $state)) {
                 $stateExist = true;
@@ -1274,8 +1274,8 @@ class Mollie extends PaymentModule
                 $orderState->name[$language['id_lang']] = $this->lang('Awaiting Mollie payment');
             }
             if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+                $source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
+                $destination = _PS_ROOT_DIR_.'/img/os/'.(int) $orderState->id.'.gif';
                 @copy($source, $destination);
             }
             Configuration::updateValue(static::MOLLIE_PENDING, (int) $orderState->id);
@@ -1319,8 +1319,8 @@ class Mollie extends PaymentModule
                 $orderState->name[$language['id_lang']] = $this->lang('Mollie partially refunded');
             }
             if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+                $source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
+                $destination = _PS_ROOT_DIR_.'/img/os/'.(int) $orderState->id.'.gif';
                 @copy($source, $destination);
             }
             Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
@@ -1403,7 +1403,7 @@ class Mollie extends PaymentModule
                 ? $context->link->getModuleLink(
                     'mollie',
                     'qrcode',
-                    array('done' => 1)
+                    array('cart_id' => $cartId, 'done' => 1)
                 )
                 : $context->link->getModuleLink(
                     'mollie',

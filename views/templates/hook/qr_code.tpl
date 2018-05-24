@@ -13,6 +13,14 @@
 
 <script type="text/javascript">
   (function () {
+    function clearCache() {
+      Object.keys(window.localStorage).forEach(function (key) {
+        if (key.indexOf('mollieqrcache') > -1) {
+          window.localStorage.removeItem(key);
+        }
+      });
+    }
+
     function pollStatus(idTransaction) {
       setTimeout(function () {
         var request = new XMLHttpRequest();
@@ -24,20 +32,19 @@
               // Success!
               try {
                 var data = JSON.parse(this.responseText);
-                if (data.status) {
-                  Object.keys(window.localStorage).forEach(function (key) {
-                    if (key.indexOf('mollieqrcache') > -1) {
-                      window.localStorage.removeItem(key);
-                    }
-                  });
-
+                if (parseInt(data.status, 10) === 2) {
+                  clearCache();
                   // Never redirect to a different domain
                   var a = document.createElement('A');
                   a.href = data.href;
                   if (a.hostname === window.location.hostname) {
                     window.location.href = data.href;
                   }
-                } else {
+                } else if (parseInt(data.status, 10) === 3) {
+                  clearCache();
+                  initQrImage();
+                }
+                else {
                   pollStatus(idTransaction);
                 }
               } catch (e) {
