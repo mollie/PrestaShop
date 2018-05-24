@@ -5,6 +5,7 @@ import xss from 'xss';
 
 const refund = (callback, translations) => {
   swal({
+    dangerMode: true,
     icon: 'warning',
     title: xss(translations.areYouSure),
     text: xss(translations.areYouSureYouWantToRefund),
