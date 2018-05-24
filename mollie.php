@@ -58,19 +58,19 @@ class Mollie extends PaymentModule
     * @var array
     */
     public static $methodCurrencies = array(
-        'banktransfer' => array('eur'),
-        'belfius '     => array('eur'),
-        'bitcoin '     => array('eur'),
-        'creditcard'   => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
-        'directdebit'  => array('eur'),
-        'giftcard'     => array('eur'),
-        'ideal'        => array('eur'),
-        'inghomepay '  => array('eur'),
-        'kbc'          => array('eur'),
-        'bancontact'   => array('eur'),
-        'paypal'       => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
-        'paysafecard'  => array('eur'),
-        'sofort'       => array('eur'),
+        'banktransfer'  => array('eur'),
+        'belfius'       => array('eur'),
+        'bitcoin'       => array('eur'),
+        'creditcard'    => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
+        'directdebit'   => array('eur'),
+        'giftcard'      => array('eur'),
+        'ideal'         => array('eur'),
+        'inghomepay'    => array('eur'),
+        'kbc'           => array('eur'),
+        'bancontact'    => array('eur'),
+        'paypal'        => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
+        'paysafecard'   => array('eur'),
+        'sofort'        => array('eur'),
     );
 
     const NOTICE = 1;
@@ -973,15 +973,24 @@ class Mollie extends PaymentModule
         }*/
 
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
+        $iso = strtolower($this->context->currency->iso_code);
 
         try {
-            $methods = $this->api->methods->all();
+            $methods = $this->api->methods->all()->getArrayCopy();
             $issuerList = in_array(
                 $issuerSetting,
                 array(static::ISSUERS_ON_CLICK)
             )
                 ? $this->getIssuerList()
                 : array();
+            foreach ($methods as $index => $method) {
+                if (!isset(static::$methodCurrencies[$method->id])) {
+                    continue;
+                }
+                if (!in_array($iso, static::$methodCurrencies[$method->id])) {
+                    unset($methods[$index]);
+                }
+            }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $methods = array();
             $issuerList = array();
@@ -1000,8 +1009,8 @@ class Mollie extends PaymentModule
         $smarty->assign(
             array(
                 'link'                  => $this->context->link,
-                'cartAmount'            => (int) ($cart->getOrderTotal(true)),
-                'methods'               => $methods->getArrayCopy(),
+                'cartAmount'            => (int) ($cart->getOrderTotal(true) * 100),
+                'methods'               => $methods,
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
                 'images'                => Configuration::get(static::MOLLIE_IMAGES),
@@ -1031,7 +1040,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayPaymentEU()
     {
-        if (/*!Currency::exists('EUR', 0) ||*/ version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             return array();
         }
 
@@ -1039,20 +1048,30 @@ class Mollie extends PaymentModule
             $methods = $this->api->methods->all();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
+                Logger::addLog(__METHOD__." said: {$e->getMessage()}", static::ERROR);
             }
 
             return array();
         }
 
+        $iso = strtolower(Context::getContext()->currency->iso_code);
         $paymentOptions = array();
         foreach ($methods as $method) {
+            if (!isset(static::$methodCurrencies[$method->id])) {
+                continue;
+            }
+            if (in_array($iso, static::$methodCurrencies[$method->id])) {
+                continue;
+            }
+            
             $paymentOptions[] = array(
                 'cta_text' => $this->lang[$method->description],
-                'logo'     => $method->image->normal,
+                'logo'     => $method->image->size1x,
                 'action'   => $this->context->link->getModuleLink(
-                    'mollie', 'payment',
-                    array('method' => $method->id), true
+                    'mollie',
+                    'payment',
+                    array('method' => $method->id),
+                    true
                 ),
             );
         }
@@ -1103,8 +1122,16 @@ class Mollie extends PaymentModule
             'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
         ));
 
+        $iso = strtolower($context->currency->iso_code);
         $paymentOptions = array();
         foreach ($methods as $method) {
+            if (!isset(static::$methodCurrencies[$method->id])) {
+                continue;
+            }
+            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
+                continue;
+            }
+
             if ($method->id === 'ideal' && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
