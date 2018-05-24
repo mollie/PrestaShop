@@ -206,7 +206,7 @@
     <div class="form-group row">
       <div class="col-sm-12 col-md-4 mollie_msg">
         <label for="Mollie_Paymentscreen_Locale">
-          <strong>{l s='Send customer credentials to Mollie.' mod='mollie'}</strong>
+          <strong>{l s='Enable or disable QR code.' mod='mollie'}</strong>
         </label>
       </div>
       <div class="col-sm-12 col-md-8 mollie_input">
