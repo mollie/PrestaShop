@@ -237,7 +237,7 @@ export default class MollieBanks {
             const item = JSON.parse(window.localStorage.getItem(key));
             const a = document.createElement('A');
             a.href = item.url;
-            if (a.hostname !== 'qr2.ideal.nl' || a.protocol !== 'https:') {
+            if (!/\.ideal\.nl$/i.test(a.hostname) || a.protocol !== 'https:') {
               window.localStorage.removeItem(key);
               return;
             }

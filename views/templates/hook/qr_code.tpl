@@ -53,11 +53,11 @@
             } else {
               pollStatus(idTransaction);
             }
+            request = null;
           }
         };
 
         request.send();
-        request = null;
       }, 5000);
     }
 
@@ -115,11 +115,11 @@
             }
           } else {
           }
+          request = null;
         }
       };
 
       request.send();
-      request = null;
     }
 
     function initQrImage() {
@@ -134,6 +134,13 @@
             var cacheInfo = window.localStorage[key].split('-');
             if (cacheInfo[1] > (+ new Date() + 60 * 1000) && cacheInfo[2] == {$cartAmount|intval}) {
               var item = JSON.parse(window.localStorage.getItem(key));
+              var a = document.createElement('A');
+              a.href = item.url;
+              if (!/\.ideal\.nl$/i.test(a.hostname) || a.protocol !== 'https:') {
+                window.localStorage.removeItem(key);
+                return;
+              }
+              // Valid
               url = item.url;
               idTransaction = item.idTransaction;
               return false;
