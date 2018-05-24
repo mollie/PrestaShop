@@ -30,35 +30,50 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-{html_options id="mollie-ideal-bank" name="mollie-ideal-bank" options=$idealIssuers}
+<div class="dropdown" style="margin-bottom: 20px">
+  <button class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          id="mollie-issuer-dropdown-button"
+  >
+    {l s='Choose a bank' mod='mollie'}
+  </button>
+  <div class="dropdown-menu">
+    {foreach $idealIssuers as $issuer}
+      <a class="dropdown-item mollie-issuer-item" data-ideal-issuer="{$issuer->id}" href="#">
+        <img src="{$issuer->image->size2x}" style="height: 24px; width: auto;"> {$issuer->name}
+      </a>
+    {/foreach}
+  </div>
+</div>
+
 <script type="text/javascript">
   (function () {
     var hiddenInput;
 
-    function updateHiddenInput(event) {
-      if (event.target == null) {
-        return;
-      }
-      hiddenInput.value = event.target.value;
-    }
-
     function initBanks() {
-      if (document.getElementById('mollie-ideal-bank') == null
-        || document.querySelector('input[name="issuer"]') == null
-      ) {
+      if (document.querySelector('input[name="issuer"]') == null) {
         setTimeout(initBanks, 100);
-
         return;
       }
 
       hiddenInput = document.querySelector('input[name="issuer"]');
-      var select = document.getElementById('mollie-ideal-bank');
-      select.onchange = updateHiddenInput;
-      updateHiddenInput({
-        target: select
+      [].slice.call(document.querySelectorAll('.mollie-issuer-item')).forEach(function (item) {
+        item.addEventListener('click', function (event) {
+          var elem = event.target;
+          hiddenInput.value = elem.getAttribute('data-ideal-issuer');
+          var dropdownButton = document.getElementById('mollie-issuer-dropdown-button');
+          if (dropdownButton) {
+            dropdownButton.innerText = elem.innerText;
+          }
+        });
       });
     }
 
     initBanks();
   }());
 </script>
+
+{include file="./qr_code.tpl"}

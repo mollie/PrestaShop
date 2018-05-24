@@ -5,9 +5,10 @@
     <div class="bounce3"></div>
   </div>
 
-<div id="mollie-qr-image-container" style="text-align: center">
-  <span id="mollie-qr-title" style="font-size: 20px">{l s='or scan the iDEAL QR code' mod='mollie'}</span>
-  <img id="mollie-qr-image" width="320" height="320" style="height: 240px; width: 240px; margin: 0 auto; visibility: hidden">
+  <div id="mollie-qr-image-container" style="text-align: {if !empty($qrAlign)}{$qrAlign}{else}center{/if}">
+    <span id="mollie-qr-title" style="font-size: 20px">{l s='or scan the iDEAL QR code' mod='mollie'}</span>
+    <img id="mollie-qr-image" width="320" height="320" style="height: 240px; width: 240px; visibility: hidden;{if !empty($qrAlign) && $qrAlign === 'center'} margin: 0 auto;{/if}">
+  </div>
 </div>
 
 <script type="text/javascript">
@@ -24,6 +25,12 @@
               try {
                 var data = JSON.parse(this.responseText);
                 if (data.status) {
+                  Object.keys(window.localStorage).forEach(function (key) {
+                    if (key.indexOf('mollieqrcache') > -1) {
+                      window.localStorage.removeItem(key);
+                    }
+                  });
+
                   // Never redirect to a different domain
                   var a = document.createElement('A');
                   a.href = data.href;
@@ -45,12 +52,37 @@
         request.send();
         request = null;
       }, 5000);
-    };
+    }
 
-    function initQrImage() {
-      var elem = document.getElementById('mollie-qr-image');
-      var self = this;
-      elem.style.display = 'none';
+    function setImage(url, resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        if (img.src && img.width) {
+          var elem = document.getElementById('mollie-qr-image');
+          elem.src = url;
+          elem.style.display = 'block';
+          document.getElementById('mollie-spinner').style.display = 'none';
+          document.getElementById('mollie-qr-image').style.visibility = 'visible';
+          if (typeof resolve === 'function') {
+            resolve();
+          }
+        } else {
+          document.getElementById('mollie-qr-code').style.display = 'none';
+          if (typeof reject === 'function') {
+            reject();
+          }
+        }
+      };
+      img.onerror = function () {
+        document.getElementById('mollie-qr-code').style.display = 'none';
+        if (typeof reject === 'function') {
+          reject();
+        }
+      };
+      img.src = url;
+    }
+
+    function grabNewUrl() {
       var request = new XMLHttpRequest();
       request.open('GET', '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'])|escape:'javascript':'UTF-8' nofilter}', true);
 
@@ -60,35 +92,79 @@
             // Success!
             try {
               var data = JSON.parse(this.responseText);
-              // Preload an image and check if it loads, if not, hide the qr block
-              var img = new Image();
-              img.onload = () => {
-                if (img.src && img.width) {
-                  elem.src = data.href;
-                  elem.style.display = 'block';
-                  document.getElementById('mollie-spinner').style.display = 'none';
-                  document.getElementById('mollie-qr-image').style.visibility = 'visible';
+              if (data.href && data.idTransaction && data.expires) {
+                window.localStorage.setItem('mollieqrcache-' + data.expires + '-{$cartAmount|intval}', JSON.stringify({
+                  url: data.href,
+                  idTransaction: data.idTransaction,
+                }));
+
+                setImage(data.href, function () {
                   pollStatus(data.idTransaction);
-                } else {
-                  document.getElementById('mollie-qr-code').style.display = 'none';
-                }
-              };
-              img.onerror = function () {
+                });
+              } else {
                 document.getElementById('mollie-qr-code').style.display = 'none';
-              };
-              img.src = data.href;
+              }
             } catch (e) {
             }
           } else {
-            // Error :(
           }
         }
       };
 
       request.send();
       request = null;
-    };
+    }
 
-    initQrImage();
+    function initQrImage() {
+      var elem = document.getElementById('mollie-qr-image');
+      elem.style.display = 'none';
+
+      var url = null;
+      var idTransaction = null;
+      if (typeof window.localStorage !== 'undefined') {
+        Object.keys(window.localStorage).forEach(function (key) {
+          if (key.indexOf('mollieqrcache') > -1) {
+            var cacheInfo = window.localStorage[key].split('-');
+            if (cacheInfo[1] > (+ new Date() + 60 * 1000) && cacheInfo[2] == {$cartAmount|intval}) {
+              var item = JSON.parse(window.localStorage.getItem(key));
+              url = item.url;
+              idTransaction = item.idTransaction;
+              return false;
+            } else {
+              window.localStorage.removeItem(key);
+            }
+          }
+        });
+        if (url && idTransaction) {
+          setImage(url, function () {
+            pollStatus(idTransaction);
+          });
+        } else {
+          grabNewUrl();
+        }
+      }
+    }
+
+    if (typeof window.IntersectionObserver !== 'undefined') {
+      var observer = new IntersectionObserver(function (changes) {
+        changes.forEach(function (change) {
+          if (change.intersectionRatio > 0) {
+            initQrImage();
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5,
+      });
+      observer.observe(document.getElementById('mollie-qr-code'));
+    } else {
+      var interval = setInterval(function () {
+        if (document.getElementById('mollie-qr-code').offsetParent) {
+          initQrImage();
+          clearInterval(interval);
+        }
+      }, 500);
+    }
   }());
 </script>

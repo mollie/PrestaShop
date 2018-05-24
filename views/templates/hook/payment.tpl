@@ -64,6 +64,7 @@
       window.MollieModule = window.MollieModule || { };
       window.MollieModule.urls = window.MollieModule.urls || { };
       window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+      window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
       window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
 
       if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.banks === 'undefined') {

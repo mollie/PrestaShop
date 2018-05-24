@@ -996,9 +996,11 @@ class Mollie extends PaymentModule
             }
         }
 
+        $cart = Context::getContext()->cart;
         $smarty->assign(
             array(
                 'link'                  => $this->context->link,
+                'cartAmount'            => (int) ($cart->getOrderTotal(true)),
                 'methods'               => $methods->getArrayCopy(),
                 'issuers'               => $issuerList,
                 'issuer_setting'        => $issuerSetting,
@@ -1072,7 +1074,80 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        return include dirname(__FILE__).'/lib/paymentoptions.php';
+        try {
+            $methods = $this->api->methods->all();
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
+                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
+            }
+
+            return array();
+        }
+
+        $idealIssuers = array();
+        $issuers = $this->getIssuerList();
+        if (isset($issuers['ideal'])) {
+            foreach ($issuers['ideal'] as $issuer) {
+                $idealIssuers[$issuer->id] = $issuer;
+            }
+        }
+
+        $context = Context::getContext();
+        $cart = $context->cart;
+
+        $context->smarty->assign(array(
+            'idealIssuers'  => $idealIssuers,
+            'link'          => $this->context->link,
+            'qrCodeEnabled' => true,
+            'qrAlign'       => 'left',
+            'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
+        ));
+
+        $paymentOptions = array();
+        foreach ($methods as $method) {
+            if ($method->id === 'ideal' && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK) {
+                $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $newOption
+                    ->setCallToActionText($this->lang[$method->description])
+                    ->setAction(Context::getContext()->link->getModuleLink(
+                        $this->name,
+                        'payment',
+                        array('method' => $method->id),
+                        true
+                    ))
+                    ->setInputs(array(
+                        'token' => array(
+                            'name'  => 'issuer',
+                            'type'  => 'hidden',
+                            'value' => '',
+                        ),
+                    ))
+                    ->setLogo($method->image->size1x)
+                    ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'))
+                ;
+
+                $paymentOptions[] = $newOption;
+            } else {
+                $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                if (isset($this->lang[$method->description])) {
+                    $description = $this->lang[$method->description];
+                } else {
+                    $description = $method->description;
+                }
+                $newOption
+                    ->setCallToActionText($description)
+                    ->setAction(Context::getContext()->link->getModuleLink(
+                        'mollie', 'payment',
+                        array('method' => $method->id), true
+                    ))
+                    ->setLogo($method->image->size1x)
+                ;
+
+                $paymentOptions[] = $newOption;
+            }
+        }
+
+        return $paymentOptions;
     }
 
     /**

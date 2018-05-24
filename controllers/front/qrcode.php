@@ -52,6 +52,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 return $this->processNewQrCode();
             case 'qrCodeStatus':
                 return $this->processGetStatus();
+            case 'cartAmount':
+                return $this->processCartAmount();
         }
 
         exit;
@@ -77,8 +79,9 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             )));
         }
 
+        $orderTotal = $cart->getOrderTotal(true);
         $payment = $mollie->api->payments->create(Mollie::getPaymentData(
-            $cart->getOrderTotal(true),
+            $orderTotal,
             strtoupper($this->context->currency->iso_code),
             'ideal',
             null,
@@ -104,6 +107,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             'success'       => (bool) $src,
             'href'          => $src,
             'idTransaction' => $payment->id,
+            'expires'       => strtotime($payment->expiresAt) * 1000,
+            'amount'        => (int) ($orderTotal * 100),
         )));
     }
 
@@ -150,6 +155,31 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                     'key'       => $cart->secure_key,
                 )
             )
+        )));
+    }
+
+    /**
+     * Get the cart amount
+     */
+    protected function processCartAmount()
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        @ob_clean();
+        /** @var Context $context */
+        $context = Context::getContext();
+        /** @var Cart $cart */
+        $cart = $context->cart;
+        if (!$cart) {
+            die(json_encode(array(
+                'success' => true,
+                'amount'  => 0
+            )));
+        }
+
+        $cartTotal = (int) ($cart->getOrderTotal(true) * 100);
+        die(json_encode(array(
+            'success' => true,
+            'amount'  => $cartTotal,
         )));
     }
 }
