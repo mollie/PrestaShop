@@ -183,6 +183,11 @@ class Mollie extends PaymentModule
             $this->api = new \Mollie\Api\MollieApiClient();
             if (Configuration::get(static::MOLLIE_API_KEY)) {
                 $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
+            } elseif (!empty($this->context->employee)
+                && Tools::getValue('Mollie_Api_Key')
+                && $this->context->controller instanceof AdminModulesController
+            ) {
+                $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
             }
             if (defined('_TB_VERSION_')) {
                 $this->api->addVersionString('ThirtyBees/'._TB_VERSION_);
@@ -397,6 +402,8 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
+
+
         $cookie = Context::getContext()->cookie;
         $lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
         $lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
@@ -434,7 +441,6 @@ class Mollie extends PaymentModule
             static::DEBUG_LOG_ERRORS => $this->l('Errors'),
             static::DEBUG_LOG_ALL    => $this->l('Everything'),
         );
-
         if (Tools::isSubmit('Mollie_Config_Save')) {
             $resultMessage = $this->getSaveResult(
                 array_keys($payscreenLocaleOptions), array_keys($imageOptions),
