@@ -16,7 +16,7 @@ if [ ! -d "${CWD_BASEDIR}/views/js/app/node_modules/" ]; then
   npm i
 fi
 rm -rf ${CWD_BASEDIR}/views/js/app/dist/
-NODE_ENV=production webpack
+NODE_ENV=production webpack --mode production
 cp ${CWD_BASEDIR}/views/js/app/index.php ${CWD_BASEDIR}/views/js/app/dist/index.php
 cd ${CWD_BASEDIR}
 

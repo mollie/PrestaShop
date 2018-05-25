@@ -1,28 +1,35 @@
 const path = require('path');
 const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
   new webpack.optimize.ModuleConcatenationPlugin(),
 ];
+const optimization = {
+  minimizer: [],
+};
 
 if (production) {
-  plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        screw_ie8: true,
-        conditionals: true,
-        unused: true,
-        comparisons: true,
-        sequences: true,
-        dead_code: true,
-        evaluate: true,
-        if_return: true,
-        join_vars: true,
-      },
-      output: {
-        comments: false,
+  optimization.minimizer.push(
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          warnings: false,
+          conditionals: true,
+          unused: true,
+          comparisons: true,
+          sequences: true,
+          dead_code: true,
+          evaluate: true,
+          if_return: true,
+          join_vars: true,
+        },
+        cache: true,
+        parallel: true,
+        output: {
+          comments: false,
+        },
       },
     })
   );
@@ -73,17 +80,18 @@ if (production) {
 
 module.exports = {
   entry: {
-    banks: './src/banks.js',
-    confirmrefund: './src/confirmrefund.js',
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].min.js',
-    library: ['MollieModule', '[name]'],
-    libraryTarget: 'var',
+    banks: ['./src/banks.js'],
+    confirmrefund: ['./src/confirmrefund.js'],
   },
   resolve: {
     extensions: ['.js', '.css'],
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/assets/',
+    filename: '[name].min.js',
+    library: ['MollieModule', '[name]'],
+    libraryTarget: 'var',
   },
   devtool: 'source-map',
   module: {
@@ -134,4 +142,5 @@ module.exports = {
     ],
   },
   plugins,
+  optimization,
 };
