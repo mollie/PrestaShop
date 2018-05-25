@@ -92,7 +92,7 @@
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">
-          {{{l s='You can find your API key in your %sMollie Profile%s; it starts with test or live.' mod='mollie'}|escape:'htmlall':'UTF-8' nofilter}|sprintf:'<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank">':'</a>'}
+          {l s='You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.' mod='mollie' tags=['<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank" rel="noopener noreferrer">']}
         </em>
       </div>
     </div>
@@ -135,7 +135,7 @@
         </select>
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
-        <em class="mollie_desc">{{l s='Should the plugin send the current webshop %slocale%s to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:'<a href="https://en.wikipedia.org/wiki/Locale" target="_blank">':'</a>'}</em>
+        <em class="mollie_desc">{l s='Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.' mod='mollie' tags=['<a href="https://en.wikipedia.org/wiki/Locale" target="_blank" rel="noopener noreferrer">']}</em>
       </div>
     </div>
     <!--/ Mollie locale settings-->
@@ -202,7 +202,7 @@
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
         <em class="mollie_desc">{l s='Leave empty for default stylesheet. Should include file path when set.' mod='mollie'}</em>
-        <em class="mollie_desc">{{l s='Hint: You can use %s{BASE}%s, %s{THEME}%s, %s{CSS}%s, %s{MOBILE}%s, %s{MOBILE_CSS}%s and %s{OVERRIDE}%s for easy folder mapping.' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>':'<kbd>':'</kbd>'}</em>
+        <em class="mollie_desc">{l s='Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.' mod='mollie' tags=['<kbd>']}</em>
       </div>
     </div>
     <!--/ Mollie issuer settings-->
@@ -402,7 +402,8 @@
         </select>
         <br>
         {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}<br>{/if}
-        <em class="mollie_desc">{{l s='Recommended level: Errors. Set to Everything to monitor incoming webhook requests. %sView logs%s' mod='mollie'}|escape:'htmlall':'UTF-8'|sprintf:"<a href=\"%s\">":'</a>'|sprintf:{$link->getAdminLink('AdminLogs')|escape:'htmlall':'UTF-8' nofilter}}</em>
+        {assign var="logLink" value={$link->getAdminLink('AdminLogs')}}
+        <em class="mollie_desc">{l s='Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs[/1]' mod='mollie' tags=["<a href='$logLink'>"]}</em>
       </div>
     </div>
     <!--/ Mollie debug settings-->
