@@ -1221,3 +1221,14 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
 .mollie-ui i.icon-chevron-down:before {
     content: "▼";
 }
+
+ul.sortable {
+    clear: both;
+}
+
+li.sortable-placeholder {
+    border: 1px dashed #CCC;
+    background-color: #eee;
+    margin: 4px;
+    border-radius: 5px;
+}

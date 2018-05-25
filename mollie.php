@@ -512,12 +512,8 @@ class Mollie extends PaymentModule
             $data['statuses'][] = $name;
         }
 
-        if (version_compare(_PS_VERSION_, '1.6.0.3', '<=')) {
-            $this->context->controller->addJquery();
-            $this->context->controller->addJqueryUI('ui.sortable');
-        } else {
-            $this->context->controller->addJS(_PS_JS_DIR_.'jquery/plugins/jquery.sortable.js');
-        }
+        $this->context->controller->addJquery();
+        $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
         $this->context->controller->addJS($this->_path.'views/js/sweetalert-2.1.0.min.js');
         $this->context->smarty->assign($data);
 
