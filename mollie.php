@@ -182,12 +182,18 @@ class Mollie extends PaymentModule
         try {
             $this->api = new \Mollie\Api\MollieApiClient();
             if (Configuration::get(static::MOLLIE_API_KEY)) {
-                $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
+                try {
+                    $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
+                } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                }
             } elseif (!empty($this->context->employee)
                 && Tools::getValue('Mollie_Api_Key')
                 && $this->context->controller instanceof AdminModulesController
             ) {
-                $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+                try {
+                    $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+                } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                }
             }
             if (defined('_TB_VERSION_')) {
                 $this->api->addVersionString('ThirtyBees/'._TB_VERSION_);
@@ -1006,14 +1012,14 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
-        $issuerList = in_array(
-            $issuerSetting,
-            array(static::ISSUERS_ON_CLICK)
-        )
-            ? $this->getIssuerList()
-            : array();
 
         try {
+            $issuerList = in_array(
+                $issuerSetting,
+                array(static::ISSUERS_ON_CLICK)
+            )
+                ? $this->getIssuerList()
+                : array();
             $apiMethods = $this->getFilteredApiMethods();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $apiMethods = array();
