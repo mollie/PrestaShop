@@ -178,13 +178,12 @@
     font-size: 12px;
     line-height: 1.42857;
     color: #000;
-    background-color: #F5F8F9;
-    background-image: none;
+    background: #F5F8F9 none;
     border: 1px solid #0c95fd;
     border-radius: 3px;
-    -webkit-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -o-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
 .bootstrap legend {
@@ -259,10 +258,8 @@
     border: 1px solid #CCCED7;
     color: #585A69;
     font-size: 1.1em;
-    margin: 0;
-    margin-top: 25px;
-    padding: 1em;
-    padding-top: 20px;
+    margin: 25px 0 0;
+    padding: 20px 1em 1em;
     position: relative;
 }
 
@@ -283,7 +280,6 @@
 }
 
 .mollie_refund_button {
-    background: -moz-linear-gradient(center top, #F9F9F9, #E3E3E3) repeat scroll 0 0 rgba(0, 0, 0, 0);
     border-color: #CCCCCC #BBBBBB #A0A0A0;
     border-radius: 3px;
     border-style: solid;
@@ -325,9 +321,7 @@
 
 .mollie_button {
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
-    text-ansform: uppercase;
-    font-weight: 600;
-    padding: .5rem 1.25rem;
+    text-transform: uppercase;
     display: inline-block;
     font-weight: 400;
     line-height: 1.25;
@@ -341,11 +335,10 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    border: 2px solid;
     padding: .5rem 1rem;
     font-size: 1rem;
     border-radius: 0;
-    border-color: #fff;
+    border: 2px solid #fff;
     background: border-box;
 }
 
@@ -383,117 +376,86 @@
 }
 
 .mollie_ideal_ABNANL2A:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ABNANL2A%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ABNANL2A%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_ASNBNL21:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ASNBNL21%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/ASNBNL21%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_BUNQNL2A:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/BUNQNL2A%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/BUNQNL2A%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_INGBNL2A:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/INGBNL2A%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/INGBNL2A%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_KNABNL2H:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/KNABNL2H%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/KNABNL2H%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_RABONL2U:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RABONL2U%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RABONL2U%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_RBRBNL21:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RBRBNL21%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/RBRBNL21%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_SNSBNL2A:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/SNSBNL2A%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/SNSBNL2A%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_IONL2U:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/IONL2U%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/IONL2U%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 .mollie_ideal_FVLBNL22:before select {
-    background-image: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/FVLBNL22%402x.png');
-    background-position: 0px -346px;
     width: 55px;
     height: 37px;
-    background-repeat: no-repeat;
+    background: url('https://www.mollie.com/images/checkout/v2/ideal-issuer-icons/FVLBNL22%402x.png') no-repeat 0 -346px;
     overflow: hidden;
-    display: inline-block;
     display: block;
 }
 
 /****Mollie switch****/
-
 label.mollie_switch {
     position: relative;
     display: inline-block;
@@ -586,38 +548,20 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     animation-name: none;
     animation-play-state: running;
     animation-timing-function: ease;
-    background-attachment: scroll;
     background-blend-mode: normal;
     background-clip: border-box;
-    background-color: rgb(12, 149, 253);
-    background-image: none;
     background-origin: padding-box;
-    background-position: 0% 0%;
-    background-repeat: repeat;
+    background: rgb(12, 149, 253) none repeat scroll 0 0;
     background-size: auto;
-    border-bottom-color: rgb(46, 172, 206);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
     border-collapse: separate;
-    border-image-outset: 0px;
+    border-image-outset: 0;
     border-image-repeat: stretch;
     border-image-slice: 100%;
     border-image-source: none;
     border-image-width: 1;
-    border-left-color: rgb(46, 172, 206);
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-right-color: rgb(46, 172, 206);
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-top-color: rgb(46, 172, 206);
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    border-top-style: solid;
-    border-top-width: 1px;
-    bottom: 0px;
+    border-radius: 0;
+    border: 1px solid rgb(46, 172, 206);
+    bottom: 0;
     box-shadow: none;
     box-sizing: border-box;
     break-after: auto;
@@ -627,7 +571,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     clear: none;
     clip: auto;
     color: rgb(255, 255, 255);
-    content:;
     cursor: pointer;
     direction: ltr;
     display: block;
@@ -636,7 +579,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
     font-kerning: auto;
     font-size: 11px;
-    font-stretch: 100%;
     font-style: normal;
     font-variant: normal;
     font-variant-ligatures: normal;
@@ -649,44 +591,30 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     isolation: auto;
     justify-items: normal;
     justify-self: auto;
-    left: 0px;
+    left: 0;
     letter-spacing: normal;
-    line-height: 16.5px;
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: none;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
+    line-height: 17px;
+    list-style: none outside none;
+    margin: 0;
     max-height: none;
     max-width: 100%;
-    min-height: 0px;
-    min-width: 0px;
+    min-height: 0;
+    min-width: 0;
     mix-blend-mode: normal;
     object-fit: fill;
     object-position: 50% 50%;
-    offset-distance: 0px;
-    offset-path: none;
-    offset-rotate: auto 0deg;
     opacity: 1;
     orphans: 2;
-    outline-color: rgb(255, 255, 255);
-    outline-offset: 0px;
-    outline-style: none;
-    outline-width: 0px;
-    overflow-anchor: auto;
+    outline-offset: 0;
+    outline: rgb(255, 255, 255) none 0;
     overflow-wrap: normal;
     overflow-x: visible;
     overflow-y: visible;
-    padding-bottom: 1px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 1px;
+    padding: 1px 5px;
     pointer-events: auto;
     position: relative;
     resize: none;
-    right: 0px;
+    right: 0;
     scroll-behavior: auto;
     speak: normal;
     table-layout: auto;
@@ -694,18 +622,13 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     text-align: center;
     text-align-last: auto;
     text-decoration: none solid rgb(255, 255, 255);
-    text-decoration-line: none;
-    text-decoration-style: solid;
-    text-decoration-color: rgb(255, 255, 255);
-    text-decoration-skip-ink: auto;
     text-underline-position: auto;
-    text-indent: 0px;
+    text-indent: 0;
     text-rendering: auto;
     text-shadow: none;
-    text-size-adjust: 100%;
     text-overflow: clip;
     text-transform: uppercase;
-    top: 0px;
+    top: 0;
     touch-action: auto;
     transition-delay: 0s;
     transition-duration: 0s;
@@ -719,15 +642,15 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     width: 26px;
     will-change: auto;
     word-break: normal;
-    word-spacing: 0px;
+    word-spacing: 0;
     word-wrap: normal;
     z-index: auto;
     zoom: 1;
     -webkit-appearance: none;
     backface-visibility: visible;
-    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-horizontal-spacing: 0;
     -webkit-border-image: none;
-    -webkit-border-vertical-spacing: 0px;
+    -webkit-border-vertical-spacing: 0;
     -webkit-box-align: stretch;
     -webkit-box-decoration-break: slice;
     -webkit-box-direction: normal;
@@ -742,7 +665,7 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     column-gap: normal;
     column-rule-color: rgb(255, 255, 255);
     column-rule-style: none;
-    column-rule-width: 0px;
+    column-rule-width: 0;
     column-span: none;
     column-width: auto;
     align-content: normal;
@@ -754,7 +677,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: normal;
-    -webkit-font-smoothing: auto;
     grid-auto-columns: auto;
     grid-auto-flow: row;
     grid-auto-rows: auto;
@@ -765,26 +687,11 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     grid-template-rows: none;
     grid-row-end: auto;
     grid-row-start: auto;
-    row-gap: normal;
-    -webkit-highlight: none;
     hyphens: manual;
-    -webkit-hyphenate-character: auto;
-    -webkit-line-break: auto;
-    -webkit-line-clamp: none;
-    -webkit-locale: "nl";
-    -webkit-margin-before-collapse: collapse;
-    -webkit-margin-after-collapse: collapse;
     -webkit-mask-box-image: none;
-    -webkit-mask-box-image-outset: 0px;
-    -webkit-mask-box-image-repeat: stretch;
-    -webkit-mask-box-image-slice: 0 fill;
-    -webkit-mask-box-image-source: none;
-    -webkit-mask-box-image-width: auto;
-    -webkit-mask-clip: border-box;
     -webkit-mask-composite: source-over;
     -webkit-mask-image: none;
-    -webkit-mask-origin: border-box;
-    -webkit-mask-position: 0% 0%;
+    -webkit-mask-position: 0 0;
     -webkit-mask-repeat: repeat;
     -webkit-mask-size: auto;
     order: 0;
@@ -794,18 +701,15 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     -webkit-rtl-ordering: logical;
     shape-outside: none;
     shape-image-threshold: 0;
-    shape-margin: 0px;
+    shape-margin: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-text-combine: none;
-    -webkit-text-decorations-in-effect: none;
     -webkit-text-emphasis-color: rgb(255, 255, 255);
     -webkit-text-emphasis-position: over right;
     -webkit-text-emphasis-style: none;
     -webkit-text-fill-color: rgb(255, 255, 255);
-    -webkit-text-orientation: vertical-right;
     -webkit-text-security: none;
     -webkit-text-stroke-color: rgb(255, 255, 255);
-    -webkit-text-stroke-width: 0px;
+    -webkit-text-stroke-width: 0;
     transform: none;
     transform-origin: 13px 10px;
     transform-style: flat;
@@ -813,8 +717,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     -webkit-user-modify: read-only;
     user-select: none;
     -webkit-writing-mode: horizontal-tb;
-    -webkit-app-region: no-drag;
-    buffered-rendering: auto;
     clip-path: none;
     clip-rule: nonzero;
     mask: none;
@@ -837,14 +739,14 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-up {
     shape-rendering: auto;
     stroke: none;
     stroke-dasharray: none;
-    stroke-dashoffset: 0px;
+    stroke-dashoffset: 0;
     stroke-linecap: butt;
     stroke-linejoin: miter;
     stroke-miterlimit: 4;
     stroke-opacity: 1;
     stroke-width: 1px;
     alignment-baseline: auto;
-    baseline-shift: 0px;
+    baseline-shift: 0;
     dominant-baseline: auto;
     text-anchor: start;
     writing-mode: horizontal-tb;
@@ -862,38 +764,20 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     animation-name: none;
     animation-play-state: running;
     animation-timing-function: ease;
-    background-attachment: scroll;
     background-blend-mode: normal;
     background-clip: border-box;
-    background-color: rgb(12, 149, 253);
-    background-image: none;
     background-origin: padding-box;
-    background-position: 0% 0%;
-    background-repeat: repeat;
+    background: rgb(12, 149, 253) none repeat scroll 0 0;
     background-size: auto;
-    border-bottom-color: rgb(46, 172, 206);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
     border-collapse: separate;
-    border-image-outset: 0px;
+    border-image-outset: 0;
     border-image-repeat: stretch;
     border-image-slice: 100%;
     border-image-source: none;
     border-image-width: 1;
-    border-left-color: rgb(46, 172, 206);
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-right-color: rgb(46, 172, 206);
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-top-color: rgb(46, 172, 206);
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    border-top-style: solid;
-    border-top-width: 1px;
-    bottom: 0px;
+    border-radius: 0;
+    border: 1px solid rgb(46, 172, 206);
+    bottom: 0;
     box-shadow: none;
     box-sizing: border-box;
     break-after: auto;
@@ -903,7 +787,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     clear: none;
     clip: auto;
     color: rgb(255, 255, 255);
-    content:;
     cursor: pointer;
     direction: ltr;
     display: block;
@@ -912,7 +795,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
     font-kerning: auto;
     font-size: 11px;
-    font-stretch: 100%;
     font-style: normal;
     font-variant: normal;
     font-variant-ligatures: normal;
@@ -925,44 +807,30 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     isolation: auto;
     justify-items: normal;
     justify-self: auto;
-    left: 0px;
+    left: 0;
     letter-spacing: normal;
-    line-height: 16.5px;
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: none;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: -1px;
+    line-height: 17px;
+    list-style: none outside none;
+    margin: -1px 0 0;
     max-height: none;
     max-width: 100%;
-    min-height: 0px;
-    min-width: 0px;
+    min-height: 0;
+    min-width: 0;
     mix-blend-mode: normal;
     object-fit: fill;
     object-position: 50% 50%;
-    offset-distance: 0px;
-    offset-path: none;
-    offset-rotate: auto 0deg;
     opacity: 1;
     orphans: 2;
-    outline-color: rgb(255, 255, 255);
-    outline-offset: 0px;
-    outline-style: none;
-    outline-width: 0px;
-    overflow-anchor: auto;
+    outline-offset: 0;
+    outline: rgb(255, 255, 255) none 0;
     overflow-wrap: normal;
     overflow-x: visible;
     overflow-y: visible;
-    padding-bottom: 1px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 1px;
+    padding: 1px 5px;
     pointer-events: auto;
     position: relative;
     resize: none;
-    right: 0px;
+    right: 0;
     scroll-behavior: auto;
     speak: normal;
     table-layout: auto;
@@ -970,18 +838,13 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     text-align: center;
     text-align-last: auto;
     text-decoration: none solid rgb(255, 255, 255);
-    text-decoration-line: none;
-    text-decoration-style: solid;
-    text-decoration-color: rgb(255, 255, 255);
-    text-decoration-skip-ink: auto;
     text-underline-position: auto;
-    text-indent: 0px;
+    text-indent: 0;
     text-rendering: auto;
     text-shadow: none;
-    text-size-adjust: 100%;
     text-overflow: clip;
     text-transform: uppercase;
-    top: 0px;
+    top: 0;
     touch-action: auto;
     transition-delay: 0s;
     transition-duration: 0s;
@@ -995,15 +858,15 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     width: 26px;
     will-change: auto;
     word-break: normal;
-    word-spacing: 0px;
+    word-spacing: 0;
     word-wrap: normal;
     z-index: auto;
     zoom: 1;
     -webkit-appearance: none;
     backface-visibility: visible;
-    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-horizontal-spacing: 0;
     -webkit-border-image: none;
-    -webkit-border-vertical-spacing: 0px;
+    -webkit-border-vertical-spacing: 0;
     -webkit-box-align: stretch;
     -webkit-box-decoration-break: slice;
     -webkit-box-direction: normal;
@@ -1018,7 +881,7 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     column-gap: normal;
     column-rule-color: rgb(255, 255, 255);
     column-rule-style: none;
-    column-rule-width: 0px;
+    column-rule-width: 0;
     column-span: none;
     column-width: auto;
     align-content: normal;
@@ -1030,7 +893,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: normal;
-    -webkit-font-smoothing: auto;
     grid-auto-columns: auto;
     grid-auto-flow: row;
     grid-auto-rows: auto;
@@ -1041,26 +903,11 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     grid-template-rows: none;
     grid-row-end: auto;
     grid-row-start: auto;
-    row-gap: normal;
-    -webkit-highlight: none;
     hyphens: manual;
-    -webkit-hyphenate-character: auto;
-    -webkit-line-break: auto;
-    -webkit-line-clamp: none;
-    -webkit-locale: "nl";
-    -webkit-margin-before-collapse: collapse;
-    -webkit-margin-after-collapse: collapse;
     -webkit-mask-box-image: none;
-    -webkit-mask-box-image-outset: 0px;
-    -webkit-mask-box-image-repeat: stretch;
-    -webkit-mask-box-image-slice: 0 fill;
-    -webkit-mask-box-image-source: none;
-    -webkit-mask-box-image-width: auto;
-    -webkit-mask-clip: border-box;
     -webkit-mask-composite: source-over;
     -webkit-mask-image: none;
-    -webkit-mask-origin: border-box;
-    -webkit-mask-position: 0% 0%;
+    -webkit-mask-position: 0 0;
     -webkit-mask-repeat: repeat;
     -webkit-mask-size: auto;
     order: 0;
@@ -1070,18 +917,15 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     -webkit-rtl-ordering: logical;
     shape-outside: none;
     shape-image-threshold: 0;
-    shape-margin: 0px;
+    shape-margin: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-text-combine: none;
-    -webkit-text-decorations-in-effect: none;
     -webkit-text-emphasis-color: rgb(255, 255, 255);
     -webkit-text-emphasis-position: over right;
     -webkit-text-emphasis-style: none;
     -webkit-text-fill-color: rgb(255, 255, 255);
-    -webkit-text-orientation: vertical-right;
     -webkit-text-security: none;
     -webkit-text-stroke-color: rgb(255, 255, 255);
-    -webkit-text-stroke-width: 0px;
+    -webkit-text-stroke-width: 0;
     transform: none;
     transform-origin: 13px 10px;
     transform-style: flat;
@@ -1089,8 +933,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     -webkit-user-modify: read-only;
     user-select: none;
     -webkit-writing-mode: horizontal-tb;
-    -webkit-app-region: no-drag;
-    buffered-rendering: auto;
     clip-path: none;
     clip-rule: nonzero;
     mask: none;
@@ -1113,28 +955,19 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     shape-rendering: auto;
     stroke: none;
     stroke-dasharray: none;
-    stroke-dashoffset: 0px;
+    stroke-dashoffset: 0;
     stroke-linecap: butt;
     stroke-linejoin: miter;
     stroke-miterlimit: 4;
     stroke-opacity: 1;
     stroke-width: 1px;
     alignment-baseline: auto;
-    baseline-shift: 0px;
+    baseline-shift: 0;
     dominant-baseline: auto;
     text-anchor: start;
     writing-mode: horizontal-tb;
     vector-effect: none;
     paint-order: fill stroke markers;
-    d: none;
-    cx: 0px;
-    cy: 0px;
-    x: 0px;
-    y: 0px;
-    r: 0px;
-    rx: auto;
-    ry: auto;
-    caret-color: rgb(255, 255, 255);
     line-break: auto;
 }
 
@@ -1161,10 +994,10 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     background-blend-mode: normal;
     background-clip: border-box;
     background-origin: padding-box;
-    background: rgb(238, 238, 238) none repeat scroll 0% 0%;
+    background: rgb(238, 238, 238) none repeat scroll 0 0;
     background-size: auto;
     border-collapse: separate;
-    border-image-outset: 0px;
+    border-image-outset: 0;
     border-image-repeat: stretch;
     border-image-slice: 100%;
     border-image-source: none;
@@ -1172,7 +1005,7 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     border-radius: 3px;
     border: 1px solid rgb(204, 204, 204);
     bottom: auto;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px inset;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px 0 inset;
     box-sizing: border-box;
     break-after: auto;
     break-before: auto;
@@ -1188,7 +1021,7 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     float: none;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
     font-kerning: auto;
-    font-size: 16.8px;
+    font-size: 17px;
     font-style: normal;
     font-variant: normal;
     font-variant-ligatures: normal;
@@ -1204,22 +1037,21 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     letter-spacing: normal;
     line-height: 24px;
     list-style: none outside none;
-    margin: 0px;
+    margin: 0;
     max-height: none;
     max-width: none;
-    min-height: 0px;
-    min-width: 0px;
+    min-height: 0;
+    min-width: 0;
     mix-blend-mode: normal;
     object-fit: fill;
     object-position: 50% 50%;
     opacity: 1;
     orphans: 2;
-    outline-offset: 0px;
-    overflow-anchor: auto;
+    outline-offset: 0;
     overflow-wrap: normal;
     overflow-x: visible;
     overflow-y: visible;
-    padding: 0px 5px;
+    padding: 0 5px;
     pointer-events: auto;
     resize: none;
     right: auto;
@@ -1231,9 +1063,9 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     text-align-last: auto;
     text-decoration: none solid rgb(170, 170, 170);
     text-underline-position: auto;
-    text-indent: 0px;
+    text-indent: 0;
     text-rendering: auto;
-    text-shadow: rgb(255, 255, 255) 1px 1px 0px;
+    text-shadow: rgb(255, 255, 255) 1px 1px 0;
     text-overflow: clip;
     text-transform: none;
     touch-action: auto;
@@ -1249,15 +1081,15 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     width: auto;
     will-change: auto;
     word-break: normal;
-    word-spacing: 0px;
+    word-spacing: 0;
     word-wrap: normal;
     z-index: auto;
     zoom: 1;
     -webkit-appearance: none;
     backface-visibility: visible;
-    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-horizontal-spacing: 0;
     -webkit-border-image: none;
-    -webkit-border-vertical-spacing: 0px;
+    -webkit-border-vertical-spacing: 0;
     -webkit-box-align: stretch;
     -webkit-box-decoration-break: slice;
     -webkit-box-direction: normal;
@@ -1272,7 +1104,7 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     column-gap: normal;
     column-rule-color: rgb(170, 170, 170);
     column-rule-style: none;
-    column-rule-width: 0px;
+    column-rule-width: 0;
     column-span: none;
     column-width: auto;
     align-content: normal;
@@ -1284,7 +1116,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: normal;
-    -webkit-font-smoothing: auto;
     grid-auto-columns: auto;
     grid-auto-flow: row;
     grid-auto-rows: auto;
@@ -1296,23 +1127,20 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     grid-row-end: auto;
     grid-row-start: auto;
     hyphens: manual;
-    -webkit-line-break: auto;
     -webkit-mask-box-image: none;
-    -webkit-mask-clip: border-box;
     -webkit-mask-composite: source-over;
     -webkit-mask-image: none;
-    -webkit-mask-origin: border-box;
-    -webkit-mask-position: 0% 0%;
+    -webkit-mask-position: 0 0;
     -webkit-mask-repeat: repeat;
     -webkit-mask-size: auto;
     order: 0;
     perspective: none;
-    perspective-origin: 0px 0px;
+    perspective-origin: 0 0;
     -webkit-print-color-adjust: economy;
     -webkit-rtl-ordering: logical;
     shape-outside: none;
     shape-image-threshold: 0;
-    shape-margin: 0px;
+    shape-margin: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-text-emphasis-color: rgb(170, 170, 170);
     -webkit-text-emphasis-position: over right;
@@ -1320,9 +1148,9 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     -webkit-text-fill-color: rgb(170, 170, 170);
     -webkit-text-security: none;
     -webkit-text-stroke-color: rgb(170, 170, 170);
-    -webkit-text-stroke-width: 0px;
+    -webkit-text-stroke-width: 0;
     transform: none;
-    transform-origin: 0px 0px;
+    transform-origin: 0 0;
     transform-style: flat;
     -webkit-user-drag: auto;
     -webkit-user-modify: read-only;
@@ -1350,14 +1178,14 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     shape-rendering: auto;
     stroke: none;
     stroke-dasharray: none;
-    stroke-dashoffset: 0px;
+    stroke-dashoffset: 0;
     stroke-linecap: butt;
     stroke-linejoin: miter;
     stroke-miterlimit: 4;
     stroke-opacity: 1;
     stroke-width: 1px;
     alignment-baseline: auto;
-    baseline-shift: 0px;
+    baseline-shift: 0;
     dominant-baseline: auto;
     text-anchor: start;
     writing-mode: horizontal-tb;
@@ -1382,9 +1210,6 @@ a.mollie-ui.btn.btn-primary.btn-xs.mollie-down {
     width: 100%;
     padding: 5px 0;
     margin-bottom: -1px;
-}
-
-.module_list_item draggable {
     background-color: #ffffff;
     cursor: pointer;
 }
