@@ -1208,8 +1208,10 @@ class Mollie extends PaymentModule
                 $newOption
                     ->setCallToActionText($description)
                     ->setAction(Context::getContext()->link->getModuleLink(
-                        'mollie', 'payment',
-                        array('method' => $method->id), true
+                        'mollie',
+                        'payment',
+                        array('method' => $method->id),
+                        true
                     ))
                 ;
 
@@ -1440,17 +1442,21 @@ class Mollie extends PaymentModule
                 ? $context->link->getModuleLink(
                     'mollie',
                     'qrcode',
-                    array('cart_id' => $cartId, 'done' => 1)
+                    array('cart_id' => $cartId, 'done' => 1),
+                    true
                 )
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    array('cart_id' => $cartId, 'utm_nooverride' => 1)
+                    array('cart_id' => $cartId, 'utm_nooverride' => 1),
+                    true
                 )
             ),
             'webhookUrl'  => $context->link->getModuleLink(
                 'mollie',
-                'webhook'
+                'webhook',
+                array(),
+                true
             ),
         );
 
