@@ -408,8 +408,6 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
-
-
         $cookie = Context::getContext()->cookie;
         $lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
         $lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
@@ -514,8 +512,13 @@ class Mollie extends PaymentModule
             $data['statuses'][] = $name;
         }
 
+        if (version_compare(_PS_VERSION_, '1.6.0.3', '<=')) {
+            $this->context->controller->addJquery();
+            $this->context->controller->addJqueryUI('ui.sortable');
+        } else {
+            $this->context->controller->addJS(_PS_JS_DIR_.'jquery/plugins/jquery.sortable.js');
+        }
         $this->context->controller->addJS($this->_path.'views/js/sweetalert-2.1.0.min.js');
-        $this->context->controller->addJS(_PS_JS_DIR_.'jquery/plugins/jquery.sortable.js');
         $this->context->smarty->assign($data);
 
         return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');

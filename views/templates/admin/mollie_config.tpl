@@ -208,7 +208,7 @@
     <!--/ Mollie issuer settings-->
 
     <!-- Mollie payment method list-->
-    {if count($methods) && version_compare($smarty.const._PS_VERSION_, '1.6.0.3', '>=')}
+    {*{if count($methods) && version_compare($smarty.const._PS_VERSION_, '1.6.0.3', '>=')}*}
       <div class="form-group row">
         <div class="col-sm-12 col-md-4 mollie_msg">
           <label for="Mollie_Css">
@@ -262,7 +262,7 @@
         </div>
       </div>
       {include file="./sortable_payment_methods.tpl"}
-    {/if}
+    {*{/if}*}
     <!--/ Mollie payment method list-->
 
     <!-- Mollie qrenabled checkbox-->
