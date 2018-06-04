@@ -145,7 +145,7 @@ Maar wat denk je er over om bij een [technology driven organisatie](https://jobs
 
 # Licentie #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013, Mollie B.V.
+Copyright (c) 2013-2018, Mollie B.V.
 
 # Ondersteuning #
 
