@@ -159,7 +159,7 @@ Et que diriez-vous de travailler dans une [organisation axée sur la technologie
 
 # Licence #
 [Licence BSD (Berkeley Software Distribution)](http://www.opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013, Mollie B.V.
+Copyright (c) 2013-2018, Mollie B.V.
 
 # Support #
 
