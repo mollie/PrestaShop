@@ -32,10 +32,6 @@
  * @link       https://www.mollie.nl
  */
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
     require_once __DIR__.'/lib/vendor/ehough/psr7/src/functions.php';
