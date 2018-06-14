@@ -101,7 +101,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             }
         }
 
-        // Currency conversion (thou shalt pay in euros)
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH
