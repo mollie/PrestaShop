@@ -62,7 +62,7 @@
           isThrottled = true;
           callback.apply(this, arguments);
 
-          setTimeout(() => {
+          setTimeout(function () {
             isThrottled = false;
             if (args) {
               wrapper.apply(context, args);
@@ -174,7 +174,7 @@
                 if (data.href && data.idTransaction && data.expires) {
                   window.localStorage.setItem('mollieqrcache-' + data.expires + '-{$cartAmount|intval}', JSON.stringify({
                     url: data.href,
-                    idTransaction: data.idTransaction,
+                    idTransaction: data.idTransaction
                   }));
 
                   setImage(data.href, function () {
@@ -198,7 +198,7 @@
         var elem = document.getElementById('mollie-qr-image');
         elem.style.display = 'none';
 
-        window.addEventListener('resize', throttle(() => {
+        window.addEventListener('resize', throttle(function () {
           checkWindowSize();
         }, 200));
 
@@ -246,7 +246,7 @@
         }, {
           root: null,
           rootMargin: '0px',
-          threshold: 0.5,
+          threshold: 0.5
         });
         observer.observe(document.getElementById('mollie-qr-code'));
       } else {
