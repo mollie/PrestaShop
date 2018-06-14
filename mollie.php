@@ -806,7 +806,7 @@ class Mollie extends PaymentModule
                 $payment->refund(array(
                     'amount' => array(
                         'currency' => (string) $payment->amount->currency,
-                        'value'    => (string) number_format(((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value), 2),
+                        'value'    => (string) number_format(((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value), 2, '.', ''),
                     ),
                 ));
             }
@@ -1427,8 +1427,8 @@ class Mollie extends PaymentModule
 
         $paymentData = array(
             'amount'      => array(
-                'currency' => $currency ? strtoupper($currency) : 'EUR',
-                'value'    => number_format(str_replace(',', '.', $amount), 2),
+                'currency' => (string) ($currency ? strtoupper($currency) : 'EUR'),
+                'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
             'method'      => $method,
             'issuer'      => $issuer,
