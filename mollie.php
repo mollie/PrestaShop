@@ -140,8 +140,8 @@ class Mollie extends PaymentModule
     /** @var array $methods */
     public static $methods = array(
         'banktransfer' => 'Bank',
-        'belfius '     => 'Belfius',
-        'bitcoin '     => 'Bitcoin',
+        'belfius'      => 'Belfius',
+        'bitcoin'      => 'Bitcoin',
         'creditcard'   => 'Credit Card',
         'directdebit'  => 'Direct Debit',
         'eps'          => 'EPS',
