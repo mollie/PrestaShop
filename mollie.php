@@ -1172,6 +1172,7 @@ class Mollie extends PaymentModule
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
                     ->setCallToActionText($this->lang[$method->description])
+                    ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
@@ -1206,6 +1207,7 @@ class Mollie extends PaymentModule
                 }
                 $newOption
                     ->setCallToActionText($description)
+                    ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
