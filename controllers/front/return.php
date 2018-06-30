@@ -117,7 +117,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                     case \Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-					case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
                     case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
