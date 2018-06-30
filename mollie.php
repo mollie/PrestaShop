@@ -1578,7 +1578,20 @@ class Mollie extends PaymentModule
             'es',
             'fr',
             'nl',
+            'ca',
+            'pt',
+            'it',
+            'no',
+            'sv',
+            'fi',
+            'da',
+            'is',
+            'hu',
+            'pl',
+            'lv',
+            'lt',
         );
+
         $supportedLocales = array(
             'en_US',
             'de_AT',
@@ -1589,6 +1602,18 @@ class Mollie extends PaymentModule
             'fr_FR',
             'nl_BE',
             'nl_NL',
+            'ca_ES',
+            'pt_PT',
+            'it_IT',
+            'nb_NO',
+            'sv_SE',
+            'fi_FI',
+            'da_DK',
+            'is_IS',
+            'hu_HU',
+            'pl_PL',
+            'lv_LV',
+            'lt_LT',
         );
 
         $langIso = Tools::strtolower($language);
@@ -1609,6 +1634,43 @@ class Mollie extends PaymentModule
                     break;
                 case 'nl':
                     $countryIso = 'NL';
+                    break;
+                case 'ca':
+                    $countryIso = 'ES';
+                    break;
+                case 'pt':
+                    $countryIso = 'PT';
+                    break;
+                case 'it':
+                    $countryIso = 'IT';
+                    break;
+                case 'no':
+                    $langIso = 'nb';
+                    $countryIso = 'NO';
+                    break;
+                case 'sv':
+                    $countryIso = 'SE';
+                    break;
+                case 'fi':
+                    $countryIso = 'FI';
+                    break;
+                case 'da':
+                    $countryIso = 'DK';
+                    break;
+                case 'is':
+                    $countryIso = 'IS';
+                    break;
+                case 'hu':
+                    $countryIso = 'hu';
+                    break;
+                case 'pl':
+                    $countryIso = 'PL';
+                    break;
+                case 'lv':
+                    $countryIso = 'LV';
+                    break;
+                case 'lt':
+                    $countryIso = 'LT';
                     break;
                 default:
                     $countryIso = 'US';
