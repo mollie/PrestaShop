@@ -1498,7 +1498,7 @@ class Mollie extends PaymentModule
             }
             if (isset($context->cart->id_address_delivery)) {
                 $shipping = new Address((int) $context->cart->id_address_delivery);
-                $paymentData['billingAddress'] = array(
+                $paymentData['shippingAddress'] = array(
                     'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
                     'city'            => (string) $shipping->city,
                     'region'          => (string) State::getNameById($shipping->id_state),
