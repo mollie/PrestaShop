@@ -377,7 +377,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get(static::MOLLIE_PENDING));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELLED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
