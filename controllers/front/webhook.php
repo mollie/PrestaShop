@@ -144,9 +144,16 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
+                
+                $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
+                
+                if ($paymentStatus < 2) {
+                    $paymentStatus = Configuration::get('PS_OS_PAYMENT');
+                }
+                
                 $this->module->validateOrder(
                     (int) $apiPayment->metadata->cart_id,
-                    $this->module->statuses[$apiPayment->status],
+                    $paymentStatus,
                     $apiPayment->amount->value,
                     isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
                     null,
