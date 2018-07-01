@@ -131,11 +131,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 )
             );
         }
+        
+        $paymentStatus = (int) $this->module->statuses[$payment->status];
+		
+		if ($paymentStatus < 2) {
+            $paymentStatus = Configuration::get('PS_OS_BANKWIRE');
+        }
 
         if ($payment->method == 'banktransfer') {
             $this->module->validateOrder(
                 (int) $cart->id,
-                $this->module->statuses[$payment->status],
+                $paymentStatus,
                 $originalAmount,
                 isset(Mollie::$methods[$payment->method]) ? Mollie::$methods[$payment->method] : 'Mollie',
                 null,
