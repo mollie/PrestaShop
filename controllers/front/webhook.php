@@ -239,37 +239,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Transforms euro prices from mollie back to the currency of the Cart (order)
-     *
-     * @param float $amount in euros
-     * @param int   $cartId
-     *
-     * @return float in the currency of the cart
-     * @throws PrestaShopException
-     */
-    /*private function convertEuroToCartCurrency($amount, $cartId)
-    {
-        $cart = new Cart($cartId);
-        $currencyEuro = Currency::getIdByIsoCode('EUR');
-
-        if (!$currencyEuro) {
-            // No Euro currency available!
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: In order to use this module, you need to enable Euros as currency. Cart ID: '.$cartId, Mollie::CRASH);
-            }
-            die($this->module->lang['This payment method is only available for Euros.']);
-        }
-
-        if ($cart->id_currency !== $currencyEuro) {
-            // Convert euro currency to cart currency
-            $amount = Tools::convertPriceFull($amount, Currency::getCurrencyInstance($currencyEuro),
-                Currency::getCurrencyInstance($cart->id_currency));
-        }
-
-        return round($amount, 2);
-    }*/
-
-    /**
      * (Re)sets the controller country context.
      * When Prestashop receives a call from Mollie (without context)
      * Prestashop always has default context to fall back on, so context->country
