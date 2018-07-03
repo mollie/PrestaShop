@@ -26,8 +26,8 @@ export default class MollieBanks {
     Object.values(this.banks).forEach((bank) => {
       content += `<div class="${styles.radio} ${styles['radio-primary']}">
             <input type="radio" id="${xss(bank.id)}" name="mollie-bank" value="${xss(bank.id)}">
-            <label for="${xss(bank.id)}">
-                <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}"> ${xss(bank.name)}
+            <label for="${xss(bank.id)}" style="line-height: 24px;">
+                <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}" style="height: 24px; width: auto"> ${xss(bank.name)}
             </label>
         </div>`;
     });
