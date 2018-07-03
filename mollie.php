@@ -343,7 +343,6 @@ class Mollie extends PaymentModule
         return parent::uninstall();
     }
 
-
     /**
      * @return void
      *
@@ -396,7 +395,6 @@ class Mollie extends PaymentModule
     {
         return $this->_errors;
     }
-
 
     /**
      * @return string
@@ -574,7 +572,6 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-
     public function getPaymentBy($column, $id)
     {
         $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
@@ -787,7 +784,6 @@ class Mollie extends PaymentModule
     {
         return @Tools::file_get_contents($url.'/releases.atom');
     }
-
 
     /**
      * @param int    $orderId
