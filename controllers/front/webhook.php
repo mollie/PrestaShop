@@ -124,14 +124,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                && (float) $apiPayment->settlementAmount->value - (float) $apiPayment->amountRefunded->value > 0
+                    && (float) $apiPayment->settlementAmount->value - (float) $apiPayment->amountRefunded->value > 0
                 ) {
                     $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
                 } else {
                     $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
                 }
-            } elseif ($psPayment['method'] === 'banktransfer' &&
-                $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+            } elseif ($psPayment['method'] === 'banktransfer'
+                && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             ) {
                 $order = new Order($orderId);
@@ -147,7 +147,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
                 
-                if ($paymentStatus < 2) {
+                if ($paymentStatus < 1) {
                     $paymentStatus = Configuration::get('PS_OS_PAYMENT');
                 }
                 

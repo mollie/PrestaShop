@@ -134,7 +134,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         
         $paymentStatus = (int) $this->module->statuses[$payment->status];
 
-        if ($paymentStatus < 2) {
+        if ($paymentStatus < 1) {
             $paymentStatus = Configuration::get('PS_OS_BANKWIRE');
         }
 
