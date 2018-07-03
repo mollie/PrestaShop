@@ -1647,6 +1647,7 @@ class Mollie extends PaymentModule
                 case 'nn':
                     $langIso = 'nb';
                     $countryIso = 'NO';
+                    break;
                 case 'no':
                     $langIso = 'nb';
                     $countryIso = 'NO';
