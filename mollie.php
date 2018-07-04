@@ -33,6 +33,7 @@
  */
 
 require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
+require_once(dirname(__FILE__)).'/lib/helpers.php';
 if (!function_exists('\\Hough\\Psr7\\str')) {
     require_once __DIR__.'/lib/vendor/ehough/psr7/src/functions.php';
 }
@@ -58,21 +59,23 @@ class Mollie extends PaymentModule
     * @var array
     */
     public static $methodCurrencies = array(
-        'banktransfer'  => array('eur'),
-        'belfius'       => array('eur'),
-        'bitcoin'       => array('eur'),
-        'creditcard'    => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
-        'directdebit'   => array('eur'),
-        'eps'           => array('eur'),
-        'giftcard'      => array('eur'),
-        'giropay'       => array('eur'),
-        'ideal'         => array('eur'),
-        'inghomepay'    => array('eur'),
-        'kbc'           => array('eur'),
-        'bancontact'    => array('eur'),
-        'paypal'        => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
-        'paysafecard'   => array('eur'),
-        'sofort'        => array('eur'),
+        'banktransfer'    => array('eur'),
+        'belfius'         => array('eur'),
+        'bitcoin'         => array('eur'),
+        'cartasi'         => array('eur'),
+        'cartesbancaires' => array('eur'),
+        'creditcard'      => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
+        'directdebit'     => array('eur'),
+        'eps'             => array('eur'),
+        'giftcard'        => array('eur'),
+        'giropay'         => array('eur'),
+        'ideal'           => array('eur'),
+        'inghomepay'      => array('eur'),
+        'kbc'             => array('eur'),
+        'bancontact'      => array('eur'),
+        'paypal'          => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
+        'paysafecard'     => array('eur'),
+        'sofort'          => array('eur'),
     );
 
     const NOTICE = 1;
@@ -139,21 +142,23 @@ class Mollie extends PaymentModule
 
     /** @var array $methods */
     public static $methods = array(
-        'banktransfer' => 'Bank',
-        'belfius'      => 'Belfius',
-        'bitcoin'      => 'Bitcoin',
-        'creditcard'   => 'Credit Card',
-        'directdebit'  => 'Direct Debit',
-        'eps'          => 'EPS',
-        'giftcard'     => 'Giftcard',
-        'giropay'      => 'Giropay',
-        'ideal'        => 'iDEAL',
-        'inghomepay '  => 'ING Homepay',
-        'kbc'          => 'KBC',
-        'bancontact'   => 'Bancontact',
-        'paypal'       => 'PayPal',
-        'paysafecard'  => 'Paysafecard',
-        'sofort'       => 'Sofort Banking',
+        'banktransfer'    => 'Bank',
+        'belfius'         => 'Belfius',
+        'bitcoin'         => 'Bitcoin',
+        'cartasi'         => 'CartaSi',
+        'cartesbancaires' => 'Cartes Bancaires',
+        'creditcard'      => 'Credit Card',
+        'directdebit'     => 'Direct Debit',
+        'eps'             => 'EPS',
+        'giftcard'        => 'Giftcard',
+        'giropay'         => 'Giropay',
+        'ideal'           => 'iDEAL',
+        'inghomepay '     => 'ING Homepay',
+        'kbc'             => 'KBC',
+        'bancontact'      => 'Bancontact',
+        'paypal'          => 'PayPal',
+        'paysafecard'     => 'Paysafecard',
+        'sofort'          => 'Sofort Banking',
     );
 
     /**
@@ -165,7 +170,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.2';
+        $this->version = '3.1.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -250,6 +255,8 @@ class Mollie extends PaymentModule
             'Awaiting Mollie payment'                                                                                                              => $this->l('Awaiting Mollie payment'),
             'Mollie partially refunded'                                                                                                            => $this->l('Mollie partially refunded'),
             'iDEAL'                                                                                                                                => $this->l('iDEAL'),
+            'CartaSi'                                                                                                                              => $this->l('CartaSi'),
+            'Cartes Bancaires'                                                                                                                     => $this->l('Cartes Bancaires'),
             'Credit card'                                                                                                                          => $this->l('Credit card'),
             'Bancontact'                                                                                                                           => $this->l('Bancontact'),
             'SOFORT Banking'                                                                                                                       => $this->l('SOFORT Banking'),
@@ -1091,7 +1098,7 @@ class Mollie extends PaymentModule
 
             $paymentOption = array(
                 'cta_text' => $this->lang[$method->description],
-                'logo'     => $method->image->size1x,
+                'logo'     => $method->image->fallback,
                 'action'   => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
@@ -1100,10 +1107,8 @@ class Mollie extends PaymentModule
                 ),
             );
             $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-            if ($imageConfig === static::LOGOS_NORMAL) {
-                $paymentOption['logo'] = $method->image->size1x;
-            } elseif ($imageConfig === static::LOGOS_NORMAL) {
-                $paymentOption['logo'] = $method->image->size2x;
+            if ($imageConfig == static::LOGOS_HIDE) {
+                $paymentOption['logo'] = $method->image->fallback;
             }
             $paymentOptions[] = $paymentOption;
         }
@@ -1187,10 +1192,8 @@ class Mollie extends PaymentModule
                 ;
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-                if ($imageConfig === static::LOGOS_NORMAL) {
-                    $newOption->setLogo($method->image->size1x);
-                } elseif ($imageConfig === static::LOGOS_BIG) {
-                    $newOption->setLogo($method->image->size2x);
+                if ($imageConfig !== static::LOGOS_HIDE) {
+                    $newOption->setLogo($method->image->fallback);
                 }
 
                 $paymentOptions[] = $newOption;
@@ -1213,10 +1216,12 @@ class Mollie extends PaymentModule
                 ;
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-                if ($imageConfig === static::LOGOS_NORMAL) {
-                    $newOption->setLogo($method->image->size1x);
-                } elseif ($imageConfig === static::LOGOS_BIG) {
-                    $newOption->setLogo($method->image->size2x);
+                if ($imageConfig !== static::LOGOS_HIDE) {
+                    if (in_array($method->id, array('cartasi', 'cartesbancaires'))) {
+                        $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}.png"));
+                    } else {
+                        $newOption->setLogo($method->image->fallback);
+                    }
                 }
 
                 $paymentOptions[] = $newOption;
@@ -1919,7 +1924,7 @@ class Mollie extends PaymentModule
     protected function getMethodsForConfig($active = false)
     {
         try {
-            $apiMethods = $this->api->methods->all();
+            $apiMethods = $this->api->methods->all()->getArrayCopy();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $apiMethods = array();
         } catch (Exception $e) {
@@ -1931,6 +1936,7 @@ class Mollie extends PaymentModule
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
         if (!is_array($dbMethods)) {
+            $dbMethods = array();
             $configMethods = array();
         } else {
             $configMethods = array();
@@ -1947,8 +1953,8 @@ class Mollie extends PaymentModule
                 $deferredMethods[] = array(
                     'id'      => $apiMethod->id,
                     'name'    => $apiMethod->description,
-                    'image'   => $apiMethod->image->size2x,
                     'enabled' => true,
+                    'image'   => $apiMethod->image->size2x,
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -1957,6 +1963,30 @@ class Mollie extends PaymentModule
                     'enabled' => $configMethods[$apiMethod->id]['enabled'],
                     'image'   => $apiMethod->image->size2x,
                 );
+            }
+        }
+        $availableApiMethods = array_column(array_map(function ($apiMethod) {
+            return (array) $apiMethod;
+        }, $apiMethods), 'id');
+        if (in_array('creditcard', $availableApiMethods)) {
+            foreach (array('cartasi' => 'CartaSi', 'cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
+                if (!in_array($id, array_column($dbMethods, 'id'))) {
+                    $deferredMethods[] = array(
+                        'id'      => $id,
+                        'name'    => $name,
+                        'enabled' => true,
+                        'image'   => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                    );
+                } else {
+                    $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
+                    $thisMethod = $dbMethods[array_search($id, array_column($dbMethods, 'id'))];
+                    $methods[$configMethods[$id]['position']] = [
+                        'id'      => $id,
+                        'name'    => $name,
+                        'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
+                        'image'   => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                    ];
+                }
             }
         }
         ksort($methods);
@@ -1991,11 +2021,52 @@ class Mollie extends PaymentModule
         $dbMethods = $this->getMethodsForConfig(true);
         $methods = array();
         $apiMethods = $this->api->methods->all()->getArrayCopy();
+        foreach ($apiMethods as $apiMethod) {
+            if (Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_BIG) {
+                $apiMethod->image->fallback = $apiMethod->image->size2x;
+            } else {
+                $apiMethod->image->fallback = $apiMethod->image->size1x;
+            }
+        }
+        $creditCard = null;
+        foreach ($apiMethods as $apiMethod) {
+            if ($apiMethod->id === 'creditcard') {
+                $creditCard = clone $apiMethod;
+                break;
+            }
+        }
+        $extra = array();
+        if (in_array('creditcard', array_column($apiMethods, 'id'))) {
+            if (in_array('cartasi', array_column($dbMethods, 'id'))) {
+                $cartaSi = clone $creditCard;
+                $cartaSi->image = clone $cartaSi->image;
+                $cartaSi->id = 'cartasi';
+                $cartaSi->description = 'CartaSi';
+                $cartaSi->image->size1x = static::getMediaPath($this->_path.'views/img/cartasi.svg');
+                $cartaSi->image->size2x = static::getMediaPath($this->_path.'views/img/cartasi.svg');
+                $cartaSi->image->fallback = static::getMediaPath($this->_path.'views/img/cartasi.png');
+                $extra['cartasi'] = $cartaSi;
+            }
+            if (in_array('cartesbancaires', array_column($dbMethods, 'id'))) {
+                $cartesBancaires = clone $creditCard;
+                $cartesBancaires->image = clone $cartesBancaires->image;
+                $cartesBancaires->id = 'cartesbancaires';
+                $cartesBancaires->description = 'Cartes Bancaires';
+                $cartesBancaires->image->size1x = static::getMediaPath($this->_path.'views/img/cartesbancaires.svg');
+                $cartesBancaires->image->size2x = static::getMediaPath($this->_path.'views/img/cartesbancaires.svg');
+                $cartesBancaires->image->fallback = static::getMediaPath($this->_path.'views/img/cartesbancaires.png');
+                $extra['cartesbancaires'] = $cartesBancaires;
+            }
+        }
         foreach ($dbMethods as $method) {
-            foreach ($apiMethods as $apiMethod) {
-                if ($apiMethod->id === $method['id']) {
-                    $methods[] = $apiMethod;
-                    break;
+            if ($creditCard && in_array($method['id'], array('cartasi', 'cartesbancaires'))) {
+                $methods[] = $extra[$method['id']];
+            } else {
+                foreach ($apiMethods as $apiMethod) {
+                    if ($apiMethod->id === $method['id']) {
+                        $methods[] = $apiMethod;
+                        break;
+                    }
                 }
             }
         }

@@ -44,9 +44,9 @@
       >
         {if isset($method->image) && $images !== 'hide'}
           {if $images === 'big'}
-            <img class="mollie_image_big" src="{$method->image->size2x|escape:'htmlall':'UTF-8' nofilter}" alt="">
+            <img class="mollie_image_big" src="{$method->image->size2x|escape:'htmlall':'UTF-8' nofilter}"{if !empty($method->image->fallback)} onerror="this.src = '{$method->image->fallback|escape:'javascript':'UTF-8' nofilter}"{/if} alt="{$method->description|escape:'htmlall':'UTF-8' nofilter}'">
           {else}
-            <img class="mollie_image" src="{$method->image->size1x|escape:'htmlall':'UTF-8' nofilter}" alt="">
+            <img class="mollie_image" src="{$method->image->size1x|escape:'htmlall':'UTF-8' nofilter}"{if !empty($method->image->fallback)} onerror="this.src = '{$method->image->fallback|escape:'javascript':'UTF-8' nofilter}'"{/if} alt="{$method->description|escape:'htmlall':'UTF-8' nofilter}">
           {/if}
         {else}
           <span class="mollie_margin">&nbsp;</span>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-32x32-cartebancare</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="100%" y1="0%" x2="0%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#083969" offset="0%"></stop>
+            <stop stop-color="#007B9D" offset="49.1699219%"></stop>
+            <stop stop-color="#00A84A" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="ALL" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Payment-Method-icons" transform="translate(-632.000000, -758.000000)">
+            <g id="Group-2" transform="translate(416.000000, 758.000000)">
+                <g id="icon-32x32-cartebancare" transform="translate(216.000000, 0.000000)">
+                    <rect id="Mask" fill="url(#linearGradient-1)" x="0" y="0" width="32" height="32" rx="8"></rect>
+                    <g id="Page-1" transform="translate(6.000000, 12.000000)" fill="#FFFFFF">
+                        <path d="M5,4 L10,4 C9.94748589,3.0278568 9.69541814,1.90279641 9,1 C8.02021793,0.319306532 6.42510175,0 5,0 C3.51625749,0 1.87562908,0.350222747 1,1 C0.170670868,2.06945414 0,3.34957866 0,4 C0,5.70452472 0.333902236,7.10589877 1,8 C2.10100214,8.77199292 3.57664872,9 5,9 C6.38221522,9 7.87974268,8.7425259 9,8 C9.68797864,7.11266169 10,6.33983146 10,5 L5,5 L5,4 Z" id="Fill-1"></path>
+                        <path d="M11,5 L11,9 L18,9 L18,9 C19.1703335,8.9425687 20,8.08199663 20,7 C20,5.96825575 19.1703335,5.05249579 18,5 L18,5 L11,5 Z" id="Fill-4"></path>
+                        <path d="M20,2 C20,0.889460411 19.1813223,0.00891584446 18,2.22044605e-16 C18.0785393,0.00891584446 17.9908076,-0.00576805604 18,2.22044605e-16 L11,2.22044605e-16 L11,4 L18,4 C19.2481438,3.91140713 20,3.05239895 20,2" id="Fill-7"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
