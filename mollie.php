@@ -624,8 +624,7 @@ class Mollie extends PaymentModule
         array $imageOptions = array(),
         array $issuerOptions = array(),
         array $loggerOptions = array()
-    )
-    {
+    ) {
         $errors = array();
 
         $mollieApiKey = Tools::getValue('Mollie_Api_Key');
@@ -1222,7 +1221,11 @@ class Mollie extends PaymentModule
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
                     if (in_array($method->id, array('cartasi', 'cartesbancaires'))) {
-                        $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}.png"));
+                        if ($imageConfig == static::LOGOS_BIG) {
+                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}80.png"));
+                        } else {
+                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}.png"));
+                        }
                     } else {
                         $newOption->setLogo($method->image->fallback);
                     }
