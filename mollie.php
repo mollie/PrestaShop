@@ -269,6 +269,9 @@ class Mollie extends PaymentModule
             'PayPal'                                                                                                                               => $this->l('PayPal'),
             'paysafecard'                                                                                                                          => $this->l('paysafecard'),
             'KBC/CBC Payment Button'                                                                                                               => $this->l('KBC/CBC Payment Button'),
+            'ING Home\'Pay'                                                                                                                        => $this->l('ING Home\'Pay'),
+            'Giropay'                                                                                                                              => $this->l('Giropay'),
+            'eps'                                                                                                                                  => $this->l('eps'),
         );
     }
 
@@ -1088,11 +1091,12 @@ class Mollie extends PaymentModule
 
         $iso = strtolower(Context::getContext()->currency->iso_code);
         $paymentOptions = array();
+
         foreach ($methods as $method) {
             if (!isset(static::$methodCurrencies[$method->id])) {
                 continue;
             }
-            if (in_array($iso, static::$methodCurrencies[$method->id])) {
+            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
                 continue;
             }
 
