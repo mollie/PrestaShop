@@ -76,6 +76,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
+        if (in_array($method, array('cartasi', 'cartesbancaires'))) {
+            $method = 'creditcard';
+        }
         $issuer = Tools::getValue('issuer') ?: null;
 
         // If no issuer was set yet and the issuer list has its own page, show issuer list here
