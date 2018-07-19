@@ -33,7 +33,7 @@
  */
 
 require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
-require_once(dirname(__FILE__)).'/lib/helpers.php';
+require_once(dirname(__FILE__).'/lib/helpers.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
     require_once __DIR__.'/lib/vendor/ehough/psr7/src/functions.php';
 }
