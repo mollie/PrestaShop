@@ -56,7 +56,7 @@
 </head>
 <body>
   <div class="ideal-container">
-    <img class="ideal-logo" src="{$ideal_logo}" alt="">
+    <img class="ideal-logo" src="{$ideal_logo|escape:'htmlall':'UTF-8' nofilter}" alt="">
   </div>
   {if !empty($canceled)}
     <h1>{l s='Welcome back' mod='mollie'}</h1>

@@ -9,6 +9,7 @@
   "author": "Martijn Diederiks <info@trendweb.nl>",
   "license": "AFL-3.0",
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-polyfill": "^6.26.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "lodash-webpack-plugin": "^0.11.5",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack-cli": "^2.1.4"
   }

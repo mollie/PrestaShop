@@ -113,7 +113,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         // Prepare payment
         $paymentData = Mollie::getPaymentData(
             $amount,
-            strtoupper($this->context->currency->iso_code),
+            Tools::strtoupper($this->context->currency->iso_code),
             $method,
             $issuer,
             (int) $cart->id,

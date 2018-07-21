@@ -38,7 +38,7 @@
       <div class="bounce3"></div>
     </div>
 
-    <div id="mollie-qr-image-container" style="text-align: {if !empty($qrAlign)}{$qrAlign}{else}center{/if}">
+    <div id="mollie-qr-image-container" style="text-align: {if !empty($qrAlign)}{$qrAlign|escape:'html':'UTF-8'}{else}center{/if}">
       <span id="mollie-qr-title" style="font-size: 20px">{l s='or scan the iDEAL QR code' mod='mollie'}</span>
       <img id="mollie-qr-image"
            width="320"
@@ -104,7 +104,7 @@
                 // Success!
                 try {
                   var data = JSON.parse(this.responseText);
-                  if (parseInt(data.status, 10) === 2) {
+                  if (data.status === 2) {
                     clearCache();
                     // Never redirect to a different domain
                     var a = document.createElement('A');
@@ -112,7 +112,7 @@
                     if (a.hostname === window.location.hostname) {
                       window.location.href = data.href;
                     }
-                  } else if (parseInt(data.status, 10) === 3) {
+                  } else if (data.status === 3) {
                     clearCache();
                     grabNewUrl();
                   }

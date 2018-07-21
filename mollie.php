@@ -35,7 +35,7 @@
 require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
 require_once(dirname(__FILE__).'/lib/helpers.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
-    require_once __DIR__.'/lib/vendor/ehough/psr7/src/functions.php';
+    require_once dirname(__FILE__).'/lib/vendor/ehough/psr7/src/functions.php';
 }
 
 if (!defined('_PS_VERSION_')) {
@@ -77,6 +77,9 @@ class Mollie extends PaymentModule
         'paysafecard'     => array('eur'),
         'sofort'          => array('eur'),
     );
+
+    // The Addons version does not include the GitHub updater
+    const ADDONS = true;
 
     const NOTICE = 1;
     const WARNING = 2;
@@ -1088,7 +1091,7 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        $iso = strtolower(Context::getContext()->currency->iso_code);
+        $iso = Tools::strtolower(Context::getContext()->currency->iso_code);
         $paymentOptions = array();
 
         foreach ($methods as $method) {
@@ -1162,7 +1165,7 @@ class Mollie extends PaymentModule
             'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
         ));
 
-        $iso = strtolower($context->currency->iso_code);
+        $iso = Tools::strtolower($context->currency->iso_code);
         $paymentOptions = array();
         foreach ($methods as $method) {
             if (!isset(static::$methodCurrencies[$method->id])) {
@@ -1437,7 +1440,7 @@ class Mollie extends PaymentModule
 
         $paymentData = array(
             'amount'      => array(
-                'currency' => (string) ($currency ? strtoupper($currency) : 'EUR'),
+                'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
                 'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
             'method'      => $method,
@@ -1715,7 +1718,7 @@ class Mollie extends PaymentModule
                 'message' => $this->l('Unable to retieve info about the latest version'),
             )));
         }
-        if (version_compare(substr($latestVersion['version'], 1, strlen($latestVersion['version']) - 1), $this->version, '>')) {
+        if (version_compare(Tools::substr($latestVersion['version'], 1, Tools::strlen($latestVersion['version']) - 1), $this->version, '>')) {
             // Then update
             die(json_encode(array(
                 'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
@@ -1851,9 +1854,10 @@ class Mollie extends PaymentModule
         }
 
         $success = false;
-        if (substr($file, -4) == '.zip') {
+        if (Tools::substr($file, -4) == '.zip') {
             if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder.DIRECTORY_SEPARATOR.$moduleName)) {
                 if (file_exists(_PS_MODULE_DIR_.$moduleName)) {
+                    $report = '';
                     if (!static::testDir(_PS_MODULE_DIR_.$moduleName, true, $report, true)) {
                         $this->recursiveDeleteOnDisk($tmpFolder);
                         @unlink(_PS_MODULE_DIR_.$moduleName.'.zip');
@@ -1987,12 +1991,12 @@ class Mollie extends PaymentModule
                 } else {
                     $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
                     $thisMethod = $dbMethods[array_search($id, array_column($dbMethods, 'id'))];
-                    $methods[$configMethods[$id]['position']] = [
+                    $methods[$configMethods[$id]['position']] = array(
                         'id'      => $id,
                         'name'    => $name,
                         'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'image'   => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
-                    ];
+                    );
                 }
             }
         }
@@ -2024,7 +2028,7 @@ class Mollie extends PaymentModule
      */
     protected function getFilteredApiMethods()
     {
-        $iso = strtolower($this->context->currency->iso_code);
+        $iso = Tools::strtolower($this->context->currency->iso_code);
         $dbMethods = $this->getMethodsForConfig(true);
         $methods = array();
         $apiMethods = $this->api->methods->all()->getArrayCopy();
@@ -2125,7 +2129,7 @@ class Mollie extends PaymentModule
             foreach (scandir($absoluteDir, SCANDIR_SORT_NONE) as $item) {
                 $path = $absoluteDir.DIRECTORY_SEPARATOR.$item;
 
-                if (in_array($item, ['.', '..', '.git'])
+                if (in_array($item, array('.', '..', '.git'))
                     || is_link($path)) {
                     continue;
                 }

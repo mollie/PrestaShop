@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
@@ -11,6 +12,26 @@ const optimization = {
 };
 
 if (production) {
+  plugins.push(
+    new LodashModuleReplacementPlugin({
+      collections: true,
+      paths: true,
+      shorthands: true,
+      cloning: true,
+      chaining: true,
+      metadata: true,
+      caching: false,
+      exotics: false,
+      guards: false,
+      deburring: false,
+      unicode: false,
+      memoizing: false,
+      coercions: false,
+      currying: false,
+      flattening: false,
+      placeholders: false,
+    })
+  );
   optimization.minimizer.push(
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -28,7 +49,7 @@ if (production) {
         cache: true,
         parallel: true,
         output: {
-          comments: false,
+          comments: /^\**!|@preserve|@license|@cc_on/,
         },
       },
     })
@@ -39,36 +60,36 @@ if (production) {
     })
   );
   plugins.push(
-    new webpack.BannerPlugin(`Copyright (c) 2012-2018, Mollie B.V.
-* All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-* 
-* - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
-* - Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS \`\`AS IS'' AND ANY
-* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
-* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-* DAMAGE.
-* 
-* @author     Mollie B.V. <info@mollie.nl>
-* @copyright  Mollie B.V.
-* @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
-* @category   Mollie
-* @package    Mollie
-* @link       https://www.mollie.nl`),
+    new webpack.BannerPlugin(` Copyright (c) 2012-2018, Mollie B.V.
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ - Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS \`\`AS IS'' AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+ 
+ @author     Mollie B.V. <info@mollie.nl>
+ @copyright  Mollie B.V.
+ @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ @category   Mollie
+ @package    Mollie
+ @link       https://www.mollie.nl`)
   );
 } else {
   plugins.push(
@@ -82,6 +103,7 @@ module.exports = {
   entry: {
     banks: ['./src/banks.js'],
     confirmrefund: ['./src/confirmrefund.js'],
+    updater: ['./src/updater.js'],
   },
   resolve: {
     extensions: ['.js', '.css'],
