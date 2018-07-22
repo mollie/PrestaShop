@@ -427,11 +427,14 @@ class Mollie extends PaymentModule
             'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
         ));
 
-        $updateMessage = defined('_TB_VERSION_')
-            ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
-            : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
-        if ($updateMessage === 'updateAvailable') {
-            $updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
+        $updateMessage = '';
+        if (!static::ADDONS) {
+            $updateMessage = defined('_TB_VERSION_')
+                ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
+                : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
+            if ($updateMessage === 'updateAvailable') {
+                $updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
+            }
         }
         $resultMessage = '';
         $warningMessage = '';
@@ -1428,6 +1431,8 @@ class Mollie extends PaymentModule
      * @param string|null $cssMediaType
      *
      * @return array|bool|mixed|string
+     *
+     * @since 3.2.0
      */
     public static function getMediaPathForJavaScript($relativeMediaUri, $cssMediaType = null)
     {
