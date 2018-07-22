@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2018, mollie-ui b.V.
+* Copyright (c) 2012-2018, Mollie B.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,32 +23,19 @@
 * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 * DAMAGE.
 *
-* @author     mollie-ui b.V. <info@mollie.nl>
-* @copyright  mollie-ui b.V.
+* @author     Mollie B.V. <info@mollie.nl>
+* @copyright  Mollie B.V.
 * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
 * @category   Mollie
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<button id="mollie-update" type="button" class="btn btn-primary pull-right"><i class="icon icon-cloud-download"></i> {l s='Update this module' mod='mollie'}</button>
 <script type="text/javascript">
-  (function initMollieUpdater() {
-    if (typeof window.MollieModule === 'undefined'
-      || typeof window.MollieModule.updater === 'undefined'
-    ) {
-      setTimeout(initMollieUpdater, 100);
-    }
-    window.MollieModule.updater.default(
-      document.getElementById('mollie-update'),
-      {
-        endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie&ajax=1',
-      },
-      {
-        error: '{l s='Error' mod='mollie' js=1}',
-        unableToConnect: '{l s='Unable to connect' mod='mollie' js=1}',
-        unableToUnzip: '{l s='Unable to unzip new module' mod='mollie' js=1}',
-        updated: '{l s='The module has been updated!' mod='mollie' js=1}',
-      }
-    );
+  (function () {
+    window.MollieModule = window.MollieModule || { };
+    window.MollieModule.urls = window.MollieModule.urls || { };
+    window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus'], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
   }());
 </script>

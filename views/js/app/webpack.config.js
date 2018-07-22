@@ -104,6 +104,7 @@ module.exports = {
     banks: ['./src/banks.js'],
     confirmrefund: ['./src/confirmrefund.js'],
     updater: ['./src/updater.js'],
+    qrcode: ['./src/qrcode.js'],
   },
   resolve: {
     extensions: ['.js', '.css'],

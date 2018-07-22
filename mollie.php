@@ -79,7 +79,7 @@ class Mollie extends PaymentModule
     );
 
     // The Addons version does not include the GitHub updater
-    const ADDONS = true;
+    const ADDONS = false;
 
     const NOTICE = 1;
     const WARNING = 2;
@@ -173,7 +173,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.0';
+        $this->version = '3.2.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -525,7 +525,10 @@ class Mollie extends PaymentModule
 
         $this->context->controller->addJquery();
         $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
-        $this->context->controller->addJS($this->_path.'views/js/sweetalert-2.1.0.min.js');
+        if (!static::ADDONS) {
+            $this->context->controller->addJS($this->_path.'views/js/app/dist/updater.min.js');
+        }
+
         $this->context->smarty->assign($data);
 
         return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');
@@ -1043,27 +1046,26 @@ class Mollie extends PaymentModule
         }
 
         $cart = Context::getContext()->cart;
-        $smarty->assign(
-            array(
-                'link'                  => $this->context->link,
-                'cartAmount'            => (int) ($cart->getOrderTotal(true) * 100),
-                'methods'               => $apiMethods,
-                'issuers'               => $issuerList,
-                'issuer_setting'        => $issuerSetting,
-                'images'                => Configuration::get(static::MOLLIE_IMAGES),
-                'warning'               => $this->warning,
-                'msg_pay_with'          => $this->lang['Pay with %s'],
-                'msg_bankselect'        => $this->lang['Select your bank:'],
-                'module'                => $this,
-                'mollie_banks_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
-                'mollie_translations'   => array(
-                    'chooseYourBank' => $this->l('Choose your bank'),
-                    'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
-                    'choose'         => $this->l('Choose'),
-                    'cancel'         => $this->l('Cancel'),
-                ),
-            )
-        );
+        $smarty->assign(array(
+            'link'                   => $this->context->link,
+            'cartAmount'             => (int) ($cart->getOrderTotal(true) * 100),
+            'methods'                => $apiMethods,
+            'issuers'                => $issuerList,
+            'issuer_setting'         => $issuerSetting,
+            'images'                 => Configuration::get(static::MOLLIE_IMAGES),
+            'warning'                => $this->warning,
+            'msg_pay_with'           => $this->lang['Pay with %s'],
+            'msg_bankselect'         => $this->lang['Select your bank:'],
+            'module'                 => $this,
+            'mollie_banks_app_path'  => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
+            'mollie_qrcode_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/qrcode.min.js'),
+            'mollie_translations'    => array(
+                'chooseYourBank' => $this->l('Choose your bank'),
+                'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
+                'choose'         => $this->l('Choose'),
+                'cancel'         => $this->l('Cancel'),
+            ),
+        ));
 
         return $this->display(__FILE__, 'addjsdef.tpl').$this->display(__FILE__, 'payment.tpl');
     }
@@ -1160,7 +1162,7 @@ class Mollie extends PaymentModule
         $context->smarty->assign(array(
             'idealIssuers'  => $idealIssuers,
             'link'          => $this->context->link,
-            'qrCodeEnabled' => true,
+            'qrCodeEnabled' => Configuration::get(static::MOLLIE_QRENABLED),
             'qrAlign'       => 'left',
             'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
         ));
@@ -1417,6 +1419,19 @@ class Mollie extends PaymentModule
         }
 
         return $mediaUri;
+    }
+
+    /**
+     * Get media path for JS
+     *
+     * @param string      $relativeMediaUri
+     * @param string|null $cssMediaType
+     *
+     * @return array|bool|mixed|string
+     */
+    public static function getMediaPathForJavaScript($relativeMediaUri, $cssMediaType = null)
+    {
+        return static::getMediaPath(_PS_MODULE_DIR_."mollie/{$relativeMediaUri}", $cssMediaType);
     }
 
     /**
