@@ -114,16 +114,15 @@ class Mollie extends PaymentModule
     const MOLLIE_QRENABLED = 'MOLLIE_QRENABLED';
     const MOLLIE_DISPLAY_ERRORS = 'MOLLIE_DISPLAY_ERRORS';
     const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
-    const MOLLIE_PENDING = 'MOLLIE_PENDING';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
-    const MOLLIE_STATUS_CANCELLED = 'MOLLIE_STATUS_CANCELLED';
+    const MOLLIE_STATUS_CANCELED = 'MOLLIE_STATUS_CANCELED';
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
     const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_PARTIAL_REFUND';
     const MOLLIE_STATUS_REFUNDED = 'MOLLIE_STATUS_REFUNDED';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
-    const MOLLIE_MAIL_WHEN_CANCELLED = 'MOLLIE_MAIL_WHEN_CANCELLED';
+    const MOLLIE_MAIL_WHEN_CANCELED = 'MOLLIE_MAIL_WHEN_CANCELED';
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
@@ -219,7 +218,7 @@ class Mollie extends PaymentModule
 
         $this->statuses = array(
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID     => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELLED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED  => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             static::PARTIAL_REFUND_CODE                      => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED  => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
@@ -229,7 +228,7 @@ class Mollie extends PaymentModule
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                                           => $this->l('paid'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                       => $this->l('cancelled'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                       => $this->l('canceled'),
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                        => $this->l('expired'),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                        => $this->l('refunded'),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                                           => $this->l('bankwire pending'),
@@ -299,12 +298,6 @@ class Mollie extends PaymentModule
             $this->registerHook($hook);
         }
 
-        if (!$this->pendingOrderState()) {
-            $this->_errors[] = 'Unable to install Mollie pending order state';
-
-            return false;
-        }
-
         if (!$this->partialRefundOrderState()) {
             $this->_errors[] = 'Unable to install Mollie partially refunded order state';
 
@@ -340,16 +333,15 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_QRENABLED);
         Configuration::deleteByName(static::MOLLIE_DISPLAY_ERRORS);
         Configuration::deleteByName(static::MOLLIE_USE_PROFILE_WEBHOOK);
-        Configuration::deleteByName(static::MOLLIE_PENDING);
         Configuration::deleteByName(static::MOLLIE_STATUS_OPEN);
         Configuration::deleteByName(static::MOLLIE_STATUS_PAID);
-        Configuration::deleteByName(static::MOLLIE_STATUS_CANCELLED);
+        Configuration::deleteByName(static::MOLLIE_STATUS_CANCELED);
         Configuration::deleteByName(static::MOLLIE_STATUS_EXPIRED);
         Configuration::deleteByName(static::MOLLIE_STATUS_PARTIAL_REFUND);
         Configuration::deleteByName(static::MOLLIE_STATUS_REFUNDED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_OPEN);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_PAID);
-        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_CANCELLED);
+        Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_CANCELED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_EXPIRED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_REFUNDED);
 
@@ -391,17 +383,20 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELLED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_PARTIAL_REFUND, Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND));
+        Configuration::updateGlobalValue(
+            static::MOLLIE_STATUS_PARTIAL_REFUND,
+            Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND)
+        );
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_PAID, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELLED, true);
+        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
     }
 
-    /**
+      /**
      * @return mixed
      */
     public function getErrors()
@@ -439,43 +434,18 @@ class Mollie extends PaymentModule
         $resultMessage = '';
         $warningMessage = '';
 
-        $payscreenLocaleOptions = array(
-            static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE      => $this->l('Do not send locale, use browser language'),
-            static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE => $this->l('Send webshop locale'),
-        );
-
-        $imageOptions = array(
-            static::LOGOS_BIG    => $this->l('big'),
-            static::LOGOS_NORMAL => $this->l('normal'),
-            static::LOGOS_HIDE   => $this->l('hide'),
-        );
-        $issuerOptions = array(
-            static::ISSUERS_ON_CLICK       => $this->l('On click'),
-            static::ISSUERS_OWN_PAGE       => $this->l('Own page'),
-            static::ISSUERS_PAYMENT_PAGE   => $this->l('Payment page'),
-        );
-        $loggerOptions = array(
-            static::DEBUG_LOG_NONE   => $this->l('Nothing'),
-            static::DEBUG_LOG_ERRORS => $this->l('Errors'),
-            static::DEBUG_LOG_ALL    => $this->l('Everything'),
-        );
-        if (Tools::isSubmit('Mollie_Config_Save')) {
-            $resultMessage = $this->getSaveResult(
-                array_keys($payscreenLocaleOptions), array_keys($imageOptions),
-                array_keys($issuerOptions), array_keys($loggerOptions)
-            );
+        $errors = array();
+        if (Tools::isSubmit("submit{$this->name}")) {
+            $resultMessage = $this->getSaveResult($errors);
+            if (!empty($errors)) {
+                $this->context->controller->errors[] = $resultMessage;
+            } else {
+                $this->context->controller->confirmations[] = $resultMessage;
+            }
         }
 
         $data = array(
-            'form_action'              => Tools::htmlentitiesUTF8($_SERVER['REQUEST_URI']),
-            'config_title'             => $this->l('Mollie Configuration'),
-            'config_legend'            => $this->l('Mollie Settings'),
             'update_message'           => $updateMessage,
-            'all_statuses'             => array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang)),
-            'payscreen_locale_options' => $payscreenLocaleOptions,
-            'image_options'            => $imageOptions,
-            'issuer_options'           => $issuerOptions,
-            'logger_options'           => $loggerOptions,
             'title_status'             => $this->l('%s statuses:'),
             'title_visual'             => $this->l('Visual settings:'),
             'title_debug'              => $this->l('Debug info:'),
@@ -496,15 +466,38 @@ class Mollie extends PaymentModule
             'methods'                  => $this->getMethodsForConfig(),
         );
 
+        $this->context->controller->addJquery();
+        $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
+        if (!static::ADDONS) {
+            $this->context->controller->addJS($this->_path.'views/js/app/dist/updater.min.js');
+        }
+
+        $this->context->smarty->assign($data);
+
+        return $this->generateForm();
+    }
+
+    /**
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     * @since 1.0.0
+     */
+    protected function generateForm()
+    {
+        $lang = Context::getContext()->language->id;
         $messageStatus = $this->l('Status for %s payments');
         $descriptionStatus = $this->l('`%s` payments get status `%s`');
         $messageMail = $this->l('Send mails when %s');
         $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
+        $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
+        $statuses = array();
         foreach ($this->statuses as $name => $val) {
             $val = (int) $val;
-            $data['msg_status_'.$name] = sprintf($messageStatus, $this->lang[$name]);
             if ($val) {
-                $data['desc_status_'.$name] = Tools::strtolower(
+                $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
                         $this->lang[$name],
@@ -517,24 +510,329 @@ class Mollie extends PaymentModule
                     )
                 );
             } else {
-                $data['desc_status_'.$name] = sprintf($this->l('`%s` payments do not get a status'), $this->lang[$name]);
+                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang[$name]);
             }
-            $data['val_status_'.$name] = $val;
-            $data['msg_mail_'.$name] = sprintf($messageMail, $this->lang[$name]);
-            $data['desc_mail_'.$name] = sprintf($descriptionMail, $this->lang[$name]);
-            $data['val_mail_'.$name] = Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name));
-            $data['statuses'][] = $name;
+            $statuses[] = array(
+                'name'             => $name,
+                'key'              => constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
+                'value'            => $val,
+                'description'      => $desc,
+                'message'          => sprintf($messageStatus, $this->lang[$name]),
+                'key_mail'         => @constant('static::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+                'value_mail'       => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+                'description_mail' => sprintf($descriptionMail, $this->lang[$name]),
+                'message_mail'     => sprintf($messageMail, $this->lang[$name]),
+            );
         }
 
-        $this->context->controller->addJquery();
-        $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
-        if (!static::ADDONS) {
-            $this->context->controller->addJS($this->_path.'views/js/app/dist/updater.min.js');
+        $input = array(
+            array(
+                'type'     => 'mollie-logo',
+                'name'     => '',
+            ),
+            array(
+                'type' => 'mollie-h2',
+                'name' => '',
+                'title'  => $this->l('Mollie Settings'),
+            ),
+            array(
+                'type'     => 'text',
+                'label'    => $this->l('API Key'),
+                'desc'     => static::ppTags(
+                    $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                    array('<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank" rel="noopener noreferrer">')
+                ),
+                'name'     => static::MOLLIE_API_KEY,
+                'required' => true,
+                'class'    => 'fixed-width-xxl',
+            ),
+            array(
+                'type'     => 'text',
+                'label'    => $this->l('Description'),
+                'desc'     => $this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters.'),
+                'name'     => static::MOLLIE_DESCRIPTION,
+                'required' => true,
+                'class'    => 'fixed-width-xxl',
+            ),
+            array(
+                'type'    => 'select',
+                'label'   => $this->l('Send locale for payment screen'),
+                'desc'    => static::ppTags(
+                    $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
+                    array('<a href="https://en.wikipedia.org/wiki/Locale">')
+                ),
+                'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
+                'options' => array(
+                    'query' => array(
+                        array(
+                            'id'   => static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
+                            'name' => $this->l('Do not send locale using browser language'),
+                        ),
+                        array(
+                            'id'   => static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+                            'name' => $this->l('Send locale for payment screen'),
+                        ),
+                    ),
+                    'id'    => 'id',
+                    'name'  => 'name',
+                ),
+            ),
+            array(
+                'type' => 'mollie-h2',
+                'name' => '',
+                'title' => $this->l('Visual Settings'),
+            ),
+            array(
+                'type'    => 'select',
+                'label'   => $this->l('Images'),
+                'desc'    => $this->l('Show big, normal or no payment method logos on checkout.'),
+                'name'    => static::MOLLIE_IMAGES,
+                'options' => array(
+                    'query' => array(
+                        array(
+                            'id'   => static::LOGOS_HIDE,
+                            'name' => $this->l('hide'),
+                        ),
+                        array(
+                            'id'   => static::LOGOS_NORMAL,
+                            'name' => $this->l('normal'),
+                        ),
+                        array(
+                            'id'   => static::LOGOS_BIG,
+                            'name' => $this->l('big'),
+                        ),
+                    ),
+                    'id'    => 'id',
+                    'name'  => 'name',
+                ),
+            ),
+            array(
+                'type'    => 'select',
+                'label'   => $this->l('Issuer list'),
+                'desc'    => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
+                'name'    => static::MOLLIE_ISSUERS,
+                'options' => array(
+                    'query' => array(
+                        array(
+                            'id'   => static::ISSUERS_ON_CLICK,
+                            'name' => $this->l('On click'),
+                        ),
+                        array(
+                            'id'   => static::ISSUERS_OWN_PAGE,
+                            'name' => $this->l('Own page'),
+                        ),
+                        array(
+                            'id'   => static::ISSUERS_PAYMENT_PAGE,
+                            'name' => $this->l('Payment page'),
+                        ),
+                    ),
+                    'id'    => 'id',
+                    'name'  => 'name',
+                ),
+            ),
+            array(
+                'type'     => 'text',
+                'label'    => $this->l('CSS file'),
+                'desc'     => static::ppTags(
+                    $this->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
+                    array('<kbd>')
+                ),
+                'name'     => static::MOLLIE_CSS,
+                'required' => true,
+                'class'    => 'fixed-width-xxl',
+            ),
+            array(
+                'type' => 'mollie-methods',
+                'name'  => static::METHODS_CONFIG,
+                'label' => $this->l('Payment methods'),
+                'desc' => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
+                'methods' => $this->getMethodsForConfig(),
+            ),
+            array(
+                'type'    => 'switch',
+                'label'   => $this->l('Enable iDEAL QR'),
+                'name'    => static::MOLLIE_QRENABLED,
+                'is_bool' => true,
+                'values'  => array(
+                    array(
+                        'id'    => 'active_on',
+                        'value' => true,
+                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    ),
+                    array(
+                        'id'    => 'active_off',
+                        'value' => false,
+                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    ),
+                ),
+            ),
+        );
+        foreach ($statuses as $status) {
+            $input[] = array(
+                'type' => 'mollie-h3',
+                'name' => '',
+                'title' => sprintf($this->l('%s statuses'), $status['name']),
+            );
+            $input[] = array(
+                'type'    => 'select',
+                'label'   => $status['message'],
+                'desc'    => $status['description'],
+                'name'    => $status['key'],
+                'options' => array(
+                    'query' => $allStatuses,
+                    'id'    => 'id_order_state',
+                    'name'  => 'name',
+                ),
+            );
+            if (!in_array($status['name'], array('paid', 'partial_refund'))) {
+                $input[] = array(
+                    'type'    => 'switch',
+                    'label'   => $status['message_mail'],
+                    'name'    => $status['key_mail'],
+                    'is_bool' => true,
+                    'values'  => array(
+                        array(
+                            'id'    => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id'    => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                );
+            }
         }
+        $input = array_merge(
+            $input,
+            array(
+                array(
+                    'type' => 'mollie-h2',
+                    'name' => '',
+                    'title' => $this->l('Debug level'),
+                ),
+                array(
+                    'type'    => 'switch',
+                    'label'   => $this->l('Display errors'),
+                    'name'    => static::MOLLIE_DISPLAY_ERRORS,
+                    'desc'    => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
+                    'is_bool' => true,
+                    'values'  => array(
+                        array(
+                            'id'    => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id'    => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                ),
+                array(
+                    'type'    => 'select',
+                    'label'   => $this->l('Log level'),
+                    'desc'    => static::ppTags(
+                        $this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
+                        array("<a href='{$this->context->link->getAdminLink('AdminLogs')}'>")
+                    ),
+                    'name'    => static::MOLLIE_DEBUG_LOG,
+                    'options' => array(
+                        'query' => array(
+                            array(
+                                'id'   => static::DEBUG_LOG_NONE,
+                                'name' => $this->l('Nothing'),
+                            ),
+                            array(
+                                'id'   => static::DEBUG_LOG_ERRORS,
+                                'name' => $this->l('Errors'),
+                            ),
+                            array(
+                                'id'   => static::DEBUG_LOG_ALL,
+                                'name' => $this->l('Everything'),
+                            ),
+                        ),
+                        'id'    => 'id',
+                        'name'  => 'name',
+                    ),
+                ),
+            )
+        );
 
-        $this->context->smarty->assign($data);
+        $fields = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->l('Mollie'),
+                    'icon'  => 'icon-credit-card',
+                ),
+                'input'  => $input,
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-default pull-right',
+                ),
+            ),
+        );
 
-        return $this->display(__FILE__, 'views/templates/admin/mollie_config.tpl');
+        $helper = new HelperForm();
+
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = $this->context->language->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = "submit{$this->name}";
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        $helper->tpl_vars = array(
+            'fields_value' => $this->getConfigFieldsValues(),
+            'languages'    => $this->context->controller->getLanguages(),
+            'id_language'  => $this->context->language->id,
+        );
+
+        return $helper->generateForm(array($fields));
+    }
+
+    /**
+     * @return array
+     * @throws PrestaShopException
+     */
+    protected function getConfigFieldsValues()
+    {
+        return array(
+            static::MOLLIE_API_KEY               => Configuration::get(static::MOLLIE_API_KEY),
+            static::MOLLIE_DESCRIPTION           => Configuration::get(static::MOLLIE_DESCRIPTION),
+            static::MOLLIE_PAYMENTSCREEN_LOCALE  => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
+
+            static::MOLLIE_CSS                   => Configuration::get(static::MOLLIE_CSS),
+            static::MOLLIE_IMAGES                => Configuration::get(static::MOLLIE_IMAGES),
+            static::MOLLIE_ISSUERS               => Configuration::get(static::MOLLIE_ISSUERS),
+
+            static::METHODS_CONFIG               => $this->getMethodsForConfig(),
+            static::MOLLIE_QRENABLED             => Configuration::get(static::MOLLIE_QRENABLED),
+
+            static::MOLLIE_STATUS_OPEN           => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            static::MOLLIE_STATUS_PAID           => Configuration::get(static::MOLLIE_STATUS_PAID),
+            static::MOLLIE_STATUS_CANCELED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            static::MOLLIE_STATUS_CANCELED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            static::MOLLIE_STATUS_EXPIRED        => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            static::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
+            static::MOLLIE_STATUS_REFUNDED       => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            static::MOLLIE_MAIL_WHEN_OPEN        => Configuration::get(static::MOLLIE_MAIL_WHEN_OPEN),
+            static::MOLLIE_MAIL_WHEN_PAID        => Configuration::get(static::MOLLIE_MAIL_WHEN_PAID),
+            static::MOLLIE_MAIL_WHEN_CANCELED    => Configuration::get(static::MOLLIE_MAIL_WHEN_CANCELED),
+            static::MOLLIE_MAIL_WHEN_EXPIRED     => Configuration::get(static::MOLLIE_MAIL_WHEN_EXPIRED),
+            static::MOLLIE_MAIL_WHEN_REFUNDED    => Configuration::get(static::MOLLIE_MAIL_WHEN_REFUNDED),
+
+            static::MOLLIE_DISPLAY_ERRORS        => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+            static::MOLLIE_DEBUG_LOG             => Configuration::get(static::MOLLIE_DEBUG_LOG),
+        );
     }
 
     /**
@@ -620,78 +918,39 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param array $payscreenLocaleOptions
-     * @param array $imageOptions
-     * @param array $issuerOptions
-     * @param array $loggerOptions
+     * @param array $errors
      *
      * @return string
      * @throws PrestaShopException
      */
-    protected function getSaveResult(
-        array $payscreenLocaleOptions = array(),
-        array $imageOptions = array(),
-        array $issuerOptions = array(),
-        array $loggerOptions = array()
-    ) {
-        $errors = array();
-
-        $mollieApiKey = Tools::getValue('Mollie_Api_Key');
+    protected function getSaveResult(&$errors = array()) {
+        $mollieApiKey = Tools::getValue(static::MOLLIE_API_KEY);
 
         if (!empty($mollieApiKey) && strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
             $errors[] = $this->l('The API key needs to start with test or live.');
         }
 
-        $mollieDescription = Tools::getValue('Mollie_Description');
-
-        if (Tools::getValue('Mollie_Payment_Methods') && @json_decode(Tools::getValue('Mollie_Payment_Methods'))) {
-            Configuration::updateValue(static::METHODS_CONFIG, json_encode(@json_decode(Tools::getValue('Mollie_Payment_Methods'))));
+        $mollieDescription = Tools::getValue(static::MOLLIE_DESCRIPTION);
+        if (Tools::getValue(static::METHODS_CONFIG) && @json_decode(Tools::getValue(static::METHODS_CONFIG))) {
+            Configuration::updateValue(
+                static::METHODS_CONFIG,
+                json_encode(@json_decode(Tools::getValue(static::METHODS_CONFIG)))
+            );
         }
-
-        $molliePaymentscreenLocale = Tools::getValue('Mollie_Paymentscreen_Locale');
-
-        if (!in_array($molliePaymentscreenLocale, $payscreenLocaleOptions)) {
-            $errors[] = $this->l('Invalid locale setting.');
-        }
-
-        $mollieImages = Tools::getValue('Mollie_Images');
-
-        if (!in_array($mollieImages, $imageOptions)) {
-            $errors[] = $this->l('Invalid image setting.');
-        }
-
-        $mollieIssuers = Tools::getValue('Mollie_Issuers');
-
-        if (!in_array($mollieIssuers, $issuerOptions)) {
-            $errors[] = $this->l('Invalid issuer setting.');
-        }
-
-        $mollieCss = Tools::getValue('Mollie_Css');
-
+        $molliePaymentscreenLocale = Tools::getValue(static::MOLLIE_PAYMENTSCREEN_LOCALE);
+        $mollieImages = Tools::getValue(static::MOLLIE_IMAGES);
+        $mollieIssuers = Tools::getValue(static::MOLLIE_ISSUERS);
+        $mollieCss = Tools::getValue(static::MOLLIE_CSS);
         if (!isset($mollieCss)) {
             $mollieCss = '';
         }
-
-        $mollieLogger = Tools::getValue('Mollie_Logger');
-
-        if (!in_array($mollieLogger, $loggerOptions)) {
-            $errors[] = $this->l('Invalid debug log setting.');
-        }
-
-        $mollieQrEnabled = (bool) Tools::getValue('Mollie_Qrenabled');
-
-        $mollieErrors = Tools::getValue('Mollie_Errors');
-
+        $mollieLogger = Tools::getValue(static::MOLLIE_DEBUG_LOG);
+        $mollieQrEnabled = (bool) Tools::getValue(static::MOLLIE_QRENABLED);
+        $mollieErrors = Tools::getValue(static::MOLLIE_DISPLAY_ERRORS);
         if (!isset($mollieErrors)) {
             $mollieErrors = false;
         } else {
             $mollieErrors = ($mollieErrors == 1);
-        }
-
-        foreach ($this->statuses as $name => $val) {
-            if (!is_numeric(Tools::getValue('Mollie_Status_'.$name))) {
-                $errors[] = Tools::ucfirst($name).'('.Tools::ucfirst($val).') status must be numeric.';
-            }
         }
 
         if (empty($errors)) {
@@ -706,14 +965,15 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
 
             foreach (array_keys($this->statuses) as $name) {
-                $new = (int) Tools::getValue('Mollie_Status_'.$name);
-                $this->statuses[$name] = $new;
-                Configuration::updateValue('MOLLIE_STATUS_'.Tools::strtoupper($name), $new);
+                $name = Tools::strtoupper($name);
+                $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
+                $this->statuses[Tools::strtolower($name)] = $new;
+                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
 
                 if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
                     Configuration::updateValue(
-                        'MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name),
-                        Tools::getValue('Mollie_Mail_When_'.$name) ? true : false
+                        "MOLLIE_MAIL_WHEN_{$name}",
+                        Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
                     );
                 }
             }
@@ -721,6 +981,7 @@ class Mollie extends PaymentModule
         } else {
             $resultMessage = 'The configuration could not be saved:<br /> - '.implode('<br /> - ', $errors);
         }
+
         return $resultMessage;
     }
 
@@ -800,6 +1061,10 @@ class Mollie extends PaymentModule
      */
     protected function getUpdateXML($url)
     {
+        if (static::ADDONS) {
+            return '';
+        }
+
         return @Tools::file_get_contents($url.'/releases.atom');
     }
 
@@ -979,9 +1244,12 @@ class Mollie extends PaymentModule
         if (Tools::isSubmit('Mollie_Refund')) {
             $tplData = $this->doRefund((int) $mollieData['order_id'], $mollieData['transaction_id']);
             if ($tplData['status'] === 'success') {
-                Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true).'&vieworder&id_order='.(int) $params['id_order']);
+                Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true)
+                    .'&vieworder&id_order='.(int) $params['id_order']);
             }
-        } elseif (isset($mollieData['bank_status']) && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED) {
+        } elseif (isset($mollieData['bank_status'])
+            && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED
+        ) {
             $tplData = array(
                 'status'      => 'success',
                 'msg_success' => $this->lang('The order has been refunded!'),
@@ -1296,51 +1564,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Create new order state while mollie payment pending.
-     *
-     * @since 2.0.0
-     *
-     * @return boolean
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws Adapter_Exception
-     */
-    public function pendingOrderState()
-    {
-        $stateExist = false;
-        $states = OrderState::getOrderStates((int) $this->context->language->id);
-        foreach ($states as $state) {
-            if (in_array($this->lang('Awaiting Mollie payment'), $state)) {
-                $stateExist = true;
-                break;
-            }
-        }
-        if (!$stateExist) {
-            $orderState = new OrderState();
-            $orderState->send_email = false;
-            $orderState->color = '#4169E1';
-            $orderState->hidden = false;
-            $orderState->delivery = false;
-            $orderState->logable = false;
-            $orderState->invoice = false;
-            $orderState->module_name = $this->name;
-            $orderState->name = array();
-            $languages = Language::getLanguages(false);
-            foreach ($languages as $language) {
-                $orderState->name[$language['id_lang']] = $this->lang('Awaiting Mollie payment');
-            }
-            if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_.'/img/os/'.(int) $orderState->id.'.gif';
-                @copy($source, $destination);
-            }
-            Configuration::updateValue(static::MOLLIE_PENDING, (int) $orderState->id);
-        }
-
-        return true;
-    }
-
-    /**
      * Create new order state for partial refunds.
      *
      * @since 2.0.0
@@ -1461,7 +1684,8 @@ class Mollie extends PaymentModule
         $paymentData = array(
             'amount'      => array(
                 'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
-                'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
+                'value'    =>
+                    (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
             'method'      => $method,
             'issuer'      => $issuer,
@@ -1738,7 +1962,13 @@ class Mollie extends PaymentModule
                 'message' => $this->l('Unable to retieve info about the latest version'),
             )));
         }
-        if (version_compare(Tools::substr($latestVersion['version'], 1, Tools::strlen($latestVersion['version']) - 1), $this->version, '>')) {
+        if (version_compare(Tools::substr(
+            $latestVersion['version'],
+            1,
+            Tools::strlen($latestVersion['version']) - 1),
+            $this->version,
+            '>'
+        )) {
             // Then update
             die(json_encode(array(
                 'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
@@ -1893,7 +2123,8 @@ class Mollie extends PaymentModule
         }
 
         if (!$success) {
-            $this->context->controller->errors[] = $this->l('There was an error while extracting the module file (file may be corrupted).');
+            $this->context->controller->errors[] =
+                $this->l('There was an error while extracting the module file (file may be corrupted).');
             // Force a new check
         } else {
             //check if it's a real module
@@ -2168,5 +2399,38 @@ class Mollie extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * Post process tags in (translated) strings
+     *
+     * @param string $string
+     * @param array  $tags
+     *
+     * @return string
+     *
+     * @since 3.2.0
+     */
+    public static function ppTags($string, $tags = array())
+    {
+        // If tags were explicitely provided, we want to use them *after* the translation string is escaped.
+        if (!empty($tags)) {
+            foreach ($tags as $index => $tag) {
+                // Make positions start at 1 so that it behaves similar to the %1$d etc. sprintf positional params
+                $position = $index + 1;
+                // extract tag name
+                $match = array();
+                if (preg_match('/^\s*<\s*(\w+)/', $tag, $match)) {
+                    $opener = $tag;
+                    $closer = '</'.$match[1].'>';
+
+                    $string = str_replace('['.$position.']', $opener, $string);
+                    $string = str_replace('[/'.$position.']', $closer, $string);
+                    $string = str_replace('['.$position.'/]', $opener.$closer, $string);
+                }
+            }
+        }
+
+        return $string;
     }
 }

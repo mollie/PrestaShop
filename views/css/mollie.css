@@ -1,135 +1,6 @@
 /****Mollie config****/
-
-.mollie_config {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 660px;
-}
-
-.mollie_config_page {
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, .2);
-    background: #fff;
-    padding: 1.25rem 1.875rem;
-}
-
-.mollie_config h2 {
-    text-align: center;
-}
-
-.mollie_config label {
-    text-align: left;
-    font-weight: normal;
-    width: 100%;
-}
-
-.mollie_config input {
-    display: block;
-    border: 1px solid #0c95fd;
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 3px;
-}
-
-.mollie_config input:hover, .mollie_config select:hover {
-    background: #0c95fd;
-    color: #FFFFFF;
-}
-
-.mollie_config option {
-    background: #FFFFFF;
-    color: #585A69;
-}
-
-.mollie_update_msg {
-    background: #ee7600;
-    color: #fff;
-    font-weight: bolder;
-}
-
-.mollie_update_msg {
-    padding: 10px;
-}
-
-.mollie_update_msg a {
-    color: #FFFFFF;
-}
-
-.mollie_update_msg a:hover {
-    color: #CCCED7;
-    text-decoration: underline;
-}
-
-.mollie_result_msg {
-    background: #0c95fd;
-    color: #fff;
-    font-weight: bolder;
-    font-size: 16px;
-}
-
-.mollie_result_msg {
-    padding: 10px;
-}
-
-.mollie_msg {
-    width: 200px;
-    vertical-align: top;
-    padding-right: 10px;
-    padding-top: 6px;
-    color: #0c95fd;
-}
-
 .mollie_hidden {
     display: none;
-}
-
-.mollie_input {
-    font-weight: bolder;
-    color: #000000;
-    margin-bottom: 20px;
-}
-
-.mollie_input_btn {
-    width: 450px;
-    height: 50px;
-}
-
-.mollie_title {
-    padding-top: 50px;
-    padding-bottom: 20px;
-    font-weight: bolder;
-    font-size: 16px;
-    color: #0c95fd;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.bootstrap select {
-    display: block;
-    width: 100%;
-    height: 31px;
-    padding: 6px 8px;
-    font-size: 12px;
-    line-height: 1.42857;
-    color: #000;
-    background-color: #F5F8F9;
-    background-image: none;
-    border: 1px solid #0c95fd;
-    border-radius: 3px;
-    -webkit-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -o-ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    ansition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-}
-
-.bootstrap .mollie-ui.btn.btn-primary {
-    background-color: #0c95fd;
-    border-radius: 0!important;
-}
-
-.bootstrap .mollie-ui.btn.btn-xs {
-    background-color: #0c95fd;
-    border-radius: 0!important;
 }
 
 .mollie-ui.sortable {
@@ -138,18 +9,6 @@
 
 .bootstrap .module_list .module_list_item {
     border: 1px solid #0c95fd;
-}
-
-.bootstrap legend {
-    display: block;
-    width: 100%;
-    padding: 0;
-    margin-bottom: 17px;
-    font-size: 18px;
-    line-height: inherit;
-    color: #333;
-    border: 0;
-    border-bottom: 1px solid #0c95fd;
 }
 
 .mollie_methods p.payment_module a {
@@ -178,7 +37,6 @@
 }
 
 /****Mollie issuers****/
-
 .mollie_issuer {
     margin-left: auto;
     margin-right: auto;
@@ -206,7 +64,6 @@
 }
 
 /****Mollie refund****/
-
 .mollie_refund {
     background-color: #EBEDF4;
     border: 1px solid #CCCED7;
@@ -272,67 +129,6 @@
 
 .mollie_refund_desc {
     margin-bottom: 10px;
-}
-
-/****Mollie buttons****/
-
-.mollie_button {
-    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
-    text-ansform: uppercase;
-    font-weight: 600;
-    padding: .5rem 1.25rem;
-    display: inline-block;
-    font-weight: 400;
-    width: 150px;
-    margin-bottom: 5px;
-    line-height: 1.25;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: 2px solid;
-    padding: .5rem 1rem;
-    font-size: 1rem;
-    border-radius: 0;
-    border-color: #fff;
-    background: border-box;
-}
-
-.mollie_button:hover {
-    /*border-color: #0c95fd;*/
-    border: 2px solid #0c95fd;
-}
-
-.mollie_btn {
-    display: inline-block;
-    font-weight: 400;
-    line-height: 1.25;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: .5rem 1rem;
-    font-size: 1rem;
-    border-radius: 0;
-}
-
-.mollie_btn_primary {
-    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .2);
-    text-transform: uppercase;
-    font-weight: 600;
-    padding: .5rem 1.25rem;
-    color: #fff;
-    background-color: #2fb5d2;
-    border-color: transparent;
 }
 
 .mollie_ideal_ABNANL2A:before select {
@@ -446,7 +242,6 @@
 }
 
 /****Mollie switch****/
-
 label.mollie_switch {
     position: relative;
     display: inline-block;
