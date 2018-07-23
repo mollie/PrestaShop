@@ -414,9 +414,6 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
-        $cookie = Context::getContext()->cookie;
-        $lang = isset($cookie->id_lang) ? (int) $cookie->id_lang : Configuration::get('PS_LANG_DEFAULT');
-        $lang = $lang == 0 ? Configuration::get('PS_LANG_DEFAULT') : $lang;
         $this->context->smarty->assign(array(
             'link'       => Context::getContext()->link,
             'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
@@ -923,7 +920,8 @@ class Mollie extends PaymentModule
      * @return string
      * @throws PrestaShopException
      */
-    protected function getSaveResult(&$errors = array()) {
+    protected function getSaveResult(&$errors = array())
+    {
         $mollieApiKey = Tools::getValue(static::MOLLIE_API_KEY);
 
         if (!empty($mollieApiKey) && strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
@@ -1722,10 +1720,7 @@ class Mollie extends PaymentModule
         );
 
         // Send webshop locale
-        if (Configuration::get(
-                Mollie::MOLLIE_PAYMENTSCREEN_LOCALE
-            ) === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE
-        ) {
+        if (Configuration::get(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE) === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE) {
             $locale = static::getWebshopLocale();
 
             if (preg_match(
@@ -1962,10 +1957,8 @@ class Mollie extends PaymentModule
                 'message' => $this->l('Unable to retieve info about the latest version'),
             )));
         }
-        if (version_compare(Tools::substr(
-            $latestVersion['version'],
-            1,
-            Tools::strlen($latestVersion['version']) - 1),
+        if (version_compare(
+            Tools::substr($latestVersion['version'], 1, Tools::strlen($latestVersion['version']) - 1),
             $this->version,
             '>'
         )) {
@@ -2048,7 +2041,7 @@ class Mollie extends PaymentModule
         $zipLocation = _PS_MODULE_DIR_.$moduleName.'.zip';
         if (@!file_exists($zipLocation)) {
             $curl = new \Curl\Curl();
-            $curl->setOpt(CURLOPT_ENCODING , '');
+            $curl->setOpt(CURLOPT_ENCODING, '');
             $curl->setOpt(CURLOPT_FOLLOWLOCATION, 1);
             if (!$curl->download($location, _PS_MODULE_DIR_.'mollie-update.zip')) {
                 return false;

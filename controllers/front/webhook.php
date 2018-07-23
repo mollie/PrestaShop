@@ -144,7 +144,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
-                
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
                 
                 if ($paymentStatus < 1) {
@@ -234,8 +233,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             'order_id'    => (int) $orderId,
         );
 
-        return Db::getInstance()->update('mollie_payments', $data,
-            '`transaction_id` = \''.pSQL($transactionId).'\'');
+        return Db::getInstance()->update(
+            'mollie_payments',
+            $data,
+            '`transaction_id` = \''.pSQL($transactionId).'\''
+        );
     }
 
     /**
