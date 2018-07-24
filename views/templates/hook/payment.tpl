@@ -57,6 +57,10 @@
   {/foreach}
 </div>
 
+{if Configuration::get(Mollie::MOLLIE_QRENABLED)}
+  {include file="./init_urls.tpl"}
+{/if}
+
 {if !empty($issuers['ideal']) && $issuer_setting == Mollie::ISSUERS_ON_CLICK}
   <script type="text/javascript">
     (function () {
