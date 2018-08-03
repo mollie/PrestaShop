@@ -436,7 +436,7 @@ class Mollie extends PaymentModule
         $warningMessage = '';
 
         $errors = array();
-        if (Tools::isSubmit('createNewAccount')) {
+        if (Tools::isSubmit('submitNewAccount')) {
             $this->processNewAccount();
         }
 
@@ -503,7 +503,7 @@ class Mollie extends PaymentModule
                     'title' => $this->l('Create your account'),
                     'icon'  => 'icon-user',
                 ),
-                'description' => $this->l('Do you already have an API Key? Then you can skip this step.'),
+                'description' => $this->l('Do you already have an API Key? Then you can skip this step and proceed to entering your API key.'),
                 'input'       => array(
                     array(
                         'type'     => 'text',
@@ -562,17 +562,24 @@ class Mollie extends PaymentModule
                         'class'    => 'fixed-width-xxl',
                     ),
                 ),
-                'buttons'     => array(
-                    array(
-                        'title' => $this->l('Create'),
-                        'class' => 'btn btn-default pull-right',
-                        'icon'  => 'process-icon-plus',
-                        'type'  => 'submit',
-                        'name'  => 'createNewAccount',
-                    ),
-                ),
             ),
         );
+
+        if (version_compare(_PS_VERSION_, '1.6.0.0', '>=')) {
+            $fields['form']['buttons'] = array(
+                array(
+                    'title' => $this->l('Create'),
+                    'class' => 'btn btn-default pull-right',
+                    'icon'  => 'process-icon-plus',
+                    'type'  => 'submit',
+                    'name'  => 'submitNewAccount',
+                ),
+            );
+        } else {
+            $fields['form']['submit'] = array(
+                'title' => $this->l('Create'),
+            );
+        }
 
         $helper = new HelperForm();
 
