@@ -172,7 +172,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.2.0';
+        $this->version = '3.1.5';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -636,7 +636,7 @@ class Mollie extends PaymentModule
                 ),
                 'name'     => static::MOLLIE_CSS,
                 'required' => true,
-                'class'    => 'fixed-width-xxl',
+                'class'    => 'long-text',
             ),
             array(
                 'type' => 'mollie-methods',

@@ -42,9 +42,18 @@ if (!defined('_PS_VERSION_')) {
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  */
-function upgrade_module_3_2_0()
+function upgrade_module_3_1_5()
 {
-    Configuration::updateValue('MOLLIE_STATUS_CANCELED', 'MOLLIE_STATUS_CANCELLED');
+    foreach (Shop::getShops(false, null, true) as $shop) {
+        Configuration::updateValue(
+            'MOLLIE_STATUS_CANCELED',
+            Configuration::get('MOLLIE_STATUS_CANCELLED', null, (int) $shop['id_shop_group'], (int) $shop['id_shop']),
+            false,
+            (int) $shop['id_shop_group'],
+            (int) $shop['id_shop']
+        );
+    }
+    Configuration::updateGlobalValue('MOLLIE_STATUS_CANCELED', Configuration::get('MOLLIE_STATUS_CANCELLED'));
     Configuration::deleteByName('MOLLIE_STATUS_CANCELLED');
 
     return true;

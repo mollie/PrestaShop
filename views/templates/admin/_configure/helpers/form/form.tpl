@@ -67,24 +67,34 @@
               <img width="57" src="{$method['image']|escape:'htmlall':'UTF-8'}" alt="mollie">
             </div>
             <div class="module_col_infos">
-              <div style="display: inline-block">
+              <div style="display: inline-block; margin-top: 5px">
                 <span class="module_name">
                   {$method['name']|escape:'htmlall':'UTF-8'}
                 </span>
               </div>
-              <span class="switch prestashop-switch" style="float:right;width:100px;right:20px;top:0;">
-                <input type="radio" data-mollie-check name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}" value="1" {if !empty($method['enabled'])}checked="checked"{/if}>
-                <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='YES' mod='mollie'}</label>
-                <input type="radio" name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}" value="" {if empty($method['enabled'])}checked="checked"{/if}>
-                <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='NO' mod='mollie'}</label>
-                <a class="slide-button btn"></a>
-              </span>
+              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
+                <span class="switch prestashop-switch" style="float:right;width:100px;right:20px;top:0;">
+                  <input type="radio" data-mollie-check name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}" value="1" {if !empty($method['enabled'])}checked="checked"{/if}>
+                  <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='YES' mod='mollie'}</label>
+                  <input type="radio" name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}" value="" {if empty($method['enabled'])}checked="checked"{/if}>
+                  <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='NO' mod='mollie'}</label>
+                  <a class="slide-button btn"></a>
+                </span>
+              {else}
+                <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
+                  <input type="checkbox"
+                         value="1"
+                         style="width: auto;"
+                         {if !empty($method['enabled'])}checked="checked"{/if}
+                  >
+                  <span class="mollie_slider"></span>
+                </label>
+              {/if}
             </div>
           </li>
         {/foreach}
       </ul>
     </section>
-    <em class="mollie_desc">{l s='Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.' mod='mollie'}</em>
     <input type="hidden" name="{$input.name|escape:'htmlall':'UTF-8'}" id="{$input.name|escape:'htmlall':'UTF-8'}">
     <script type="text/javascript">
       (function () {
@@ -96,7 +106,7 @@
             config.push({
               id: $elem.attr('data-method'),
               position: position++,
-              enabled: $elem.find('input[type=radio]')[0].checked,
+              enabled: $elem.find('{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}input[type=radio]{else}input[type=checkbox]{/if}')[0].checked,
             });
           });
           $('#{$input.name|escape:'javascript':'UTF-8'}').val(JSON.stringify(config));
@@ -140,7 +150,11 @@
             var $elem = $(elem);
             $elem.find('a.mollie-up').click(moveUp);
             $elem.find('a.mollie-down').click(moveDown);
-            $elem.find('input[type=radio]').change(setInput);
+            {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
+              $elem.find('input[type=radio]').change(setInput);
+            {else}
+              $elem.find('input[type=checkbox]').change(setInput);
+            {/if}
           });
           setInput();
         }
