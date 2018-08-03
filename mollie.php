@@ -436,6 +436,10 @@ class Mollie extends PaymentModule
         $warningMessage = '';
 
         $errors = array();
+        if (Tools::isSubmit('createNewAccount')) {
+            $this->processNewAccount();
+        }
+
         if (Tools::isSubmit("submit{$this->name}")) {
             $resultMessage = $this->getSaveResult($errors);
             if (!empty($errors)) {
@@ -475,7 +479,7 @@ class Mollie extends PaymentModule
 
         $this->context->smarty->assign($data);
 
-        $html  = '';
+        $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
         if (!Configuration::get(static::MOLLIE_API_KEY)) {
             $html .= $this->generateAccountForm();
         }
@@ -652,10 +656,6 @@ class Mollie extends PaymentModule
         }
 
         $input = array(
-            array(
-                'type'     => 'mollie-logo',
-                'name'     => '',
-            ),
             array(
                 'type' => 'mollie-h2',
                 'name' => '',
@@ -2554,6 +2554,33 @@ class Mollie extends PaymentModule
         }
 
         return $string;
+    }
+
+    /**
+     * Process a submitted account
+     *
+     * @since 3.2.0
+     */
+    protected function processNewAccount()
+    {
+        try {
+            if ($this->createMollieAccount(
+                Tools::getValue('mollie_new_user'),
+                Tools::getValue('mollie_new_name'),
+                Tools::getValue('mollie_new_company'),
+                Tools::getValue('mollie_new_address'),
+                Tools::getValue('mollie_new_zipcode'),
+                Tools::getValue('mollie_new_city'),
+                Tools::getValue('mollie_new_country'),
+                Tools::getValue('mollie_new_email')
+            )) {
+                $this->context->controller->confirmations[] = $this->l('Successfully created your new Mollie account. Please check your inbox for more information.');
+            } else {
+                $this->context->controller->errors[] = $this->l('An unknown error occurred while trying to create your Mollie account');
+            }
+        } catch (Mollie_Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+        }
     }
 
     /**

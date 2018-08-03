@@ -23,8 +23,8 @@
 * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 * DAMAGE.
 *
-* @author     mollie-ui b.V. <info@mollie.nl>
-* @copyright  mollie-ui b.V.
+* @author     Mollie B.V. <info@mollie.nl>
+* @copyright  Mollie B.V.
 * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
 * @category   Mollie
 * @package    Mollie

@@ -23,8 +23,8 @@
 * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 * DAMAGE.
 *
-* @author     mollie-ui b.V. <info@mollie.nl>
-* @copyright  mollie-ui b.V.
+* @author     Mollie B.V. <info@mollie.nl>
+* @copyright  Mollie B.V.
 * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
 * @category   Mollie
 * @package    Mollie
@@ -33,15 +33,7 @@
 {extends file="helpers/form/form.tpl"}
 
 {block name="input"}
-  {if $input.type === 'mollie-logo'}
-    <div class="form-group row">
-      <div class="col-md-12">
-        <img src="{$module_dir|escape:'htmlall':'UTF-8' nofilter}mollie/views/img/mollie_logo.png"
-             style="max-width:100%; height:auto"
-        >
-      </div>
-    </div>
-  {elseif $input.type === 'mollie-br'}
+  {if $input.type === 'mollie-br'}
     <br>
   {elseif $input.type === 'mollie-methods'}
     <section class="module_list" style="max-width: 440px">

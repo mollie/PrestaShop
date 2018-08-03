@@ -30,3 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
+<div style="width: 100%; align-content: center; text-align: center;">
+  <img src="/modules/mollie/views/img/mollie_logo.png" style="max-width:100%; height:auto; margin: 0 auto">
+</div>
+
