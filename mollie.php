@@ -127,6 +127,10 @@ class Mollie extends PaymentModule
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
 
+    const MOLLIE_RESELLER_PARTNER_ID = 4602094;
+    const MOLLIE_RESELLER_PROFILE_KEY = 'B69C2D66';
+    const MOLLIE_RESELLER_APP_SECRET = '49726EB7650EC592F732E7B82A4C1EFD6EE8A10F';
+
     /**
      * Hooks for this module
      *
@@ -471,7 +475,12 @@ class Mollie extends PaymentModule
 
         $this->context->smarty->assign($data);
 
-        return $this->generateForm();
+        $html  = '';
+        if (!Configuration::get(static::MOLLIE_API_KEY)) {
+            $html .= $this->generateAccountForm();
+        }
+
+        return $html.$this->generateSettingsForm();
     }
 
     /**
@@ -482,7 +491,127 @@ class Mollie extends PaymentModule
      * @throws SmartyException
      * @since 1.0.0
      */
-    protected function generateForm()
+    protected function generateAccountForm()
+    {
+        $fields = array(
+            'form' => array(
+                'legend'      => array(
+                    'title' => $this->l('Create your account'),
+                    'icon'  => 'icon-user',
+                ),
+                'description' => $this->l('Do you already have an API Key? Then you can skip this step.'),
+                'input'       => array(
+                    array(
+                        'type'     => 'text',
+                        'label'    => $this->l('Username'),
+                        'name'     => 'mollie_new_user',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => $this->l('First and last name'),
+                        'name'     => 'mollie_new_name',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('Email address', 'AdminCustomers'),
+                        'name'     => 'mollie_new_email',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('Shop name', 'AdminStores'),
+                        'name'     => 'mollie_new_company',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('Address', 'AdminStores'),
+                        'name'     => 'mollie_new_address',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('Postcode', 'AdminStores'),
+                        'name'     => 'mollie_new_zipcode',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('City', 'AdminStores'),
+                        'name'     => 'mollie_new_city',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                    array(
+                        'type'     => 'text',
+                        'label'    => Translate::getAdminTranslation('Country', 'AdminStores'),
+                        'name'     => 'mollie_new_country',
+                        'required' => true,
+                        'class'    => 'fixed-width-xxl',
+                    ),
+                ),
+                'buttons'     => array(
+                    array(
+                        'title' => $this->l('Create'),
+                        'class' => 'btn btn-default pull-right',
+                        'icon'  => 'process-icon-plus',
+                        'type'  => 'submit',
+                        'name'  => 'createNewAccount',
+                    ),
+                ),
+            ),
+        );
+
+        $helper = new HelperForm();
+
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = $this->context->language->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = "submitNewAccount";
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        $employee = $this->context->employee;
+        $helper->tpl_vars = array(
+            'fields_value' => array(
+                'mollie_new_user'    => '',
+                'mollie_new_name'    => "{$employee->firstname} {$employee->lastname}",
+                'mollie_new_email'   => Configuration::get('PS_SHOP_EMAIL'),
+                'mollie_new_company' => Configuration::get('PS_SHOP_NAME'),
+                'mollie_new_address' => trim(Configuration::get('PS_SHOP_ADDR1').' '.Configuration::get('PS_SHOP_ADDR2')),
+                'mollie_new_zipcode' => trim(Configuration::get('PS_SHOP_CODE')),
+                'mollie_new_city'    => trim(Configuration::get('PS_SHOP_CITY')),
+                'mollie_new_country' => Country::getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID')),
+            ),
+            'languages'    => $this->context->controller->getLanguages(),
+            'id_language'  => $this->context->language->id,
+        );
+
+        return $helper->generateForm(array($fields));
+    }
+
+    /**
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     * @since 1.0.0
+     */
+    protected function generateSettingsForm()
     {
         $lang = Context::getContext()->language->id;
         $messageStatus = $this->l('Status for %s payments');
@@ -2425,5 +2554,48 @@ class Mollie extends PaymentModule
         }
 
         return $string;
+    }
+
+    /**
+     * @param string $user
+     * @param string $name
+     * @param string $company
+     * @param string $address
+     * @param string $zipcode
+     * @param string $city
+     * @param string $country
+     * @param string $email
+     *
+     * @return bool
+     *
+     * @throws Mollie_Exception
+     *
+     * @since 3.2.0
+     */
+    protected function createMollieAccount($user, $name, $company, $address, $zipcode, $city, $country, $email)
+    {
+        $mollie = new Mollie_Reseller(
+            static::MOLLIE_RESELLER_PARTNER_ID,
+            static::MOLLIE_RESELLER_PROFILE_KEY,
+            static::MOLLIE_RESELLER_APP_SECRET
+        );
+        $simplexml = $mollie->accountCreate(
+            $user,
+            array(
+                'name'         => $name,
+                'company_name' => $company,
+                'address'      => $address,
+                'zipcode'      => $zipcode,
+                'city'         => $city,
+                'country'      => $country,
+                'email'        => $email,
+            )
+        );
+
+        if (empty($simplexml->success) && isset($simplexml->resultmessage) && isset($simplexml->resultcode)) {
+            throw new Mollie_Exception($simplexml->resultmessage, $simplexml->resultcode);
+        }
+
+        return !empty($simplexml->success);
     }
 }
