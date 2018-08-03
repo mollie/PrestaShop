@@ -590,7 +590,7 @@ class Mollie extends PaymentModule
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
         $helper->identifier = $this->identifier;
-        $helper->submit_action = "submitNewAccount";
+        $helper->submit_action = 'submitNewAccount';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
             ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
