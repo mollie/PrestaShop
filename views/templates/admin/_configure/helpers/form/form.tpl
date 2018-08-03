@@ -67,9 +67,9 @@
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
                 <span class="switch prestashop-switch" style="float:right;width:100px;right:20px;top:0;">
                   <input type="radio" data-mollie-check name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}" value="1" {if !empty($method['enabled'])}checked="checked"{/if}>
-                  <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='YES' mod='mollie'}</label>
+                  <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{Translate::getAdminTranslation('Yes')|escape:'htmlall':'UTF-8'}</label>
                   <input type="radio" name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}" value="" {if empty($method['enabled'])}checked="checked"{/if}>
-                  <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='NO' mod='mollie'}</label>
+                  <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{Translate::getAdminTranslation('No')|escape:'htmlall':'UTF-8'}</label>
                   <a class="slide-button btn"></a>
                 </span>
               {else}
