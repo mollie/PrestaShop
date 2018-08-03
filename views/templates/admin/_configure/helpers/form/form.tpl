@@ -68,18 +68,17 @@
             </div>
             <div class="module_col_infos">
               <div style="display: inline-block">
-                      <span class="module_name">
-                        {$method['name']|escape:'htmlall':'UTF-8'}
-                      </span>
+                <span class="module_name">
+                  {$method['name']|escape:'htmlall':'UTF-8'}
+                </span>
               </div>
-              <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
-                <input type="checkbox"
-                       value="1"
-                       style="width: auto;"
-                       {if !empty($method['enabled'])}checked="checked"{/if}
-                >
-                <span class="mollie_slider"></span>
-              </label>
+              <span class="switch prestashop-switch" style="float:right;width:100px;right:20px;top:0;">
+                <input type="radio" data-mollie-check name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}" value="1" {if !empty($method['enabled'])}checked="checked"{/if}>
+                <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='YES' mod='mollie'}</label>
+                <input type="radio" name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}" value="" {if empty($method['enabled'])}checked="checked"{/if}>
+                <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{l s='NO' mod='mollie'}</label>
+                <a class="slide-button btn"></a>
+              </span>
             </div>
           </li>
         {/foreach}
@@ -97,14 +96,13 @@
             config.push({
               id: $elem.attr('data-method'),
               position: position++,
-              enabled: $elem.find('input[type=checkbox]').is(':checked'),
+              enabled: $elem.find('input[type=radio]')[0].checked,
             });
           });
           $('#{$input.name|escape:'javascript':'UTF-8'}').val(JSON.stringify(config));
         }
 
         function setPositions() {
-          var index = 0;
           $('.sortable > li').each(function (index, elem) {
             var $elem = $(elem);
             $elem.attr('data-pos', index++);
@@ -134,7 +132,7 @@
 
           $('.sortable').sortable({
             forcePlaceholderSize: true
-          }).on('sortupdate', function (event, ui) {
+          }).on('sortupdate', function () {
             setPositions();
             setInput();
           });
@@ -142,7 +140,7 @@
             var $elem = $(elem);
             $elem.find('a.mollie-up').click(moveUp);
             $elem.find('a.mollie-down').click(moveDown);
-            $elem.find('input[type=checkbox]').change(setInput);
+            $elem.find('input[type=radio]').change(setInput);
           });
           setInput();
         }
