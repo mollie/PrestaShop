@@ -1,11 +1,16 @@
 {
     "require": {
-        "firstred/mollie-api-php": "~2.0.3"
+        "firstred/mollie-api-php": "~2.0.3",
+        "firstred/mollie-reseller-api": "dev-master"
     },
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/firstred/mollie-api-php"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/firstred/mollie-reseller-api"
         }
     ]
 }
