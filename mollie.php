@@ -180,6 +180,7 @@ class Mollie extends PaymentModule
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
+        $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
 
