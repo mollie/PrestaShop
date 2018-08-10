@@ -1236,12 +1236,14 @@ class Mollie extends PaymentModule
         $this->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
 
         // Save status in mollie_payments table
-        $updateData = array(
-            'updated_at'  => date('Y-m-d H:i:s'),
-            'bank_status' => \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+        Db::getInstance()->update(
+            'mollie_payments',
+            array(
+                'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                'bank_status' => \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+            ),
+            '`order_id` = '.(int) $orderId
         );
-
-        Db::getInstance(_PS_USE_SQL_SLAVE_)->update('mollie_payments', $updateData, '`order_id` = '.(int) $orderId);
 
         return array(
             'status'      => 'success',

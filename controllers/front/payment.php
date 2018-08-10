@@ -57,6 +57,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws \Mollie\Api\Exceptions\ApiException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     public function initContent()
     {
@@ -130,10 +131,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 'mollie_payments',
                 array(
                     'cart_id'        => (int) $cart->id,
-                    'method'         => $payment->method,
-                    'transaction_id' => $payment->id,
+                    'method'         => pSQL($payment->method),
+                    'transaction_id' => pSQL($payment->id),
                     'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'     => date('Y-m-d H:i:s'),
+                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
         }
@@ -163,11 +164,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 'mollie_payments',
                 array(
                     'cart_id'        => (int) $cart->id,
-                    'order_id'       => $orderId,
-                    'method'         => $payment->method,
-                    'transaction_id' => $payment->id,
+                    'order_id'       => (int) $orderId,
+                    'method'         => pSQL($payment->method),
+                    'transaction_id' => pSQL($payment->id),
                     'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'     => date("Y-m-d H:i:s"),
+                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
         }
@@ -256,6 +257,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @return \Mollie\Api\Resources\Payment|null
      *
      * @throws PrestaShopException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     private function createPayment($data)
     {

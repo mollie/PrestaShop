@@ -215,7 +215,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
     }
 
-
     /**
      * @param string $transactionId
      * @param int    $status
@@ -227,15 +226,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     protected function savePaymentStatus($transactionId, $status, $orderId)
     {
-        $data = array(
-            'updated_at'  => date("Y-m-d H:i:s"),
-            'bank_status' => $status,
-            'order_id'    => (int) $orderId,
-        );
-
         return Db::getInstance()->update(
             'mollie_payments',
-            $data,
+            array(
+                'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                'bank_status' => (int) $status,
+                'order_id'    => (int) $orderId,
+            ),
             '`transaction_id` = \''.pSQL($transactionId).'\''
         );
     }

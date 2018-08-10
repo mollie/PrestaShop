@@ -111,6 +111,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function processNewQrCode()
     {
@@ -144,10 +145,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             'mollie_payments',
             array(
                 'cart_id'        => (int) $cart->id,
-                'method'         => $payment->method,
-                'transaction_id' => $payment->id,
+                'method'         => pSQL($payment->method),
+                'transaction_id' => pSQL($payment->id),
                 'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                'created_at'     => date('Y-m-d H:i:s'),
+                'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
             )
         );
 
