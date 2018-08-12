@@ -124,6 +124,8 @@ $_MODULE['<{mollie}prestashop>download_update_5d04a002ea59c8114f9d08b0c6250a3b']
 $_MODULE['<{mollie}prestashop>download_update_3844b140df977eee8639de6d1de9e1e0'] = 'Niet gelukt om de update uit te pakken';
 $_MODULE['<{mollie}prestashop>download_update_b50ec141b028d5a8acec4a17c32f3808'] = 'De module is bijgewerkt!';
 $_MODULE['<{mollie}prestashop>new_release_b7f73af7318580996a3889353b282827'] = 'U gebruikt momenteel versie %s. Wij raden u met klem aan om te upgraden naar versie %s!';
+$_MODULE['<{mollie}prestashop>form_7469a286259799e5b37e5db9296f00b3'] = 'JA';
+$_MODULE['<{mollie}prestashop>form_c2f3f489a00553e7a01d369c103c7251'] = 'NEE';
 $_MODULE['<{mollie}prestashop>error_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Betaling';
 $_MODULE['<{mollie}prestashop>error_1e97d97a923eaddd810e056c828e99ea'] = 'Betalingsfout';
 $_MODULE['<{mollie}prestashop>error_a25c753ee3e4be15ec0daa5a40deb7b8'] = 'Er is een fout opgetreden';
