@@ -230,7 +230,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             'mollie_payments',
             array(
                 'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
-                'bank_status' => (int) $status,
+                'bank_status' => pSQL($status),
                 'order_id'    => (int) $orderId,
             ),
             '`transaction_id` = \''.pSQL($transactionId).'\''

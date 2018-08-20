@@ -70,7 +70,13 @@ const throttle = (callback: any, delay: number) => {
 
 export default class QrCode {
   public suffix: string;
-  constructor(public target: HTMLElement, public title = '', public center = true) {
+  public target: HTMLElement;
+  public title: string;
+  public center: boolean;
+  constructor(target: HTMLElement, title = '', center = true) {
+    this.target = target;
+    this.title = title;
+    this.center = center;
     this.suffix = `mol${Math.random().toString(36).substring(7)}`;
 
     this.init();
@@ -80,7 +86,7 @@ export default class QrCode {
     }, 200));
   }
 
-  init = () => {
+  init = (): void => {
     const elem = this.target;
     if (elem == null) {
       return;
@@ -101,7 +107,7 @@ export default class QrCode {
     elem.innerHTML = content;
   };
 
-  static clearCache = () => {
+  static clearCache = (): void => {
     for (let key in window.localStorage) {
       if (key.indexOf('mollieqrcache') > -1) {
         window.localStorage.removeItem(key);
@@ -109,7 +115,7 @@ export default class QrCode {
     }
   };
 
-  checkWindowSize() {
+  checkWindowSize(): void {
     const elem = this.target;
     if (elem) {
       if (window.innerWidth > 800 && window.innerHeight > 860) {
@@ -120,8 +126,8 @@ export default class QrCode {
     }
   }
 
-  pollStatus = (idTransaction: string) => {
-    setTimeout(async () => {
+  pollStatus = (idTransaction: string): void => {
+    setTimeout(async (): Promise<void> => {
       try {
         const { data } = await axios.get(`${window.MollieModule.urls.qrCodeStatus}&transaction_id=${idTransaction}`);
         if (data.status === SUCCESS) {
@@ -136,8 +142,10 @@ export default class QrCode {
         } else if (data.status === REFRESH) {
           QrCode.clearCache();
           this.grabNewUrl().then();
-        } else {
+        } else if (data.status === PENDING) {
           this.pollStatus(idTransaction);
+        } else {
+          console.error('Invalid payment status');
         }
       } catch (e) {
         this.pollStatus(idTransaction);
@@ -145,7 +153,7 @@ export default class QrCode {
     }, 5000);
   };
 
-  grabAmount = async () => {
+  grabAmount = async (): Promise<number> => {
     try {
       const  { data: { amount } } = await axios.get(window.MollieModule.urls.cartAmount);
       return amount;
@@ -154,7 +162,7 @@ export default class QrCode {
     }
   };
 
-  grabNewUrl = async () => {
+  grabNewUrl = async (): Promise<void> => {
     try {
       const { data } = await axios.get(window.MollieModule.urls.qrCodeNew);
       window.localStorage.setItem('mollieqrcache-' + data.expires + '-' + data.amount, JSON.stringify({
@@ -184,7 +192,7 @@ export default class QrCode {
     }
   };
 
-  initQrImage = (amount: number) => {
+  initQrImage = (amount: number): void => {
     const elem = document.getElementById(`mollie-qr-image-${this.suffix}`) as HTMLImageElement;
     if (elem == null) {
       return;

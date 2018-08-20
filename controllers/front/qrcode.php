@@ -59,6 +59,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function initContent()
     {
@@ -92,6 +93,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function processAjax()
     {
@@ -166,11 +168,12 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * Get payment status, can be regularly polled
      *
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     protected function processGetStatus()
     {
-        header('Content-Type: application/json;charset=UTF-8');
         @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
         if (empty($this->context->cart)) {
             die(json_encode(array(
                 'success' => false,
@@ -229,6 +232,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
     /**
      * Get the cart amount
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function processCartAmount()
     {
