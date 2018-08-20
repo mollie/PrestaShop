@@ -30,11 +30,12 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import 'babel-polyfill';
+import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
 
-const refund = (callback, translations) => {
+const refund = (callback: any, translations: ITranslations) => {
+  // @ts-ignore
   swal({
     dangerMode: true,
     icon: 'warning',
@@ -44,9 +45,9 @@ const refund = (callback, translations) => {
       cancel: xss(translations.cancel),
       confirm: xss(translations.refund),
     },
-  }).then((value) => {
-    [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((elem) => {
-      elem.parentNode.removeChild(elem);
+  }).then((value: any) => {
+    [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((elem: HTMLElement) => {
+      elem.parentElement.removeChild(elem);
     });
 
     callback(!!value);

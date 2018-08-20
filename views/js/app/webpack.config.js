@@ -101,13 +101,13 @@ if (production) {
 
 module.exports = {
   entry: {
-    banks: ['./src/banks.js'],
-    confirmrefund: ['./src/confirmrefund.js'],
-    updater: ['./src/updater.js'],
-    qrcode: ['./src/qrcode.js'],
+    banks: ['./src/banks.ts'],
+    confirmrefund: ['./src/confirmrefund.ts'],
+    updater: ['./src/updater.ts'],
+    qrcode: ['./src/qrcode.ts'],
   },
   resolve: {
-    extensions: ['.js', '.css'],
+    extensions: ['.js', '.ts', '.css'],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -120,17 +120,21 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(ts)|(js)$/,
         include: [
           path.join(__dirname, 'src'),
+          path.join(__dirname, 'css'),
         ],
         exclude: path.join(__dirname, 'node_modules'),
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: ['transform-class-properties'],
+            plugins: [
+              'transform-class-properties',
+              'babel-plugin-lodash',
+            ],
             presets: [
-              ['env', {
+              ['@babel/preset-env', {
                 targets: {
                   browsers: [
                     'defaults',
@@ -149,7 +153,7 @@ module.exports = {
                 useBuiltIns: 'entry',
                 debug: false,
               }],
-              'stage-3',
+              '@babel/typescript',
             ],
             sourceMap: true,
           },
@@ -157,7 +161,17 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loaders: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+        use: [
+          'style-loader',
+          {
+            loader: 'typings-for-css-modules-loader',
+            options: {
+              modules: true,
+              importLoaders: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]',
+            },
+          },
+        ],
         include: [
           path.join(__dirname, 'css'),
         ],

@@ -30,12 +30,13 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import 'babel-polyfill';
+import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
 import axios from 'axios';
+import _ from 'lodash';
 
-const showError = (message) => {
+const showError = (message: string) => {
   swal({
     icon: 'error',
     title: _.get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
@@ -43,7 +44,7 @@ const showError = (message) => {
   }).then();
 };
 
-const handleClick = async (button, config, translations) => {
+const handleClick = async (config: any, translations: ITranslations): Promise<void> => {
   const steps = [
     {
       action: 'downloadUpdate',
@@ -59,7 +60,7 @@ const handleClick = async (button, config, translations) => {
     },
   ];
 
-  for (step of steps) {
+  for (let step of steps) {
     try {
       const { data } = await axios.get(`${config.endpoint}&action=${step.action}`);
       if (!_.get(data, 'success')) {
@@ -77,8 +78,8 @@ const handleClick = async (button, config, translations) => {
   }).then();
 };
 
-const init = (button, config, translations) => {
-  button.onclick = () => handleClick(button, config, translations);
+const init = (button: HTMLElement, config: any, translations: ITranslations) => {
+  button.onclick = () => handleClick(config, translations);
 };
 
 export default init;

@@ -30,13 +30,15 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import 'babel-polyfill';
+import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
 import styles from '../css/banks.css';
 
+declare let window: any;
+
 export default class MollieBanks {
-  constructor(banks, translations) {
+  constructor(public banks: IBanks, public translations: ITranslations) {
     this.banks = banks;
     this.translations = translations;
 
@@ -48,7 +50,7 @@ export default class MollieBanks {
     elem.id = 'mollie-banks-list';
     let content = '<ul>';
     for (let bank of Object.values(this.banks)) {
-      content += `<div class="${styles.radio} ${styles['radio-primary']}">
+      content += `<div class="${styles['radio']} ${styles['radio-primary']}">
   <input type="radio" id="${xss(bank.id)}" name="mollie-bank" value="${xss(bank.id)}">
   <label for="${xss(bank.id)}" style="line-height: 24px;">
       <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}" style="height: 24px; width: auto"> ${xss(bank.name)}
@@ -62,6 +64,7 @@ export default class MollieBanks {
     elem.innerHTML = content;
     elem.querySelector('input').checked = true;
 
+    // @ts-ignore
     swal({
       title: xss(this.translations.chooseYourBank),
       content: elem,
@@ -69,14 +72,14 @@ export default class MollieBanks {
         cancel: xss(this.translations.cancel),
         confirm: xss(this.translations.choose),
       },
-    }).then((value) => {
+    }).then((value: any) => {
       if (value) {
-        const issuer = elem.querySelector('input[name="mollie-bank"]:checked').value;
+        const issuer = (elem.querySelector('input[name="mollie-bank"]:checked') as HTMLInputElement).value;
         const win = window.open(this.banks[issuer].href, '_self');
         win.opener = null;
       } else {
-        [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((item) => {
-          item.parentNode.removeChild(item);
+        [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((item: HTMLElement) => {
+          item.parentElement.removeChild(item);
         });
       }
     });
