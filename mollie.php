@@ -170,6 +170,8 @@ class Mollie extends PaymentModule
     /**
      * Mollie constructor.
      *
+     * @throws ErrorException
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public function __construct()
