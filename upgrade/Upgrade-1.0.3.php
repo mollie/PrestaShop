@@ -37,11 +37,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * @param $module
+ * @param Mollie $module
  *
  * @return bool
+ * @throws PrestaShopDatabaseException
+ * @throws PrestaShopException
  */
 function upgrade_module_1_0_3($module)
 {
-    return $module->reinstallHooks() && $module->addCartIdChangePrimaryKey();
+    return $module->reinstall() && $module->addCartIdChangePrimaryKey();
 }
