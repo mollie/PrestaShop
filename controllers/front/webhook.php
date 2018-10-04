@@ -82,10 +82,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws SmartyException
      */
     protected function executeWebhook()
-    {
-        if (Tools::getValue('testByMollie')) {
+    {if (Tools::getValue('testByMollie')) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie::NOTICE);
             }
@@ -149,8 +149,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 if ($paymentStatus < 1) {
                     $paymentStatus = Configuration::get('PS_OS_PAYMENT');
                 }
-                
-                $this->module->validateOrder(
+
+                $this->module->currentOrderReference = Order::generateReference();
+                $this->module->validateMollieOrder(
                     (int) $apiPayment->metadata->cart_id,
                     $paymentStatus,
                     $apiPayment->amount->value,

@@ -58,6 +58,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws Adapter_Exception
+     * @throws SmartyException
      */
     public function initContent()
     {
@@ -146,7 +147,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         if ($payment->method == 'banktransfer') {
-            $this->module->validateOrder(
+            $this->module->currentOrderReference = Order::generateReference();
+            $this->module->validateMollieOrder(
                 (int) $cart->id,
                 $paymentStatus,
                 $originalAmount,
