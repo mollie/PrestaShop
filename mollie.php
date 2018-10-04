@@ -56,10 +56,10 @@ class Mollie extends PaymentModule
     /** @var string $currentOrderReference */
     public $currentOrderReference;
     /**
-    * Currency restrictions per payment method
-    *
-    * @var array
-    */
+     * Currency restrictions per payment method
+     *
+     * @var array
+     */
     public static $methodCurrencies = array(
         'banktransfer'    => array('eur'),
         'belfius'         => array('eur'),
@@ -236,53 +236,53 @@ class Mollie extends PaymentModule
 
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                                           => $this->l('paid'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                       => $this->l('canceled'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                        => $this->l('expired'),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                        => $this->l('refunded'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                                           => $this->l('bankwire pending'),
-            static::PARTIAL_REFUND_CODE                                                                                                            => $this->l('partially refunded'),
-            'This payment method is not available.'                                                                                                => $this->l('This payment method is not available.'),
-            'Click here to continue'                                                                                                               => $this->l('Click here to continue'),
-            'This payment method is only available for Euros.'                                                                                     => $this->l('This payment method is only available for Euros.'),
-            'There was an error while processing your request: '                                                                                   => $this->l('There was an error while processing your request: '),
-            'The order with this id does not exist.'                                                                                               => $this->l('The order with this id does not exist.'),
-            'We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'      => $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'),
-            'Unfortunately your payment was expired.'                                                                                              => $this->l('Unfortunately your payment was expired.'),
-            'Thank you. Your payment has been received.'                                                                                           => $this->l('Thank you. Your payment has been received.'),
-            'The transaction has an unexpected status.'                                                                                            => $this->l('The transaction has an unexpected status.'),
-            'You are not authorised to see this page.'                                                                                             => $this->l('You are not authorised to see this page.'),
-            'Continue shopping'                                                                                                                    => $this->l('Continue shopping'),
-            'Welcome back'                                                                                                                         => $this->l('Welcome back'),
-            'Select your bank:'                                                                                                                    => $this->l('Select your bank:'),
-            'OK'                                                                                                                                   => $this->l('OK'),
-            'Different payment method'                                                                                                             => $this->l('Different payment method'),
-            'Pay with %s'                                                                                                                          => $this->l('Pay with %s'),
-            'Refund this order'                                                                                                                    => $this->l('Refund this order'),
-            'Mollie refund'                                                                                                                        => $this->l('Mollie refund'),
-            'Refund order #%d through the Mollie API.'                                                                                             => $this->l('Refund order #%d through the Mollie API.'),
-            'The order has been refunded!'                                                                                                         => $this->l('The order has been refunded!'),
-            'Mollie B.V. will transfer the money back to the customer on the next business day.'                                                   => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
-            'Awaiting Mollie payment'                                                                                                              => $this->l('Awaiting Mollie payment'),
-            'Mollie partially refunded'                                                                                                            => $this->l('Mollie partially refunded'),
-            'iDEAL'                                                                                                                                => $this->l('iDEAL'),
-            'CartaSi'                                                                                                                              => $this->l('CartaSi'),
-            'Cartes Bancaires'                                                                                                                     => $this->l('Cartes Bancaires'),
-            'Credit card'                                                                                                                          => $this->l('Credit card'),
-            'Bancontact'                                                                                                                           => $this->l('Bancontact'),
-            'SOFORT Banking'                                                                                                                       => $this->l('SOFORT Banking'),
-            'SEPA Direct Debit'                                                                                                                    => $this->l('SEPA Direct Debit'),
-            'Belfius Pay Button'                                                                                                                   => $this->l('Belfius Pay Button'),
-            'Bitcoin'                                                                                                                              => $this->l('Bitcoin'),
-            'PODIUM Cadeaukaart'                                                                                                                   => $this->l('PODIUM Cadeaukaart'),
-            'Gift cards'                                                                                                                           => $this->l('Gift cards'),
-            'Bank transfer'                                                                                                                        => $this->l('Bank transfer'),
-            'PayPal'                                                                                                                               => $this->l('PayPal'),
-            'paysafecard'                                                                                                                          => $this->l('paysafecard'),
-            'KBC/CBC Payment Button'                                                                                                               => $this->l('KBC/CBC Payment Button'),
-            'ING Home\'Pay'                                                                                                                        => $this->l('ING Home\'Pay'),
-            'Giropay'                                                                                                                              => $this->l('Giropay'),
-            'eps'                                                                                                                                  => $this->l('eps'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                                      => $this->l('paid'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                  => $this->l('canceled'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                   => $this->l('expired'),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                   => $this->l('refunded'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                                      => $this->l('bankwire pending'),
+            static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('partially refunded'),
+            'This payment method is not available.'                                                                                           => $this->l('This payment method is not available.'),
+            'Click here to continue'                                                                                                          => $this->l('Click here to continue'),
+            'This payment method is only available for Euros.'                                                                                => $this->l('This payment method is only available for Euros.'),
+            'There was an error while processing your request: '                                                                              => $this->l('There was an error while processing your request: '),
+            'The order with this id does not exist.'                                                                                          => $this->l('The order with this id does not exist.'),
+            'We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.' => $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'),
+            'Unfortunately your payment was expired.'                                                                                         => $this->l('Unfortunately your payment was expired.'),
+            'Thank you. Your payment has been received.'                                                                                      => $this->l('Thank you. Your payment has been received.'),
+            'The transaction has an unexpected status.'                                                                                       => $this->l('The transaction has an unexpected status.'),
+            'You are not authorised to see this page.'                                                                                        => $this->l('You are not authorised to see this page.'),
+            'Continue shopping'                                                                                                               => $this->l('Continue shopping'),
+            'Welcome back'                                                                                                                    => $this->l('Welcome back'),
+            'Select your bank:'                                                                                                               => $this->l('Select your bank:'),
+            'OK'                                                                                                                              => $this->l('OK'),
+            'Different payment method'                                                                                                        => $this->l('Different payment method'),
+            'Pay with %s'                                                                                                                     => $this->l('Pay with %s'),
+            'Refund this order'                                                                                                               => $this->l('Refund this order'),
+            'Mollie refund'                                                                                                                   => $this->l('Mollie refund'),
+            'Refund order #%d through the Mollie API.'                                                                                        => $this->l('Refund order #%d through the Mollie API.'),
+            'The order has been refunded!'                                                                                                    => $this->l('The order has been refunded!'),
+            'Mollie B.V. will transfer the money back to the customer on the next business day.'                                              => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
+            'Awaiting Mollie payment'                                                                                                         => $this->l('Awaiting Mollie payment'),
+            'Mollie partially refunded'                                                                                                       => $this->l('Mollie partially refunded'),
+            'iDEAL'                                                                                                                           => $this->l('iDEAL'),
+            'CartaSi'                                                                                                                         => $this->l('CartaSi'),
+            'Cartes Bancaires'                                                                                                                => $this->l('Cartes Bancaires'),
+            'Credit card'                                                                                                                     => $this->l('Credit card'),
+            'Bancontact'                                                                                                                      => $this->l('Bancontact'),
+            'SOFORT Banking'                                                                                                                  => $this->l('SOFORT Banking'),
+            'SEPA Direct Debit'                                                                                                               => $this->l('SEPA Direct Debit'),
+            'Belfius Pay Button'                                                                                                              => $this->l('Belfius Pay Button'),
+            'Bitcoin'                                                                                                                         => $this->l('Bitcoin'),
+            'PODIUM Cadeaukaart'                                                                                                              => $this->l('PODIUM Cadeaukaart'),
+            'Gift cards'                                                                                                                      => $this->l('Gift cards'),
+            'Bank transfer'                                                                                                                   => $this->l('Bank transfer'),
+            'PayPal'                                                                                                                          => $this->l('PayPal'),
+            'paysafecard'                                                                                                                     => $this->l('paysafecard'),
+            'KBC/CBC Payment Button'                                                                                                          => $this->l('KBC/CBC Payment Button'),
+            'ING Home\'Pay'                                                                                                                   => $this->l('ING Home\'Pay'),
+            'Giropay'                                                                                                                         => $this->l('Giropay'),
+            'eps'                                                                                                                             => $this->l('eps'),
         );
     }
 
@@ -405,7 +405,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
     }
 
-      /**
+    /**
      * @return mixed
      */
     public function getErrors()
@@ -423,6 +423,14 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
+        if ($module = $this->checkPaymentModuleOverride()) {
+            $this->context->controller->warnings[] = sprintf(
+                $this->l('The method %s is overridden by module %s. This can cause interference with payments.'),
+                'PaymentModule::validateOrder',
+                $module
+            );
+        }
+
         $this->context->smarty->assign(array(
             'link'       => Context::getContext()->link,
             'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
@@ -455,25 +463,25 @@ class Mollie extends PaymentModule
         }
 
         $data = array(
-            'update_message'           => $updateMessage,
-            'title_status'             => $this->l('%s statuses:'),
-            'title_visual'             => $this->l('Visual settings:'),
-            'title_debug'              => $this->l('Debug info:'),
-            'msg_result'               => $resultMessage,
-            'msg_warning'              => $warningMessage,
-            'path'                     => $this->_path,
-            'val_api_key'              => Configuration::get(static::MOLLIE_API_KEY),
-            'val_desc'                 => Configuration::get(static::MOLLIE_DESCRIPTION),
-            'payscreen_locale_value'   => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
-            'val_images'               => Configuration::get(static::MOLLIE_IMAGES),
-            'val_issuers'              => Configuration::get(static::MOLLIE_ISSUERS),
-            'val_css'                  => Configuration::get(static::MOLLIE_CSS),
-            'val_errors'               => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-            'val_qrenabled'            => Configuration::get(Mollie::MOLLIE_QRENABLED),
-            'val_logger'               => Configuration::get(static::MOLLIE_DEBUG_LOG),
-            'val_save'                 => $this->l('Save'),
-            'lang'                     => $this->lang,
-            'methods'                  => $this->getMethodsForConfig(),
+            'update_message'         => $updateMessage,
+            'title_status'           => $this->l('%s statuses:'),
+            'title_visual'           => $this->l('Visual settings:'),
+            'title_debug'            => $this->l('Debug info:'),
+            'msg_result'             => $resultMessage,
+            'msg_warning'            => $warningMessage,
+            'path'                   => $this->_path,
+            'val_api_key'            => Configuration::get(static::MOLLIE_API_KEY),
+            'val_desc'               => Configuration::get(static::MOLLIE_DESCRIPTION),
+            'payscreen_locale_value' => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
+            'val_images'             => Configuration::get(static::MOLLIE_IMAGES),
+            'val_issuers'            => Configuration::get(static::MOLLIE_ISSUERS),
+            'val_css'                => Configuration::get(static::MOLLIE_CSS),
+            'val_errors'             => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+            'val_qrenabled'          => Configuration::get(Mollie::MOLLIE_QRENABLED),
+            'val_logger'             => Configuration::get(static::MOLLIE_DEBUG_LOG),
+            'val_save'               => $this->l('Save'),
+            'lang'                   => $this->lang,
+            'methods'                => $this->getMethodsForConfig(),
         );
 
         $this->context->controller->addJquery();
@@ -669,9 +677,9 @@ class Mollie extends PaymentModule
 
         $input = array(
             array(
-                'type' => 'mollie-h2',
-                'name' => '',
-                'title'  => $this->l('Mollie Settings'),
+                'type'  => 'mollie-h2',
+                'name'  => '',
+                'title' => $this->l('Mollie Settings'),
             ),
             array(
                 'type'     => 'text',
@@ -716,8 +724,8 @@ class Mollie extends PaymentModule
                 ),
             ),
             array(
-                'type' => 'mollie-h2',
-                'name' => '',
+                'type'  => 'mollie-h2',
+                'name'  => '',
                 'title' => $this->l('Visual Settings'),
             ),
             array(
@@ -780,10 +788,10 @@ class Mollie extends PaymentModule
                 'class'    => 'long-text',
             ),
             array(
-                'type' => 'mollie-methods',
-                'name'  => static::METHODS_CONFIG,
-                'label' => $this->l('Payment methods'),
-                'desc' => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
+                'type'    => 'mollie-methods',
+                'name'    => static::METHODS_CONFIG,
+                'label'   => $this->l('Payment methods'),
+                'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
                 'methods' => $this->getMethodsForConfig(),
             ),
             array(
@@ -807,8 +815,8 @@ class Mollie extends PaymentModule
         );
         foreach ($statuses as $status) {
             $input[] = array(
-                'type' => 'mollie-h3',
-                'name' => '',
+                'type'  => 'mollie-h3',
+                'name'  => '',
                 'title' => sprintf($this->l('%s statuses'), $status['name']),
             );
             $input[] = array(
@@ -847,8 +855,8 @@ class Mollie extends PaymentModule
             $input,
             array(
                 array(
-                    'type' => 'mollie-h2',
-                    'name' => '',
+                    'type'  => 'mollie-h2',
+                    'name'  => '',
                     'title' => $this->l('Debug level'),
                 ),
                 array(
@@ -944,16 +952,16 @@ class Mollie extends PaymentModule
     protected function getConfigFieldsValues()
     {
         return array(
-            static::MOLLIE_API_KEY               => Configuration::get(static::MOLLIE_API_KEY),
-            static::MOLLIE_DESCRIPTION           => Configuration::get(static::MOLLIE_DESCRIPTION),
-            static::MOLLIE_PAYMENTSCREEN_LOCALE  => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
+            static::MOLLIE_API_KEY              => Configuration::get(static::MOLLIE_API_KEY),
+            static::MOLLIE_DESCRIPTION          => Configuration::get(static::MOLLIE_DESCRIPTION),
+            static::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
 
-            static::MOLLIE_CSS                   => Configuration::get(static::MOLLIE_CSS),
-            static::MOLLIE_IMAGES                => Configuration::get(static::MOLLIE_IMAGES),
-            static::MOLLIE_ISSUERS               => Configuration::get(static::MOLLIE_ISSUERS),
+            static::MOLLIE_CSS     => Configuration::get(static::MOLLIE_CSS),
+            static::MOLLIE_IMAGES  => Configuration::get(static::MOLLIE_IMAGES),
+            static::MOLLIE_ISSUERS => Configuration::get(static::MOLLIE_ISSUERS),
 
-            static::METHODS_CONFIG               => $this->getMethodsForConfig(),
-            static::MOLLIE_QRENABLED             => Configuration::get(static::MOLLIE_QRENABLED),
+            static::METHODS_CONFIG   => $this->getMethodsForConfig(),
+            static::MOLLIE_QRENABLED => Configuration::get(static::MOLLIE_QRENABLED),
 
             static::MOLLIE_STATUS_OPEN           => Configuration::get(static::MOLLIE_STATUS_OPEN),
             static::MOLLIE_STATUS_PAID           => Configuration::get(static::MOLLIE_STATUS_PAID),
@@ -968,8 +976,8 @@ class Mollie extends PaymentModule
             static::MOLLIE_MAIL_WHEN_EXPIRED     => Configuration::get(static::MOLLIE_MAIL_WHEN_EXPIRED),
             static::MOLLIE_MAIL_WHEN_REFUNDED    => Configuration::get(static::MOLLIE_MAIL_WHEN_REFUNDED),
 
-            static::MOLLIE_DISPLAY_ERRORS        => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-            static::MOLLIE_DEBUG_LOG             => Configuration::get(static::MOLLIE_DEBUG_LOG),
+            static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+            static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
         );
     }
 
@@ -1334,6 +1342,7 @@ class Mollie extends PaymentModule
     }
 
     // Hooks
+
     /**
      * @throws PrestaShopException
      */
@@ -1399,7 +1408,8 @@ class Mollie extends PaymentModule
                 ),
             );
         } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], array(
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT))) {
+                \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT
+            ))) {
             $tplData = array(
                 'status'          => 'form',
                 'msg_button'      => $this->lang['Refund this order'],
@@ -1607,9 +1617,7 @@ class Mollie extends PaymentModule
                             'value' => '',
                         ),
                     ))
-
-                    ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'))
-                ;
+                    ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
@@ -1632,8 +1640,7 @@ class Mollie extends PaymentModule
                         'payment',
                         array('method' => $method->id),
                         true
-                    ))
-                ;
+                    ));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
@@ -1717,7 +1724,7 @@ class Mollie extends PaymentModule
     public function partialRefundOrderState()
     {
         $stateExist = false;
-        $states = OrderState::getOrderStates((int)$this->context->language->id);
+        $states = OrderState::getOrderStates((int) $this->context->language->id);
         foreach ($states as $state) {
             if (in_array($this->lang('Mollie Partially Refunded'), $state)) {
                 $stateExist = true;
@@ -2139,7 +2146,7 @@ class Mollie extends PaymentModule
 
         die(json_encode(array(
             'success' => $result,
-            'message'  => isset($this->context->controller->errors[0]) ? $this->context->controller->errors[0] : '',
+            'message' => isset($this->context->controller->errors[0]) ? $this->context->controller->errors[0] : '',
         )));
     }
 
@@ -2484,10 +2491,10 @@ class Mollie extends PaymentModule
     /**
      * Test if directory is writable
      *
-     * @param string $dir        Directory path, absolute or relative
+     * @param string $dir      Directory path, absolute or relative
      * @param bool   $recursive
      * @param null   $fullReport
-     * @param bool   $absolute   Is absolute path to directory
+     * @param bool   $absolute Is absolute path to directory
      *
      * @return bool
      *
@@ -2530,6 +2537,7 @@ class Mollie extends PaymentModule
 
                 if (!is_writable($path)) {
                     $fullReport = sprintf('File %s is not writable.', $path);
+
                     return false;
                 }
             }
@@ -2669,7 +2677,7 @@ class Mollie extends PaymentModule
      *
      * Hybrid PrestaShop 1.5/1.6/1.7 and thirty bees 1.0 function
      *
-     * @todo: - [ ] Check PS 1.5 compatibility
+     * @todo  : - [ ] Check PS 1.5 compatibility
      * @todo  - [ ] Check tb 1.0 compatibility
      */
     public function validateMollieOrder(
@@ -2683,7 +2691,8 @@ class Mollie extends PaymentModule
         $dontTouchAmount = false,
         $secureKey = false,
         Shop $shop = null
-    ) {
+    )
+    {
         if (self::DEBUG_MODE) {
             Logger::addLog('Mollie::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
         }
@@ -3338,7 +3347,7 @@ class Mollie extends PaymentModule
     /**
      * Hybrid 1.6/1.7 translation function
      *
-     * @param string  $text
+     * @param string $text
      * @param array?  $variables (1.7 only)
      * @param string? $domain (1.7 only)
      *
@@ -3353,5 +3362,168 @@ class Mollie extends PaymentModule
         } else {
             return call_user_func_array(array($this, 'trans'), func_get_args());
         }
+    }
+
+    /**
+     * Check if the method PaymentModule::validateOrder is overridden
+     * This can cause interference with this module
+     *
+     * @return false|string Returns the module name if overridden, otherwise false
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     *
+     * @since 3.3.0
+     */
+    protected function checkPaymentModuleOverride()
+    {
+        foreach ($this->findOverrides() as $override) {
+            if ($override['override'] === 'PaymentModule::validateOrder') {
+                return $override['module'];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find overrides
+     *
+     * @return array Overrides
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     *
+     * @since 3.3.0
+     */
+    protected function findOverrides()
+    {
+        $overrides = array();
+
+        $overriddenClasses = array_keys($this->findOverriddenClasses());
+
+        foreach ($overriddenClasses as $overriddenClass) {
+            $reflectionClass = new ReflectionClass($overriddenClass);
+            $reflectionMethods = array_filter($reflectionClass->getMethods(), function ($reflectionMethod) use ($overriddenClass) {
+                return $reflectionMethod->class == $overriddenClass;
+            });
+
+            if (!file_exists($reflectionClass->getFileName())) {
+                continue;
+            }
+            $overrideFile = file($reflectionClass->getFileName());
+            if (is_array($overrideFile)) {
+                $overrideFile = array_diff($overrideFile, array("\n"));
+            } else {
+                $overrideFile = array();
+            }
+            foreach ($reflectionMethods as $reflectionMethod) {
+                /** @var ReflectionMethod $reflectionMethod */
+                $idOverride = substr(sha1($reflectionMethod->class.'::'.$reflectionMethod->name), 0, 10);
+                $overriddenMethod = array(
+                    'id_override' => $idOverride,
+                    'override'    => $reflectionMethod->class.'::'.$reflectionMethod->name,
+                    'module_code' => $this->l('Unknown'),
+                    'module_name' => $this->l('Unknown'),
+                    'date'        => $this->l('Unknown'),
+                    'version'     => $this->l('Unknown'),
+                    'deleted'     => (Tools::isSubmit('deletemodule') && Tools::getValue( 'id_override') === $idOverride)
+                        || (Tools::isSubmit('overrideBox') && in_array($idOverride, Tools::getValue('overrideBox'))),
+                );
+                if (isset($overrideFile[$reflectionMethod->getStartLine() - 5])
+                    && preg_match('/module: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 5], $module)
+                    && preg_match('/date: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 4], $date)
+                    && preg_match('/version: ([0-9.]+)/ism', $overrideFile[$reflectionMethod->getStartLine() - 3], $version)) {
+                    $overriddenMethod['module_code'] = trim($module[1]);
+                    $module = Module::getInstanceByName(trim($module[1]));
+                    if (Validate::isLoadedObject($module)) {
+                        $overriddenMethod['module_name'] = $module->displayName;
+                    }
+                    $overriddenMethod['date'] = trim($date[1]);
+                    $overriddenMethod['version'] = trim($version[1]);
+                }
+                $overrides[$idOverride] = $overriddenMethod;
+            }
+        }
+
+        return $overrides;
+    }
+
+    /**
+     * Find all override classes
+     *
+     * @return array Overridden classes
+     *
+     * @since 3.3.0
+     */
+    protected function findOverriddenClasses()
+    {
+        $hostMode = defined('_PS_HOST_MODE_') && _PS_HOST_MODE_;
+
+        return $this->getClassesFromDir('override/classes/', $hostMode) + $this->getClassesFromDir('override/controllers/', $hostMode);
+    }
+
+    /**
+     * Retrieve recursively all classes in a directory and its subdirectories
+     *
+     * @param string $path Relative path from root to the directory
+     * @param bool   $hostMode
+     *
+     * @return array
+     *
+     * @since 3.3.0
+     */
+    protected function getClassesFromDir($path, $hostMode = false)
+    {
+        $classes = array();
+        $rootDir = $hostMode ? $this->normalizeDirectory(_PS_ROOT_DIR_) : _PS_CORE_DIR_.'/';
+
+        foreach (scandir($rootDir.$path) as $file) {
+            if ($file[0] != '.') {
+                if (is_dir($rootDir.$path.$file)) {
+                    $classes = array_merge($classes, $this->getClassesFromDir($path.$file.'/', $hostMode));
+                } elseif (substr($file, -4) == '.php') {
+                    $content = file_get_contents($rootDir.$path.$file);
+
+                    $namespacePattern = '[\\a-z0-9_]*[\\]';
+                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P<classname>'.basename($file, '.php').'(?:Core)?)'.'(?:\s+extends\s+'.$namespacePattern.'[a-z][a-z0-9_]*)?(?:\s+implements\s+'.$namespacePattern.'[a-z][\\a-z0-9_]*(?:\s*,\s*'.$namespacePattern.'[a-z][\\a-z0-9_]*)*)?\s*\{#i';
+
+                    if (preg_match($pattern, $content, $m)) {
+                        $classes[$m['classname']] = array(
+                            'path'     => $path.$file,
+                            'type'     => trim($m[1]),
+                            'override' => true,
+                        );
+
+                        if (substr($m['classname'], -4) == 'Core') {
+                            $classes[substr($m['classname'], 0, -4)] = array(
+                                'path'     => '',
+                                'type'     => $classes[$m['classname']]['type'],
+                                'override' => true,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Normalize directory
+     *
+     * @param string $directory
+     *
+     * @return string
+     *
+     * @since 3.3.0
+     */
+    protected function normalizeDirectory($directory)
+    {
+        return rtrim($directory, '/\\').DIRECTORY_SEPARATOR;
     }
 }
