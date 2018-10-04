@@ -137,7 +137,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'cart_id'         => (int) $cart->id,
                     'method'          => pSQL($payment->method),
                     'transaction_id'  => pSQL($payment->id),
-                    'order_reference' => $orderReference,
+                    'order_reference' => pSQL($orderReference),
                     'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                 )
