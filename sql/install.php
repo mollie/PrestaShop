@@ -27,13 +27,14 @@
 $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mollie_payments` (
-				`transaction_id` VARCHAR(64)  NOT NULL PRIMARY KEY,
-				`cart_id`        INT(64),
-				`order_id`       INT(64),
-				`method`         VARCHAR(128) NOT NULL,
-				`bank_status`    VARCHAR(64)  NOT NULL,
-				`created_at`     DATETIME     NOT NULL,
-				`updated_at`     DATETIME     DEFAULT NULL,
+				`transaction_id`  VARCHAR(64)  NOT NULL PRIMARY KEY,
+				`cart_id`         INT(64),
+				`order_id`        INT(64),
+				`order_reference` VARCHAR(191),
+				`method`          VARCHAR(128) NOT NULL,
+				`bank_status`     VARCHAR(64)  NOT NULL,
+				`created_at`      DATETIME     NOT NULL,
+				`updated_at`      DATETIME     DEFAULT NULL,
 				 INDEX (cart_id)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
