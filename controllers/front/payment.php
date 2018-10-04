@@ -122,20 +122,24 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $method,
             $issuer,
             (int) $cart->id,
-            $customer->secure_key
+            $customer->secure_key,
+            false,
+            Order::generateReference()
         );
         $payment = $this->createPayment($paymentData);
+        $orderReference = isset($payment->metadata->order_reference ) ? pSQL($payment->metadata->order_reference) : '';
 
         // Store payment linked to cart
         if ($payment->method != 'banktransfer') {
             Db::getInstance()->insert(
                 'mollie_payments',
                 array(
-                    'cart_id'        => (int) $cart->id,
-                    'method'         => pSQL($payment->method),
-                    'transaction_id' => pSQL($payment->id),
-                    'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
+                    'cart_id'         => (int) $cart->id,
+                    'method'          => pSQL($payment->method),
+                    'transaction_id'  => pSQL($payment->id),
+                    'order_reference' => $orderReference,
+                    'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
         }
@@ -147,7 +151,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         if ($payment->method == 'banktransfer') {
-            $this->module->currentOrderReference = Order::generateReference();
+            $this->module->currentOrderReference = $orderReference;
             $this->module->validateMollieOrder(
                 (int) $cart->id,
                 $paymentStatus,
@@ -216,41 +220,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         return true;
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return string
-     * @throws PrestaShopException
-     */
-    private function generateDescriptionFromCart($cartId)
-    {
-        $cart = new Cart($cartId);
-
-        $buyer = null;
-        if ($cart->id_customer) {
-            $buyer = new Customer($cart->id_customer);
-        }
-
-        $filters = array(
-            'cart.id'            => $cartId,
-            'customer.firstname' => $buyer == null ? '' : $buyer->firstname,
-            'customer.lastname'  => $buyer == null ? '' : $buyer->lastname,
-            'customer.company'   => $buyer == null ? '' : $buyer->company,
-        );
-
-        $content = Configuration::get(Mollie::MOLLIE_DESCRIPTION);
-
-        foreach ($filters as $key => $value) {
-            $content = str_replace(
-                "{".$key."}",
-                $value,
-                $content
-            );
-        }
-
-        return $content;
     }
 
     /**

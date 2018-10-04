@@ -149,8 +149,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 if ($paymentStatus < 1) {
                     $paymentStatus = Configuration::get('PS_OS_PAYMENT');
                 }
+                $orderReference = isset($apiPayment->metadata->order_reference) ? $apiPayment->metadata->order_reference : '';
 
-                $this->module->currentOrderReference = Order::generateReference();
+                $this->module->currentOrderReference = $orderReference;
                 $this->module->validateMollieOrder(
                     (int) $apiPayment->metadata->cart_id,
                     $paymentStatus,

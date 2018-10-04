@@ -1816,8 +1816,10 @@ class Mollie extends PaymentModule
      *
      * @return array
      * @throws PrestaShopException
+     *
+     * @since 3.3.0 Order reference
      */
-    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey, $qrCode = false)
+    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey, $qrCode = false, $orderReference = '')
     {
         $description = static::generateDescriptionFromCart($cartId);
         $context = Context::getContext();
@@ -1830,9 +1832,9 @@ class Mollie extends PaymentModule
             ),
             'method'      => $method,
             'issuer'      => $issuer,
-            'description' => str_replace(
-                '%',
-                $cartId,
+            'description' => str_ireplace(
+                array('%'),
+                array($cartId),
                 $description
             ),
             'redirectUrl' => ($qrCode
@@ -1858,8 +1860,9 @@ class Mollie extends PaymentModule
         );
 
         $paymentData['metadata'] = array(
-            'cart_id'    => $cartId,
-            'secure_key' => Tools::encrypt($secureKey),
+            'cart_id'         => $cartId,
+            'order_reference' => $orderReference,
+            'secure_key'      => Tools::encrypt($secureKey),
         );
 
         // Send webshop locale
@@ -1907,15 +1910,15 @@ class Mollie extends PaymentModule
     /**
      * Generate a description from the Cart
      *
-     * @param Cart|int $cartId Cart or Cart ID
+     * @param Cart|int $cartId         Cart or Cart ID
+     * @param string   $orderReference Order reference
      *
      * @return string Description
      *
      * @throws PrestaShopException
-     *
      * @since 3.0.0
      */
-    public static function generateDescriptionFromCart($cartId)
+    public static function generateDescriptionFromCart($cartId, $orderReference = '')
     {
         if ($cartId instanceof Cart) {
             $cart = $cartId;
@@ -1929,21 +1932,19 @@ class Mollie extends PaymentModule
         }
 
         $filters = array(
-            'cart.id'            => $cartId,
-            'customer.firstname' => $buyer == null ? '' : $buyer->firstname,
-            'customer.lastname'  => $buyer == null ? '' : $buyer->lastname,
-            'customer.company'   => $buyer == null ? '' : $buyer->company,
+            '%'                    => $cartId,
+            '{cart.id}'            => $cartId,
+            '{order.reference}'    => $orderReference,
+            '{customer.firstname}' => $buyer == null ? '' : $buyer->firstname,
+            '{customer.lastname}'  => $buyer == null ? '' : $buyer->lastname,
+            '{customer.company}'   => $buyer == null ? '' : $buyer->company,
         );
 
-        $content = Configuration::get(Mollie::MOLLIE_DESCRIPTION);
-
-        foreach ($filters as $key => $value) {
-            $content = str_replace(
-                "{".$key."}",
-                $value,
-                $content
-            );
-        }
+        $content = str_ireplace(
+            array_keys($filters),
+            array_values($filters),
+            Configuration::get(Mollie::MOLLIE_DESCRIPTION)
+        );
 
         return $content;
     }
