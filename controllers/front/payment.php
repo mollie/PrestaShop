@@ -169,12 +169,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Db::getInstance()->insert(
                 'mollie_payments',
                 array(
-                    'cart_id'        => (int) $cart->id,
-                    'order_id'       => (int) $orderId,
-                    'method'         => pSQL($payment->method),
-                    'transaction_id' => pSQL($payment->id),
-                    'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
+                    'cart_id'         => (int) $cart->id,
+                    'order_id'        => (int) $orderId,
+                    'order_reference' => pSQL($orderReference),
+                    'method'          => pSQL($payment->method),
+                    'transaction_id'  => pSQL($payment->id),
+                    'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
         }
