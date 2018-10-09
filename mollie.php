@@ -78,6 +78,8 @@ class Mollie extends PaymentModule
         'paypal'          => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
         'paysafecard'     => array('eur'),
         'sofort'          => array('eur'),
+        'klarnapaylater'  => array('eur'),
+        'klarnasliceit'   => array('eur'),
     );
 
     // The Addons version does not include the GitHub updater
@@ -132,6 +134,10 @@ class Mollie extends PaymentModule
     const MOLLIE_RESELLER_PARTNER_ID = 4602094;
     const MOLLIE_RESELLER_PROFILE_KEY = 'B69C2D66';
     const MOLLIE_RESELLER_APP_SECRET = '49726EB7650EC592F732E7B82A4C1EFD6EE8A10F';
+
+    const MOLLIE_API = 'MOLLIE_API';
+    const MOLLIE_ORDERS_API = 'orders';
+    const MOLLIE_PAYMENTS_API = 'payments';
 
     /**
      * Hooks for this module
@@ -403,6 +409,8 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
+
+        Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
     }
 
     /**
@@ -477,7 +485,7 @@ class Mollie extends PaymentModule
             'val_issuers'            => Configuration::get(static::MOLLIE_ISSUERS),
             'val_css'                => Configuration::get(static::MOLLIE_CSS),
             'val_errors'             => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-            'val_qrenabled'          => Configuration::get(Mollie::MOLLIE_QRENABLED),
+            'val_qrenabled'          => Configuration::get(static::MOLLIE_QRENABLED),
             'val_logger'             => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'               => $this->l('Save'),
             'lang'                   => $this->lang,
@@ -854,6 +862,34 @@ class Mollie extends PaymentModule
         $input = array_merge(
             $input,
             array(
+                array(
+                    'type'  => 'mollie-h2',
+                    'name'  => '',
+                    'title' => $this->l('Mollie API'),
+                ),
+                array(
+                    'type'    => 'select',
+                    'label'   => $this->l('UseN tHe New m0lLiE ApI'),
+                    'desc'    => static::ppTags(
+                        $this->l('Should the plugin UseN the new ApI [1]locale[/1] froim Molka.'),
+                        array('<a href="https://en.wikipedia.org/wiki/Locale">')
+                    ),
+                    'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
+                    'options' => array(
+                        'query' => array(
+                            array(
+                                'id'   => 'eins',
+                                'name' => $this->l('Payments API'),
+                            ),
+                            array(
+                                'id'   => 'zwei',
+                                'name' => $this->l('Orders API'),
+                            ),
+                        ),
+                        'id'    => 'id',
+                        'name'  => 'name',
+                    ),
+                ),
                 array(
                     'type'  => 'mollie-h2',
                     'name'  => '',
@@ -1563,8 +1599,8 @@ class Mollie extends PaymentModule
         try {
             $methods = $this->getFilteredApiMethods();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), Mollie::ERROR);
+            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
+                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
             }
 
             return array();
@@ -1873,7 +1909,7 @@ class Mollie extends PaymentModule
         );
 
         // Send webshop locale
-        if (Configuration::get(Mollie::MOLLIE_PAYMENTSCREEN_LOCALE) === Mollie::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE) {
+        if (Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE) {
             $locale = static::getWebshopLocale();
 
             if (preg_match(
@@ -1950,7 +1986,7 @@ class Mollie extends PaymentModule
         $content = str_ireplace(
             array_keys($filters),
             array_values($filters),
-            Configuration::get(Mollie::MOLLIE_DESCRIPTION)
+            Configuration::get(static::MOLLIE_DESCRIPTION)
         );
 
         return $content;
@@ -2408,6 +2444,20 @@ class Mollie extends PaymentModule
             }
         }
 
+        // TODO: remove once these methods are live
+        $methods[] = array(
+            'id'      => 'klarnapaylater',
+            'name'    => 'Klarna Pay Later',
+            'enabled' => true,
+            'image'   => 'https://www.mollie.com/external/icons/payment-methods/klarnapaylater%402x.png',
+        );
+        $methods[] = array(
+            'id'      => 'klarnasliceit',
+            'name'    => 'Klarna Slice It',
+            'enabled' => true,
+            'image'   => 'https://www.mollie.com/external/icons/payment-methods/klarnasliceit%402x.png',
+        );
+
         return $methods;
     }
 
@@ -2694,7 +2744,7 @@ class Mollie extends PaymentModule
     )
     {
         if (self::DEBUG_MODE) {
-            Logger::addLog('Mollie::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
+            Logger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
         }
         if (!isset($this->context)) {
             $this->context = Context::getContext();
@@ -2713,17 +2763,17 @@ class Mollie extends PaymentModule
         }
         $orderStatus = new OrderState((int) $idOrderState, (int) $this->context->language->id);
         if (!Validate::isLoadedObject($orderStatus)) {
-            Logger::addLog('Mollie::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
+            Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
             throw new PrestaShopException('Can\'t load Order status');
         }
         if (!$this->active) {
-            Logger::addLog('Mollie::validateMollieOrder - Module is not active', 3, null, 'Cart', (int) $idCart, true);
+            Logger::addLog(__CLASS__.'::validateMollieOrder - Module is not active', 3, null, 'Cart', (int) $idCart, true);
             die(Tools::displayError());
         }
         // Does order already exists ?
         if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
             if ($secureKey !== false && $secureKey != $this->context->cart->secure_key) {
-                Logger::addLog('Mollie::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int) $idCart, true);
+                Logger::addLog(__CLASS__.'::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int) $idCart, true);
                 die(Tools::displayError());
             }
             // For each package, generate an order
@@ -2743,8 +2793,8 @@ class Mollie extends PaymentModule
             $orderDetailList = array();
 
             if (!$this->currentOrderReference || Order::getByReference($this->currentOrderReference)->count()) {
-                Logger::addLog('Mollie::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
-                throw new PrestaShopException('Order reference not set before call to Mollie::validateMollieOrder');
+                Logger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
+                throw new PrestaShopException('Order reference not set before call to '.__CLASS__.'::validateMollieOrder');
             }
             $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
             foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
@@ -2844,12 +2894,12 @@ class Mollie extends PaymentModule
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
                     if (self::DEBUG_MODE) {
-                        Logger::addLog('Mollie::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Creating order
                     $result = $order->add();
                     if (!$result) {
-                        Logger::addLog('Mollie::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
                         throw new PrestaShopException('Can\'t save Order');
                     }
                     // Amount paid by customer is not the right one -> Status = payment error
@@ -2861,14 +2911,14 @@ class Mollie extends PaymentModule
                     }
                     $orderList[] = $order;
                     if (self::DEBUG_MODE) {
-                        Logger::addLog('Mollie::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
                     $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (self::DEBUG_MODE) {
-                        Logger::addLog('Mollie::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Adding an entry in order_carrier table
                     if (!is_null($carrier)) {
@@ -2883,15 +2933,15 @@ class Mollie extends PaymentModule
                 }
             }
             // The country can only change if the address used for the calculation is the delivery address, and if multi-shipping is activated
-            if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
+            if (isset($context_country) && Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
                 $this->context->country = $context_country;
             }
             if (!$this->context->country->active) {
-                Logger::addLog('Mollie::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
+                Logger::addLog(__CLASS__.'::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
                 throw new PrestaShopException('The order address country is not active.');
             }
             if (self::DEBUG_MODE) {
-                Logger::addLog('Mollie::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                Logger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
             }
             // Register Payment only if the order status validate the order
             if ($orderStatus->logable) {
@@ -2903,8 +2953,8 @@ class Mollie extends PaymentModule
                 } else {
                     $transaction_id = null;
                 }
-                if (!$order->addOrderPayment($amountPaid, null, $transaction_id)) {
-                    Logger::addLog('Mollie::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int) $idCart, true);
+                if (isset($order) && !$order->addOrderPayment($amountPaid, null, $transaction_id)) {
+                    Logger::addLog(__CLASS__.'::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int) $idCart, true);
                     throw new PrestaShopException('Can\'t save Order Payment');
                 }
             }
@@ -2925,7 +2975,7 @@ class Mollie extends PaymentModule
                         $message = strip_tags($message, '<br>');
                         if (Validate::isCleanHtml($message)) {
                             if (self::DEBUG_MODE) {
-                                Logger::addLog('Mollie::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                                Logger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
                             }
                             $msg->message = $message;
                             $msg->id_cart = (int) $idCart;
@@ -3021,7 +3071,7 @@ class Mollie extends PaymentModule
                             }
                         }
                         $productVarTplList[] = $productVarTpl;
-                        // Check if is not a virutal product for the displaying of shipping
+                        // Check if is not a virtual product for the displaying of shipping
                         if (!$product['is_virtual']) {
                             $virtualProduct &= false;
                         }
@@ -3168,7 +3218,7 @@ class Mollie extends PaymentModule
                         }
                     }
                     if (self::DEBUG_MODE) {
-                        Logger::addLog('Mollie::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Hook validate order
                     Hook::exec('actionValidateOrder', array(
@@ -3184,7 +3234,7 @@ class Mollie extends PaymentModule
                         }
                     }
                     if (self::DEBUG_MODE) {
-                        Logger::addLog('Mollie::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Set the order status
                     $newHistory = new OrderHistory();
@@ -3275,7 +3325,7 @@ class Mollie extends PaymentModule
                             $fileAttachment = null;
                         }
                         if (self::DEBUG_MODE) {
-                            Logger::addLog('Mollie::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
+                            Logger::addLog(__CLASS__.'::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
                         }
                         $orderLanguage = new Language((int) $order->id_lang);
                         if (Validate::isEmail($this->context->customer->email)) {
@@ -3333,7 +3383,7 @@ class Mollie extends PaymentModule
                 $this->currentOrder = (int) $order->id;
             }
             if (self::DEBUG_MODE) {
-                Logger::addLog('Mollie::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
+                Logger::addLog(__CLASS__.'::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
             }
 
             return true;
