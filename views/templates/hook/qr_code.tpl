@@ -45,7 +45,7 @@
       }
       if (!found) {
         var newScript = document.createElement('SCRIPT');
-        newScript.src = '{Mollie::getMediaPathForJavaScript('views/js/app/dist/qrcode.min.js')|escape:'javascript':'UTF-8'}';
+        newScript.src = '{Mollie::getMediaPathForJavaScript('views/js/dist/qrcode.min.js')|escape:'javascript':'UTF-8'}';
         newScript.type = 'text/javascript';
         document.head.appendChild(newScript);
       }

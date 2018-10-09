@@ -495,7 +495,7 @@ class Mollie extends PaymentModule
         $this->context->controller->addJquery();
         $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
         if (!static::ADDONS) {
-            $this->context->controller->addJS($this->_path.'views/js/app/dist/updater.min.js');
+            $this->context->controller->addJS($this->_path.'views/js/dist/updater.min.js');
         }
 
         $this->context->smarty->assign($data);
@@ -1460,7 +1460,7 @@ class Mollie extends PaymentModule
 
         $tplData['msg_title'] = $this->lang['Mollie refund'];
         $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
-        $this->context->controller->addJS($this->_path.'views/js/app/dist/confirmrefund.min.js');
+        $this->context->controller->addJS($this->_path.'views/js/dist/confirmrefund.min.js');
         $this->smarty->assign($tplData);
         $this->context->smarty->assign(array(
             'link'       => Context::getContext()->link,
@@ -1515,8 +1515,8 @@ class Mollie extends PaymentModule
             'msg_pay_with'           => $this->lang['Pay with %s'],
             'msg_bankselect'         => $this->lang['Select your bank:'],
             'module'                 => $this,
-            'mollie_banks_app_path'  => static::getMediaPath($this->_path.'views/js/app/dist/banks.min.js'),
-            'mollie_qrcode_app_path' => static::getMediaPath($this->_path.'views/js/app/dist/qrcode.min.js'),
+            'mollie_banks_app_path'  => static::getMediaPath($this->_path.'views/js/dist/banks.min.js'),
+            'mollie_qrcode_app_path' => static::getMediaPath($this->_path.'views/js/dist/qrcode.min.js'),
             'mollie_translations'    => array(
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),

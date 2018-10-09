@@ -101,16 +101,16 @@ if (production) {
 
 module.exports = {
   entry: {
-    banks: ['./src/banks.ts'],
-    confirmrefund: ['./src/confirmrefund.ts'],
-    updater: ['./src/updater.ts'],
-    qrcode: ['./src/qrcode.ts'],
+    banks: ['./banks/index.ts'],
+    confirmrefund: ['./refund/index.ts'],
+    updater: ['./updater/index.ts'],
+    qrcode: ['./qrcode/index.ts'],
   },
   resolve: {
     extensions: ['.js', '.ts', '.css'],
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     publicPath: '/assets/',
     filename: '[name].min.js',
     library: ['MollieModule', '[name]'],
@@ -122,8 +122,10 @@ module.exports = {
       {
         test: /\.(ts)|(js)$/,
         include: [
-          path.join(__dirname, 'src'),
-          path.join(__dirname, 'css'),
+          path.join(__dirname, 'banks'),
+          path.join(__dirname, 'qrcode'),
+          path.join(__dirname, 'refund'),
+          path.join(__dirname, 'updater'),
         ],
         exclude: path.join(__dirname, 'node_modules'),
         use: {
@@ -173,7 +175,10 @@ module.exports = {
           },
         ],
         include: [
-          path.join(__dirname, 'css'),
+          path.join(__dirname, 'banks'),
+          path.join(__dirname, 'qrcode'),
+          path.join(__dirname, 'refund'),
+          path.join(__dirname, 'updater'),
         ],
       },
     ],

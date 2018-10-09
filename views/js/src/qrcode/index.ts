@@ -33,7 +33,7 @@
 import '@babel/polyfill';
 import axios from 'axios';
 import xss from 'xss';
-import styles from '../css/qrcode.css';
+import styles from './css/qrcode.css';
 
 const PENDING = 1;
 const SUCCESS = 2;
@@ -93,15 +93,17 @@ export default class QrCode {
     }
     elem.style.width = '100%';
     elem.style.height = '280px';
-    let content = `<div id="mollie-spinner-${this.suffix}" class="${styles['spinner']}" style="height: 100px">
+    let content = '';
+    if (this.title) {
+      content += `<span id="mollie-qr-title-${this.suffix}" style="font-size: 20px; display: block">${xss(this.title)}</span>`;
+    }
+    content += `<div id="mollie-spinner-${this.suffix}" class="${styles['spinner']}" style="height: 100px">
     <div class="${styles['bounce1']}"></div>
     <div class="${styles['bounce2']}"></div>
     <div class="${styles['bounce2']}"></div>
   </div>
   <div id="mollie-qr-image-container-${this.suffix}" style="text-align: ${this.center ? 'center' : 'left'}">`;
-    if (this.title) {
-      content += `<span id="mollie-qr-title-${this.suffix}" style="font-size: 20px">${xss(this.title)}</span>`;
-    }
+
     content += `<img id="mollie-qr-image-${this.suffix}" width="320" height="320" style="height: 240px; width: 240px; ${this.center ? 'margin: 0 auto; ' : ''} visibility: hidden">
   </div>`;
     elem.innerHTML = content;
@@ -115,7 +117,7 @@ export default class QrCode {
     }
   };
 
-  checkWindowSize(): void {
+  checkWindowSize = (): void => {
     const elem = this.target;
     if (elem) {
       if (window.innerWidth > 800 && window.innerHeight > 860) {
@@ -124,7 +126,7 @@ export default class QrCode {
         elem.style.display = 'none';
       }
     }
-  }
+  };
 
   pollStatus = (idTransaction: string): void => {
     setTimeout(async (): Promise<void> => {

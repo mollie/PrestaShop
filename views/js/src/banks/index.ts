@@ -33,7 +33,7 @@
 import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
-import styles from '../css/banks.css';
+import styles from './css/banks.css';
 
 declare let window: any;
 
@@ -56,7 +56,7 @@ export default class MollieBanks {
       <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}" style="height: 24px; width: auto"> ${xss(bank.name)}
   </label>
 </div>`;
-    };
+    }
     content += '</ul>';
     if (window.mollieQrEnabled) {
       content += `<div id="mollie-qr-code"/>`;

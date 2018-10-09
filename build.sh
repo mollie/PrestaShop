@@ -11,13 +11,13 @@ if [ ! -d "${CWD_BASEDIR}/lib/vendor/" ]; then
   cd ..
 fi
 
-cd ${CWD_BASEDIR}/views/js/app/
-if [ ! -d "${CWD_BASEDIR}/views/js/app/node_modules/" ]; then
+cd ${CWD_BASEDIR}/views/js/src/
+if [ ! -d "${CWD_BASEDIR}/views/js/src/node_modules/" ]; then
   npm i
 fi
-rm -rf ${CWD_BASEDIR}/views/js/app/dist/
+rm -rf ${CWD_BASEDIR}/views/js/dist/
 NODE_ENV=production webpack --mode production
-cp ${CWD_BASEDIR}/views/js/app/index.php ${CWD_BASEDIR}/views/js/app/dist/index.php
+cp ${CWD_BASEDIR}/views/js/src/index.php ${CWD_BASEDIR}/views/js/dist/index.php
 cd ${CWD_BASEDIR}
 
 ${CWD_BASEDIR}/lib/vendor/firstred/mollie-api-php/.git -rf
@@ -40,9 +40,9 @@ FILES+=("views/img/**")
 FILES+=("views/js/index.php")
 FILES+=("views/js/jquery.sortable.js")
 FILES+=("views/js/sweetalert-2.1.0.min.js")
-FILES+=("views/js/app/index.php")
-FILES+=("views/js/app/dist/*.min.js")
-FILES+=("views/js/app/dist/index.php")
+FILES+=("views/js/src/index.php")
+FILES+=("views/js/dist/*.min.js")
+FILES+=("views/js/dist/index.php")
 FILES+=("views/templates/**")
 
 MODULE_VERSION="$(sed -ne "s/\\\$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" ${CWD_BASENAME}.php)"

@@ -1,0 +1,3 @@
+*.css.d.ts
+dist/**
+src/node_modules/**
