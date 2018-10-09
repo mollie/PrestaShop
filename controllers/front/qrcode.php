@@ -73,7 +73,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             $dbPayment = $this->module->getPaymentBy('cart_id', Tools::getValue('cart_id'));
             if (is_array($dbPayment)) {
                 try {
-                    $apiPayment = $this->module->api->payments->get($dbPayment['transaction_id']);
+                    /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $apiPayment */
+                    $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($dbPayment['transaction_id']);
                     $canceled = $apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_PAID;
                 } catch (\Mollie\Api\Exceptions\ApiException $e) {
                 }
@@ -132,10 +133,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         $orderTotal = $cart->getOrderTotal(true);
-        $payment = $mollie->api->payments->create(Mollie::getPaymentData(
+        $payment = $mollie->api->{Mollie::selectedApi()}->create(Mollie::getPaymentData(
             $orderTotal,
             Tools::strtoupper($this->context->currency->iso_code),
-            'ideal',
+            \Mollie\Api\Types\PaymentMethod::IDEAL,
             null,
             (int) $cart->id,
             $customer->secure_key,

@@ -67,6 +67,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws SmartyException
      */
     public function initContent()
     {
@@ -85,7 +86,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws SmartyException
      */
     protected function executeWebhook()
-    {if (Tools::getValue('testByMollie')) {
+    {
+        if (Tools::getValue('testByMollie')) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie::NOTICE);
             }
@@ -104,8 +106,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         try {
-            /** @var \Mollie\Api\Resources\Payment $apiPayment */
-            $apiPayment = $this->module->api->payments->get($transactionId);
+            /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $apiPayment */
+            $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($transactionId);
             $transactionId = $apiPayment->id;
         } catch (Exception $e) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
@@ -130,7 +132,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 } else {
                     $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
                 }
-            } elseif ($psPayment['method'] === 'banktransfer'
+            } elseif ($psPayment['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             ) {
@@ -139,7 +141,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $order->update();
 
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
-            } elseif ($psPayment['method'] !== 'banktransfer'
+            } elseif ($psPayment['method'] !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
                 && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
@@ -251,7 +253,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function setCountryContextIfNotSet(\Mollie\Api\Resources\Payment $payment)
+    private function setCountryContextIfNotSet($payment)
     {
         if (empty($this->context->country) || !$this->context->country->active) {
             if ($payment->metadata->cart_id) {

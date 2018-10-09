@@ -55,6 +55,8 @@ class Mollie extends PaymentModule
     public $lang = array();
     /** @var string $currentOrderReference */
     public $currentOrderReference;
+    /** @var string $selectedApi */
+    public static $selectedApi;
     /**
      * Currency restrictions per payment method
      *
@@ -173,6 +175,8 @@ class Mollie extends PaymentModule
         'paypal'          => 'PayPal',
         'paysafecard'     => 'Paysafecard',
         'sofort'          => 'Sofort Banking',
+        'klarnapaylater'  => 'Klarna Pay Later',
+        'klarnaspliceit'  => 'Klarna Splice It',
     );
 
     /**
@@ -672,7 +676,7 @@ class Mollie extends PaymentModule
             }
             $statuses[] = array(
                 'name'             => $name,
-                'key'              => constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
+                'key'              => @constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
                 'value'            => $val,
                 'description'      => $desc,
                 'message'          => sprintf($messageStatus, $this->lang[$name]),
@@ -869,20 +873,17 @@ class Mollie extends PaymentModule
                 ),
                 array(
                     'type'    => 'select',
-                    'label'   => $this->l('UseN tHe New m0lLiE ApI'),
-                    'desc'    => static::ppTags(
-                        $this->l('Should the plugin UseN the new ApI [1]locale[/1] froim Molka.'),
-                        array('<a href="https://en.wikipedia.org/wiki/Locale">')
-                    ),
+                    'label'   => $this->l('Select which Mollie API to use'),
+                    'desc'    => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
                     'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
                     'options' => array(
                         'query' => array(
                             array(
-                                'id'   => 'eins',
+                                'id'   => static::MOLLIE_PAYMENTS_API,
                                 'name' => $this->l('Payments API'),
                             ),
                             array(
-                                'id'   => 'zwei',
+                                'id'   => static::MOLLIE_ORDERS_API,
                                 'name' => $this->l('Orders API'),
                             ),
                         ),
@@ -1263,7 +1264,8 @@ class Mollie extends PaymentModule
     protected function doRefund($orderId, $transactionId)
     {
         try {
-            $payment = $this->api->payments->get($transactionId);
+            /** @var \Mollie\Api\Resources\Order|\Mollie\Api\Resources\Payment $payment */
+            $payment = $this->api->{static::selectedApi()}->get($transactionId);
             if ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
                 $payment->refund(array(
                     'amount' => array(
@@ -1608,8 +1610,8 @@ class Mollie extends PaymentModule
 
         $idealIssuers = array();
         $issuers = $this->getIssuerList();
-        if (isset($issuers['ideal'])) {
-            foreach ($issuers['ideal'] as $issuer) {
+        if (isset($issuers[\Mollie\Api\Types\PaymentMethod::IDEAL])) {
+            foreach ($issuers[\Mollie\Api\Types\PaymentMethod::IDEAL] as $issuer) {
                 $idealIssuers[$issuer->id] = $issuer;
             }
         }
@@ -1635,7 +1637,9 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            if ($method->id === 'ideal' && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK) {
+            if ($method->id === \Mollie\Api\Types\PaymentMethod::IDEAL
+                && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK
+            ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
                     ->setCallToActionText($this->lang[$method->description])
@@ -1847,6 +1851,92 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * @return array
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public static function getCartLines()
+    {
+        /** @var Cart $cart */
+        $cart = Context::getContext()->cart;
+        $oCurrency = new Currency($cart->id_currency);
+        $totalCartWithTax = $cart->getOrderTotal(true);
+
+        $remaining = round($totalCartWithTax, 2);
+
+        $cartItems = $cart->getProducts();
+
+        $aItems = array();
+        /* Item */
+        foreach ($cartItems as $cartItem) {
+            $roundedTotalWithoutTax = round($cartItem['total'], 2);
+            $roundedTax = round($cartItem['total_wt'] - $cartItem['total'], 2);
+            $quantity = $cartItem['cart_quantity'];
+            $lastItemPriceDifference = round($roundedTotalWithoutTax - round($cartItem['price'], 2) * $quantity, 2);
+            $lastItemTaxDifference = round($roundedTax - round($cartItem['price_wt'] - $cartItem['price'], 2) * $quantity, 2);
+
+            // If the last item has at least one cent difference on this cart line, then change the price of the last item
+            if ($lastItemPriceDifference >= 0.01 || $lastItemTaxDifference >= 0.01) {
+                $aItems[] = array(
+                    'name'        => $cartItem['name'],
+                    'quantity'    => $quantity - 1,
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2)),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2)),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                );
+                $remaining -= round($cartItem['price'], 2) * ($quantity - 1);
+                $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) * ($quantity - 1);
+                $aItems[] = array(
+                    'name'        => $cartItem['name'],
+                    'quantity'    => 1,
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['price_wt'], 2) + $lastItemPriceDifference, 2)),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['total_wt'], 2) + $lastItemPriceDifference, 2)),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                );
+                $remaining -= round($cartItem['price'], 2) + $lastItemPriceDifference;
+                $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) + $lastItemTaxDifference;
+            } else {
+                $aItems[] = array(
+                    'name'        => $cartItem['name'],
+                    'quantity'    => $quantity,
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2)),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2)),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                );
+                $remaining -= round($cartItem['price'], 2) * $quantity;
+                $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) * $quantity;
+            }
+        }
+
+        // Shipping tax is the remainder
+        $totalShippingCostsWithTax = round($remaining, 2);
+        // Calculate shipping tax rate
+        $totalAmount = 0;
+        $totalQuantity = 0;
+        foreach ($aItems as $item) {
+            $totalAmount += $item['vatRate'];
+            $totalQuantity += $item['quantity'];
+        }
+        $shippingTaxRate = $totalAmount / $totalQuantity;
+
+        $aItems[] = array(
+            'name'        => 'Shipping',
+            'quantity'    => 1,
+            'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2)),
+            'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2)),
+            'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax - ($totalShippingCostsWithTax / (1 + $shippingTaxRate / 100)), 2)),
+            'vatRate'     => number_format($shippingTaxRate, 2),
+        );
+
+        return $aItems;
+    }
+
+    /**
      * Get payment data
      *
      * @param float|string $amount
@@ -1856,30 +1946,35 @@ class Mollie extends PaymentModule
      * @param int|Cart     $cartId
      * @param string       $secureKey
      * @param bool         $qrCode
+     * @param string       $orderReference
      *
      * @return array
      * @throws PrestaShopException
+     * @throws Adapter_Exception
      *
      * @since 3.3.0 Order reference
      */
-    public static function getPaymentData($amount, $currency, $method, $issuer, $cartId, $secureKey, $qrCode = false, $orderReference = '')
-    {
+    public static function getPaymentData(
+        $amount,
+        $currency,
+        $method,
+        $issuer,
+        $cartId,
+        $secureKey,
+        $qrCode = false,
+        $orderReference = ''
+    ) {
         $description = static::generateDescriptionFromCart($cartId);
         $context = Context::getContext();
+        $cart = new Cart($cartId);
+        $customer = new Customer($cart->id_customer);
 
         $paymentData = array(
             'amount'      => array(
                 'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
-                'value'    =>
-                    (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
+                'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
             'method'      => $method,
-            'issuer'      => $issuer,
-            'description' => str_ireplace(
-                array('%'),
-                array($cartId),
-                $description
-            ),
             'redirectUrl' => ($qrCode
                 ? $context->link->getModuleLink(
                     'mollie',
@@ -1909,9 +2004,11 @@ class Mollie extends PaymentModule
         );
 
         // Send webshop locale
-        if (Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE) {
+        if ((Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API
+            && Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
+            || Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API
+        ) {
             $locale = static::getWebshopLocale();
-
             if (preg_match(
                 '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
                 $locale
@@ -1920,14 +2017,22 @@ class Mollie extends PaymentModule
             }
         }
 
-        if (isset($context->cart)) {
-            if (isset($context->cart->id_customer)) {
-                $buyer = new Customer($context->cart->id_customer);
-                $paymentData['billingEmail'] = (string) $buyer->email;
-            }
-            if (isset($context->cart->id_address_invoice)) {
-                $billing = new Address((int) $context->cart->id_address_invoice);
+        if (Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API) {
+            $paymentData['description'] = str_ireplace(
+                array('%'),
+                array($cartId),
+                $description
+            );
+            $paymentData['issuer'] = $issuer;
+        }
+
+        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
+            if (isset($cart->id_address_invoice)) {
+                $billing = new Address((int) $cart->id_address_invoice);
                 $paymentData['billingAddress'] = array(
+                    'givenName'       => (string) $customer->firstname,
+                    'familyName'      => (string) $customer->lastname,
+                    'email'           => (string) $customer->email,
                     'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
                     'city'            => (string) $billing->city,
                     'region'          => (string) State::getNameById($billing->id_state),
@@ -1935,9 +2040,12 @@ class Mollie extends PaymentModule
                     'country'         => (string) Country::getIsoById($billing->id_country),
                 );
             }
-            if (isset($context->cart->id_address_delivery)) {
-                $shipping = new Address((int) $context->cart->id_address_delivery);
+            if (isset($cart->id_address_delivery)) {
+                $shipping = new Address((int) $cart->id_address_delivery);
                 $paymentData['shippingAddress'] = array(
+                    'givenName'       => (string) $customer->firstname,
+                    'familyName'      => (string) $customer->lastname,
+                    'email'           => (string) $customer->email,
                     'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
                     'city'            => (string) $shipping->city,
                     'region'          => (string) State::getNameById($shipping->id_state),
@@ -1945,6 +2053,11 @@ class Mollie extends PaymentModule
                     'country'         => (string) Country::getIsoById($shipping->id_country),
                 );
             }
+            $paymentData['orderNumber'] = $orderReference;
+            $paymentData['lines'] = static::getCartLines();
+            $paymentData['payment'] = array(
+                'issuer' => $issuer,
+            );
         }
 
         return $paymentData;
@@ -3575,5 +3688,23 @@ class Mollie extends PaymentModule
     protected function normalizeDirectory($directory)
     {
         return rtrim($directory, '/\\').DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * Get the selected API
+     *
+     * @since 3.3.0
+     * @throws PrestaShopException
+     */
+    public static function selectedApi()
+    {
+        if (!in_array(static::$selectedApi, array(static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API))) {
+            static::$selectedApi = Configuration::get(static::MOLLIE_API);
+            if (!static::$selectedApi) {
+                static::$selectedApi = static::MOLLIE_PAYMENTS_API;
+            }
+        }
+
+        return static::$selectedApi;
     }
 }
