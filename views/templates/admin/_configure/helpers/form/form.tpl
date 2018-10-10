@@ -65,22 +65,54 @@
                 </span>
               </div>
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
-                <span class="switch prestashop-switch" style="float:right;width:100px;right:20px;top:0;">
-                  <input type="radio" data-mollie-check name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}" value="1" {if !empty($method['enabled'])}checked="checked"{/if}>
-                  <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">{Translate::getAdminTranslation('Yes')|escape:'htmlall':'UTF-8'}</label>
-                  <input type="radio" name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}" id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}" value="" {if empty($method['enabled'])}checked="checked"{/if}>
-                  <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">{Translate::getAdminTranslation('No')|escape:'htmlall':'UTF-8'}</label>
-                  <a class="slide-button btn"></a>
-                </span>
-              {else}
-                <label class="mollie_switch" style="float: right;width: 60px;height: 24px;right: 20px;top: 5px;">
-                  <input type="checkbox"
-                         value="1"
-                         style="width: auto;"
-                         {if !empty($method['enabled'])}checked="checked"{/if}
+                {if empty($method['available'])}
+                  <span style="float:right;width:100px;right:20px;top:10px;position:relative;"
+                        title="{l s='This payment method is not available on the Payments API. Switch to the Orders API in order to activate this method.' mod='mollie'}"
                   >
-                  <span class="mollie_slider"></span>
-                </label>
+                    <i class="icon icon-exclamation-triangle"></i> {l s='Not available' mod='mollie'}
+                  </span>
+                {else}
+                  <span class="switch prestashop-switch"
+                        style="float:right;position:relative;width:100px;right:20px;top:0;"
+                        title="{l s='This payment method is not available on the Payments API. Switch to the Orders API in order to activate this method.' mod='mollie'}"
+                  >
+                    <input type="radio"
+                           data-mollie-check
+                           name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}"
+                           id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}"
+                           value="1"
+                           {if !empty($method['enabled'])}checked="checked"{/if}
+                    >
+                    <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">
+                      {Translate::getAdminTranslation('Yes')|escape:'htmlall':'UTF-8'}
+                    </label>
+                    <input type="radio"
+                           name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}"
+                           id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}"
+                           value=""
+                           {if empty($method['enabled'])}checked="checked"{/if}
+                    >
+                    <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">
+                      {Translate::getAdminTranslation('No')|escape:'htmlall':'UTF-8'}
+                    </label>
+                    <a class="slide-button btn"></a>
+                  </span>
+                {/if}
+              {else}
+                {if empty($method['available'])}
+                  <span style="float:right;width:100px;right:20px;top:10px;position:relative;">
+                    ⚠ {l s='Not available' mod='mollie'}
+                  </span>
+                {else}
+                  <label class="mollie_switch" style="float:right;width:60px;height:24px;right:20px;top:5px;">
+                    <input type="checkbox"
+                           value="1"
+                           style="width: auto;"
+                           {if !empty($method['enabled'])}checked="checked"{/if}
+                    >
+                    <span class="mollie_slider"></span>
+                  </label>
+                {/if}
               {/if}
             </div>
           </li>

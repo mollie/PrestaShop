@@ -42,7 +42,7 @@
                       name="issuer"
                       class="mollie_button"
                       value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}">
-                <img src="{$issuer->image->size2x|escape:'htmlall':'UTF-8' nofilter}">
+                <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8' nofilter}">
                 <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
               </button>
             {/foreach}

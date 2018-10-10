@@ -875,7 +875,7 @@ class Mollie extends PaymentModule
                     'type'    => 'select',
                     'label'   => $this->l('Select which Mollie API to use'),
                     'desc'    => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
-                    'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
+                    'name'    => static::MOLLIE_API,
                     'options' => array(
                         'query' => array(
                             array(
@@ -1015,6 +1015,7 @@ class Mollie extends PaymentModule
 
             static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
             static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
+            static::MOLLIE_API            => Configuration::get(static::MOLLIE_API),
         );
     }
 
@@ -1129,6 +1130,7 @@ class Mollie extends PaymentModule
             $mollieCss = '';
         }
         $mollieLogger = Tools::getValue(static::MOLLIE_DEBUG_LOG);
+        $mollieApi = Tools::getValue(static::MOLLIE_API);
         $mollieQrEnabled = (bool) Tools::getValue(static::MOLLIE_QRENABLED);
         $mollieErrors = Tools::getValue(static::MOLLIE_DISPLAY_ERRORS);
         if (!isset($mollieErrors)) {
@@ -1147,6 +1149,7 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
             Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
+            Configuration::updateValue(static::MOLLIE_API, $mollieApi);
 
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
@@ -2480,6 +2483,16 @@ class Mollie extends PaymentModule
     {
         try {
             $apiMethods = $this->api->methods->all(array('resource' => 'orders'))->getArrayCopy();
+            $notAvailable = array();
+            if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+                $paymentApiMethods = array_map(function ($item) {
+                    return $item->id;
+                }, $this->api->methods->all()->getArrayCopy());
+                $orderApiMethods = array_map(function ($item) {
+                    return $item->id;
+                }, $apiMethods);
+                $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
+            }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $apiMethods = array();
         } catch (Exception $e) {
@@ -2506,17 +2519,19 @@ class Mollie extends PaymentModule
         foreach ($apiMethods as $apiMethod) {
             if (!in_array($apiMethod->id, $methodsFromDb)) {
                 $deferredMethods[] = array(
-                    'id'      => $apiMethod->id,
-                    'name'    => $apiMethod->description,
-                    'enabled' => true,
-                    'image'   => $apiMethod->image->size2x,
+                    'id'        => $apiMethod->id,
+                    'name'      => $apiMethod->description,
+                    'enabled'   => true,
+                    'available' => !in_array($apiMethod->id, $notAvailable),
+                    'image'     => $apiMethod->image->svg,
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
-                    'id'      => $apiMethod->id,
-                    'name'    => $apiMethod->description,
-                    'enabled' => $configMethods[$apiMethod->id]['enabled'],
-                    'image'   => $apiMethod->image->size2x,
+                    'id'        => $apiMethod->id,
+                    'name'      => $apiMethod->description,
+                    'enabled'   => $configMethods[$apiMethod->id]['enabled'],
+                    'available' => !in_array($apiMethod->id, $notAvailable),
+                    'image'     => $apiMethod->image->svg,
                 );
             }
         }
@@ -2527,19 +2542,21 @@ class Mollie extends PaymentModule
             foreach (array('cartasi' => 'CartaSi', 'cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = array(
-                        'id'      => $id,
-                        'name'    => $name,
-                        'enabled' => true,
-                        'image'   => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        'id'        => $id,
+                        'name'      => $name,
+                        'enabled'   => true,
+                        'available' => !in_array($id, $notAvailable),
+                        'image'     => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
                     );
                 } else {
                     $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
                     $thisMethod = $dbMethods[array_search($id, array_column($dbMethods, 'id'))];
                     $methods[$configMethods[$id]['position']] = array(
-                        'id'      => $id,
-                        'name'    => $name,
-                        'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
-                        'image'   => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        'id'        => $id,
+                        'name'      => $name,
+                        'enabled'   => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
+                        'available' => !in_array($id, $notAvailable),
+                        'image'     => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
                     );
                 }
             }
@@ -2578,9 +2595,9 @@ class Mollie extends PaymentModule
         $apiMethods = $this->api->methods->all()->getArrayCopy();
         foreach ($apiMethods as $apiMethod) {
             if (Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_BIG) {
-                $apiMethod->image->fallback = $apiMethod->image->size2x;
+                $apiMethod->image->fallback = $apiMethod->image->svg;
             } else {
-                $apiMethod->image->fallback = $apiMethod->image->size1x;
+                $apiMethod->image->fallback = $apiMethod->image->svg;
             }
         }
         $creditCard = null;
@@ -2707,7 +2724,7 @@ class Mollie extends PaymentModule
      */
     public static function ppTags($string, $tags = array())
     {
-        // If tags were explicitely provided, we want to use them *after* the translation string is escaped.
+        // If tags were explicitly provided, we want to use them *after* the translation string is escaped.
         if (!empty($tags)) {
             foreach ($tags as $index => $tag) {
                 // Make positions start at 1 so that it behaves similar to the %1$d etc. sprintf positional params
@@ -2826,8 +2843,8 @@ class Mollie extends PaymentModule
      *
      * Hybrid PrestaShop 1.5/1.6/1.7 and thirty bees 1.0 function
      *
-     * @todo  : - [ ] Check PS 1.5 compatibility
-     * @todo  - [ ] Check tb 1.0 compatibility
+     * @todo - [ ] Check PS 1.5 compatibility
+     * @todo - [ ] Check tb 1.0 compatibility
      */
     public function validateMollieOrder(
         $idCart,
