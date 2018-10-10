@@ -2479,7 +2479,7 @@ class Mollie extends PaymentModule
     protected function getMethodsForConfig($active = false)
     {
         try {
-            $apiMethods = $this->api->methods->all()->getArrayCopy();
+            $apiMethods = $this->api->methods->all(array('resource' => 'orders'))->getArrayCopy();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $apiMethods = array();
         } catch (Exception $e) {
@@ -2556,20 +2556,6 @@ class Mollie extends PaymentModule
                 }
             }
         }
-
-        // TODO: remove once these methods are live
-        $methods[] = array(
-            'id'      => 'klarnapaylater',
-            'name'    => 'Klarna Pay Later',
-            'enabled' => true,
-            'image'   => 'https://www.mollie.com/external/icons/payment-methods/klarnapaylater%402x.png',
-        );
-        $methods[] = array(
-            'id'      => 'klarnasliceit',
-            'name'    => 'Klarna Slice It',
-            'enabled' => true,
-            'image'   => 'https://www.mollie.com/external/icons/payment-methods/klarnasliceit%402x.png',
-        );
 
         return $methods;
     }
