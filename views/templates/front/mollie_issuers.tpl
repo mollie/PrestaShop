@@ -34,7 +34,7 @@
   <form method="post" action="">
     <div class="form-group row">
       <div class="mollie_issuer">
-        <div class="text-center">
+        <div class="mollie_text_center">
           {if count($issuers)}
             <span style="font-size: 24px; font-weight: 700">{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</span>
             {foreach $issuers as $issuer}
