@@ -120,6 +120,7 @@
     color: white!important;
     text-decoration: none!important;
     font-weight: 700!important;
+    padding: 5px;
 }
 
 .mollie_btn_primary:hover {
