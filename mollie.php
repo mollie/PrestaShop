@@ -237,9 +237,9 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED  => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED    => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED     => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
-            static::PARTIAL_REFUND_CODE                         => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED     => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN        => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            static::PARTIAL_REFUND_CODE                         => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
         );
 
         // Load all translatable text here so we have a single translation point
