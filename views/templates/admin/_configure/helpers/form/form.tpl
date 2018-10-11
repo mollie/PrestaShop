@@ -49,12 +49,12 @@
             <div class="module_col_position dragHandle">
               <span class="positions">{$index + 1|intval}</span>
               <div class="btn-group-vertical">
-                <a class="mollie-ui btn btn-primary btn-xs mollie-up">
+                <button class="mollie-ui btn btn-primary btn-xs mollie-up">
                   <i class="icon-chevron-up"></i>
-                </a>
-                <a class="mollie-ui btn btn-primary btn-xs mollie-down">
+                </button>
+                <button class="mollie-ui btn btn-primary btn-xs mollie-down">
                   <i class="icon-chevron-down"></i>
-                </a>
+                </button>
               </div>
             </div>
             <div class="module_col_icon">
@@ -127,8 +127,11 @@
         function setInput() {
           var config = [];
           var position = 0;
-          $('.sortable > li').each(function (index, elem) {
+          var $sortableLis = $('.sortable > li');
+          $sortableLis.each(function (index, elem) {
             var $elem = $(elem);
+            $elem.find('button.mollie-up').attr('disabled', index === 0);
+            $elem.find('button.mollie-down').attr('disabled', index === ($sortableLis.length - 1));
             config.push({
               id: $elem.attr('data-method'),
               position: position++,
@@ -139,21 +142,25 @@
         }
 
         function setPositions() {
-          $('.sortable > li').each(function (index, elem) {
+          var $sortableLis = $('.sortable > li');
+          $sortableLis.each(function (index, elem) {
             var $elem = $(elem);
+            $elem.find('button.mollie-up').attr('disabled', index === 0);
+            $elem.find('button.mollie-down').attr('disabled', index === ($sortableLis.length - 1));
             $elem.attr('data-pos', index++);
             $elem.find('.positions').text(index);
           });
         }
 
         function moveUp(event) {
+          event.preventDefault();
           var $elem = $(event.target).closest('li');
           $elem.prev().insertAfter($elem);
           setPositions();
         }
 
         function moveDown(event) {
-
+          event.preventDefault();
           var $elem = $(event.target).closest('li');
           console.log($elem);
           $elem.next().insertBefore($elem);
@@ -172,10 +179,12 @@
             setPositions();
             setInput();
           });
-          $('.sortable > li').each(function (index, elem) {
+          var $sortableLis = $('.sortable > li');
+          $sortableLis.each(function (index, elem) {
+            console.log(index);
             var $elem = $(elem);
-            $elem.find('a.mollie-up').click(moveUp);
-            $elem.find('a.mollie-down').click(moveDown);
+            $elem.find('button.mollie-up').click(moveUp).attr('disabled', index === 0);
+            $elem.find('button.mollie-down').click(moveDown).attr('disabled', index === ($sortableLis.length - 1));
             {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
               $elem.find('input[type=radio]').change(setInput);
             {else}
