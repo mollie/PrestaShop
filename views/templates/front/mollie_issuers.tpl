@@ -36,7 +36,7 @@
       <div class="mollie_issuer">
         <div class="mollie_text_center">
           {if count($issuers)}
-            <span style="font-size: 24px; font-weight: 700">{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</span>
+            <span style="font-size: 24px; font-weight: 700; margin-bottom:10px">{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</span>
             {foreach $issuers as $issuer}
               <button type="submit"
                       name="issuer"
