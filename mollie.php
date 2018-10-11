@@ -1329,7 +1329,7 @@ class Mollie extends PaymentModule
                 $issuer->href = $this->context->link->getModuleLink(
                     $this->name,
                     'payment',
-                    array('method' => $method->id, 'issuer' => $issuer->id),
+                    array('method' => $method->id, 'issuer' => $issuer->id, 'rand' => microtime()),
                     true
                 );
 
@@ -1576,7 +1576,7 @@ class Mollie extends PaymentModule
                 'action'   => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    array('method' => $method->id),
+                    array('method' => $method->id, 'rand' => microtime()),
                     true
                 ),
             );
@@ -1653,7 +1653,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $method->id),
+                        array('method' => $method->id, 'rand' => microtime()),
                         true
                     ))
                     ->setInputs(array(
@@ -1684,7 +1684,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        array('method' => $method->id),
+                        array('method' => $method->id, 'rand' => microtime()),
                         true
                     ));
 
@@ -1985,13 +1985,13 @@ class Mollie extends PaymentModule
                 ? $context->link->getModuleLink(
                     'mollie',
                     'qrcode',
-                    array('cart_id' => $cartId, 'done' => 1),
+                    array('cart_id' => $cartId, 'done' => 1, 'rand' => microtime()),
                     true
                 )
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    array('cart_id' => $cartId, 'utm_nooverride' => 1),
+                    array('cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => microtime()),
                     true
                 )
             ),

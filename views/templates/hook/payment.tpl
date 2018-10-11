@@ -37,7 +37,7 @@
 <div class="mollie_methods">
   {foreach $methods as $method}
     <p class="payment_module">
-      <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id], true)|escape:'htmlall':'UTF-8' nofilter}"
+      <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id, 'rand' => microtime()], true)|escape:'htmlall':'UTF-8' nofilter}"
          title="{$msg_pay_with|sprintf:$method->description|escape:'htmlall':'UTF-8' nofilter}"
          id="mollie_link_{$method->id|escape:'htmlall':'UTF-8' nofilter}"
          class="mollie_method"
