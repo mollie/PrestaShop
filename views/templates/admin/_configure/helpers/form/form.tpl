@@ -35,6 +35,8 @@
 {block name="input"}
   {if $input.type === 'mollie-br'}
     <br>
+  {elseif $input.type === 'mollie-warning'}
+    <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
   {elseif $input.type === 'mollie-methods'}
     <section class="module_list" style="max-width: 440px">
       <ul class="list-unstyled sortable">

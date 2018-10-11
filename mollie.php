@@ -821,7 +821,9 @@ class Mollie extends PaymentModule
                 'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
                 'methods' => $this->getMethodsForConfig(),
             ),
-            array(
+        );
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+            $input[] = array(
                 'type'    => 'switch',
                 'label'   => $this->l('Enable iDEAL QR'),
                 'name'    => static::MOLLIE_QRENABLED,
@@ -838,8 +840,16 @@ class Mollie extends PaymentModule
                         'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                     ),
                 ),
-            ),
-        );
+            );
+        } else {
+            $input[] = array(
+                'type'    => 'mollie-warning',
+                'label'   => $this->l('Enable iDEAL QR'),
+                'name'    => static::MOLLIE_QRENABLED,
+                'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
+            );
+        }
+
         foreach ($statuses as $status) {
             $input[] = array(
                 'type'  => 'mollie-h3',
