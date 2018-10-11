@@ -146,7 +146,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 )
             );
         }
-        
+
         $paymentStatus = (int) $this->module->statuses[$payment->status];
 
         if ($paymentStatus < 1) {

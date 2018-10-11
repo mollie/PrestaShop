@@ -71,9 +71,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
+//        if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
             Logger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
-        }
+//        }
 
         die($this->executeWebhook());
     }
@@ -95,8 +95,23 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'OK';
         }
 
-        $transactionId = Tools::getValue('id');
+        return $this->processTransaction(Tools::getValue('id'));
+    }
 
+    /**
+     * @param string $transactionId
+     *
+     * @return string
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     *
+     * @since 3.3.0
+     */
+    public function processTransaction($transactionId)
+    {
         if (empty($transactionId)) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: Received webhook request without proper transaction ID.', Mollie::WARNING);
@@ -107,8 +122,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         try {
             /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $apiPayment */
-            $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($transactionId);
-            $transactionId = $apiPayment->id;
+            $apiToUse = Tools::substr($transactionId, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
+            $apiPayment = $this->module->api->{$apiToUse}->get($transactionId);
         } catch (Exception $e) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: Could not retrieve payment details for transaction_id "'.$transactionId.'". Reason: '.$e->getMessage(), Mollie::WARNING);
@@ -143,11 +158,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
-                && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
+                && ($apiPayment->isPaid() || $apiPayment instanceof \Mollie\Api\Resources\Order && $apiPayment->isAuthorized())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
-                
+
                 if ($paymentStatus < 1) {
                     $paymentStatus = Configuration::get('PS_OS_PAYMENT');
                 }

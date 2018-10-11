@@ -216,10 +216,7 @@ class Mollie extends PaymentModule
                 && Tools::getValue('Mollie_Api_Key')
                 && $this->context->controller instanceof AdminModulesController
             ) {
-                try {
-                    $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
-                } catch (\Mollie\Api\Exceptions\ApiException $e) {
-                }
+                $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
             }
             if (defined('_TB_VERSION_')) {
                 $this->api->addVersionString('ThirtyBees/'._TB_VERSION_);
@@ -236,17 +233,19 @@ class Mollie extends PaymentModule
         }
 
         $this->statuses = array(
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID     => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED  => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
-            static::PARTIAL_REFUND_CODE                      => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED  => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN     => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID        => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED  => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED    => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED     => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            static::PARTIAL_REFUND_CODE                         => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED     => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN        => Configuration::get(static::MOLLIE_STATUS_OPEN),
         );
 
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                                      => $this->l('paid'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                                => $this->l('authorized'),
             \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                                  => $this->l('canceled'),
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                                   => $this->l('expired'),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                                   => $this->l('refunded'),
@@ -657,6 +656,10 @@ class Mollie extends PaymentModule
         $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
         $statuses = array();
         foreach ($this->statuses as $name => $val) {
+            if ($name === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+                continue;
+            }
+
             $val = (int) $val;
             if ($val) {
                 $desc = Tools::strtolower(
@@ -1269,7 +1272,9 @@ class Mollie extends PaymentModule
         try {
             /** @var \Mollie\Api\Resources\Order|\Mollie\Api\Resources\Payment $payment */
             $payment = $this->api->{static::selectedApi()}->get($transactionId);
-            if ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
+            if (Tools::substr($transactionId, 0, 3) === 'ord') {
+                $payment->refundAll();
+            } elseif ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
                 $payment->refund(array(
                     'amount' => array(
                         'currency' => (string) $payment->amount->currency,
@@ -1301,9 +1306,7 @@ class Mollie extends PaymentModule
         return array(
             'status'      => 'success',
             'msg_success' => $this->lang('The order has been refunded!'),
-            'msg_details' => $this->lang(
-                'Mollie B.V. will transfer the money back to the customer on the next business day.'
-            ),
+            'msg_details' => $this->lang('Mollie B.V. will transfer the money back to the customer on the next business day.'),
         );
     }
 
@@ -2007,9 +2010,9 @@ class Mollie extends PaymentModule
         );
 
         // Send webshop locale
-        if ((Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API
+        if ((static::selectedApi() === static::MOLLIE_PAYMENTS_API
             && Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
-            || Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API
+            || static::selectedApi() === static::MOLLIE_ORDERS_API
         ) {
             $locale = static::getWebshopLocale();
             if (preg_match(
@@ -2020,7 +2023,7 @@ class Mollie extends PaymentModule
             }
         }
 
-        if (Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API) {
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentData['description'] = str_ireplace(
                 array('%'),
                 array($cartId),
@@ -2029,7 +2032,7 @@ class Mollie extends PaymentModule
             $paymentData['issuer'] = $issuer;
         }
 
-        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
+        if (static::selectedApi() === static::MOLLIE_ORDERS_API) {
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int) $cart->id_address_invoice);
                 $paymentData['billingAddress'] = array(
@@ -2592,7 +2595,7 @@ class Mollie extends PaymentModule
         $iso = Tools::strtolower($this->context->currency->iso_code);
         $dbMethods = $this->getMethodsForConfig(true);
         $methods = array();
-        $apiMethods = $this->api->methods->all()->getArrayCopy();
+        $apiMethods = $this->api->methods->all(array('resource' => static::selectedApi()))->getArrayCopy();
         foreach ($apiMethods as $apiMethod) {
             if (Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_BIG) {
                 $apiMethod->image->fallback = $apiMethod->image->svg;

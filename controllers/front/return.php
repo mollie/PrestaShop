@@ -36,6 +36,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once dirname(__FILE__).'/webhook.php';
+
 /**
  * Class MollieReturnModuleFrontController
  *
@@ -75,10 +77,13 @@ class MollieReturnModuleFrontController extends ModuleFrontController
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Adapter_Exception
+     * @throws SmartyException
      */
     public function initContent()
     {
         parent::initContent();
+
         $data = array();
         /**
          * Set ref is indicative of a payment that is tied to an order instead of a cart, which
@@ -101,6 +106,13 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             if ($data['auth']) {
                 $data['mollie_info'] = $this->module->getPaymentBy('cart_id', (int) $idCart);
             }
+        }
+
+        // Simulate webhook call (Orders API does not call the webhook on cancel)
+        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API && isset($data['mollie_info']['transaction_id'])) {
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($data['mollie_info']['transaction_id']);
+            $data['mollie_info'] = $this->module->getPaymentBy('order_id', $data['mollie_info']['order_id']);
         }
 
         if (isset($data['auth']) && $data['auth']) {
@@ -127,6 +139,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         $data['msg_details'] = $this->module->lang('Unfortunately your payment was expired.');
                         break;
                     case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
                         // Validate the Order
                         if (isset($cart) && Validate::isLoadedObject($cart)) {
                             Tools::redirect(
@@ -151,6 +164,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                             Logger::addLog(__METHOD__.'said: The transaction has an unexpected status ('.$data['mollie_info']['bank_status'].')', Mollie::WARNING);
                         }
+                        break;
                 }
             }
         } else {
