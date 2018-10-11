@@ -101,10 +101,8 @@ if (production) {
 
 module.exports = {
   entry: {
-    banks: ['./banks/index.ts'],
-    order: ['./order/index.tsx'],
-    updater: ['./updater/index.ts'],
-    qrcode: ['./qrcode/index.ts'],
+    front: ['./front/index.ts'],
+    back: ['./back/index.ts'],
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
@@ -122,10 +120,8 @@ module.exports = {
       {
         test: /\.(tsx?)|(jsx?)$/,
         include: [
-          path.join(__dirname, 'banks'),
-          path.join(__dirname, 'qrcode'),
-          path.join(__dirname, 'order'),
-          path.join(__dirname, 'updater'),
+          path.join(__dirname, 'front'),
+          path.join(__dirname, 'back'),
         ],
         exclude: path.join(__dirname, 'node_modules'),
         use: {
@@ -176,10 +172,8 @@ module.exports = {
           },
         ],
         include: [
-          path.join(__dirname, 'banks'),
-          path.join(__dirname, 'qrcode'),
-          path.join(__dirname, 'order'),
-          path.join(__dirname, 'updater'),
+          path.join(__dirname, 'front'),
+          path.join(__dirname, 'back'),
         ],
       },
     ],

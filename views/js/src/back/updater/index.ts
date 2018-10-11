@@ -78,9 +78,7 @@ const handleClick = async (config: any, translations: ITranslations): Promise<vo
   }).then();
 };
 
-const init = (button: HTMLElement, config: any, translations: ITranslations) => {
+export const updater = (button: HTMLElement, config: any, translations: ITranslations) => {
   button.onclick = () => handleClick(config, translations);
 };
-
-export default init;
 

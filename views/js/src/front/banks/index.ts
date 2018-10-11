@@ -37,7 +37,7 @@ import styles from './css/banks.css';
 
 declare let window: any;
 
-export default class MollieBanks {
+export class MollieBanks {
   constructor(public banks: IBanks, public translations: ITranslations) {
     this.banks = banks;
     this.translations = translations;

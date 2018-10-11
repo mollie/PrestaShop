@@ -37,7 +37,7 @@
 <div class="mollie_methods">
   {foreach $methods as $method}
     <p class="payment_module">
-      <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id, 'rand' => microtime()], true)|escape:'htmlall':'UTF-8' nofilter}"
+      <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method->id, 'rand' => time()], true)|escape:'htmlall':'UTF-8' nofilter}"
          title="{$msg_pay_with|sprintf:$method->description|escape:'htmlall':'UTF-8' nofilter}"
          id="mollie_link_{$method->id|escape:'htmlall':'UTF-8' nofilter}"
          class="mollie_method"
@@ -49,7 +49,7 @@
             <img class="mollie_image" src="{$method->image->size1x|escape:'htmlall':'UTF-8' nofilter}"{if !empty($method->image->fallback)} onerror="this.src = '{$method->image->fallback|escape:'javascript':'UTF-8' nofilter}'"{/if} alt="{$method->description|escape:'htmlall':'UTF-8' nofilter}">
           {/if}
         {else}
-          <span class="mollie_margin">&nbsp;</span>
+          <span class="mollie_margin"> &nbsp;</span>
         {/if}
         {$module->lang($method->description)|escape:'htmlall':'UTF-8' nofilter}
       </a>
@@ -57,24 +57,18 @@
   {/foreach}
 </div>
 
-{if Configuration::get(Mollie::MOLLIE_QRENABLED)}
+{if Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API}
   {include file="./init_urls.tpl"}
 {/if}
 
-{if !empty($issuers['ideal']) && $issuer_setting == Mollie::ISSUERS_ON_CLICK}
+{if !empty($issuers['ideal']) && $issuer_setting === Mollie::ISSUERS_ON_CLICK}
   <script type="text/javascript">
     (function () {
-      if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.banks === 'undefined') {
+      if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
         var elem = document.createElement('script');
         elem.type = 'text/javascript';
         document.querySelector('head').appendChild(elem);
-        elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8' nofilter}';
-      }
-      if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.qrcode === 'undefined') {
-        var qrcodeElem = document.createElement('script');
-        qrcodeElem.type = 'text/javascript';
-        document.querySelector('head').appendChild(qrcodeElem);
-        qrcodeElem.src = '{$mollie_qrcode_app_path|escape:'javascript':'UTF-8' nofilter}';
+        elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
       }
 
       function showBanks(event) {
@@ -83,16 +77,16 @@
         var banks = {$issuers['ideal']|json_encode};
         var translations = {$mollie_translations|json_encode};
 
-        if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.banks === 'undefined') {
+        if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
           var elem = document.createElement('script');
           elem.type = 'text/javascript';
           elem.onload = function () {
-            new window.MollieModule.banks.default(banks, translations);
+            new window.MollieModule.front.MollieBanks(banks, translations);
           };
           document.querySelector('head').appendChild(elem);
-          elem.src = '{$mollie_banks_app_path|escape:'javascript':'UTF-8' nofilter}';
+          elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
         } else {
-          new window.MollieModule.banks.default(banks, translations);
+          new window.MollieModule.front.MollieBanks(banks, translations);
         }
       }
 

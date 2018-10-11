@@ -30,27 +30,5 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
-
-import React from 'react';
-import { render } from 'react-dom';
-
-import RefundPanel from './RefundPanel';
-import store from './store';
-import { updateConfig, updateStatus, updateTranslations } from './store/actions';
-
-export const orderInfo = (target: any, config: IMollieOrderConfig = {}, translations: ITranslations = {}) => {
-  // if (_.includes([], config.method)) {
-  //   return render(<OrderPanel config={config} store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
-  // }
-
-  store.dispatch(updateStatus(config.initialStatus));
-  store.dispatch(updateTranslations(translations));
-  store.dispatch(updateConfig(config));
-
-  return render(<RefundPanel config={config} store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
-};
-
-export default orderInfo;
-
-
+export * from './updater';
+export * from './order';

@@ -34,8 +34,8 @@
   (function () {
     window.MollieModule = window.MollieModule || { };
     window.MollieModule.urls = window.MollieModule.urls || { };
-    window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew', 'rand' => microtime()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
-    window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount', 'rand' => microtime()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
-    window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus', 'rand' => microtime()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
   }());
 </script>

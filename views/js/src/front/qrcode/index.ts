@@ -68,7 +68,7 @@ const throttle = (callback: any, delay: number) => {
   return wrapper;
 };
 
-export default class QrCode {
+export class QrCode {
   public suffix: string;
   public target: HTMLElement;
   public title: string;

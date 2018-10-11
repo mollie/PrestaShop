@@ -98,8 +98,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $tplData['link'] = $this->context->link;
                 $tplData['cartAmount'] = (int) ($this->context->cart->getOrderTotal(true) * 100);
                 $tplData['qrAlign'] = 'center';
-                if (Configuration::get(Mollie::MOLLIE_QRENABLED)) {
-                    $this->context->controller->addJS(_PS_MODULE_DIR_.'mollie/views/js/dist/qrcode.min.js');
+                if (Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API) {
+                    $this->context->controller->addJS(_PS_MODULE_DIR_.'mollie/views/js/dist/front.min.js');
                 }
                 $this->context->smarty->assign($tplData);
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {

@@ -30,7 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-{if Configuration::get(Mollie::MOLLIE_QRENABLED)}
+{if Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API}
   {include file="./init_urls.tpl"}
   <div id="mollie-qr-code"></div>
   <script type="text/javascript">
@@ -38,26 +38,26 @@
       var scripts = document.getElementsByTagName('script');
       var found = false;
       for (var i = scripts.length; i--;) {
-        if (scripts[i].src && scripts[i].src.indexOf('qrcode.min.js') > -1) {
+        if (scripts[i].src && scripts[i].src.indexOf('front.min.js') > -1) {
           found = true;
           break;
         }
       }
       if (!found) {
         var newScript = document.createElement('SCRIPT');
-        newScript.src = '{Mollie::getMediaPathForJavaScript('views/js/dist/qrcode.min.js')|escape:'javascript':'UTF-8'}';
+        newScript.src = '{Mollie::getMediaPathForJavaScript('views/js/dist/front.min.js')|escape:'javascript':'UTF-8'}';
         newScript.type = 'text/javascript';
         document.head.appendChild(newScript);
       }
     }());
     (function initQrCode() {
       if (typeof window.MollieModule === 'undefined'
-        || typeof window.MollieModule.qrcode === 'undefined'
+        || typeof window.MollieModule.front === 'undefined'
       ) {
         return setTimeout(initQrCode, 100);
       }
 
-      new window.MollieModule.qrcode.default(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
+      new window.MollieModule.front.QrCode(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
     }());
   </script>
 {/if}

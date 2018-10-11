@@ -1341,7 +1341,7 @@ class Mollie extends PaymentModule
                 $issuer->href = $this->context->link->getModuleLink(
                     $this->name,
                     'payment',
-                    array('method' => $method->id, 'issuer' => $issuer->id, 'rand' => microtime()),
+                    array('method' => $method->id, 'issuer' => $issuer->id, 'rand' => time()),
                     true
                 );
 
@@ -1540,8 +1540,7 @@ class Mollie extends PaymentModule
             'msg_pay_with'           => $this->lang['Pay with %s'],
             'msg_bankselect'         => $this->lang['Select your bank:'],
             'module'                 => $this,
-            'mollie_banks_app_path'  => static::getMediaPath($this->_path.'views/js/dist/banks.min.js'),
-            'mollie_qrcode_app_path' => static::getMediaPath($this->_path.'views/js/dist/qrcode.min.js'),
+            'mollie_front_app_path'  => static::getMediaPath($this->_path.'views/js/dist/front.min.js'),
             'mollie_translations'    => array(
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
@@ -1593,7 +1592,7 @@ class Mollie extends PaymentModule
                 'action'   => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    array('method' => $method->id, 'rand' => microtime()),
+                    array('method' => $method->id, 'rand' => time()),
                     true
                 ),
             );
@@ -1670,7 +1669,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $method->id, 'rand' => microtime()),
+                        array('method' => $method->id, 'rand' => time()),
                         true
                     ))
                     ->setInputs(array(
@@ -1701,7 +1700,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        array('method' => $method->id, 'rand' => microtime()),
+                        array('method' => $method->id, 'rand' => time()),
                         true
                     ));
 
@@ -2002,13 +2001,13 @@ class Mollie extends PaymentModule
                 ? $context->link->getModuleLink(
                     'mollie',
                     'qrcode',
-                    array('cart_id' => $cartId, 'done' => 1, 'rand' => microtime()),
+                    array('cart_id' => $cartId, 'done' => 1, 'rand' => time()),
                     true
                 )
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    array('cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => microtime()),
+                    array('cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time()),
                     true
                 )
             ),
@@ -2113,9 +2112,13 @@ class Mollie extends PaymentModule
             }
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines();
-            $paymentData['payment'] = array(
-                'issuer' => $issuer,
-            );
+            $paymentData['payment'] = array();
+            if ($issuer) {
+                $paymentData['payment']['issuer'] = $issuer;
+            }
+            if (empty($paymentData['payment'])) {
+                unset($paymentData['payment']);
+            }
         }
 
         return $paymentData;
