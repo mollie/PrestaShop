@@ -40,4 +40,8 @@ declare global {
   interface IBankOptions {
     [key: string]: any,
   }
+
+  interface IMollieOrderConfig {
+    [key: string]: any,
+  }
 }

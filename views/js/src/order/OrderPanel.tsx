@@ -30,28 +30,3 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
-import swal from 'sweetalert';
-import xss from 'xss';
-
-const refund = (callback: any, translations: ITranslations) => {
-  // @ts-ignore
-  swal({
-    dangerMode: true,
-    icon: 'warning',
-    title: xss(translations.areYouSure),
-    text: xss(translations.areYouSureYouWantToRefund),
-    buttons: {
-      cancel: xss(translations.cancel),
-      confirm: xss(translations.refund),
-    },
-  }).then((value: any) => {
-    [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((elem: HTMLElement) => {
-      elem.parentElement.removeChild(elem);
-    });
-
-    callback(!!value);
-  });
-};
-
-export default refund;

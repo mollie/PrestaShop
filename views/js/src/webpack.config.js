@@ -102,12 +102,12 @@ if (production) {
 module.exports = {
   entry: {
     banks: ['./banks/index.ts'],
-    confirmrefund: ['./refund/index.ts'],
+    order: ['./order/index.tsx'],
     updater: ['./updater/index.ts'],
     qrcode: ['./qrcode/index.ts'],
   },
   resolve: {
-    extensions: ['.js', '.ts', '.css'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
   },
   output: {
     path: path.resolve(__dirname, '../dist'),
@@ -120,11 +120,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts)|(js)$/,
+        test: /\.(tsx?)|(jsx?)$/,
         include: [
           path.join(__dirname, 'banks'),
           path.join(__dirname, 'qrcode'),
-          path.join(__dirname, 'refund'),
+          path.join(__dirname, 'order'),
           path.join(__dirname, 'updater'),
         ],
         exclude: path.join(__dirname, 'node_modules'),
@@ -132,7 +132,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             plugins: [
-              'transform-class-properties',
+              '@babel/plugin-proposal-class-properties',
               'babel-plugin-lodash',
             ],
             presets: [
@@ -156,6 +156,7 @@ module.exports = {
                 debug: false,
               }],
               '@babel/typescript',
+              '@babel/react',
             ],
             sourceMap: true,
           },
@@ -177,7 +178,7 @@ module.exports = {
         include: [
           path.join(__dirname, 'banks'),
           path.join(__dirname, 'qrcode'),
-          path.join(__dirname, 'refund'),
+          path.join(__dirname, 'order'),
           path.join(__dirname, 'updater'),
         ],
       },

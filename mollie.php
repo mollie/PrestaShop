@@ -434,6 +434,18 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
+        if (Tools::getValue('ajax')) {
+            @ob_clean();
+            header('Content-Type: application/json;charset=UTF-8');
+
+            if (!method_exists($this, 'displayAjax'.Tools::ucfirst(Tools::getValue('action')))) {
+                die(Tools::jsonEncode(array(
+                    'success' => false,
+                )));
+            }
+            die(Tools::jsonEncode($this->{'displayAjax'.Tools::ucfirst(Tools::getValue('action'))}()));
+        }
+
         if ($module = $this->checkPaymentModuleOverride()) {
             $this->context->controller->warnings[] = sprintf(
                 $this->l('The method %s is overridden by module %s. This can cause interference with payments.'),
@@ -1259,8 +1271,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int    $orderId
-     * @param string $transactionId
+     * @param int    $orderId       PrestaShop Order ID
+     * @param string $transactionId Transaction/Mollie Order ID
      *
      * @return array
      * @throws Adapter_Exception
@@ -1422,60 +1434,65 @@ class Mollie extends PaymentModule
     {
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
 
-        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-            sprintf(
-                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
-                _DB_PREFIX_.'mollie_payments',
-                (int) $cartId
-            )
-        );
-        // If the order_id is NULL in the mollie_payments db table
-        // use Order::getOrderByCartId for backwards compatibility
-        if (empty($mollieData['order_id'])) {
-            $mollieData['order_id'] = Order::getOrderByCartId((int) $cartId);
-        }
-
-        if (Tools::isSubmit('Mollie_Refund')) {
-            $tplData = $this->doRefund((int) $mollieData['order_id'], $mollieData['transaction_id']);
-            if ($tplData['status'] === 'success') {
-                Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true)
-                    .'&vieworder&id_order='.(int) $params['id_order']);
-            }
-        } elseif (isset($mollieData['bank_status'])
-            && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED
-        ) {
-            $tplData = array(
-                'status'      => 'success',
-                'msg_success' => $this->lang('The order has been refunded!'),
-                'msg_details' => $this->lang(
-                    'Mollie B.V. will transfer the money back to the customer on the next business day.'
-                ),
-            );
-        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], array(
-                \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT
-            ))) {
-            $tplData = array(
-                'status'          => 'form',
-                'msg_button'      => $this->lang['Refund this order'],
-                'msg_description' => sprintf(
-                    $this->lang['Refund order #%d through the Mollie API.'],
-                    (int) $mollieData['order_id']
-                ),
-            );
-        } else {
-            return '';
-        }
-
-        $tplData['msg_title'] = $this->lang['Mollie refund'];
-        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
-        $this->context->controller->addJS($this->_path.'views/js/dist/confirmrefund.min.js');
-        $this->smarty->assign($tplData);
+//        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+//            sprintf(
+//                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
+//                _DB_PREFIX_.'mollie_payments',
+//                (int) $cartId
+//            )
+//        );
+//        // If the order_id is NULL in the mollie_payments db table
+//        // use Order::getOrderByCartId for backwards compatibility
+//        if (empty($mollieData['order_id'])) {
+//            $mollieData['order_id'] = Order::getOrderByCartId((int) $cartId);
+//        }
+//
+//        if (Tools::isSubmit('Mollie_Refund')) {
+//            $tplData = $this->doRefund((int) $mollieData['order_id'], $mollieData['transaction_id']);
+//            if ($tplData['status'] === 'success') {
+//                Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true)
+//                    .'&vieworder&id_order='.(int) $params['id_order']);
+//            }
+//        } elseif (isset($mollieData['bank_status'])
+//            && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED
+//        ) {
+//            $tplData = array(
+//                'status'      => 'success',
+//                'msg_success' => $this->lang('The order has been refunded!'),
+//                'msg_details' => $this->lang(
+//                    'Mollie B.V. will transfer the money back to the customer on the next business day.'
+//                ),
+//            );
+//        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], array(
+//                \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT
+//            ))) {
+//            $tplData = array(
+//                'status'          => 'form',
+//                'msg_button'      => $this->lang['Refund this order'],
+//                'msg_description' => sprintf(
+//                    $this->lang['Refund order #%d through the Mollie API.'],
+//                    (int) $mollieData['order_id']
+//                ),
+//            );
+//        } else {
+//            return '';
+//        }
+//
+//        $tplData['msg_title'] = $this->lang['Mollie refund'];
+//        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
+        $this->context->controller->addJS($this->_path.'views/js/dist/order.min.js');
         $this->context->smarty->assign(array(
-            'link'       => Context::getContext()->link,
-            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
+           'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
         ));
+        return $this->display(__FILE__, 'order_info.tpl');
+        return '<div id="mollie_order"></div><script type="text/javascript">(function(){window.MollieModule.order.orderInfo("#mollie_order")}());</script>';
+//        $this->smarty->assign($tplData);
+//        $this->context->smarty->assign(array(
+//            'link'       => Context::getContext()->link,
+//            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
+//        ));
 
-        return $this->display(__FILE__, 'refund.tpl');
+//        return $this->display(__FILE__, 'refund.tpl');
     }
 
     /**
@@ -3736,6 +3753,8 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      * @throws PrestaShopException
+     *
+     * @since 3.3.0
      */
     public static function selectedApi()
     {
@@ -3747,5 +3766,231 @@ class Mollie extends PaymentModule
         }
 
         return static::$selectedApi;
+    }
+
+    /**
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     *
+     * @since 3.3.0
+     */
+    protected function renderOrderLineList()
+    {
+        $list = json_decode('[
+    {
+      "resource": "orderline",
+      "id": "odl_bv4nfb",
+      "orderId": "ord_gcd6xz",
+      "name": "Cadeaukaart",
+      "sku": null,
+      "type": "physical",
+      "status": "created",
+      "isCancelable": false,
+      "quantity": 1,
+      "quantityShipped": 0,
+      "amountShipped": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "quantityRefunded": 0,
+      "amountRefunded": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "quantityCanceled": 0,
+      "amountCanceled": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "shippableQuantity": 0,
+      "refundableQuantity": 0,
+      "cancelableQuantity": 0,
+      "unitPrice": {
+        "value": "60.50",
+        "currency": "EUR"
+      },
+      "vatRate": "21.00",
+      "vatAmount": {
+        "value": "10.50",
+        "currency": "EUR"
+      },
+      "totalAmount": {
+        "value": "60.50",
+        "currency": "EUR"
+      },
+      "createdAt": "2018-10-10T23:16:00+00:00"
+    },
+    {
+      "resource": "orderline",
+      "id": "odl_hteccp",
+      "orderId": "ord_gcd6xz",
+      "name": "Shipping",
+      "sku": null,
+      "type": "physical",
+      "status": "created",
+      "isCancelable": false,
+      "quantity": 1,
+      "quantityShipped": 0,
+      "amountShipped": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "quantityRefunded": 0,
+      "amountRefunded": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "quantityCanceled": 0,
+      "amountCanceled": {
+        "value": "0.00",
+        "currency": "EUR"
+      },
+      "shippableQuantity": 0,
+      "refundableQuantity": 0,
+      "cancelableQuantity": 0,
+      "unitPrice": {
+        "value": "2.89",
+        "currency": "EUR"
+      },
+      "vatRate": "21.00",
+      "vatAmount": {
+        "value": "0.50",
+        "currency": "EUR"
+      },
+      "totalAmount": {
+        "value": "2.89",
+        "currency": "EUR"
+      },
+      "createdAt": "2018-10-10T23:16:00+00:00"
+    }
+  ]', true);
+        $fieldsList = array(
+            'resource'         => array(
+                'title' => $this->l('Resource'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'orderId'          => array(
+                'title' => $this->l('Order ID'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'name'             => array(
+                'title' => $this->l('Name'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'quantity'         => array(
+                'title' => $this->l('Qty.'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'quantityShipped'  => array(
+                'title' => $this->l('Qty. Shipped'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'quantityCanceled' => array(
+                'title' => $this->l('Qty. Canceled'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'quantityRefunded' => array(
+                'title' => $this->l('Qty. Refunded'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'status'           => array(
+                'title' => $this->l('Status'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+            'unitPrice'        => array(
+                'title' => $this->l('Unit Price'),
+                'type'  => 'price',
+                'align' => 'center',
+            ),
+            'totalAmount'      => array(
+                'title' => $this->l('Total Amount'),
+                'type'  => 'text',
+                'align' => 'center',
+            ),
+        );
+        $helper = new HelperList();
+        $helper->shopLinkType = '';
+        $helper->simple_header = true;
+        $helper->actions = array('OrderLineShip', 'OrderLineRefund');
+        $helper->show_toolbar = false;
+        $helper->module = $this;
+        $helper->identifier = 'mollie_order_lines';
+        $this->context->smarty->assign(array(
+            'mollieMethod' => 'klarnapaylater',
+        ));
+        $helper->title = $this->display(__FILE__, 'views/templates/admin/klarna/title.tpl');
+        $helper->table = null;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = '';
+        $helper->colorOnBackground = true;
+        $helper->no_link = true;
+        $helper->listTotal = count($list);
+        return $helper->generateList($list, $fieldsList);
+    }
+
+    /**
+     * @param string $token
+     * @param string $id
+     * @param string $name
+     *
+     * @return string
+     *
+     * @since 3.3.0
+     */
+    public function displayOrderLineRefundLink($token, $id, $name)
+    {
+        return '<a href="#refund"><i class="icon icon-money"></i> Refund</a>';
+    }
+
+    /**
+     * @param string $token
+     * @param int    $id
+     * @param string $name
+     *
+     * @return string
+     *
+     * @since 3.3.0
+     */
+    public function displayOrderLineShipLink($token, $id, $name)
+    {
+        return '<a href="#ship" class="btn btn-default"><i class="icon icon-truck"></i> Ship</a>';
+    }
+
+    /**
+     * @return array
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
+    public function displayAjaxMollieOrderInfo()
+    {
+        $input = @json_decode(file_get_contents('php://input'), true);
+
+        $cartId = Cart::getCartIdByOrderId((int) $input['orderId']);
+
+        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            sprintf(
+                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
+                _DB_PREFIX_.'mollie_payments',
+                (int) $cartId
+            )
+        );
+
+        $status = $this->doRefund($mollieData['order_id'], $mollieData['transaction_id']);
+
+        return array('success' => isset($status['status']) && $status['status'] === 'success');
     }
 }
