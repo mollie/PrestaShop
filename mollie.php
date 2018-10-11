@@ -2030,6 +2030,37 @@ class Mollie extends PaymentModule
                 $description
             );
             $paymentData['issuer'] = $issuer;
+
+            if (isset($context->cart)) {
+                if (isset($context->cart->id_customer)) {
+                    $buyer = new Customer($context->cart->id_customer);
+                    $paymentData['billingEmail'] = (string) $buyer->email;
+                }
+                if (isset($context->cart->id_address_invoice)) {
+                    $billing = new Address((int) $context->cart->id_address_invoice);
+                    $paymentData['billingAddress'] = array(
+                        'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
+                        'city'            => (string) $billing->city,
+                        'region'          => (string) State::getNameById($billing->id_state),
+                        'country'         => (string) Country::getIsoById($billing->id_country),
+                    );
+                    if ($billing->postcode) {
+                        $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode;
+                    }
+                }
+                if (isset($context->cart->id_address_delivery)) {
+                    $shipping = new Address((int) $context->cart->id_address_delivery);
+                    $paymentData['shippingAddress'] = array(
+                        'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
+                        'city'            => (string) $shipping->city,
+                        'region'          => (string) State::getNameById($shipping->id_state),
+                        'country'         => (string) Country::getIsoById($shipping->id_country),
+                    );
+                    if ($shipping->postcode) {
+                        $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode;
+                    }
+                }
+            }
         }
 
         if (static::selectedApi() === static::MOLLIE_ORDERS_API) {
@@ -2042,9 +2073,11 @@ class Mollie extends PaymentModule
                     'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
                     'city'            => (string) $billing->city,
                     'region'          => (string) State::getNameById($billing->id_state),
-                    'postalCode'      => (string) $billing->postcode,
                     'country'         => (string) Country::getIsoById($billing->id_country),
                 );
+                if ($billing->postcode) {
+                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode;
+                }
             }
             if (isset($cart->id_address_delivery)) {
                 $shipping = new Address((int) $cart->id_address_delivery);
@@ -2055,9 +2088,11 @@ class Mollie extends PaymentModule
                     'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
                     'city'            => (string) $shipping->city,
                     'region'          => (string) State::getNameById($shipping->id_state),
-                    'postalCode'      => (string) $shipping->postcode,
                     'country'         => (string) Country::getIsoById($shipping->id_country),
                 );
+                if ($shipping->postcode) {
+                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode;
+                }
             }
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines();
