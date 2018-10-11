@@ -35,7 +35,7 @@ import '@babel/polyfill';
 import React from 'react';
 import { render } from 'react-dom';
 
-import RefundPanel from './RefundPanel';
+import RefundPanel from './refund/RefundPanel';
 import store from './store';
 import { updateConfig, updateStatus, updateTranslations } from './store/actions';
 

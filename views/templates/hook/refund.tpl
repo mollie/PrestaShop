@@ -100,7 +100,7 @@
     if (refundButton != null) {
       document.getElementById('mollie_refund').onclick = function (event) {
         event.preventDefault();
-        window.MollieModule.order.refund(function (value) {
+        window.MollieModule.back.refund(function (value) {
           if (value) {
             document.getElementById('mollie_refund_form').submit();
           }

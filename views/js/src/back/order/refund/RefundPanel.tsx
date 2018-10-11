@@ -34,9 +34,7 @@ import React, { Component } from 'react';
 import { connect, Provider } from 'react-redux';
 
 import RefundForm from './RefundForm';
-import RefundFail from './RefundFail';
-import RefundSuccess from './RefundSuccess';
-import store from './store';
+import store from '../store';
 import { Store } from 'redux';
 
 interface IProps {
@@ -56,36 +54,18 @@ class RefundPanel extends Component<IProps> {
     }
     const { moduleDir } = config;
 
-    let content;
-    switch (status) {
-      case 'form':
-        content = <RefundForm message={'test'}/>;
-        break;
-      case 'fail':
-        content = <RefundFail failMessage={'test'} failDetails={'tast'}/>;
-        break;
-      case 'success':
-        content = <RefundSuccess successMessage={'test'} successDetails={'tast'}/>;
-        break;
-    }
-
     return (
       <Provider store={store}>
         <div className="panel">
           <div className="panel-heading">
             <img
               src={`${moduleDir}views/img/mollie_panel_icon.png`}
-              height="32"
               width="32"
-              style={{
-                height: '14px',
-                width: '14px',
-              }}
-            /> Mollie
+              height="32"
+              style={{ height: '16px', width: '16px', opacity: 0.8 }}
+            /> <span>Mollie</span>&nbsp;
           </div>
-          <div className="mollie_refund_button_box">
-            {content}
-          </div>
+          {status === 'form' && <RefundForm/>}
         </div>
       </Provider>
     );

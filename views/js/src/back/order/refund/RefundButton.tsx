@@ -30,24 +30,32 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 interface IProps {
-  failMessage: string,
-  failDetails: string,
+  loading: boolean,
+
+  // Redux
+  translations?: ITranslations,
 }
 
-class RefundFail extends Component<IProps> {
+class RefundButton extends Component<IProps> {
   render() {
-    const { failMessage, failDetails } = this.props;
+    const { translations } = this.props;
 
     return (
-      <Fragment>
-        <div className="mollie_refund_fail">{failMessage}</div>
-        <div className="mollie_refund_details">{failDetails}</div>
-      </Fragment>
+      <button id="stripe_full_refund_button" type="button" className="btn btn-default">
+        <i className="icon icon-undo"/> {translations.fullRefund}
+      </button>
     );
   }
 }
 
-export default RefundFail;
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+  })
+)
+(RefundButton);

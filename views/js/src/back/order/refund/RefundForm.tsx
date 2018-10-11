@@ -30,18 +30,18 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
 import swal from 'sweetalert';
-import xss from "xss";
+import xss from 'xss';
 import { Dispatch } from 'redux';
-import { updateStatus } from './store/actions';
+import { updateStatus } from '../store/actions';
+import RefundButton from './RefundButton';
+import PartialRefundButton from './PartialRefundButton';
 
 interface IProps {
-  message: string,
-
   // Redux
   config?: IMollieOrderConfig,
   translations?: ITranslations,
@@ -49,9 +49,17 @@ interface IProps {
   dispatchUpdateStatus?: Function,
 }
 
+interface IState {
+  loading: boolean,
+}
+
 declare let window: any;
 
 class RefundForm extends Component<IProps> {
+  state: IState = {
+    loading: false,
+  };
+
   refund = async (event: any) => {
     event.preventDefault();
 
@@ -89,21 +97,29 @@ class RefundForm extends Component<IProps> {
   };
 
   render() {
-    const { message } = this.props;
+    const { loading } = this.state;
+    const { translations } = this.props;
     return (
-      <div>
-        <div className="mollie_refund_desc">{message}</div>
-        <a
-          type="button"
-          className="btn btn-default"
-          onClick={(e) => this.refund(e)}
-          style={{
-            cursor: 'pointer',
-          }}
-        >
-          Refund yo
-        </a>
-      </div>
+      <Fragment>
+        <h4>{translations.refund}</h4>
+        <div className="well well-sm">
+          <div className="form-inline">
+            <div className="form-group">
+              <RefundButton loading={loading}/>
+            </div>
+            <div className="form-group" style={{ marginLeft: '10px' }}>
+              <div className="input-group" style={{ minWidth: '400px' }}>
+                <div className="input-group-addon">
+                  {translations.remaining}:
+                </div>
+                <input type="hidden" value="1398"/>
+                <input type="text" className="form-control" placeholder="$59.59"/>
+                <PartialRefundButton loading={loading}/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment>
     );
   }
 }

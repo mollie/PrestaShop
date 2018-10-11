@@ -30,24 +30,33 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 interface IProps {
-  successMessage: string,
-  successDetails: string,
+  loading: boolean,
+
+  // Redux
+  translations?: ITranslations,
 }
 
-class RefundSuccess extends Component<IProps> {
+class PartialRefundButton extends Component<IProps> {
   render() {
-    const { successMessage, successDetails } = this.props;
+    const { translations } = this.props;
+
     return (
-      <div>
-        <div className="mollie_refund_success">{successMessage}</div>
-        <br/>
-        <div className="mollie_refund_details"> {successDetails}</div>
+      <div className="input-group-btn">
+        <button id="stripe_partial_refund_button" className="btn btn-default" type="button">
+          <i className="icon icon-undo"/> {translations.partialRefund}
+        </button>
       </div>
-    )
+    );
   }
 }
 
-export default RefundSuccess;
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+  })
+)(PartialRefundButton);

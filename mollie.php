@@ -1498,12 +1498,12 @@ class Mollie extends PaymentModule
 //
 //        $tplData['msg_title'] = $this->lang['Mollie refund'];
 //        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
-        $this->context->controller->addJS($this->_path.'views/js/dist/order.min.js');
+        $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
         $this->context->smarty->assign(array(
            'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
         ));
         return $this->display(__FILE__, 'order_info.tpl');
-        return '<div id="mollie_order"></div><script type="text/javascript">(function(){window.MollieModule.order.orderInfo("#mollie_order")}());</script>';
+        return '<div id="mollie_order"></div><script type="text/javascript">(function(){window.MollieModule.back.orderInfo("#mollie_order")}());</script>';
 //        $this->smarty->assign($tplData);
 //        $this->context->smarty->assign(array(
 //            'link'       => Context::getContext()->link,
