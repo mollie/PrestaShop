@@ -727,7 +727,10 @@ class Mollie extends PaymentModule
                 'required' => true,
                 'class'    => 'fixed-width-xxl',
             ),
-            array(
+        );
+
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+            $input[] = array(
                 'type'    => 'select',
                 'label'   => $this->l('Send locale for payment screen'),
                 'desc'    => static::ppTags(
@@ -749,7 +752,10 @@ class Mollie extends PaymentModule
                     'id'    => 'id',
                     'name'  => 'name',
                 ),
-            ),
+            );
+        }
+
+        $input = array_merge($input, array(
             array(
                 'type'  => 'mollie-h2',
                 'name'  => '',
@@ -821,7 +827,8 @@ class Mollie extends PaymentModule
                 'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
                 'methods' => $this->getMethodsForConfig(),
             ),
-        );
+        ));
+
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $input[] = array(
                 'type'    => 'switch',
@@ -888,6 +895,7 @@ class Mollie extends PaymentModule
                 );
             }
         }
+
         $input = array_merge(
             $input,
             array(
