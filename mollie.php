@@ -3853,6 +3853,19 @@ class Mollie extends PaymentModule
         $payment = $this->api->payments->get($transactionId);
         if ($payment && method_exists($payment, 'refunds')) {
             $refunds = $payment->refunds();
+            if (empty($refunds)) {
+                $refunds = array();
+            }
+            $refunds = array_map(function ($refund) {
+                return array_intersect_key(
+                    (array) $refund,
+                    array_flip(array(
+                        'resource',
+                        'id',
+                        'amount',
+                        'createdAt',
+                    )));
+            }, (array) $refunds);
             $payment = array_intersect_key(
                 (array) $payment,
                 array_flip(array(
