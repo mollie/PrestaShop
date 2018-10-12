@@ -79,20 +79,34 @@ class OrderLinesTable extends Component<IProps> {
       content: el,
     });
     if (input) {
-      let tracking: IMollieTracking = null;
+      let tracking: IMollieTracking = {
+        carrier: '',
+        code: '',
+        url: '',
+      };
+      const checkSwalButton = async (): Promise<void> => {
+        const elem: HTMLInputElement = document.querySelector('.swal-button.swal-button--confirm');
+
+        elem.disabled = tracking && (!tracking.code || !tracking.carrier);
+      };
+
+      const updateTracking = (newTracking: IMollieTracking) => {
+        tracking = newTracking;
+        checkSwalButton().then();
+      };
 
       let trackingWrapper = document.createElement('DIV');
       trackingWrapper.innerHTML = '';
-      render(<ShipmentTrackingEditor translations={translations} edited={newTracking => tracking = newTracking}/>, trackingWrapper);
+      render(<ShipmentTrackingEditor translations={translations} edited={newTracking => updateTracking(newTracking)}/>, trackingWrapper);
       el = trackingWrapper.firstChild;
       // @ts-ignore
-      input = await swal({
+      [ input ] = await Promise.all([swal({
         title: xss(translations.trackingDetails),
         text: xss(translations.addTrackingInfo),
         buttons: [xss(translations.cancel), xss(translations.shipProducts)],
         closeOnClickOutside: false,
         content: el,
-      });
+      }), checkSwalButton()]);
       if (input) {
         try {
           this.setState(() => ({ loading: true }));
@@ -131,7 +145,7 @@ class OrderLinesTable extends Component<IProps> {
                 <td className="actions">
                   <div className="btn-group-action">
                     <div className="btn-group pull-right">
-                      <button className=" btn btn-default" title="" disabled={loading} onClick={() => this.ship([line])}>
+                      <button className=" btn btn-default" title="" disabled={loading || line.shippableQuantity < 1} onClick={() => this.ship([line])}>
                         <i className="icon icon-truck"/> {translations.ship}
                       </button>
                       {/*<button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">*/}
