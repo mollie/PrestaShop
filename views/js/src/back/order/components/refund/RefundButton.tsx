@@ -60,7 +60,7 @@ class RefundButton extends Component<IProps> {
           'icon-undo': !loading,
           'icon-circle-o-notch': loading,
           'icon-spin': loading,
-        })}/> {translations.fullRefund}
+        })}/> {translations.refundOrder}
       </button>
     );
   }

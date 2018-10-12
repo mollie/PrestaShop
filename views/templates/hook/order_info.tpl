@@ -48,7 +48,7 @@
         areYouSureYouWantToRefund: '{l s='Are you sure you want to refund this order?' mod='mollie' js=1}',
         refund: '{l s='Refund' mod='mollie' js=1}',
         cancel: '{l s='Cancel' mod='mollie' js=1}',
-        fullRefund:'{l s='Full refund' mod='mollie' js=1}',
+        refundOrder:'{l s='Refund order' mod='mollie' js=1}',
         remaining: '{l s='Remaining' mod='mollie' js=1}',
         partialRefund: '{l s='Partial refund' mod='mollie' js=1}',
         invalidAmount: '{l s='Invalid amount' mod='mollie' js=1}',
