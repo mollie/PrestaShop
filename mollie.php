@@ -722,7 +722,7 @@ class Mollie extends PaymentModule
             array(
                 'type'     => 'text',
                 'label'    => $this->l('Description'),
-                'desc'     => $this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters.'),
+                'desc'     => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {customer.firstname} {customer.lastname} {customer.company}'),
                 'name'     => static::MOLLIE_DESCRIPTION,
                 'required' => true,
                 'class'    => 'fixed-width-xxl',
@@ -1105,8 +1105,10 @@ class Mollie extends PaymentModule
      * @return array
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
+     * @since 3.3.0 static function
      */
-    public function getPaymentBy($column, $id)
+    public static function getPaymentBy($column, $id)
     {
         $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
             sprintf(
@@ -1289,21 +1291,48 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int    $orderId       PrestaShop Order ID
-     * @param string $transactionId Transaction/Mollie Order ID
+     * @param int    $orderId
+     * @param string $transactionId
      *
      * @return array
+     *
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
+     * @since      3.0.0
+     * @deprecated 3.3.0
      */
     protected function doRefund($orderId, $transactionId)
     {
+        return $this->doPaymentRefund($orderId, $transactionId);
+    }
+
+    /**
+     * @param int        $orderId       PrestaShop Order ID
+     * @param string     $transactionId Transaction/Mollie Order ID
+     * @param float|null $amount        Amount to refund, refund all if `null`
+     *
+     * @return array
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
+     */
+    protected function doPaymentRefund($orderId, $transactionId, $amount = null)
+    {
         try {
-            /** @var \Mollie\Api\Resources\Order|\Mollie\Api\Resources\Payment $payment */
-            $payment = $this->api->{static::selectedApi()}->get($transactionId);
-            if (Tools::substr($transactionId, 0, 3) === 'ord') {
-                $payment->refundAll();
+            /** @var \Mollie\Api\Resources\Payment $payment */
+            $payment = $this->api->payments->get($transactionId);
+            if ($amount) {
+                $payment->refund(array(
+                    'amount' => array(
+                        'currency' => (string) $payment->amount->currency,
+                        'value'    => (string) number_format($amount, 2, '.', ''),
+                    ),
+                ));
             } elseif ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
                 $payment->refund(array(
                     'amount' => array(
@@ -1439,18 +1468,36 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param array $params
+     * @param array $params Hook parameters
      *
-     * @return string
+     * @return string Hook HTML
+     *
      * @throws Adapter_Exception
      * @throws Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     *
+     * @fixme: find a solution for 1.7 currencies
      */
     public function hookDisplayAdminOrder($params)
     {
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
+        $transaction = static::getPaymentBy('cart_id', (int) $cartId);
+        if (empty($transaction)) {
+            return false;
+        }
+        $currencies = array();
+        foreach (Currency::getCurrencies() as $currency) {
+            $currencies[Tools::strtoupper($currency['iso_code'])] = array(
+                'name'     => $currency['name'],
+                'iso_code' => Tools::strtoupper($currency['iso_code']),
+                'sign'     => $currency['sign'],
+                'blank'    => (bool) $currency['blank'],
+                'format'   => (int) $currency['format'],
+                'decimals' => (bool) $currency['decimals'],
+            );
+        }
 
 //        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
 //            sprintf(
@@ -1499,8 +1546,11 @@ class Mollie extends PaymentModule
 //        $tplData['msg_title'] = $this->lang['Mollie refund'];
 //        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
         $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
+
         $this->context->smarty->assign(array(
-           'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
+           'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
+           'transactionId' => $transaction['transaction_id'],
+           'currencies'    => $currencies,
         ));
         return $this->display(__FILE__, 'order_info.tpl');
         return '<div id="mollie_order"></div><script type="text/javascript">(function(){window.MollieModule.back.orderInfo("#mollie_order")}());</script>';
@@ -1536,7 +1586,7 @@ class Mollie extends PaymentModule
             $apiMethods = array();
             $issuerList = array();
 
-            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
+            if ((int) Configuration::get(static::MOLLIE_DEBUG_LOG) === static::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
             }
             if (Configuration::get(static::MOLLIE_DISPLAY_ERRORS)) {
@@ -1922,9 +1972,9 @@ class Mollie extends PaymentModule
                 $aItems[] = array(
                     'name'        => $cartItem['name'],
                     'quantity'    => $quantity - 1,
-                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2)),
-                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2)),
-                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2, '.', '')),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2, '.', '')),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2, '.', '')),
                     'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
                 );
                 $remaining -= round($cartItem['price'], 2) * ($quantity - 1);
@@ -1932,9 +1982,9 @@ class Mollie extends PaymentModule
                 $aItems[] = array(
                     'name'        => $cartItem['name'],
                     'quantity'    => 1,
-                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['price_wt'], 2) + $lastItemPriceDifference, 2)),
-                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['total_wt'], 2) + $lastItemPriceDifference, 2)),
-                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['price_wt'], 2) + $lastItemPriceDifference, 2, '.', '')),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['total_wt'], 2) + $lastItemPriceDifference, 2, '.', '')),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2, '.', '')),
                     'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
                 );
                 $remaining -= round($cartItem['price'], 2) + $lastItemPriceDifference;
@@ -1943,10 +1993,10 @@ class Mollie extends PaymentModule
                 $aItems[] = array(
                     'name'        => $cartItem['name'],
                     'quantity'    => $quantity,
-                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2)),
-                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2)),
-                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2)),
-                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2, '.', '')),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2, '.', '')),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2, '.', '')),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2, '.', ''),
                 );
                 $remaining -= round($cartItem['price'], 2) * $quantity;
                 $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) * $quantity;
@@ -1967,10 +2017,10 @@ class Mollie extends PaymentModule
         $aItems[] = array(
             'name'        => 'Shipping',
             'quantity'    => 1,
-            'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2)),
-            'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2)),
-            'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax - ($totalShippingCostsWithTax / (1 + $shippingTaxRate / 100)), 2)),
-            'vatRate'     => number_format($shippingTaxRate, 2),
+            'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')),
+            'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')),
+            'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax - ($totalShippingCostsWithTax / (1 + $shippingTaxRate / 100)), 2, '.', '')),
+            'vatRate'     => number_format($shippingTaxRate, 2, '.', ''),
         );
 
         return $aItems;
@@ -3790,202 +3840,47 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @return string
+     * @param string $transactionId
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws SmartyException
+     * @return array|null
+     *
+     * @throws \Mollie\Api\Exceptions\ApiException
      *
      * @since 3.3.0
      */
-    protected function renderOrderLineList()
+    public function getFilteredApiPayment($transactionId)
     {
-        $list = json_decode('[
-    {
-      "resource": "orderline",
-      "id": "odl_bv4nfb",
-      "orderId": "ord_gcd6xz",
-      "name": "Cadeaukaart",
-      "sku": null,
-      "type": "physical",
-      "status": "created",
-      "isCancelable": false,
-      "quantity": 1,
-      "quantityShipped": 0,
-      "amountShipped": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "quantityRefunded": 0,
-      "amountRefunded": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "quantityCanceled": 0,
-      "amountCanceled": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "shippableQuantity": 0,
-      "refundableQuantity": 0,
-      "cancelableQuantity": 0,
-      "unitPrice": {
-        "value": "60.50",
-        "currency": "EUR"
-      },
-      "vatRate": "21.00",
-      "vatAmount": {
-        "value": "10.50",
-        "currency": "EUR"
-      },
-      "totalAmount": {
-        "value": "60.50",
-        "currency": "EUR"
-      },
-      "createdAt": "2018-10-10T23:16:00+00:00"
-    },
-    {
-      "resource": "orderline",
-      "id": "odl_hteccp",
-      "orderId": "ord_gcd6xz",
-      "name": "Shipping",
-      "sku": null,
-      "type": "physical",
-      "status": "created",
-      "isCancelable": false,
-      "quantity": 1,
-      "quantityShipped": 0,
-      "amountShipped": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "quantityRefunded": 0,
-      "amountRefunded": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "quantityCanceled": 0,
-      "amountCanceled": {
-        "value": "0.00",
-        "currency": "EUR"
-      },
-      "shippableQuantity": 0,
-      "refundableQuantity": 0,
-      "cancelableQuantity": 0,
-      "unitPrice": {
-        "value": "2.89",
-        "currency": "EUR"
-      },
-      "vatRate": "21.00",
-      "vatAmount": {
-        "value": "0.50",
-        "currency": "EUR"
-      },
-      "totalAmount": {
-        "value": "2.89",
-        "currency": "EUR"
-      },
-      "createdAt": "2018-10-10T23:16:00+00:00"
-    }
-  ]', true);
-        $fieldsList = array(
-            'resource'         => array(
-                'title' => $this->l('Resource'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'orderId'          => array(
-                'title' => $this->l('Order ID'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'name'             => array(
-                'title' => $this->l('Name'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'quantity'         => array(
-                'title' => $this->l('Qty.'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'quantityShipped'  => array(
-                'title' => $this->l('Qty. Shipped'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'quantityCanceled' => array(
-                'title' => $this->l('Qty. Canceled'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'quantityRefunded' => array(
-                'title' => $this->l('Qty. Refunded'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'status'           => array(
-                'title' => $this->l('Status'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-            'unitPrice'        => array(
-                'title' => $this->l('Unit Price'),
-                'type'  => 'price',
-                'align' => 'center',
-            ),
-            'totalAmount'      => array(
-                'title' => $this->l('Total Amount'),
-                'type'  => 'text',
-                'align' => 'center',
-            ),
-        );
-        $helper = new HelperList();
-        $helper->shopLinkType = '';
-        $helper->simple_header = true;
-        $helper->actions = array('OrderLineShip', 'OrderLineRefund');
-        $helper->show_toolbar = false;
-        $helper->module = $this;
-        $helper->identifier = 'mollie_order_lines';
-        $this->context->smarty->assign(array(
-            'mollieMethod' => 'klarnapaylater',
-        ));
-        $helper->title = $this->display(__FILE__, 'views/templates/admin/klarna/title.tpl');
-        $helper->table = null;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = '';
-        $helper->colorOnBackground = true;
-        $helper->no_link = true;
-        $helper->listTotal = count($list);
-        return $helper->generateList($list, $fieldsList);
-    }
+        $payment = $this->api->payments->get($transactionId);
+        if ($payment && method_exists($payment, 'refunds')) {
+            $refunds = $payment->refunds();
+            $payment = array_intersect_key(
+                (array) $payment,
+                array_flip(array(
+                    'resource',
+                    'id',
+                    'mode',
+                    'amount',
+                    'settlementAmount',
+                    'amountRefunded',
+                    'amountRemaining',
+                    'description',
+                    'method',
+                    'status',
+                    'createdAt',
+                    'paidAt',
+                    'canceledAt',
+                    'expiresAt',
+                    'failedAt',
+                    'metadata',
+                    'isCancelable',
+                ))
+            );
+            $payment['refunds'] = (array) $refunds;
+        } else {
+            $payment = null;
+        }
 
-    /**
-     * @param string $token
-     * @param string $id
-     * @param string $name
-     *
-     * @return string
-     *
-     * @since 3.3.0
-     */
-    public function displayOrderLineRefundLink($token, $id, $name)
-    {
-        return '<a href="#refund"><i class="icon icon-money"></i> Refund</a>';
-    }
-
-    /**
-     * @param string $token
-     * @param int    $id
-     * @param string $name
-     *
-     * @return string
-     *
-     * @since 3.3.0
-     */
-    public function displayOrderLineShipLink($token, $id, $name)
-    {
-        return '<a href="#ship" class="btn btn-default"><i class="icon icon-truck"></i> Ship</a>';
+        return $payment;
     }
 
     /**
@@ -3998,20 +3893,35 @@ class Mollie extends PaymentModule
      */
     public function displayAjaxMollieOrderInfo()
     {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
         $input = @json_decode(file_get_contents('php://input'), true);
 
-        $cartId = Cart::getCartIdByOrderId((int) $input['orderId']);
+        $mollieData = static::getPaymentBy('transaction_id', $input['transactionId']);
 
-        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-            sprintf(
-                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
-                _DB_PREFIX_.'mollie_payments',
-                (int) $cartId
-            )
-        );
+        try {
+            if ($input['resource'] === 'payments') {
+                switch ($input['action']) {
+                    case 'refund':
+                        if (!isset($input['amount']) || empty($input['amount'])) {
+                            // No amount = full refund
+                            $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id']);
+                        } else {
+                            $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id'], $input['amount']);
+                        }
 
-        $status = $this->doRefund($mollieData['order_id'], $mollieData['transaction_id']);
+                        return array('success' => isset($status['status']) && $status['status'] === 'success', 'payment' => static::getFilteredApiPayment($input['transactionId']));
+                    case 'retrieve':
+                        return array('success' => true, 'payment' => static::getFilteredApiPayment($input['transactionId']));
+                    default:
+                        return array('success' => false);
+                }
+            }
+        } catch (Exception $e) {
+            return array('success' => false);
+        }
 
-        return array('success' => isset($status['status']) && $status['status'] === 'success');
+        return array('success' => false);
     }
 }

@@ -32,6 +32,7 @@ if (production) {
       placeholders: false,
     })
   );
+  plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
   optimization.minimizer.push(
     new UglifyJsPlugin({
       uglifyOptions: {

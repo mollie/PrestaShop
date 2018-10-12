@@ -1,19 +1,34 @@
 /**
- * 2017-2018 DM Productions B.V.
+ * Copyright (c) 2012-2018, Mollie B.V.
+ * All rights reserved.
  *
- * NOTICE OF LICENSE
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.md
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to info@dmp.nl so we can send you a copy immediately.
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * @author     Michael Dekker <info@mijnpresta.nl>
- * @copyright  2010-2018 DM Productions B.V.
- * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
  */
 export {}
 declare global {
@@ -43,5 +58,72 @@ declare global {
 
   interface IMollieOrderConfig {
     [key: string]: any,
+  }
+
+  interface ICurrencies {
+    [iso: string]: ICurrency,
+  }
+
+  interface ICurrency {
+    format: number,
+    sign: string,
+    blank: string,
+  }
+
+  interface IMollieApiOrder {
+    [key: string]: any,
+  }
+
+  interface IMollieOrderLine {
+    [key: string]: any,
+  }
+
+  interface IMollieApiPayment {
+    resource: string,
+    id: string,
+    mode: string,
+    amount: {
+      value: string,
+      currency: string,
+    },
+    settlementAmount: {
+      value: string,
+      currency: string,
+    },
+    amountRefunded: {
+      value: string,
+      currency: string,
+    },
+    amountRemaining: {
+      value: string,
+      currency: string,
+    },
+    description: string,
+    method: string,
+    status: string,
+    createdAt: string,
+    paidAt: string,
+    canceledAt: string,
+    expiresAt: string,
+    failedAt: string,
+    metaData: any,
+    isCancelable: boolean,
+    refunds: Array<IMollieApiRefund>,
+  }
+
+  interface IMollieApiRefund {
+    resource: string,
+    id: string,
+    amount: {
+      value: string,
+      currency: string,
+    },
+    createdAt: string,
+    description: string,
+    paymentId: string,
+    orderId: string,
+    lines: string,
+    settlementAmount: string,
+    status: string,
   }
 }

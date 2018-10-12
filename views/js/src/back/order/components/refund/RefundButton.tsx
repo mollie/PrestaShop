@@ -33,24 +33,36 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 interface IProps {
   loading: boolean,
+  disabled: boolean,
+  refundPayment: any,
 
   // Redux
   translations?: ITranslations,
 }
 
-class PartialRefundButton extends Component<IProps> {
+class RefundButton extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, loading, disabled, refundPayment } = this.props;
 
     return (
-      <div className="input-group-btn">
-        <button id="stripe_partial_refund_button" className="btn btn-default" type="button">
-          <i className="icon icon-undo"/> {translations.partialRefund}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="btn btn-default"
+        disabled={loading || disabled}
+        onClick={refundPayment}
+        style={{ marginRight: '10px' }}
+      >
+        <i className={classnames({
+          'icon': true,
+          'icon-undo': !loading,
+          'icon-circle-o-notch': loading,
+          'icon-spin': loading,
+        })}/> {translations.fullRefund}
+      </button>
     );
   }
 }
@@ -59,4 +71,5 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
   })
-)(PartialRefundButton);
+)
+(RefundButton);

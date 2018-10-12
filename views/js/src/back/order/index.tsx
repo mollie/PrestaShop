@@ -34,21 +34,46 @@ import '@babel/polyfill';
 
 import React from 'react';
 import { render } from 'react-dom';
+import axios from 'axios';
 
-import RefundPanel from './refund/RefundPanel';
+import RefundPanel from './components/refund/RefundPanel';
 import store from './store';
-import { updateConfig, updateStatus, updateTranslations } from './store/actions';
+import { updateConfig, updateCurrencies, updatePayment, updateTranslations } from './store/actions';
 
-export const orderInfo = (target: any, config: IMollieOrderConfig = {}, translations: ITranslations = {}) => {
+export const orderInfo = (
+  target: any,
+  config: IMollieOrderConfig = {},
+  translations: ITranslations = {},
+  currencies: ICurrencies
+) => {
   // if (_.includes([], config.method)) {
   //   return render(<OrderPanel config={config} store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
   // }
 
-  store.dispatch(updateStatus(config.initialStatus));
+  setTimeout(async () => {
+    const { transactionId } = config;
+
+    if (config.transactionId.substr(0, 3) === 'ord') {
+      axios.post(config.ajaxEndpoint, {
+        resource: 'orders',
+        action: 'retrieve',
+        transactionId,
+      })
+    } else {
+      const { data: { payment } } = await axios.post(config.ajaxEndpoint, {
+        resource: 'payments',
+        action: 'retrieve',
+        transactionId,
+      });
+      store.dispatch(updatePayment(payment));
+    }
+  }, 0);
+
+  store.dispatch(updateCurrencies(currencies));
   store.dispatch(updateTranslations(translations));
   store.dispatch(updateConfig(config));
 
-  return render(<RefundPanel config={config} store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
+  return render(<RefundPanel store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
 };
 
 

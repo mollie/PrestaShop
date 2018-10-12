@@ -39,7 +39,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class MolliePaymentModuleFrontController
  *
- * @property Context|null $context
+ * @property Context? $context
  * @property Mollie       $module
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
@@ -229,7 +229,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @param array $data
      *
-     * @return \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order|null
+     * @return \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order?
      *
      * @throws PrestaShopException
      * @throws \Mollie\Api\Exceptions\ApiException

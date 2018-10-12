@@ -70,7 +70,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
         if (Tools::getValue('done')) {
             $canceled = true;
-            $dbPayment = $this->module->getPaymentBy('cart_id', Tools::getValue('cart_id'));
+            $dbPayment = Mollie::getPaymentBy('cart_id', Tools::getValue('cart_id'));
             if (is_array($dbPayment)) {
                 try {
                     /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $apiPayment */
@@ -184,7 +184,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $payment = $this->module->getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
+            $payment = Mollie::getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
         } catch (PrestaShopDatabaseException $e) {
             die(json_encode(array(
                 'success' => false,

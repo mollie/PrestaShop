@@ -132,7 +132,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'NOT OK';
         }
 
-        $psPayment = $this->module->getPaymentBy('transaction_id', $transactionId);
+        $psPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
 
         $this->setCountryContextIfNotSet($apiPayment);
 

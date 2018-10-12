@@ -32,18 +32,15 @@
  */
 // Action types
 export enum ReduxActionTypes {
-  updateOrderStatus = 'UPDATE_MOLLIE_ORDER_STATUS',
   updateTranslations = 'UPDATE_MOLLIE_ORDER_TRANSLATIONS',
   updateConfig = 'UPDATE_MOLLIE_ORDER_CONFIG',
+  updateOrder = 'UPDATE_MOLLIE_ORDER',
+  updatePayment = 'UPDATE_MOLLIE_PAYMENT',
+  updateCurrencies = 'UPDATE_MOLLIE_CURRENCIES',
 }
 
 // Action creators
 declare global {
-  interface IUpdateStatusAction {
-    type: string,
-    status: string,
-  }
-
   interface IUpdateTranslationsAction {
     type: string,
     translations: ITranslations,
@@ -53,16 +50,39 @@ declare global {
     type: string,
     config: IMollieOrderConfig,
   }
-}
 
-export function updateStatus(status: string): IUpdateStatusAction {
-  return { type: ReduxActionTypes.updateOrderStatus, status };
+  interface IUpdateOrderAction {
+    type: string,
+    order: IMollieApiOrder,
+  }
+
+  interface IUpdatePaymentAction {
+    type: string,
+    payment: IMollieApiPayment,
+  }
+
+  interface IUpdateCurrenciesAction {
+    type: string,
+    currencies: ICurrencies,
+  }
 }
 
 export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
   return { type: ReduxActionTypes.updateTranslations, translations };
 }
 
+export function updateCurrencies(currencies: ICurrencies): IUpdateCurrenciesAction {
+  return { type: ReduxActionTypes.updateCurrencies, currencies };
+}
+
 export function updateConfig(config: IMollieOrderConfig): IUpdateConfigAction {
   return { type: ReduxActionTypes.updateConfig, config };
+}
+
+export function updateOrder(order: IMollieApiOrder): IUpdateOrderAction {
+  return { type: ReduxActionTypes.updateOrder, order };
+}
+
+export function updatePayment(payment: IMollieApiPayment): IUpdatePaymentAction {
+  return { type: ReduxActionTypes.updatePayment, payment };
 }

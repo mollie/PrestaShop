@@ -31,53 +31,45 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
-import { connect, Provider } from 'react-redux';
+import styled, { keyframes } from 'styled-components';
 
-import RefundForm from './RefundForm';
-import store from '../store';
-import { Store } from 'redux';
+const BounceAnimation = keyframes`
+  0% { margin-bottom: 0; }
+  50% { margin-bottom: 15px }
+  100% { margin-bottom: 0 }
+` as any;
 
-interface IProps {
-  store: Store,
+const DotWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  min-height: 30px;
+` as any;
 
-  // Redux
-  config?: IMollieOrderConfig,
-  translations?: ITranslations,
-  status?: string,
+interface IDotProps {
+  delay: string,
 }
 
-class RefundPanel extends Component<IProps> {
-  render() {
-    const { status, config } = this.props;
-    if (Object.keys(config).length <= 0) {
-      return null;
-    }
-    const { moduleDir } = config;
+const Dot = styled.div`
+  background-color: black;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  opacity: 0.7;
+  /* Animation */
+  animation: ${BounceAnimation} 0.5s linear infinite;
+  animation-delay: ${(props: IDotProps) => props.delay};
+` as any;
 
+class LoadingDots extends Component {
+  render() {
     return (
-      <Provider store={store}>
-        <div className="panel">
-          <div className="panel-heading">
-            <img
-              src={`${moduleDir}views/img/mollie_panel_icon.png`}
-              width="32"
-              height="32"
-              style={{ height: '16px', width: '16px', opacity: 0.8 }}
-            /> <span>Mollie</span>&nbsp;
-          </div>
-          {status === 'form' && <RefundForm/>}
-        </div>
-      </Provider>
-    );
+      <DotWrapper>
+        <Dot delay="0s" />
+        <Dot delay=".1s" />
+        <Dot delay=".2s" />
+      </DotWrapper>
+    )
   }
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    status: state.status,
-    translations: state.translations,
-    config: state.config,
-  })
-)
-(RefundPanel);
-
+export default LoadingDots;

@@ -41,7 +41,7 @@ require_once dirname(__FILE__).'/webhook.php';
 /**
  * Class MollieReturnModuleFrontController
  *
- * @property Context|null $context
+ * @property Context? $context
  * @property Mollie       $module
  */
 class MollieReturnModuleFrontController extends ModuleFrontController
@@ -95,7 +95,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             // Check if user is allowed to be on the return page
             $data['auth'] = Order::getUniqReferenceOf($idOrder) === Tools::getValue('ref');
             if ($data['auth']) {
-                $data['mollie_info'] = $this->module->getPaymentBy('order_id', (int) $idOrder);
+                $data['mollie_info'] = Mollie::getPaymentBy('order_id', (int) $idOrder);
             }
         } elseif (Tools::getIsset('cart_id')) {
             $idCart = (int) Tools::getValue('cart_id');
@@ -104,7 +104,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $cart = new Cart($idCart);
             $data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $this->module->getPaymentBy('cart_id', (int) $idCart);
+                $data['mollie_info'] = Mollie::getPaymentBy('cart_id', (int) $idCart);
             }
         }
 
@@ -112,7 +112,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API && isset($data['mollie_info']['transaction_id'])) {
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($data['mollie_info']['transaction_id']);
-            $data['mollie_info'] = $this->module->getPaymentBy('order_id', $data['mollie_info']['order_id']);
+            $data['mollie_info'] = Mollie::getPaymentBy('order_id', $data['mollie_info']['order_id']);
         }
 
         if (isset($data['auth']) && $data['auth']) {

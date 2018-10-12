@@ -32,42 +32,60 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
+import _ from 'lodash';
 
 import swal from 'sweetalert';
 import xss from 'xss';
 import { Dispatch } from 'redux';
-import { updateStatus } from '../store/actions';
+import { updatePayment } from '../../store/actions';
 import RefundButton from './RefundButton';
 import PartialRefundButton from './PartialRefundButton';
+import { formatCurrency } from '../../misc/tools';
+import { refundPayment } from '../../misc/ajax';
 
 interface IProps {
   // Redux
   config?: IMollieOrderConfig,
+  payment?: IMollieApiPayment,
   translations?: ITranslations,
+  currencies?: ICurrencies,
 
-  dispatchUpdateStatus?: Function,
+  dispatchUpdatePayment?: Function,
 }
 
 interface IState {
   loading: boolean,
+  refundInput: string,
 }
-
-declare let window: any;
 
 class RefundForm extends Component<IProps> {
   state: IState = {
     loading: false,
+    refundInput: '',
   };
 
-  refund = async (event: any) => {
-    event.preventDefault();
-
+  refundPayment = async (partial: false) => {
+    const { refundInput } = this.state;
     const {
-      dispatchUpdateStatus,
+      dispatchUpdatePayment,
       translations,
-      config: { ajaxEndpoint, orderId, transactionId },
+      payment: { id: transactionId },
     } = this.props;
+
+    let amount;
+    if (partial) {
+      amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
+    }
+    if (isNaN(amount)) {
+      // TODO: improve
+      swal({
+        icon: 'error',
+        title: translations.invalidAmount,
+        text: translations.notAValidAmount,
+      }).then();
+
+      return false;
+    }
 
     // @ts-ignore
     const input = await swal({
@@ -82,39 +100,64 @@ class RefundForm extends Component<IProps> {
     });
     if (input) {
       try {
-        const { data: { success } } = await axios.post(ajaxEndpoint, {
-          resource: 'payments',
-          action: 'refund',
-          orderId,
-          transactionId,
-        });
+        this.setState(() => ({ loading: true }));
+        const { success, payment } = await refundPayment(transactionId, amount);
         if (success) {
-          dispatchUpdateStatus('success');
+          if (payment) {
+            dispatchUpdatePayment(payment);
+            this.setState(() => ({
+              refundInput: '',
+            }));
+          }
+        } else {
+          swal({
+            icon: 'error',
+            title: translations.refundFailed,
+            text: translations.unableToRefund,
+          }).then();
         }
       } catch (e) {
+        console.error(e);
+      } finally {
+        this.setState(() => ({ loading: false }));
       }
     }
   };
 
   render() {
-    const { loading } = this.state;
-    const { translations } = this.props;
+    const { loading, refundInput } = this.state;
+    const { translations, payment, currencies } = this.props;
+
     return (
       <Fragment>
         <h4>{translations.refund}</h4>
         <div className="well well-sm">
           <div className="form-inline">
             <div className="form-group">
-              <RefundButton loading={loading}/>
+              <RefundButton
+                refundPayment={this.refundPayment}
+                loading={loading}
+                disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+              />
             </div>
-            <div className="form-group" style={{ marginLeft: '10px' }}>
-              <div className="input-group" style={{ minWidth: '400px' }}>
+            <div className="form-group">
+              <div className="input-group" style={{ minWidth: '100px' }}>
                 <div className="input-group-addon">
                   {translations.remaining}:
                 </div>
-                <input type="hidden" value="1398"/>
-                <input type="text" className="form-control" placeholder="$59.59"/>
-                <PartialRefundButton loading={loading}/>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
+                  disabled={loading}
+                  value={refundInput}
+                  onChange={({ target: { value: refundInput } }: any) => this.setState(() => ({ refundInput }))}
+                />
+                <PartialRefundButton
+                  refundPayment={this.refundPayment}
+                  loading={loading}
+                  disabled={parseFloat(payment.amountRemaining.value) <= 0}
+                />
               </div>
             </div>
           </div>
@@ -128,10 +171,12 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
     config: state.config,
+    payment: state.payment,
+    currencies: state.currencies,
   }),
-  (state: IMollieOrderState, dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdateStatus(status: string) {
-      dispatch(updateStatus(status));
+  (dispatch: Dispatch): Partial<IProps> => ({
+    dispatchUpdatePayment(payment: IMollieApiPayment) {
+      dispatch(updatePayment(payment));
     }
   })
 )

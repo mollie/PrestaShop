@@ -36,20 +36,13 @@ import { ReduxActionTypes } from './actions';
 
 declare global {
   interface IMollieOrderState {
-    status: string,
     translations: ITranslations,
     config: IMollieOrderConfig,
+    order: IMollieApiOrder,
+    payment: IMollieApiPayment,
+    currencies: ICurrencies,
   }
 }
-
-const status = (state: string = 'form', action: IUpdateStatusAction): string => {
-  switch (action.type) {
-    case ReduxActionTypes.updateOrderStatus:
-      return action.status;
-    default:
-      return state;
-  }
-};
 
 const translations = (state: any = {}, action: IUpdateTranslationsAction): ITranslations => {
   switch (action.type) {
@@ -69,10 +62,39 @@ const config = (state: any = {}, action: IUpdateConfigAction): IMollieOrderConfi
   }
 };
 
+const order = (state: IMollieApiOrder = null, action: IUpdateOrderAction): IMollieApiOrder => {
+  switch (action.type) {
+    case ReduxActionTypes.updateOrder:
+      return action.order;
+    default:
+      return state;
+  }
+};
+
+const payment = (state: IMollieApiPayment = null, action: IUpdatePaymentAction): IMollieApiPayment => {
+  switch (action.type) {
+    case ReduxActionTypes.updatePayment:
+      return action.payment;
+    default:
+      return state;
+  }
+};
+
+const currencies = (state: ICurrencies = {}, action: IUpdateCurrenciesAction): ICurrencies => {
+  switch (action.type) {
+    case ReduxActionTypes.updateCurrencies:
+      return action.currencies;
+    default:
+      return state;
+  }
+};
+
 const checkoutApp = combineReducers({
-  status,
   translations,
   config,
+  order,
+  payment,
+  currencies,
 });
 
 export default checkoutApp;
