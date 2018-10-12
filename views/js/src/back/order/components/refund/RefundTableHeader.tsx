@@ -14,7 +14,7 @@ class RefundTableHeader extends Component<IProps> {
       <thead>
         <tr>
           <th>
-            <span className="title_box">{translations.ID}</span>
+            <span className="title_box"><strong>{translations.ID}</strong></span>
           </th>
           <th>
             <span className="title_box">{translations.date}</span>
