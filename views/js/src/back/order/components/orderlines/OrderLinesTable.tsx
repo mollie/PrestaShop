@@ -90,7 +90,7 @@ class OrderLinesTable extends Component<IProps> {
       const checkSwalButton = async (): Promise<void> => {
         const elem: HTMLInputElement = document.querySelector('.swal-button.swal-button--confirm');
 
-        elem.disabled = tracking && (!tracking.code || !tracking.carrier);
+        elem.disabled = tracking && (_.isEmpty(tracking.code.replace(/\s+/, '')) || _.isEmpty(tracking.carrier.replace(/\s+/, '')));
       };
 
       const updateTracking = (newTracking: IMollieTracking) => {

@@ -32,6 +32,7 @@
  */
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 
 interface IProps {
   edited: (newLines: IMollieTracking) => void,
@@ -67,12 +68,28 @@ class ShipmentTrackingEditor extends Component<IProps> {
     url: '',
   };
 
+  get carrierInvalid() {
+    const { skipTracking, carrier, carrierChanged } = this.state;
+
+    return !skipTracking && _.isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
+  }
+
+  get codeInvalid() {
+    const { skipTracking, code, codeChanged } = this.state;
+
+    return !skipTracking && _.isEmpty(code.replace(/\s+/, '')) && codeChanged;
+  }
+
   updateSkipTracking = (skipTracking: boolean): void => {
     const { edited } = this.props;
     this.setState(() => ({
       skipTracking,
     }));
-    edited(null);
+    edited(skipTracking ? null : {
+      carrier: this.state.carrier,
+      code: this.state.code,
+      url: this.state.url,
+    });
   };
 
   updateCarrier = (carrier: string): void => {
@@ -150,7 +167,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               value={carrier}
               onChange={({ target: { value: carrier }}) => this.updateCarrier(carrier)}
             />
-            <ErrorMessage show={!skipTracking && !carrier && carrierChanged}>
+            <ErrorMessage show={this.carrierInvalid}>
               {translations.thisInfoIsRequired}
             </ErrorMessage>
           </div>
@@ -166,7 +183,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               disabled={skipTracking}
               onChange={({ target: { value: code }}) => this.updateCode(code)}
             />
-            <ErrorMessage show={!skipTracking && !code && codeChanged}>
+            <ErrorMessage show={this.codeInvalid}>
               {translations.thisInfoIsRequired}
             </ErrorMessage>
           </div>

@@ -137,7 +137,7 @@ class OrderLinesEditor extends Component<IProps> {
                 </QuantitySelect>
                 <FontAwesomeIcon icon={faChevronDown} style={{ marginLeft: '-20px', pointerEvents: 'none' }}/>
               </td>
-              <td style={{ display: lines.length > 1 ? 'block' : 'none' }}>
+              <td style={{ display: lines.length > 1 ? 'auto' : 'none' }}>
                 <CloseIcon icon={faTimesCircle} onClick={() => this.updateQty(line.id, 0)}/>
               </td>
             </Tr>
