@@ -86,7 +86,7 @@ class OrderLinesTableFooter extends Component<IProps> {
         <tr>
           <td colSpan={10}>
             <button
-              style={{ float: 'right', marginLeft: '5px', display: this.shippable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px', display: this.shippable ? 'block' : 'none' }}
               type="button"
               onClick={() => ship(_.compact(order.lines))}
               className="btn btn-primary"
@@ -95,7 +95,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/> {translations.shipAll}
             </button>
             <button
-              style={{ float: 'right', marginLeft: '5px', display: this.refundable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px', display: this.refundable ? 'block' : 'none' }}
               type="button"
               onClick={() => refund(_.compact(order.lines))}
               className="btn btn-default"
@@ -104,7 +104,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/> {translations.refundAll}
             </button>
             <button
-              style={{ float: 'right', marginLeft: '5px', display: this.cancelable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px', display: this.cancelable ? 'block' : 'none' }}
               type="button"
               onClick={() => cancel(_.compact(order.lines))}
               className="btn btn-default"
