@@ -32,23 +32,86 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface IProps {
   loading: boolean,
+  ship: Function,
+  refund: Function,
+  cancel: Function,
 
   // Redux
+  order?: IMollieApiOrder,
   translations?: ITranslations,
 }
 
 class OrderLinesTableFooter extends Component<IProps> {
+  get shippable() {
+    for (let line of Object.values(this.props.order.lines)) {
+      if (line.shippableQuantity >= 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  get refundable() {
+    for (let line of Object.values(this.props.order.lines)) {
+      if (line.refundableQuantity >= 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  get cancelable() {
+    for (let line of Object.values(this.props.order.lines)) {
+      if (line.cancelableQuantity >= 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   render() {
-    const { translations, loading } = this.props;
+    const { translations, loading, order, ship, cancel, refund } = this.props;
 
     return (
       <tfoot>
         <tr>
-          <td>
-            <span className="title_box"><strong>Iets</strong></span>
+          <td colSpan={10}>
+            <button
+              style={{ float: 'right', marginLeft: '5px', display: this.shippable ? 'block' : 'none' }}
+              type="button"
+              onClick={() => ship(_.compact(order.lines))}
+              className="btn btn-primary"
+              disabled={loading}
+            >
+              <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/> {translations.shipAll}
+            </button>
+            <button
+              style={{ float: 'right', marginLeft: '5px', display: this.refundable ? 'block' : 'none' }}
+              type="button"
+              onClick={() => refund(_.compact(order.lines))}
+              className="btn btn-default"
+              disabled={loading}
+            >
+              <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/> {translations.refundAll}
+            </button>
+            <button
+              style={{ float: 'right', marginLeft: '5px', display: this.cancelable ? 'block' : 'none' }}
+              type="button"
+              onClick={() => cancel(_.compact(order.lines))}
+              className="btn btn-default"
+              disabled={loading}
+            >
+              <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/> {translations.cancelAll}
+            </button>
           </td>
         </tr>
       </tfoot>
@@ -59,5 +122,6 @@ class OrderLinesTableFooter extends Component<IProps> {
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    order: state.order,
   })
 )(OrderLinesTableFooter);

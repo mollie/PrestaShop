@@ -30,18 +30,21 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, CSSProperties } from 'react';
 import { render } from 'react-dom';
-import OrderLinesTableHeader from './OrderLinesTableHeader';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import xss from 'xss';
+import { Dispatch } from 'redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faTruck, faUndo } from '@fortawesome/free-solid-svg-icons';
+
+import OrderLinesTableHeader from './OrderLinesTableHeader';
 import { formatCurrency } from '../../misc/tools';
 import OrderLinesTableFooter from './OrderLinesTableFooter';
-import xss from 'xss';
 import OrderLinesEditor from './OrderLinesEditor';
 import ShipmentTrackingEditor from './ShipmentTrackingEditor';
-import { shipOrder } from '../../misc/ajax';
-import { Dispatch } from 'redux';
+import { cancelOrder, refundOrder, shipOrder } from '../../misc/ajax';
 import { updateOrder } from '../../store/actions';
 
 interface IProps {
@@ -123,6 +126,68 @@ class OrderLinesTable extends Component<IProps> {
     }
   };
 
+  refund = async (origLines: Array<IMollieOrderLine>) => {
+    let lines = null;
+    const { translations, order, dispatchUpdateOrder } = this.props;
+
+    const reviewWrapper = document.createElement('DIV');
+    render(<OrderLinesEditor lineType="refundable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
+    let el = reviewWrapper.firstChild;
+
+    // @ts-ignore
+    let input = await swal({
+      title: xss(translations.reviewShipment),
+      text: xss(translations.reviewShipmentProducts),
+      buttons: [xss(translations.cancel), xss(translations.OK)],
+      closeOnClickOutside: false,
+      content: el,
+    });
+    if (input) {
+      try {
+        this.setState(() => ({ loading: true }));
+        const { success, order: newOrder } = await refundOrder(order.id, lines);
+        if (success) {
+          dispatchUpdateOrder(newOrder);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.setState(() => ({ loading: false }));
+      }
+    }
+  };
+
+  cancel = async (origLines: Array<IMollieOrderLine>) => {
+    let lines = null;
+    const { translations, order, dispatchUpdateOrder } = this.props;
+
+    const reviewWrapper = document.createElement('DIV');
+    render(<OrderLinesEditor lineType="cancelable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
+    let el = reviewWrapper.firstChild;
+
+    // @ts-ignore
+    let input = await swal({
+      title: xss(translations.reviewShipment),
+      text: xss(translations.reviewShipmentProducts),
+      buttons: [xss(translations.cancel), xss(translations.OK)],
+      closeOnClickOutside: false,
+      content: el,
+    });
+    if (input) {
+      try {
+        this.setState(() => ({ loading: true }));
+        const { success, order: newOrder } = await cancelOrder(order.id, lines);
+        if (success) {
+          dispatchUpdateOrder(newOrder);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.setState(() => ({ loading: false }));
+      }
+    }
+  };
+
   render() {
     const { loading } = this.state;
     const { order, currencies, translations } = this.props;
@@ -145,48 +210,37 @@ class OrderLinesTable extends Component<IProps> {
                 <td className="actions">
                   <div className="btn-group-action">
                     <div className="btn-group pull-right">
-                      <button className=" btn btn-default" title="" disabled={loading || line.shippableQuantity < 1} onClick={() => this.ship([line])}>
-                        <i className="icon icon-truck"/> {translations.ship}
+                      <button style={{ cursor: line.shippableQuantity < 1 ? 'not-allowed' : 'pointer' }} className="btn btn-default" title="" disabled={loading || line.shippableQuantity < 1} onClick={() => this.ship([line])}>
+                        <FontAwesomeIcon icon={faTruck}/> {translations.ship}
                       </button>
-                      {/*<button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">*/}
-                        {/*<span className="caret">&nbsp;</span>*/}
-                      {/*</button>*/}
-                      {/*<ul className="dropdown-menu">*/}
-                        {/*<li><a className="" href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;module_name=izettle&amp;enable=0&amp;tab_module=payments_gateways"*/}
-                                {/*title=""><i className="icon-off"></i> Uitschakelen</a></li>*/}
-                        {/*<li><a className=""*/}
-                               {/*href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;module_name=izettle&amp;disable_device=4&amp;tab_module=payments_gateways"*/}
-                               {/*onClick="" title="Uitschakelen op mobielen"><i className="icon-mobile"></i> Uitschakelen op mobielen</a></li>*/}
-                        {/*<li><a className=""*/}
-                               {/*href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;module_name=izettle&amp;disable_device=2&amp;tab_module=payments_gateways"*/}
-                               {/*onClick="" title="Uitschakelen op tablets"><i className="icon-tablet"></i> Uitschakelen op tablets</a></li>*/}
-                        {/*<li><a className=""*/}
-                               {/*href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;module_name=izettle&amp;disable_device=1&amp;tab_module=payments_gateways"*/}
-                               {/*onClick="" title="Uitschakelen op computers"><i className="icon-desktop"></i> Uitschakelen op computers</a></li>*/}
-                        {/*<li><a className="" href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;module_name=izettle&amp;reset&amp;tab_module=payments_gateways"*/}
-                               {/*onClick="" title=""><i className="icon-undo"></i> Herstellen</a></li>*/}
-                        {/*<li><a className=""*/}
-                               {/*href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;uninstall=izettle&amp;tab_module=payments_gateways&amp;module_name=izettle&amp;anchor=Izettle"*/}
-                               {/*onClick="return confirm('Weet u zeker dat u deze module wilt deïnstalleren?');"*/}
-                               {/*title="Deïnstalleren"><i className="icon-minus-sign-alt"></i> Deïnstalleren</a></li>*/}
-                        {/*<li><a className="action_unfavorite toggle_favorite" data-value="0" data-module="izettle"*/}
-                               {/*style="" href="#" onClick="" title="Verwijder van Favorieten"><i*/}
-                          {/*className="icon-star"></i> Verwijder van Favorieten</a></li>*/}
-                        {/*<li><a className="action_favorite toggle_favorite" data-value="1" data-module="izettle"*/}
-                               {/*style="display:none;" href="#" onClick="" title="Markeer as Favoriet"><i*/}
-                          {/*className="icon-star"></i> Markeer as Favoriet</a></li>*/}
-                        {/*<li className="divider"></li>*/}
-                        {/*<li><a className="text-danger"*/}
-                               {/*href="index.php?controller=AdminModules&amp;token=e69ed5725e4389835af0cb7ffa3c1d6c&amp;delete=izettle&amp;tab_module=payments_gateways&amp;module_name=izettle"*/}
-                               {/*onClick="return confirm('Deze actie zal de module voorgoed van de server verwijderen. Weet u het zeker?');" title=""><i className="icon-trash"></i> Verwijder</a></li>*/}
-                      {/*</ul>*/}
+                      <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled={loading || (line.refundableQuantity < 1 && line.cancelableQuantity < 1)}>
+                        <span className="caret">&nbsp;</span>
+                      </button>
+                      <ul className="dropdown-menu">
+                        <li>
+                          <a
+                            style={{ cursor: (loading || line.refundableQuantity < 1) ? 'not-allowed' : 'pointer', opacity: (loading || line.refundableQuantity < 1) ? 0.6 : 1 }}
+                            onClick={() => line.refundableQuantity > 0 && this.refund([line])}
+                          >
+                            <FontAwesomeIcon icon={faUndo}/> {translations.refund}
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            style={{ cursor: (loading || line.cancelableQuantity < 1) ? 'not-allowed' : 'pointer', opacity: (loading || line.cancelableQuantity < 1) ? 0.6 : 1 }}
+                            onClick={() => line.cancelableQuantity > 0 && this.cancel([line])}
+                          >
+                            <FontAwesomeIcon icon={faTimes}/> {translations.cancel}
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-          <OrderLinesTableFooter loading={loading}/>
+          <OrderLinesTableFooter loading={loading} ship={this.ship} refund={this.refund} cancel={this.cancel}/>
         </table>
       </div>
     );

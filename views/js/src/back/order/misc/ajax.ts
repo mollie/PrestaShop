@@ -56,7 +56,7 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
   }
 };
 
-export const refundOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<boolean> => {
+export const refundOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 
@@ -74,7 +74,7 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
   }
 };
 
-export const cancelOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<boolean> => {
+export const cancelOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 

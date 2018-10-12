@@ -1400,7 +1400,81 @@ class Mollie extends PaymentModule
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
-                'message'  => $this->lang('The products could not be shipped!'),
+                'message'  => $this->lang('The product(s) could not be shipped!'),
+                'detailed' => $e->getMessage(),
+            );
+        }
+
+        return array(
+            'success'  => true,
+            'message'  => '',
+            'detailed' => '',
+        );
+    }
+
+    /**
+     * @param string     $transactionId
+     * @param array      $lines
+     *
+     * @return array
+     *
+     * @since 3.3.0
+     */
+    protected function doRefundOrderLines($transactionId, $lines = array())
+    {
+        try {
+            /** @var \Mollie\Api\Resources\Order $payment */
+            $order = $this->api->orders->get($transactionId);
+            $refund = array(
+                'lines' => array_map(function ($line) {
+                    return array_intersect_key(
+                        (array) $line,
+                        array_flip(array(
+                            'id',
+                            'quantity',
+                        )));
+                }, $lines),
+            );
+            $order->refund($refund);
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            return array(
+                'success'  => false,
+                'message'  => $this->lang('The product(s) could not be refunded!'),
+                'detailed' => $e->getMessage(),
+            );
+        }
+
+        return array(
+            'success'  => true,
+            'message'  => '',
+            'detailed' => '',
+        );
+    }
+
+    /**
+     * @param string     $transactionId
+     * @param array      $lines
+     *
+     * @return array
+     *
+     * @since 3.3.0
+     */
+    protected function doCancelOrderLines($transactionId, $lines = array())
+    {
+        try {
+            /** @var \Mollie\Api\Resources\Order $payment */
+            $order = $this->api->orders->get($transactionId);
+            if ($lines === array()) {
+                $order->cancel();
+            } else {
+                foreach ($lines as $line) {
+                    $order->cancelLine($line['id'], array('quantity' => $line['quantity']));
+                }
+            }
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            return array(
+                'success'  => false,
+                'message'  => $this->lang('The product(s) could not be canceled!'),
                 'detailed' => $e->getMessage(),
             );
         }
@@ -4034,7 +4108,12 @@ class Mollie extends PaymentModule
                     case 'ship':
                         $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
-                        break;
+                    case 'refund':
+                        $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
+                    case 'cancel':
+                        $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     default:
                         return array('success' => false);
                 }

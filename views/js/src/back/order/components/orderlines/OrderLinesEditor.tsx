@@ -80,14 +80,17 @@ class OrderLinesEditor extends Component<IProps> {
   };
 
   componentDidMount() {
-    const { edited, lines } = this.props;
-    edited(_.cloneDeep(lines));
+    const { lines, lineType } = this.props;
+
+    this.updateQty(lines[0].id, lines[0][`${lineType}Quantity`])
   }
 
   updateQty = (lineId: string, qty: number) => {
     const { lines } = this.state;
-    const { edited } = this.props;
-    const newLines = _.cloneDeep(lines);
+    const { edited, lineType } = this.props;
+    let newLines = _.compact(_.cloneDeep(lines));
+    newLines = _.filter(newLines, line => line[`${lineType}Quantity`] > 0);
+
     const newLineIndex = _.findIndex(newLines, item => item.id === lineId);
     if (newLineIndex < 0) {
       return;
@@ -96,13 +99,17 @@ class OrderLinesEditor extends Component<IProps> {
     if (qty > 0) {
       newLines[newLineIndex].newQuantity = qty;
     } else if (newLines.length > 1) {
-      delete newLines[newLineIndex];
+      newLines.splice(newLineIndex, 1);
     }
     const stateLines = _.cloneDeep(newLines);
     this.setState(() => ({
       lines: stateLines,
     }));
     _.forEach(newLines, (newLine) => {
+      if (typeof newLine.quantity === 'undefined') {
+        return;
+      }
+
       newLine.quantity = newLine.newQuantity;
       delete newLine.newQuantity;
     });

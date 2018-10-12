@@ -87,6 +87,9 @@
         trackingCode: '{l s='Tracking code' mod='mollie' js=1}',
         url: '{l s='URL' mod='mollie' js=1}',
         carrier: '{l s='Carrier' mod='mollie' js=1}',
+        shipAll: '{l s='Ship all' mod='mollie' js=1}',
+        cancelAll: '{l s='Cancel all' mod='mollie' js=1}',
+        refundAll: '{l s='Refund all' mod='mollie' js=1}'
       },
       {Tools::jsonEncode($currencies)}
     );
