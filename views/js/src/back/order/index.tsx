@@ -36,9 +36,9 @@ import React from 'react';
 import { render } from 'react-dom';
 import axios from 'axios';
 
-import RefundPanel from './components/refund/RefundPanel';
 import store from './store';
-import { updateConfig, updateCurrencies, updatePayment, updateTranslations } from './store/actions';
+import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations } from './store/actions';
+import MolliePanel from './components/MolliePanel';
 
 export const orderInfo = (
   target: any,
@@ -46,19 +46,16 @@ export const orderInfo = (
   translations: ITranslations = {},
   currencies: ICurrencies
 ) => {
-  // if (_.includes([], config.method)) {
-  //   return render(<OrderPanel config={config} store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
-  // }
-
   setTimeout(async () => {
     const { transactionId } = config;
 
     if (config.transactionId.substr(0, 3) === 'ord') {
-      axios.post(config.ajaxEndpoint, {
+      const { data: { order } } = await axios.post(config.ajaxEndpoint, {
         resource: 'orders',
         action: 'retrieve',
         transactionId,
-      })
+      });
+      store.dispatch(updateOrder(order));
     } else {
       const { data: { payment } } = await axios.post(config.ajaxEndpoint, {
         resource: 'payments',
@@ -73,7 +70,7 @@ export const orderInfo = (
   store.dispatch(updateTranslations(translations));
   store.dispatch(updateConfig(config));
 
-  return render(<RefundPanel store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
+  return render(<MolliePanel store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
 };
 
 

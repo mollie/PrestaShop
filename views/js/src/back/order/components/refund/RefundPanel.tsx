@@ -31,8 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component, Fragment } from 'react';
-import { connect, Provider } from 'react-redux';
-
+import { connect } from 'react-redux';
 /**
  * Copyright (c) 2012-2018, Mollie B.V.
  * All rights reserved.
@@ -65,16 +64,13 @@ import { connect, Provider } from 'react-redux';
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import store from '../../store';
-import { Dispatch, Store } from 'redux';
+import { Dispatch } from 'redux';
 import { updatePayment } from '../../store/actions';
 import LoadingDots from '../../../misc/LoadingDots';
 import PaymentInfo from './PaymentInfo';
 import RefundInfo from './RefundInfo';
 
 interface IProps {
-  store: Store,
-
   // Redux
   config?: IMollieOrderConfig,
   translations?: ITranslations,
@@ -91,25 +87,23 @@ class RefundPanel extends Component<IProps> {
     const { moduleDir } = config;
 
     return (
-      <Provider store={store}>
-        <div className="panel">
-          <div className="panel-heading">
-            <img
-              src={`${moduleDir}views/img/mollie_panel_icon.png`}
-              width="32"
-              height="32"
-              style={{ height: '16px', width: '16px', opacity: 0.8 }}
-            /> <span>Mollie</span>&nbsp;
-          </div>
-          {!payment && <Fragment><LoadingDots/></Fragment>}
-          {!!payment && payment.status && (
-            <div className="panel-body row">
-              <PaymentInfo/>
-              <RefundInfo/>
-            </div>
-          )}
+      <div className="panel">
+        <div className="panel-heading">
+          <img
+            src={`${moduleDir}views/img/mollie_panel_icon.png`}
+            width="32"
+            height="32"
+            style={{ height: '16px', width: '16px', opacity: 0.8 }}
+          /> <span>Mollie</span>&nbsp;
         </div>
-      </Provider>
+        {!payment && <Fragment><LoadingDots/></Fragment>}
+        {!!payment && payment.status && (
+          <div className="panel-body row">
+            <PaymentInfo/>
+            <RefundInfo/>
+          </div>
+        )}
+      </div>
     );
   }
 }

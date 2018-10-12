@@ -32,36 +32,40 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
+import OrderLinesTable from './OrderLinesTable';
+import EmptyOrderLinesTable from './EmptyOrderLinesTable';
 
 interface IProps {
   // Redux
   translations?: ITranslations,
+  order?: IMollieApiOrder,
 }
 
-class RefundTableHeader extends Component<IProps> {
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: 5px!important;
+  margin-right: -5px!important;
+}
+` as any;
+
+class OrderLinesInfo extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, order } = this.props;
 
     return (
-      <thead>
-        <tr>
-          <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.date}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.amount}</span>
-          </th>
-        </tr>
-      </thead>
-    );
+      <Div className="col-md-6 panel">
+        <div className="panel-heading">{translations.products}</div>
+        {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+        {!!order && !!order.lines.length && <OrderLinesTable/>}
+      </Div>
+    )
   }
 }
 
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    order: state.order,
   })
-)(RefundTableHeader);
+)(OrderLinesInfo);

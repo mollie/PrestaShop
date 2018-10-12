@@ -32,30 +32,40 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import _ from 'lodash';
+import styled from 'styled-components';
+
+import { formatCurrency } from '../../misc/tools';
 
 interface IProps {
   // Redux
+  order?: IMollieApiOrder,
   translations?: ITranslations,
+  currencies?: ICurrencies,
 }
 
-class RefundTableHeader extends Component<IProps> {
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: -5px!important;
+  margin-right: 5px!important;
+}
+` as any;
+
+class PaymentInfo extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, order, currencies } = this.props;
 
     return (
-      <thead>
-        <tr>
-          <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.date}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.amount}</span>
-          </th>
-        </tr>
-      </thead>
+      <Div className="col-md-6 panel">
+        <div className="panel-heading">{translations.orders}</div>
+        <h4>{translations.orderInfo}</h4>
+        <div><strong>{translations.transactionId}</strong>: <span>{order.id}</span></div>
+        <div><strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span></div>
+        {/*<div><strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
+        {/*<div><strong>{translations.refunded}</strong>: <span>{formatCurrency(parseFloat(order.amountRefunded.value), _.get(currencies, order.amountRefunded.currency))}</span></div>*/}
+        {/*<div><strong style={{ textDecoration: 'underline' }}>{translations.currentAmount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value) - parseFloat(order.amountRefunded.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
+      </Div>
     );
   }
 }
@@ -63,5 +73,7 @@ class RefundTableHeader extends Component<IProps> {
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    order: state.order,
+    currencies: state.currencies,
   })
-)(RefundTableHeader);
+)(PaymentInfo);

@@ -54,7 +54,7 @@ class PartialRefundButton extends Component<IProps> {
           className="btn btn-default"
           type="button"
           disabled={loading || disabled}
-          onClick={refundPayment}
+          onClick={() => refundPayment(true)}
         >
           <i
             className={classnames({

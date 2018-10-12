@@ -30,3 +30,64 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+
+import { updateOrder } from '../../store/actions';
+import LoadingDots from '../../../misc/LoadingDots';
+import PaymentInfo from './PaymentInfo';
+import OrderLinesInfo from './OrderLinesInfo';
+
+interface IProps {
+  // Redux
+  config?: IMollieOrderConfig,
+  translations?: ITranslations,
+  order?: IMollieApiOrder,
+  dispatchUpdateOrder?: Function,
+}
+
+class RefundPanel extends Component<IProps> {
+  render() {
+    const { order, config } = this.props;
+    if (Object.keys(config).length <= 0) {
+      return null;
+    }
+    const { moduleDir } = config;
+
+    return (
+      <div className="panel">
+        <div className="panel-heading">
+          <img
+            src={`${moduleDir}views/img/mollie_panel_icon.png`}
+            width="32"
+            height="32"
+            style={{ height: '16px', width: '16px', opacity: 0.8 }}
+          /> <span>Mollie</span>&nbsp;
+        </div>
+        {!order && <Fragment><LoadingDots/></Fragment>}
+        {!!order && order.status && (
+          <div className="panel-body row">
+            <PaymentInfo/>
+            <OrderLinesInfo/>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    config: state.config,
+    order: state.order,
+  }),
+  (dispatch: Dispatch): Partial<IProps> => ({
+    dispatchUpdateOrder(order: IMollieApiOrder) {
+      dispatch(updateOrder(order));
+    }
+  })
+)
+(RefundPanel);
+

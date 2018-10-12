@@ -38,7 +38,7 @@ interface IProps {
   translations?: ITranslations,
 }
 
-class RefundTableHeader extends Component<IProps> {
+class OrderLinesTableHeader extends Component<IProps> {
   render() {
     const { translations } = this.props;
 
@@ -46,14 +46,30 @@ class RefundTableHeader extends Component<IProps> {
       <thead>
         <tr>
           <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
+            <span className="title_box"><strong>{translations.product}</strong></span>
           </th>
           <th>
-            <span className="title_box">{translations.date}</span>
+            <span className="title_box">{translations.status}</span>
           </th>
           <th>
-            <span className="title_box">{translations.amount}</span>
+            <span className="title_box">{translations.shipped}</span>
           </th>
+          <th>
+            <span className="title_box">{translations.canceled}</span>
+          </th>
+          <th>
+            <span className="title_box">{translations.refunded}</span>
+          </th>
+          <th>
+            <span className="title_box">{translations.unitPrice}</span>
+          </th>
+          <th>
+            <span className="title_box">{translations.vatAmount}</span>
+          </th>
+          <th>
+            <span className="title_box">{translations.totalAmount}</span>
+          </th>
+          <th/>
         </tr>
       </thead>
     );
@@ -64,4 +80,4 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
   })
-)(RefundTableHeader);
+)(OrderLinesTableHeader);

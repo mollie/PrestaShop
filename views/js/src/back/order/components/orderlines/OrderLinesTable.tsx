@@ -31,15 +31,51 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
+import OrderLinesTableHeader from './OrderLinesTableHeader';
+import { connect } from 'react-redux';
+import _ from 'lodash';
+import { formatCurrency } from '../../misc/tools';
+import OrderLinesTableFooter from './OrderLinesTableFooter';
 
 interface IProps {
-  config: IMollieOrderConfig,
+  // Redux
+  order?: IMollieApiOrder,
+  currencies?: ICurrencies,
 }
 
-class MollieOrderLines extends Component<IProps> {
+class OrderLinesTable extends Component<IProps> {
   render() {
-    return 'test';
+    const { order, currencies } = this.props;
+
+    return (
+      <div className="table-responsive">
+        <table className="table">
+          <OrderLinesTableHeader/>
+          <tbody>
+            {order.lines.map((line: IMollieOrderLine) => (
+              <tr key={line.id} style={{ marginBottom: '100px' }}>
+                <td><strong>{line.quantity}x</strong> {line.name}</td>
+                <td>{line.status}</td>
+                <td>{line.quantityShipped}</td>
+                <td>{line.quantityCanceled}</td>
+                <td>{line.quantityRefunded}</td>
+                <td>{formatCurrency(parseFloat(line.unitPrice.value), _.get(currencies, line.unitPrice.currency))}</td>
+                <td>{formatCurrency(parseFloat(line.vatAmount.value), _.get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
+                <td>{formatCurrency(parseFloat(line.totalAmount.value), _.get(currencies, line.totalAmount.currency))}</td>
+                <td/>
+              </tr>
+            ))}
+          </tbody>
+          <OrderLinesTableFooter/>
+        </table>
+      </div>
+    );
   }
 }
 
-export default MollieOrderLines;
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    order: state.order,
+    currencies: state.currencies,
+  })
+)(OrderLinesTable);

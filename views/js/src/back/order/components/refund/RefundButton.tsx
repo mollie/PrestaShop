@@ -52,7 +52,7 @@ class RefundButton extends Component<IProps> {
         type="button"
         className="btn btn-default"
         disabled={loading || disabled}
-        onClick={refundPayment}
+        onClick={() => refundPayment(false)}
         style={{ marginRight: '10px' }}
       >
         <i className={classnames({

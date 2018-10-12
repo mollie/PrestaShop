@@ -52,6 +52,11 @@ declare global {
     [key: string]: IBank,
   }
 
+  interface IMollieAmount {
+    value: string,
+    currency: string,
+  }
+
   interface IBankOptions {
     [key: string]: any,
   }
@@ -71,33 +76,54 @@ declare global {
   }
 
   interface IMollieApiOrder {
-    [key: string]: any,
+    resource: string,
+    id: string,
+    mode: string,
+    amount: IMollieAmount,
+    amountCaptured: IMollieAmount,
+    status: string,
+    method: string,
+    metadata: any,
+    isCancelable?: boolean,
+    createdAt: string,
+    lines: Array<IMollieOrderLine>,
+    refunds: Array<IMollieApiRefund>,
   }
 
   interface IMollieOrderLine {
-    [key: string]: any,
+    resource: string,
+    id: string,
+    orderId: string,
+    name: string,
+    sku?: string,
+    type: string,
+    status: string,
+    isCancelable: boolean,
+    quantity: number,
+    quantityShipped: number,
+    amountShipped: IMollieAmount,
+    quantityRefunded: number,
+    amountRefunded: IMollieAmount,
+    quantityCanceled: number,
+    amountCanceled: IMollieAmount,
+    shippableQuantity: number,
+    refundableQuantity: number,
+    cancelableQuantity: number,
+    unitPrice: IMollieAmount,
+    vatRate: string,
+    vatAmount: IMollieAmount,
+    totalAmount: IMollieAmount,
+    createdAt: string,
   }
 
   interface IMollieApiPayment {
     resource: string,
     id: string,
     mode: string,
-    amount: {
-      value: string,
-      currency: string,
-    },
-    settlementAmount: {
-      value: string,
-      currency: string,
-    },
-    amountRefunded: {
-      value: string,
-      currency: string,
-    },
-    amountRemaining: {
-      value: string,
-      currency: string,
-    },
+    amount: IMollieAmount,
+    settlementAmount: IMollieAmount,
+    amountRefunded: IMollieAmount,
+    amountRemaining: IMollieAmount,
     description: string,
     method: string,
     status: string,
@@ -114,10 +140,7 @@ declare global {
   interface IMollieApiRefund {
     resource: string,
     id: string,
-    amount: {
-      value: string,
-      currency: string,
-    },
+    amount: IMollieAmount,
     createdAt: string,
     description: string,
     paymentId: string,

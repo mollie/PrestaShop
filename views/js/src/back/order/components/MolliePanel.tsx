@@ -30,38 +30,38 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, Fragment } from 'react';
+import RefundPanel from './refund/RefundPanel';
+import store from '../store';
+import { connect, Provider } from 'react-redux';
+import OrderPanel from './orderlines/OrderPanel';
+import { Store } from 'redux';
 
 interface IProps {
-  // Redux
-  translations?: ITranslations,
+  store: Store,
+
+  payment?: IMollieApiPayment,
+  order?: IMollieApiOrder,
 }
 
-class RefundTableHeader extends Component<IProps> {
-  render() {
-    const { translations } = this.props;
+class MolliePanel extends Component<IProps> {
+  render () {
+    const { payment, order } = this.props;
 
     return (
-      <thead>
-        <tr>
-          <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.date}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.amount}</span>
-          </th>
-        </tr>
-      </thead>
-    );
+    <Provider store={store}>
+      <Fragment>
+        {payment && <RefundPanel/>}
+        {order && <OrderPanel/>}
+      </Fragment>
+    </Provider>
+    )
   }
 }
 
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
+    payment: state.payment,
+    order: state.order,
   })
-)(RefundTableHeader);
+)(MolliePanel);

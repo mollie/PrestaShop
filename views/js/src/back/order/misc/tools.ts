@@ -30,8 +30,6 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import _ from 'lodash';
-
 declare let window: any;
 
 export const formattedNumberToFloat = (price: string | number, currencyFormat: number, currencySign: string) => {

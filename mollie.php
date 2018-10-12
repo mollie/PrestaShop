@@ -3850,6 +3850,7 @@ class Mollie extends PaymentModule
      */
     public function getFilteredApiPayment($transactionId)
     {
+        /** @var \Mollie\Api\Resources\Payment $payment */
         $payment = $this->api->payments->get($transactionId);
         if ($payment && method_exists($payment, 'refunds')) {
             $refunds = $payment->refunds();
@@ -3897,6 +3898,59 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * @param string $transactionId
+     *
+     * @return array|null
+     *
+     * @throws \Mollie\Api\Exceptions\ApiException
+     *
+     * @since 3.3.0
+     */
+    public function getFilteredApiOrder($transactionId)
+    {
+        /** @var \Mollie\Api\Resources\Order $order */
+        $order = $this->api->orders->get($transactionId);
+        if ($order && method_exists($order, 'refunds')) {
+            $refunds = $order->refunds();
+            if (empty($refunds)) {
+                $refunds = array();
+            }
+            $refunds = array_map(function ($refund) {
+                return array_intersect_key(
+                    (array) $refund,
+                    array_flip(array(
+                        'resource',
+                        'id',
+                        'amount',
+                        'createdAt',
+                    )));
+            }, (array) $refunds);
+            $order = array_intersect_key(
+                (array) $order,
+                array_flip(array(
+                    'resource',
+                    'id',
+                    'mode',
+                    'amount',
+                    'settlementAmount',
+                    'amountCaptured',
+                    'status',
+                    'method',
+                    'metadata',
+                    'isCancelable',
+                    'createdAt',
+                    'lines',
+                ))
+            );
+            $order['refunds'] = (array) $refunds;
+        } else {
+            $order = null;
+        }
+
+        return $order;
+    }
+
+    /**
      * @return array
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
@@ -3927,6 +3981,13 @@ class Mollie extends PaymentModule
                         return array('success' => isset($status['status']) && $status['status'] === 'success', 'payment' => static::getFilteredApiPayment($input['transactionId']));
                     case 'retrieve':
                         return array('success' => true, 'payment' => static::getFilteredApiPayment($input['transactionId']));
+                    default:
+                        return array('success' => false);
+                }
+            } elseif ($input['resource'] === 'orders') {
+                switch ($input['action']) {
+                    case 'retrieve':
+                        return array('success' => true, 'order' => static::getFilteredApiOrder($input['transactionId']));
                     default:
                         return array('success' => false);
                 }

@@ -64,8 +64,15 @@
         amount: '{l s='Amount' mod='mollie' js=1}',
         refunds: '{l s='Refunds' mod='mollie' js=1}',
         payments: '{l s='Payments' mod='mollie' js=1}',
-        refunded: '{l s='Refunded' mod='mollie' js=1}',
         currentAmount: '{l s='Current amount' mod='mollie' js=1}',
+        products: '{l s='Products' mod='mollie' js=1}',
+        status: '{l s='Status' mod='mollie' js=1}',
+        shipped: '{l s='Shipped' mod='mollie' js=1}',
+        canceled: '{l s='Canceled' mod='mollie' js=1}',
+        refunded: '{l s='Refunded' mod='mollie' js=1}',
+        unitPrice: '{l s='Unit Price' mod='mollie' js=1}',
+        vatAmount: '{l s='VAT Amount' mod='mollie' js=1}',
+        totalAmount: '{l s='Total amount' mod='mollie' js=1}',
       },
       {Tools::jsonEncode($currencies)}
     );

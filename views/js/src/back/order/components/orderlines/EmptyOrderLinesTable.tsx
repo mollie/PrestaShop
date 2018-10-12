@@ -32,36 +32,39 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import OrderLinesTableHeader from './OrderLinesTableHeader';
 
 interface IProps {
   // Redux
   translations?: ITranslations,
 }
 
-class RefundTableHeader extends Component<IProps> {
+class EmptyOrderLinesTable extends Component<IProps> {
   render() {
     const { translations } = this.props;
 
     return (
-      <thead>
-        <tr>
-          <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.date}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.amount}</span>
-          </th>
-        </tr>
-      </thead>
+      <div className="table-responsive">
+        <table className="table">
+          <OrderLinesTableHeader/>
+          <tbody>
+            <tr>
+              <td className="list-empty hidden-print" colSpan={3}>
+                <div className="list-empty-msg">
+                  <i className="icon-warning-sign list-empty-icon"/>
+                  {translations.thereAreNoProducts}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
 }
 
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
+    translations: state.translations
   })
-)(RefundTableHeader);
+)(EmptyOrderLinesTable);

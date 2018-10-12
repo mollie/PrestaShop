@@ -75,16 +75,15 @@ class RefundForm extends Component<IProps> {
     let amount;
     if (partial) {
       amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
-    }
-    if (isNaN(amount)) {
-      // TODO: improve
-      swal({
-        icon: 'error',
-        title: translations.invalidAmount,
-        text: translations.notAValidAmount,
-      }).then();
+      if (isNaN(amount)) {
+        swal({
+          icon: 'error',
+          title: translations.invalidAmount,
+          text: translations.notAValidAmount,
+        }).then();
 
-      return false;
+        return false;
+      }
     }
 
     // @ts-ignore
