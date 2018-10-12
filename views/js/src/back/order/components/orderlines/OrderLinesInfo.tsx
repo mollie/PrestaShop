@@ -54,7 +54,7 @@ class OrderLinesInfo extends Component<IProps> {
     const { translations, order } = this.props;
 
     return (
-      <Div className="col-md-6 panel">
+      <Div className="col-md-9 panel">
         <div className="panel-heading">{translations.products}</div>
         {!order || !order.lines.length && <EmptyOrderLinesTable/>}
         {!!order && !!order.lines.length && <OrderLinesTable/>}

@@ -86,29 +86,29 @@ class OrderLinesTableFooter extends Component<IProps> {
         <tr>
           <td colSpan={10}>
             <button
-              style={{ float: 'left', marginRight: '5px', display: this.shippable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px' }}
               type="button"
               onClick={() => ship(_.compact(order.lines))}
               className="btn btn-primary"
-              disabled={loading}
+              disabled={loading || !this.shippable}
             >
               <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/> {translations.shipAll}
             </button>
             <button
-              style={{ float: 'left', marginRight: '5px', display: this.refundable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px' }}
               type="button"
               onClick={() => refund(_.compact(order.lines))}
               className="btn btn-default"
-              disabled={loading}
+              disabled={loading || !this.refundable}
             >
               <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/> {translations.refundAll}
             </button>
             <button
-              style={{ float: 'left', marginRight: '5px', display: this.cancelable ? 'block' : 'none' }}
+              style={{ float: 'left', marginRight: '5px' }}
               type="button"
               onClick={() => cancel(_.compact(order.lines))}
               className="btn btn-default"
-              disabled={loading}
+              disabled={loading || !this.cancelable}
             >
               <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/> {translations.cancelAll}
             </button>

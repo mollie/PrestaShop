@@ -71,9 +71,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-//        if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
+        if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
             Logger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
-//        }
+        }
 
         die($this->executeWebhook());
     }
@@ -139,7 +139,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $orderId = (int) Order::getOrderByCartId($apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
-            if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
+            if ($apiPayment instanceof \Mollie\Api\Resources\Order && ($apiPayment->isRefunded() || $apiPayment->isCanceled())
+                || ($apiPayment instanceof \Mollie\Api\Resources\Payment && ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()))
+            ) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     && (float) $apiPayment->settlementAmount->value - (float) $apiPayment->amountRefunded->value > 0
                 ) {

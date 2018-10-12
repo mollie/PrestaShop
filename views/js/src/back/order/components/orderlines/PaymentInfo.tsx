@@ -57,7 +57,7 @@ class PaymentInfo extends Component<IProps> {
     const { translations, order, currencies } = this.props;
 
     return (
-      <Div className="col-md-6 panel">
+      <Div className="col-md-3 panel">
         <div className="panel-heading">{translations.paymentInfo}</div>
         <h4>{translations.orderInfo}</h4>
         <div><strong>{translations.transactionId}</strong>: <span>{order.id}</span></div>
