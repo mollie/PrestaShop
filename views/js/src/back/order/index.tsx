@@ -34,11 +34,11 @@ import '@babel/polyfill';
 
 import React from 'react';
 import { render } from 'react-dom';
-import axios from 'axios';
 
 import store from './store';
 import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations } from './store/actions';
 import MolliePanel from './components/MolliePanel';
+import { retrieveOrder, retrievePayment } from './misc/ajax';
 
 export const orderInfo = (
   target: any,
@@ -49,20 +49,10 @@ export const orderInfo = (
   setTimeout(async () => {
     const { transactionId } = config;
 
-    if (config.transactionId.substr(0, 3) === 'ord') {
-      const { data: { order } } = await axios.post(config.ajaxEndpoint, {
-        resource: 'orders',
-        action: 'retrieve',
-        transactionId,
-      });
-      store.dispatch(updateOrder(order));
+    if (transactionId.substr(0, 3) === 'ord') {
+      store.dispatch(updateOrder(await retrieveOrder(transactionId)));
     } else {
-      const { data: { payment } } = await axios.post(config.ajaxEndpoint, {
-        resource: 'payments',
-        action: 'retrieve',
-        transactionId,
-      });
-      store.dispatch(updatePayment(payment));
+      store.dispatch(updatePayment(await retrievePayment(transactionId)));
     }
   }, 0);
 

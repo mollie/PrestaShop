@@ -2,39 +2,39 @@ import axios from 'axios';
 import store from '../store';
 import _ from 'lodash';
 
-export const retrievePayment = async (orderId: number): Promise<false|IMollieApiPayment> => {
+export const retrievePayment = async (transactionId: number): Promise<IMollieApiPayment|null> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 
     const { data: { payment } = { payment: null } } = await axios.post(ajaxEndpoint, {
       resource: 'payments',
       action: 'retrieve',
-      orderId,
+      transactionId,
     });
 
-    return payment || false;
+    return payment || null;
   } catch (e) {
     console.error(e);
 
-    return false;
+    return null;
   }
 };
 
-export const retrieveOrder = async (transactionId: string): Promise<false|IMollieApiOrder> => {
+export const retrieveOrder = async (transactionId: string): Promise<IMollieApiOrder|null> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 
     const { data: { order } = { order: null } } = await axios.post(ajaxEndpoint, {
       resource: 'orders',
       action: 'retrieve',
-      orderId: transactionId,
+      transactionId,
     });
 
-    return order || false;
+    return order || null;
   } catch (e) {
     console.error(e);
 
-    return false;
+    return null;
   }
 };
 
