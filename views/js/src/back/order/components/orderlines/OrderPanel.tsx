@@ -65,6 +65,9 @@ class RefundPanel extends Component<IProps> {
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           /> <span>Mollie</span>&nbsp;
         </div>
+        <div className="alert alert-warning">
+          <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
+        </div>
         {!order && <Fragment><LoadingDots/></Fragment>}
         {!!order && order.status && (
           <div className="panel-body row">
