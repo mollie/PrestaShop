@@ -30,7 +30,15 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-export {}
+export {
+}
+
+// @ts-ignore
+declare module 'styled-table-component' {
+  let x: any;
+  export = x;
+}
+
 declare global {
   interface ITranslations {
     [key: string]: string,
@@ -114,6 +122,20 @@ declare global {
     vatAmount: IMollieAmount,
     totalAmount: IMollieAmount,
     createdAt: string,
+
+    // PrestaShop additions
+    newQuantity: number,
+  }
+
+  interface IMollieTracking {
+    carrier: string,
+    code: string,
+    url?: string,
+  }
+
+  interface IMollieShipment {
+    lines: Array<IMollieOrderLine>,
+    tracking: IMollieTracking,
   }
 
   interface IMollieApiPayment {

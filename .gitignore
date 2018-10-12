@@ -4,3 +4,4 @@ lib/composer.lock
 yarn.lock
 package-lock.json
 .idea/
+yarn-error.log

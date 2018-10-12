@@ -1370,6 +1370,49 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * @param string     $transactionId
+     * @param array      $lines
+     * @param array|null $tracking
+     *
+     * @return array
+     *
+     * @since 3.3.0
+     */
+    protected function doShipOrderLines($transactionId, $lines = array(), $tracking = null)
+    {
+        try {
+            /** @var \Mollie\Api\Resources\Order $payment */
+            $order = $this->api->orders->get($transactionId);
+            $shipment = array(
+                'lines' => array_map(function ($line) {
+                    return array_intersect_key(
+                        (array) $line,
+                        array_flip(array(
+                            'id',
+                            'quantity',
+                        )));
+                }, $lines),
+            );
+            if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
+                $shipment['tracking'] = $tracking;
+            }
+            $order->createShipment($shipment);
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            return array(
+                'success'  => false,
+                'message'  => $this->lang('The products could not be shipped!'),
+                'detailed' => $e->getMessage(),
+            );
+        }
+
+        return array(
+            'success'  => true,
+            'message'  => '',
+            'detailed' => '',
+        );
+    }
+
+    /**
      * @return array
      *
      * @throws \Mollie\Api\Exceptions\ApiException
@@ -3988,6 +4031,10 @@ class Mollie extends PaymentModule
                 switch ($input['action']) {
                     case 'retrieve':
                         return array('success' => true, 'order' => static::getFilteredApiOrder($input['transactionId']));
+                    case 'ship':
+                        $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
+                        break;
                     default:
                         return array('success' => false);
                 }
@@ -3997,5 +4044,17 @@ class Mollie extends PaymentModule
         }
 
         return array('success' => false);
+    }
+
+    /**
+     * Use this function to check if automatic shipments are enabled
+     *
+     * @return bool
+     *
+     * @since 3.3.0
+     */
+    public static function checkAutomaticShipments()
+    {
+        return false;
     }
 }

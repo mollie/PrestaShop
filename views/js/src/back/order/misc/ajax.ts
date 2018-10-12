@@ -56,7 +56,7 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
   }
 };
 
-export const refundOrder = async (transactionId: number, orderLines: Array<IMollieOrderLine>): Promise<boolean> => {
+export const refundOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<boolean> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 
@@ -65,6 +65,43 @@ export const refundOrder = async (transactionId: number, orderLines: Array<IMoll
       action: 'refund',
       transactionId,
       orderLines,
+    });
+    return _.defaults(data, { success: false, order: null });
+  } catch (e) {
+    console.error(e);
+
+    return false;
+  }
+};
+
+export const cancelOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<boolean> => {
+  try {
+    const ajaxEndpoint = store.getState().config.ajaxEndpoint;
+
+    const { data } = await axios.post(ajaxEndpoint, {
+      resource: 'orders',
+      action: 'cancel',
+      transactionId,
+      orderLines,
+    });
+    return _.defaults(data, { success: false, order: null });
+  } catch (e) {
+    console.error(e);
+
+    return false;
+  }
+};
+
+export const shipOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>, tracking?: IMollieTracking): Promise<any> => {
+  try {
+    const ajaxEndpoint = store.getState().config.ajaxEndpoint;
+
+    const { data } = await axios.post(ajaxEndpoint, {
+      resource: 'orders',
+      action: 'ship',
+      transactionId,
+      orderLines,
+      tracking,
     });
     return _.defaults(data, { success: false, order: null });
   } catch (e) {

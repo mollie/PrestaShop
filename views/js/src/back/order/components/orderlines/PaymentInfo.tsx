@@ -58,11 +58,11 @@ class PaymentInfo extends Component<IProps> {
 
     return (
       <Div className="col-md-6 panel">
-        <div className="panel-heading">{translations.orders}</div>
+        <div className="panel-heading">{translations.paymentInfo}</div>
         <h4>{translations.orderInfo}</h4>
         <div><strong>{translations.transactionId}</strong>: <span>{order.id}</span></div>
         <div><strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span></div>
-        {/*<div><strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
+        <div><strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), _.get(currencies, order.amount.currency))}</span></div>
         {/*<div><strong>{translations.refunded}</strong>: <span>{formatCurrency(parseFloat(order.amountRefunded.value), _.get(currencies, order.amountRefunded.currency))}</span></div>*/}
         {/*<div><strong style={{ textDecoration: 'underline' }}>{translations.currentAmount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value) - parseFloat(order.amountRefunded.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
       </Div>

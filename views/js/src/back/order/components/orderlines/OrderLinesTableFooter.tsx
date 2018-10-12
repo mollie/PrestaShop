@@ -34,13 +34,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 interface IProps {
+  loading: boolean,
+
   // Redux
   translations?: ITranslations,
 }
 
 class OrderLinesTableFooter extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, loading } = this.props;
 
     return (
       <tfoot>
