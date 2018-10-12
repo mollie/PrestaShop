@@ -31,38 +31,34 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
+import RefundHistory from './RefundHistory';
+import RefundForm from './RefundForm';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import styled from 'styled-components';
 
 interface IProps {
-  loading: boolean,
-  disabled: boolean,
-  refundPayment: any,
-
   // Redux
   translations?: ITranslations,
 }
 
-class RefundButton extends Component<IProps> {
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: 5px!important;
+  margin-right: -5px!important;
+}
+` as any;
+
+class RefundInfo extends Component<IProps> {
   render() {
-    const { translations, loading, disabled, refundPayment } = this.props;
+    const { translations } = this.props;
 
     return (
-      <button
-        type="button"
-        className="btn btn-default"
-        disabled={loading || disabled}
-        onClick={refundPayment}
-        style={{ marginRight: '10px' }}
-      >
-        <i className={classnames({
-          'icon': true,
-          'icon-undo': !loading,
-          'icon-circle-o-notch': loading,
-          'icon-spin': loading,
-        })}/> {translations.fullRefund}
-      </button>
-    );
+      <Div className="col-md-6 panel">
+        <div className="panel-heading">{translations.refunds}</div>
+        <RefundHistory/>
+        <RefundForm/>
+      </Div>
+    )
   }
 }
 
@@ -70,5 +66,4 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
   })
-)
-(RefundButton);
+)(RefundInfo);

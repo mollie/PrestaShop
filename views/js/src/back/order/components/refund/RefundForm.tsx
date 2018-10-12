@@ -152,6 +152,7 @@ class RefundForm extends Component<IProps> {
                   disabled={loading}
                   value={refundInput}
                   onChange={({ target: { value: refundInput } }: any) => this.setState(() => ({ refundInput }))}
+                  style={{ width: '80px' }}
                 />
                 <PartialRefundButton
                   refundPayment={this.refundPayment}

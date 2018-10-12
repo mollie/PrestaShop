@@ -62,6 +62,10 @@
         ID: '{l s='ID' mod='mollie' js=1}',
         date: '{l s='Date' mod='mollie' js=1}',
         amount: '{l s='Amount' mod='mollie' js=1}',
+        refunds: '{l s='Refunds' mod='mollie' js=1}',
+        payments: '{l s='Payments' mod='mollie' js=1}',
+        refunded: '{l s='Refunded' mod='mollie' js=1}',
+        currentAmount: '{l s='Current amount' mod='mollie' js=1}',
       },
       {Tools::jsonEncode($currencies)}
     );
