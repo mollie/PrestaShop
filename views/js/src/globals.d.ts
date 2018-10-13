@@ -73,6 +73,15 @@ declare global {
     [key: string]: any,
   }
 
+  interface IMollieCarrierConfig {
+    'id_carrier': string,
+    'name': string,
+    'source': 'module'|'carrier_url'|'custom_url',
+    'module'?: string,
+    'module_name': string,
+    'custom_url': string,
+  }
+
   interface ICurrencies {
     [iso: string]: ICurrency,
   }

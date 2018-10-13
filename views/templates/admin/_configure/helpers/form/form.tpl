@@ -162,7 +162,6 @@
         function moveDown(event) {
           event.preventDefault();
           var $elem = $(event.target).closest('li');
-          console.log($elem);
           $elem.next().insertBefore($elem);
           setPositions();
         }
@@ -181,7 +180,6 @@
           });
           var $sortableLis = $('.sortable > li');
           $sortableLis.each(function (index, elem) {
-            console.log(index);
             var $elem = $(elem);
             $elem.find('button.mollie-up').click(moveUp).attr('disabled', index === 0);
             $elem.find('button.mollie-down').click(moveDown).attr('disabled', index === ($sortableLis.length - 1));
@@ -205,6 +203,30 @@
   {elseif $input.type === 'mollie-h3'}
     <br>
     <h3>{$input.title|escape:'html':'UTF-8'}</h3>
+  {elseif $input.type == 'mollie-carriers'}
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
+    <script type="text/javascript">
+      (function initMollieCarrierConfig() {
+        if (typeof window.MollieModule === 'undefined'
+          || typeof window.MollieModule.back === 'undefined'
+          || typeof window.MollieModule.back.carrierConfig === 'undefined'
+        ) {
+          return setTimeout(initMollieCarrierConfig, 100);
+        }
+
+        window.MollieModule.back.carrierConfig(
+          '{$input.name|escape:'javascript':'UTF-8'}',
+          {Tools::jsonEncode($input.carrier_config)},
+          {
+            name: '{l s='Name' mod='mollie' js=1}',
+            urlSource: '{l s='URL Source' mod='mollie' js=1}',
+            carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
+            customUrl: '{l s='Custom URL' mod='mollie' js=1}',
+            module: '{l s='Module' mod='mollie' js=1}',
+          }
+        )
+      }());
+    </script>
   {elseif $input.type == 'switch' && version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
     {foreach $input.values as $value}
       <input type="radio" name="{$input.name|escape:'htmlall':'UTF-8'}"

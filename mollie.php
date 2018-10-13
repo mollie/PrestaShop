@@ -119,6 +119,7 @@ class Mollie extends PaymentModule
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';
     const MOLLIE_QRENABLED = 'MOLLIE_QRENABLED';
     const MOLLIE_DISPLAY_ERRORS = 'MOLLIE_DISPLAY_ERRORS';
+    const MOLLIE_TRACKING_URLS = 'MOLLIE_TRACKING_URLS';
     const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
@@ -509,9 +510,7 @@ class Mollie extends PaymentModule
 
         $this->context->controller->addJquery();
         $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
-        if (!static::ADDONS) {
-            $this->context->controller->addJS($this->_path.'views/js/dist/updater.min.js');
-        }
+        $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
 
         $this->context->smarty->assign($data);
 
@@ -924,6 +923,31 @@ class Mollie extends PaymentModule
                         'name'  => 'name',
                     ),
                 ),
+            )
+        );
+
+        if (static::selectedApi() === static::MOLLIE_ORDERS_API) {
+            $input = array_merge(
+                $input,
+                array(
+                    array(
+                        'type'  => 'mollie-h3',
+                        'name'  => '',
+                        'title' => $this->l('Orders API'),
+                    ),
+                    array(
+                        'type'    => 'mollie-carriers',
+                        'label'   => $this->l('Tracking URLs'),
+                        'name'    => static::MOLLIE_TRACKING_URLS,
+                        'desc'    => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
+                        'carrier_config' => static::carrierConfig()),
+                )
+            );
+        }
+
+        $input = array_merge(
+            $input,
+            array(
                 array(
                     'type'  => 'mollie-h2',
                     'name'  => '',
@@ -1049,6 +1073,36 @@ class Mollie extends PaymentModule
             static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
             static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
             static::MOLLIE_API            => Configuration::get(static::MOLLIE_API),
+        );
+    }
+
+    public static function carrierConfig()
+    {
+        return array(
+            array(
+                'id_carrier'  => '1',
+                'name'        => 'PostNL',
+                'source'      => 'custom_url',
+                'module'      => null,
+                'module_name' => null,
+                'custom_url'  => '',
+            ),
+            array(
+                'id_carrier'  => '2',
+                'name'        => 'MyParcel',
+                'source'      => 'module',
+                'module'      => 'myparcel',
+                'module_name' => 'MyParcel',
+                'custom_url'  => '',
+            ),
+            array(
+                'id_carrier'  => '3',
+                'name'        => 'bpost',
+                'source'      => 'carrier_url',
+                'module'      => null,
+                'module_name' => null,
+                'custom_url'  => '',
+            ),
         );
     }
 
@@ -4019,6 +4073,7 @@ class Mollie extends PaymentModule
      *
      * @return array|null
      *
+     * @throws ErrorException
      * @throws \Mollie\Api\Exceptions\ApiException
      *
      * @since 3.3.0

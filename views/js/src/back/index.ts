@@ -32,3 +32,4 @@
  */
 export * from './updater';
 export * from './order';
+export * from './carrierconfig';
