@@ -8,5 +8,8 @@ export const carrierConfig = (
   config: Array<IMollieCarrierConfig>,
   translations: ITranslations
 ) => {
-  return render(<CarrierConfig translations={translations} config={config} target={target}/>, document.getElementById(`${target}_container`));
+  return render(
+    <CarrierConfig translations={translations} config={config} target={target}/>,
+    document.getElementById(`${target}_container`)
+  );
 };
