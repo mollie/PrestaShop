@@ -33,11 +33,17 @@
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// Uncomment for analyzing webpack size (1/2)
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
   new webpack.optimize.ModuleConcatenationPlugin(),
+  new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+  // Uncomment for analyzing webpack size (2/2)
+  new BundleAnalyzerPlugin(),
 ];
 const optimization = {
   minimizer: [],
@@ -64,7 +70,6 @@ if (production) {
       placeholders: false,
     })
   );
-  plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
   optimization.minimizer.push(
     new UglifyJsPlugin({
       uglifyOptions: {
