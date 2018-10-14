@@ -123,23 +123,23 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 $data['msg_details'] = $this->module->lang('The order with this id does not exist.');
             } else {
                 switch ($data['mollie_info']['bank_status']) {
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
                         $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
                         break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
                         $data['msg_details'] = $this->module->lang('Unfortunately your payment was expired.');
                         break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
                         // Validate the Order
                         if (isset($cart) && Validate::isLoadedObject($cart)) {
                             Tools::redirect(

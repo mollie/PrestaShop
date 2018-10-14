@@ -1,7 +1,10 @@
 {
     "require": {
         "firstred/mollie-api-php": "~2.1.2",
-        "firstred/mollie-reseller-api": "~1.10.2"
+        "firstred/mollie-reseller-api": "~1.10.2",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*"
     },
     "autoload": {
         "files": ["helpers.php"]
@@ -20,5 +23,6 @@
         "platform": {
             "php": "5.3.29"
         }
-    }
+    },
+    "type": "prestashop-module"
 }

@@ -86,11 +86,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         // If no issuer was set yet and the issuer list has its own page, show issuer list here
         if (!$issuer
             && Configuration::get(Mollie::MOLLIE_ISSUERS) === Mollie::ISSUERS_OWN_PAGE
-            && $method === \Mollie\Api\Types\PaymentMethod::IDEAL
+            && $method === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
         ) {
             $tplData = array();
             $issuers = $this->module->getIssuerList();
-            $tplData['issuers'] = isset($issuers[\Mollie\Api\Types\PaymentMethod::IDEAL]) ? $issuers[\Mollie\Api\Types\PaymentMethod::IDEAL] : array();
+            $tplData['issuers'] = isset($issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL]) ? $issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] : array();
             if (!empty($tplData['issuers'])) {
                 $tplData['msg_bankselect'] = $this->module->lang['Select your bank:'];
                 $tplData['msg_ok'] = $this->module->lang['OK'];
@@ -133,7 +133,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $orderReference = isset($payment->metadata->order_reference) ? pSQL($payment->metadata->order_reference) : '';
 
         // Store payment linked to cart
-        if ($payment->method !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($payment->method !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
             Db::getInstance()->insert(
                 'mollie_payments',
                 array(
@@ -141,7 +141,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'method'          => pSQL($payment->method),
                     'transaction_id'  => pSQL($payment->id),
                     'order_reference' => pSQL($orderReference),
-                    'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
@@ -153,7 +153,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentStatus = Configuration::get('PS_OS_BANKWIRE');
         }
 
-        if ($payment->method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($payment->method === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
             $this->module->currentOrderReference = $orderReference;
             $this->module->validateMollieOrder(
                 (int) $cart->id,
@@ -177,7 +177,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     'order_reference' => pSQL($orderReference),
                     'method'          => pSQL($payment->method),
                     'transaction_id'  => pSQL($payment->id),
-                    'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
@@ -229,10 +229,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @param array $data
      *
-     * @return \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order?
+     * @return \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order|null
      *
      * @throws PrestaShopException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     private function createPayment($data)
     {
@@ -240,7 +240,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             unset($data['webhookUrl']);
         }
 
-        /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $payment */
+        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
         $payment = $this->module->api->{Mollie::selectedApi()}->create($data);
 
         return $payment;

@@ -59,7 +59,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     public function initContent()
     {
@@ -73,10 +73,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             $dbPayment = Mollie::getPaymentBy('cart_id', Tools::getValue('cart_id'));
             if (is_array($dbPayment)) {
                 try {
-                    /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $apiPayment */
+                    /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
                     $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($dbPayment['transaction_id']);
-                    $canceled = $apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_PAID;
-                } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                    $canceled = $apiPayment->status !== \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID;
+                } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
                 }
             }
 
@@ -94,7 +94,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     protected function processAjax()
     {
@@ -114,7 +114,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     protected function processNewQrCode()
     {
@@ -136,7 +136,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         $payment = $mollie->api->{Mollie::selectedApi()}->create(Mollie::getPaymentData(
             $orderTotal,
             Tools::strtoupper($this->context->currency->iso_code),
-            \Mollie\Api\Types\PaymentMethod::IDEAL,
+            \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL,
             null,
             (int) $cart->id,
             $customer->secure_key,
@@ -150,7 +150,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'cart_id'        => (int) $cart->id,
                 'method'         => pSQL($payment->method),
                 'transaction_id' => pSQL($payment->id),
-                'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                'bank_status'    => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                 'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
             )
         );
@@ -200,10 +200,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         switch ($payment['bank_status']) {
-            case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
                 $status = static::SUCCESS;
                 break;
-            case \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
                 $status = static::PENDING;
                 break;
             default:
