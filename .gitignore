@@ -5,3 +5,6 @@ yarn.lock
 yarn-error.log
 package-lock.json
 .idea/
+build/
+php-scoper.phar
+php-scoper.phar.pubkey
