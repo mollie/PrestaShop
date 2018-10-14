@@ -2,12 +2,10 @@
 CWD_BASENAME=${PWD##*/}
 CWD_BASEDIR=${PWD}
 
-if [ ! -d "${CWD_BASEDIR}/lib/vendor/" ]; then
-  cd lib
+if [ ! -d "${CWD_BASEDIR}/vendor/" ]; then
   composer install --no-dev --prefer-dist
   composer -o dump-autoload
   find vendor/ -type d -exec cp index.php {} \;
-  rm ${CWD_BASEDIR}/lib/vendor/firstred/mollie-api-php/examples -rf
   cd ..
 fi
 
@@ -20,27 +18,22 @@ NODE_ENV=production webpack --mode production
 cp ${CWD_BASEDIR}/views/js/src/index.php ${CWD_BASEDIR}/views/js/dist/index.php
 cd ${CWD_BASEDIR}
 
-${CWD_BASEDIR}/lib/vendor/firstred/mollie-api-php/.git -rf
-${CWD_BASEDIR}/lib/vendor/firstred/mollie-api-php/tests -rf
-${CWD_BASEDIR}/lib/vendor/firstred/mollie-api-php/build -rf
-
 FILES=("logo.gif")
 FILES+=("logo.png")
 FILES+=("LICENSE")
 FILES+=("${CWD_BASENAME}.php")
 FILES+=("index.php")
 FILES+=("controllers/**")
-FILES+=("lib/**")
 FILES+=("sql/**")
 FILES+=("translations/**")
 FILES+=("upgrade/**")
+FILES+=("vendor/**")
 FILES+=("views/index.php")
 FILES+=("views/css/**")
 FILES+=("views/img/**")
 FILES+=("views/js/index.php")
 FILES+=("views/js/jquery.sortable.js")
 FILES+=("views/js/sweetalert-2.1.0.min.js")
-FILES+=("views/js/src/index.php")
 FILES+=("views/js/dist/*.min.js")
 FILES+=("views/js/dist/index.php")
 FILES+=("views/templates/**")
