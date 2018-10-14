@@ -18,6 +18,11 @@ NODE_ENV=production webpack --mode production
 cp ${CWD_BASEDIR}/views/js/src/index.php ${CWD_BASEDIR}/views/js/dist/index.php
 cd ${CWD_BASEDIR}
 
+// Remove deprecated files from build
+rm ${CWD_BASEDIR}/vendor/firstred/mollie-api-php/composer.json
+rm ${CWD_BASEDIR}/vendor/firstred/mollie-reseller-api/composer.json
+rm ${CWD_BASEDIR}/vendor/firstred/mollie-reseller-api/Makefile
+
 FILES=("logo.gif")
 FILES+=("logo.png")
 FILES+=("LICENSE")
