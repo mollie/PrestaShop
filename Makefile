@@ -33,23 +33,31 @@ prod: composer php-scoper node webpack zip
 dev: NODE_ENV=development
 dev: composer php-scoper node webpack
 
+# Quick aliases
+a: all
+p: prod
+d: dev
+c: clean
+qc: quick-clean
+
 clean:
+# PHP scoper
+	@rm -rf pre-scoper/ 2>/dev/null || true
+	@rm php-scoper.phar 2>/dev/null || true
+	@rm php-scoper.phar.pubkey 2>/dev/null || true
+
+quick-clean:
 # Composer
 	@rm -rf vendor/ 2>/dev/null || true
 	@rm composer.lock 2>/dev/null || true
 
 # Webpack / node.js
-	@rm -rf views/js/src/node_modules/
-	2>/dev/null || true
+	@rm -rf views/js/src/node_modules/ 2>/dev/null || true
 	@rm views/js/src/package-lock.json 2>/dev/null || true
 	@rm views/js/src/yarn.lock 2>/dev/null || true
 	@rm views/js/src/yarn.lock 2>/dev/null || true
 	@rm -rf views/js/dist/ 2>/dev/null || true
 
-# PHP scoper
-	@rm -rf pre-scoper/ 2>/dev/null || true
-	@rm php-scoper.phar 2>/dev/null || true
-	@rm php-scoper.phar.pubkey 2>/dev/null || true
 
 php-scoper:
 # Check if php scoper is available, otherwise download it
@@ -65,6 +73,8 @@ endif
 	@mv build/pre-scoper/vendor vendor
 	@rm -rf pre-scoper/ -rf 2>/dev/null || true
 	@rm -rf build/ -rf 2>/dev/null || true
+# Create a new autoloader, the one PHP-scoper generates is not compatible with PHP 5.3.29+
+	composer -o dump-autoload
 
 composer:
 ifeq (,$(wildcard vendor/))

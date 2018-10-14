@@ -32,7 +32,7 @@
  * @link       https://www.mollie.nl
  */
 
-require_once(dirname(__FILE__).'/vendor/autoload.php');
+require_once(dirname(__FILE__).'/vendor/scoper-autoload.php');
 require_once(dirname(__FILE__).'/helpers.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
     require_once dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php';
