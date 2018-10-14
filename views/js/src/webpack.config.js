@@ -43,7 +43,7 @@ const plugins = [
   new webpack.optimize.ModuleConcatenationPlugin(),
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   // Uncomment for analyzing webpack size (2/2)
-  new BundleAnalyzerPlugin(),
+  // new BundleAnalyzerPlugin(),
 ];
 const optimization = {
   minimizer: [],
