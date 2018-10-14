@@ -25,12 +25,13 @@ FILES+=views/js/dist/index.php
 FILES+=views/templates/**
 
 .PHONY: all clean composer php-scoper node webpack zip
-all: prod
-prod: composer php-scoper node webpack zip
-dev: setdev composer php-scoper node webpack
 
-setdev:
-export NODE_ENV=development
+all: clean prod
+
+prod: composer php-scoper node webpack zip
+
+dev: NODE_ENV=development
+dev: composer php-scoper node webpack
 
 clean:
 # Composer
@@ -38,7 +39,8 @@ clean:
 	@rm composer.lock 2>/dev/null || true
 
 # Webpack / node.js
-	@rm -rf views/js/src/node_modules/ 2>/dev/null || true
+	@rm -rf views/js/src/node_modules/
+	2>/dev/null || true
 	@rm views/js/src/package-lock.json 2>/dev/null || true
 	@rm views/js/src/yarn.lock 2>/dev/null || true
 	@rm views/js/src/yarn.lock 2>/dev/null || true
@@ -61,8 +63,8 @@ endif
 	@mv vendor pre-scoper/
 	php ./php-scoper.phar add-prefix -p MollieModule -n
 	@mv build/pre-scoper/vendor vendor
-	@rm pre-scoper/ -rf
-	@rm build/ -rf
+	@rm -rf pre-scoper/ -rf 2>/dev/null || true
+	@rm -rf build/ -rf 2>/dev/null || true
 
 composer:
 ifeq (,$(wildcard vendor/))
