@@ -14,6 +14,7 @@ FILES+=sql/**
 FILES+=translations/**
 FILES+=upgrade/**
 FILES+=vendor/**
+FILES+=views/helpers.php
 FILES+=views/index.php
 FILES+=views/css/**
 FILES+=views/img/**
