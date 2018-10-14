@@ -1,7 +1,10 @@
 {
     "require": {
         "firstred/mollie-api-php": "~2.1.2",
-        "firstred/mollie-reseller-api": "dev-master"
+        "firstred/mollie-reseller-api": "~1.10.2"
+    },
+    "autoload": {
+        "files": ["helpers.php"]
     },
     "repositories": [
         {

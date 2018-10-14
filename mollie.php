@@ -32,10 +32,10 @@
  * @link       https://www.mollie.nl
  */
 
-require_once(dirname(__FILE__).'/lib/vendor/autoload.php');
-require_once(dirname(__FILE__).'/lib/helpers.php');
+require_once(dirname(__FILE__).'/vendor/autoload.php');
+require_once(dirname(__FILE__).'/helpers.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
-    require_once dirname(__FILE__).'/lib/vendor/ehough/psr7/src/functions.php';
+    require_once dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php';
 }
 
 if (!defined('_PS_VERSION_')) {
