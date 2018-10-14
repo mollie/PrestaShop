@@ -1,6 +1,5 @@
 SHELL:=/bin/bash
 
-NODE_ENV:=production
 MODULE_NAME:=$(shell basename $$PWD)
 MODULE_VERSION:=$(shell sed -ne "s/\\\$$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" ${MODULE_NAME}.php | awk '{$$1=$$1};1')
 ZIP_FILE:="${MODULE_NAME}-v${MODULE_VERSION}.zip"
@@ -26,15 +25,31 @@ FILES+=views/templates/**
 
 .PHONY: all clean composer php-scoper node webpack zip
 
-all: clean prod
+all:
+	$(MAKE) quick-clean
+	$(MAKE) prod
 
-prod: composer php-scoper node webpack zip
+release:
+	$(MAKE) clean
+	$(MAKE) prod
 
-dev: NODE_ENV=development
-dev: composer php-scoper node webpack
+prod:
+	$(MAKE) composer
+	$(MAKE) php-scoper
+	$(MAKE) node
+	NODE_ENV=production $(MAKE) webpack
+	$(MAKE) zip
+
+dev:
+	export NODE_ENV=development
+	$(MAKE) composer
+	$(MAKE) php-scoper
+	$(MAKE) node
+	NODE_ENV=development $(MAKE) webpack
 
 # Quick aliases
 a: all
+r: release
 p: prod
 d: dev
 c: clean
@@ -47,6 +62,9 @@ clean:
 	@rm php-scoper.phar.pubkey 2>/dev/null || true
 
 quick-clean:
+# Remove target file
+	@rm $(ZIP_FILE) 2>/dev/null || true
+
 # Composer
 	@rm -rf vendor/ 2>/dev/null || true
 	@rm composer.lock 2>/dev/null || true
@@ -58,24 +76,6 @@ quick-clean:
 	@rm views/js/src/yarn.lock 2>/dev/null || true
 	@rm -rf views/js/dist/ 2>/dev/null || true
 
-
-php-scoper:
-# Check if php scoper is available, otherwise download it
-ifeq (,$(wildcard php-scoper.phar))
-	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar
-	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar.pubkey
-endif
-ifeq (,$(wildcard pre-scoper/))
-	@mkdir pre-scoper
-endif
-	@mv vendor pre-scoper/
-	php ./php-scoper.phar add-prefix -p MollieModule -n
-	@mv build/pre-scoper/vendor vendor
-	@rm -rf pre-scoper/ -rf 2>/dev/null || true
-	@rm -rf build/ -rf 2>/dev/null || true
-# Create a new autoloader, the one PHP-scoper generates is not compatible with PHP 5.3.29+
-	composer -o dump-autoload
-
 composer:
 ifeq (,$(wildcard vendor/))
 # Composer install
@@ -85,6 +85,22 @@ ifeq (,$(wildcard vendor/))
 # Copy index.php files to vendor folder or Addons validation
 	find vendor/ -type d -exec cp index.php {} \;
 endif
+
+php-scoper:
+# Check if php scoper is available, otherwise download it
+ifeq (,$(wildcard php-scoper.phar))
+	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar
+	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar.pubkey
+endif
+	@rm -rf pre-scoper/ -rf 2>/dev/null || true
+	@mkdir pre-scoper
+	@mv vendor pre-scoper/
+	php ./php-scoper.phar add-prefix -p MollieModule -n
+	@mv build/pre-scoper/vendor vendor
+	@rm -rf pre-scoper/ -rf 2>/dev/null || true
+	@rm -rf build/ -rf 2>/dev/null || true
+# Create a new autoloader, the one PHP-scoper generates is not compatible with PHP 5.3.29+
+	composer -o dump-autoload
 
 node:
 # Download node modules
@@ -101,6 +117,9 @@ endif
 endif
 
 webpack:
+ifndef NODE_ENV
+	export NODE_ENV=production
+endif
 # Webpack build
 ifeq (,$(wildcard views/js/dist/))
 	mkdir -p views/js/dist/
