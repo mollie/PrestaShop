@@ -40,7 +40,7 @@ import { Dispatch } from 'redux';
 import { updatePayment } from '../../store/actions';
 import RefundButton from './RefundButton';
 import PartialRefundButton from './PartialRefundButton';
-import { formatCurrency } from '../../misc/tools';
+import { formatCurrency } from '../../../misc/tools';
 import { refundPayment } from '../../misc/ajax';
 
 interface IProps {

@@ -84,6 +84,6 @@ export class MollieBanks {
       }
     });
 
-    new window.MollieModule.qrcode.default(document.getElementById('mollie-qr-code'), this.translations.orPayByIdealQr);
+    new window.MollieModule.front.QrCode(document.getElementById('mollie-qr-code'), this.translations.orPayByIdealQr);
   };
 }

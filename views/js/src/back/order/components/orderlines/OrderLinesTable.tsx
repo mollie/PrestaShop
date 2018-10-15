@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, CSSProperties } from 'react';
+import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -40,7 +40,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faTruck, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 import OrderLinesTableHeader from './OrderLinesTableHeader';
-import { formatCurrency } from '../../misc/tools';
+import { formatCurrency } from '../../../misc/tools';
 import OrderLinesTableFooter from './OrderLinesTableFooter';
 import OrderLinesEditor from './OrderLinesEditor';
 import ShipmentTrackingEditor from './ShipmentTrackingEditor';
@@ -195,7 +195,7 @@ class OrderLinesTable extends Component<IProps> {
     return (
       <div className="table-responsive">
         <table className="table">
-          <OrderLinesTableHeader loading={loading}/>
+          <OrderLinesTableHeader/>
           <tbody>
             {order.lines.map((line: IMollieOrderLine) => (
               <tr key={line.id} style={{ marginBottom: '100px' }}>

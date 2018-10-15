@@ -35,7 +35,7 @@ import RefundTableHeader from './RefundTableHeader';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-import { formatCurrency } from '../../misc/tools';
+import { formatCurrency } from '../../../misc/tools';
 
 interface IProps {
   // Redux

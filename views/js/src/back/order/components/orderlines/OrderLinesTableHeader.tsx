@@ -34,8 +34,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 interface IProps {
-  loading: boolean,
-
   // Redux
   translations?: ITranslations,
 }

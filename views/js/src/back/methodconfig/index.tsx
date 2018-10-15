@@ -32,9 +32,8 @@
  */
 import React from 'react';
 import { render } from 'react-dom';
-import MolliePaymentMethods from './components/MolliePaymentMethods';
+import PaymentMethodConfig from './components/PaymentMethodConfig';
 
 export const methodConfig = (target: string, config: IMollieMethodConfig, translations: ITranslations) => {
-  console.log(config);
-  render(<MolliePaymentMethods methods={config.methods} target={target} translations={translations}/>, document.getElementById(`${target}_container`));
+  render(<PaymentMethodConfig target={target} config={config} translations={translations}/>, document.getElementById(`${target}_container`));
 };

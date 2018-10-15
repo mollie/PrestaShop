@@ -66,7 +66,7 @@ import { connect } from 'react-redux';
  */
 import { Dispatch } from 'redux';
 import { updatePayment } from '../../store/actions';
-import LoadingDots from '../../../misc/LoadingDots';
+import LoadingDots from '../../../misc/components/LoadingDots';
 import PaymentInfo from './PaymentInfo';
 import RefundInfo from './RefundInfo';
 

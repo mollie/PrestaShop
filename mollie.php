@@ -505,7 +505,6 @@ class Mollie extends PaymentModule
             'val_logger'             => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'               => $this->l('Save'),
             'lang'                   => $this->lang,
-            'methods'                => $this->getMethodsForConfig(),
         );
 
         if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
@@ -714,7 +713,7 @@ class Mollie extends PaymentModule
                 'label'    => $this->l('API Key'),
                 'desc'     => static::ppTags(
                     $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                    array('<a href="https://www.mollie.nl/beheer/account/profielen/" target="_blank" rel="noopener noreferrer">')
+                    array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
                 ),
                 'name'     => static::MOLLIE_API_KEY,
                 'required' => true,
@@ -826,7 +825,6 @@ class Mollie extends PaymentModule
                 'name'    => static::METHODS_CONFIG,
                 'label'   => $this->l('Payment methods'),
                 'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
-                'methods' => $this->getMethodsForConfig(),
             ),
         ));
 
@@ -1750,26 +1748,20 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
-
-        try {
-            $issuerList = in_array(
-                $issuerSetting,
-                array(static::ISSUERS_ON_CLICK)
-            )
-                ? $this->getIssuerList()
-                : array();
-            $apiMethods = $this->getFilteredApiMethods();
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
-            $apiMethods = array();
-            $issuerList = array();
-
-            if ((int) Configuration::get(static::MOLLIE_DEBUG_LOG) === static::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
-            }
-            if (Configuration::get(static::MOLLIE_DISPLAY_ERRORS)) {
-                $smarty->assign('message', $e->getMessage());
-
-                return $this->display(__FILE__, 'error_message.tpl');
+        $apiMethods = $this->getMethodsForCheckout();
+        $issuerList = array();
+        foreach ($apiMethods as $apiMethod) {
+            if ($apiMethod['id'] === 'ideal') {
+                $issuerList['ideal'] = array();
+                foreach ($apiMethod['issuers'] as $issuer) {
+                    $issuer['href'] = $this->context->link->getModuleLink(
+                        $this->name,
+                        'payment',
+                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        true
+                    );
+                    $issuerList['ideal'][$issuer['id']] = $issuer;
+                }
             }
         }
 
@@ -1824,26 +1816,26 @@ class Mollie extends PaymentModule
         $paymentOptions = array();
 
         foreach ($methods as $method) {
-            if (!isset(static::$methodCurrencies[$method->id])) {
+            if (!isset(static::$methodCurrencies[$method['id']])) {
                 continue;
             }
-            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
+            if (!in_array($iso, static::$methodCurrencies[$method['id']])) {
                 continue;
             }
 
             $paymentOption = array(
-                'cta_text' => $this->lang[$method->description],
-                'logo'     => $method->image->fallback,
+                'cta_text' => $this->lang[$method['name']],
+                'logo'     => $method['image']['size2x'],
                 'action'   => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    array('method' => $method->id, 'rand' => time()),
+                    array('method' => $method['id'], 'rand' => time()),
                     true
                 ),
             );
             $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
             if ($imageConfig == static::LOGOS_HIDE) {
-                $paymentOption['logo'] = $method->image->fallback;
+                $paymentOption['logo'] = $method['image']['size2x'];
             }
             $paymentOptions[] = $paymentOption;
         }
@@ -1897,10 +1889,10 @@ class Mollie extends PaymentModule
         $iso = Tools::strtolower($context->currency->iso_code);
         $paymentOptions = array();
         foreach ($methods as $method) {
-            if (!isset(static::$methodCurrencies[$method->id])) {
+            if (!isset(static::$methodCurrencies[$method['id']])) {
                 continue;
             }
-            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
+            if (!in_array($iso, static::$methodCurrencies[$method['id']])) {
                 continue;
             }
 
@@ -2773,6 +2765,26 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * Get payment methods to show on the checkout
+     *
+     * @return array
+     *
+     * @throws PrestaShopException
+     * @since 3.0.0
+     */
+    protected function getMethodsForCheckout()
+    {
+        $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        foreach ($methods as $index => $method) {
+            if (empty($method['enabled'])) {
+                unset($methods[$index]);
+            }
+        }
+
+        return $methods;
+    }
+
+    /**
      * Get payment methods to show on the configuration page
      *
      * @param bool $active Active methods only
@@ -2787,7 +2799,7 @@ class Mollie extends PaymentModule
         $notAvailable = array();
 
         try {
-            $apiMethods = $this->api->methods->all(array('resource' => 'orders'))->getArrayCopy();
+            $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers'))->getArrayCopy();
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
                 $paymentApiMethods = array_map(function ($item) {
                     return $item->id;
@@ -2827,7 +2839,8 @@ class Mollie extends PaymentModule
                     'name'      => $apiMethod->description,
                     'enabled'   => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image'     => $apiMethod->image->svg,
+                    'image'     => (array) $apiMethod->image,
+                    'issuers'   => $apiMethod->issuers,
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -2835,7 +2848,8 @@ class Mollie extends PaymentModule
                     'name'      => $apiMethod->description,
                     'enabled'   => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image'     => $apiMethod->image->svg,
+                    'image'     => (array) $apiMethod->image,
+                    'issuers'   => $apiMethod->issuers,
                 );
             }
         }
@@ -2850,7 +2864,12 @@ class Mollie extends PaymentModule
                         'name'      => $name,
                         'enabled'   => true,
                         'available' => !in_array($id, $notAvailable),
-                        'image'     => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        'image'     => array(
+                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        ),
+                        'issuers'   => null,
                     );
                 } else {
                     $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
@@ -2860,7 +2879,12 @@ class Mollie extends PaymentModule
                         'name'      => $name,
                         'enabled'   => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'available' => !in_array($id, $notAvailable),
-                        'image'     => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        'image'     => array(
+                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        ),
+                        'issuers'   => null,
                     );
                 }
             }
@@ -4127,6 +4151,41 @@ class Mollie extends PaymentModule
         }
 
         return $order;
+    }
+
+    /**
+     * @return array
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
+    public function displayAjaxMollieMethodConfig()
+    {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
+        $methodsForConfig = $this->getMethodsForConfig();
+        $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+
+        // Auto update images and issuers
+        if (is_array($dbMethods)) {
+            foreach ($dbMethods as &$dbMethod) {
+                foreach ($methodsForConfig as $methodForConfig) {
+                    if ($dbMethod['id'] === $methodForConfig['id']) {
+                        foreach (array('issuers', 'image', 'name') as $prop) {
+                            if (isset($methodForConfig[$prop])) {
+                                $dbMethod[$prop] = $methodForConfig[$prop];
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
+
+        return array('success', 'methods' => $methodsForConfig);
     }
 
     /**

@@ -36,7 +36,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import styled from 'styled-components';
 
-import { formatCurrency } from '../../misc/tools';
+import { formatCurrency } from '../../../misc/tools';
 
 interface IProps {
   // Redux

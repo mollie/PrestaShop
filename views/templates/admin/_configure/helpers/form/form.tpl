@@ -52,8 +52,9 @@
         window.MollieModule.back.methodConfig(
           '{$input.name|escape:'javascript':'UTF-8'}',
           {
-            methods: {Tools::jsonEncode($input.methods)},
-            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
+            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
+            ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieMethodConfig',
+            moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}'
           },
           {
             yes: '{l s='Yes' mod='mollie' js=1}',

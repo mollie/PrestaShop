@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import PaymentMethod from './PaymentMethod';
 import { SortableContainer, arrayMove } from 'react-sortable-hoc';
 import _ from 'lodash';
 import styled from 'styled-components';
+
+import PaymentMethod from './PaymentMethod';
 
 const Section = styled.section`
 border: 2px solid #0c95fd!important;
@@ -13,13 +14,13 @@ margin: -1px!important;
 padding: 0;
 ` as any;
 
-const SortableList = SortableContainer(({ items, translations, onArrowClicked, onToggle }: any) => {
+const SortableList = SortableContainer(({ items, translations, onArrowClicked, onToggle, config }: any) => {
   return (
     <Section className="module_list" style={{ maxWidth: '440px' }}>
       <Ul>
         {items.map((item: IMolliePaymentMethodItem, index: number) => (
           <PaymentMethod
-            imageUrl={item.image}
+            imageUrl={item.image.svg ? item.image.svg : `${config.moduleDir}views/img/${item.id}.svg`}
             key={item.id}
             index={index}
             code={item.id}
@@ -41,13 +42,14 @@ interface IProps {
   methods: Array<IMolliePaymentMethodItem>,
   translations: ITranslations,
   target: string,
+  config: IMollieMethodConfig,
 }
 
 interface IState {
   methods: Array<IMolliePaymentMethodItem>,
 }
 
-class MolliePaymentMethods extends Component<IProps> {
+class PaymentMethods extends Component<IProps> {
   state: IState = {
     methods: this.props.methods,
   };
@@ -63,6 +65,8 @@ class MolliePaymentMethods extends Component<IProps> {
         id: method.id,
         position: index,
         enabled: method.enabled,
+        issuers: method.issuers,
+        image: method.image,
       })));
     }
   }
@@ -92,7 +96,7 @@ class MolliePaymentMethods extends Component<IProps> {
 
   render() {
     const { methods } = this.state;
-    const { translations } = this.props;
+    const { translations, config } = this.props;
 
     return (
       <SortableList
@@ -102,9 +106,10 @@ class MolliePaymentMethods extends Component<IProps> {
         onArrowClicked={this.onArrowClicked}
         onToggle={this.onToggle}
         shouldCancelStart={this.shouldCancelStart}
+        config={config}
       />
     );
   }
 }
 
-export default MolliePaymentMethods;
+export default PaymentMethods;

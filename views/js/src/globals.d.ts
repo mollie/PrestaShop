@@ -87,22 +87,36 @@ declare global {
     'custom_url': string,
   }
 
+  interface IMolliePaymentMethodImage {
+    size1x: string,
+    size2x: string,
+    svg: string,
+  }
+
+  interface IMolliePaymentIssuer {
+    [key: string]: any,
+  }
+
   interface IMolliePaymentMethodItem {
     id: string,
     name: string,
     enabled: boolean,
     available: boolean,
-    image: string,
+    image: IMolliePaymentMethodImage,
+    issuers: Array<IMolliePaymentIssuer>,
   }
 
   interface IMolliePaymentMethodConfigItem {
     id: string,
     position: number,
     enabled: boolean,
+    image: IMolliePaymentMethodImage,
+    issuers: Array<IMolliePaymentIssuer>,
   }
 
   interface IMollieMethodConfig {
-    methods: Array<IMolliePaymentMethodItem>,
+    ajaxEndpoint: string,
+    moduleDir: string,
     legacy: boolean,
   }
 
