@@ -62,11 +62,8 @@ class PaymentMethods extends Component<IProps> {
     const input: HTMLInputElement = document.getElementById(this.props.target) as HTMLInputElement;
     if (input != null) {
       input.value = JSON.stringify(this.state.methods.map((method: IMolliePaymentMethodItem, index: number): IMolliePaymentMethodConfigItem => ({
-        id: method.id,
+        ...method,
         position: index,
-        enabled: method.enabled,
-        issuers: method.issuers,
-        image: method.image,
       })));
     }
   }

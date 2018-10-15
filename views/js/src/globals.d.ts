@@ -101,17 +101,13 @@ declare global {
     id: string,
     name: string,
     enabled: boolean,
-    available: boolean,
+    available?: boolean,
     image: IMolliePaymentMethodImage,
     issuers: Array<IMolliePaymentIssuer>,
   }
 
-  interface IMolliePaymentMethodConfigItem {
-    id: string,
+  interface IMolliePaymentMethodConfigItem extends IMolliePaymentMethodItem {
     position: number,
-    enabled: boolean,
-    image: IMolliePaymentMethodImage,
-    issuers: Array<IMolliePaymentIssuer>,
   }
 
   interface IMollieMethodConfig {

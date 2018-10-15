@@ -4117,7 +4117,7 @@ class Mollie extends PaymentModule
                     }
                 }
                 if (!$found) {
-                    unset($dbMethods[$dbMethods[$index]]);
+                    unset($dbMethods[$index]);
                     $shouldSave = true;
                 }
             }
