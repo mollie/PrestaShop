@@ -3,7 +3,7 @@ SHELL:=/bin/bash
 MODULE_NAME:=$(shell basename $$PWD)
 MODULE_VERSION:=$(shell sed -ne "s/\\\$$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" ${MODULE_NAME}.php | awk '{$$1=$$1};1')
 
-COLOR_BLACk:=\u001b[30m
+COLOR_BLACK:=\u001b[30m
 COLOR_RED:=\u001b[31m
 COLOR_GREEN:=\u001b[32m
 COLOR_YELLOW:=\u001b[33m
@@ -146,7 +146,7 @@ ifeq (,$(wildcard views/js/dist/))
 endif
 	@cp views/js/src/index.php views/js/dist/index.php
 	@cd views/js/src/; \
-		webpack --mode $(NODE_ENV)
+		webpack --mode ${NODE_ENV}
 ifeq ($(NODE_ENV),production)
 	@mv views/js/dist/front.min.js views/js/dist/front-v$(MODULE_VERSION).min.js
 	@mv views/js/dist/back.min.js views/js/dist/back-v$(MODULE_VERSION).min.js
