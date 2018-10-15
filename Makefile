@@ -20,7 +20,6 @@ FILES+=LICENSE
 FILES+=controllers/**
 FILES+=helpers.php
 FILES+=index.php
-FILES+=misc/**
 FILES+=${MODULE_NAME}.php
 FILES+=sql/**
 FILES+=translations/**
