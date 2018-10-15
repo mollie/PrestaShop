@@ -2774,9 +2774,14 @@ class Mollie extends PaymentModule
      */
     protected function getMethodsForCheckout()
     {
+        $iso = Tools::strtolower($this->context->currency->iso_code);
         $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+
         foreach ($methods as $index => $method) {
-            if (empty($method['enabled'])) {
+            if (!isset(static::$methodCurrencies[$method['id']])
+                || !in_array($iso, static::$methodCurrencies[$method['id']])
+                || empty($method['enabled'])
+            ) {
                 unset($methods[$index]);
             }
         }
@@ -2899,83 +2904,6 @@ class Mollie extends PaymentModule
                 if (!$method['enabled']) {
                     unset($methods[$index]);
                 }
-            }
-        }
-
-        return $methods;
-    }
-
-    /**
-     * Get filtered API method
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
-     *
-     * @since 3.0.0
-     */
-    protected function getFilteredApiMethods()
-    {
-        $iso = Tools::strtolower($this->context->currency->iso_code);
-        $dbMethods = $this->getMethodsForConfig(true);
-        $methods = array();
-        $apiMethods = $this->api->methods->all(array('resource' => static::selectedApi()))->getArrayCopy();
-        foreach ($apiMethods as $apiMethod) {
-            if (Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_BIG) {
-                $apiMethod->image->fallback = $apiMethod->image->svg;
-            } else {
-                $apiMethod->image->fallback = $apiMethod->image->svg;
-            }
-        }
-        $creditCard = null;
-        foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod->id === 'creditcard') {
-                $creditCard = clone $apiMethod;
-                break;
-            }
-        }
-        $extra = array();
-        if (in_array('creditcard', array_column($apiMethods, 'id'))) {
-            if (in_array('cartasi', array_column($dbMethods, 'id'))) {
-                $cartaSi = clone $creditCard;
-                $cartaSi->image = clone $cartaSi->image;
-                $cartaSi->id = 'cartasi';
-                $cartaSi->description = 'CartaSi';
-                $cartaSi->image->size1x = static::getMediaPath($this->_path.'views/img/cartasi.svg');
-                $cartaSi->image->size2x = static::getMediaPath($this->_path.'views/img/cartasi.svg');
-                $cartaSi->image->fallback = static::getMediaPath($this->_path.'views/img/cartasi.png');
-                $extra['cartasi'] = $cartaSi;
-            }
-            if (in_array('cartesbancaires', array_column($dbMethods, 'id'))) {
-                $cartesBancaires = clone $creditCard;
-                $cartesBancaires->image = clone $cartesBancaires->image;
-                $cartesBancaires->id = 'cartesbancaires';
-                $cartesBancaires->description = 'Cartes Bancaires';
-                $cartesBancaires->image->size1x = static::getMediaPath($this->_path.'views/img/cartesbancaires.svg');
-                $cartesBancaires->image->size2x = static::getMediaPath($this->_path.'views/img/cartesbancaires.svg');
-                $cartesBancaires->image->fallback = static::getMediaPath($this->_path.'views/img/cartesbancaires.png');
-                $extra['cartesbancaires'] = $cartesBancaires;
-            }
-        }
-        foreach ($dbMethods as $method) {
-            if ($creditCard && in_array($method['id'], array('cartasi', 'cartesbancaires'))) {
-                $methods[] = $extra[$method['id']];
-            } else {
-                foreach ($apiMethods as $apiMethod) {
-                    if ($apiMethod->id === $method['id']) {
-                        $methods[] = $apiMethod;
-                        break;
-                    }
-                }
-            }
-        }
-        foreach ($methods as $index => $method) {
-            if (!isset(static::$methodCurrencies[$method->id])) {
-                continue;
-            }
-            if (!in_array($iso, static::$methodCurrencies[$method->id])) {
-                unset($methods[$index]);
             }
         }
 
@@ -4165,25 +4093,39 @@ class Mollie extends PaymentModule
         header('Content-Type: application/json;charset=UTF-8');
 
         $methodsForConfig = $this->getMethodsForConfig();
+        if (empty($methodsForConfig)) {
+            return array('success' => false, 'methods' => array());
+        }
+
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
 
         // Auto update images and issuers
+        $shouldSave = false;
         if (is_array($dbMethods)) {
-            foreach ($dbMethods as &$dbMethod) {
+            foreach ($dbMethods as $index => &$dbMethod) {
+                $found = false;
                 foreach ($methodsForConfig as $methodForConfig) {
                     if ($dbMethod['id'] === $methodForConfig['id']) {
+                        $found = true;
                         foreach (array('issuers', 'image', 'name') as $prop) {
                             if (isset($methodForConfig[$prop])) {
                                 $dbMethod[$prop] = $methodForConfig[$prop];
+                                $shouldSave = true;
                             }
                         }
                         break;
                     }
                 }
+                if (!$found) {
+                    unset($dbMethods[$dbMethods[$index]]);
+                    $shouldSave = true;
+                }
             }
         }
 
-        Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
+        if ($shouldSave) {
+            Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
+        }
 
         return array('success', 'methods' => $methodsForConfig);
     }

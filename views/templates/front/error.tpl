@@ -31,7 +31,7 @@
 * @link       https://www.mollie.nl
 *}
 {capture name=path}
-  <a href="{$orderLink|escape:'html':'UTF-8' nofilter}">
+  <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}">
     {l s='Payment' mod='mollie'}
   </a>
   <span class="navigation-pipe">
@@ -51,7 +51,7 @@
 </div>
 <ul class="footer_links clearfix">
   <li>
-    <a class="btn btn-default button button-small" href="{$orderLink|escape:'html':'UTF-8' nofilter}" title="{l s='Back to your shopping cart' mod='mollie'}">
+    <a class="btn btn-default button button-small" href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}" title="{l s='Back to your shopping cart' mod='mollie'}">
       <span><i class="icon-chevron-left"></i> {l s='Back to your shopping cart' mod='mollie'}</span>
     </a>
   </li>

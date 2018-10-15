@@ -54,7 +54,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     // @codingStandardsIgnoreEnd
 
     /**
-     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws Adapter_Exception
@@ -66,6 +65,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /** @var Cart $cart */
         $cart = $this->context->cart;
         $customer = new Customer($cart->id_customer);
+        $this->context->smarty->assign('link', $this->context->link);
 
         if (!$this->validate(
             $cart,
@@ -89,7 +89,21 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             && $method === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
         ) {
             $tplData = array();
-            $issuers = $this->module->getIssuerList();
+            try {
+                $issuers = $this->module->getIssuerList();
+            } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+                $this->setTemplate('error.tpl');
+                $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+                    ? $e->getMessage()
+                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+                return;
+            } catch (PrestaShopException $e) {
+                $this->setTemplate('error.tpl');
+                $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+                    ? $e->getMessage()
+                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+                return;
+            }
             $tplData['issuers'] = isset($issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL]) ? $issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] : array();
             if (!empty($tplData['issuers'])) {
                 $tplData['msg_bankselect'] = $this->module->lang['Select your bank:'];
@@ -129,7 +143,21 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             false,
             Order::generateReference()
         );
-        $payment = $this->createPayment($paymentData);
+        try {
+            $payment = $this->createPayment($paymentData);
+        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+            $this->setTemplate('error.tpl');
+            $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+                ? $e->getMessage()
+                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+            return;
+        } catch (PrestaShopException $e) {
+            $this->setTemplate('error.tpl');
+            $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+                ? $e->getMessage()
+                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+            return;
+        }
         $orderReference = isset($payment->metadata->order_reference) ? pSQL($payment->metadata->order_reference) : '';
 
         // Store payment linked to cart
