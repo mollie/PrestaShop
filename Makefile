@@ -145,7 +145,7 @@ ifeq (,$(wildcard views/js/dist/))
 	@mkdir -p views/js/dist/
 endif
 	@cp views/js/src/index.php views/js/dist/index.php
-	@cd views/js/src/;\
+	@cd views/js/src/; \
 		webpack --mode $(NODE_ENV)
 ifeq ($(NODE_ENV),production)
 	@mv views/js/dist/front.min.js views/js/dist/front-v$(MODULE_VERSION).min.js
@@ -160,7 +160,7 @@ zip:
 	@rm vendor/firstred/mollie-reseller-api/Makefile 2>/dev/null || true
 	@mkdir -p build/${MODULE_NAME}
 	@$(foreach f,$(FILES),cp --parents -rf $(f) build/$(MODULE_NAME);)
-	cd build/; zip -r -9 ${MODULE_NAME}-v${MODULE_VERSION}.zip ${MODULE_NAME}
+	@cd build/; zip -r -9 ${MODULE_NAME}-v${MODULE_VERSION}.zip ${MODULE_NAME}
 	@rm -rf build/${MODULE_NAME} || true
 
 vartest:
