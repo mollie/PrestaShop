@@ -153,6 +153,7 @@ zip:
 	@mkdir -p build/${MODULE_NAME}
 	@$(foreach f,$(FILES),cp --parents -rf $(f) build/$(MODULE_NAME);)
 	cd build/; zip -r -9 ${MODULE_NAME}-v${MODULE_VERSION}.zip ${MODULE_NAME}
+	@rm -rf build/${MODULE_NAME} || true
 
 vartest:
 ifndef NODE_ENV
