@@ -104,6 +104,7 @@ class PaymentMethods extends Component<IProps> {
         onToggle={this.onToggle}
         shouldCancelStart={this.shouldCancelStart}
         config={config}
+        helperClass="sortable-helper"
       />
     );
   }

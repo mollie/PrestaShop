@@ -30,6 +30,7 @@ cursor: move!important;
                                  supported by Chrome and Opera */
                                  
 border: 1px solid #0c95fd;
+border-bottom-width: ${(props: any) => props.last ? '1px' : '2px'};
 background-color: rgba(255, 255, 255, 0.8);
 display: table;
 width: 100%;
@@ -141,7 +142,7 @@ class PaymentMethod extends Component<IProps> {
     } = this.props;
 
     return (
-      <Li>
+      <Li last={position >= max}>
         <PositionColumn>
           <PositionIndicator>{position + 1}</PositionIndicator>
           <ButtonBox>
