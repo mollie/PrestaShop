@@ -508,7 +508,11 @@ class Mollie extends PaymentModule
             'methods'                => $this->getMethodsForConfig(),
         );
 
-        $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
+        if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
+            $this->context->controller->addJS("{$this->_path}views/js/dist/back-v{$this->version}.min.js");
+        } else {
+            $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
+        }
 
         $this->context->smarty->assign($data);
 
@@ -1714,7 +1718,11 @@ class Mollie extends PaymentModule
 //
 //        $tplData['msg_title'] = $this->lang['Mollie refund'];
 //        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
-        $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
+        if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
+            $this->context->controller->addJS("{$this->_path}views/js/dist/back-v{$this->version}.min.js");
+        } else {
+            $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
+        }
 
         $this->context->smarty->assign(array(
            'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
@@ -1777,7 +1785,7 @@ class Mollie extends PaymentModule
             'msg_pay_with'           => $this->lang['Pay with %s'],
             'msg_bankselect'         => $this->lang['Select your bank:'],
             'module'                 => $this,
-            'mollie_front_app_path'  => static::getMediaPath($this->_path.'views/js/dist/front.min.js'),
+            'mollie_front_app_path'  => file_exists("{$this->local_path}views/js/dist/front-v{$this->version}.min.js") ? static::getMediaPath("{$this->_path}views/js/dist/front-v{$this->version}.min.js") : static::getMediaPath("{$this->_path}views/js/dist/front.min.js"),
             'mollie_translations'    => array(
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
