@@ -7,8 +7,7 @@
         "ext-simplexml": "*"
     },
     "autoload": {
-        "classmap": ["vendor/"],
-        "files": ["helpers.php"]
+        "classmap": ["vendor/"]
     },
     "repositories": [
         {
