@@ -38,160 +38,28 @@
   {elseif $input.type === 'mollie-warning'}
     <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
   {elseif $input.type === 'mollie-methods'}
-    <section class="module_list" style="max-width: 440px">
-      <ul class="list-unstyled sortable">
-        {foreach $input.methods as $index => $method}
-          <li class="module_list_item draggable"
-              draggable="true"
-              data-pos="{$index|intval}"
-              data-method="{$method['id']|escape:'htmlall':'UTF-8'}"
-          >
-            <div class="module_col_position dragHandle">
-              <span class="positions">{$index + 1|intval}</span>
-              <div class="btn-group-vertical">
-                <button class="mollie-ui btn btn-primary btn-xs mollie-up">
-                  <i class="icon-chevron-up"></i>
-                </button>
-                <button class="mollie-ui btn btn-primary btn-xs mollie-down">
-                  <i class="icon-chevron-down"></i>
-                </button>
-              </div>
-            </div>
-            <div class="module_col_icon">
-              <img width="57" src="{$method['image']|escape:'htmlall':'UTF-8'}" alt="mollie">
-            </div>
-            <div class="module_col_infos">
-              <div style="display: inline-block; margin-top: 5px">
-                <span class="module_name">
-                  {$method['name']|escape:'htmlall':'UTF-8'}
-                </span>
-              </div>
-              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
-                {if empty($method['available'])}
-                  <span style="float:right;width:100px;right:20px;top:10px;position:relative;"
-                        title="{l s='This payment method is not available on the Payments API. Switch to the Orders API in order to activate this method.' mod='mollie'}"
-                  >
-                    <i class="icon icon-exclamation-triangle"></i> {l s='Not available' mod='mollie'}
-                  </span>
-                {else}
-                  <span class="switch prestashop-switch"
-                        style="float:right;position:relative;width:100px;right:20px;top:0;"
-                        title="{l s='This payment method is not available on the Payments API. Switch to the Orders API in order to activate this method.' mod='mollie'}"
-                  >
-                    <input type="radio"
-                           data-mollie-check
-                           name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}"
-                           id="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}"
-                           value="1"
-                           {if !empty($method['enabled'])}checked="checked"{/if}
-                    >
-                    <label for="MOLLIE_METHOD_ENABLED_on_{$method['id']|escape:'htmlall':'UTF-8'}">
-                      {Translate::getAdminTranslation('Yes')|escape:'htmlall':'UTF-8'}
-                    </label>
-                    <input type="radio"
-                           name="MOLLIE_METHOD_ENABLED_{$method['id']|escape:'htmlall':'UTF-8'}"
-                           id="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}"
-                           value=""
-                           {if empty($method['enabled'])}checked="checked"{/if}
-                    >
-                    <label for="MOLLIE_METHOD_ENABLED_off_{$method['id']|escape:'htmlall':'UTF-8'}">
-                      {Translate::getAdminTranslation('No')|escape:'htmlall':'UTF-8'}
-                    </label>
-                    <a class="slide-button btn"></a>
-                  </span>
-                {/if}
-              {else}
-                {if empty($method['available'])}
-                  <span style="float:right;width:100px;right:20px;top:10px;position:relative;">
-                    ⚠ {l s='Not available' mod='mollie'}
-                  </span>
-                {else}
-                  <label class="mollie_switch" style="float:right;width:60px;height:24px;right:20px;top:5px;">
-                    <input type="checkbox"
-                           value="1"
-                           style="width: auto;"
-                           {if !empty($method['enabled'])}checked="checked"{/if}
-                    >
-                    <span class="mollie_slider"></span>
-                  </label>
-                {/if}
-              {/if}
-            </div>
-          </li>
-        {/foreach}
-      </ul>
-    </section>
-    <input type="hidden" name="{$input.name|escape:'htmlall':'UTF-8'}" id="{$input.name|escape:'htmlall':'UTF-8'}">
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
+    <input type="hidden" id="{$input.name|escape:'htmlall':'UTF-8'}" name="{$input.name|escape:'htmlall':'UTF-8'}">
     <script type="text/javascript">
-      (function () {
-        function setInput() {
-          var config = [];
-          var position = 0;
-          var $sortableLis = $('.sortable > li');
-          $sortableLis.each(function (index, elem) {
-            var $elem = $(elem);
-            $elem.find('button.mollie-up').attr('disabled', index === 0);
-            $elem.find('button.mollie-down').attr('disabled', index === ($sortableLis.length - 1));
-            config.push({
-              id: $elem.attr('data-method'),
-              position: position++,
-              enabled: $elem.find('{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}input[type=radio]{else}input[type=checkbox]{/if}')[0].checked,
-            });
-          });
-          $('#{$input.name|escape:'javascript':'UTF-8'}').val(JSON.stringify(config));
+      (function initMollieMethodsConfig() {
+        if (typeof window.MollieModule === 'undefined'
+          || typeof window.MollieModule.back === 'undefined'
+          || typeof window.MollieModule.back.methodConfig === 'undefined'
+        ) {
+          return setTimeout(initMollieMethodsConfig, 100);
         }
 
-        function setPositions() {
-          var $sortableLis = $('.sortable > li');
-          $sortableLis.each(function (index, elem) {
-            var $elem = $(elem);
-            $elem.find('button.mollie-up').attr('disabled', index === 0);
-            $elem.find('button.mollie-down').attr('disabled', index === ($sortableLis.length - 1));
-            $elem.attr('data-pos', index++);
-            $elem.find('.positions').text(index);
-          });
-        }
-
-        function moveUp(event) {
-          event.preventDefault();
-          var $elem = $(event.target).closest('li');
-          $elem.prev().insertAfter($elem);
-          setPositions();
-        }
-
-        function moveDown(event) {
-          event.preventDefault();
-          var $elem = $(event.target).closest('li');
-          $elem.next().insertBefore($elem);
-          setPositions();
-        }
-
-        function init () {
-          if (typeof $ === 'undefined') {
-            setTimeout(init, 100);
-            return;
+        window.MollieModule.back.methodConfig(
+          '{$input.name|escape:'javascript':'UTF-8'}',
+          {
+            methods: {Tools::jsonEncode($input.methods)},
+            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
+          },
+          {
+            yes: '{l s='Yes' mod='mollie' js=1}',
+            no: '{l s='No' mod='mollie' js=1}',
           }
-
-          $('.sortable').sortable({
-            forcePlaceholderSize: true
-          }).on('sortupdate', function () {
-            setPositions();
-            setInput();
-          });
-          var $sortableLis = $('.sortable > li');
-          $sortableLis.each(function (index, elem) {
-            var $elem = $(elem);
-            $elem.find('button.mollie-up').click(moveUp).attr('disabled', index === 0);
-            $elem.find('button.mollie-down').click(moveDown).attr('disabled', index === ($sortableLis.length - 1));
-            {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '>=')}
-              $elem.find('input[type=radio]').change(setInput);
-            {else}
-              $elem.find('input[type=checkbox]').change(setInput);
-            {/if}
-          });
-          setInput();
-        }
-        init();
+        )
       }());
     </script>
   {elseif $input.type === 'mollie-h1'}
@@ -216,7 +84,10 @@
 
         window.MollieModule.back.carrierConfig(
           '{$input.name|escape:'javascript':'UTF-8'}',
-          {Tools::jsonEncode($input.carrier_config)},
+          {
+            carrierConfig: {Tools::jsonEncode($input.carrier_config)},
+            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
+          },
           {
             name: '{l s='Name' mod='mollie' js=1}',
             urlSource: '{l s='URL Source' mod='mollie' js=1}',

@@ -2778,9 +2778,10 @@ class Mollie extends PaymentModule
      */
     protected function getMethodsForConfig($active = false)
     {
+        $notAvailable = array();
+
         try {
             $apiMethods = $this->api->methods->all(array('resource' => 'orders'))->getArrayCopy();
-            $notAvailable = array();
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
                 $paymentApiMethods = array_map(function ($item) {
                     return $item->id;

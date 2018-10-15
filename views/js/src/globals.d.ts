@@ -74,12 +74,36 @@ declare global {
   }
 
   interface IMollieCarrierConfig {
+    carrierConfig: Array<IMollieCarrierConfigItem>,
+    legacy: boolean,
+  }
+
+  interface IMollieCarrierConfigItem {
     'id_carrier': string,
     'name': string,
     'source': 'module'|'carrier_url'|'custom_url',
     'module'?: string,
     'module_name': string,
     'custom_url': string,
+  }
+
+  interface IMolliePaymentMethodItem {
+    id: string,
+    name: string,
+    enabled: boolean,
+    available: boolean,
+    image: string,
+  }
+
+  interface IMolliePaymentMethodConfigItem {
+    id: string,
+    position: number,
+    enabled: boolean,
+  }
+
+  interface IMollieMethodConfig {
+    methods: Array<IMolliePaymentMethodItem>,
+    legacy: boolean,
   }
 
   interface ICurrencies {

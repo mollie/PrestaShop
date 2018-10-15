@@ -2,22 +2,22 @@ import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 
 interface IProps {
-  config: Array<IMollieCarrierConfig>,
+  config: IMollieCarrierConfig,
   translations: ITranslations,
   target: string,
 }
 
 interface IState {
-  config: Array<IMollieCarrierConfig>,
+  carrierConfig: Array<IMollieCarrierConfigItem>,
 }
 
 class CarrierConfig extends Component<IProps> {
   state: IState = {
-    config: this.props.config,
+    carrierConfig: this.props.config.carrierConfig,
   };
 
   updateCarrierConfig = (id: string, key: string, value: string|null) => {
-    const localConfig = _.cloneDeep(this.state.config);
+    const localConfig = _.cloneDeep(this.state.carrierConfig);
 
     const config = _.find(localConfig, item => item.id_carrier === id);
     if (typeof config === 'undefined') {
@@ -31,7 +31,7 @@ class CarrierConfig extends Component<IProps> {
   };
 
   render() {
-    const { config } = this.state;
+    const { carrierConfig } = this.state;
     const { translations, target } = this.props;
 
     return (
@@ -46,7 +46,7 @@ class CarrierConfig extends Component<IProps> {
             </tr>
           </thead>
           <tbody>
-            {config.map((carrier) => (
+            {carrierConfig.map((carrier) => (
               <tr key={carrier.id_carrier}>
                 <td className="left">
                   {carrier.name}
@@ -73,7 +73,7 @@ class CarrierConfig extends Component<IProps> {
             ))}
           </tbody>
         </table>
-        <input type="hidden" id={target} name={target} value={JSON.stringify(this.state.config)}/>
+        <input type="hidden" id={target} name={target} value={JSON.stringify(this.state.carrierConfig)}/>
       </Fragment>
     );
   }

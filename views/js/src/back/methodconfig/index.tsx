@@ -30,7 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-export * from './updater';
-export * from './order';
-export * from './carrierconfig';
-export * from './methodconfig';
+import React from 'react';
+import { render } from 'react-dom';
+import MolliePaymentMethods from './components/MolliePaymentMethods';
+
+export const methodConfig = (target: string, config: IMollieMethodConfig, translations: ITranslations) => {
+  console.log(config);
+  render(<MolliePaymentMethods methods={config.methods} target={target} translations={translations}/>, document.getElementById(`${target}_container`));
+};
