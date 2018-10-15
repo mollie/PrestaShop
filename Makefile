@@ -33,7 +33,7 @@ FILES+=views/js/dist/*.min.js
 FILES+=views/js/dist/index.php
 FILES+=views/templates/**
 
-.PHONY: all clean composer php-scoper node webpack zip
+.PHONY: all clean composer php-scoper node webpack zip vartest
 
 all:
 	$(MAKE) quick-clean
@@ -132,6 +132,10 @@ endif
 endif
 
 webpack:
+ifndef NODE_ENV
+NODE_ENV:=production
+endif
+webpack:
 	@echo -e "${COLOR_BLUE}Running webpack${COLOR_RESET}"
 ifndef NODE_ENV
 	@export NODE_ENV=production
@@ -143,7 +147,7 @@ endif
 	@cp views/js/src/index.php views/js/dist/index.php
 	@cd views/js/src/;\
 		webpack --mode $(NODE_ENV)
-ifeq ($(NODE_ENV),"production")
+ifeq ($(NODE_ENV),production)
 	@mv views/js/dist/front.min.js views/js/dist/front-v$(MODULE_VERSION).min.js
 	@mv views/js/dist/back.min.js views/js/dist/back-v$(MODULE_VERSION).min.js
 endif
@@ -161,11 +165,11 @@ zip:
 
 vartest:
 ifndef NODE_ENV
-	@export NODE_ENV=production
+NODE_ENV:=production
 endif
+vartest:
 # Use this to test if all environment variables are correctly set
 	@echo -e "${COLOR_BLUE}Testing environment variables, NODE_ENV is possibly not set${COLOR_RESET}"
 	@echo -e "${COLOR_BLUE}NODE_ENV:${COLOR_YELLOW} ${NODE_ENV}${COLOR_RESET}"
 	@echo -e "${COLOR_BLUE}MODULE_NAME:${COLOR_YELLOW} ${MODULE_NAME}${COLOR_RESET}"
 	@echo -e "${COLOR_BLUE}MODULE_VERSION:${COLOR_YELLOW} ${MODULE_VERSION}${COLOR_RESET}"
-	@echo -e "${COLOR_BLUE}ZIP_FILE:${COLOR_YELLOW} ${ZIP_FILE}${COLOR_RESET}"
