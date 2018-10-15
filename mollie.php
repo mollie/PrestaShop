@@ -508,8 +508,6 @@ class Mollie extends PaymentModule
             'methods'                => $this->getMethodsForConfig(),
         );
 
-        $this->context->controller->addJquery();
-        $this->context->controller->addJS($this->_path.'views/js/jquery.sortable.js');
         $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
 
         $this->context->smarty->assign($data);
