@@ -33,7 +33,7 @@
  */
 
 require_once(dirname(__FILE__).'/vendor/scoper-autoload.php');
-require_once(dirname(__FILE__).'/helpers.php');
+require_once(dirname(__FILE__).'/misc/helpers.php');
 if (!function_exists('\\Hough\\Psr7\\str')) {
     require_once dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php';
 }
