@@ -3113,10 +3113,60 @@ class Mollie extends PaymentModule
      * This function replaces the PaymentModule::validateOrder method in order to support the new Cart => Order flow.
      * This flow is applicable only to the Orders API.
      *
-     * Hybrid PrestaShop 1.5/1.6/1.7 and thirty bees 1.0 function
+     * PrestaShop 1.5 function
      *
-     * @todo - [ ] Check PS 1.5 compatibility
-     * @todo - [ ] Check tb 1.0 compatibility
+     * @todo - [✔] Check PS 1.5 compatibility
+     * @todo - [✘] Check tb 1.0 compatibility
+     * @todo - [✘] Check PS 1.6 compatibility
+     * @todo - [✘] check PS 1.7 compatibility
+     */
+    public function validateMollieOrderLegacy(
+        $idCart,
+        $idOrderState,
+        $amountPaid,
+        $paymentMethod = 'Unknown',
+        $message = null,
+        $extraVars = array(),
+        $currencySpecial = null,
+        $dontTouchAmount = false,
+        $secureKey = false,
+        Shop $shop = null
+    ) {
+
+    }
+
+    /**
+     * Validate an order in database
+     * Function called from a payment module.
+     *
+     * @param int    $idCart
+     * @param int    $idOrderState
+     * @param float  $amountPaid    Amount really paid by customer (in the default currency)
+     * @param string $paymentMethod Payment method (eg. 'Credit card')
+     * @param null   $message       Message to attach to order
+     * @param array  $extraVars
+     * @param null   $currencySpecial
+     * @param bool   $dontTouchAmount
+     * @param bool   $secureKey
+     * @param Shop   $shop
+     *
+     * @return bool
+     *
+     * @since 3.3.0
+     *
+     * @throws PrestaShopException
+     * @throws Adapter_Exception
+     * @throws SmartyException
+     *
+     * This function replaces the PaymentModule::validateOrder method in order to support the new Cart => Order flow.
+     * This flow is applicable only to the Orders API.
+     *
+     * Hybrid PrestaShop 1.6/1.7 and thirty bees 1.0 function
+     *
+     * @todo - [✘] Check PS 1.5 compatibility
+     * @todo - [✔] Check tb 1.0 compatibility
+     * @todo - [✔] Check PS 1.6 compatibility
+     * @todo - [✔] check PS 1.7 compatibility
      */
     public function validateMollieOrder(
         $idCart,
@@ -3129,9 +3179,8 @@ class Mollie extends PaymentModule
         $dontTouchAmount = false,
         $secureKey = false,
         Shop $shop = null
-    )
-    {
-        if (self::DEBUG_MODE) {
+    ) {
+        if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && self::DEBUG_MODE) {
             Logger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
         }
         if (!isset($this->context)) {
@@ -3140,10 +3189,14 @@ class Mollie extends PaymentModule
         $this->context->cart = new Cart((int) $idCart);
         $this->context->customer = new Customer((int) $this->context->cart->id_customer);
         // The tax cart is loaded before the customer so re-cache the tax calculation method
-        $this->context->cart->setTaxCalculationMethod();
+        if (method_exists($this->context->cart, 'setTaxCalculationMethod')) {
+            $this->context->cart->setTaxCalculationMethod();
+        }
         $this->context->language = new Language((int) $this->context->cart->id_lang);
         $this->context->shop = ($shop ? $shop : new Shop((int) $this->context->cart->id_shop));
-        ShopUrl::resetMainDomainCache();
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            ShopUrl::resetMainDomainCache();
+        }
         $idCurrency = $currencySpecial ? (int) $currencySpecial : (int) $this->context->cart->id_currency;
         $this->context->currency = new Currency((int) $idCurrency, null, (int) $this->context->shop->id);
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
@@ -3281,7 +3334,7 @@ class Mollie extends PaymentModule
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
-                    if (self::DEBUG_MODE) {
+                    if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Creating order
@@ -3298,14 +3351,14 @@ class Mollie extends PaymentModule
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
                     $orderList[] = $order;
-                    if (self::DEBUG_MODE) {
+                    if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
                     $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
-                    if (self::DEBUG_MODE) {
+                    if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Adding an entry in order_carrier table
@@ -3328,7 +3381,7 @@ class Mollie extends PaymentModule
                 Logger::addLog(__CLASS__.'::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
                 throw new PrestaShopException('The order address country is not active.');
             }
-            if (self::DEBUG_MODE) {
+            if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                 Logger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
             }
             // Register Payment only if the order status validate the order
@@ -3362,7 +3415,7 @@ class Mollie extends PaymentModule
                         $msg = new Message();
                         $message = strip_tags($message, '<br>');
                         if (Validate::isCleanHtml($message)) {
-                            if (self::DEBUG_MODE) {
+                            if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                                 Logger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
                             }
                             $msg->message = $message;
@@ -3579,6 +3632,7 @@ class Mollie extends PaymentModule
                         $cartRulesListTxt = $this->getEmailTemplateContent('order_conf_cart_rules.txt', Mail::TYPE_TEXT, $cartRulesList);
                         $cartRulesListHtml = $this->getEmailTemplateContent('order_conf_cart_rules.tpl', Mail::TYPE_HTML, $cartRulesList);
                     }
+
                     // Specify order id for message
                     $oldMessage = Message::getMessageByCartId((int) $this->context->cart->id);
                     if ($oldMessage && !$oldMessage['private']) {
@@ -3605,7 +3659,7 @@ class Mollie extends PaymentModule
                             $this->context->controller->errors[] = $this->translate('An error occurred while saving message', array(), 'Admin.Payment.Notification');
                         }
                     }
-                    if (self::DEBUG_MODE) {
+                    if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Hook validate order
@@ -3621,7 +3675,7 @@ class Mollie extends PaymentModule
                             ProductSale::addProductSale((int) $product['id_product'], (int) $product['cart_quantity']);
                         }
                     }
-                    if (self::DEBUG_MODE) {
+                    if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Set the order status
@@ -3712,7 +3766,7 @@ class Mollie extends PaymentModule
                         } else {
                             $fileAttachment = null;
                         }
-                        if (self::DEBUG_MODE) {
+                        if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                             Logger::addLog(__CLASS__.'::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
                         }
                         $orderLanguage = new Language((int) $order->id_lang);
@@ -3770,7 +3824,7 @@ class Mollie extends PaymentModule
             if (isset($order) && $order->id) {
                 $this->currentOrder = (int) $order->id;
             }
-            if (self::DEBUG_MODE) {
+            if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                 Logger::addLog(__CLASS__.'::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
             }
 
@@ -3899,30 +3953,27 @@ class Mollie extends PaymentModule
      */
     protected function findOverriddenClasses()
     {
-        $hostMode = defined('_PS_HOST_MODE_') && _PS_HOST_MODE_;
-
-        return $this->getClassesFromDir('override/classes/', $hostMode) + $this->getClassesFromDir('override/controllers/', $hostMode);
+        return $this->getClassesFromDir('override/classes/') + $this->getClassesFromDir('override/controllers/');
     }
 
     /**
      * Retrieve recursively all classes in a directory and its subdirectories
      *
      * @param string $path Relative path from root to the directory
-     * @param bool   $hostMode
      *
      * @return array
      *
      * @since 3.3.0
      */
-    protected function getClassesFromDir($path, $hostMode = false)
+    protected function getClassesFromDir($path)
     {
         $classes = array();
-        $rootDir = $hostMode ? $this->normalizeDirectory(_PS_ROOT_DIR_) : _PS_CORE_DIR_.'/';
+        $rootDir = $this->normalizeDirectory(_PS_ROOT_DIR_);
 
         foreach (scandir($rootDir.$path) as $file) {
             if ($file[0] != '.') {
                 if (is_dir($rootDir.$path.$file)) {
-                    $classes = array_merge($classes, $this->getClassesFromDir($path.$file.'/', $hostMode));
+                    $classes = array_merge($classes, $this->getClassesFromDir($path.$file.'/'));
                 } elseif (substr($file, -4) == '.php') {
                     $content = file_get_contents($rootDir.$path.$file);
 

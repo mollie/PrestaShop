@@ -31,6 +31,7 @@ const SortableList = SortableContainer(({ items, translations, onArrowClicked, o
             name={item.name}
             moveMethod={onArrowClicked}
             onToggle={onToggle}
+            config={config}
           />
         ))}
       </Ul>

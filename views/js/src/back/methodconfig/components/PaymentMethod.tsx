@@ -14,6 +14,7 @@ interface IProps {
   code: string,
   imageUrl: string,
   translations: ITranslations,
+  config: IMollieMethodConfig,
 
   moveMethod: Function,
   onToggle: Function,
@@ -36,6 +37,7 @@ display: table;
 width: 100%;
 padding: 5px 0;
 margin-bottom: -1px;
+${({ legacy }: any) => legacy ? 'width: calc(100% - 2px);' : ''}
 ` as any;
 
 const PositionColumn = styled.div`
@@ -75,6 +77,7 @@ display: block;
 width: 40px;
 text-align: center;
 margin: 0 auto;
+${( { legacy }: any) => legacy ? 'height: 24px;line-height: 24px;' : ''}
 ` as any;
 
 const ArrowButton = styled.button`
@@ -112,6 +115,7 @@ margin-right: 2px!important;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+${( { legacy }: any) => legacy ? 'height: 20px;line-height: 20px;' : ''}
 ` as any;
 
 const ButtonBox = styled.div`
@@ -139,14 +143,16 @@ class PaymentMethod extends Component<IProps> {
       imageUrl,
       moveMethod,
       enabled,
+      config: { legacy },
     } = this.props;
 
     return (
-      <Li last={position >= max}>
+      <Li last={position >= max} legacy={legacy}>
         <PositionColumn>
-          <PositionIndicator>{position + 1}</PositionIndicator>
+          <PositionIndicator legacy={legacy}>{position + 1}</PositionIndicator>
           <ButtonBox>
             <ArrowButton
+              legacy={legacy}
               disabled={position <= 0}
               onClick={(e: any) => {
                 e.preventDefault();
@@ -159,6 +165,7 @@ class PaymentMethod extends Component<IProps> {
               <FontAwesomeIcon icon={faChevronUp} style={{ color: 'white', pointerEvents: 'none' }}/>
             </ArrowButton>
             <ArrowButton
+              legacy={legacy}
               disabled={position >= max}
               onClick={(e: any) => {
                 e.preventDefault();
@@ -193,6 +200,7 @@ class PaymentMethod extends Component<IProps> {
             translations={translations}
             enabled={enabled}
             onChange={({ target: { value }}: any) => this.toggleMethod(!!value)}
+            legacy={legacy}
           />
         </InfoColumn>
       </Li>

@@ -36,7 +36,11 @@
   {if $input.type === 'mollie-br'}
     <br>
   {elseif $input.type === 'mollie-warning'}
-    <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
+    {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
+      <div class="warn">{$input.message|escape:'htmlall':'UTF-8'}</div>
+    {else}
+      <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
+    {/if}
   {elseif $input.type === 'mollie-methods'}
     <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
     <input type="hidden" id="{$input.name|escape:'htmlall':'UTF-8'}" name="{$input.name|escape:'htmlall':'UTF-8'}">
@@ -101,19 +105,26 @@
     </script>
   {elseif $input.type == 'switch' && version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
     {foreach $input.values as $value}
-      <input type="radio" name="{$input.name|escape:'htmlall':'UTF-8'}"
+      <input type="radio"
+             name="{$input.name|escape:'htmlall':'UTF-8'}"
              id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
              value="{$value.value|escape:'htmlall':'UTF-8'}"
              {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
-              {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if} />
+             {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+      >
       <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
         {if isset($input.is_bool) && $input.is_bool == true}
           {if $value.value == 1}
-            <img src="../img/admin/enabled.gif" alt="{$value.label|escape:'htmlall':'UTF-8'}"
-                 title="{$value.label|escape:'htmlall':'UTF-8'}" />
+            <img
+              src="../img/admin/enabled.gif"
+              alt="{$value.label|escape:'htmlall':'UTF-8'}"
+              title="{$value.label|escape:'htmlall':'UTF-8'}" />
           {else}
-            <img src="../img/admin/disabled.gif" alt="{$value.label|escape:'htmlall':'UTF-8'}"
-                 title="{$value.label|escape:'htmlall':'UTF-8'}" />
+            <img
+              src="../img/admin/disabled.gif"
+              alt="{$value.label|escape:'htmlall':'UTF-8'}"
+              title="{$value.label|escape:'htmlall':'UTF-8'}"
+            />
           {/if}
         {else}
           {$value.label|escape:'htmlall':'UTF-8'}

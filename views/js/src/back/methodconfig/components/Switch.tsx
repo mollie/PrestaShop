@@ -7,11 +7,15 @@ interface IProps {
   onChange: any,
   id: string,
   translations: ITranslations,
+  legacy: boolean,
 }
 
 const Span = styled.span`
 display: block;
 height: 26px;
+float: right;
+width: 100px;
+right: 20px;
 
 a {
   display: block;
@@ -39,7 +43,7 @@ label {
   z-index: 2;
   width: 50%;
   height: 100%;
-  margin: 0;
+  margin: ${({ legacy }: IProps) => legacy ? '-2px' : '0'} 0 0 0;
   text-align: center;
   float: left;
 }
@@ -71,7 +75,7 @@ input:disabled ~ a {
   // box-shadow: ${lighten(0.2, 'gray')} 0 -1px 0 inset !important;
 }
 
-margin-top: 3px;
+margin-top: ${({ legacy }: IProps) => legacy ? '0' : '3px'};
 background-color: #eee;
 border-radius: 3px!important;
 color: #555;
@@ -102,15 +106,7 @@ class Switch extends Component<IProps> {
     const { enabled, onChange, id, translations } = this.props;
 
     return (
-      <Span
-        style={{
-          float: 'right',
-          position: 'relative',
-          width: '100px',
-          right: '20px',
-          top: '0',
-        }}
-      >
+      <Span {...this.props}>
         <input
           type="radio"
           data-mollie-check=""

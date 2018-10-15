@@ -5,7 +5,7 @@ import CarrierConfig from './components/CarrierConfig';
 
 export const carrierConfig = (
   target: string,
-  config: Array<IMollieCarrierConfig>,
+  config: IMollieCarrierConfig,
   translations: ITranslations
 ) => {
   return render(

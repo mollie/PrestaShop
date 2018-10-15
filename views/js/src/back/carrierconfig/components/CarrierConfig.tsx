@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 interface IProps {
   config: IMollieCarrierConfig,
@@ -32,11 +33,18 @@ class CarrierConfig extends Component<IProps> {
 
   render() {
     const { carrierConfig } = this.state;
-    const { translations, target } = this.props;
+    const { translations, target, config: { legacy } } = this.props;
 
     return (
       <Fragment>
-        <div className="alert alert-info">Check the source of your carrier</div>
+        <div className={classnames({
+          'alert': !legacy,
+          'alert-info': !legacy,
+          'warn': legacy,
+        })}
+        >
+          Check the source of your carrier
+        </div>
         <table className="list form alternate table">
           <thead>
             <tr>
