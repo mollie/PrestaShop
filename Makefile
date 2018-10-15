@@ -2,7 +2,6 @@ SHELL:=/bin/bash
 
 MODULE_NAME:=$(shell basename $$PWD)
 MODULE_VERSION:=$(shell sed -ne "s/\\\$$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" ${MODULE_NAME}.php | awk '{$$1=$$1};1')
-ZIP_FILE:="${MODULE_NAME}-v${MODULE_VERSION}.zip"
 
 COLOR_BLACk:=\u001b[30m
 COLOR_RED:=\u001b[31m
@@ -75,7 +74,7 @@ clean:
 quick-clean:
 	@echo -e "${COLOR_BLUE}Cleanup${COLOR_RESET}"
 # Remove target file
-	@rm $(ZIP_FILE) 2>/dev/null || true
+	@rm -rf build/ 2>/dev/null || true
 
 # Composer
 	@rm -rf vendor/ 2>/dev/null || true
@@ -113,7 +112,7 @@ endif
 	php ./php-scoper.phar add-prefix -p MollieModule -n
 	@mv build/pre-scoper/vendor vendor
 	@rm -rf pre-scoper/ -rf 2>/dev/null || true
-	@rm -rf build/ -rf 2>/dev/null || true
+	@rm -rf build/ 2>/dev/null || true
 # Create a new autoloader, the one PHP-scoper generates is not compatible with PHP 5.3.29+
 	@composer -o dump-autoload
 
@@ -151,8 +150,9 @@ zip:
 	@rm vendor/firstred/mollie-api-php/composer.json 2>/dev/null || true
 	@rm vendor/firstred/mollie-reseller-api/composer.json 2>/dev/null || true
 	@rm vendor/firstred/mollie-reseller-api/Makefile 2>/dev/null || true
-
-	@$(foreach f,$(FILES),zip -9 $(ZIP_FILE) $(f);)
+	@mkdir -p build/${MODULE_NAME}
+	@$(foreach f,$(FILES),cp --parents -rf $(f) build/$(MODULE_NAME);)
+	cd build/; zip -r -9 ${MODULE_NAME}-v${MODULE_VERSION}.zip ${MODULE_NAME}
 
 vartest:
 ifndef NODE_ENV
