@@ -142,6 +142,9 @@ class Mollie extends PaymentModule
     const MOLLIE_ORDERS_API = 'orders';
     const MOLLIE_PAYMENTS_API = 'payments';
 
+    const MOLLIE_METHODS_LAST_CHECK = 'MOLLIE_METHOD_CHECK_UPD';
+    const MOLLIE_METHODS_CHECK_INTERVAL = 86400; //daily check
+
     /**
      * Hooks for this module
      *
@@ -1628,14 +1631,27 @@ class Mollie extends PaymentModule
 
     /**
      * @throws PrestaShopException
+     * @throws SmartyException
      */
     public function hookDisplayBackOfficeHeader()
     {
+        $html = '';
         if ($this->context->controller instanceof AdminOrdersController && version_compare(_PS_VERSION_, '1.6.0.0', '<')
             || $this->context->controller instanceof AdminModulesController && Tools::getValue('configure') === $this->name
         ) {
+
             $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
         }
+
+        if ($this->context->controller instanceof AdminOrdersController) {
+            $this->context->smarty->assign(array(
+                'mollieProcessUrl'   => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1',
+                'mollieCheckMethods' => time() > ((int) Configuration::get(static::MOLLIE_METHODS_LAST_CHECK) + static::MOLLIE_METHODS_CHECK_INTERVAL),
+            ));
+            $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
+        }
+
+        return $html;
     }
 
     /**
@@ -4093,6 +4109,7 @@ class Mollie extends PaymentModule
         header('Content-Type: application/json;charset=UTF-8');
 
         $methodsForConfig = $this->getMethodsForConfig();
+        Configuration::updateValue(static::MOLLIE_METHODS_LAST_CHECK, time());
         if (empty($methodsForConfig)) {
             return array('success' => false, 'methods' => array());
         }
