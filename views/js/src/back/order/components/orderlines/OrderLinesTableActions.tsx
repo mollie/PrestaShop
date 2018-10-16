@@ -127,7 +127,7 @@ class OrderLinesTableActions extends Component<IProps> {
             'btn-default': !legacy,
             'dropdown-toggle': !legacy,
           })}
-          data-toggle={legacy ? 'dropdown' : null}
+          data-toggle={legacy ? null : 'dropdown'}
           disabled={loading || (line.refundableQuantity < 1 && line.cancelableQuantity < 1)}
         >
           <span className="caret">&nbsp;</span>
