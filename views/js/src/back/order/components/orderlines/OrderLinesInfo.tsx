@@ -57,7 +57,8 @@ class OrderLinesInfo extends Component<IProps> {
     if (legacy) {
       return (
         <Fragment>
-          <h4>{translations.products}</h4>
+          {legacy && <h3>{translations.products}</h3>}
+          {!legacy && <h4>{translations.products}</h4>}
           {!order || !order.lines.length && <EmptyOrderLinesTable/>}
           {!!order && !!order.lines.length && <OrderLinesTable/>}
         </Fragment>

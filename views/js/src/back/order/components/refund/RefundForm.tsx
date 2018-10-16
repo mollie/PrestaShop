@@ -125,7 +125,42 @@ class RefundForm extends Component<IProps> {
 
   render() {
     const { loading, refundInput } = this.state;
-    const { translations, payment, currencies } = this.props;
+    const { translations, payment, currencies, config: { legacy } } = this.props;
+
+    if (legacy) {
+      return (
+        <Fragment>
+          <h3>{translations.refund}</h3>
+          <span>
+            <RefundButton
+              refundPayment={this.refundPayment}
+              loading={loading}
+              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+            />
+            <span>
+                {translations.remaining}:
+            </span>
+            <input
+              type="text"
+              placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
+              disabled={loading}
+              value={refundInput}
+              onChange={({ target: { value: refundInput } }: any) => this.setState(() => ({ refundInput }))}
+              style={{
+                width: '80px',
+                height: '15px',
+                margin: '-2px 4px 0 4px',
+              }}
+            />
+            <PartialRefundButton
+              refundPayment={this.refundPayment}
+              loading={loading}
+              disabled={parseFloat(payment.amountRemaining.value) <= 0}
+            />
+          </span>
+        </Fragment>
+      );
+    }
 
     return (
       <Fragment>

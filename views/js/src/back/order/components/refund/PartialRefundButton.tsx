@@ -42,29 +42,38 @@ interface IProps {
 
   // Redux
   translations?: ITranslations,
+  config?: IMollieOrderConfig,
 }
 
 class PartialRefundButton extends Component<IProps> {
   render() {
-    const { translations, loading, disabled, refundPayment } = this.props;
+    const { translations, loading, disabled, refundPayment, config: { legacy } } = this.props;
+
+    const content = (
+      <button
+        className="btn btn-default"
+        type="button"
+        disabled={loading || disabled}
+        onClick={() => refundPayment(true)}
+      >
+        {!legacy && (<i
+          className={classnames({
+            'icon': true,
+            'icon-undo': !loading,
+            'icon-circle-o-notch': loading,
+            'icon-spin': loading,
+          })}
+        />)} {translations.partialRefund}
+      </button>
+    );
+
+    if (legacy) {
+      return content;
+    }
 
     return (
       <div className="input-group-btn">
-        <button
-          className="btn btn-default"
-          type="button"
-          disabled={loading || disabled}
-          onClick={() => refundPayment(true)}
-        >
-          <i
-            className={classnames({
-              'icon': true,
-              'icon-undo': !loading,
-              'icon-circle-o-notch': loading,
-              'icon-spin': loading,
-            })}
-          /> {translations.partialRefund}
-        </button>
+        {content}
       </div>
     );
   }
@@ -73,5 +82,6 @@ class PartialRefundButton extends Component<IProps> {
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    config: state.config,
   })
 )(PartialRefundButton);

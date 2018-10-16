@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import RefundHistory from './RefundHistory';
 import RefundForm from './RefundForm';
 import { connect } from 'react-redux';
@@ -39,6 +39,7 @@ import styled from 'styled-components';
 interface IProps {
   // Redux
   translations?: ITranslations,
+  config?: IMollieOrderConfig,
 }
 
 const Div = styled.div`
@@ -50,13 +51,22 @@ const Div = styled.div`
 
 class RefundInfo extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, config: { legacy } } = this.props;
+
+    if (legacy) {
+      return (
+        <Fragment>
+          <h3>{translations.refunds}</h3>
+          <RefundHistory/>
+          <RefundForm/>
+        </Fragment>
+      );
+    }
 
     return (
       <Div className="col-md-6 panel">
         <div className="panel-heading">{translations.refunds}</div>
-        <RefundHistory/>
-        <RefundForm/>
+
       </Div>
     )
   }
@@ -65,5 +75,6 @@ class RefundInfo extends Component<IProps> {
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    config: state.config,
   })
 )(RefundInfo);

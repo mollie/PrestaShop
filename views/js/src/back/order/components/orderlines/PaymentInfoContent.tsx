@@ -9,15 +9,17 @@ interface IProps {
   translations?: ITranslations,
   currencies?: ICurrencies,
   order?: IMollieApiOrder,
+  config?: IMollieOrderConfig,
 }
 
 class PaymentInfoContent extends Component<IProps> {
   render() {
-    const { translations, order, currencies } = this.props;
+    const { translations, order, currencies, config: { legacy } } = this.props;
 
     return (
       <Fragment>
-        <h4>{translations.transactionInfo}</h4>
+        {legacy && <h3>{translations.transactionInfo}</h3>}
+        {!legacy && <h4>{translations.transactionInfo}</h4>}
         <strong>{translations.transactionId}</strong>: <span>{order.id}</span><br/>
         <strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span><br/>
         <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), _.get(currencies, order.amount.currency))}</span><br/>
@@ -33,5 +35,6 @@ export default connect<{}, {}, IProps>(
     order: state.order,
     currencies: state.currencies,
     translations: state.translations,
+    config: state.config,
   })
 )(PaymentInfoContent);
