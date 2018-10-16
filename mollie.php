@@ -1723,8 +1723,8 @@ class Mollie extends PaymentModule
         $apiMethods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod['id'] === 'ideal') {
-                $issuerList['ideal'] = array();
+            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
@@ -1732,7 +1732,7 @@ class Mollie extends PaymentModule
                         array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
                         true
                     );
-                    $issuerList['ideal'][$issuer['id']] = $issuer;
+                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
                 }
             }
         }
@@ -1874,7 +1874,7 @@ class Mollie extends PaymentModule
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
-                    $newOption->setLogo($method['image']['size2x']);
+                    $newOption->setLogo($method['i  mage']['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
@@ -3632,11 +3632,28 @@ class Mollie extends PaymentModule
         $secureKey = false,
         Shop $shop = null
     ) {
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API
+            && (stripos(Configuration::get(static::MOLLIE_DESCRIPTION), '{order.reference}') === false)
+        ) {
+            return $this->validateOrder(
+                $idCart,
+                $idOrderState,
+                $amountPaid,
+                $paymentMethod,
+                $message,
+                $extraVars,
+                $currencySpecial,
+                $dontTouchAmount,
+                $secureKey,
+                $shop
+            );
+        }
+
         if (version_compare(_PS_VERSION_, '1.6.0.0', '<')) {
             return $this->validateMollieOrderLegacy($idCart, $idOrderState, $amountPaid, $paymentMethod, $message, $extraVars, $currencySpecial, $dontTouchAmount, $secureKey, $shop);
         }
 
-        if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && self::DEBUG_MODE) {
+        if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
             Logger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
         }
         if (!isset($this->context)) {
