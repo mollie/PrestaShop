@@ -55,7 +55,6 @@
         invalidAmount: '{l s='Invalid amount' mod='mollie' js=1}',
         notAValidAmount: '{l s='You have entered an invalid amount' mod='mollie' js=1}',
         refundFailed: '{l s='Refund failed' mod='mollie' js=1}',
-        unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
         paymentInfo: '{l s='Payment info' mod='mollie' js=1}',
         transactionId: '{l s='Transaction ID' mod='mollie' js=1}',
         refundHistory: '{l s='Refund history' mod='mollie' js=1}',
@@ -93,6 +92,10 @@
         refundAll: '{l s='Refund all' mod='mollie' js=1}',
         transactionInfo: '{l s='Transaction info' mod='mollie' js=1}',
         thereAreNoProducts: '{l s='There are no products' mod='mollie' js=1}',
+        anErrorOccurred: '{l s='An error occurred' mod='mollie' js=1}',
+        unableToShip: '{l s='Unable to ship' mod='mollie' js=1}',
+        unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
+        unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
       },
       {Tools::jsonEncode($currencies)}
     );

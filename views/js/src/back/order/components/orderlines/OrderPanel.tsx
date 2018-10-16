@@ -47,7 +47,7 @@ interface IProps {
 
 class OrderPanel extends Component<IProps> {
   render() {
-    const { order, config } = this.props;
+    const { config } = this.props;
     const { legacy } = config;
     if (Object.keys(config).length <= 0) {
       return null;
@@ -64,7 +64,7 @@ class OrderPanel extends Component<IProps> {
               height="32"
               style={{ height: '16px', width: '16px', opacity: 0.8 }}
             />
-            <span>Mollie</span>&nbsp;
+            &nbsp;<span>Mollie</span>&nbsp;
           </legend>
           <div className="warn">
             <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
@@ -83,7 +83,7 @@ class OrderPanel extends Component<IProps> {
             height="32"
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           />
-          <span>Mollie</span>&nbsp;
+          &nbsp;<span>Mollie</span>&nbsp;
         </div>
         <div className="alert alert-warning">
           <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>

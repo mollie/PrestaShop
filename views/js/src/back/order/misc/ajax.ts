@@ -80,8 +80,15 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
       transactionId,
       amount,
     });
+    if (!data.success && typeof data.message === 'string') {
+      throw data.message;
+    }
+
     return _.defaults(data, { success: false, payment: null });
   } catch (e) {
+    if (typeof e === 'string') {
+      throw e;
+    }
     console.error(e);
 
     return false;
@@ -98,8 +105,14 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
       transactionId,
       orderLines,
     });
+    if (!data.success && typeof data.message === 'string') {
+      throw data.message;
+    }
     return _.defaults(data, { success: false, order: null });
   } catch (e) {
+    if (typeof e === 'string') {
+      throw e;
+    }
     console.error(e);
 
     return false;
@@ -116,8 +129,14 @@ export const cancelOrder = async (transactionId: string, orderLines?: Array<IMol
       transactionId,
       orderLines,
     });
+    if (!data.success && typeof data.message === 'string') {
+      throw data.message;
+    }
     return _.defaults(data, { success: false, order: null });
   } catch (e) {
+    if (typeof e === 'string') {
+      throw e;
+    }
     console.error(e);
 
     return false;
@@ -135,8 +154,15 @@ export const shipOrder = async (transactionId: string, orderLines?: Array<IMolli
       orderLines,
       tracking,
     });
+    if (!data.success && typeof data.message === 'string') {
+      throw data.message;
+    }
+
     return _.defaults(data, { success: false, order: null });
   } catch (e) {
+    if (typeof e === 'string') {
+      throw e;
+    }
     console.error(e);
 
     return false;

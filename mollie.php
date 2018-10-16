@@ -4662,9 +4662,16 @@ class Mollie extends PaymentModule
         $mollieData = static::getPaymentBy('transaction_id', $input['transactionId']);
 
         try {
+            $adminOrdersController = new AdminOrdersController();
+            $access = Profile::getProfileAccess($this->context->employee->id_profile, $adminOrdersController->id);
+
             if ($input['resource'] === 'payments') {
                 switch ($input['action']) {
                     case 'refund':
+                        // Check order edit permissions
+                        if (!$access || empty($access['edit'])) {
+                            return array('success' => false, 'message' => $this->l('You do not have permission to refund payments'));
+                        }
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
                             $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id']);
@@ -4674,6 +4681,10 @@ class Mollie extends PaymentModule
 
                         return array('success' => isset($status['status']) && $status['status'] === 'success', 'payment' => static::getFilteredApiPayment($input['transactionId']));
                     case 'retrieve':
+                        // Check order view permissions
+                        if (!$access || empty($access['view'])) {
+                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('view')));
+                        }
                         return array('success' => true, 'payment' => static::getFilteredApiPayment($input['transactionId']));
                     default:
                         return array('success' => false);
@@ -4681,14 +4692,30 @@ class Mollie extends PaymentModule
             } elseif ($input['resource'] === 'orders') {
                 switch ($input['action']) {
                     case 'retrieve':
+                        // Check order edit permissions
+                        if (!$access || empty($access['view'])) {
+                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('edit')));
+                        }
                         return array('success' => true, 'order' => static::getFilteredApiOrder($input['transactionId']));
                     case 'ship':
+                        // Check order edit permissions
+                        if (!$access || empty($access['edit'])) {
+                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('ship')));
+                        }
                         $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     case 'refund':
+                        // Check order edit permissions
+                        if (!$access || empty($access['edit'])) {
+                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('refund')));
+                        }
                         $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     case 'cancel':
+                        // Check order edit permissions
+                        if (!$access || empty($access['edit'])) {
+                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('cancel')));
+                        }
                         $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     default:

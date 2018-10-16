@@ -100,7 +100,7 @@ class RefundForm extends Component<IProps> {
     if (input) {
       try {
         this.setState(() => ({ loading: true }));
-        const { success, payment } = await refundPayment(transactionId, amount);
+        const { success = false, payment = null } = await refundPayment(transactionId, amount);
         if (success) {
           if (payment) {
             dispatchUpdatePayment(payment);

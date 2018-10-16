@@ -119,8 +119,21 @@ class OrderLinesTable extends Component<IProps> {
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
             dispatchUpdateOrder(newOrder);
+          } else {
+            swal({
+              icon: 'error',
+              title: xss(translations.anErrorOccurred),
+              text: xss(translations.unableToShip),
+            }).then();
           }
         } catch (e) {
+          if (typeof e === 'string') {
+            swal({
+              icon: 'error',
+              title: xss(translations.anErrorOccurred),
+              text: xss(e),
+            }).then();
+          }
           console.error(e);
         } finally {
           this.setState(() => ({ loading: false }));
@@ -151,8 +164,21 @@ class OrderLinesTable extends Component<IProps> {
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
+        } else {
+          swal({
+            icon: 'error',
+            title: xss(translations.anErrorOccurred),
+            text: xss(translations.unableToRefund),
+          }).then();
         }
       } catch (e) {
+        if (typeof e === 'string') {
+          swal({
+            icon: 'error',
+            title: xss(translations.anErrorOccurred),
+            text: xss(e),
+          }).then();
+        }
         console.error(e);
       } finally {
         this.setState(() => ({ loading: false }));
@@ -182,8 +208,21 @@ class OrderLinesTable extends Component<IProps> {
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
+        } else {
+          swal({
+            icon: 'error',
+            title: xss(translations.anErrorOccurred),
+            text: xss(translations.unableToShip),
+          }).then();
         }
       } catch (e) {
+        if (typeof e === 'string') {
+          swal({
+            icon: 'error',
+            title: xss(translations.anErrorOccurred),
+            text: xss(e),
+          }).then();
+        }
         console.error(e);
       } finally {
         this.setState(() => ({ loading: false }));
