@@ -125,7 +125,10 @@ class OrderLinesEditor extends Component<IProps> {
 
   render() {
     const { lineType } = this.props;
-    const { lines } = this.state;
+    const { lines: origLines } = this.state;
+    const lines = _.cloneDeep(origLines);
+    _.remove(lines, line => line[`${lineType}Quantity`] < 1);
+
 
     return (
       <Table bordered>
