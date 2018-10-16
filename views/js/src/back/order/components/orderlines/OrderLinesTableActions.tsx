@@ -110,8 +110,8 @@ class OrderLinesTableActions extends Component<IProps> {
 
     const buttonGroup = legacy ? (
       <div>
-        {shipButton}
-        {refundButton}
+        {shipButton}<br/>
+        {refundButton}<br/>
         {cancelButton}
       </div>
     ) : (
