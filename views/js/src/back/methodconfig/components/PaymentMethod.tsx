@@ -141,7 +141,7 @@ class PaymentMethod extends Component<IProps> {
   }
 
   componentDidUpdate() {
-    if (typeof $ !== 'undefined') {
+    if (typeof $ !== 'undefined' && typeof $.prototype.tooltip === 'function') {
       $('[data-toggle=tooltip]').tooltip();
     }
   }
