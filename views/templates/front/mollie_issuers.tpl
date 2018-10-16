@@ -38,17 +38,20 @@
           {if count($issuers)}
             <span style="font-size: 24px; font-weight: 700; margin-bottom:10px">{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</span>
             {foreach $issuers as $issuer}
-              <button type="submit"
-                      name="issuer"
-                      class="mollie_button"
-                      value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}">
-                <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8' nofilter}">
-                <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
+              <button
+                type="submit"
+                name="issuer"
+                class="mollie_button"
+                value="{$issuer['id']|escape:'htmlall':'UTF-8' nofilter}"
+              >
+                <img src="{$issuer['image']['svg']|escape:'htmlall':'UTF-8' nofilter}">
+                <p class="mollie_p">{$issuer['name']|escape:'htmlall':'UTF-8' nofilter}</p>
               </button>
             {/foreach}
-            <input type="hidden"
-                   name="method"
-                   value="ideal"
+            <input
+              type="hidden"
+              name="method"
+              value="ideal"
             >
             {block name='content'}
               {include file="../hook/qr_code.tpl"}

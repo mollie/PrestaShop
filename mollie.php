@@ -1686,52 +1686,6 @@ class Mollie extends PaymentModule
             );
         }
 
-//        $mollieData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-//            sprintf(
-//                'SELECT * FROM `%s` WHERE `cart_id` = \'%s\' ORDER BY `created_at` DESC',
-//                _DB_PREFIX_.'mollie_payments',
-//                (int) $cartId
-//            )
-//        );
-//        // If the order_id is NULL in the mollie_payments db table
-//        // use Order::getOrderByCartId for backwards compatibility
-//        if (empty($mollieData['order_id'])) {
-//            $mollieData['order_id'] = Order::getOrderByCartId((int) $cartId);
-//        }
-//
-//        if (Tools::isSubmit('Mollie_Refund')) {
-//            $tplData = $this->doRefund((int) $mollieData['order_id'], $mollieData['transaction_id']);
-//            if ($tplData['status'] === 'success') {
-//                Tools::redirectAdmin($this->context->link->getAdminLink('AdminOrders', true)
-//                    .'&vieworder&id_order='.(int) $params['id_order']);
-//            }
-//        } elseif (isset($mollieData['bank_status'])
-//            && $mollieData['bank_status'] === \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED
-//        ) {
-//            $tplData = array(
-//                'status'      => 'success',
-//                'msg_success' => $this->lang('The order has been refunded!'),
-//                'msg_details' => $this->lang(
-//                    'Mollie B.V. will transfer the money back to the customer on the next business day.'
-//                ),
-//            );
-//        } elseif (isset($mollieData['bank_status']) && in_array($mollieData['bank_status'], array(
-//                \Mollie\Api\Types\PaymentStatus::STATUS_PAID, \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT
-//            ))) {
-//            $tplData = array(
-//                'status'          => 'form',
-//                'msg_button'      => $this->lang['Refund this order'],
-//                'msg_description' => sprintf(
-//                    $this->lang['Refund order #%d through the Mollie API.'],
-//                    (int) $mollieData['order_id']
-//                ),
-//            );
-//        } else {
-//            return '';
-//        }
-//
-//        $tplData['msg_title'] = $this->lang['Mollie refund'];
-//        $tplData['img_src'] = $this->_path.'views/img/logo_small.png';
         if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
             $this->context->controller->addJS("{$this->_path}views/js/dist/back-v{$this->version}.min.js");
         } else {
@@ -1743,15 +1697,8 @@ class Mollie extends PaymentModule
            'transactionId' => $transaction['transaction_id'],
            'currencies'    => $currencies,
         ));
-        return $this->display(__FILE__, 'order_info.tpl');
-        return '<div id="mollie_order"></div><script type="text/javascript">(function(){window.MollieModule.back.orderInfo("#mollie_order")}());</script>';
-//        $this->smarty->assign($tplData);
-//        $this->context->smarty->assign(array(
-//            'link'       => Context::getContext()->link,
-//            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
-//        ));
 
-//        return $this->display(__FILE__, 'refund.tpl');
+        return $this->display(__FILE__, 'order_info.tpl');
     }
 
     /**
@@ -1818,16 +1765,7 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        try {
-            $methods = $this->getFilteredApiMethods();
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
-            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__." said: {$e->getMessage()}", static::ERROR);
-            }
-
-            return array();
-        }
-
+        $methods = $this->getMethodsForCheckout();
         $iso = Tools::strtolower(Context::getContext()->currency->iso_code);
         $paymentOptions = array();
 
@@ -1873,16 +1811,7 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        try {
-            $methods = $this->getFilteredApiMethods();
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
-            if (Configuration::get(static::MOLLIE_DEBUG_LOG) == static::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: '.$e->getMessage(), static::ERROR);
-            }
-
-            return array();
-        }
-
+        $methods = $this->getMethodsForCheckout();
         $idealIssuers = array();
         $issuers = $this->getIssuerList();
         if (isset($issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL])) {
@@ -1912,17 +1841,17 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            if ($method->id === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
+            if ($method['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
                 && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK
             ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
-                    ->setCallToActionText($this->lang[$method->description])
+                    ->setCallToActionText($this->lang[$method['name']])
                     ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $method->id, 'rand' => time()),
+                        array('method' => $method['id'], 'rand' => time()),
                         true
                     ))
                     ->setInputs(array(
@@ -1936,16 +1865,16 @@ class Mollie extends PaymentModule
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
-                    $newOption->setLogo($method->image->fallback);
+                    $newOption->setLogo($method['image']['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
             } else {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                if (isset($this->lang[$method->description])) {
-                    $description = $this->lang[$method->description];
+                if (isset($this->lang[$method['name']])) {
+                    $description = $this->lang[$method['name']];
                 } else {
-                    $description = $method->description;
+                    $description = $method['name'];
                 }
                 $newOption
                     ->setCallToActionText($description)
@@ -1953,20 +1882,20 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        array('method' => $method->id, 'rand' => time()),
+                        array('method' => $method['id'], 'rand' => time()),
                         true
                     ));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig !== static::LOGOS_HIDE) {
-                    if (in_array($method->id, array('cartasi', 'cartesbancaires'))) {
+                    if (in_array($method['id'], array('cartasi', 'cartesbancaires'))) {
                         if ($imageConfig == static::LOGOS_BIG) {
-                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}80.png"));
+                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method['id']}80.png"));
                         } else {
-                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method->id}.png"));
+                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method['id']}.png"));
                         }
                     } else {
-                        $newOption->setLogo($method->image->fallback);
+                        $newOption->setLogo($method['image']['size2x']);
                     }
                 }
 

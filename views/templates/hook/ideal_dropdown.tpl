@@ -31,12 +31,13 @@
 * @link       https://www.mollie.nl
 *}
 <div class="dropdown" style="margin-bottom: 20px">
-  <button class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          id="mollie-issuer-dropdown-button"
+  <button
+    class="btn btn-secondary dropdown-toggle"
+    type="button"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false"
+    id="mollie-issuer-dropdown-button"
   >
     {l s='Choose a bank' mod='mollie'}
   </button>
