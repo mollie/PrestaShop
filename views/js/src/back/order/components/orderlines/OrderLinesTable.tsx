@@ -33,11 +33,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
+import swal from 'sweetalert';
 import _ from 'lodash';
 import xss from 'xss';
 import { Dispatch } from 'redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faTruck, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 import OrderLinesTableHeader from './OrderLinesTableHeader';
 import { formatCurrency } from '../../../misc/tools';
@@ -46,12 +46,15 @@ import OrderLinesEditor from './OrderLinesEditor';
 import ShipmentTrackingEditor from './ShipmentTrackingEditor';
 import { cancelOrder, refundOrder, shipOrder } from '../../misc/ajax';
 import { updateOrder } from '../../store/actions';
+import OrderLinesTableActions from './OrderLinesTableActions';
 
 interface IProps {
   // Redux
   order?: IMollieApiOrder,
   currencies?: ICurrencies,
   translations?: ITranslations,
+  config?: IMollieOrderConfig,
+  viewportWidth?: number,
 
   dispatchUpdateOrder?: Function,
 }
@@ -103,7 +106,7 @@ class OrderLinesTable extends Component<IProps> {
       render(<ShipmentTrackingEditor translations={translations} edited={newTracking => updateTracking(newTracking)}/>, trackingWrapper);
       el = trackingWrapper.firstChild;
       // @ts-ignore
-      [ input ] = await Promise.all([swal({
+      [input] = await Promise.all([swal({
         title: xss(translations.trackingDetails),
         text: xss(translations.addTrackingInfo),
         buttons: [xss(translations.cancel), xss(translations.shipProducts)],
@@ -190,52 +193,38 @@ class OrderLinesTable extends Component<IProps> {
 
   render() {
     const { loading } = this.state;
-    const { order, currencies, translations } = this.props;
+    const { order, currencies, config: { legacy }, viewportWidth } = this.props;
 
     return (
-      <div className="table-responsive">
-        <table className="table">
+      <div className={classnames({
+        'table-responsive': !legacy,
+      })}>
+        <table className={classnames({
+          'table': true,
+        })}>
           <OrderLinesTableHeader/>
           <tbody>
             {order.lines.map((line: IMollieOrderLine) => (
               <tr key={line.id} style={{ marginBottom: '100px' }}>
                 <td><strong>{line.quantity}x</strong> {line.name}</td>
                 <td>{line.status}</td>
-                <td>{line.quantityShipped}</td>
-                <td>{line.quantityCanceled}</td>
-                <td>{line.quantityRefunded}</td>
+                {viewportWidth < 1390 && <td>{line.quantityShipped} / {line.quantityShipped} / {line.quantityCanceled}</td>}
+                {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
+                {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
+                {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}
                 <td>{formatCurrency(parseFloat(line.unitPrice.value), _.get(currencies, line.unitPrice.currency))}</td>
                 <td>{formatCurrency(parseFloat(line.vatAmount.value), _.get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
                 <td>{formatCurrency(parseFloat(line.totalAmount.value), _.get(currencies, line.totalAmount.currency))}</td>
-                <td className="actions">
-                  <div className="btn-group-action">
-                    <div className="btn-group pull-right">
-                      <button style={{ cursor: line.shippableQuantity < 1 ? 'not-allowed' : 'pointer' }} className="btn btn-default" title="" disabled={loading || line.shippableQuantity < 1} onClick={() => this.ship([line])}>
-                        <FontAwesomeIcon icon={faTruck}/> {translations.ship}
-                      </button>
-                      <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled={loading || (line.refundableQuantity < 1 && line.cancelableQuantity < 1)}>
-                        <span className="caret">&nbsp;</span>
-                      </button>
-                      <ul className="dropdown-menu">
-                        <li>
-                          <a
-                            style={{ cursor: (loading || line.refundableQuantity < 1) ? 'not-allowed' : 'pointer', opacity: (loading || line.refundableQuantity < 1) ? 0.6 : 1 }}
-                            onClick={() => line.refundableQuantity > 0 && this.refund([line])}
-                          >
-                            <FontAwesomeIcon icon={faUndo}/> {translations.refund}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            style={{ cursor: (loading || line.cancelableQuantity < 1) ? 'not-allowed' : 'pointer', opacity: (loading || line.cancelableQuantity < 1) ? 0.6 : 1 }}
-                            onClick={() => line.cancelableQuantity > 0 && this.cancel([line])}
-                          >
-                            <FontAwesomeIcon icon={faTimes}/> {translations.cancel}
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                <td className={classnames({
+                  'actions': !legacy,
+                })}>
+                  <OrderLinesTableActions
+                    loading={loading}
+                    line={line}
+                    refundLine={this.refund}
+                    shipLine={this.ship}
+                    cancelLine={this.cancel}
+                  />
                 </td>
               </tr>
             ))}
@@ -252,6 +241,8 @@ export default connect<{}, {}, IProps>(
     order: state.order,
     currencies: state.currencies,
     translations: state.translations,
+    config: state.config,
+    viewportWidth: state.viewportWidth,
   }),
   (dispatch: Dispatch): Partial<IProps> => ({
     dispatchUpdateOrder(order: IMollieApiOrder) {

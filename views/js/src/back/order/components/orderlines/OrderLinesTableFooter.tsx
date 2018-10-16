@@ -45,6 +45,7 @@ interface IProps {
   // Redux
   order?: IMollieApiOrder,
   translations?: ITranslations,
+  config?: IMollieOrderConfig,
 }
 
 class OrderLinesTableFooter extends Component<IProps> {
@@ -79,7 +80,7 @@ class OrderLinesTableFooter extends Component<IProps> {
   }
 
   render() {
-    const { translations, loading, order, ship, cancel, refund } = this.props;
+    const { translations, loading, order, ship, cancel, refund, config: { legacy } } = this.props;
 
     return (
       <tfoot>
@@ -91,24 +92,63 @@ class OrderLinesTableFooter extends Component<IProps> {
                 onClick={() => ship(_.compact(order.lines))}
                 className="btn btn-primary"
                 disabled={loading || !this.shippable}
+                style={{
+                  cursor: (loading || !this.shippable) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !this.shippable) ? 0.8 : 1
+                }}
               >
-                <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/> {translations.shipAll}
+                {legacy && (
+                  <img
+                    src="../img/admin/delivery.gif"
+                    style={{
+                      filter: (loading || !this.shippable) ? 'grayscale(100%)' : null,
+                      WebkitFilter: (loading || !this.shippable) ? 'grayscale(100%)' : null,
+                    }}
+                  />
+                )}
+                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/>} {translations.shipAll}
               </button>
               <button
                 type="button"
                 onClick={() => refund(_.compact(order.lines))}
                 className="btn btn-default"
                 disabled={loading || !this.refundable}
+                style={{
+                  cursor: (loading || !this.refundable) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !this.refundable) ? 0.8 : 1
+                }}
               >
-                <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/> {translations.refundAll}
+                {legacy && (
+                  <img
+                    src="../img/admin/money.gif"
+                    style={{
+                      filter: (loading || !this.refundable) ? 'grayscale(100%)' : null,
+                      WebkitFilter: (loading || !this.refundable) ? 'grayscale(100%)' : null,
+                    }}
+                  />
+                )}
+                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/>} {translations.refundAll}
               </button>
               <button
                 type="button"
                 onClick={() => cancel(_.compact(order.lines))}
                 className="btn btn-default"
                 disabled={loading || !this.cancelable}
+                style={{
+                  cursor: (loading || !this.cancelable) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !this.cancelable) ? 0.8 : 1
+                }}
               >
-                <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/> {translations.cancelAll}
+                {legacy && (
+                  <img
+                    src="../img/admin/disabled.gif"
+                    style={{
+                      filter: (loading || !this.cancelable) ? 'grayscale(100%)' : null,
+                      WebkitFilter: (loading || !this.cancelable) ? 'grayscale(100%)' : null,
+                    }}
+                  />
+                )}
+                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/>} {translations.cancelAll}
               </button>
             </div>
           </td>
@@ -122,5 +162,6 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
     order: state.order,
+    config: state.config,
   })
 )(OrderLinesTableFooter);

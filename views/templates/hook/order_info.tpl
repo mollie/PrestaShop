@@ -42,6 +42,7 @@
         moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}',
         initialStatus: 'form',
         transactionId: '{$transactionId|escape:'javascript':'UTF-8'}',
+        legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
       },
       {
         areYouSure: '{l s='Are you sure?' mod='mollie' js=1}',
@@ -89,7 +90,9 @@
         carrier: '{l s='Carrier' mod='mollie' js=1}',
         shipAll: '{l s='Ship all' mod='mollie' js=1}',
         cancelAll: '{l s='Cancel all' mod='mollie' js=1}',
-        refundAll: '{l s='Refund all' mod='mollie' js=1}'
+        refundAll: '{l s='Refund all' mod='mollie' js=1}',
+        transactionInfo: '{l s='Transaction info' mod='mollie' js=1}',
+        thereAreNoProducts: '{l s='There are no products' mod='mollie' js=1}',
       },
       {Tools::jsonEncode($currencies)}
     );

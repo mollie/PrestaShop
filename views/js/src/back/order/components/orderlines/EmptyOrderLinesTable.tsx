@@ -37,11 +37,16 @@ import OrderLinesTableHeader from './OrderLinesTableHeader';
 interface IProps {
   // Redux
   translations?: ITranslations,
+  config?: IMollieOrderConfig,
 }
 
 class EmptyOrderLinesTable extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, config: { legacy } } = this.props;
+
+    if (legacy) {
+      return <div className="error">{translations.thereAreNoProducts}</div>;
+    }
 
     return (
       <div className="table-responsive">
@@ -65,6 +70,7 @@ class EmptyOrderLinesTable extends Component<IProps> {
 
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations
+    translations: state.translations,
+    config: state.config,
   })
 )(EmptyOrderLinesTable);

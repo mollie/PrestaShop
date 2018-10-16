@@ -34,9 +34,11 @@ import '@babel/polyfill';
 
 import React from 'react';
 import { render } from 'react-dom';
+import viewportSize from 'viewport-size';
+import _ from 'lodash';
 
 import store from './store';
-import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations } from './store/actions';
+import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations, updateViewportWidth } from './store/actions';
 import MolliePanel from './components/MolliePanel';
 import { retrieveOrder, retrievePayment } from './misc/ajax';
 
@@ -55,6 +57,11 @@ export const orderInfo = (
       store.dispatch(updatePayment(await retrievePayment(transactionId)));
     }
   }, 0);
+
+  // Listen for window resizes
+  window.addEventListener('resize', _.throttle(() => {
+    store.dispatch(updateViewportWidth(viewportSize.getWidth()));
+  }, 200));
 
   store.dispatch(updateCurrencies(currencies));
   store.dispatch(updateTranslations(translations));

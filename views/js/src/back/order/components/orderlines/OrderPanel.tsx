@@ -35,9 +35,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { updateOrder } from '../../store/actions';
-import LoadingDots from '../../../misc/components/LoadingDots';
-import PaymentInfo from './PaymentInfo';
-import OrderLinesInfo from './OrderLinesInfo';
+import OrderPanelContent from './OrderPanelContent';
 
 interface IProps {
   // Redux
@@ -47,13 +45,34 @@ interface IProps {
   dispatchUpdateOrder?: Function,
 }
 
-class RefundPanel extends Component<IProps> {
+class OrderPanel extends Component<IProps> {
   render() {
     const { order, config } = this.props;
+    const { legacy } = config;
     if (Object.keys(config).length <= 0) {
       return null;
     }
     const { moduleDir } = config;
+
+    if (legacy) {
+      return (
+        <fieldset style={{ marginTop: '14px' }}>
+          <legend>
+            <img
+              src={`${moduleDir}views/img/logo_small.png`}
+              width="32"
+              height="32"
+              style={{ height: '16px', width: '16px', opacity: 0.8 }}
+            />
+            <span>Mollie</span>&nbsp;
+          </legend>
+          <div className="warn">
+            <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
+          </div>
+          <OrderPanelContent/>
+        </fieldset>
+      );
+    }
 
     return (
       <div className="panel">
@@ -63,18 +82,13 @@ class RefundPanel extends Component<IProps> {
             width="32"
             height="32"
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
-          /> <span>Mollie</span>&nbsp;
+          />
+          <span>Mollie</span>&nbsp;
         </div>
         <div className="alert alert-warning">
           <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
         </div>
-        {!order && <Fragment><LoadingDots/></Fragment>}
-        {!!order && order.status && (
-          <div className="panel-body row">
-            <PaymentInfo/>
-            <OrderLinesInfo/>
-          </div>
-        )}
+        <OrderPanelContent/>
       </div>
     );
   }
@@ -92,5 +106,5 @@ export default connect<{}, {}, IProps>(
     }
   })
 )
-(RefundPanel);
+(OrderPanel);
 

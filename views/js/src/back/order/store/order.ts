@@ -31,6 +31,8 @@
  * @link       https://www.mollie.nl
  */
 import { combineReducers } from 'redux';
+// @ts-ignore
+import viewportSize from 'viewport-size';
 
 import { ReduxActionTypes } from './actions';
 
@@ -38,6 +40,7 @@ declare global {
   interface IMollieOrderState {
     translations: ITranslations,
     config: IMollieOrderConfig,
+    viewportWidth: number,
     order: IMollieApiOrder,
     payment: IMollieApiPayment,
     currencies: ICurrencies,
@@ -89,12 +92,23 @@ const currencies = (state: ICurrencies = {}, action: IUpdateCurrenciesAction): I
   }
 };
 
+const initialViewportwidth = viewportSize.getWidth();
+const viewportWidth = (state = initialViewportwidth, action : IUpdateViewportWidthAction): number => {
+  switch (action.type) {
+    case ReduxActionTypes.updateViewportWidth:
+      return action.width;
+    default:
+      return state;
+  }
+};
+
 const checkoutApp = combineReducers({
   translations,
   config,
   order,
   payment,
   currencies,
+  viewportWidth,
 });
 
 export default checkoutApp;

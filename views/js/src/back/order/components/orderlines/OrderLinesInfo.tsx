@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import OrderLinesTable from './OrderLinesTable';
@@ -40,6 +40,7 @@ interface IProps {
   // Redux
   translations?: ITranslations,
   order?: IMollieApiOrder,
+  config?: IMollieOrderConfig,
 }
 
 const Div = styled.div`
@@ -51,7 +52,17 @@ const Div = styled.div`
 
 class OrderLinesInfo extends Component<IProps> {
   render() {
-    const { translations, order } = this.props;
+    const { translations, order, config: { legacy } } = this.props;
+
+    if (legacy) {
+      return (
+        <Fragment>
+          <h4>{translations.products}</h4>
+          {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+          {!!order && !!order.lines.length && <OrderLinesTable/>}
+        </Fragment>
+      );
+    }
 
     return (
       <Div className="col-md-9 panel">
@@ -67,5 +78,6 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
     order: state.order,
+    config: state.config,
   })
 )(OrderLinesInfo);

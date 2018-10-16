@@ -30,17 +30,18 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 interface IProps {
   // Redux
   translations?: ITranslations,
+  viewportWidth?: number,
 }
 
 class OrderLinesTableHeader extends Component<IProps> {
   render() {
-    const { translations } = this.props;
+    const { translations, viewportWidth } = this.props;
 
     return (
       <thead>
@@ -51,15 +52,28 @@ class OrderLinesTableHeader extends Component<IProps> {
           <th>
             <span className="title_box">{translations.status}</span>
           </th>
-          <th>
-            <span className="title_box">{translations.shipped}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.canceled}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.refunded}</span>
-          </th>
+          {viewportWidth < 1390 && (
+            <th>
+              <span className="title_box">
+                <span>{translations.shipped}</span>
+                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.canceled}</span>
+                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.refunded}</span>
+                </span>
+            </th>
+          )}
+          {viewportWidth >= 1390 && (
+            <Fragment>
+              <th>
+                <span className="title_box">{translations.shipped}</span>
+              </th>
+              <th>
+                <span className="title_box">{translations.canceled}</span>
+              </th>
+              <th>
+                <span className="title_box">{translations.refunded}</span>
+              </th>
+            </Fragment>
+          )}
           <th>
             <span className="title_box">{translations.unitPrice}</span>
           </th>
@@ -79,5 +93,6 @@ class OrderLinesTableHeader extends Component<IProps> {
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
+    viewportWidth: state.viewportWidth,
   })
 )(OrderLinesTableHeader);

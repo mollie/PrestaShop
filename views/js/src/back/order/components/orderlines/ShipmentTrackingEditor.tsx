@@ -58,6 +58,20 @@ const FormGroup = styled.div`
 min-height: 60px!important;
 ` as any;
 
+const Label = styled.label`
+font-size: medium!important;
+text-align: left!important;
+` as any;
+
+const Input = styled.input`
+font-size: medium!important;
+text-align: left!important;
+` as any;
+
+const InputContainer = styled.div`
+text-align: left!important;
+`;
+
 class ShipmentTrackingEditor extends Component<IProps> {
   state: IState = {
     skipTracking: false,
@@ -142,8 +156,8 @@ class ShipmentTrackingEditor extends Component<IProps> {
 
     return (
       <div style={{ textAlign: 'left' }}>
-        <label htmlFor="skipTracking">
-          <input
+        <Label htmlFor="skipTracking">
+          <Input
             id="skipTracking"
             name="skipTracking"
             type="checkbox"
@@ -151,13 +165,13 @@ class ShipmentTrackingEditor extends Component<IProps> {
             onChange={({ target: { checked: skipTracking }}: any) => this.updateSkipTracking(skipTracking)}
           />
           <span>&nbsp;{translations.skipTrackingDetails}</span>
-        </label>
+        </Label>
         <br/>
         <br/>
         <FormGroup>
-          <label htmlFor="input-carrier"><span>{translations.carrier} <sup>*</sup></span></label>
-          <div>
-            <input
+          <Label htmlFor="input-carrier"><span>{translations.carrier} <sup>*</sup></span></Label>
+          <InputContainer>
+            <Input
               type="text"
               placeholder={translations.egFedex}
               className="l-form-control"
@@ -170,12 +184,12 @@ class ShipmentTrackingEditor extends Component<IProps> {
             <ErrorMessage show={this.carrierInvalid}>
               {translations.thisInfoIsRequired}
             </ErrorMessage>
-          </div>
+          </InputContainer>
         </FormGroup>
         <FormGroup>
-          <label htmlFor="input-code"><span>{translations.trackingCode} <sup>*</sup></span></label>
-          <div>
-            <input
+          <Label htmlFor="input-code"><span>{translations.trackingCode} <sup>*</sup></span></Label>
+          <InputContainer>
+            <Input
               type="text"
               name="code"
               id="input-code"
@@ -186,12 +200,12 @@ class ShipmentTrackingEditor extends Component<IProps> {
             <ErrorMessage show={this.codeInvalid}>
               {translations.thisInfoIsRequired}
             </ErrorMessage>
-          </div>
+          </InputContainer>
         </FormGroup>
         <FormGroup>
-          <label htmlFor="input-url"><span><span>{translations.url}</span> ({translations.optional})</span></label>
-          <div>
-            <input
+          <Label htmlFor="input-url"><span><span>{translations.url}</span> ({translations.optional})</span></Label>
+          <InputContainer>
+            <Input
               type="text"
               className="l-form-control"
               placeholder="https://"
@@ -201,7 +215,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               disabled={skipTracking}
               onChange={({ target: { value: url }}) => this.updateUrl(url)}
             />
-          </div>
+          </InputContainer>
         </FormGroup>
       </div>
     )

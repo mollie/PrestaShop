@@ -32,17 +32,16 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import _ from 'lodash';
 import styled from 'styled-components';
 
-import { formatCurrency } from '../../../misc/tools';
+import PaymentInfoContent from './PaymentInfoContent';
 
 interface IProps {
   // Redux
   order?: IMollieApiOrder,
   translations?: ITranslations,
   currencies?: ICurrencies,
+  config?: IMollieOrderConfig,
 }
 
 const Div = styled.div`
@@ -54,17 +53,18 @@ const Div = styled.div`
 
 class PaymentInfo extends Component<IProps> {
   render() {
-    const { translations, order, currencies } = this.props;
+    const { translations, config: { legacy } } = this.props;
+
+    if (legacy) {
+      return (
+        <PaymentInfoContent/>
+      );
+    }
 
     return (
       <Div className="col-md-3 panel">
         <div className="panel-heading">{translations.paymentInfo}</div>
-        <h4>{translations.orderInfo}</h4>
-        <div><strong>{translations.transactionId}</strong>: <span>{order.id}</span></div>
-        <div><strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span></div>
-        <div><strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), _.get(currencies, order.amount.currency))}</span></div>
-        {/*<div><strong>{translations.refunded}</strong>: <span>{formatCurrency(parseFloat(order.amountRefunded.value), _.get(currencies, order.amountRefunded.currency))}</span></div>*/}
-        {/*<div><strong style={{ textDecoration: 'underline' }}>{translations.currentAmount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value) - parseFloat(order.amountRefunded.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
+        <PaymentInfoContent/>
       </Div>
     );
   }
@@ -75,5 +75,6 @@ export default connect<{}, {}, IProps>(
     translations: state.translations,
     order: state.order,
     currencies: state.currencies,
+    config: state.config,
   })
 )(PaymentInfo);

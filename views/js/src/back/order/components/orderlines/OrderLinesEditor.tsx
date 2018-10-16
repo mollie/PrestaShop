@@ -52,6 +52,7 @@ interface IState {
 
 const CloseIcon = styled(FontAwesomeIcon)`
 cursor: pointer;
+color: #555;
 
 :hover {
   opacity: 0.8;
@@ -66,12 +67,18 @@ cursor: pointer!important;
 -moz-appearance: none!important;
 -webkit-appearance: none!important;
 appearance: none!important;
-
+color: #555!important;
 border: 0!important;
 background-color: transparent!important;
 display: inline-block!important;
 height: auto!important;
 padding: 0 25px 0 5px!important;
+font-size: medium!important;
+` as any;
+
+const QuantityOption = styled.option`
+font-size: medium!important;
+color: #555!important;
 ` as any;
 
 class OrderLinesEditor extends Component<IProps> {
@@ -125,14 +132,14 @@ class OrderLinesEditor extends Component<IProps> {
         <tbody>
           {lines.map((line) => (
             <Tr key={line.id}>
-              <td>{line.name}</td>
-              <td>
+              <td style={{ color: '#555' }}>{line.name}</td>
+              <td style={{ color: '#555' }}>
                 <QuantitySelect
                   value={line.newQuantity || line[`${lineType}Quantity`]}
                   onChange={({ target: { value: qty }}: any) => this.updateQty(line.id, parseInt(qty, 10))}
                 >
                   {_.range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
-                    <option key={qty} value={qty}>{qty}x</option>
+                    <QuantityOption key={qty} value={qty}>{qty}x</QuantityOption>
                   ))}
                 </QuantitySelect>
                 <FontAwesomeIcon icon={faChevronDown} style={{ marginLeft: '-20px', pointerEvents: 'none' }}/>

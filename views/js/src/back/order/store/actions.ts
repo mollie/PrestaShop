@@ -37,6 +37,7 @@ export enum ReduxActionTypes {
   updateOrder = 'UPDATE_MOLLIE_ORDER',
   updatePayment = 'UPDATE_MOLLIE_PAYMENT',
   updateCurrencies = 'UPDATE_MOLLIE_CURRENCIES',
+  updateViewportWidth = 'UPDATE_MOLLIE_VIEWPORT_WIDTH',
 }
 
 // Action creators
@@ -65,6 +66,11 @@ declare global {
     type: string,
     currencies: ICurrencies,
   }
+
+  interface IUpdateViewportWidthAction {
+    type: string,
+    width: number,
+  }
 }
 
 export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
@@ -85,4 +91,8 @@ export function updateOrder(order: IMollieApiOrder): IUpdateOrderAction {
 
 export function updatePayment(payment: IMollieApiPayment): IUpdatePaymentAction {
   return { type: ReduxActionTypes.updatePayment, payment };
+}
+
+export function updateViewportWidth(width: number) : IUpdateViewportWidthAction {
+  return { type: ReduxActionTypes.updateViewportWidth, width };
 }
