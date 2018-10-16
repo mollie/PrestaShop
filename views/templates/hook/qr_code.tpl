@@ -31,14 +31,22 @@
 * @link       https://www.mollie.nl
 *}
 {if Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API}
-  {include file="./init_urls.tpl"}
+  <script type="text/javascript">
+    (function () {
+      window.MollieModule = window.MollieModule || { };
+      window.MollieModule.urls = window.MollieModule.urls || { };
+      window.MollieModule.urls.qrCodeNew = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeNew', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+      window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+      window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
+    }());
+  </script>
   <div id="mollie-qr-code"></div>
   <script type="text/javascript">
     (function () {
       var scripts = document.getElementsByTagName('script');
       var found = false;
       for (var i = scripts.length; i--;) {
-        if (scripts[i].src && scripts[i].src.indexOf('front.min.js') > -1) {
+        if (scripts[i].src && scripts[i].src.indexOf('{Mollie::getMediaPathForJavaScript('views/js/dist/front.min.js')|escape:'javascript':'UTF-8'}') > -1) {
           found = true;
           break;
         }

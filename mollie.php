@@ -1611,13 +1611,8 @@ class Mollie extends PaymentModule
             $file = Configuration::get(static::MOLLIE_CSS);
         }
         if (empty($file)) {
-            if (version_compare(_PS_VERSION_, '1.6.0.0', '<')) {
-                // Use a modified css file to display the new 1.6 default layout
-                $file = $this->_path.'views/css/mollie_15.css';
-            } else {
-                // Use default css file
-                $file = $this->_path.'views/css/mollie.css';
-            }
+            // Use default css file
+            $file = $this->_path.'views/css/mollie.css';
         } else {
             // Use a custom css file
             if (defined('_PS_BASE_URL_')) {
@@ -1663,7 +1658,6 @@ class Mollie extends PaymentModule
         if ($this->context->controller instanceof AdminOrdersController && version_compare(_PS_VERSION_, '1.6.0.0', '<')
             || $this->context->controller instanceof AdminModulesController && Tools::getValue('configure') === $this->name
         ) {
-
             $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
         }
 
@@ -1785,12 +1779,25 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayPaymentEU()
     {
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-            return array();
+        $methods = $this->getMethodsForCheckout();
+        $issuerList = array();
+        foreach ($methods as $apiMethod) {
+            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+                foreach ($apiMethod['issuers'] as $issuer) {
+                    $issuer['href'] = $this->context->link->getModuleLink(
+                        $this->name,
+                        'payment',
+                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        true
+                    );
+                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+                }
+            }
         }
 
-        $methods = $this->getMethodsForCheckout();
-        $iso = Tools::strtolower(Context::getContext()->currency->iso_code);
+        $context = Context::getContext();
+        $iso = Tools::strtolower($context->currency->iso_code);
         $paymentOptions = array();
 
         foreach ($methods as $method) {
@@ -1801,9 +1808,11 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            $paymentOption = array(
+            $paymentOptions[] = array(
                 'cta_text' => $this->lang[$method['name']],
-                'logo'     => $method['image']['size2x'],
+                'logo'     => Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_NORMAL
+                    ? $method['image']['size1x']
+                    : $method['image']['size2x'],
                 'action'   => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
@@ -1811,18 +1820,13 @@ class Mollie extends PaymentModule
                     true
                 ),
             );
-            $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-            if ($imageConfig == static::LOGOS_HIDE) {
-                $paymentOption['logo'] = $method['image']['size2x'];
-            }
-            $paymentOptions[] = $paymentOption;
         }
 
         return $paymentOptions;
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return array|null
      * @throws Exception
@@ -1836,11 +1840,19 @@ class Mollie extends PaymentModule
         }
 
         $methods = $this->getMethodsForCheckout();
-        $idealIssuers = array();
-        $issuers = $this->getIssuerList();
-        if (isset($issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL])) {
-            foreach ($issuers[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] as $issuer) {
-                $idealIssuers[$issuer->id] = $issuer;
+        $issuerList = array();
+        foreach ($methods as $apiMethod) {
+            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+                foreach ($apiMethod['issuers'] as $issuer) {
+                    $issuer['href'] = $this->context->link->getModuleLink(
+                        $this->name,
+                        'payment',
+                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        true
+                    );
+                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+                }
             }
         }
 
@@ -1848,7 +1860,9 @@ class Mollie extends PaymentModule
         $cart = $context->cart;
 
         $context->smarty->assign(array(
-            'idealIssuers'  => $idealIssuers,
+            'idealIssuers'  => isset($issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL])
+                ? $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL]
+                : array(),
             'link'          => $this->context->link,
             'qrCodeEnabled' => Configuration::get(static::MOLLIE_QRENABLED),
             'qrAlign'       => 'left',
@@ -1866,7 +1880,7 @@ class Mollie extends PaymentModule
             }
 
             if ($method['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
-                && Configuration::get(static::MOLLIE_ISSUERS) == static::ISSUERS_ON_CLICK
+                && Configuration::get(static::MOLLIE_ISSUERS) === static::ISSUERS_ON_CLICK
             ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
@@ -1888,8 +1902,10 @@ class Mollie extends PaymentModule
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-                if ($imageConfig !== static::LOGOS_HIDE) {
-                    $newOption->setLogo($method['i  mage']['size2x']);
+                if ($imageConfig === static::LOGOS_NORMAL) {
+                    $newOption->setLogo($method['image']['svg']);
+                } elseif ($imageConfig === static::LOGOS_BIG) {
+                    $newOption->setLogo($method['image']['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
@@ -1911,16 +1927,10 @@ class Mollie extends PaymentModule
                     ));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
-                if ($imageConfig !== static::LOGOS_HIDE) {
-                    if (in_array($method['id'], array('cartasi', 'cartesbancaires'))) {
-                        if ($imageConfig == static::LOGOS_BIG) {
-                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method['id']}80.png"));
-                        } else {
-                            $newOption->setLogo(static::getMediaPath("{$this->_path}views/img/{$method['id']}.png"));
-                        }
-                    } else {
-                        $newOption->setLogo($method['image']['size2x']);
-                    }
+                if ($imageConfig === static::LOGOS_NORMAL) {
+                    $newOption->setLogo($method['image']['svg']);
+                } elseif ($imageConfig === static::LOGOS_BIG) {
+                    $newOption->setLogo($method['image']['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
@@ -2075,6 +2085,18 @@ class Mollie extends PaymentModule
      */
     public static function getMediaPathForJavaScript($relativeMediaUri, $cssMediaType = null)
     {
+        $version = static::getDatabaseVersion();
+        foreach (array('front.min.js', 'back.min.js') as $needle) {
+            if (Tools::substr($relativeMediaUri, -Tools::strlen($needle)) === $needle) {
+                $parts = explode('.', $relativeMediaUri);
+                $parts[count($parts) - 3] = "{$parts[count($parts) - 3]}-v{$version}";
+                $newRelativeMediaUri = implode('.', $parts);
+                if (file_exists(_PS_MODULE_DIR_."mollie/{$newRelativeMediaUri}")) {
+                    $relativeMediaUri = $newRelativeMediaUri;
+                }
+            }
+        }
+
         return static::getMediaPath(_PS_MODULE_DIR_."mollie/{$relativeMediaUri}", $cssMediaType);
     }
 
@@ -2745,6 +2767,9 @@ class Mollie extends PaymentModule
     {
         $iso = Tools::strtolower($this->context->currency->iso_code);
         $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        if (empty($methods)) {
+            $methods = array();
+        }
 
         foreach ($methods as $index => $method) {
             if (!isset(static::$methodCurrencies[$method['id']])
@@ -2839,7 +2864,7 @@ class Mollie extends PaymentModule
                         'enabled'   => true,
                         'available' => !in_array($id, $notAvailable),
                         'image'     => array(
-                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}_small.png"),
                             'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
                             'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
                         ),
@@ -2854,7 +2879,7 @@ class Mollie extends PaymentModule
                         'enabled'   => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'available' => !in_array($id, $notAvailable),
                         'image'     => array(
-                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
+                            'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}_small.png"),
                             'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
                             'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
                         ),
@@ -4294,7 +4319,7 @@ class Mollie extends PaymentModule
                     }
                     $order->updateOrderDetailTax();
                     // sync all stock
-                    if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                    if (class_exists('StockManager') && method_exists('StockManager', 'updatePhysicalProductQuantity')) {
                         $stockManager = new StockManager();
                         $stockManager->updatePhysicalProductQuantity(
                             (int) $order->id_shop,
@@ -4783,5 +4808,24 @@ class Mollie extends PaymentModule
     public static function checkAutomaticShipments()
     {
         return false;
+    }
+
+    /**
+     * Get module version from database
+     *
+     * @return string
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
+    public static function getDatabaseVersion()
+    {
+        $sql = new DbQuery();
+        $sql->select('`version`');
+        $sql->from('module');
+        $sql->where('`name` = \'mollie\'');
+
+        return (string) Db::getInstance()->getValue($sql);
     }
 }

@@ -42,10 +42,10 @@
                 type="submit"
                 name="issuer"
                 class="mollie_button"
-                value="{$issuer['id']|escape:'htmlall':'UTF-8' nofilter}"
+                value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}"
               >
-                <img src="{$issuer['image']['svg']|escape:'htmlall':'UTF-8' nofilter}">
-                <p class="mollie_p">{$issuer['name']|escape:'htmlall':'UTF-8' nofilter}</p>
+                <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8' nofilter}">
+                <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
               </button>
             {/foreach}
             <input

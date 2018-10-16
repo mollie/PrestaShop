@@ -1,27 +1,119 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
-    <title>icon-32x32-cartebancare</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <linearGradient x1="100%" y1="0%" x2="0%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#083969" offset="0%"></stop>
-            <stop stop-color="#007B9D" offset="49.1699219%"></stop>
-            <stop stop-color="#00A84A" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="ALL" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Payment-Method-icons" transform="translate(-632.000000, -758.000000)">
-            <g id="Group-2" transform="translate(416.000000, 758.000000)">
-                <g id="icon-32x32-cartebancare" transform="translate(216.000000, 0.000000)">
-                    <rect id="Mask" fill="url(#linearGradient-1)" x="0" y="0" width="32" height="32" rx="8"></rect>
-                    <g id="Page-1" transform="translate(6.000000, 12.000000)" fill="#FFFFFF">
-                        <path d="M5,4 L10,4 C9.94748589,3.0278568 9.69541814,1.90279641 9,1 C8.02021793,0.319306532 6.42510175,0 5,0 C3.51625749,0 1.87562908,0.350222747 1,1 C0.170670868,2.06945414 0,3.34957866 0,4 C0,5.70452472 0.333902236,7.10589877 1,8 C2.10100214,8.77199292 3.57664872,9 5,9 C6.38221522,9 7.87974268,8.7425259 9,8 C9.68797864,7.11266169 10,6.33983146 10,5 L5,5 L5,4 Z" id="Fill-1"></path>
-                        <path d="M11,5 L11,9 L18,9 L18,9 C19.1703335,8.9425687 20,8.08199663 20,7 C20,5.96825575 19.1703335,5.05249579 18,5 L18,5 L11,5 Z" id="Fill-4"></path>
-                        <path d="M20,2 C20,0.889460411 19.1813223,0.00891584446 18,2.22044605e-16 C18.0785393,0.00891584446 17.9908076,-0.00576805604 18,2.22044605e-16 L11,2.22044605e-16 L11,4 L18,4 C19.2481438,3.91140713 20,3.05239895 20,2" id="Fill-7"></path>
-                    </g>
-                </g>
-            </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="cartesbancaires.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata28">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>icon-32x32-cartebancare</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1853"
+     inkscape:window-height="1025"
+     id="namedview26"
+     showgrid="false"
+     inkscape:zoom="14.75"
+     inkscape:cx="10.252419"
+     inkscape:cy="13.502622"
+     inkscape:window-x="67"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24" />
+  <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title2">icon-32x32-cartebancare</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <defs
+     id="defs13">
+    <linearGradient
+       x1="32"
+       y1="0"
+       x2="0"
+       y2="32"
+       id="linearGradient-1"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#083969"
+         offset="0%"
+         id="stop6" />
+      <stop
+         stop-color="#007B9D"
+         offset="49.1699219%"
+         id="stop8" />
+      <stop
+         stop-color="#00A84A"
+         offset="100%"
+         id="stop10" />
+    </linearGradient>
+  </defs>
+  <g
+     id="ALL"
+     style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1"
+     transform="matrix(0.74981603,0,0,0.74981603,0,0.00588696)">
+    <g
+       id="Payment-Method-icons"
+       transform="translate(-632,-758)">
+      <g
+         id="Group-2"
+         transform="translate(416,758)">
+        <g
+           id="icon-32x32-cartebancare"
+           transform="translate(216)">
+          <rect
+             id="Mask"
+             x="0"
+             y="0"
+             width="32"
+             height="32"
+             rx="8"
+             style="fill:url(#linearGradient-1)" />
+          <g
+             id="Page-1"
+             transform="translate(6,12)"
+             style="fill:#ffffff">
+            <path
+               d="m 5,4 h 5 C 9.9474859,3.0278568 9.6954181,1.9027964 9,1 8.0202179,0.31930653 6.4251017,0 5,0 3.5162575,0 1.8756291,0.35022275 1,1 0.17067087,2.0694541 0,3.3495787 0,4 0,5.7045247 0.33390224,7.1058988 1,8 2.1010021,8.7719929 3.5766487,9 5,9 6.3822152,9 7.8797427,8.7425259 9,8 9.6879786,7.1126617 10,6.3398315 10,5 H 5 Z"
+               id="Fill-1"
+               inkscape:connector-curvature="0" />
+            <path
+               d="m 11,5 v 4 h 7 V 9 C 19.170334,8.9425687 20,8.0819966 20,7 20,5.9682557 19.170334,5.0524958 18,5 v 0 z"
+               id="Fill-4"
+               inkscape:connector-curvature="0" />
+            <path
+               d="m 20,2 c 0,-1.11053959 -0.818678,-1.99108416 -2,-2 0.07854,0.00891584 -0.0092,-0.00576806 0,0 h -7 v 4 h 7 c 1.248144,-0.088593 2,-0.947601 2,-2"
+               id="Fill-7"
+               inkscape:connector-curvature="0" />
+          </g>
         </g>
+      </g>
     </g>
+  </g>
 </svg>

@@ -84,12 +84,18 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         parent::initContent();
 
         $data = array();
+        $cart = null;
+
         /**
          * Set ref is indicative of a payment that is tied to an order instead of a cart, which
          * we still support for transitional reasons.
          */
         if (Tools::getIsset('ref')) {
             $idOrder = (int) Tools::getValue('id');
+            $idCart = (int) Cart::getCartByOrderId($idOrder);
+            if ($idCart) {
+                $cart = new Cart($idCart);
+            }
 
             // Check if user is allowed to be on the return page
             $data['auth'] = Order::getUniqReferenceOf($idOrder) === Tools::getValue('ref');
@@ -107,8 +113,14 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             }
         }
 
+
+
         // Simulate webhook call (Orders API does not call the webhook on cancel)
-        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API && isset($data['mollie_info']['transaction_id'])) {
+        if ($cart instanceof Cart
+            && !$cart->orderExists()
+            && Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API
+            && isset($data['mollie_info']['transaction_id'])
+        ) {
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($data['mollie_info']['transaction_id']);
             $data['mollie_info'] = Mollie::getPaymentBy('order_id', $data['mollie_info']['order_id']);

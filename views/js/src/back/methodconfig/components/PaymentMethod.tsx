@@ -35,7 +35,7 @@ cursor: move!important;
                                  
 border: 1px solid #0c95fd;
 border-bottom-width: ${(props: any) => props.last ? '1px' : '2px'};
-background-color: rgba(255, 255, 255, 0.8);
+background-color: #fff;
 display: table;
 width: 100%;
 padding: 5px 0;
@@ -219,7 +219,7 @@ class PaymentMethod extends Component<IProps> {
               data-toggle="tooltip"
             >
               <FontAwesomeIcon icon={faExclamationTriangle}/> {translations.notAvailable}
-              </p>
+            </p>
           )}
           {available &&
             <Switch
