@@ -299,12 +299,27 @@ class Mollie extends PaymentModule
             'eps'                                                                                                                             => $this->l('eps'),
         );
 
-        // Register json Smarty function if missing
+        // Register json Smarty function when missing, happens on older 1.5; some 1.6 versions
         try {
             smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_encode', array('Tools', 'jsonEncode'));
             smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_decode', array('Tools', 'jsonDecode'));
         } catch (SmartyException $e) {
             // Already registered
+        } catch (Exception $e) {
+            // Already registered
+        }
+
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')
+            && version_compare(_PS_VERSION_, '1.7.0.5', '<')
+        ) {
+            // Bugfix generating invoices on 1.7.0.x => Register Admin/PDF displayPrice Smarty function when missing
+            try {
+                smartyRegisterFunction(Context::getContext()->smarty, 'function', 'displayPrice', array('Tools', 'displayPriceSmarty'));
+            } catch (SmartyException $e) {
+                // Already registered
+            } catch (Exception $e) {
+                // Already registered
+            }
         }
     }
 
