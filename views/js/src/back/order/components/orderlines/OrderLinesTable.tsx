@@ -47,6 +47,7 @@ import ShipmentTrackingEditor from './ShipmentTrackingEditor';
 import { cancelOrder, refundOrder, shipOrder } from '../../misc/ajax';
 import { updateOrder } from '../../store/actions';
 import OrderLinesTableActions from './OrderLinesTableActions';
+import styled from 'styled-components';
 
 interface IProps {
   // Redux
@@ -62,6 +63,12 @@ interface IProps {
 interface IState {
   loading: boolean,
 }
+
+const TableContainer = styled.div`
+@media (min-width: 1280px) {
+  overflow: ${({ config: { legacy } }: IProps) => legacy ? 'inherit' : 'visible!important'};
+}
+` as any;
 
 class OrderLinesTable extends Component<IProps> {
   state: IState = {
@@ -235,9 +242,12 @@ class OrderLinesTable extends Component<IProps> {
     const { order, currencies, config: { legacy }, viewportWidth } = this.props;
 
     return (
-      <div className={classnames({
-        'table-responsive': !legacy,
-      })}>
+      <TableContainer
+        className={classnames({
+          'table-responsive': !legacy,
+        })}
+        {...this.props}
+      >
         <table className={classnames({
           'table': true,
         })}>
@@ -270,7 +280,7 @@ class OrderLinesTable extends Component<IProps> {
           </tbody>
           <OrderLinesTableFooter loading={loading} ship={this.ship} refund={this.refund} cancel={this.cancel}/>
         </table>
-      </div>
+      </TableContainer>
     );
   }
 }
