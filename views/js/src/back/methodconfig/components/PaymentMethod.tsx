@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { SortableElement } from 'react-sortable-hoc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp, faChevronDown, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 import Switch from './Switch';
 
@@ -10,6 +10,7 @@ interface IProps {
   position: number,
   max: number,
   enabled: boolean,
+  available: boolean,
   name: string,
   code: string,
   imageUrl: string,
@@ -19,6 +20,8 @@ interface IProps {
   moveMethod: Function,
   onToggle: Function,
 }
+
+declare let $: any;
 
 const Li = styled.li`
 cursor: move!important;
@@ -133,6 +136,16 @@ class PaymentMethod extends Component<IProps> {
     onToggle(this.props.code, enabled);
   };
 
+  componentDidMount() {
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate() {
+    if (typeof $ !== 'undefined') {
+      $('[data-toggle=tooltip]').tooltip();
+    }
+  }
+
   render() {
     const {
       translations,
@@ -143,6 +156,7 @@ class PaymentMethod extends Component<IProps> {
       imageUrl,
       moveMethod,
       enabled,
+      available,
       config: { legacy },
     } = this.props;
 
@@ -195,13 +209,27 @@ class PaymentMethod extends Component<IProps> {
               {name}
             </span>
           </div>
-          <Switch
-            id={code}
-            translations={translations}
-            enabled={enabled}
-            onChange={({ target: { value }}: any) => this.toggleMethod(!!value)}
-            legacy={legacy}
-          />
+          {!available && (
+            <p
+              style={{
+                float: 'right',
+                marginRight: '20px'
+              }}
+              title={translations.thisPaymentMethodIsNotAvailableOnPaymentsApi}
+              data-toggle="tooltip"
+            >
+              <FontAwesomeIcon icon={faExclamationTriangle}/> {translations.notAvailable}
+              </p>
+          )}
+          {available &&
+            <Switch
+              id={code}
+              translations={translations}
+              enabled={enabled}
+              onChange={({ target: { value }}: any) => this.toggleMethod(!!value)}
+              legacy={legacy}
+            />
+          }
         </InfoColumn>
       </Li>
     );

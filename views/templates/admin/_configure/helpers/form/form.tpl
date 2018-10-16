@@ -63,6 +63,8 @@
           {
             yes: '{l s='Yes' mod='mollie' js=1}',
             no: '{l s='No' mod='mollie' js=1}',
+            notAvailable: '{l s='Not available' mod='mollie' js=1}',
+            thisPaymentMethodIsNotAvailableOnPaymentsApi: '{l s='This payment method is not available on the Payments API. Switch to the Orders API below in order to activate this method.' mod='mollie' js=1}',
           }
         )
       }());
