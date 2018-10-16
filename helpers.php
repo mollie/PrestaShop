@@ -30,10 +30,13 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
+
 if (!defined('_PS_VERSION_')) {
     return;
 }
+
 /**
  * This file is part of the array_column library
  *

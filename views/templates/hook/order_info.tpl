@@ -97,7 +97,7 @@
         unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
         unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
       },
-      {Tools::jsonEncode($currencies)}
+      {$currencies|json_encode nofilter}
     );
   }());
 </script>

@@ -90,7 +90,7 @@
         window.MollieModule.back.carrierConfig(
           '{$input.name|escape:'javascript':'UTF-8'}',
           {
-            carrierConfig: {Tools::jsonEncode($input.carrier_config)},
+            carrierConfig: {$input.carrier_config|json_encode nofilter},
             legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
           },
           {

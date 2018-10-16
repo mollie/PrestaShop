@@ -30,6 +30,7 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -45,14 +46,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
-    // @codingStandardsIgnoreStart
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
     public $display_column_left = false;
     /** @var bool $display_column_right */
     public $display_column_right = false;
-    // @codingStandardsIgnoreEnd
 
     /**
      * Prevent displaying the maintenance page

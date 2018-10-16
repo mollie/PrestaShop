@@ -30,6 +30,7 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -46,12 +47,10 @@ require_once dirname(__FILE__).'/webhook.php';
  */
 class MollieReturnModuleFrontController extends ModuleFrontController
 {
-    // @codingStandardsIgnoreStart
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
     public $display_column_left = false;
-    // @codingStandardsIgnoreEnd
 
     /**
      * Unset the cart id from cookie if the order exists

@@ -72,8 +72,8 @@
       function showBanks(event) {
         event.preventDefault();
 
-        var banks = {Tools::jsonEncode($issuers['ideal'])};
-        var translations = {Tools::jsonEncode($mollie_translations)};
+        var banks = {$issuers['ideal']|json_encode nofilter};
+        var translations = {$mollie_translations|json_encode nofilter};
 
         if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
           var elem = document.createElement('script');

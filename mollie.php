@@ -30,6 +30,7 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
 require_once(dirname(__FILE__).'/vendor/autoload.php');
@@ -297,6 +298,14 @@ class Mollie extends PaymentModule
             'Giropay'                                                                                                                         => $this->l('Giropay'),
             'eps'                                                                                                                             => $this->l('eps'),
         );
+
+        // Register json Smarty function if missing
+        try {
+            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_encode', array('Tools', 'jsonEncode'));
+            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_decode', array('Tools', 'jsonDecode'));
+        } catch (SmartyException $e) {
+            // Already registered
+        }
     }
 
     /**
@@ -3253,7 +3262,7 @@ class Mollie extends PaymentModule
                         $message = strip_tags($message, '<br>');
                         if (Validate::isCleanHtml($message)) {
                             $msg->message = $message;
-                            $msg->id_order = intval($order->id);
+                            $msg->id_order = (int) $order->id;
                             $msg->private = 1;
                             $msg->add();
                         }
@@ -3338,9 +3347,9 @@ class Mollie extends PaymentModule
                             $voucher = new CartRule($cartRule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
                             unset($voucher->id);
                             // Set a new voucher code
-                            $voucher->code = empty($voucher->code) ? substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
+                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.(intval($matches[1]) + 1), $voucher->code);
+                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.((int) ($matches[1]) + 1), $voucher->code);
                             }
                             // Set the new voucher value
                             if ($voucher->reduction_tax) {
@@ -3523,11 +3532,12 @@ class Mollie extends PaymentModule
                         // Join PDF invoice
                         if ((int) Configuration::get('PS_INVOICE') && $orderStatus->invoice && $order->invoice_number) {
                             $pdf = new PDF($order->getInvoicesCollection(), PDF::TEMPLATE_INVOICE, $this->context->smarty);
-                            $file_attachement['content'] = $pdf->render(false);
-                            $file_attachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
-                            $file_attachement['mime'] = 'application/pdf';
+                            $fileAttachement = array();
+                            $fileAttachement['content'] = $pdf->render(false);
+                            $fileAttachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
+                            $fileAttachement['mime'] = 'application/pdf';
                         } else {
-                            $file_attachement = null;
+                            $fileAttachement = null;
                         }
                         if (Validate::isEmail($this->context->customer->email)) {
                             Mail::Send(
@@ -3539,7 +3549,7 @@ class Mollie extends PaymentModule
                                 $this->context->customer->firstname.' '.$this->context->customer->lastname,
                                 null,
                                 null,
-                                $file_attachement,
+                                $fileAttachement,
                                 null, _PS_MAIL_DIR_, false, (int) $order->id_shop
                             );
                         }
@@ -3557,7 +3567,7 @@ class Mollie extends PaymentModule
                     }
                 } else {
                     $error = Tools::displayError('Order creation failed');
-                    Logger::addLog($error, 4, '0000002', 'Cart', intval($order->id_cart));
+                    Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
@@ -3567,7 +3577,7 @@ class Mollie extends PaymentModule
             return true;
         } else {
             $error = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
-            Logger::addLog($error, 4, '0000001', 'Cart', intval($this->context->cart->id));
+            Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
     }
@@ -3878,6 +3888,7 @@ class Mollie extends PaymentModule
                     // Construct order detail table for the email
                     $virtualProduct = true;
                     $productVarTplList = array();
+                    $specificPrice = null;
                     foreach ($order->product_list as $product) {
                         $price = Product::getPriceStatic(
                             (int) $product['id_product'],
@@ -3892,7 +3903,7 @@ class Mollie extends PaymentModule
                             (int) $order->id_customer,
                             (int) $order->id_cart,
                             (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
-                            $specific_price,
+                            $specificPrice,
                             true,
                             true,
                             null,
@@ -3912,7 +3923,7 @@ class Mollie extends PaymentModule
                             (int) $order->id_customer,
                             (int) $order->id_cart,
                             (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
-                            $specific_price,
+                            $specificPrice,
                             true,
                             true,
                             null,
@@ -3994,9 +4005,9 @@ class Mollie extends PaymentModule
                             $voucher = new CartRule((int) $cartRule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
                             unset($voucher->id);
                             // Set a new voucher code
-                            $voucher->code = empty($voucher->code) ? substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
+                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.(intval($matches[1]) + 1), $voucher->code);
+                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.((int) ($matches[1]) + 1), $voucher->code);
                             }
                             // Set the new voucher value
                             if ($voucher->reduction_tax) {
@@ -4206,6 +4217,7 @@ class Mollie extends PaymentModule
                             $orderInvoiceList = $order->getInvoicesCollection();
                             Hook::exec('actionPDFInvoiceRender', array('order_invoice_list' => $orderInvoiceList));
                             $pdf = new PDF($orderInvoiceList, PDF::TEMPLATE_INVOICE, $this->context->smarty);
+                            $fileAttachment = array();
                             $fileAttachment['content'] = $pdf->render(false);
                             $fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
                             $fileAttachment['mime'] = 'application/pdf';
@@ -4262,7 +4274,7 @@ class Mollie extends PaymentModule
                     }
                 } else {
                     $error = $this->translate('Order creation failed', array(), 'Admin.Payment.Notification');
-                    Logger::addLog($error, 4, '0000002', 'Cart', intval($order->id_cart));
+                    Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
@@ -4277,7 +4289,7 @@ class Mollie extends PaymentModule
             return true;
         } else {
             $error = $this->translate('Cart cannot be loaded or an order has already been placed using this cart', array(), 'Admin.Payment.Notification');
-            Logger::addLog($error, 4, '0000001', 'Cart', intval($this->context->cart->id));
+            Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
     }
@@ -4360,7 +4372,7 @@ class Mollie extends PaymentModule
             }
             foreach ($reflectionMethods as $reflectionMethod) {
                 /** @var ReflectionMethod $reflectionMethod */
-                $idOverride = substr(sha1($reflectionMethod->class.'::'.$reflectionMethod->name), 0, 10);
+                $idOverride = Tools::substr(sha1($reflectionMethod->class.'::'.$reflectionMethod->name), 0, 10);
                 $overriddenMethod = array(
                     'id_override' => $idOverride,
                     'override'    => $reflectionMethod->class.'::'.$reflectionMethod->name,
@@ -4420,8 +4432,8 @@ class Mollie extends PaymentModule
             if ($file[0] != '.') {
                 if (is_dir($rootDir.$path.$file)) {
                     $classes = array_merge($classes, $this->getClassesFromDir($path.$file.'/'));
-                } elseif (substr($file, -4) == '.php') {
-                    $content = file_get_contents($rootDir.$path.$file);
+                } elseif (Tools::substr($file, -4) == '.php') {
+                    $content = Tools::file_get_contents($rootDir.$path.$file);
 
                     $namespacePattern = '[\\a-z0-9_]*[\\]';
                     $pattern = '#\W((abstract\s+)?class|interface)\s+(?P<classname>'.basename($file, '.php').'(?:Core)?)'.'(?:\s+extends\s+'.$namespacePattern.'[a-z][a-z0-9_]*)?(?:\s+implements\s+'.$namespacePattern.'[a-z][\\a-z0-9_]*(?:\s*,\s*'.$namespacePattern.'[a-z][\\a-z0-9_]*)*)?\s*\{#i';
@@ -4433,8 +4445,8 @@ class Mollie extends PaymentModule
                             'override' => true,
                         );
 
-                        if (substr($m['classname'], -4) == 'Core') {
-                            $classes[substr($m['classname'], 0, -4)] = array(
+                        if (Tools::substr($m['classname'], -4) == 'Core') {
+                            $classes[Tools::substr($m['classname'], 0, -4)] = array(
                                 'path'     => '',
                                 'type'     => $classes[$m['classname']]['type'],
                                 'override' => true,
@@ -4657,7 +4669,7 @@ class Mollie extends PaymentModule
         @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
 
-        $input = @json_decode(file_get_contents('php://input'), true);
+        $input = @json_decode(Tools::file_get_contents('php://input'), true);
 
         $mollieData = static::getPaymentBy('transaction_id', $input['transactionId']);
 
