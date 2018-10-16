@@ -3654,7 +3654,7 @@ class Mollie extends PaymentModule
      * @todo - [✔] Check tb 1.0.x compatibility
      * @todo - [✘] Check PS 1.6.0.x compatibility
      * @todo - [✔] Check PS 1.6.1.x compatibility
-     * @todo - [✘] check PS 1.7.0.x compatibility
+     * @todo - [✔] check PS 1.7.0.x compatibility
      * @todo - [✘] check PS 1.7.1.x compatibility
      * @todo - [✘] check PS 1.7.2.x compatibility
      * @todo - [✘] check PS 1.7.3.x compatibility
