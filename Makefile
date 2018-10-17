@@ -67,9 +67,9 @@ qc: quick-clean
 
 clean:
 # PHP scoper
-	@rm -rf pre-scoper/ 2>/dev/null || true
-	@rm php-scoper.phar 2>/dev/null || true
-	@rm php-scoper.phar.pubkey 2>/dev/null || true
+#	@rm -rf pre-scoper/ 2>/dev/null || true
+#	@rm php-scoper.phar 2>/dev/null || true
+#	@rm php-scoper.phar.pubkey 2>/dev/null || true
 
 quick-clean:
 	@echo -e "${COLOR_BLUE}Cleanup${COLOR_RESET}"
