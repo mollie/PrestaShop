@@ -127,6 +127,8 @@ class Mollie extends PaymentModule
     const MOLLIE_QRENABLED = 'MOLLIE_QRENABLED';
     const MOLLIE_DISPLAY_ERRORS = 'MOLLIE_DISPLAY_ERRORS';
     const MOLLIE_TRACKING_URLS = 'MOLLIE_TRACKING_URLS';
+    const MOLLIE_AUTO_SHIP_MAIN = 'MOLLIE_AS_MAIN';
+    const MOLLIE_AUTO_SHIP_STATUSES = 'MOLLIE_AS_STATUSES';
     const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
@@ -468,6 +470,7 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
+        $this->hookActionOrderStatusUpdate();
         if (Tools::getValue('ajax')) {
             @ob_clean();
             header('Content-Type: application/json;charset=UTF-8');
@@ -487,6 +490,8 @@ class Mollie extends PaymentModule
                 $module
             );
         }
+
+        $this->checkOrderStatusHook();
 
         $this->context->smarty->assign(array(
             'link'       => Context::getContext()->link,
@@ -928,6 +933,22 @@ class Mollie extends PaymentModule
             }
         }
 
+        $orderStatuses = array(
+            array(
+                'name'           => $this->l('Disable this status'),
+                'id_order_state' => '0',
+            ),
+        );
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
+
+        for ($i = 0; $i < count($orderStatuses); $i++) {
+            $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'].' - '.$orderStatuses[$i]['name'];
+        }
+
+        $this->aasort($orderStatuses, 'id_order_state');
+
+        $orderStatuses = OrderState::getOrderStates($this->context->language->id);
+
         $input = array_merge(
             $input,
             array(
@@ -956,31 +977,57 @@ class Mollie extends PaymentModule
                         'name'  => 'name',
                     ),
                 ),
-            )
-        );
-
-        if (static::selectedApi() === static::MOLLIE_ORDERS_API) {
-            $input = array_merge(
-                $input,
                 array(
-                    array(
-                        'type'  => 'mollie-h3',
-                        'name'  => '',
-                        'title' => $this->l('Orders API'),
+                    'type'  => 'mollie-h3',
+                    'name'  => '',
+                    'title' => $this->l('Orders API'),
+                ),
+                array(
+                    'type'           => 'mollie-carriers',
+                    'label'          => $this->l('Shipment information'),
+                    'name'           => static::MOLLIE_TRACKING_URLS,
+                    'carrier_config' => static::carrierConfig(),
+                    'depends'        => static::MOLLIE_API,
+                    'depends_value'  => static::MOLLIE_ORDERS_API,
+                ),
+                array(
+                    'type'    => 'mollie-carriers-switch',
+                    'label'   => $this->l('Automatically ship when marked as `shipped`'),
+                    'name'    => static::MOLLIE_AUTO_SHIP_MAIN,
+                    'desc'    => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
+                    'is_bool' => true,
+                    'values'  => array(
+                        array(
+                            'id'    => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id'    => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
                     ),
-                    array(
-                        'type'    => 'mollie-carriers',
-                        'label'   => $this->l('Tracking URLs'),
-                        'name'    => static::MOLLIE_TRACKING_URLS,
-                        'desc'    => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
-                        'carrier_config' => static::carrierConfig()),
-                )
-            );
-        }
-
-        $input = array_merge(
-            $input,
-            array(
+                ),
+                array(
+                    'type'     => 'checkbox',
+                    'label'    => $this->l('Automatically ship when one of these statuses is reached'),
+                    'desc'     =>
+                        $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
+                    'name'     => static::MOLLIE_AUTO_SHIP_STATUSES,
+                    'multiple' => true,
+                    'values'   => array(
+                        'query' => $orderStatuses,
+                        'id'    => 'id_order_state',
+                        'name'  => 'name',
+                    ),
+                    'expand'   => (count($orderStatuses) > 10) ? array(
+                        'print_total' => count($orderStatuses),
+                        'default'     => 'show',
+                        'show'        => array('text' => $this->l('Show'), 'icon' => 'plus-sign-alt'),
+                        'hide'        => array('text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'),
+                    ) : null,
+                ),
                 array(
                     'type'  => 'mollie-h2',
                     'name'  => '',
@@ -4796,7 +4843,21 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
         }
 
-        return array('success', 'methods' => $dbMethods);
+        return array('success' => true, 'methods' => $dbMethods);
+    }
+
+    /**
+     * @return array
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
+    public function displayAjaxMollieCarrierConfig()
+    {
+        @ob_clean();
+        header('Content-Type: application/json;charset=UTF-8');
+
+        return array('success' => true, 'carriers' => static::carrierConfig());
     }
 
     /**
@@ -4939,5 +5000,147 @@ class Mollie extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * 2D array sort by key
+     *
+     * @param mixed $array
+     * @param mixed $key
+     *
+     * @since 3.3.0
+     */
+    protected function aasort(&$array, $key)
+    {
+        $sorter = array();
+        $ret = array();
+        reset($array);
+        foreach ($array as $ii => $va) {
+            $sorter[$ii] = $va[$key];
+        }
+        asort($sorter);
+        foreach ($sorter as $ii => $va) {
+            $ret[$ii] = $array[$ii];
+        }
+        $array = $ret;
+    }
+
+    /**
+     * Check the order status hook
+     *
+     * @since 3.3.0
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    protected function checkOrderStatusHook()
+    {
+        $shouldHook = false;
+        if (!$idHook = Hook::getIdByName('actionOrderStatusUpdate')) {
+            $shouldHook = true;
+        }
+        $modules = Hook::getModulesFromHook($idHook);
+        if (!is_array($modules)) {
+            $modules = array();
+        }
+        $modules = array_map('intval', array_keys($modules));
+        if (!in_array((int) $this->id, $modules)) {
+            $shouldHook = true;
+        }
+
+        if ($shouldHook) {
+            $this->registerHook('actionOrderStatusUpdate');
+        }
+    }
+
+    /**
+     * actionOrderStatusUpdate hook
+     *
+     * @param array $params
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws Adapter_Exception
+     *
+     * @since 3.3.0
+     */
+    public function hookActionOrderStatusUpdate($params = array())
+    {
+        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+            return;
+        }
+
+        $orderStatusNumber = $params['newOrderStatus'];
+        $orderStatus = new OrderState($orderStatusNumber);
+        $idOrder = $params['id_order'];
+        $checkStatuses = array();
+        if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
+            $checkStatuses = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES));
+        }
+        if (!is_array($checkStatuses)) {
+            $checkStatuses = array();
+        }
+
+        if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
+            || in_array($orderStatusNumber, $checkStatuses)
+        )) {
+            return;
+        }
+
+        try {
+            $dbPayment = static::getPaymentBy('order_id', (int) $idOrder);
+        } catch (PrestaShopDatabaseException $e) {
+            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        } catch (PrestaShopException $e) {
+            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        }
+        if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
+            // No transaction found
+            return;
+        }
+
+        $length = Tools::strlen(\MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
+        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== \MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX) {
+            // No need to check regular payments
+            return;
+        }
+
+        try {
+            $apiPayment = $this->api->orders->get($dbPayment['transaction_id']);
+            $shippableItems = 0;
+            foreach ($apiPayment->lines as $line) {
+                $shippableItems += $line->shippableQuantity;
+            }
+            if ($shippableItems <= 0) {
+                return;
+            }
+            $apiPayment->shipAll(static::getShipmentInformation($idOrder));
+        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        } catch (Exception $e) {
+            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        }
+    }
+
+    /**
+     * Get shipment information
+     *
+     * @param int $idOrder
+     *
+     * @return array
+     *
+     * @since 3.3.0
+     */
+    public static function getShipmentInformation($idOrder)
+    {
+        return array(
+            'carrier' => 'PostNL',
+            'code'    => '3SABCD2398472342',
+            'url'     => 'https://postnl.nl/',
+        );
     }
 }

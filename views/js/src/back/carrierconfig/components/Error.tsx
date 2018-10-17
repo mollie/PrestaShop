@@ -30,32 +30,54 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Provider } from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
+import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import store from './store';
-import CarrierConfig from './components/CarrierConfig';
-import { updateConfig, updateTranslations } from './store/actions';
+interface IProps {
+  retry: Function,
 
-declare let window: any;
+  // Redux
+  translations?: ITranslations,
+  config?: IMollieCarrierConfig,
+}
 
-window.MollieModule = window.MollieModule || {};
-window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
+class Error extends Component<IProps> {
+  render() {
+    const { translations, config: { legacy }, retry } = this.props;
 
-export const carrierConfig = (
-  target: string,
-  config: IMollieCarrierConfig,
-  translations: ITranslations
-) => {
-  store.dispatch(updateConfig(config));
-  store.dispatch(updateTranslations(translations));
+    return (
+      <div
+        className={classnames({
+          'alert': !legacy,
+          'alert-danger': !legacy,
+          'error': legacy,
+        })}
+      >
+        {translations.unableToLoadMethods}&nbsp;
+        <button
+          className={classnames({
+            'btn': !legacy,
+            'btn-danger': !legacy,
+            'button': legacy,
+          })}
+          onClick={(e) => {
+            e.preventDefault();
+            retry();
+          }}
+        >
+          {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
+        </button>
+      </div>
+    );
+  }
+}
 
-  return render((
-    <Provider store={store}>
-      <CarrierConfig translations={translations} config={config} target={target}/>
-    </Provider>
-    ),
-    document.getElementById(`${target}_container`)
-  );
-};
+export default connect<{}, {}, IProps>(
+  (state: IMollieCarriersState): Partial<IProps> => ({
+    translations: state.translations,
+    config: state.config,
+  })
+)(Error);

@@ -33,11 +33,21 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import classnames from 'classnames';
+import axios from 'axios';
+import { connect } from 'react-redux';
+import Error from './Error';
+import LoadingDots from '../../misc/components/LoadingDots';
+import { Dispatch, Store } from 'redux';
+import { updateCarriers } from '../store/actions';
 
 interface IProps {
   config: IMollieCarrierConfig,
   translations: ITranslations,
   target: string,
+
+  // Redux
+  carriers?: Array<IMollieCarrierConfigItem>,
+  dispatchUpdateCarriers: Function,
 }
 
 interface IState {
@@ -47,6 +57,25 @@ interface IState {
 class CarrierConfig extends Component<IProps> {
   state: IState = {
     carrierConfig: this.props.config.carrierConfig,
+  };
+
+  componentDidMount() {
+    this.init();
+  }
+
+  init = () => {
+    const self = this;
+    const { config: { ajaxEndpoint }, carriers } = this.props;
+    if (carriers === null) {
+      setTimeout(async () => {
+        try {
+          const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
+          self.props.dispatchUpdateCarriers(carriers);
+        } catch (e) {
+          console.error(e);
+        }
+      }, 0);
+    }
   };
 
   updateCarrierConfig = (id: string, key: string, value: string|null) => {
@@ -65,7 +94,15 @@ class CarrierConfig extends Component<IProps> {
 
   render() {
     const { carrierConfig } = this.state;
-    const { translations, target, config: { legacy } } = this.props;
+    const { translations, target, config: { legacy }, carriers } = this.props;
+
+    if (_.isArray(carriers) && _.isEmpty(carriers)) {
+      return <Error retry={this.init}/>;
+    }
+
+    if (carriers === null) {
+      return <LoadingDots/>;
+    }
 
     return (
       <Fragment>
@@ -119,4 +156,13 @@ class CarrierConfig extends Component<IProps> {
   }
 }
 
-export default CarrierConfig;
+export default connect<{}, {}, IProps>(
+  (state: IMollieCarriersState): Partial<IProps> => ({
+    carriers: state.carriers,
+  }),
+  (dispatch: Dispatch): Partial<IProps> => ({
+    dispatchUpdateCarriers(carriers: Array<IMollieCarrierConfigItem>) {
+      dispatch(updateCarriers(carriers))
+    }
+  })
+)(CarrierConfig);

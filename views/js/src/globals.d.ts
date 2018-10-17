@@ -74,6 +74,7 @@ declare global {
   }
 
   interface IMollieCarrierConfig {
+    ajaxEndpoint: string,
     carrierConfig: Array<IMollieCarrierConfigItem>,
     legacy: boolean,
   }

@@ -30,32 +30,49 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Provider } from 'react-redux';
+import { combineReducers } from 'redux';
 
-import store from './store';
-import CarrierConfig from './components/CarrierConfig';
-import { updateConfig, updateTranslations } from './store/actions';
+import { ReduxActionTypes } from './actions';
 
-declare let window: any;
+declare global {
+  interface IMollieCarriersState {
+    translations: ITranslations,
+    config: IMollieCarrierConfig,
+    carriers: Array<IMollieCarrierConfigItem>,
+  }
+}
 
-window.MollieModule = window.MollieModule || {};
-window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
-
-export const carrierConfig = (
-  target: string,
-  config: IMollieCarrierConfig,
-  translations: ITranslations
-) => {
-  store.dispatch(updateConfig(config));
-  store.dispatch(updateTranslations(translations));
-
-  return render((
-    <Provider store={store}>
-      <CarrierConfig translations={translations} config={config} target={target}/>
-    </Provider>
-    ),
-    document.getElementById(`${target}_container`)
-  );
+const translations = (state: any = {}, action: IUpdateTranslationsAction): ITranslations => {
+  switch (action.type) {
+    case ReduxActionTypes.updateTranslations:
+      return action.translations;
+    default:
+      return state;
+  }
 };
+
+const config = (state: any = {}, action: IUpdateCarrierConfigAction): IMollieCarrierConfig => {
+  switch (action.type) {
+    case ReduxActionTypes.updateConfig:
+      return action.config;
+    default:
+      return state;
+  }
+};
+
+const carriers = (state: Array<IMollieCarrierConfigItem> = null, action: IUpdateCarriersAction): Array<IMollieCarrierConfigItem> => {
+  switch (action.type) {
+    case ReduxActionTypes.updateCarriers:
+      return action.carriers;
+    default:
+      return state;
+  }
+};
+
+const checkoutApp = combineReducers({
+  translations,
+  config,
+  carriers,
+});
+
+export default checkoutApp;

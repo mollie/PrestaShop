@@ -30,32 +30,39 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Provider } from 'react-redux';
+// Action types
+export enum ReduxActionTypes {
+  updateTranslations = 'UPDATE_MOLLIE_CARRIER_TRANSLATIONS',
+  updateConfig = 'UPDATE_MOLLIE_CARRIER_CONFIG',
+  updateCarriers = 'UPDATE_MOLLIE_CARRIERS',
+}
 
-import store from './store';
-import CarrierConfig from './components/CarrierConfig';
-import { updateConfig, updateTranslations } from './store/actions';
+// Action creators
+declare global {
+  interface IUpdateTranslationsAction {
+    type: string,
+    translations: ITranslations,
+  }
 
-declare let window: any;
+  interface IUpdateCarrierConfigAction {
+    type: string,
+    config: IMollieCarrierConfig,
+  }
 
-window.MollieModule = window.MollieModule || {};
-window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
+  interface IUpdateCarriersAction {
+    type: string,
+    carriers: Array<IMollieCarrierConfigItem>,
+  }
+}
 
-export const carrierConfig = (
-  target: string,
-  config: IMollieCarrierConfig,
-  translations: ITranslations
-) => {
-  store.dispatch(updateConfig(config));
-  store.dispatch(updateTranslations(translations));
+export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
+  return { type: ReduxActionTypes.updateTranslations, translations };
+}
 
-  return render((
-    <Provider store={store}>
-      <CarrierConfig translations={translations} config={config} target={target}/>
-    </Provider>
-    ),
-    document.getElementById(`${target}_container`)
-  );
-};
+export function updateConfig(config: IMollieCarrierConfig): IUpdateCarrierConfigAction {
+  return { type: ReduxActionTypes.updateConfig, config };
+}
+
+export function updateCarriers(carriers: Array<IMollieCarrierConfigItem>): IUpdateCarriersAction {
+  return { type: ReduxActionTypes.updateCarriers, carriers };
+}

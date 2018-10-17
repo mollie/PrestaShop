@@ -83,30 +83,127 @@
   {elseif $input.type == 'mollie-carriers'}
     <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
     <script type="text/javascript">
-      (function initMollieCarrierConfig() {
-        if (typeof window.MollieModule === 'undefined'
-          || typeof window.MollieModule.back === 'undefined'
-          || typeof window.MollieModule.back.carrierConfig === 'undefined'
-        ) {
-          return setTimeout(initMollieCarrierConfig, 100);
+      (function () {
+        function initMollieCarriers() {
+          var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
+          if (typeof source === 'undefined') {
+            return setTimeout(initMollieCarriers, 100);
+          }
+
+          function initMollieCarrierConfig() {
+            if (typeof window.MollieModule === 'undefined'
+              || typeof window.MollieModule.back === 'undefined'
+              || typeof window.MollieModule.back.carrierConfig === 'undefined'
+            ) {
+              return setTimeout(initMollieCarrierConfig, 100);
+            }
+
+            window.MollieModule.back.carrierConfig(
+              '{$input.name|escape:'javascript':'UTF-8'}',
+              {
+                carrierConfig: {$input.carrier_config|json_encode nofilter},
+                legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
+                ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieCarrierConfig'
+              },
+              {
+                name: '{l s='Name' mod='mollie' js=1}',
+                urlSource: '{l s='URL Source' mod='mollie' js=1}',
+                carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
+                customUrl: '{l s='Custom URL' mod='mollie' js=1}',
+                module: '{l s='Module' mod='mollie' js=1}',
+              }
+            )
+          }
+
+          function checkInput (e) {
+            var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
+            if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
+              var input = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}');
+              if (input == null) {
+                var newInput = document.createElement('DIV');
+                newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
+                container.appendChild(newInput);
+                initMollieCarrierConfig();
+              }
+            } else {
+              if (window.MollieModule && typeof window.MollieModule.unmountComponentAtNode === 'function') {
+                window.MollieModule.unmountComponentAtNode(container);
+              }
+              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
+              container.innerHTML = '<div class="info">{l s='This option is not required for the Payments API' mod='mollie' js=1}</div>';
+              {else}
+              container.innerHTML = '<div class="alert alert-info">{l s='This option is not required for the Payments API' mod='mollie' js=1}</div>';
+              {/if}
+            }
+          }
+
+          source.onchange = checkInput;
+          checkInput({
+            target: {
+              value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
+            }
+          });
         }
 
-        window.MollieModule.back.carrierConfig(
-          '{$input.name|escape:'javascript':'UTF-8'}',
-          {
-            carrierConfig: {$input.carrier_config|json_encode nofilter},
-            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
-          },
-          {
-            name: '{l s='Name' mod='mollie' js=1}',
-            urlSource: '{l s='URL Source' mod='mollie' js=1}',
-            carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
-            customUrl: '{l s='Custom URL' mod='mollie' js=1}',
-            module: '{l s='Module' mod='mollie' js=1}',
-          }
-        )
+        initMollieCarriers();
       }());
     </script>
+  {elseif $input.type == 'mollie-carrier-switch'}
+    {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
+      {foreach $input.values as $value}
+        <input type="radio"
+               name="{$input.name|escape:'htmlall':'UTF-8'}"
+               id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
+               value="{$value.value|escape:'htmlall':'UTF-8'}"
+               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+                {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+        >
+        <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
+          {if isset($input.is_bool) && $input.is_bool == true}
+            {if $value.value == 1}
+              <img
+                      src="../img/admin/enabled.gif"
+                      alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                      title="{$value.label|escape:'htmlall':'UTF-8'}"
+              />
+            {else}
+              <img
+                      src="../img/admin/disabled.gif"
+                      alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                      title="{$value.label|escape:'htmlall':'UTF-8'}"
+              />
+            {/if}
+          {else}
+            {$value.label|escape:'htmlall':'UTF-8'}
+          {/if}
+        </label>
+        {if isset($input.br) && $input.br}<br />{/if}
+        {if isset($value.p) && $value.p}<p>{$value.p|escape:'htmlall':'UTF-8'}</p>{/if}
+      {/foreach}
+    {else}
+      <span class="switch prestashop-switch fixed-width-lg">
+        {foreach $input.values as $value}
+          <input
+            type="radio"
+            name="{$input.name|escape:'htmlall':'UTF-8'}"{if $value.value == 1}
+            id="{$input.name|escape:'htmlall':'UTF-8'}_on"{else}id="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}
+            value="{$value.value|escape:'htmlall':'UTF-8'}"
+            {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+            {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+          />
+        {strip}
+          <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
+          {if $value.value == 1}
+            {l s='Yes'}
+          {else}
+            {l s='No'}
+          {/if}
+        </label>
+        {/strip}
+        {/foreach}
+        <a class="slide-button btn"></a>
+      </span>
+    {/if}
   {elseif $input.type == 'switch' && version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
     {foreach $input.values as $value}
       <input type="radio"

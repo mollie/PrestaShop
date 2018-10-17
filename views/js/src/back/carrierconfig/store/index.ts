@@ -30,32 +30,17 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Provider } from 'react-redux';
-
-import store from './store';
-import CarrierConfig from './components/CarrierConfig';
-import { updateConfig, updateTranslations } from './store/actions';
+import { createStore, Store } from 'redux';
+import carriersApp from './carriers';
 
 declare let window: any;
 
-window.MollieModule = window.MollieModule || {};
-window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
+let store: Store;
+const devTools = window.__REDUX_DEVTOOLS_EXTENSION__;
 
-export const carrierConfig = (
-  target: string,
-  config: IMollieCarrierConfig,
-  translations: ITranslations
-) => {
-  store.dispatch(updateConfig(config));
-  store.dispatch(updateTranslations(translations));
+store = createStore(
+  carriersApp,
+  devTools && devTools(),
+);
 
-  return render((
-    <Provider store={store}>
-      <CarrierConfig translations={translations} config={config} target={target}/>
-    </Provider>
-    ),
-    document.getElementById(`${target}_container`)
-  );
-};
+export default store;
