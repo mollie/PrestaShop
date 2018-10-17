@@ -3116,10 +3116,10 @@ class Mollie extends PaymentModule
      *
      * PrestaShop 1.5 function
      *
-     * @todo - [✘] Check PS 1.5.0.x compatibility
-     * @todo - [✘] Check PS 1.5.1.x compatibility
-     * @todo - [✘] Check PS 1.5.2.x compatibility
-     * @todo - [✘] Check PS 1.5.3.x compatibility
+     * @todo - [✔] Check PS 1.5.0.x compatibility
+     * @todo - [✔] Check PS 1.5.1.x compatibility
+     * @todo - [✔] Check PS 1.5.2.x compatibility
+     * @todo - [✔] Check PS 1.5.3.x compatibility
      * @todo - [✔] Check PS 1.5.4.x compatibility
      * @todo - [✔] Check PS 1.5.5.x compatibility
      * @todo - [✔] Check PS 1.5.6.x compatibility
@@ -3179,17 +3179,21 @@ class Mollie extends PaymentModule
             $this->currentOrderReference = $reference;
             $orderCreationFailed = false;
             $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
-            foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
-                foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
-                    foreach ($data['package_list'] as $idPackage) {
-                        // Rewrite the id_warehouse
-                        $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
-                        $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
+            if (method_exists('Cart', 'getPackageIdWarehouse')) {
+                foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
+                    foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
+                        foreach ($data['package_list'] as $idPackage) {
+                            // Rewrite the id_warehouse
+                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
+                            $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
+                        }
                     }
                 }
             }
             // Make sure CarRule caches are empty
-            CartRule::cleanCache();
+            if (method_exists('CartRule', 'cleanCache')) {
+                CartRule::cleanCache();
+            }
 
             foreach ($packageList as $idAddress => $packageByAddress) {
                 foreach ($packageByAddress as $idPackage => $package) {
@@ -3774,17 +3778,21 @@ class Mollie extends PaymentModule
                 throw new PrestaShopException('Order reference not set before call to '.__CLASS__.'::validateMollieOrder');
             }
             $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
-            foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
-                foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
-                    foreach ($data['package_list'] as $idPackage) {
-                        // Rewrite the id_warehouse
-                        $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
-                        $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
+            if (method_exists('Cart', 'getPackageIdWarehouse')) {
+                foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
+                    foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
+                        foreach ($data['package_list'] as $idPackage) {
+                            // Rewrite the id_warehouse
+                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
+                            $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
+                        }
                     }
                 }
             }
             // Make sure CartRule caches are empty
-            CartRule::cleanCache();
+            if (method_exists('CartRule', 'cleanCache')) {
+                CartRule::cleanCache();
+            }
             $cartRules = $this->context->cart->getCartRules();
             foreach ($cartRules as $cartRule) {
                 if (($rule = new CartRule((int) $cartRule['obj']->id)) && Validate::isLoadedObject($rule)) {
