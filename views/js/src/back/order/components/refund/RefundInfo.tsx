@@ -66,7 +66,8 @@ class RefundInfo extends Component<IProps> {
     return (
       <Div className="col-md-6 panel">
         <div className="panel-heading">{translations.refunds}</div>
-
+        <RefundHistory/>
+        <RefundForm/>
       </Div>
     )
   }
