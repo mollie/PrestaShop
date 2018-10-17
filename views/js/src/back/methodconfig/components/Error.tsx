@@ -30,65 +30,46 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
-import axios from 'axios';
-import PaymentMethods from './PaymentMethods';
-import LoadingDots from '../../misc/components/LoadingDots';
+import React, { Component } from 'react';
+import classnames from 'classnames';
+import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IProps {
-  config: IMollieMethodConfig,
   translations: ITranslations,
-  target: string,
+  config: IMollieOrderConfig,
+  retry: Function,
 }
 
-interface IState {
-  methods: Array<IMolliePaymentMethodItem>,
-  reset: boolean,
-}
-
-class PaymentMethodConfig extends Component<IProps> {
-  state: IState = {
-    methods: undefined,
-    reset: true,
-  };
-
-  componentDidMount() {
-    this.init();
-  }
-
-  init = () => {
-    const { config: { ajaxEndpoint } } = this.props;
-    setTimeout(async () => {
-      try {
-        const { data: { methods } = { methods: null } } = await axios.post(ajaxEndpoint, {
-          resource: 'orders',
-          action: 'retrieve',
-        });
-
-        this.setState(() => ({ methods, reset: false }), () => this.setState(() => ({ reset: true })));
-      } catch (e) {
-        console.error(e);
-
-        this.setState(() => ({ methods: null, reset: false }), () => this.setState(() => ({ reset: true })));
-
-      }
-    }, 0);
-  };
-
+class Error extends Component<IProps> {
   render() {
-    const { target, translations, config } = this.props;
-    const { reset, methods } = this.state;
-
-    if (typeof methods === 'undefined') {
-      return <LoadingDots/>;
-    }
+    const { translations, config: { legacy }, retry } = this.props;
 
     return (
-      <Fragment>
-        {reset && <PaymentMethods methods={methods} translations={translations} target={target} config={config} retry={this.init}/>}
-      </Fragment>
+      <div
+        className={classnames({
+          'alert': !legacy,
+          'alert-danger': !legacy,
+          'error': legacy,
+        })}
+      >
+        {translations.unableToLoadMethods}&nbsp;
+        <button
+          className={classnames({
+            'btn': !legacy,
+            'btn-danger': !legacy,
+            'button': legacy,
+          })}
+          onClick={(e) => {
+            e.preventDefault();
+            retry();
+          }}
+        >
+          {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
+        </button>
+      </div>
     );
   }
 }
 
-export default PaymentMethodConfig;
+export default Error;

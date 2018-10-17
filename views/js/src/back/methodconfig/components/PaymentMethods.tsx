@@ -1,9 +1,42 @@
+/**
+ * Copyright (c) 2012-2018, Mollie B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
+ */
 import React, { Component } from 'react';
 import { SortableContainer, arrayMove } from 'react-sortable-hoc';
 import _ from 'lodash';
 import styled from 'styled-components';
 
 import PaymentMethod from './PaymentMethod';
+import Error from './Error';
 
 const Section = styled.section`
 border: 2px solid #0c95fd!important;
@@ -45,6 +78,7 @@ interface IProps {
   translations: ITranslations,
   target: string,
   config: IMollieMethodConfig,
+  retry: Function,
 }
 
 interface IState {
@@ -61,6 +95,10 @@ class PaymentMethods extends Component<IProps> {
   }
 
   componentDidUpdate() {
+    if (!_.isArray(this.state.methods)) {
+      return;
+    }
+
     const input: HTMLInputElement = document.getElementById(this.props.target) as HTMLInputElement;
     if (input != null) {
       input.value = JSON.stringify(this.state.methods.map((method: IMolliePaymentMethodItem, index: number): IMolliePaymentMethodConfigItem => ({
@@ -95,7 +133,11 @@ class PaymentMethods extends Component<IProps> {
 
   render() {
     const { methods } = this.state;
-    const { translations, config } = this.props;
+    const { translations, config, retry } = this.props;
+
+    if (methods === null || _.isArray(methods) && _.isEmpty(methods)) {
+      return <Error translations={translations} config={config} retry={retry}/>;
+    }
 
     return (
       <SortableList
