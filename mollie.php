@@ -3655,10 +3655,10 @@ class Mollie extends PaymentModule
      * @todo - [✘] Check PS 1.6.0.x compatibility
      * @todo - [✔] Check PS 1.6.1.x compatibility
      * @todo - [✔] check PS 1.7.0.x compatibility
-     * @todo - [✘] check PS 1.7.1.x compatibility
-     * @todo - [✘] check PS 1.7.2.x compatibility
-     * @todo - [✘] check PS 1.7.3.x compatibility
-     * @todo - [✘] check PS 1.7.4.x compatibility
+     * @todo - [✔] check PS 1.7.1.x compatibility
+     * @todo - [✔] check PS 1.7.2.x compatibility
+     * @todo - [✔] check PS 1.7.3.x compatibility
+     * @todo - [✔] check PS 1.7.4.x compatibility
      */
     public function validateMollieOrder(
         $idCart,
@@ -3689,7 +3689,7 @@ class Mollie extends PaymentModule
             );
         }
 
-        if (version_compare(_PS_VERSION_, '1.6.0.0', '<')) {
+        if (version_compare(_PS_VERSION_, '1.6.0.7', '<')) {
             return $this->validateMollieOrderLegacy($idCart, $idOrderState, $amountPaid, $paymentMethod, $message, $extraVars, $currencySpecial, $dontTouchAmount, $secureKey, $shop);
         }
 
@@ -3947,46 +3947,88 @@ class Mollie extends PaymentModule
                     $productVarTplList = array();
                     $specificPrice = null;
                     foreach ($order->product_list as $product) {
-                        $price = Product::getPriceStatic(
-                            (int) $product['id_product'],
-                            false,
-                            ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
-                            6,
-                            null,
-                            false,
-                            true,
-                            $product['cart_quantity'],
-                            false,
-                            (int) $order->id_customer,
-                            (int) $order->id_cart,
-                            (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
-                            $specificPrice,
-                            true,
-                            true,
-                            null,
-                            true,
-                            $product['id_customization']
-                        );
-                        $priceWt = Product::getPriceStatic(
-                            (int) $product['id_product'],
-                            true,
-                            ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
-                            2,
-                            null,
-                            false,
-                            true,
-                            $product['cart_quantity'],
-                            false,
-                            (int) $order->id_customer,
-                            (int) $order->id_cart,
-                            (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
-                            $specificPrice,
-                            true,
-                            true,
-                            null,
-                            true,
-                            $product['id_customization']
-                        );
+                        if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
+                            $price = Product::getPriceStatic(
+                                (int) $product['id_product'],
+                                false,
+                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                6,
+                                null,
+                                false,
+                                true,
+                                $product['cart_quantity'],
+                                false,
+                                (int) $order->id_customer,
+                                (int) $order->id_cart,
+                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                $specificPrice,
+                                true,
+                                true,
+                                null,
+                                true
+                            );
+                            $priceWt = Product::getPriceStatic(
+                                (int) $product['id_product'],
+                                true,
+                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                2,
+                                null,
+                                false,
+                                true,
+                                $product['cart_quantity'],
+                                false,
+                                (int) $order->id_customer,
+                                (int) $order->id_cart,
+                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                $specificPrice,
+                                true,
+                                true,
+                                null,
+                                true
+                            );
+                        } else {
+                            $price = Product::getPriceStatic(
+                                (int) $product['id_product'],
+                                false,
+                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                6,
+                                null,
+                                false,
+                                true,
+                                $product['cart_quantity'],
+                                false,
+                                (int) $order->id_customer,
+                                (int) $order->id_cart,
+                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                $specificPrice,
+                                true,
+                                true,
+                                null,
+                                true,
+                                $product['id_customization']
+                            );
+                            $priceWt = Product::getPriceStatic(
+                                (int) $product['id_product'],
+                                true,
+                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                2,
+                                null,
+                                false,
+                                true,
+                                $product['cart_quantity'],
+                                false,
+                                (int) $order->id_customer,
+                                (int) $order->id_cart,
+                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                $specificPrice,
+                                true,
+                                true,
+                                null,
+                                true,
+                                $product['id_customization']
+                            );
+                        }
+
                         $productPrice = Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt;
                         $productVarTpl = array(
                             'id_product'    => $product['id_product'],
@@ -4317,7 +4359,9 @@ class Mollie extends PaymentModule
                             }
                         }
                     }
-                    $order->updateOrderDetailTax();
+                    if (method_exists('Order', 'updateOrderDetailTax')) {
+                        $order->updateOrderDetailTax();
+                    }
                     // sync all stock
                     if (class_exists('StockManager') && method_exists('StockManager', 'updatePhysicalProductQuantity')) {
                         $stockManager = new StockManager();

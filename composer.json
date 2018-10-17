@@ -1,6 +1,6 @@
 {
     "require": {
-        "firstred/mollie-api-php": "~2.1.2",
+        "firstred/mollie-api-php": "~2.1.3",
         "firstred/mollie-reseller-api": "~1.10.2",
         "ext-curl": "*",
         "ext-json": "*",
