@@ -4748,13 +4748,24 @@ class Mollie extends PaymentModule
                     $shouldSave = true;
                 }
             }
+        } else {
+            $shouldSave = true;
+            $dbMethods = array();
+            foreach ($methodsForConfig as $index => $method) {
+                $dbMethods[] = array_merge(
+                    $method,
+                    array(
+                        'position' => $index,
+                    )
+                );
+            }
         }
 
         if ($shouldSave) {
             Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
         }
 
-        return array('success', 'methods' => $methodsForConfig);
+        return array('success', 'methods' => $dbMethods);
     }
 
     /**
