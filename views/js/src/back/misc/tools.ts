@@ -30,6 +30,8 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+import _ from 'lodash';
+
 declare let window: any;
 
 export const formattedNumberToFloat = (price: string | number, currencyFormat: number, currencySign: string) => {
@@ -128,12 +130,13 @@ export const psFormatCurrency = (price: string | number, currencyFormat: number,
 
 export const formatCurrency = (price: number, currency: ICurrency) => {
   if (typeof currency === 'undefined') {
+    console.error('Currency undefined');
     return '';
   }
 
   if (typeof window.formatCurrencyCldr !== 'undefined') {
     // PrestaShop 1.7 CLDR
-    return (new Intl.NumberFormat(undefined, { style: 'currency', currency: currency.iso_code })).format(price);
+    return (new Intl.NumberFormat(_.get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
   }
 
   return psFormatCurrency(price, currency.format, currency.sign, currency.blank);
