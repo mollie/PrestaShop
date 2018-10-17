@@ -101,7 +101,6 @@
             window.MollieModule.back.carrierConfig(
               '{$input.name|escape:'javascript':'UTF-8'}',
               {
-                carrierConfig: {$input.carrier_config|json_encode nofilter},
                 legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
                 ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieCarrierConfig'
               },
@@ -111,6 +110,16 @@
                 carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
                 customUrl: '{l s='Custom URL' mod='mollie' js=1}',
                 module: '{l s='Module' mod='mollie' js=1}',
+                doNotAutoShip: '{l s='Do not automatically ship' mod='mollie' js=1}',
+                noTrackingInformation: '{l s='No tracking information' mod='mollie' js=1}',
+                hereYouCanConfigureCarriers: '{l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie' js=1}',
+                youCanUseTheFollowingVariables: '{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}',
+                shippingNumber: '{l s='Shipping number' mod='mollie' js=1}',
+                invoiceCountryCode: '{l s='Billing country code' mod='mollie' js=1}',
+                invoicePostcode: '{l s='Billing postcode' mod='mollie' js=1}',
+                deliveryCountryCode: '{l s='Shipping country code' mod='mollie' js=1}',
+                deliveryPostcode: '{l s='Shipping postcode' mod='mollie' js=1}',
+                languageCode: '{l s='2-letter language code' mod='mollie' js=1}'
               }
             )
           }
@@ -130,14 +139,14 @@
                 window.MollieModule.unmountComponentAtNode(container);
               }
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-              container.innerHTML = '<div class="info">{l s='This option is not required for the Payments API' mod='mollie' js=1}</div>';
+              container.innerHTML = '<div class="info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
               {else}
-              container.innerHTML = '<div class="alert alert-info">{l s='This option is not required for the Payments API' mod='mollie' js=1}</div>';
+              container.innerHTML = '<div class="alert alert-info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
               {/if}
             }
           }
 
-          source.onchange = checkInput;
+          source.addEventListener('change', checkInput);
           checkInput({
             target: {
               value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
@@ -149,69 +158,105 @@
       }());
     </script>
   {elseif $input.type == 'mollie-carrier-switch'}
-    {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-      {foreach $input.values as $value}
-        <input type="radio"
-               name="{$input.name|escape:'htmlall':'UTF-8'}"
-               id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
-               value="{$value.value|escape:'htmlall':'UTF-8'}"
-               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
-                {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
-        >
-        <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
-          {if isset($input.is_bool) && $input.is_bool == true}
-            {if $value.value == 1}
-              <img
-                      src="../img/admin/enabled.gif"
-                      alt="{$value.label|escape:'htmlall':'UTF-8'}"
-                      title="{$value.label|escape:'htmlall':'UTF-8'}"
-              />
-            {else}
-              <img
-                      src="../img/admin/disabled.gif"
-                      alt="{$value.label|escape:'htmlall':'UTF-8'}"
-                      title="{$value.label|escape:'htmlall':'UTF-8'}"
-              />
-            {/if}
-          {else}
-            {$value.label|escape:'htmlall':'UTF-8'}
-          {/if}
-        </label>
-        {if isset($input.br) && $input.br}<br />{/if}
-        {if isset($value.p) && $value.p}<p>{$value.p|escape:'htmlall':'UTF-8'}</p>{/if}
-      {/foreach}
-    {else}
-      <span class="switch prestashop-switch fixed-width-lg">
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_info" style="display: none" class="{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}info{else}alert alert-info{/if}">{l s='This option is not required for the currently selected API' mod='mollie'}</div>
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
+      {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
         {foreach $input.values as $value}
           <input
             type="radio"
-            name="{$input.name|escape:'htmlall':'UTF-8'}"{if $value.value == 1}
-            id="{$input.name|escape:'htmlall':'UTF-8'}_on"{else}id="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}
+            name="{$input.name|escape:'htmlall':'UTF-8'}"
+            id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
             value="{$value.value|escape:'htmlall':'UTF-8'}"
             {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
             {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
-          />
-        {strip}
-          <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
-          {if $value.value == 1}
-            {l s='Yes'}
-          {else}
-            {l s='No'}
-          {/if}
-        </label>
-        {/strip}
+          >
+          <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
+            {if isset($input.is_bool) && $input.is_bool == true}
+              {if $value.value == 1}
+                <img
+                  src="../img/admin/enabled.gif"
+                  alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                  title="{$value.label|escape:'htmlall':'UTF-8'}"
+                />
+              {else}
+                <img
+                  src="../img/admin/disabled.gif"
+                  alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                  title="{$value.label|escape:'htmlall':'UTF-8'}"
+                />
+              {/if}
+            {else}
+              {$value.label|escape:'htmlall':'UTF-8'}
+            {/if}
+          </label>
+          {if isset($input.br) && $input.br}<br />{/if}
+          {if isset($value.p) && $value.p}<p>{$value.p|escape:'htmlall':'UTF-8'}</p>{/if}
         {/foreach}
-        <a class="slide-button btn"></a>
-      </span>
-    {/if}
+      {else}
+        <span class="switch prestashop-switch fixed-width-lg">
+          {foreach $input.values as $value}
+            <input
+              type="radio"
+              name="{$input.name|escape:'htmlall':'UTF-8'}"{if $value.value == 1}
+              id="{$input.name|escape:'htmlall':'UTF-8'}_on"{else}id="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}
+              value="{$value.value|escape:'htmlall':'UTF-8'}"
+              {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+              {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+            />
+          {strip}
+            <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
+            {if $value.value == 1}
+              {l s='Yes'}
+            {else}
+              {l s='No'}
+            {/if}
+          </label>
+          {/strip}
+          {/foreach}
+          <a class="slide-button btn"></a>
+        </span>
+      {/if}
+    </div>
+    <script type="text/javascript">
+      (function () {
+        function initMollieCarriersAuto() {
+          var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
+          if (typeof source === 'undefined') {
+            return setTimeout(initMollieCarriersAuto, 100);
+          }
+
+          function checkInput (e) {
+            var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
+            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
+            if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
+              container.style.display = 'block';
+              info.style.display = 'none';
+            } else {
+              container.style.display = 'none';
+              info.style.display = 'block';
+            }
+          }
+
+          source.addEventListener('change', checkInput);
+          checkInput({
+            target: {
+              value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
+            }
+          });
+        }
+
+        initMollieCarriersAuto();
+      }());
+    </script>
   {elseif $input.type == 'switch' && version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
     {foreach $input.values as $value}
-      <input type="radio"
-             name="{$input.name|escape:'htmlall':'UTF-8'}"
-             id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
-             value="{$value.value|escape:'htmlall':'UTF-8'}"
-             {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
-             {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+      <input
+        type="radio"
+        name="{$input.name|escape:'htmlall':'UTF-8'}"
+        id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
+        value="{$value.value|escape:'htmlall':'UTF-8'}"
+        {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+        {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
       >
       <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
         {if isset($input.is_bool) && $input.is_bool == true}
@@ -234,6 +279,42 @@
       {if isset($input.br) && $input.br}<br />{/if}
       {if isset($value.p) && $value.p}<p>{$value.p|escape:'htmlall':'UTF-8'}</p>{/if}
     {/foreach}
+  {elseif $input.type === 'checkbox'}
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_info" style="display: none" class="{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}info{else}alert alert-info{/if}">{l s='This option is not required for the currently selected API' mod='mollie'}</div>
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
+        {$smarty.block.parent}
+    </div>
+    <script type="text/javascript">
+      (function () {
+        function initMollieCheckboxAuto() {
+          var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
+          if (typeof source === 'undefined') {
+            return setTimeout(initMollieCheckboxAuto, 100);
+          }
+
+          function checkInput (e) {
+            var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
+            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
+            if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
+              container.style.display = 'block';
+              info.style.display = 'none';
+            } else {
+              container.style.display = 'none';
+              info.style.display = 'block';
+            }
+          }
+
+          source.addEventListener('change', checkInput);
+          checkInput({
+            target: {
+              value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
+            }
+          });
+        }
+
+        initMollieCheckboxAuto();
+      }());
+    </script>
   {else}
     {$smarty.block.parent}
   {/if}

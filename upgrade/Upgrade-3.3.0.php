@@ -37,12 +37,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
+ * @param Mollie $module
+ *
  * @return bool
  *
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  */
-function upgrade_module_3_3_0()
+function upgrade_module_3_3_0($module)
 {
     try {
         if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
@@ -55,6 +57,10 @@ function upgrade_module_3_3_0()
         }
     } catch (PrestaShopException $e) {
         Logger::addLog("Mollie update error: {$e->getMessage()}");
+    }
+
+    if (method_exists($module, 'setDefaultCarrierStatuses')) {
+        $module->setDefaultCarrierStatuses();
     }
 
     return true;

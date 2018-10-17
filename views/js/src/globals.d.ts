@@ -79,10 +79,14 @@ declare global {
     legacy: boolean,
   }
 
+  interface IMollieCarrierConfigItems {
+    [key: string]: IMollieCarrierConfigItem,
+  }
+
   interface IMollieCarrierConfigItem {
     'id_carrier': string,
     'name': string,
-    'source': 'module'|'carrier_url'|'custom_url',
+    'source': 'do-not-track'|'no-tracking-info'|'module'|'carrier_url'|'custom_url',
     'module'?: string,
     'module_name': string,
     'custom_url': string,

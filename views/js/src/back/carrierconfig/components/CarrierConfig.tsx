@@ -37,7 +37,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import Error from './Error';
 import LoadingDots from '../../misc/components/LoadingDots';
-import { Dispatch, Store } from 'redux';
+import { Dispatch } from 'redux';
 import { updateCarriers } from '../store/actions';
 
 interface IProps {
@@ -50,17 +50,18 @@ interface IProps {
   dispatchUpdateCarriers: Function,
 }
 
-interface IState {
-  carrierConfig: Array<IMollieCarrierConfigItem>,
-}
-
 class CarrierConfig extends Component<IProps> {
-  state: IState = {
-    carrierConfig: this.props.config.carrierConfig,
-  };
-
   componentDidMount() {
     this.init();
+  }
+
+  get carrierConfig() {
+    const carriers: IMollieCarrierConfigItems = {};
+    _.forEach(this.props.carriers, (carrier) => {
+      carriers[carrier.id_carrier] = carrier;
+    });
+
+    return carriers;
   }
 
   init = () => {
@@ -79,7 +80,7 @@ class CarrierConfig extends Component<IProps> {
   };
 
   updateCarrierConfig = (id: string, key: string, value: string|null) => {
-    const localConfig = _.cloneDeep(this.state.carrierConfig);
+    const localConfig = _.cloneDeep(this.props.carriers);
 
     const config = _.find(localConfig, item => item.id_carrier === id);
     if (typeof config === 'undefined') {
@@ -87,13 +88,10 @@ class CarrierConfig extends Component<IProps> {
     }
     config[key] = value;
 
-    this.setState(() => ({
-      config: localConfig,
-    }));
+    this.props.dispatchUpdateCarriers(localConfig);
   };
 
   render() {
-    const { carrierConfig } = this.state;
     const { translations, target, config: { legacy }, carriers } = this.props;
 
     if (_.isArray(carriers) && _.isEmpty(carriers)) {
@@ -112,7 +110,17 @@ class CarrierConfig extends Component<IProps> {
           'warn': legacy,
         })}
         >
-          Check the source of your carrier
+          {translations.hereYouCanConfigureCarriers}
+          <br/>{translations.youCanUseTheFollowingVariables}
+          <ul>
+            <li><strong>@ </strong>: {translations.shippingNumber}</li>
+            <li><strong>%%shipping_number%% </strong>: {translations.shippingNumber}</li>
+            <li><strong>%%invoice.country_iso%%</strong>: {translations.invoiceCountryCode}</li>
+            <li><strong>%%invoice.postcode%% </strong>: {translations.invoicePostcode}</li>
+            <li><strong>%%delivery.country_iso%%</strong>: {translations.deliveryCountryCode}</li>
+            <li><strong>%%delivery.postcode%% </strong>: {translations.deliveryPostcode}</li>
+            <li><strong>%%lang_iso%% </strong>: {translations.languageCode}</li>
+          </ul>
         </div>
         <table className="list form alternate table">
           <thead>
@@ -123,7 +131,7 @@ class CarrierConfig extends Component<IProps> {
             </tr>
           </thead>
           <tbody>
-            {carrierConfig.map((carrier) => (
+            {carriers.map((carrier) => (
               <tr key={carrier.id_carrier}>
                 <td className="left">
                   {carrier.name}
@@ -133,9 +141,11 @@ class CarrierConfig extends Component<IProps> {
                     value={carrier.source}
                     onChange={({ target: { value } }) => this.updateCarrierConfig(carrier.id_carrier, 'source', value)}
                   >
+                    <option value="do_not_auto_ship">{translations.doNotAutoShip}</option>
+                    <option value="no_tracking_info">{translations.noTrackingInformation}</option>
                     <option value="carrier_url">{translations.carrierUrl}</option>
                     <option value="custom_url">{translations.customUrl}</option>
-                    <option value="module">{translations.module}</option>
+                    {carrier.module && <option value="module">{translations.module}</option>}
                   </select>
                 </td>
                 <td className="left">
@@ -150,7 +160,7 @@ class CarrierConfig extends Component<IProps> {
             ))}
           </tbody>
         </table>
-        <input type="hidden" id={target} name={target} value={JSON.stringify(this.state.carrierConfig)}/>
+        <input type="hidden" id={target} name={target} value={JSON.stringify(this.carrierConfig)}/>
       </Fragment>
     );
   }

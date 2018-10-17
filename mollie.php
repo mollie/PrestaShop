@@ -147,6 +147,12 @@ class Mollie extends PaymentModule
     const MOLLIE_RESELLER_PROFILE_KEY = 'B69C2D66';
     const MOLLIE_RESELLER_APP_SECRET = '49726EB7650EC592F732E7B82A4C1EFD6EE8A10F';
 
+    const MOLLIE_CARRIER_DO_NOT_AUTO_SHIPO = 'do_not_auto_ship';
+    const MOLLIE_CARRIER_NO_TRACKING_INFO = 'no_tracking_info';
+    const MOLLIE_CARRIER_MODULE = 'module';
+    const MOLLIE_CARRIER_CARRIER = 'carrier_url';
+    const MOLLIE_CARRIER_CUSTOM = 'custom_url';
+
     const MOLLIE_API = 'MOLLIE_API';
     const MOLLIE_ORDERS_API = 'orders';
     const MOLLIE_PAYMENTS_API = 'payments';
@@ -359,6 +365,7 @@ class Mollie extends PaymentModule
         }
 
         $this->initConfig();
+        $this->setDefaultCarrierStatuses();
 
         include(dirname(__FILE__).'/sql/install.php');
 
@@ -470,17 +477,16 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
-        $this->hookActionOrderStatusUpdate();
         if (Tools::getValue('ajax')) {
             @ob_clean();
             header('Content-Type: application/json;charset=UTF-8');
 
             if (!method_exists($this, 'displayAjax'.Tools::ucfirst(Tools::getValue('action')))) {
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'success' => false,
                 )));
             }
-            die(Tools::jsonEncode($this->{'displayAjax'.Tools::ucfirst(Tools::getValue('action'))}()));
+            die(json_encode($this->{'displayAjax'.Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
         if ($module = $this->checkPaymentModuleOverride()) {
@@ -986,12 +992,11 @@ class Mollie extends PaymentModule
                     'type'           => 'mollie-carriers',
                     'label'          => $this->l('Shipment information'),
                     'name'           => static::MOLLIE_TRACKING_URLS,
-                    'carrier_config' => static::carrierConfig(),
                     'depends'        => static::MOLLIE_API,
                     'depends_value'  => static::MOLLIE_ORDERS_API,
                 ),
                 array(
-                    'type'    => 'mollie-carriers-switch',
+                    'type'    => 'mollie-carrier-switch',
                     'label'   => $this->l('Automatically ship when marked as `shipped`'),
                     'name'    => static::MOLLIE_AUTO_SHIP_MAIN,
                     'desc'    => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
@@ -1008,6 +1013,8 @@ class Mollie extends PaymentModule
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ),
                     ),
+                    'depends'        => static::MOLLIE_API,
+                    'depends_value'  => static::MOLLIE_ORDERS_API,
                 ),
                 array(
                     'type'     => 'checkbox',
@@ -1027,6 +1034,8 @@ class Mollie extends PaymentModule
                         'show'        => array('text' => $this->l('Show'), 'icon' => 'plus-sign-alt'),
                         'hide'        => array('text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'),
                     ) : null,
+                    'depends'        => static::MOLLIE_API,
+                    'depends_value'  => static::MOLLIE_ORDERS_API,
                 ),
                 array(
                     'type'  => 'mollie-h2',
@@ -1125,7 +1134,7 @@ class Mollie extends PaymentModule
      */
     protected function getConfigFieldsValues()
     {
-        return array(
+        $configFields = array(
             static::MOLLIE_API_KEY              => Configuration::get(static::MOLLIE_API_KEY),
             static::MOLLIE_DESCRIPTION          => Configuration::get(static::MOLLIE_DESCRIPTION),
             static::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
@@ -1153,37 +1162,67 @@ class Mollie extends PaymentModule
             static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
             static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
             static::MOLLIE_API            => Configuration::get(static::MOLLIE_API),
+
+            static::MOLLIE_AUTO_SHIP_MAIN  => Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN),
         );
+
+        $checkStatuses = array();
+        if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
+            $checkConfs = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES), true);
+        }
+        if (!is_array($checkConfs)) {
+            $checkConfs = array();
+        }
+
+        foreach ($checkConfs as $conf) {
+            $checkStatuses[static::MOLLIE_AUTO_SHIP_STATUSES.'_'.(int) $conf] = true;
+        }
+
+        $configFields = array_merge($configFields, $checkStatuses);
+
+        return $configFields;
     }
 
+    /**
+     * Get carrier configuration
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
     public static function carrierConfig()
     {
-        return array(
-            array(
-                'id_carrier'  => '1',
-                'name'        => 'PostNL',
-                'source'      => 'custom_url',
-                'module'      => null,
-                'module_name' => null,
-                'custom_url'  => '',
-            ),
-            array(
-                'id_carrier'  => '2',
-                'name'        => 'MyParcel',
-                'source'      => 'module',
-                'module'      => 'myparcel',
-                'module_name' => 'MyParcel',
-                'custom_url'  => '',
-            ),
-            array(
-                'id_carrier'  => '3',
-                'name'        => 'bpost',
-                'source'      => 'carrier_url',
-                'module'      => null,
-                'module_name' => null,
-                'custom_url'  => '',
-            ),
+        $dbConfig = @json_decode(Configuration::get(static::MOLLIE_TRACKING_URLS), true);
+        if (!is_array($dbConfig)) {
+            $dbConfig = array();
+        }
+
+        $carriers = Carrier::getCarriers(
+            Context::getContext()->language->id,
+            false,
+            false,
+            false,
+            null,
+            Carrier::ALL_CARRIERS
         );
+
+        $configCarriers = array();
+        foreach ($carriers as $carrier) {
+            $idCarrier = (int) $carrier['id_carrier'];
+            $configCarriers[] = array(
+                'id_carrier'  => $idCarrier,
+                'name'        => $carrier['name'],
+                'source'      => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : static::MOLLIE_CARRIER_NO_TRACKING_INFO,
+                'module'      => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
+                'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
+                'custom_url'  => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['custom_url'] : '',
+            );
+        }
+
+        return $configCarriers;
     }
 
     /**
@@ -1295,7 +1334,7 @@ class Mollie extends PaymentModule
         }
 
         $mollieDescription = Tools::getValue(static::MOLLIE_DESCRIPTION);
-        if (Tools::getValue(static::METHODS_CONFIG) && @json_decode(Tools::getValue(static::METHODS_CONFIG))) {
+        if (Tools::getValue(static::METHODS_CONFIG) && json_decode(Tools::getValue(static::METHODS_CONFIG))) {
             Configuration::updateValue(
                 static::METHODS_CONFIG,
                 json_encode(@json_decode(Tools::getValue(static::METHODS_CONFIG)))
@@ -1312,6 +1351,8 @@ class Mollie extends PaymentModule
         $mollieApi = Tools::getValue(static::MOLLIE_API);
         $mollieQrEnabled = (bool) Tools::getValue(static::MOLLIE_QRENABLED);
         $mollieErrors = Tools::getValue(static::MOLLIE_DISPLAY_ERRORS);
+
+        $mollieShipMain = Tools::getValue(static::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
             $mollieErrors = false;
         } else {
@@ -1329,6 +1370,15 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
             Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
             Configuration::updateValue(static::MOLLIE_API, $mollieApi);
+            Configuration::updateValue(
+                static::MOLLIE_AUTO_SHIP_STATUSES,
+                json_encode($this->getStatusesValue(static::MOLLIE_AUTO_SHIP_STATUSES))
+            );
+            Configuration::updateValue(static::MOLLIE_AUTO_SHIP_MAIN, (bool) $mollieShipMain);
+            Configuration::updateValue(
+                static::MOLLIE_TRACKING_URLS,
+                json_encode(@json_decode(Tools::getValue(static::MOLLIE_TRACKING_URLS)))
+            );
 
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
@@ -4946,18 +4996,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Use this function to check if automatic shipments are enabled
-     *
-     * @return bool
-     *
-     * @since 3.3.0
-     */
-    public static function checkAutomaticShipments()
-    {
-        return false;
-    }
-
-    /**
      * Get module version from database
      *
      * @return string
@@ -4966,12 +5004,12 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    public static function getDatabaseVersion()
+    public static function getDatabaseVersion($module = 'mollie')
     {
         $sql = new DbQuery();
         $sql->select('`version`');
         $sql->from('module');
-        $sql->where('`name` = \'mollie\'');
+        $sql->where('`name` = \''.pSQL($module).'\'');
 
         return (string) Db::getInstance()->getValue($sql);
     }
@@ -5080,10 +5118,11 @@ class Mollie extends PaymentModule
         if (!is_array($checkStatuses)) {
             $checkStatuses = array();
         }
+        $shipmentInfo = static::getShipmentInformation($idOrder);
 
         if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
             || in_array($orderStatusNumber, $checkStatuses)
-        )) {
+        ) || $shipmentInfo === null) {
             return;
         }
 
@@ -5116,6 +5155,7 @@ class Mollie extends PaymentModule
             if ($shippableItems <= 0) {
                 return;
             }
+
             $apiPayment->shipAll(static::getShipmentInformation($idOrder));
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             Logger::addLog("Mollie module error: {$e->getMessage()}");
@@ -5131,16 +5171,199 @@ class Mollie extends PaymentModule
      *
      * @param int $idOrder
      *
-     * @return array
+     * @return array|null
      *
      * @since 3.3.0
+     * @throws PrestaShopException
+     * @throws Adapter_Exception
      */
     public static function getShipmentInformation($idOrder)
     {
-        return array(
-            'carrier' => 'PostNL',
-            'code'    => '3SABCD2398472342',
-            'url'     => 'https://postnl.nl/',
-        );
+        $order = new Order($idOrder);
+        if (!Validate::isLoadedObject($order)) {
+            return null;
+        }
+        $invoiceAddress = new Address($order->id_address_invoice);
+        $deliveryAddress = new Address($order->id_address_delivery);
+        $carrierConfig = static::getOrderCarrierConfig($idOrder);
+        if (!Validate::isLoadedObject($invoiceAddress)
+            || !Validate::isLoadedObject($deliveryAddress)
+            || !$carrierConfig
+        ) {
+            return null;
+        }
+
+        if ($carrierConfig['source'] === static::MOLLIE_CARRIER_NO_TRACKING_INFO) {
+            return array();
+        }
+
+        if ($carrierConfig['source'] === static::MOLLIE_CARRIER_MODULE) {
+            $carrier = new Carrier($order->id_carrier);
+            if (in_array($carrier->external_module_name, array('postnl', 'myparcel'))) {
+                if (version_compare(static::getDatabaseVersion($carrier->external_module_name), '2.1.0', '>=')) {
+                    $table = $carrier->external_module_name === 'postnl' ? 'postnlmod_order' : 'myparcel_order';
+                    $sql = new DbQuery();
+                    $sql->select('`tracktrace`, `postcode`');
+                    $sql->from(bqSQL($table));
+                    $sql->where('`id_order` = \''.pSQL($idOrder).'\'');
+
+                    try {
+                        $info = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+                        if ($info['tracktrace'] && $info['postcode']) {
+                            $postcode = Tools::strtoupper(str_replace(' ', '', $info['postcode']));
+                            $langIso = Tools::strtoupper(Language::getIsoById($order->id_lang));
+                            $countryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
+                            $tracktrace = $info['tracktrace'];
+
+                            return array(
+                                'carrier' => 'PostNL',
+                                'code'    => $info['tracktrace'],
+                                'url'     => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
+                            );
+                        }
+                    } catch (PrestaShopDatabaseException $e) {
+                        return array();
+                    }
+                }
+            }
+            return array();
+        }
+
+        if ($carrierConfig['source'] === static::MOLLIE_CARRIER_CARRIER) {
+            $carrier = new Carrier($order->id_carrier);
+            $shippingNumber = $order->shipping_number;
+            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
+                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+                $shippingNumber = $orderCarrier->tracking_number;
+            }
+
+            if (!$shippingNumber || !$carrier->name) {
+                return array();
+            }
+
+            return array(
+                'carrier' => $carrier->name,
+                'code'    => $shippingNumber,
+                'url'     => str_replace('@', $shippingNumber, $carrier->url),
+            );
+        }
+
+        if ($carrierConfig['source'] === static::MOLLIE_CARRIER_CUSTOM) {
+            $carrier = new Carrier($order->id_carrier);
+            $shippingNumber = $order->shipping_number;
+            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
+                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+                $shippingNumber = $orderCarrier->tracking_number;
+            }
+
+            if (!$shippingNumber || !$carrier->name) {
+                return array();
+            }
+
+            $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
+            $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));
+            $deliveryPostcode = Tools::strtoupper(str_replace(' ', '', $deliveryAddress->postcode));
+            $deliveryCountryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
+
+            $langIso = Tools::strtoupper(Language::getIsoById($order->id_lang));
+
+            $info = array(
+                '@'                        => $shippingNumber,
+                '%%shipping_number%%'      => $shippingNumber,
+                '%%invoice.country_iso%%'  => $invoiceCountryIso,
+                '%%invoice.postcode%%'     => $invoicePostcode,
+                '%%delivery.country_iso%%' => $deliveryCountryIso,
+                '%%delivery.postcode%%'    => $deliveryPostcode,
+                '%%lang_iso%%'             => $langIso,
+            );
+
+            return array(
+                'carrier' => $carrier->name,
+                'code'    => $shippingNumber,
+                'url'     => str_ireplace(
+                    array_keys($info),
+                    array_values($info),
+                    $carrierConfig['custom_url']
+                ),
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * Get carrier config for order
+     *
+     * @param Order|int $order
+     *
+     * @return array|null Configuration or `null` if not tracking
+     *
+     * @throws PrestaShopException
+     */
+    public static function getOrderCarrierConfig($order)
+    {
+        if (is_int($order)) {
+            $order = new Order($order);
+        }
+
+        if (!$carrierConfig = @json_decode(Configuration::get(static::MOLLIE_TRACKING_URLS))) {
+            return null;
+        }
+
+        if (!Validate::isLoadedObject($order) || !$order->id_carrier) {
+            return null;
+        }
+
+        if (!isset($carrierConfig[$order->id_carrier]) || !isset($carrierConfig[$order->id_carrier]['source'])) {
+            return null;
+        }
+
+        return $carrierConfig[$order->id_carrier];
+    }
+
+    /**
+     * Set default carrier statuses
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     */
+    public function setDefaultCarrierStatuses()
+    {
+        $sql = new DbQuery();
+        $sql->select('`'.bqSQL(OrderState::$definition['primary']).'`');
+        $sql->from(bqSQL(OrderState::$definition['table']));
+        $sql->where('`shipped` = 1');
+
+        $defaultStatuses = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        if (!is_array($defaultStatuses)) {
+            return;
+        }
+        $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
+        Configuration::updateValue(static::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
+    }
+
+    /**
+     * Get all status values from the form.
+     *
+     * @param $key string The key that is used in the HelperForm
+     *
+     * @return array Array with statuses
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 3.3.0
+     */
+    protected function getStatusesValue($key)
+    {
+        $statesEnabled = array();
+        foreach (OrderState::getOrderStates($this->context->language->id) as $state) {
+            if (Tools::isSubmit($key.'_'.$state['id_order_state'])) {
+                $statesEnabled[] = $state['id_order_state'];
+            }
+        }
+
+        return $statesEnabled;
     }
 }
