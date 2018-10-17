@@ -124,6 +124,9 @@ declare global {
     format: number,
     sign: string,
     blank: string,
+    name: string,
+    iso_code: string,
+    decimals: boolean,
   }
 
   interface IMollieApiOrder {

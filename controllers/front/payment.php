@@ -179,7 +179,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             }
         }
 
-        $paymentStatus = (int) $this->module->statuses[$payment->status];
+        $status = $payment->status;
+        if (!isset($this->module->statuses[$payment->status])) {
+            $status = 'open';
+        }
+
+        $paymentStatus = (int) $this->module->statuses[$status];
 
         if ($paymentStatus < 1) {
             $paymentStatus = Configuration::get('PS_OS_BANKWIRE');

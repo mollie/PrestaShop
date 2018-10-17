@@ -131,6 +131,11 @@ export const formatCurrency = (price: number, currency: ICurrency) => {
     return '';
   }
 
+  if (typeof window.formatCurrencyCldr !== 'undefined') {
+    // PrestaShop 1.7 CLDR
+    return (new Intl.NumberFormat(undefined, { style: 'currency', currency: currency.iso_code })).format(price);
+  }
+
   return psFormatCurrency(price, currency.format, currency.sign, currency.blank);
 };
 

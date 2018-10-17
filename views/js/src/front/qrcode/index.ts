@@ -30,7 +30,6 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
 import axios from 'axios';
 import xss from 'xss';
 import styles from './css/qrcode.css';

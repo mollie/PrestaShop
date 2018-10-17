@@ -30,10 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
-
 import React from 'react';
 import { render } from 'react-dom';
+// @ts-ignore
 import viewportSize from 'viewport-size';
 import _ from 'lodash';
 

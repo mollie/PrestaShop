@@ -1719,9 +1719,9 @@ class Mollie extends PaymentModule
                 'name'     => $currency['name'],
                 'iso_code' => Tools::strtoupper($currency['iso_code']),
                 'sign'     => $currency['sign'],
-                'blank'    => (bool) $currency['blank'],
+                'blank'    => (bool) isset($currency['blank']) ? $currency['blank'] : true,
                 'format'   => (int) $currency['format'],
-                'decimals' => (bool) $currency['decimals'],
+                'decimals' => (bool) isset($currency['decimals']) ? $currency['decimals'] : true,
             );
         }
 

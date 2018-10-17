@@ -30,6 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+import '@babel/polyfill';
+import 'intl';
+
 export * from './updater';
 export * from './order';
 export * from './carrierconfig';

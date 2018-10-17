@@ -30,7 +30,6 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
 import axios from 'axios';
