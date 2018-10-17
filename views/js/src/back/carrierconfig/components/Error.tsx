@@ -56,7 +56,7 @@ class Error extends Component<IProps> {
           'error': legacy,
         })}
       >
-        {translations.unableToLoadMethods}&nbsp;
+        {translations.unableToLoadCarriers}&nbsp;
         <button
           className={classnames({
             'btn': !legacy,
