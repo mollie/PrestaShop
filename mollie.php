@@ -1191,28 +1191,38 @@ class Mollie extends PaymentModule
      */
     public static function getPaymentBy($column, $id)
     {
-        $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-            sprintf(
-                'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` = \'%s\'',
-                _DB_PREFIX_.'mollie_payments',
-                bqSQL($column),
-                pSQL($id),
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID
-            )
-        );
+        try {
+            $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                sprintf(
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` = \'%s\'',
+                    _DB_PREFIX_.'mollie_payments',
+                    bqSQL($column),
+                    pSQL($id),
+                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID
+                )
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            static::tryAddOrderReferenceColumn();
+            throw $e;
+        }
 
         if ($paidPayment) {
             return $paidPayment;
         }
 
-        $nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-            sprintf(
-                'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
-                _DB_PREFIX_.'mollie_payments',
-                bqSQL($column),
-                pSQL($id)
-            )
-        );
+        try {
+            $nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                sprintf(
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
+                    _DB_PREFIX_.'mollie_payments',
+                    bqSQL($column),
+                    pSQL($id)
+                )
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            static::tryAddOrderReferenceColumn();
+            throw $e;
+        }
 
         return $nonPaidPayment;
     }
@@ -1434,14 +1444,19 @@ class Mollie extends PaymentModule
         $this->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
 
         // Save status in mollie_payments table
-        Db::getInstance()->update(
-            'mollie_payments',
-            array(
-                'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
-                'bank_status' => \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-            ),
-            '`order_id` = '.(int) $orderId
-        );
+        try {
+            Db::getInstance()->update(
+                'mollie_payments',
+                array(
+                    'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                    'bank_status' => \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+                ),
+                '`order_id` = '.(int) $orderId
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            static::tryAddOrderReferenceColumn();
+            throw $e;
+        }
 
         return array(
             'status'      => 'success',
@@ -1981,6 +1996,8 @@ class Mollie extends PaymentModule
                 return false;
             }
         } catch (PrestaShopException $e) {
+            static::tryAddOrderReferenceColumn();
+
             $this->_errors[] = 'Database error: '.Db::getInstance()->getMsgError();
 
             return false;
@@ -4882,5 +4899,31 @@ class Mollie extends PaymentModule
         $sql->where('`name` = \'mollie\'');
 
         return (string) Db::getInstance()->getValue($sql);
+    }
+
+    /**
+     * Add the order reference column in case the module upgrade script hasn't run
+     *
+     * @return bool
+     *
+     * @since 3.3.0
+     */
+    public static function tryAddOrderReferenceColumn()
+    {
+        try {
+            if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+                SELECT COUNT(*)
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
+                AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
+                AND COLUMN_NAME = \'order_reference\'')
+            ) {
+                return Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+            }
+        } catch (PrestaShopException $e) {
+            return false;
+        }
+
+        return true;
     }
 }

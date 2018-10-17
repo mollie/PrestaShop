@@ -45,7 +45,14 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_3_3_0()
 {
     try {
-        Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+        if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+                SELECT COUNT(*)
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
+                AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
+                AND COLUMN_NAME = \'order_reference\'')) {
+            Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+        }
     } catch (PrestaShopException $e) {
         Logger::addLog("Mollie update error: {$e->getMessage()}");
     }

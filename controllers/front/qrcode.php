@@ -146,16 +146,22 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         ), array(
             'include' => 'details.qrCode',
         ));
-        Db::getInstance()->insert(
-            'mollie_payments',
-            array(
-                'cart_id'        => (int) $cart->id,
-                'method'         => pSQL($payment->method),
-                'transaction_id' => pSQL($payment->id),
-                'bank_status'    => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
-            )
-        );
+
+        try {
+            Db::getInstance()->insert(
+                'mollie_payments',
+                array(
+                    'cart_id'        => (int) $cart->id,
+                    'method'         => pSQL($payment->method),
+                    'transaction_id' => pSQL($payment->id),
+                    'bank_status'    => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
+                )
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            Mollie::tryAddOrderReferenceColumn();
+            throw $e;
+        }
 
         $src = isset($payment->details->qrCode->src) ? $payment->details->qrCode->src : null;
         die(json_encode(array(

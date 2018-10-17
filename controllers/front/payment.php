@@ -161,17 +161,22 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         // Store payment linked to cart
         if ($payment->method !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
-            Db::getInstance()->insert(
-                'mollie_payments',
-                array(
-                    'cart_id'         => (int) $cart->id,
-                    'method'          => pSQL($payment->method),
-                    'transaction_id'  => pSQL($payment->id),
-                    'order_reference' => pSQL($orderReference),
-                    'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
-                )
-            );
+            try {
+                Db::getInstance()->insert(
+                    'mollie_payments',
+                    array(
+                        'cart_id'         => (int) $cart->id,
+                        'method'          => pSQL($payment->method),
+                        'transaction_id'  => pSQL($payment->id),
+                        'order_reference' => pSQL($orderReference),
+                        'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
+                    )
+                );
+            } catch (PrestaShopDatabaseException $e) {
+                Mollie::tryAddOrderReferenceColumn();
+                throw $e;
+            }
         }
 
         $paymentStatus = (int) $this->module->statuses[$payment->status];
@@ -196,18 +201,23 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
             $orderId = Order::getOrderByCartId((int) $cart->id);
 
-            Db::getInstance()->insert(
-                'mollie_payments',
-                array(
-                    'cart_id'         => (int) $cart->id,
-                    'order_id'        => (int) $orderId,
-                    'order_reference' => pSQL($orderReference),
-                    'method'          => pSQL($payment->method),
-                    'transaction_id'  => pSQL($payment->id),
-                    'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
-                )
-            );
+            try {
+                Db::getInstance()->insert(
+                    'mollie_payments',
+                    array(
+                        'cart_id'         => (int) $cart->id,
+                        'order_id'        => (int) $orderId,
+                        'order_reference' => pSQL($orderReference),
+                        'method'          => pSQL($payment->method),
+                        'transaction_id'  => pSQL($payment->id),
+                        'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
+                    )
+                );
+            } catch (PrestaShopDatabaseException $e) {
+                Mollie::tryAddOrderReferenceColumn();
+                throw $e;
+            }
         }
 
         // Go to payment url

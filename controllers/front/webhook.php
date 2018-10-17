@@ -250,15 +250,20 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     protected function savePaymentStatus($transactionId, $status, $orderId)
     {
-        return Db::getInstance()->update(
-            'mollie_payments',
-            array(
-                'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
-                'bank_status' => pSQL($status),
-                'order_id'    => (int) $orderId,
-            ),
-            '`transaction_id` = \''.pSQL($transactionId).'\''
-        );
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                array(
+                    'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                    'bank_status' => pSQL($status),
+                    'order_id'    => (int) $orderId,
+                ),
+                '`transaction_id` = \''.pSQL($transactionId).'\''
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            Mollie::tryAddOrderReferenceColumn();
+            throw $e;
+        }
     }
 
     /**
