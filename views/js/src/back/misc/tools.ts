@@ -31,6 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import _ from 'lodash';
+import version_compare from 'locutus/php/info/version_compare';
 
 declare let window: any;
 
@@ -134,7 +135,9 @@ export const formatCurrency = (price: number, currency: ICurrency) => {
     return '';
   }
 
-  if (typeof window.formatCurrencyCldr !== 'undefined') {
+  if ((typeof window._PS_VERSION_ === 'string' && version_compare(window._PS_VERSION_, '1.7.0.0', '>='))
+    || typeof window.formatCurrencyCldr !== 'undefined'
+  ) {
     // PrestaShop 1.7 CLDR
     return (new Intl.NumberFormat(_.get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
   }
