@@ -33,10 +33,16 @@
  * @codingStandardsIgnoreStart
  */
 
-require_once(dirname(__FILE__).'/vendor/autoload.php');
-require_once(dirname(__FILE__).'/helpers.php');
+// Composer autoload, if failure, skip this module
+if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
+    return;
+}
+
+// PSR-7 standard autoload, if failure, skip this module
 if (!function_exists('\\Hough\\Psr7\\str')) {
-    require_once dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php';
+    if (!include_once(dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php')) {
+        return;
+    }
 }
 
 if (!defined('_PS_VERSION_')) {

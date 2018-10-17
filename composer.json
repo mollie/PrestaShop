@@ -4,7 +4,10 @@
         "firstred/mollie-reseller-api": "~1.10.2",
         "ext-curl": "*",
         "ext-json": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "symfony/polyfill-php55": "^1.9",
+        "symfony/polyfill-mbstring": "^1.9",
+        "symfony/polyfill-php54": "^1.9"
     },
     "autoload": {
         "classmap": ["vendor/"]

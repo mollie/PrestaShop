@@ -47,6 +47,4 @@ return array(
             return $content;
         },
     ),
-    // Disable, this will generate PHP 5.6+ code which we want to avoid
-    'whitelist-global-functions' => false,
 );

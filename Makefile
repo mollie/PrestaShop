@@ -103,8 +103,8 @@ php-scoper:
 # Check if php scoper is available, otherwise download it
 	@echo -e "${COLOR_BLUE}Running PHP Scoper${COLOR_RESET}"
 ifeq (,$(wildcard php-scoper.phar))
-	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar
-	wget -q https://github.com/humbug/php-scoper/releases/download/0.10.2/php-scoper.phar.pubkey
+	wget -q https://github.com/humbug/php-scoper/releases/download/0.9.2/php-scoper.phar
+	wget -q https://github.com/humbug/php-scoper/releases/download/0.9.2/php-scoper.phar.pubkey
 endif
 	@rm -rf pre-scoper/ -rf 2>/dev/null || true
 	@mkdir pre-scoper
