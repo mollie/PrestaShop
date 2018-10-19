@@ -17,6 +17,7 @@ FILES:=logo.gif
 FILES+=logo.png
 FILES+=LICENSE
 FILES+=controllers/**
+FILES+=countries.php
 FILES+=helpers.php
 FILES+=index.php
 FILES+=${MODULE_NAME}.php
