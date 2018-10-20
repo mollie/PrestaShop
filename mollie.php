@@ -676,13 +676,13 @@ class Mollie extends PaymentModule
         $employee = $this->context->employee;
         $helper->tpl_vars = array(
             'fields_value' => array(
-                'mollie_new_name'    => "{$employee->firstname} {$employee->lastname}",
-                'mollie_new_email'   => Configuration::get('PS_SHOP_EMAIL'),
-                'mollie_new_company' => Configuration::get('PS_SHOP_NAME'),
-                'mollie_new_address' => trim(Configuration::get('PS_SHOP_ADDR1').' '.Configuration::get('PS_SHOP_ADDR2')),
-                'mollie_new_zipcode' => trim(Configuration::get('PS_SHOP_CODE')),
-                'mollie_new_city'    => trim(Configuration::get('PS_SHOP_CITY')),
-                'mollie_new_country' => Country::getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID')),
+                'mollie_new_name'    => Tools::isSubmit('mollie_new_name') ? Tools::getValue('mollie_new_name') : "{$employee->firstname} {$employee->lastname}",
+                'mollie_new_email'   => Tools::isSubmit('mollie_new_email') ? Tools::getValue('mollie_new_email') : Configuration::get('PS_SHOP_EMAIL'),
+                'mollie_new_company' => Tools::isSubmit('mollie_new_company') ? Tools::getValue('mollie_new_company') : Configuration::get('PS_SHOP_NAME'),
+                'mollie_new_address' => Tools::isSubmit('mollie_new_address') ? Tools::getValue('mollie_new_address') : trim(Configuration::get('PS_SHOP_ADDR1').' '.Configuration::get('PS_SHOP_ADDR2')),
+                'mollie_new_zipcode' => Tools::isSubmit('mollie_new_zipcode') ? Tools::getValue('mollie_new_zipcode') : trim(Configuration::get('PS_SHOP_CODE')),
+                'mollie_new_city'    => Tools::isSubmit('mollie_new_city') ? Tools::getValue('mollie_new_city') : trim(Configuration::get('PS_SHOP_CITY')),
+                'mollie_new_country' => Tools::isSubmit('mollie_new_country') ? Tools::getValue('mollie_new_country') : Country::getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID')),
             ),
             'languages'    => $this->context->controller->getLanguages(),
             'id_language'  => $this->context->language->id,
@@ -3121,14 +3121,13 @@ class Mollie extends PaymentModule
     {
         try {
             if ($this->createMollieAccount(
-                Tools::getValue('mollie_new_user'),
+                Tools::getValue('mollie_new_email'),
                 Tools::getValue('mollie_new_name'),
                 Tools::getValue('mollie_new_company'),
                 Tools::getValue('mollie_new_address'),
                 Tools::getValue('mollie_new_zipcode'),
                 Tools::getValue('mollie_new_city'),
-                Tools::getValue('mollie_new_country'),
-                Tools::getValue('mollie_new_email')
+                Tools::getValue('mollie_new_country')
             )) {
                 $this->context->controller->confirmations[] = $this->l('Successfully created your new Mollie account. Please check your inbox for more information.');
             } else {
@@ -3155,7 +3154,7 @@ class Mollie extends PaymentModule
      *
      * @since 3.2.0
      */
-    protected function createMollieAccount($user, $name, $company, $address, $zipcode, $city, $country, $email)
+    protected function createMollieAccount($email, $name, $company, $address, $zipcode, $city, $country)
     {
         $mollie = new Mollie_Reseller(
             static::MOLLIE_RESELLER_PARTNER_ID,
@@ -3163,7 +3162,7 @@ class Mollie extends PaymentModule
             static::MOLLIE_RESELLER_APP_SECRET
         );
         $simplexml = $mollie->accountCreate(
-            $user,
+            $email,
             array(
                 'name'         => $name,
                 'company_name' => $company,
