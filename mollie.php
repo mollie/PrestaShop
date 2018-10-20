@@ -587,13 +587,6 @@ class Mollie extends PaymentModule
                 'input'       => array(
                     array(
                         'type'     => 'text',
-                        'label'    => $this->l('Username'),
-                        'name'     => 'mollie_new_user',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
                         'label'    => $this->l('First and last name'),
                         'name'     => 'mollie_new_name',
                         'required' => true,
@@ -683,7 +676,6 @@ class Mollie extends PaymentModule
         $employee = $this->context->employee;
         $helper->tpl_vars = array(
             'fields_value' => array(
-                'mollie_new_user'    => '',
                 'mollie_new_name'    => "{$employee->firstname} {$employee->lastname}",
                 'mollie_new_email'   => Configuration::get('PS_SHOP_EMAIL'),
                 'mollie_new_company' => Configuration::get('PS_SHOP_NAME'),
