@@ -125,7 +125,12 @@ Het maakt gebruik van meer dan 1.500 Duitse banken, waardoor het een vertrouwde 
 ### Klarna: Achteraf betalen
 [Klarna: Achteraf betalen](https://www.mollie.com/nl/payments/klarna-pay-later). Klarna is een flexibele betaaloplossing, waarmee je je klanten diverse mogelijkheden voor uitgestelde betaling biedt. 
 
-Met Mollie integreer je Klarna: Achteraf betalen binnen een handomdraai. 
+Met Mollie integreer je Klarna: Achteraf betalen binnen een handomdraai.
+
+### Klarna: Gespreid betalen
+[Klarna: Gespreid betalen](https://www.mollie.com/nl/payments/klarna-slice-it). Klarna is een flexibele betaaloplossing, waarmee je je klanten diverse mogelijkheden voor uitgestelde betaling biedt. 
+
+Met Mollie integreer je Klarna: Gespreid betalen binnen een handomdraai.
 
 # Veel gestelde vragen #
 
