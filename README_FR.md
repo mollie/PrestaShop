@@ -126,9 +126,12 @@ Les cartes sont co-marquées avec Visa.
 ### EPS
 [EPS](https://www.mollie.com/fr/payments/eps). L'Electronic Payment Standard (EPS) est une méthode de paiement développé par diverses banques autrichiennes. 
 
-Devenue très populaire auprès des consommateurs autrichiens, EPS est la référence en matière de virement bancaire en Autriche. Grâce à Mollie, vous pouvez désormais intégrer rapidement EPS et commencez à traiter les paiements immédiatement. 
+Devenue très populaire auprès des consommateurs autrichiens, EPS est la référence en matière de virement bancaire en Autriche.
 
-Vous ne payez que pour les transactions réussies, sans frais cachés.
+### Giropay
+[Giropay](https://www.mollie.com/fr/payments/giropay). Giropay est une méthode de paiement très populaire de virement bancaire en Allemagne. 
+
+Utilisé par plus de 15000 à travers le pays, cela en fait un moyen de paiement fiable, réputé auprès des consommateurs allemands. 
 
 # Foire aux questions #
 
