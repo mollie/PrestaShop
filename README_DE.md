@@ -138,6 +138,11 @@ Deutsche Kunden schenken dieser Zahlungsmethode ihr Vertrauen, da sie von über 
 
 Der Empfang von Zahlungen durch Klarna: Rechnung dauert nur wenige Minuten und ist mit keinen zusätzlichen Gebühren verbunden.
 
+### Klarna: Ratenkauf
+Klarna: Ratenkauf](https://www.mollie.com/de/payments/klarna-slice-it). Klarna ist eine flexible Zahlungslösung, die Ihren Kunden verschiedene, flexible Zahlungsmöglichkeiten zur Verfügung stellt. 
+
+Der Empfang von Zahlungen durch Klarna: Ratenkauf dauert nur wenige Minuten und ist mit keinen zusätzlichen Gebühren verbunden.
+
 # Häufig gestellte Fragen #
 
 **Das Modul kann in PrestaShop 1.7 nicht installiert werden.**
