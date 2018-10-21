@@ -131,7 +131,12 @@ Devenue très populaire auprès des consommateurs autrichiens, EPS est la réfé
 ### Giropay
 [Giropay](https://www.mollie.com/fr/payments/giropay). Giropay est une méthode de paiement très populaire de virement bancaire en Allemagne. 
 
-Utilisé par plus de 15000 à travers le pays, cela en fait un moyen de paiement fiable, réputé auprès des consommateurs allemands. 
+Utilisé par plus de 15000 à travers le pays, cela en fait un moyen de paiement fiable, réputé auprès des consommateurs allemands.
+
+### Klarna : Pay later
+[Klarna : Pay later](https://www.mollie.com/fr/payments/klarna-pay-later). Klarna est une solution de paiement flexible, qui permet à vos clients des modes de paiement variés. 
+
+Commencer à recevoir des paiements par Klarna Pay later ne prend que quelques minutes.
 
 # Foire aux questions #
 
