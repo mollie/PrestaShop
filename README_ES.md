@@ -138,6 +138,11 @@ Utiliza más de 1.500 bancos alemanes, lo que lo convierte en un tipo de pago co
 
 Sólo le llevará 10 minutos empezar a recibir pagos a través de Klarna: Pay later y no hay cargos ocultos involucrados, sólo paga por transacciones realizadas con éxito.
 
+### Klarna: Slice it
+[Klarna: Slice it](https://www.mollie.com/es/payments/klarna-slice-it). Klarna es una solución de pago flexible que les permite a sus clientes diversas formas de pago flexibles. 
+
+Sólo le llevará 10 minutos empezar a recibir pagos a través de Klarna: Slice it y no hay cargos ocultos involucrados, sólo paga por transacciones realizadas con éxito.
+
 # Preguntas frecuentes #
 
 **El módulo no se puede instalar en PrestaShop 1.7.**
