@@ -122,6 +122,11 @@ Dit maakt EPS de belangrijkste betaalmethode voor bankoverboekingen in Oostenrij
 
 Het maakt gebruik van meer dan 1.500 Duitse banken, waardoor het een vertrouwde betaalmethode is onder Duitse klanten.
 
+### Klarna: Achteraf betalen
+[Klarna: Achteraf betalen](https://www.mollie.com/nl/payments/klarna-pay-later). Klarna is een flexibele betaaloplossing, waarmee je je klanten diverse mogelijkheden voor uitgestelde betaling biedt. 
+
+Met Mollie integreer je Klarna: Achteraf betalen binnen een handomdraai. 
+
 # Veel gestelde vragen #
 
 **De module kan niet geïnstalleerd worden in PrestaShop 1.7.**
