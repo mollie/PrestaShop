@@ -123,6 +123,13 @@ Il y a plus de 13 millions de cartes de crédit CartaSi en circulation.
 
 Les cartes sont co-marquées avec Visa.
 
+### EPS
+[EPS](https://www.mollie.com/fr/payments/eps). L'Electronic Payment Standard (EPS) est une méthode de paiement développé par diverses banques autrichiennes. 
+
+Devenue très populaire auprès des consommateurs autrichiens, EPS est la référence en matière de virement bancaire en Autriche. Grâce à Mollie, vous pouvez désormais intégrer rapidement EPS et commencez à traiter les paiements immédiatement. 
+
+Vous ne payez que pour les transactions réussies, sans frais cachés.
+
 # Foire aux questions #
 
 **Le module ne peut pas être installé dans PrestaShop 1.7.**
