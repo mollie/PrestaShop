@@ -123,6 +123,13 @@ Hay más de 13 millones de tarjetas de crédito CartaSi en circulación.
 
 Las tarjetas que comparten marca con Visa.
 
+### EPS
+[EPS](https://www.mollie.com/es/payments/eps). El Electronic Payment Standard (EPS) es un tipo de pago desarrollado por varios bancos austriacos. 
+
+Esto hace que el EPS sea el principal tipo de pago por transferencia bancaria en Austria y muy popular entre los compradores austriacos. Con Mollie, usted puede integrar el EPS rápidamente y comenzar a procesar pagos de inmediato. 
+
+Usted solo paga por transacciones exitosas y no hay involucrados cargos ocultos.
+
 # Preguntas frecuentes #
 
 **El módulo no se puede instalar en PrestaShop 1.7.**
