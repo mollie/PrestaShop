@@ -126,9 +126,12 @@ Las tarjetas que comparten marca con Visa.
 ### EPS
 [EPS](https://www.mollie.com/es/payments/eps). El Electronic Payment Standard (EPS) es un tipo de pago desarrollado por varios bancos austriacos. 
 
-Esto hace que el EPS sea el principal tipo de pago por transferencia bancaria en Austria y muy popular entre los compradores austriacos. Con Mollie, usted puede integrar el EPS rápidamente y comenzar a procesar pagos de inmediato. 
+Esto hace que el EPS sea el principal tipo de pago por transferencia bancaria en Austria y muy popular entre los compradores austriacos.
 
-Usted solo paga por transacciones exitosas y no hay involucrados cargos ocultos.
+### Giropay
+[Giropay](https://www.mollie.com/es/payments/giropay). Giropay es un tipo de pago por transferencia bancaria, popular en Alemania.
+
+Utiliza más de 1.500 bancos alemanes, lo que lo convierte en un tipo de pago confiable para los clientes alemanes.
 
 # Preguntas frecuentes #
 
