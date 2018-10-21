@@ -1,4 +1,4 @@
-[Nederlands](README_NL.md) [Deutsch](README_DE.md) [English](README_EN.md) [Español](README_ES.md)
+[Nederlands](README_NL.md) [Deutsch](README_DE.md) [English](README.md) [Español](README_ES.md)
 
 ![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
 
