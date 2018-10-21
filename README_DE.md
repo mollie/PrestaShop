@@ -123,6 +123,13 @@ Es sind über 13 Millionen CartaSi-Karten im Umlauf.
 
 Die Karten tragen ebenfalls das Markenzeichen von Visa.
 
+### EPS
+[EPS](https://www.mollie.com/de/payments/eps). Electronic Payment Standard (EPS) ist eine von mehreren österreichischen Banken gemeinsam entwickelte Zahlungsmethode. 
+
+Dies macht sie zur wichtigsten Zahlungsmethode in Österreich, die bei österreichischen Konsumenten hohe Beliebtheit genießt. Mit Mollie können Sie EPS problemlos integrieren und sofort die ersten Zahlungen verarbeiten. 
+
+Sie zahlen nur für erfolgreiche Transaktionen. Keine versteckten Gebühren!
+
 # Häufig gestellte Fragen #
 
 **Das Modul kann in PrestaShop 1.7 nicht installiert werden.**
