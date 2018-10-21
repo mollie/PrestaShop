@@ -100,7 +100,7 @@ Payments are direct, non-reversible and this payment method opens up a huge mark
 ### paysafecard
 [paysafecard](https://www.mollie.com/en/payments/paysafecard) is the most popular prepaid card for online payments. With paysafecard you can receive prepaid payments from 43 countries.
 
-### KBC/CBC-Betaalknop
+### KBC/CBC Payment Button
 The [KBC / CBC Payment Button](https://www.mollie.com/en/payments/kbc-cbc) is an online payment method for KBC and CBC customers, together the largest bank in Belgium. 
 
 KBC focuses on Flanders and CBC on Wallonia.
