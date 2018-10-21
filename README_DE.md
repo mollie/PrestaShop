@@ -88,6 +88,11 @@ Deutschland, Belgien, die Niederlande, Italien, Österreich, Polen, der Schweiz,
 
 Die Zahlungen sind direkt, unumkehrbar, und diese Zahlungsmethode eröffnet Ihrem Online-Shop einen riesigen Markt.
 
+### ING Home’Pay
+[ING Home’Pay](https://www.mollie.com/de/payments/ing-homepay). Mit Mollie können Sie schnell und einfach Zahlungen mittels ING Home'Pay empfangen. 
+
+Sie benötigen nur 10 Minuten, um Zahlungen empfangen zu können, und es existieren keine versteckten Gebühren, Sie zahlen nur für erfolgreiche Transaktionen.
+
 ### Banküberweisungen
 Im SEPA-Bereich empfangene [Banküberweisungen](https://www.mollie.com/en/payments/bank-transfer) mit [Mollie](https://www.mollie.com/). So können Sie Zahlungen sowohl von Einzelpersonen als auch von Geschäftskunden in mehr als 35 europäischen Ländern empfangen.
 
