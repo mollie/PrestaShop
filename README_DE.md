@@ -126,9 +126,12 @@ Die Karten tragen ebenfalls das Markenzeichen von Visa.
 ### EPS
 [EPS](https://www.mollie.com/de/payments/eps). Electronic Payment Standard (EPS) ist eine von mehreren österreichischen Banken gemeinsam entwickelte Zahlungsmethode. 
 
-Dies macht sie zur wichtigsten Zahlungsmethode in Österreich, die bei österreichischen Konsumenten hohe Beliebtheit genießt. Mit Mollie können Sie EPS problemlos integrieren und sofort die ersten Zahlungen verarbeiten. 
+Dies macht sie zur wichtigsten Zahlungsmethode in Österreich, die bei österreichischen Konsumenten hohe Beliebtheit genießt.
 
-Sie zahlen nur für erfolgreiche Transaktionen. Keine versteckten Gebühren!
+### Giropay
+[Giropay](https://www.mollie.com/de/payments/giropay). Giropay ist eine der beliebtesten Überweisungsmethoden Deutschlands. 
+
+Deutsche Kunden schenken dieser Zahlungsmethode ihr Vertrauen, da sie von über 1.500 Banken landesweit unterstützt wird.
 
 # Häufig gestellte Fragen #
 
