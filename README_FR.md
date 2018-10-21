@@ -138,6 +138,11 @@ Utilisé par plus de 15000 à travers le pays, cela en fait un moyen de paiement
 
 Commencer à recevoir des paiements par Klarna Pay later ne prend que quelques minutes.
 
+### Klarna : Slice it
+[Klarna : Slice it](https://www.mollie.com/fr/payments/klarna-slice-it). Klarna est une solution de paiement flexible, qui permet à vos clients des modes de paiement variés. 
+
+Commencer à recevoir des paiements par Klarna Slice it ne prend que quelques minutes.
+
 # Foire aux questions #
 
 **Le module ne peut pas être installé dans PrestaShop 1.7.**
