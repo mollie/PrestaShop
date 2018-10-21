@@ -128,7 +128,7 @@ The cards are co-branded with Visa.
 
 This makes EPS the main bank transfer payment method in Austria and highly popular with Austrian shoppers. 
 
-### GiropayEPS
+### Giropay
 [Giropay](https://www.mollie.com/en/payments/giropay). Giropay is a popular bank transfer payment method in Germany. 
 
 It uses more than 1,500 German banks, which makes it a trusted payment method under German customers.
