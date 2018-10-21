@@ -79,6 +79,11 @@ Duitsland, België, Nederland, Italië, Oostenrijk, Polen, Zwitserland, Spanje e
 
 Betalingen zijn direct en niet storneerbaar, waarmee het sterk op het Nederlandse iDEAL lijkt. Daarom is het uitermate geschikt voor uw webwinkel.
 
+### ING Home’Pay
+[ING Home’Pay](https://www.mollie.com/nl/payments/ing-homepay). Met Mollie accepteer je snel en eenvoudig betalingen via ING Home'Pay. 
+
+Je bent online binnen 10 minuten en we rekenen nooit verborgen kosten, je betaalt alleen voor succesvolle transacties.
+
 ### Overboekingen
 [Overboekingen](https://www.mollie.com/nl/payments/bank-transfer) binnen de SEPA zone ontvangen via Mollie. Hiermee kun je betalingen ontvangen van zowel particulieren als zakelijke klanten in meer dan 35 Europese landen.
 
