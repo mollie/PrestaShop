@@ -133,6 +133,11 @@ Dies macht sie zur wichtigsten Zahlungsmethode in Österreich, die bei österrei
 
 Deutsche Kunden schenken dieser Zahlungsmethode ihr Vertrauen, da sie von über 1.500 Banken landesweit unterstützt wird.
 
+### Klarna: Rechnung
+[Klarna: Rechnung](https://www.mollie.com/de/payments/klarna-pay-later). Klarna ist eine flexible Zahlungslösung, die Ihren Kunden verschiedene, flexible Zahlungsmöglichkeiten zur Verfügung stellt. 
+
+Der Empfang von Zahlungen durch Klarna: Rechnung dauert nur wenige Minuten und ist mit keinen zusätzlichen Gebühren verbunden.
+
 # Häufig gestellte Fragen #
 
 **Das Modul kann in PrestaShop 1.7 nicht installiert werden.**
