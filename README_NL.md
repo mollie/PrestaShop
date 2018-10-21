@@ -112,6 +112,13 @@ KBC richt zich op Vlaanderen en CBC op Wallonië.
 
 De kaarten zijn co-branded met Visa.
 
+### EPS
+[EPS](https://www.mollie.com/nl/payments/eps). De Electronic Payment Standard (EPS) is een betaalmethode die door een aantal Oostenrijkse banken is ontwikkeld. 
+
+Dit maakt EPS de belangrijkste betaalmethode voor bankoverboekingen in Oostenrijk en zeer populair bij Oostenrijkse klanten. Met Mollie kun je EPS snel integreren en direct beginnen met het verwerken van betalingen. 
+
+Je betaalt alleen voor succesvolle transacties en er zijn geen verborgen kosten.
+
 # Veel gestelde vragen #
 
 **De module kan niet geïnstalleerd worden in PrestaShop 1.7.**
