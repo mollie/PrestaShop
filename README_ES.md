@@ -88,6 +88,11 @@ Alemania, Bélgica, los Países Bajos, Italia, Austria, Polonia, Suiza, España 
 
 Los pagos son directos, no reversibles y este método de pago abre un enorme potencial de mercado para su tienda en línea.
 
+### ING Home’Pay
+[ING Home’Pay](https://www.mollie.com/es/payments/ing-homepay). Mollie le permite aceptar pagos de forma rápida y sencilla con ING Home'Pay. 
+
+Sólo le llevará 10 minutos empezar a recibir pagos y no hay cargos ocultos involucrados, sólo paga por transacciones realizadas con éxito.
+
 ### Transferencias Bancarias
 [Transferencias bancarias](https://www.mollie.com/en/payments/bank-transfer) recibidas en la zona SEPA a través de [Mollie](https://www.mollie.com/). Esto le permite recibir pagos de individuos y clientes comerciales en más de 35 países europeos.
 
