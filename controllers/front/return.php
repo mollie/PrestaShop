@@ -113,8 +113,6 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             }
         }
 
-
-
         // Simulate webhook call (Orders API does not call the webhook on cancel)
         if ($cart instanceof Cart
             && !$cart->orderExists()

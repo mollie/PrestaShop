@@ -858,7 +858,6 @@ class Mollie extends PaymentModule
                     array('<kbd>')
                 ),
                 'name'     => static::MOLLIE_CSS,
-                'required' => true,
                 'class'    => 'long-text',
             ),
             array(
@@ -2803,7 +2802,7 @@ class Mollie extends PaymentModule
         }
 
         $success = false;
-        if (Tools::substr($file, -4) == '.zip') {
+        if (Tools::substr($file, -4) === '.zip') {
             if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder.DIRECTORY_SEPARATOR.$moduleName)) {
                 if (file_exists(_PS_MODULE_DIR_.$moduleName)) {
                     $report = '';
@@ -2859,8 +2858,8 @@ class Mollie extends PaymentModule
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
-                if ($object != '.' && $object != '..') {
-                    if (filetype($dir.'/'.$object) == 'dir') {
+                if ($object !== '.' && $object !== '..') {
+                    if (filetype($dir.'/'.$object) === 'dir') {
                         $this->recursiveDeleteOnDisk($dir.'/'.$object);
                     } else {
                         @unlink($dir.'/'.$object);
@@ -5302,7 +5301,7 @@ class Mollie extends PaymentModule
             $order = new Order($order);
         }
 
-        if (!$carrierConfig = @json_decode(Configuration::get(static::MOLLIE_TRACKING_URLS))) {
+        if (!$carrierConfig = @json_decode(Configuration::get(static::MOLLIE_TRACKING_URLS), true)) {
             return null;
         }
 
