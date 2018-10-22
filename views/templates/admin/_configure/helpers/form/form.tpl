@@ -205,11 +205,11 @@
               {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
           {strip}
-            <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
+            <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
             {if $value.value == 1}
-              {l s='Yes'}
+              {l s='Yes' mod='mollie'}
             {else}
-              {l s='No'}
+              {l s='No' mod='mollie'}
             {/if}
           </label>
           {/strip}
