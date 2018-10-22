@@ -1828,10 +1828,10 @@ class Mollie extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
-           'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
-           'transactionId' => $transaction['transaction_id'],
-           'currencies'    => $currencies,
-           'tracking'      => static::getShipmentInformation($params['id_order']),
+            'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
+            'transactionId' => $transaction['transaction_id'],
+            'currencies'    => $currencies,
+            'tracking'      => static::getShipmentInformation($params['id_order']),
         ));
 
         return $this->display(__FILE__, 'order_info.tpl');
@@ -2375,7 +2375,7 @@ class Mollie extends PaymentModule
 
         // Send webshop locale
         if ((static::selectedApi() === static::MOLLIE_PAYMENTS_API
-            && Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
+                && Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
             || static::selectedApi() === static::MOLLIE_ORDERS_API
         ) {
             $locale = static::getWebshopLocale();
@@ -2938,6 +2938,13 @@ class Mollie extends PaymentModule
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        $keys = array('id', 'name', 'enabled', 'image', 'issuers', 'position');
+        foreach ($dbMethods as $index => $dbMethod) {
+            if (count(array_intersect($keys, array_keys($dbMethod))) !== count($keys)) {
+                unset($dbMethods[$index]);
+            }
+        }
+        
         if (!is_array($dbMethods)) {
             $dbMethods = array();
             $configMethods = array();
@@ -2952,7 +2959,7 @@ class Mollie extends PaymentModule
         $methods = array();
         $deferredMethods = array();
         foreach ($apiMethods as $apiMethod) {
-            if (!in_array($apiMethod->id, $methodsFromDb)) {
+            if (!in_array($apiMethod->id, $methodsFromDb) || !isset($configMethods[$apiMethod->id]['position'])) {
                 $deferredMethods[] = array(
                     'id'        => $apiMethod->id,
                     'name'      => $apiMethod->description,
@@ -4861,7 +4868,7 @@ class Mollie extends PaymentModule
                 foreach ($methodsForConfig as $methodForConfig) {
                     if ($dbMethod['id'] === $methodForConfig['id']) {
                         $found = true;
-                        foreach (array('issuers', 'image', 'name') as $prop) {
+                        foreach (array('issuers', 'image', 'name', 'available') as $prop) {
                             if (isset($methodForConfig[$prop])) {
                                 $dbMethod[$prop] = $methodForConfig[$prop];
                                 $shouldSave = true;
@@ -4894,7 +4901,7 @@ class Mollie extends PaymentModule
 
         return array(
             'success' => true,
-            'methods' => $dbMethods,
+            'methods' => $methodsForConfig,
         );
     }
 
@@ -5170,8 +5177,8 @@ class Mollie extends PaymentModule
         $shipmentInfo = static::getShipmentInformation($idOrder);
 
         if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
-            || in_array($orderStatusNumber, $checkStatuses)
-        ) || $shipmentInfo === null) {
+                || in_array($orderStatusNumber, $checkStatuses)
+            ) || $shipmentInfo === null) {
             return;
         }
 
