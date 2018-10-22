@@ -66,9 +66,6 @@ class OrderPanel extends Component<IProps> {
             />
             &nbsp;<span>Mollie</span>&nbsp;
           </legend>
-          <div className="warn">
-            <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
-          </div>
           <OrderPanelContent/>
         </fieldset>
       );
@@ -84,9 +81,6 @@ class OrderPanel extends Component<IProps> {
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           />
           &nbsp;<span>Mollie</span>&nbsp;
-        </div>
-        <div className="alert alert-warning">
-          <p>Orders currently have to be set to `shipped` manually. We are working on automating this process as soon as possible!</p>
         </div>
         <OrderPanelContent/>
       </div>

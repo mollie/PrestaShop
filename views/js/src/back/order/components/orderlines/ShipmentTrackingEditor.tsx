@@ -37,6 +37,8 @@ import _ from 'lodash';
 interface IProps {
   edited: (newLines: IMollieTracking) => void,
   translations: ITranslations,
+  config: IMollieOrderConfig,
+  checkButtons: () => Promise<void>|void,
 }
 
 interface IState {
@@ -75,12 +77,25 @@ text-align: left!important;
 class ShipmentTrackingEditor extends Component<IProps> {
   state: IState = {
     skipTracking: false,
-    carrier: '',
-    carrierChanged: false,
-    code: '',
-    codeChanged: false,
-    url: '',
+    carrier: _.get(this.props, 'config.tracking.carrier', ''),
+    carrierChanged: !!_.get(this.props, 'config.tracking.carrier', false),
+    code: _.get(this.props, 'config.tracking.code', ''),
+    codeChanged: !!_.get(this.props, 'config.tracking.code', false),
+    url: _.get(this.props, 'config.tracking.url', ''),
   };
+
+  componentDidMount() {
+    const { carrierChanged, carrier, code, url, skipTracking } = this.state;
+    const { edited } = this.props;
+
+    if (carrierChanged) {
+      edited(skipTracking ? null : {
+        carrier: carrier,
+        code: code,
+        url: url,
+      });
+    }
+  }
 
   get carrierInvalid() {
     const { skipTracking, carrier, carrierChanged } = this.state;
@@ -151,7 +166,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
   };
 
   render() {
-    const { skipTracking, carrier, carrierChanged, code, codeChanged, url } = this.state;
+    const { skipTracking, carrier, code, url } = this.state;
     const { translations } = this.props;
 
     return (
@@ -162,7 +177,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
             name="skipTracking"
             type="checkbox"
             checked={skipTracking}
-            onChange={({ target: { checked: skipTracking }}: any) => this.updateSkipTracking(skipTracking)}
+            onChange={({ target: { checked: skipTracking } }: any) => this.updateSkipTracking(skipTracking)}
           />
           <span>&nbsp;{translations.skipTrackingDetails}</span>
         </Label>
@@ -179,7 +194,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               id="input-carrier"
               disabled={skipTracking}
               value={carrier}
-              onChange={({ target: { value: carrier }}) => this.updateCarrier(carrier)}
+              onChange={({ target: { value: carrier } }: any) => this.updateCarrier(carrier)}
             />
             <ErrorMessage show={this.carrierInvalid}>
               {translations.thisInfoIsRequired}
@@ -195,7 +210,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               id="input-code"
               value={code}
               disabled={skipTracking}
-              onChange={({ target: { value: code }}) => this.updateCode(code)}
+              onChange={({ target: { value: code } }: any) => this.updateCode(code)}
             />
             <ErrorMessage show={this.codeInvalid}>
               {translations.thisInfoIsRequired}
@@ -213,7 +228,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
               id="input-url"
               value={url}
               disabled={skipTracking}
-              onChange={({ target: { value: url }}) => this.updateUrl(url)}
+              onChange={({ target: { value: url } }: any) => this.updateUrl(url)}
             />
           </InputContainer>
         </FormGroup>

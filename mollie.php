@@ -1828,6 +1828,7 @@ class Mollie extends PaymentModule
            'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
            'transactionId' => $transaction['transaction_id'],
            'currencies'    => $currencies,
+           'tracking'      => static::getShipmentInformation($params['id_order']),
         ));
 
         return $this->display(__FILE__, 'order_info.tpl');
@@ -4888,7 +4889,10 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
         }
 
-        return array('success' => true, 'methods' => $dbMethods);
+        return array(
+            'success' => true,
+            'methods' => $dbMethods,
+        );
     }
 
     /**
@@ -4931,7 +4935,10 @@ class Mollie extends PaymentModule
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array('success' => false, 'message' => $this->l('You do not have permission to refund payments'));
+                            return array(
+                                'success' => false,
+                                'message' => $this->l('You do not have permission to refund payments'),
+                            );
                         }
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
@@ -4940,13 +4947,22 @@ class Mollie extends PaymentModule
                             $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id'], $input['amount']);
                         }
 
-                        return array('success' => isset($status['status']) && $status['status'] === 'success', 'payment' => static::getFilteredApiPayment($input['transactionId']));
+                        return array(
+                            'success' => isset($status['status']) && $status['status'] === 'success',
+                            'payment' => static::getFilteredApiPayment($input['transactionId']),
+                        );
                     case 'retrieve':
                         // Check order view permissions
                         if (!$access || empty($access['view'])) {
-                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('view')));
+                            return array(
+                                'success' => false,
+                                'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('view')),
+                            );
                         }
-                        return array('success' => true, 'payment' => static::getFilteredApiPayment($input['transactionId']));
+                        return array(
+                            'success' => true,
+                            'payment' => static::getFilteredApiPayment($input['transactionId'])
+                        );
                     default:
                         return array('success' => false);
                 }
@@ -4955,27 +4971,49 @@ class Mollie extends PaymentModule
                     case 'retrieve':
                         // Check order edit permissions
                         if (!$access || empty($access['view'])) {
-                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('edit')));
+                            return array(
+                                'success' => false,
+                                'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('edit')),
+                            );
                         }
-                        return array('success' => true, 'order' => static::getFilteredApiOrder($input['transactionId']));
+                        $info = static::getPaymentBy('transaction_id', $input['transactionId']);
+                        if (!$info) {
+                            return array('success' => false);
+                        }
+                        $tracking = static::getShipmentInformation($info['order_id']);
+
+                        return array(
+                            'success'  => true,
+                            'order'    => static::getFilteredApiOrder($input['transactionId']),
+                            'tracking' => $tracking,
+                        );
                     case 'ship':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('ship')));
+                            return array(
+                                'success' => false,
+                                'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('ship')),
+                            );
                         }
                         $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('refund')));
+                            return array(
+                                'success' => false,
+                                'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('refund')),
+                            );
                         }
                         $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
                     case 'cancel':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array('success' => false, 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('cancel')));
+                            return array(
+                                'success' => false,
+                                'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('cancel')),
+                            );
                         }
                         $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
                         return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
@@ -4993,10 +5031,11 @@ class Mollie extends PaymentModule
     /**
      * Get module version from database
      *
+     * @param string $module
+     *
      * @return string
      *
      * @throws PrestaShopException
-     *
      * @since 3.3.0
      */
     public static function getDatabaseVersion($module = 'mollie')
@@ -5103,8 +5142,20 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $orderStatusNumber = $params['newOrderStatus'];
-        $orderStatus = new OrderState($orderStatusNumber);
+        if ($params['newOrderStatus'] instanceof OrderState) {
+            $orderStatus = $params['newOrderStatus'];
+        } elseif (is_int($params['newOrderStatus']) || is_string($params['newOrderStatus'])) {
+            $orderStatus = new OrderState($params['newOrderStatus']);
+        }
+        if (isset($orderStatus)
+            && $orderStatus instanceof OrderState
+            && Validate::isLoadedObject($orderStatus)
+        ) {
+            $orderStatusNumber = $orderStatus->id;
+        } else {
+            return;
+        }
+
         $idOrder = $params['id_order'];
         $checkStatuses = array();
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
@@ -5151,7 +5202,7 @@ class Mollie extends PaymentModule
                 return;
             }
 
-            $apiPayment->shipAll(static::getShipmentInformation($idOrder));
+            $apiPayment->shipAll(array('tracking' => $shipmentInfo));
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             Logger::addLog("Mollie module error: {$e->getMessage()}");
             return;

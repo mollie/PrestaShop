@@ -42,7 +42,8 @@
         moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}',
         initialStatus: 'form',
         transactionId: '{$transactionId|escape:'javascript':'UTF-8'}',
-        legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if}
+        legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
+        tracking: {$tracking|json_encode}
       },
       {
         areYouSure: '{l s='Are you sure?' mod='mollie' js=1}',

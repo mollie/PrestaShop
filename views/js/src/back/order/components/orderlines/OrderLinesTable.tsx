@@ -77,7 +77,7 @@ class OrderLinesTable extends Component<IProps> {
 
   ship = async (origLines: Array<IMollieOrderLine>) => {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder } = this.props;
+    const { translations, order, dispatchUpdateOrder, config } = this.props;
 
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="shippable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
@@ -110,7 +110,7 @@ class OrderLinesTable extends Component<IProps> {
 
       let trackingWrapper = document.createElement('DIV');
       trackingWrapper.innerHTML = '';
-      render(<ShipmentTrackingEditor translations={translations} edited={newTracking => updateTracking(newTracking)}/>, trackingWrapper);
+      render(<ShipmentTrackingEditor checkButtons={checkSwalButton} config={config} translations={translations} edited={newTracking => updateTracking(newTracking)}/>, trackingWrapper);
       el = trackingWrapper.firstChild;
       // @ts-ignore
       [input] = await Promise.all([swal({

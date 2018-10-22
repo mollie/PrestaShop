@@ -70,7 +70,12 @@ declare global {
   }
 
   interface IMollieOrderConfig {
-    [key: string]: any,
+    ajaxEndpoint: string,
+    moduleDir: string,
+    initialStatus: string,
+    transactionId: string,
+    legacy: boolean,
+    tracking?: IMollieTracking,
   }
 
   interface IMollieCarrierConfig {
