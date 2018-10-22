@@ -1211,11 +1211,14 @@ class Mollie extends PaymentModule
             $configCarriers[] = array(
                 'id_carrier'  => $idCarrier,
                 'name'        => $carrier['name'],
-                'source'      => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : static::MOLLIE_CARRIER_NO_TRACKING_INFO,
+                'source'      => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : ($carrier['external_module_name'] ? static::MOLLIE_CARRIER_MODULE : static::MOLLIE_CARRIER_NO_TRACKING_INFO),
                 'module'      => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
                 'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
                 'custom_url'  => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['custom_url'] : '',
             );
+        }
+        if (count($dbConfig) !== count($configCarriers)) {
+            Configuration::updateValue(static::MOLLIE_TRACKING_URLS, ($configCarriers));
         }
 
         return $configCarriers;
