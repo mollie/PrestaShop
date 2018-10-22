@@ -34,14 +34,14 @@ FILES+=views/js/dist/*.min.js
 FILES+=views/js/dist/index.php
 FILES+=views/templates/**
 
-.PHONY: all clean composer php-scoper node webpack zip vartest
+.PHONY: all quick-clean composer php-scoper node webpack zip vartest
 
 all:
 	$(MAKE) quick-clean
 	$(MAKE) prod
 
 release:
-	$(MAKE) clean
+	$(MAKE) quick-clean
 	$(MAKE) prod
 
 prod:
@@ -63,10 +63,9 @@ a: all
 r: release
 p: prod
 d: dev
-c: clean
 qc: quick-clean
 
-clean:
+# clean:
 # PHP scoper
 #	@rm -rf pre-scoper/ 2>/dev/null || true
 #	@rm php-scoper.phar 2>/dev/null || true
