@@ -47,7 +47,7 @@ interface IProps {
 
   // Redux
   carriers?: Array<IMollieCarrierConfigItem>,
-  dispatchUpdateCarriers: Function,
+  dispatchUpdateCarriers?: Function,
 }
 
 class CarrierConfig extends Component<IProps> {
