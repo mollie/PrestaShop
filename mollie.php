@@ -194,8 +194,8 @@ class Mollie extends PaymentModule
         'paypal'          => 'PayPal',
         'paysafecard'     => 'Paysafecard',
         'sofort'          => 'Sofort Banking',
-        'klarnapaylater'  => 'Klarna Pay Later',
-        'klarnaspliceit'  => 'Klarna Splice It',
+        'klarnapaylater'  => 'Pay later.',
+        'klarnaspliceit'  => 'Slice it.',
     );
 
     /**
@@ -311,6 +311,8 @@ class Mollie extends PaymentModule
             'ING Home\'Pay'                                                                                                                   => $this->l('ING Home\'Pay'),
             'Giropay'                                                                                                                         => $this->l('Giropay'),
             'eps'                                                                                                                             => $this->l('eps'),
+            'Pay later.'                                                                                                                      => $this->l('Pay later.'),
+            'Slice it.'                                                                                                                       => $this->l('Slice it.'),
         );
 
         // Register json Smarty function when missing, happens on older 1.5; some 1.6 versions
