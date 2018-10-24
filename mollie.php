@@ -765,7 +765,7 @@ class Mollie extends PaymentModule
             array(
                 'type'     => 'text',
                 'label'    => $this->l('Description'),
-                'desc'     => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {customer.firstname} {customer.lastname} {customer.company}'),
+                'desc'     => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
                 'name'     => static::MOLLIE_DESCRIPTION,
                 'required' => true,
                 'class'    => 'fixed-width-xxl',
