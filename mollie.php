@@ -720,7 +720,7 @@ class Mollie extends PaymentModule
                 $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
-                        $this->lang[$name],
+                        $this->lang($name),
                         Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
                             'SELECT `name`
                             FROM `'._DB_PREFIX_.'order_state_lang`
@@ -730,18 +730,18 @@ class Mollie extends PaymentModule
                     )
                 );
             } else {
-                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang[$name]);
+                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang($name));
             }
             $statuses[] = array(
                 'name'             => $name,
                 'key'              => @constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
                 'value'            => $val,
                 'description'      => $desc,
-                'message'          => sprintf($messageStatus, $this->lang[$name]),
+                'message'          => sprintf($messageStatus, $this->lang($name)),
                 'key_mail'         => @constant('static::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
                 'value_mail'       => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
-                'description_mail' => sprintf($descriptionMail, $this->lang[$name]),
-                'message_mail'     => sprintf($messageMail, $this->lang[$name]),
+                'description_mail' => sprintf($descriptionMail, $this->lang($name)),
+                'message_mail'     => sprintf($messageMail, $this->lang($name)),
             );
         }
 
@@ -1875,8 +1875,8 @@ class Mollie extends PaymentModule
             'issuer_setting'         => $issuerSetting,
             'images'                 => Configuration::get(static::MOLLIE_IMAGES),
             'warning'                => $this->warning,
-            'msg_pay_with'           => $this->lang['Pay with %s'],
-            'msg_bankselect'         => $this->lang['Select your bank:'],
+            'msg_pay_with'           => $this->lang('Pay with %s'),
+            'msg_bankselect'         => $this->lang('Select your bank:'),
             'module'                 => $this,
             'mollie_front_app_path'  => file_exists("{$this->local_path}views/js/dist/front-v{$this->version}.min.js") ? static::getMediaPath("{$this->_path}views/js/dist/front-v{$this->version}.min.js") : static::getMediaPath("{$this->_path}views/js/dist/front.min.js"),
             'mollie_translations'    => array(
@@ -1929,7 +1929,7 @@ class Mollie extends PaymentModule
             }
 
             $paymentOptions[] = array(
-                'cta_text' => $this->lang[$method['name']],
+                'cta_text' => $this->lang($method['name']),
                 'logo'     => Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_NORMAL
                     ? $method['image']['size1x']
                     : $method['image']['size2x'],
@@ -2004,7 +2004,7 @@ class Mollie extends PaymentModule
             ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
-                    ->setCallToActionText($this->lang[$method['name']])
+                    ->setCallToActionText($this->lang($method['name']))
                     ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
@@ -2031,13 +2031,8 @@ class Mollie extends PaymentModule
                 $paymentOptions[] = $newOption;
             } else {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                if (isset($this->lang[$method['name']])) {
-                    $description = $this->lang[$method['name']];
-                } else {
-                    $description = $method['name'];
-                }
                 $newOption
-                    ->setCallToActionText($description)
+                    ->setCallToActionText($this->lang($method['name']))
                     ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
