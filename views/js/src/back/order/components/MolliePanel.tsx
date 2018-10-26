@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import RefundPanel from './refund/RefundPanel';
 import store from '../store';
 import { connect, Provider } from 'react-redux';
@@ -50,10 +50,10 @@ class MolliePanel extends Component<IProps> {
 
     return (
     <Provider store={store}>
-      <Fragment>
+      <>
         {payment && <RefundPanel/>}
         {order && <OrderPanel/>}
-      </Fragment>
+      </>
     </Provider>
     )
   }

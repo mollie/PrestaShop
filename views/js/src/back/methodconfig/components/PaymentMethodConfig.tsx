@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import PaymentMethods from './PaymentMethods';
 import LoadingDots from '../../misc/components/LoadingDots';
@@ -84,9 +84,9 @@ class PaymentMethodConfig extends Component<IProps> {
     }
 
     return (
-      <Fragment>
+      <>
         {reset && <PaymentMethods methods={methods} translations={translations} target={target} config={config} retry={this.init}/>}
-      </Fragment>
+      </>
     );
   }
 }

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import RefundHistory from './RefundHistory';
 import RefundForm from './RefundForm';
 import { connect } from 'react-redux';
@@ -55,11 +55,11 @@ class RefundInfo extends Component<IProps> {
 
     if (legacy) {
       return (
-        <Fragment>
+        <>
           <h3>{translations.refunds}</h3>
           <RefundHistory/>
           <RefundForm/>
-        </Fragment>
+        </>
       );
     }
 

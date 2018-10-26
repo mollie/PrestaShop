@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 interface IProps {
@@ -62,7 +62,7 @@ class OrderLinesTableHeader extends Component<IProps> {
             </th>
           )}
           {viewportWidth >= 1390 && (
-            <Fragment>
+            <>
               <th>
                 <span className="title_box">{translations.shipped}</span>
               </th>
@@ -72,7 +72,7 @@ class OrderLinesTableHeader extends Component<IProps> {
               <th>
                 <span className="title_box">{translations.refunded}</span>
               </th>
-            </Fragment>
+            </>
           )}
           <th>
             <span className="title_box">{translations.unitPrice}</span>

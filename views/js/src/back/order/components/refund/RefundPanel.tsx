@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { updatePayment } from '../../store/actions';
@@ -66,12 +66,12 @@ class RefundPanel extends Component<IProps> {
             />
             <span>Mollie</span>&nbsp;
           </legend>
-          {!payment && <Fragment><LoadingDots/></Fragment>}
+          {!payment && <LoadingDots/>}
           {!!payment && payment.status && (
-            <Fragment>
+            <>
               <PaymentInfo/>
               <RefundInfo/>
-            </Fragment>
+            </>
           )}
         </fieldset>
       );
@@ -87,7 +87,7 @@ class RefundPanel extends Component<IProps> {
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           /> <span>Mollie</span>&nbsp;
         </div>
-        {!payment && <Fragment><LoadingDots/></Fragment>}
+        {!payment && <LoadingDots/>}
         {!!payment && payment.status && (
           <div className="panel-body row">
             <PaymentInfo/>

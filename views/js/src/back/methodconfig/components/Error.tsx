@@ -37,7 +37,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IProps {
   translations: ITranslations,
-  config: IMollieOrderConfig,
+  config: IMollieMethodConfig,
   retry: Function,
 }
 

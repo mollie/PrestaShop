@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyRefundTable from './EmptyRefundTable';
 import RefundTable from './RefundTable';
@@ -46,11 +46,11 @@ class RefundHistory extends Component<IProps> {
     const { translations, payment } = this.props;
 
     return (
-      <Fragment>
+      <>
         <h4>{translations.refundHistory}</h4>
         {!payment.refunds.length && <EmptyRefundTable/>}
         {!!payment.refunds.length && <RefundTable/>}
-      </Fragment>
+      </>
     );
   }
 }

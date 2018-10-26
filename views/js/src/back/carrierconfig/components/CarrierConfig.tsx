@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
 import classnames from 'classnames';
 import axios from 'axios';
@@ -103,7 +103,7 @@ class CarrierConfig extends Component<IProps> {
     }
 
     return (
-      <Fragment>
+      <>
         <div className={classnames({
           'alert': !legacy,
           'alert-info': !legacy,
@@ -161,7 +161,7 @@ class CarrierConfig extends Component<IProps> {
           </tbody>
         </table>
         <input type="hidden" id={target} name={target} value={JSON.stringify(this.carrierConfig)}/>
-      </Fragment>
+      </>
     );
   }
 }

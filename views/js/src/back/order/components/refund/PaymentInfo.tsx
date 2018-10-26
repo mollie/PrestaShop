@@ -55,10 +55,10 @@ class PaymentInfo extends Component<IProps> {
 
     if (legacy) {
       return (
-        <Fragment>
+        <>
           <PaymentInfoContent/>
           <br/>
-        </Fragment>
+        </>
       );
     }
 

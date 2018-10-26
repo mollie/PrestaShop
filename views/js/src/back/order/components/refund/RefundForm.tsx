@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -129,7 +129,7 @@ class RefundForm extends Component<IProps> {
 
     if (legacy) {
       return (
-        <Fragment>
+        <>
           <h3>{translations.refund}</h3>
           <span>
             <RefundButton
@@ -158,12 +158,12 @@ class RefundForm extends Component<IProps> {
               disabled={parseFloat(payment.amountRemaining.value) <= 0}
             />
           </span>
-        </Fragment>
+        </>
       );
     }
 
     return (
-      <Fragment>
+      <>
         <h4>{translations.refund}</h4>
         <div className="well well-sm">
           <div className="form-inline">
@@ -197,7 +197,7 @@ class RefundForm extends Component<IProps> {
             </div>
           </div>
         </div>
-      </Fragment>
+      </>
     );
   }
 }

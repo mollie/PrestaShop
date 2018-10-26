@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import OrderLinesTable from './OrderLinesTable';
@@ -56,12 +56,12 @@ class OrderLinesInfo extends Component<IProps> {
 
     if (legacy) {
       return (
-        <Fragment>
+        <>
           {legacy && <h3>{translations.products}</h3>}
           {!legacy && <h4>{translations.products}</h4>}
           {!order || !order.lines.length && <EmptyOrderLinesTable/>}
           {!!order && !!order.lines.length && <OrderLinesTable/>}
-        </Fragment>
+        </>
       );
     }
 
