@@ -47,7 +47,7 @@ interface IState {
 }
 
 class PaymentMethodConfig extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     methods: undefined,
     reset: true,
   };

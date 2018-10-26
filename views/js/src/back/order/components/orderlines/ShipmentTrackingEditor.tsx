@@ -75,7 +75,7 @@ text-align: left!important;
 `;
 
 class ShipmentTrackingEditor extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     skipTracking: false,
     carrier: _.get(this.props, 'config.tracking.carrier', ''),
     carrierChanged: !!_.get(this.props, 'config.tracking.carrier', false),

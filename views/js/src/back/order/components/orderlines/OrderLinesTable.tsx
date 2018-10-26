@@ -71,7 +71,7 @@ const TableContainer = styled.div`
 ` as any;
 
 class OrderLinesTable extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     loading: false,
   };
 

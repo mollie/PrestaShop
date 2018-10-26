@@ -86,7 +86,7 @@ interface IState {
 }
 
 class PaymentMethods extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     methods: this.props.methods,
   };
 

@@ -82,7 +82,7 @@ color: #555!important;
 ` as any;
 
 class OrderLinesEditor extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     lines: this.props.lines,
   };
 

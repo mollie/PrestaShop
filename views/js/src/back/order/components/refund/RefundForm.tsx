@@ -59,7 +59,7 @@ interface IState {
 }
 
 class RefundForm extends Component<IProps> {
-  state: IState = {
+  readonly state: IState = {
     loading: false,
     refundInput: '',
   };
