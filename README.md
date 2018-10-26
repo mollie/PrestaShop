@@ -138,7 +138,7 @@ It uses more than 1,500 German banks, which makes it a trusted payment method un
 
 With Mollie you can integrate Klarna: Pay later quickly and start processing payments right away. 
 
-### Add Klarna: Slice it
+### Klarna: Slice it
 [Klarna: Slice it](https://www.mollie.com/en/payments/klarna-slice-it). Klarna is a flexible payment solution, which allows your customers various, flexible, ways to pay. 
 
 With Mollie you can integrate Klarna: Slice it quickly and start processing payments right away.
