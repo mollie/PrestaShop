@@ -63,5 +63,7 @@ function upgrade_module_3_3_0($module)
         $module->setDefaultCarrierStatuses();
     }
 
+    Configuration::updateValue('MOLLIE_API', 'payments');
+
     return true;
 }
