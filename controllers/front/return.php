@@ -185,10 +185,26 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign($data);
         $this->context->smarty->assign('link', $this->context->link);
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-            $this->setTemplate('mollie_return.tpl');
-        } else {
-            $this->setTemplate('module:mollie/views/templates/front/mollie_return17.tpl');
+        $this->setTemplate('mollie_return.tpl');
+    }
+
+    /**
+     * Prepend module path if PS version >= 1.7
+     *
+     * @param string      $template
+     * @param array       $params
+     * @param string|null $locale
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.3.2
+     */
+    public function setTemplate($template, $params = [], $locale = null)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            $template = "module:mollie/views/templates/front/17_{$template}";
         }
+
+        parent::setTemplate($template, $params, $locale);
     }
 }

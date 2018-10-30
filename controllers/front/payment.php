@@ -115,11 +115,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $this->context->controller->addJS(_PS_MODULE_DIR_.'mollie/views/js/dist/front.min.js');
                 }
                 $this->context->smarty->assign($tplData);
-                if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-                    $this->setTemplate('mollie_issuers.tpl');
-                } else {
-                    $this->setTemplate('module:mollie/views/templates/front/mollie_issuers17.tpl');
-                }
+                $this->setTemplate('mollie_issuers.tpl');
 
                 return;
             }
@@ -286,5 +282,25 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $payment = $this->module->api->{Mollie::selectedApi()}->create($data);
 
         return $payment;
+    }
+
+    /**
+     * Prepend module path if PS version >= 1.7
+     *
+     * @param string      $template
+     * @param array       $params
+     * @param string|null $locale
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.3.2
+     */
+    public function setTemplate($template, $params = [], $locale = null)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            $template = "module:mollie/views/templates/front/17_{$template}";
+        }
+
+        parent::setTemplate($template, $params, $locale);
     }
 }

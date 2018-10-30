@@ -2318,6 +2318,7 @@ class Mollie extends PaymentModule
      * @return array
      * @throws PrestaShopException
      * @throws Adapter_Exception
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0 Order reference
      */
@@ -2341,7 +2342,7 @@ class Mollie extends PaymentModule
                 'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
                 'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
-            'method'      => $method,
+            'method'      => in_array($method, array(Mollie::MOLLIE_PAYMENTS_API, Mollie::MOLLIE_ORDERS_API)) ? $method: Mollie::MOLLIE_PAYMENTS_API,
             'redirectUrl' => ($qrCode
                 ? $context->link->getModuleLink(
                     'mollie',
@@ -4718,7 +4719,9 @@ class Mollie extends PaymentModule
     {
         if (!in_array(static::$selectedApi, array(static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API))) {
             static::$selectedApi = Configuration::get(static::MOLLIE_API);
-            if (!static::$selectedApi) {
+            if (!static::$selectedApi
+                || !in_array(static::$selectedApi, array(static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API))
+            ) {
                 static::$selectedApi = static::MOLLIE_PAYMENTS_API;
             }
         }
