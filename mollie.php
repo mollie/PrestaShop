@@ -2240,10 +2240,13 @@ class Mollie extends PaymentModule
         foreach ($cartItems as $cartItem) {
             $roundedTotalWithoutTax = round($cartItem['total'], 2);
             $roundedTax = round($cartItem['total_wt'] - $cartItem['total'], 2);
-            $quantity = $cartItem['cart_quantity'];
+            $quantity = (int) $cartItem['cart_quantity'];
+            if ($quantity <= 0) {
+                continue;
+            }
+
             $lastItemPriceDifference = round($roundedTotalWithoutTax - round($cartItem['price'], 2) * $quantity, 2);
             $lastItemTaxDifference = round($roundedTax - round($cartItem['price_wt'] - $cartItem['price'], 2) * $quantity, 2);
-
             // If the last item has at least one cent difference on this cart line, then change the price of the last item
             if ($lastItemPriceDifference >= 0.01 || $lastItemTaxDifference >= 0.01) {
                 $aItems[] = array(
