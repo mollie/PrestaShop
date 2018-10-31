@@ -117,6 +117,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     protected function processNewQrCode()
     {

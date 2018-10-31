@@ -57,6 +57,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws Exception
      */
     public function initContent()
     {

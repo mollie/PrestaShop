@@ -1168,7 +1168,7 @@ class Mollie extends PaymentModule
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
             $checkConfs = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES), true);
         }
-        if (!is_array($checkConfs)) {
+        if (!isset($checkConfs) || !is_array($checkConfs)) {
             $checkConfs = array();
         }
 
@@ -2345,7 +2345,7 @@ class Mollie extends PaymentModule
                 'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
                 'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
             ),
-            'method'      => in_array($method, array(Mollie::MOLLIE_PAYMENTS_API, Mollie::MOLLIE_ORDERS_API)) ? $method: Mollie::MOLLIE_PAYMENTS_API,
+            'method'      => $method,
             'redirectUrl' => ($qrCode
                 ? $context->link->getModuleLink(
                     'mollie',
