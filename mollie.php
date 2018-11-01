@@ -2394,7 +2394,7 @@ class Mollie extends PaymentModule
                 )
             ),
         );
-        if (!static::isLocalDomain()) {
+        if (!static::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
                 'webhook',
@@ -5533,7 +5533,7 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.2
      */
-    public static function isLocalDomain($host = null)
+    public static function isLocalEnvironment($host = null)
     {
         if (!$host) {
             $host = Tools::getHttpHost(false, false, true);
