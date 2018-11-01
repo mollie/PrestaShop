@@ -1263,33 +1263,44 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int $orderId
-     * @param int $status
+     * @param int       $order
+     * @param int       $status
+     * @param bool|null $useExistingPayment
      *
      * @return void
      *
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
+     * @since 3.3.2 Accept both Order ID and Order object
+     * @since 3.3.2 $useExistingPayment option
      */
-    public function setOrderStatus($orderId, $status)
+    public function setOrderStatus($order, $status, $useExistingPayment = null)
     {
         if (empty($this->statuses[$status])) {
             return;
         }
         $statusId = (int) $this->statuses[$status];
-        $order = new Order((int) $orderId);
-        if ($statusId === (int) $order->current_state) {
+        if (is_int($order) || is_string($order)) {
+            $order = new Order((int) $order);
+        }
+        if (!Validate::isLoadedObject($order) || $statusId === (int) $order->current_state) {
             return;
+        }
+        if ($useExistingPayment === null) {
+            $useExistingPayment = !$order->hasInvoice();
         }
 
         $history = new OrderHistory();
-        $history->id_order = $orderId;
-        $history->changeIdOrderState($statusId, $orderId, !$order->hasInvoice());
+        $history->id_order = $order->id;
+        $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
+            Logger::addLog('addWithEmail');
             $history->addWithemail();
         } else {
+            Logger::addLog('add');
             $history->add();
         }
     }
@@ -3238,19 +3249,12 @@ class Mollie extends PaymentModule
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * This function replaces the PaymentModule::validateOrder method in order to support the new Cart => Order flow.
      * This flow is applicable only to the Orders API.
      *
      * PrestaShop 1.5 function
-     *
-     * @todo - [✔] Check PS 1.5.0.x compatibility
-     * @todo - [✔] Check PS 1.5.1.x compatibility
-     * @todo - [✔] Check PS 1.5.2.x compatibility
-     * @todo - [✔] Check PS 1.5.3.x compatibility
-     * @todo - [✔] Check PS 1.5.4.x compatibility
-     * @todo - [✔] Check PS 1.5.5.x compatibility
-     * @todo - [✔] Check PS 1.5.6.x compatibility
      */
     public function validateMollieOrderLegacy(
         $idCart,
@@ -3651,16 +3655,10 @@ class Mollie extends PaymentModule
                         }
                     }
                     // Set the order state
-                    $new_history = new OrderHistory();
-                    $new_history->id_order = (int) $order->id;
-                    $new_history->changeIdOrderState((int) $idOrderState, $order, true);
-                    $new_history->addWithemail(true, $extraVars);
+                    $this->setOrderStatus($order, $idOrderState, true);
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') && $orderDetail->getStockState()) {
-                        $history = new OrderHistory();
-                        $history->id_order = (int) $order->id;
-                        $history->changeIdOrderState(Configuration::get('PS_OS_OUTOFSTOCK'), $order, true);
-                        $history->addWithemail();
+                        $this->setOrderStatus($order, Configuration::get('PS_OS_OUTOFSTOCK'), true);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
@@ -3804,16 +3802,6 @@ class Mollie extends PaymentModule
      * This flow is applicable only to the Orders API.
      *
      * Hybrid PrestaShop 1.6/1.7 and thirty bees 1.0 function
-     *
-     * @todo - [✔] Check PS 1.5.x compatibility -- via legacy path
-     * @todo - [✔] Check tb 1.0.x compatibility
-     * @todo - [✔] Check PS 1.6.0.x compatibility
-     * @todo - [✔] Check PS 1.6.1.x compatibility
-     * @todo - [✔] check PS 1.7.0.x compatibility
-     * @todo - [✔] check PS 1.7.1.x compatibility
-     * @todo - [✔] check PS 1.7.2.x compatibility
-     * @todo - [✔] check PS 1.7.3.x compatibility
-     * @todo - [✔] check PS 1.7.4.x compatibility
      */
     public function validateMollieOrder(
         $idCart,
@@ -3827,23 +3815,6 @@ class Mollie extends PaymentModule
         $secureKey = false,
         Shop $shop = null
     ) {
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API
-            && (stripos(Configuration::get(static::MOLLIE_DESCRIPTION), '{order.reference}') === false)
-        ) {
-            return $this->validateOrder(
-                $idCart,
-                $idOrderState,
-                $amountPaid,
-                $paymentMethod,
-                $message,
-                $extraVars,
-                $currencySpecial,
-                $dontTouchAmount,
-                $secureKey,
-                $shop
-            );
-        }
-
         if (version_compare(_PS_VERSION_, '1.6.0.7', '<')) {
             return $this->validateMollieOrderLegacy($idCart, $idOrderState, $amountPaid, $paymentMethod, $message, $extraVars, $currencySpecial, $dontTouchAmount, $secureKey, $shop);
         }
@@ -4394,17 +4365,12 @@ class Mollie extends PaymentModule
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Set the order status
-                    $newHistory = new OrderHistory();
-                    $newHistory->id_order = (int) $order->id;
-                    $newHistory->changeIdOrderState((int) $idOrderState, $order, true);
-                    $newHistory->addWithemail(true, $extraVars);
+                    $this->setOrderStatus($order->id, $idOrderState, true);
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
-                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)) {
-                        $history = new OrderHistory();
-                        $history->id_order = (int) $order->id;
-                        $history->changeIdOrderState(Configuration::get($order->valid ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), $order, true);
-                        $history->addWithemail();
+                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                    ) {
+                        $this->setOrderStatus($order, Configuration::get($order->valid ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
