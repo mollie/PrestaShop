@@ -44,7 +44,7 @@ interface IProps {
 }
 
 const Code = styled.code`
-  font-size: 16px!important;
+  font-size: 14px!important;
 ` as any;
 
 class PaymentMethodsError extends Component<IProps> {

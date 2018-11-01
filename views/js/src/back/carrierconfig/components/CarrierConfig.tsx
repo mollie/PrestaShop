@@ -34,72 +34,72 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import classnames from 'classnames';
 import axios from 'axios';
-import { connect } from 'react-redux';
-import Error from './Error';
+
 import LoadingDots from '../../misc/components/LoadingDots';
-import { Dispatch } from 'redux';
-import { updateCarriers } from '../store/actions';
+import ConfigCarrierError from './CarrierConfigError';
 
 interface IProps {
   config: IMollieCarrierConfig,
   translations: ITranslations,
   target: string,
+}
 
-  // Redux
+interface IState {
   carriers?: Array<IMollieCarrierConfigItem>,
-  dispatchUpdateCarriers?: Function,
+  message?: string,
 }
 
 class CarrierConfig extends Component<IProps> {
+  state: IState = {};
   componentDidMount() {
-    this.init();
+    setTimeout(this.init, 0);
   }
 
   get carrierConfig() {
     const carriers: IMollieCarrierConfigItems = {};
-    _.forEach(this.props.carriers, (carrier) => {
+    _.forEach(this.state.carriers, (carrier) => {
       carriers[carrier.id_carrier] = carrier;
     });
 
     return carriers;
   }
 
-  init = () => {
-    const self = this;
-    const { config: { ajaxEndpoint }, carriers } = this.props;
-    if (carriers === null) {
-      setTimeout(async () => {
-        try {
-          const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
-          self.props.dispatchUpdateCarriers(carriers);
-        } catch (e) {
-          console.error(e);
-        }
-      }, 0);
+  init = async (): Promise<void> => {
+    this.setState({ carriers: undefined });
+    const { config: { ajaxEndpoint } } = this.props;
+    try {
+      const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
+
+      this.setState({ carriers });
+    } catch (e) {
+      console.error(e);
+
+      this.setState({ carriers: null, message: (e && e instanceof Error) ? e.message : 'Check the browser console for errors' });
     }
   };
 
   updateCarrierConfig = (id: string, key: string, value: string|null) => {
-    const localConfig = _.cloneDeep(this.props.carriers);
+    const carriers = _.cloneDeep(this.state.carriers);
 
-    const config = _.find(localConfig, item => item.id_carrier === id);
+    const config = _.find(carriers, item => item.id_carrier === id);
     if (typeof config === 'undefined') {
       return;
     }
     config[key] = value;
 
-    this.props.dispatchUpdateCarriers(localConfig);
+    this.setState({ carriers: carriers });
   };
 
   render() {
-    const { translations, target, config: { legacy }, carriers } = this.props;
+    const { translations, target, config: { legacy } } = this.props;
+    const { carriers, message } = this.state;
 
-    if (_.isArray(carriers) && _.isEmpty(carriers)) {
-      return <Error retry={this.init}/>;
+    if (typeof carriers === 'undefined') {
+      return <LoadingDots/>;
     }
 
-    if (carriers === null) {
-      return <LoadingDots/>;
+    if (!_.isArray(carriers) || _.isArray(carriers) && _.isEmpty(carriers)) {
+      return <ConfigCarrierError message={message} retry={this.init}/>;
     }
 
     return (
@@ -166,13 +166,4 @@ class CarrierConfig extends Component<IProps> {
   }
 }
 
-export default connect<{}, {}, IProps>(
-  (state: IMollieCarriersState): Partial<IProps> => ({
-    carriers: state.carriers,
-  }),
-  (dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdateCarriers(carriers: Array<IMollieCarrierConfigItem>) {
-      dispatch(updateCarriers(carriers))
-    }
-  })
-)(CarrierConfig);
+export default CarrierConfig;

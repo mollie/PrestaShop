@@ -60,19 +60,9 @@ const config = (state: any = {}, action: IUpdateCarrierConfigAction): IMollieCar
   }
 };
 
-const carriers = (state: Array<IMollieCarrierConfigItem> = null, action: IUpdateCarriersAction): Array<IMollieCarrierConfigItem> => {
-  switch (action.type) {
-    case ReduxActionTypes.updateCarriers:
-      return action.carriers;
-    default:
-      return state;
-  }
-};
-
 const checkoutApp = combineReducers({
   translations,
   config,
-  carriers,
 });
 
 export default checkoutApp;

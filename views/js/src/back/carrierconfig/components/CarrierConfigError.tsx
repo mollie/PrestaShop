@@ -35,18 +35,24 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
 
 interface IProps {
   retry: Function,
+  message?: string,
 
   // Redux
   translations?: ITranslations,
   config?: IMollieCarrierConfig,
 }
 
-class Error extends Component<IProps> {
+const Code = styled.code`
+  font-size: 14px!important;
+` as any;
+
+class ConfigCarrierError extends Component<IProps> {
   render() {
-    const { translations, config: { legacy }, retry } = this.props;
+    const { translations, config: { legacy }, retry, message } = this.props;
 
     return (
       <div
@@ -57,6 +63,7 @@ class Error extends Component<IProps> {
         })}
       >
         {translations.unableToLoadCarriers}&nbsp;
+        {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
         <button
           className={classnames({
             'btn': !legacy,
@@ -80,4 +87,4 @@ export default connect<{}, {}, IProps>(
     translations: state.translations,
     config: state.config,
   })
-)(Error);
+)(ConfigCarrierError);

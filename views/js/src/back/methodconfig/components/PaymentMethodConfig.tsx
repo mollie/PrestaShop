@@ -71,7 +71,7 @@ class PaymentMethodConfig extends Component<IProps> {
     } catch (e) {
       this.setState({
         methods: null,
-        message: (e instanceof Error && typeof e.message !== 'undefined') ? e.message : 'See error in browser console',
+        message: (e instanceof Error && typeof e.message !== 'undefined') ? e.message : 'Check the browser console for errors',
       });
     }
   };

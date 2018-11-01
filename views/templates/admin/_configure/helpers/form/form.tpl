@@ -121,7 +121,9 @@
                 deliveryCountryCode: '{l s='Shipping country code' mod='mollie' js=1}',
                 deliveryPostcode: '{l s='Shipping postcode' mod='mollie' js=1}',
                 languageCode: '{l s='2-letter language code' mod='mollie' js=1}',
-                unableToLoadCarriers: '{l s='Unable to load carrier list' mod='mollie' js=1}'
+                unableToLoadCarriers: '{l s='Unable to load carrier list' mod='mollie' js=1}',
+                retry: '{l s='Retry' mod='mollie' js=1}',
+                error: '{l s='Error' mod='mollie' js=1}'
               }
             )
           }

@@ -34,7 +34,6 @@
 export enum ReduxActionTypes {
   updateTranslations = 'UPDATE_MOLLIE_CARRIER_TRANSLATIONS',
   updateConfig = 'UPDATE_MOLLIE_CARRIER_CONFIG',
-  updateCarriers = 'UPDATE_MOLLIE_CARRIERS',
 }
 
 // Action creators
@@ -48,11 +47,6 @@ declare global {
     type: string,
     config: IMollieCarrierConfig,
   }
-
-  interface IUpdateCarriersAction {
-    type: string,
-    carriers: Array<IMollieCarrierConfigItem>,
-  }
 }
 
 export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
@@ -61,8 +55,4 @@ export function updateTranslations(translations: ITranslations): IUpdateTranslat
 
 export function updateConfig(config: IMollieCarrierConfig): IUpdateCarrierConfigAction {
   return { type: ReduxActionTypes.updateConfig, config };
-}
-
-export function updateCarriers(carriers: Array<IMollieCarrierConfigItem>): IUpdateCarriersAction {
-  return { type: ReduxActionTypes.updateCarriers, carriers };
 }
