@@ -33,6 +33,10 @@
  * @codingStandardsIgnoreStart
  */
 
+if (!defined('_PS_VERSION_')) {
+    return;
+}
+
 // Composer autoload, if failure, skip this module
 if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
     return;
@@ -43,10 +47,6 @@ if (!function_exists('\\Hough\\Psr7\\str')) {
     if (!include_once(dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php')) {
         return;
     }
-}
-
-if (!defined('_PS_VERSION_')) {
-    return;
 }
 
 /**
