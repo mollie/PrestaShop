@@ -78,7 +78,6 @@ interface IProps {
   translations: ITranslations,
   target: string,
   config: IMollieMethodConfig,
-  retry: Function,
 }
 
 interface IState {
@@ -95,10 +94,6 @@ class PaymentMethods extends Component<IProps> {
   }
 
   componentDidUpdate() {
-    if (!_.isArray(this.state.methods)) {
-      return;
-    }
-
     const input: HTMLInputElement = document.getElementById(this.props.target) as HTMLInputElement;
     if (input != null) {
       input.value = JSON.stringify(this.state.methods.map((method: IMolliePaymentMethodItem, index: number): IMolliePaymentMethodConfigItem => ({
@@ -112,19 +107,19 @@ class PaymentMethods extends Component<IProps> {
     const methods = _.cloneDeep(this.state.methods);
     const method = _.find(methods, item => item.id === id);
     method.enabled = enabled;
-    this.setState(() => ({ methods }));
+    this.setState({ methods });
   };
 
   onArrowClicked = ({ oldIndex, newIndex}: any) => {
-    this.setState(() => ({
+    this.setState({
       methods: arrayMove(_.cloneDeep(this.state.methods), oldIndex, newIndex),
-    }));
+    });
   };
 
   onSortEnd = ({ oldIndex, newIndex }: any) => {
-    this.setState(() => ({
+    this.setState({
       methods: arrayMove(_.cloneDeep(this.state.methods), oldIndex, newIndex),
-    }));
+    });
   };
 
   shouldCancelStart = ({ target }: any) => {
@@ -133,11 +128,7 @@ class PaymentMethods extends Component<IProps> {
 
   render() {
     const { methods } = this.state;
-    const { translations, config, retry } = this.props;
-
-    if (methods === null || _.isArray(methods) && _.isEmpty(methods)) {
-      return <Error translations={translations} config={config} retry={retry}/>;
-    }
+    const { translations, config } = this.props;
 
     return (
       <SortableList

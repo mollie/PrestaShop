@@ -122,7 +122,7 @@ class OrderLinesTable extends Component<IProps> {
       }), checkSwalButton()]);
       if (input) {
         try {
-          this.setState(() => ({ loading: true }));
+          this.setState({ loading: true });
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
             dispatchUpdateOrder(newOrder);
@@ -143,7 +143,7 @@ class OrderLinesTable extends Component<IProps> {
           }
           console.error(e);
         } finally {
-          this.setState(() => ({ loading: false }));
+          this.setState({ loading: false });
         }
       }
     }
@@ -167,7 +167,7 @@ class OrderLinesTable extends Component<IProps> {
     });
     if (input) {
       try {
-        this.setState(() => ({ loading: true }));
+        this.setState({ loading: true });
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
@@ -188,7 +188,7 @@ class OrderLinesTable extends Component<IProps> {
         }
         console.error(e);
       } finally {
-        this.setState(() => ({ loading: false }));
+        this.setState({ loading: false });
       }
     }
   };
@@ -211,7 +211,7 @@ class OrderLinesTable extends Component<IProps> {
     });
     if (input) {
       try {
-        this.setState(() => ({ loading: true }));
+        this.setState({ loading: true });
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
@@ -232,7 +232,7 @@ class OrderLinesTable extends Component<IProps> {
         }
         console.error(e);
       } finally {
-        this.setState(() => ({ loading: false }));
+        this.setState({ loading: false });
       }
     }
   };

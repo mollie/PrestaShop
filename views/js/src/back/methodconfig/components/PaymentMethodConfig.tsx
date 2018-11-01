@@ -34,6 +34,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import PaymentMethods from './PaymentMethods';
 import LoadingDots from '../../misc/components/LoadingDots';
+import _ from 'lodash';
+import PaymentMethodsError from './PaymentMethodsError';
 
 interface IProps {
   config: IMollieMethodConfig,
@@ -43,50 +45,51 @@ interface IProps {
 
 interface IState {
   methods: Array<IMolliePaymentMethodItem>,
-  reset: boolean,
+  message: string,
 }
 
 class PaymentMethodConfig extends Component<IProps> {
   readonly state: IState = {
     methods: undefined,
-    reset: true,
+    message: '',
   };
 
   componentDidMount() {
-    this.init();
+    setTimeout(this.init, 0);
   }
 
-  init = () => {
-    const { config: { ajaxEndpoint } } = this.props;
-    setTimeout(async () => {
-      try {
-        const { data: { methods } = { methods: null } } = await axios.post(ajaxEndpoint, {
-          resource: 'orders',
-          action: 'retrieve',
-        });
+  init = async (): Promise<void> => {
+    try {
+      this.setState({ methods: undefined });
+      const { config: { ajaxEndpoint } } = this.props;
+      const { data: { methods, message } = { methods: null, message: '' } } = await axios.post(ajaxEndpoint, {
+        resource: 'orders',
+        action: 'retrieve',
+      });
 
-        this.setState(() => ({ methods, reset: false }), () => this.setState(() => ({ reset: true })));
-      } catch (e) {
-        console.error(e);
-
-        this.setState(() => ({ methods: null, reset: false }), () => this.setState(() => ({ reset: true })));
-
-      }
-    }, 0);
+      this.setState({ methods, message });
+    } catch (e) {
+      this.setState({
+        methods: null,
+        message: (e instanceof Error && typeof e.message !== 'undefined') ? e.message : 'See error in browser console',
+      });
+    }
   };
 
   render() {
     const { target, translations, config } = this.props;
-    const { reset, methods } = this.state;
+    const { methods, message } = this.state;
 
     if (typeof methods === 'undefined') {
       return <LoadingDots/>;
     }
 
+    if (methods === null || !_.isArray(methods) || _.isArray(methods) && _.isEmpty(methods)) {
+      return <PaymentMethodsError message={message} translations={translations} config={config} retry={this.init}/>;
+    }
+
     return (
-      <>
-        {reset && <PaymentMethods methods={methods} translations={translations} target={target} config={config} retry={this.init}/>}
-      </>
+      <PaymentMethods methods={methods} translations={translations} target={target} config={config}/>
     );
   }
 }

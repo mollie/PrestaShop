@@ -252,13 +252,13 @@ class Mollie extends PaymentModule
         }
 
         $this->statuses = array(
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID        => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED  => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED    => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED     => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
-            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED     => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN        => Configuration::get(static::MOLLIE_STATUS_OPEN),
-            static::PARTIAL_REFUND_CODE                                      => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
         );
 
         // Load all translatable text here so we have a single translation point
@@ -463,6 +463,8 @@ class Mollie extends PaymentModule
 
     /**
      * @return mixed
+     *
+     * @deprecated 3.4.0
      */
     public function getErrors()
     {
@@ -1141,7 +1143,6 @@ class Mollie extends PaymentModule
             static::MOLLIE_IMAGES  => Configuration::get(static::MOLLIE_IMAGES),
             static::MOLLIE_ISSUERS => Configuration::get(static::MOLLIE_ISSUERS),
 
-            static::METHODS_CONFIG   => $this->getMethodsForConfig(),
             static::MOLLIE_QRENABLED => Configuration::get(static::MOLLIE_QRENABLED),
 
             static::MOLLIE_STATUS_OPEN           => Configuration::get(static::MOLLIE_STATUS_OPEN),
@@ -2886,6 +2887,10 @@ class Mollie extends PaymentModule
      */
     protected function getMethodsForCheckout()
     {
+        if (!Configuration::get(static::MOLLIE_API_KEY)) {
+            return array();
+        }
+
         $iso = Tools::strtolower($this->context->currency->iso_code);
         $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
         if (empty($methods)) {
@@ -2912,27 +2917,23 @@ class Mollie extends PaymentModule
      * @return array
      *
      * @throws PrestaShopException
+     *
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     *
      * @since 3.0.0
      */
     protected function getMethodsForConfig($active = false)
     {
         $notAvailable = array();
-
-        try {
-            $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers'))->getArrayCopy();
-            if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-                $paymentApiMethods = array_map(function ($item) {
-                    return $item->id;
-                }, $this->api->methods->all()->getArrayCopy());
-                $orderApiMethods = array_map(function ($item) {
-                    return $item->id;
-                }, $apiMethods);
-                $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
-            }
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
-            $apiMethods = array();
-        } catch (Exception $e) {
-            $apiMethods = array();
+        $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers'))->getArrayCopy();
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+            $paymentApiMethods = array_map(function ($item) {
+                return $item->id;
+            }, $this->api->methods->all()->getArrayCopy());
+            $orderApiMethods = array_map(function ($item) {
+                return $item->id;
+            }, $apiMethods);
+            $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
         }
         if (!count($apiMethods)) {
             return array();
@@ -4834,11 +4835,28 @@ class Mollie extends PaymentModule
     {
         @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
-
-        $methodsForConfig = $this->getMethodsForConfig();
+        try {
+            $methodsForConfig = $this->getMethodsForConfig();
+        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+            return array(
+                'success' => false,
+                'methods' => null,
+                'message' => $e->getMessage(),
+            );
+        } catch (PrestaShopException $e) {
+            return array(
+                'success' => false,
+                'methods' => null,
+                'message' => $e->getMessage(),
+            );
+        }
         Configuration::updateValue(static::MOLLIE_METHODS_LAST_CHECK, time());
-        if (empty($methodsForConfig)) {
-            return array('success' => false, 'methods' => array());
+        if (!is_array($methodsForConfig)) {
+            return array(
+                'success' => false,
+                'methods' => null,
+                'message' => $this->l('No payment methods found'),
+            );
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
@@ -4878,7 +4896,7 @@ class Mollie extends PaymentModule
             }
         }
 
-        if ($shouldSave) {
+        if ($shouldSave && !empty($dbMethods)) {
             Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
         }
 

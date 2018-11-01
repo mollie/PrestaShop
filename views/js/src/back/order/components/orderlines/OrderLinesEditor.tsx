@@ -109,9 +109,7 @@ class OrderLinesEditor extends Component<IProps> {
       newLines.splice(newLineIndex, 1);
     }
     const stateLines = _.cloneDeep(newLines);
-    this.setState(() => ({
-      lines: stateLines,
-    }));
+    this.setState({lines: stateLines});
     _.forEach(newLines, (newLine) => {
       if (typeof newLine.quantity === 'undefined') {
         return;

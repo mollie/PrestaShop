@@ -34,16 +34,22 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
 
 interface IProps {
   translations: ITranslations,
   config: IMollieMethodConfig,
+  message: string,
   retry: Function,
 }
 
-class Error extends Component<IProps> {
+const Code = styled.code`
+  font-size: 16px!important;
+` as any;
+
+class PaymentMethodsError extends Component<IProps> {
   render() {
-    const { translations, config: { legacy }, retry } = this.props;
+    const { translations, config: { legacy }, retry, message } = this.props;
 
     return (
       <div
@@ -54,6 +60,7 @@ class Error extends Component<IProps> {
         })}
       >
         {translations.unableToLoadMethods}&nbsp;
+        {message && <><br/><br/><span>{translations.error}: <Code>{message}</Code></span><br/><br/></>}
         <button
           className={classnames({
             'btn': !legacy,
@@ -72,4 +79,4 @@ class Error extends Component<IProps> {
   }
 }
 
-export default Error;
+export default PaymentMethodsError;

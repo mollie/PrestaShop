@@ -111,9 +111,7 @@ class ShipmentTrackingEditor extends Component<IProps> {
 
   updateSkipTracking = (skipTracking: boolean): void => {
     const { edited } = this.props;
-    this.setState(() => ({
-      skipTracking,
-    }));
+    this.setState({ skipTracking });
     edited(skipTracking ? null : {
       carrier: this.state.carrier,
       code: this.state.code,
@@ -125,10 +123,10 @@ class ShipmentTrackingEditor extends Component<IProps> {
     const { edited } = this.props;
     const { code, url } = this.state;
 
-    this.setState(() => ({
+    this.setState({
       carrier,
       carrierChanged: true,
-    }));
+    });
     edited({
       carrier,
       code,
@@ -140,10 +138,10 @@ class ShipmentTrackingEditor extends Component<IProps> {
     const { edited } = this.props;
     const { carrier, url } = this.state;
 
-    this.setState(() => ({
+    this.setState({
       code,
       codeChanged: true,
-    }));
+    });
     edited({
       carrier,
       code,
@@ -155,14 +153,8 @@ class ShipmentTrackingEditor extends Component<IProps> {
     const { edited } = this.props;
     const { code, carrier } = this.state;
 
-    this.setState(() => ({
-      url,
-    }));
-    edited({
-      carrier,
-      code,
-      url,
-    });
+    this.setState({ url });
+    edited({ carrier, code, url });
   };
 
   render() {

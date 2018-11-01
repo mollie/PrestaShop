@@ -99,14 +99,12 @@ class RefundForm extends Component<IProps> {
     });
     if (input) {
       try {
-        this.setState(() => ({ loading: true }));
+        this.setState({ loading: true });
         const { success = false, payment = null } = await refundPayment(transactionId, amount);
         if (success) {
           if (payment) {
             dispatchUpdatePayment(payment);
-            this.setState(() => ({
-              refundInput: '',
-            }));
+            this.setState({ refundInput: '' });
           }
         } else {
           swal({
@@ -118,7 +116,7 @@ class RefundForm extends Component<IProps> {
       } catch (e) {
         console.error(e);
       } finally {
-        this.setState(() => ({ loading: false }));
+        this.setState({ loading: false });
       }
     }
   };
@@ -145,7 +143,7 @@ class RefundForm extends Component<IProps> {
               placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
               disabled={loading}
               value={refundInput}
-              onChange={({ target: { value: refundInput } }: any) => this.setState(() => ({ refundInput }))}
+              onChange={({ target: { value: refundInput } }: any) => this.setState({ refundInput })}
               style={{
                 width: '80px',
                 height: '15px',
@@ -185,7 +183,7 @@ class RefundForm extends Component<IProps> {
                   placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
                   disabled={loading}
                   value={refundInput}
-                  onChange={({ target: { value: refundInput } }: any) => this.setState(() => ({ refundInput }))}
+                  onChange={({ target: { value: refundInput } }: any) => this.setState({ refundInput })}
                   style={{ width: '80px' }}
                 />
                 <PartialRefundButton
