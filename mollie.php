@@ -3912,7 +3912,7 @@ class Mollie extends PaymentModule
                             if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
                                 $error = sprintf(Tools::displayError('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart'), (int) $rule->id, $ruleName);
                             } else {
-                                $error = $this->translate('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart', array($ruleName, (int) $rule->id), 'Admin.Payment.Notification');
+                                $error = $this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart', array($ruleName, (int) $rule->id), 'Admin.Payment.Notification');
                             }
                             Logger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
                         }
@@ -4056,7 +4056,7 @@ class Mollie extends PaymentModule
                 $order = $orderList[$key];
                 if (isset($order->id)) {
                     if (!$secureKey) {
-                        $message .= '<br />'.$this->translate('Warning: the secure key is empty, check your payment account before validation', array(), 'Admin.Payment.Notification');
+                        $message .= '<br />'.$this->l('Warning: the secure key is empty, check your payment account before validation');
                     }
                     // Optional message to attach to this order
                     if (isset($message) & !empty($message)) {
@@ -4192,7 +4192,7 @@ class Mollie extends PaymentModule
                                     }
                                 }
                                 if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                                    $customizationText .= $this->translate('%d image(s)', array(count($customization['datas'][Product::CUSTOMIZE_FILE])), 'Admin.Payment.Notification').'<br />';
+                                    $customizationText .= sprintf($this->l('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])).'<br />';
                                 }
                                 $customizationQuantity = (int) $customization['quantity'];
                                 $productVarTpl['customization'][] = array(
@@ -4283,7 +4283,7 @@ class Mollie extends PaymentModule
                                 Mail::Send(
                                     (int) $order->id_lang,
                                     'voucher',
-                                    $this->translate(
+                                    $this->l(
                                         'New voucher for your order %s',
                                         array($order->reference),
                                         'Emails.Subject',
@@ -4347,7 +4347,7 @@ class Mollie extends PaymentModule
                         $customerMessage->message = $updateMessage->message;
                         $customerMessage->private = 1;
                         if (!$customerMessage->add()) {
-                            $this->context->controller->errors[] = $this->translate('An error occurred while saving message', array(), 'Admin.Payment.Notification');
+                            $this->context->controller->errors[] = $this->l('An error occurred while saving message', array(), 'Admin.Payment.Notification');
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
@@ -4430,7 +4430,7 @@ class Mollie extends PaymentModule
                             '{invoice_other}'        => $invoice->other,
                             '{order_name}'           => $order->getUniqReference(),
                             '{date}'                 => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->translate('No carrier', array(), 'Admin.Payment.Notification') : $carrier->name,
+                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier', array(), 'Admin.Payment.Notification') : $carrier->name,
                             '{payment}'              => Tools::substr($order->payment, 0, 255),
                             '{products}'             => $productListHtml,
                             '{products_txt}'         => $productListTxt,
@@ -4466,7 +4466,7 @@ class Mollie extends PaymentModule
                             Mail::Send(
                                 (int) $order->id_lang,
                                 'order_conf',
-                                $this->translate(
+                                $this->l(
                                     'Order confirmation',
                                     array(),
                                     'Emails.Subject',
@@ -4509,7 +4509,7 @@ class Mollie extends PaymentModule
                         );
                     }
                 } else {
-                    $error = $this->translate('Order creation failed', array(), 'Admin.Payment.Notification');
+                    $error = $this->l('Order creation failed', array(), 'Admin.Payment.Notification');
                     Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
@@ -4524,29 +4524,9 @@ class Mollie extends PaymentModule
 
             return true;
         } else {
-            $error = $this->translate('Cart cannot be loaded or an order has already been placed using this cart', array(), 'Admin.Payment.Notification');
+            $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart', array(), 'Admin.Payment.Notification');
             Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
-        }
-    }
-
-    /**
-     * Hybrid 1.6/1.7 translation function
-     *
-     * @param string $text
-     * @param array?  $variables (1.7 only)
-     * @param string? $domain (1.7 only)
-     *
-     * @return string
-     *
-     * @since 3.3.0
-     */
-    protected function translate($text)
-    {
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-            return $this->l($text);
-        } else {
-            return call_user_func_array(array($this, 'trans'), func_get_args());
         }
     }
 
@@ -5424,5 +5404,19 @@ class Mollie extends PaymentModule
         }
 
         return $statesEnabled;
+    }
+
+    /**
+     * Removed, PS 1.7 translation system does not work for hybrid modules, yet.
+     *
+     * @param $text
+     *
+     * @return string
+     *
+     * @deprecated 3.4.0
+     */
+    public function translate($text)
+    {
+        return $this->l($text);
     }
 }
