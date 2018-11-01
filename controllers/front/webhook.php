@@ -135,7 +135,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $this->setCountryContextIfNotSet($apiPayment);
 
-        $orderId = (int) Order::getOrderByCartId($apiPayment->metadata->cart_id);
+        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>')
+            ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
+            : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order && ($apiPayment->isRefunded() || $apiPayment->isCanceled())
@@ -186,7 +188,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     $cart->secure_key
                 );
 
-                $orderId = Order::getOrderByCartId($apiPayment->metadata->cart_id);
+                $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>')
+                    ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
+                    : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
             }
         }
 

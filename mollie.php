@@ -5575,6 +5575,8 @@ class Mollie extends PaymentModule
         $hostParts = explode('.', $host);
         $tld = end($hostParts);
 
-        return in_array($tld, array('localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'));
+        return in_array($tld, array('localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'))
+            || (filter_var($host, FILTER_VALIDATE_IP)
+                && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
     }
 }

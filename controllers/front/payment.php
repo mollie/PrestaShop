@@ -202,7 +202,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $customer->secure_key
             );
 
-            $orderId = Order::getOrderByCartId((int) $cart->id);
+            $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>')
+                ? Order::getIdByCartId((int) $cart->id)
+                : Order::getOrderByCartId((int) $cart->id);
 
             try {
                 Db::getInstance()->insert(
