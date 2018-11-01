@@ -56,5 +56,16 @@ function upgrade_module_3_1_5()
     Configuration::updateGlobalValue('MOLLIE_STATUS_CANCELED', Configuration::get('MOLLIE_STATUS_CANCELLED'));
     Configuration::deleteByName('MOLLIE_STATUS_CANCELLED');
 
+    // Major changes, need to clear the cache
+    if (!isset(Mollie::$cacheEmpty)) {
+        if (method_exists('Tools', 'clearCache')) {
+            Tools::clearAllCache();
+        }
+        if (method_exists('Tools', 'clearCache')) {
+            Tools::clearCache();
+        }
+        Mollie::$cacheEmpty = true;
+    }
+
     return true;
 }

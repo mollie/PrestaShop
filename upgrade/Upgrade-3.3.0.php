@@ -65,5 +65,16 @@ function upgrade_module_3_3_0($module)
 
     Configuration::updateValue('MOLLIE_API', 'payments');
 
+    // Major changes, need to clear the cache
+    if (!isset(Mollie::$cacheEmpty)) {
+        if (method_exists('Tools', 'clearCache')) {
+            Tools::clearAllCache();
+        }
+        if (method_exists('Tools', 'clearCache')) {
+            Tools::clearCache();
+        }
+        Mollie::$cacheEmpty = true;
+    }
+
     return true;
 }
