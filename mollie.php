@@ -129,7 +129,6 @@ class Mollie extends PaymentModule
     const MOLLIE_TRACKING_URLS = 'MOLLIE_TRACKING_URLS';
     const MOLLIE_AUTO_SHIP_MAIN = 'MOLLIE_AS_MAIN';
     const MOLLIE_AUTO_SHIP_STATUSES = 'MOLLIE_AS_STATUSES';
-    const MOLLIE_USE_PROFILE_WEBHOOK = 'MOLLIE_USE_PROFILE_WEBHOOK';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
     const MOLLIE_STATUS_CANCELED = 'MOLLIE_STATUS_CANCELED';
@@ -395,7 +394,6 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_DEBUG_LOG);
         Configuration::deleteByName(static::MOLLIE_QRENABLED);
         Configuration::deleteByName(static::MOLLIE_DISPLAY_ERRORS);
-        Configuration::deleteByName(static::MOLLIE_USE_PROFILE_WEBHOOK);
         Configuration::deleteByName(static::MOLLIE_STATUS_OPEN);
         Configuration::deleteByName(static::MOLLIE_STATUS_PAID);
         Configuration::deleteByName(static::MOLLIE_STATUS_CANCELED);
@@ -443,7 +441,6 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
         Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateGlobalValue(static::MOLLIE_USE_PROFILE_WEBHOOK, false);
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
@@ -2385,13 +2382,15 @@ class Mollie extends PaymentModule
                     true
                 )
             ),
-            'webhookUrl'  => $context->link->getModuleLink(
+        );
+        if (!static::isLocalDomain()) {
+            $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
                 'webhook',
                 array(),
                 true
-            ),
-        );
+            );
+        }
 
         $paymentData['metadata'] = array(
             'cart_id'         => $cartId,
@@ -5540,8 +5539,10 @@ class Mollie extends PaymentModule
      *
      * @return string
      *
-     * @since 3.3.2
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      *
+     * @since 3.3.2
      */
     public static function getTabNameByClass($class, $idLang = null)
     {
@@ -5555,5 +5556,25 @@ class Mollie extends PaymentModule
         }
 
         return $tab->name[$idLang];
+    }
+
+    /**
+     * Check if local domain
+     *
+     * @param string|null $host
+     *
+     * @return bool
+     *
+     * @since 3.3.2
+     */
+    public static function isLocalDomain($host = null)
+    {
+        if (!$host) {
+            $host = Tools::getHttpHost(false, false, true);
+        }
+        $hostParts = explode('.', $host);
+        $tld = end($hostParts);
+
+        return in_array($tld, array('localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'));
     }
 }

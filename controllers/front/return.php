@@ -56,6 +56,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      * Unset the cart id from cookie if the order exists
      *
      * @throws PrestaShopException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     public function init()
     {
@@ -78,6 +79,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     public function initContent()
     {
@@ -116,12 +118,13 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         // Simulate webhook call (Orders API does not call the webhook on cancel)
         if ($cart instanceof Cart
             && !$cart->orderExists()
-            && Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API
+            && (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API || Mollie::isLocalDomain())
             && isset($data['mollie_info']['transaction_id'])
         ) {
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($data['mollie_info']['transaction_id']);
             $data['mollie_info'] = Mollie::getPaymentBy('order_id', $data['mollie_info']['order_id']);
+            Tools::redirectLink($_SERVER['REQUEST_URI']);
         }
 
         if (isset($data['auth']) && $data['auth']) {

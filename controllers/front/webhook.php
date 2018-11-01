@@ -219,7 +219,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function saveOrderTransactionData($molliePaymentId, $molliePaymentMethod, $orderId)
+    protected function saveOrderTransactionData($molliePaymentId, $molliePaymentMethod, $orderId)
     {
         // retrieve ALL payments of order.
         // in the case of a cancel or expired on banktransfer, this will fire too.
@@ -278,7 +278,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function setCountryContextIfNotSet($payment)
+    protected function setCountryContextIfNotSet($payment)
     {
         if (empty($this->context->country) || !$this->context->country->active) {
             if ($payment->metadata->cart_id) {

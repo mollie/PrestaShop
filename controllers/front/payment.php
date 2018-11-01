@@ -238,7 +238,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function validate($cart, $customer)
+    protected function validate($cart, $customer)
     {
         if (!$cart->id_customer || !$cart->id_address_delivery || !$cart->id_address_invoice || !$this->module->active) {
             // We be like: how did you even get here?
@@ -274,12 +274,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
-    private function createPayment($data)
+    protected function createPayment($data)
     {
-        if (Configuration::get(Mollie::MOLLIE_USE_PROFILE_WEBHOOK)) {
-            unset($data['webhookUrl']);
-        }
-
         /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
         $payment = $this->module->api->{Mollie::selectedApi()}->create($data);
 
