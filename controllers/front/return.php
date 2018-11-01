@@ -123,8 +123,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         ) {
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($data['mollie_info']['transaction_id']);
-            $data['mollie_info'] = Mollie::getPaymentBy('order_id', $data['mollie_info']['order_id']);
-            Tools::redirectLink($_SERVER['REQUEST_URI']);
+            $data['mollie_info'] = Mollie::getPaymentBy('transaction_id', $data['mollie_info']['transaction_id']);
         }
 
         if (isset($data['auth']) && $data['auth']) {
