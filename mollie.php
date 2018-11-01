@@ -500,6 +500,30 @@ class Mollie extends PaymentModule
                 $module
             );
         }
+        if ($this->checkTemplateCompilation()) {
+            $this->context->smarty->assign(array(
+                'settingKey'   => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Template compilation', array(), 'Admin.Advparameters.Feature')
+                    : Translate::getAdminTranslation('Template compilation', 'AdminPerformance'),
+                'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Never recompile template files', array(), 'Admin.Advparameters.Feature')
+                    : Translate::getAdminTranslation('Never recompile template files', 'AdminPerformance'),
+                'settingsPage' => static::getMenuLocation('AdminPerformance'),
+            ));
+            $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
+        }
+        if ($this->checkStaleSmartyCache()) {
+            $this->context->smarty->assign(array(
+                'settingKey'   => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Clear cache', array(), 'Admin.Advparameters.Feature')
+                    : Translate::getAdminTranslation('Clear cache', 'AdminPerformance'),
+                'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Never clear cache files', array(), 'Admin.Advparameters.Feature')
+                    : Translate::getAdminTranslation('Never clear cache files', 'AdminPerformance'),
+                'settingsPage' => static::getMenuLocation('AdminPerformance'),
+            ));
+            $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+        }
 
         $this->checkOrderStatusHook();
 
@@ -4556,6 +4580,32 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * Check if template compilation has been set to "never recompile".
+     * This is known to cause issues.
+     *
+     * @return bool
+     *
+     * @since 3.3.2
+     */
+    protected function checkTemplateCompilation()
+    {
+        return !Configuration::get('PS_SMARTY_FORCE_COMPILE');
+    }
+
+    /**
+     * Check if the Smarty cache has been enabled and revalidates.
+     * If it does not, there's a chance it will serve a stale payment method list.
+     *
+     * @return bool
+     *
+     * @since 3.3.2
+     */
+    protected function checkStaleSmartyCache()
+    {
+        return Configuration::get('PS_SMARTY_CACHE') && Configuration::get('PS_SMARTY_CLEAR_CACHE') === 'never';
+    }
+
+    /**
      * Find overrides
      *
      * @return array Overrides
@@ -5436,5 +5486,74 @@ class Mollie extends PaymentModule
     public function translate($text)
     {
         return $this->l($text);
+    }
+
+    /**
+     * Get page location
+     *
+     * @param string   $class
+     * @param int|null $idLang
+     *
+     * @return string
+     *
+     * @since 3.3.2
+     */
+    public static function getMenuLocation($class, $idLang = null)
+    {
+        if (!$idLang) {
+            $idLang = Context::getContext()->language->id;
+        }
+
+        return implode(' > ', array_reverse(array_unique(array_map(function ($tab) use ($idLang) {
+            return $tab->name[$idLang];
+        }, static::getTabTreeByClass($class)))));
+    }
+
+    /**
+     * Get the entire tab tree by tab class name
+     *
+     * @param string $class
+     *
+     * @return Tab[]|null
+     *
+     * @since 3.3.2
+     */
+    public static function getTabTreeByClass($class)
+    {
+        $tabs = [];
+        $depth = 10;
+        $tab = Tab::getInstanceFromClassName($class);
+        while (Validate::isLoadedObject($tab) && $depth > 0) {
+            $depth--;
+            $tabs[] = $tab;
+            $tab = new Tab($tab->id_parent);
+        }
+
+        return $tabs;
+    }
+
+    /**
+     * Get tab name by tab class
+     *
+     * @param string   $class
+     * @param int|null $idLang
+     *
+     * @return string
+     *
+     * @since 3.3.2
+     *
+     */
+    public static function getTabNameByClass($class, $idLang = null)
+    {
+        $tab = Tab::getInstanceFromClassName($class);
+        if (!$tab instanceof Tab) {
+            throw new InvalidArgumentException('Tab not found');
+        }
+
+        if (!$idLang) {
+            $idLang = Context::getContext()->language->id;
+        }
+
+        return $tab->name[$idLang];
     }
 }
