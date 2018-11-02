@@ -37,6 +37,8 @@ if (!defined('_PS_VERSION_')) {
     return;
 }
 
+require_once dirname(__FILE__).'/../../mollie.php';
+
 /**
  * Class MolliePaymentModuleFrontController
  *
@@ -128,6 +130,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Cart::BOTH
         );
         $amount = $originalAmount;
+        if (!$amount) {
+            Tools::redirectLink('index.php');
+        }
 
         // Prepare payment
         $paymentData = Mollie::getPaymentData(

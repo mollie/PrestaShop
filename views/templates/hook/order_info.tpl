@@ -35,6 +35,7 @@
 <div id="mollie_order"></div>
 <script type="text/javascript">
   (function () {
+    window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
     window.MollieModule.back.orderInfo(
       "#mollie_order",
       {

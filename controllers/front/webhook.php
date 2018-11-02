@@ -37,6 +37,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once dirname(__FILE__).'/../../mollie.php';
+
 /**
  * Class MollieReturnModuleFrontController
  * @method setTemplate
@@ -67,6 +69,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     public function initContent()
     {
@@ -83,6 +86,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     protected function executeWebhook()
     {
@@ -98,7 +102,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param string $transactionId
+     * @param string|\MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $transaction
      *
      * @return string
      *
@@ -106,12 +110,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
      */
-    public function processTransaction($transactionId)
+    public function processTransaction($transaction)
     {
-        if (empty($transactionId)) {
+        if (empty($transaction)) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                 Logger::addLog(__METHOD__.' said: Received webhook request without proper transaction ID.', Mollie::WARNING);
             }
@@ -119,19 +124,24 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'NO ID';
         }
 
-        try {
-            /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
-            $apiToUse = Tools::substr($transactionId, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
-            $apiPayment = $this->module->api->{$apiToUse}->get($transactionId);
-        } catch (Exception $e) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Could not retrieve payment details for transaction_id "'.$transactionId.'". Reason: '.$e->getMessage(), Mollie::WARNING);
+        if (!$transaction instanceof \MollieModule\Mollie\Api\Resources\Payment
+            && !$transaction instanceof \MollieModule\Mollie\Api\Resources\Order
+        ) {
+            try {
+                /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
+                $apiToUse = Tools::substr($transaction, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
+                $apiPayment = $this->module->api->{$apiToUse}->get($transaction);
+            } catch (Exception $e) {
+                if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
+                    Logger::addLog(__METHOD__.' said: Could not retrieve payment details for transaction_id "'.$transaction.'". Reason: '.$e->getMessage(), Mollie::WARNING);
+                }
+
+                return 'NOT OK';
             }
-
-            return 'NOT OK';
+        } else {
+            $apiPayment = $transaction;
         }
-
-        $psPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
+        $psPayment = Mollie::getPaymentBy('transaction_id', $transaction);
 
         $this->setCountryContextIfNotSet($apiPayment);
 
@@ -140,11 +150,20 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
-            if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order && ($apiPayment->isRefunded() || $apiPayment->isCanceled())
-                || ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Payment && ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()))
+            if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order
+                && ($apiPayment->calculateAmountRefunded()->value > 0 || $apiPayment->isCanceled())
             ) {
+                /** @var \MollieModule\Mollie\Api\Resources\Order $apiPayment */
+                if ((float) $apiPayment->amount->value - (float) $apiPayment->calculateAmountCanceled()->value <= 0) {
+                    $this->module->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\OrderStatus::STATUS_CANCELED);
+                } elseif ((float) $apiPayment->amountRefunded->value >= (float) $apiPayment->amount->value) {
+                    $this->module->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                } else {
+                    $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
+                }
+            } elseif ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Payment && ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks())) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                    && (float) $apiPayment->settlementAmount->value - (float) $apiPayment->amountRefunded->value > 0
+                    && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
                 ) {
                     $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
                 } else {
@@ -198,15 +217,15 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);
 
-        if (!$this->savePaymentStatus($transactionId, $apiPayment->status, $orderId)) {
+        if (!$this->savePaymentStatus($transaction, $apiPayment->status, $orderId)) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transactionId.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
+                Logger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
             }
         }
 
         // Log successful webhook requests in extended log mode only
         if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ALL) {
-            Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transactionId, Mollie::NOTICE);
+            Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction, Mollie::NOTICE);
         }
 
         return 'OK';
@@ -281,6 +300,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     protected function setCountryContextIfNotSet($payment)
     {

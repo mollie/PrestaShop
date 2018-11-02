@@ -257,7 +257,7 @@ class OrderLinesTable extends Component<IProps> {
               <tr key={line.id} style={{ marginBottom: '100px' }}>
                 <td><strong>{line.quantity}x</strong> {line.name}</td>
                 <td>{line.status}</td>
-                {viewportWidth < 1390 && <td>{line.quantityShipped} / {line.quantityShipped} / {line.quantityCanceled}</td>}
+                {viewportWidth < 1390 && <td>{line.quantityShipped} / {line.quantityCanceled} / {line.quantityRefunded}</td>}
                 {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
                 {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
                 {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}

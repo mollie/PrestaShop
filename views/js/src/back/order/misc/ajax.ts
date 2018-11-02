@@ -81,7 +81,7 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
       amount,
     });
     if (!data.success && typeof data.message === 'string') {
-      throw data.message;
+      throw data.detailed ? data.detailed : data.message;
     }
 
     return _.defaults(data, { success: false, payment: null });
@@ -106,7 +106,7 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
       orderLines,
     });
     if (!data.success && typeof data.message === 'string') {
-      throw data.message;
+      throw data.detailed ? data.detailed : data.message;
     }
     return _.defaults(data, { success: false, order: null });
   } catch (e) {
@@ -130,7 +130,7 @@ export const cancelOrder = async (transactionId: string, orderLines?: Array<IMol
       orderLines,
     });
     if (!data.success && typeof data.message === 'string') {
-      throw data.message;
+      throw data.detailed ? data.detailed : data.message;
     }
     return _.defaults(data, { success: false, order: null });
   } catch (e) {
@@ -155,7 +155,7 @@ export const shipOrder = async (transactionId: string, orderLines?: Array<IMolli
       tracking,
     });
     if (!data.success && typeof data.message === 'string') {
-      throw data.message;
+      throw data.detailed ? data.detailed : data.message;
     }
 
     return _.defaults(data, { success: false, order: null });

@@ -475,6 +475,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
+     * @throws Adapter_Exception
      */
     public function getContent()
     {
@@ -1263,9 +1264,9 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int       $order
-     * @param int       $status
-     * @param bool|null $useExistingPayment
+     * @param int        $order
+     * @param string|int $statusId
+     * @param bool|null  $useExistingPayment
      *
      * @return void
      *
@@ -1274,18 +1275,43 @@ class Mollie extends PaymentModule
      * @throws PrestaShopException
      *
      * @since 3.3.2 Accept both Order ID and Order object
+     * @since 3.3.2 Accept both Mollie status string and PrestaShop status ID
      * @since 3.3.2 $useExistingPayment option
      */
-    public function setOrderStatus($order, $status, $useExistingPayment = null)
+    public function setOrderStatus($order, $statusId, $useExistingPayment = null)
     {
-        if (empty($this->statuses[$status])) {
-            return;
+        if (is_string($statusId)) {
+            $status = $statusId;
+            if (empty($this->statuses[$statusId])) {
+                return;
+            }
+            $statusId = (int) $this->statuses[$statusId];
+        } else {
+            $status = '';
+            foreach ($this->statuses as $mollieStatus => $prestaShopStatusId) {
+                if ((int) $prestaShopStatusId === $statusId) {
+                    $status = $mollieStatus;
+                    break;
+                }
+            }
         }
-        $statusId = (int) $this->statuses[$status];
-        if (is_int($order) || is_string($order)) {
+
+        if (!$order instanceof Order) {
             $order = new Order((int) $order);
         }
-        if (!Validate::isLoadedObject($order) || $statusId === (int) $order->current_state) {
+
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        $history = array_map(function ($item) {
+            return (int) $item['id_order_state'];
+        }, $order->getHistory(Context::getContext()->language->id));
+        if (!Validate::isLoadedObject($order)
+            || $statusId === (int) $order->current_state
+            || in_array($statusId, $history)
+            || !$status
+        ) {
             return;
         }
         if ($useExistingPayment === null) {
@@ -1296,6 +1322,7 @@ class Mollie extends PaymentModule
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
+        Logger::addLog($status);
         if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
             Logger::addLog('addWithEmail');
             $history->addWithemail();
@@ -1685,12 +1712,13 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param string     $transactionId
-     * @param array      $lines
+     * @param string $transactionId
+     * @param array  $lines
      *
      * @return array
      *
      * @since 3.3.0
+     * @throws ErrorException
      */
     protected function doCancelOrderLines($transactionId, $lines = array())
     {
@@ -1700,9 +1728,11 @@ class Mollie extends PaymentModule
             if ($lines === array()) {
                 $order->cancel();
             } else {
+                $cancelableLines = array();
                 foreach ($lines as $line) {
-                    $order->cancelLine($line['id'], array('quantity' => $line['quantity']));
+                    $cancelableLines[] = array('id' => $line['id'], 'quantity' => $line['quantity']);
                 }
+                $order->cancelLines(array('lines' => $cancelableLines));
             }
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             return array(
@@ -2274,7 +2304,7 @@ class Mollie extends PaymentModule
             $roundedTotalWithoutTax = round($cartItem['total'], 2);
             $roundedTax = round($cartItem['total_wt'] - $cartItem['total'], 2);
             $quantity = (int) $cartItem['cart_quantity'];
-            if ($quantity <= 0) {
+            if ($quantity <= 0 || $cartItem['price_wt'] <= 0) {
                 continue;
             }
 
@@ -2327,14 +2357,16 @@ class Mollie extends PaymentModule
         }
         $shippingTaxRate = $totalAmount / $totalQuantity;
 
-        $aItems[] = array(
-            'name'        => 'Shipping',
-            'quantity'    => 1,
-            'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')),
-            'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')),
-            'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax - ($totalShippingCostsWithTax / (1 + $shippingTaxRate / 100)), 2, '.', '')),
-            'vatRate'     => number_format($shippingTaxRate, 2, '.', ''),
-        );
+        if ($totalShippingCostsWithTax > 0) {
+            $aItems[] = [
+                'name'        => 'Shipping',
+                'quantity'    => 1,
+                'unitPrice'   => ['currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')],
+                'totalAmount' => ['currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax, 2, '.', '')],
+                'vatAmount'   => ['currency' => $oCurrency->iso_code, 'value' => number_format($totalShippingCostsWithTax - ($totalShippingCostsWithTax / (1 + $shippingTaxRate / 100)), 2, '.', '')],
+                'vatRate'     => number_format($shippingTaxRate, 2, '.', ''),
+            ];
+        }
 
         return $aItems;
     }
@@ -4730,17 +4762,32 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $transactionId
+     * @param bool   $process Process the new payment/order status
      *
      * @return array|null
      *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
+     * @since 3.3.2 $process option
      */
-    public function getFilteredApiPayment($transactionId)
+    public function getFilteredApiPayment($transactionId, $process = false)
     {
         /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
         $payment = $this->api->payments->get($transactionId);
+        if ($process) {
+            if (!Tools::isSubmit('module')) {
+                $_GET['module'] = $this->name;
+            }
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($payment);
+        }
+
         if ($payment && method_exists($payment, 'refunds')) {
             $refunds = $payment->refunds();
             if (empty($refunds)) {
@@ -4788,18 +4835,33 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $transactionId
+     * @param bool   $process       Process the new payment/order status
      *
      * @return array|null
      *
+     * @throws Adapter_Exception
      * @throws ErrorException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
+     * @since 3.3.2 $process option
      */
-    public function getFilteredApiOrder($transactionId)
+    public function getFilteredApiOrder($transactionId, $process = false)
     {
         /** @var \MollieModule\Mollie\Api\Resources\Order $order */
         $order = $this->api->orders->get($transactionId);
+        if ($process) {
+            if (!Tools::isSubmit('module')) {
+                $_GET['module'] = $this->name;
+            }
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($order);
+        }
+
         if ($order && method_exists($order, 'refunds')) {
             $refunds = $order->refunds();
             if (empty($refunds)) {
@@ -4975,7 +5037,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success' => isset($status['status']) && $status['status'] === 'success',
-                            'payment' => static::getFilteredApiPayment($input['transactionId']),
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment()),
                         );
                     case 'retrieve':
                         // Check order view permissions
@@ -4987,7 +5049,7 @@ class Mollie extends PaymentModule
                         }
                         return array(
                             'success' => true,
-                            'payment' => static::getFilteredApiPayment($input['transactionId'])
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment())
                         );
                     default:
                         return array('success' => false);
@@ -5010,7 +5072,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success'  => true,
-                            'order'    => static::getFilteredApiOrder($input['transactionId']),
+                            'order'    => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment()),
                             'tracking' => $tracking,
                         );
                     case 'ship':
@@ -5022,7 +5084,7 @@ class Mollie extends PaymentModule
                             );
                         }
                         $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
@@ -5032,7 +5094,7 @@ class Mollie extends PaymentModule
                             );
                         }
                         $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
                     case 'cancel':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
@@ -5042,12 +5104,13 @@ class Mollie extends PaymentModule
                             );
                         }
                         $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'])));
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
                     default:
                         return array('success' => false);
                 }
             }
         } catch (Exception $e) {
+            Logger::addLog("Mollie module error: {$e->getMessage()}");
             return array('success' => false);
         }
 

@@ -68,6 +68,7 @@
         document.querySelector('head').appendChild(elem);
         elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
       }
+      window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
 
       function showBanks(event) {
         event.preventDefault();

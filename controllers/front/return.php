@@ -37,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once dirname(__FILE__).'/webhook.php';
+require_once dirname(__FILE__).'/../../mollie.php';
 
 /**
  * Class MollieReturnModuleFrontController

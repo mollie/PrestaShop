@@ -53,6 +53,7 @@
           return setTimeout(initMollieMethodsConfig, 100);
         }
 
+        window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
         window.MollieModule.back.methodConfig(
           '{$input.name|escape:'javascript':'UTF-8'}',
           {
@@ -99,6 +100,7 @@
               return setTimeout(initMollieCarrierConfig, 100);
             }
 
+            window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
             window.MollieModule.back.carrierConfig(
               '{$input.name|escape:'javascript':'UTF-8'}',
               {
@@ -141,6 +143,7 @@
             } else {
               if (window.MollieModule && typeof window.MollieModule.unmountComponentAtNode === 'function') {
                 window.MollieModule.unmountComponentAtNode(container);
+                window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
               }
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
               container.innerHTML = '<div class="info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
