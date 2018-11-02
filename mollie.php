@@ -2967,6 +2967,7 @@ class Mollie extends PaymentModule
             if (!isset(static::$methodCurrencies[$method['id']])
                 || !in_array($iso, static::$methodCurrencies[$method['id']])
                 || empty($method['enabled'])
+                || isset($method['available']) && !$method['available']
             ) {
                 unset($methods[$index]);
             }
