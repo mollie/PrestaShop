@@ -181,6 +181,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      *
      * @throws PrestaShopException
      * @throws Adapter_Exception
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws SmartyException
      */
     protected function processGetStatus()
     {
@@ -192,6 +194,16 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'status'  => false,
                 'amount'  => null,
             )));
+        }
+
+        if (Mollie::isLocalEnvironment()) {
+            /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
+            $apiPayment = $this->module->api->{Mollie::selectedApi()}->get(Tools::getValue('transaction_id'));
+            if (!Tools::isSubmit('module')) {
+                $_GET['module'] = $this->module->name;
+            }
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($apiPayment);
         }
 
         try {
@@ -250,6 +262,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws Exception
      */
     protected function processCartAmount()
     {

@@ -2400,6 +2400,11 @@ class Mollie extends PaymentModule
         $qrCode = false,
         $orderReference = ''
     ) {
+        if (!$orderReference) {
+            /** @var Mollie $module */
+            $module = Module::getInstanceByName('mollie');
+            $module->currentOrderReference = $orderReference = Order::generateReference();
+        }
         $description = static::generateDescriptionFromCart($cartId);
         $context = Context::getContext();
         $cart = new Cart($cartId);

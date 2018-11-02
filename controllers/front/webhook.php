@@ -140,6 +140,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             }
         } else {
             $apiPayment = $transaction;
+            $transaction = $apiPayment->id;
         }
         $psPayment = Mollie::getPaymentBy('transaction_id', $transaction);
 
