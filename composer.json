@@ -2,7 +2,7 @@
     "name": "mollie/prestashop",
     "description": "Mollie module for PrestaShop",
     "require": {
-        "firstred/mollie-api-php": "dev-master",
+        "firstred/mollie-api-php": "~2.1.5",
         "firstred/mollie-reseller-api": "~1.10.2",
         "ext-curl": "*",
         "ext-json": "*",
