@@ -2318,7 +2318,7 @@ class Mollie extends PaymentModule
                     'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['price_wt'], 2, '.', '')),
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'], 2, '.', '')),
                     'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2, '.', '')),
-                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2, '.', ''),
                 );
                 $remaining -= round($cartItem['price'], 2) * ($quantity - 1);
                 $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) * ($quantity - 1);
@@ -2328,7 +2328,7 @@ class Mollie extends PaymentModule
                     'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['price_wt'], 2) + $lastItemPriceDifference, 2, '.', '')),
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => number_format(round($cartItem['total_wt'], 2) + $lastItemPriceDifference, 2, '.', '')),
                     'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => number_format($cartItem['total_wt'] - $cartItem['total'], 2, '.', '')),
-                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2),
+                    'vatRate'     => number_format(($cartItem['total_wt'] / $cartItem['total']) * 100 - 100, 2, '.', ''),
                 );
                 $remaining -= round($cartItem['price'], 2) + $lastItemPriceDifference;
                 $remaining -= round($cartItem['price_wt'] - $cartItem['price'], 2) + $lastItemTaxDifference;
