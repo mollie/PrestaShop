@@ -2311,7 +2311,7 @@ class Mollie extends PaymentModule
             $lastItemPriceDifference = round($roundedTotalWithoutTax - round($cartItem['price'], 2) * $quantity, 2);
             $lastItemTaxDifference = round($roundedTax - round($cartItem['price_wt'] - $cartItem['price'], 2) * $quantity, 2);
             // If the last item has at least one cent difference on this cart line, then change the price of the last item
-            if ($lastItemPriceDifference >= 0.01 || $lastItemTaxDifference >= 0.01) {
+            if (($lastItemPriceDifference >= 0.01 || $lastItemTaxDifference >= 0.01) && $quantity > 1) {
                 $aItems[] = array(
                     'name'        => $cartItem['name'],
                     'quantity'    => $quantity - 1,
