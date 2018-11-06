@@ -1,8 +1,9 @@
-[Nederlands](README_NL.md) [Deutsch](README_DE.md) [Français](README_FR.md) [Español](README_ES.md)
+<p align="center">
+  <img src="https://info.mollie.com/hubfs/github/prestashop/logo.png" width="128" height="128"/>
+</p>
+<h1 align="center">Mollie for Prestashop</h1>
 
-![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
-
-# PrestaShop payment service provider [Mollie](https://www.mollie.com/). #
+> [Nederlands](README_NL.md) | [Deutsch](README_DE.md) | [Français](README_FR.md) | [Español](README_ES.md)
 
 Download the [Mollie](https://www.mollie.com/) module for PrestaShop. Mollie is a payment service provider (PSP) which provides your online store with the most popular online payment methods. 
 
