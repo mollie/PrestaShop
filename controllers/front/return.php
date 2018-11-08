@@ -203,7 +203,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      *
      * @since 3.3.2
      */
-    public function setTemplate($template, $params = [], $locale = null)
+    public function setTemplate($template, $params = array(), $locale = null)
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $template = "module:mollie/views/templates/front/17_{$template}";
