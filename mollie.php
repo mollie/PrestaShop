@@ -2605,7 +2605,7 @@ class Mollie extends PaymentModule
 
         // Compensate for order total rounding inaccuracies
         if (round($remaining, static::API_ROUNDING_PRECISION) < 0) {
-            foreach (array_reverse($aItems) as &$items) {
+            foreach (array_reverse($aItems) as $items) {
                 $totalAmount = array_sum(array_map(function ($item) {
                     return (float) $item['totalAmount']['value'];
                 }, $items));
