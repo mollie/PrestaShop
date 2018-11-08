@@ -94,6 +94,40 @@ class Mollie extends PaymentModule
         'klarnapaylater'  => array('eur'),
         'klarnasliceit'   => array('eur'),
     );
+    /**
+     * Default payment method availability
+     *
+     * empty array is global availability
+     *
+     * @var array
+     *
+     * @since 3.3.2
+     */
+    public static $defaultMethodAvailibity = array(
+        'creditcard'     => array(),
+        'klarnapaylater' => array('nl', 'de', 'at', 'fi'),
+        'klarnasliceit'  => array('de', 'at', 'fi'),
+        'ideal' => array('nl'),
+        'bancontact' => array('be'),
+        'paypal' => array(),
+        'giropay' => array('de'),
+        'eps' => array('at'),
+        'belfius' => array('be'),
+        'inghomepay' => array('be'),
+        'kbc' => array('be'),
+        'sofort' => array('de', 'at', 'ch', 'pl', 'it', 'es', 'be', 'nl'),
+        'giftcard' => array('nl'),
+        'bitcoin' => array(),
+        'paysafecard' => array(),
+        'banktransfer'    => array(),
+        'cartasi'         => array('it'),
+        'cartesbancaires' => array('fr'),
+        'directdebit'     => array(
+            'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
+            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'pt', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 'pt', 're',
+            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'es', 'se', 'ch', 'gb', 'uk',
+        ),
+    );
 
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
