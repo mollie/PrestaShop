@@ -51,6 +51,10 @@ if (!function_exists('\\Hough\\Psr7\\str')) {
 
 /**
  * Class Mollie
+ *
+ * // Translation detection:
+ * $this->l('Shipping);
+ * $this->l('Gift wrapping');
  */
 class Mollie extends PaymentModule
 {
@@ -2480,11 +2484,15 @@ class Mollie extends PaymentModule
     {
         /** @var Cart $cart */
         $cart = Context::getContext()->cart;
+        /** @var static $mollie */
+        $mollie = Module::getInstanceByName('mollie');
         $oCurrency = new Currency($cart->id_currency);
 
         $remaining = round($amount, static::API_ROUNDING_PRECISION);
-        $shipping = round($cart->getTotalShippingCost(), static::API_ROUNDING_PRECISION);
+        $shipping = round($cart->getTotalShippingCost(null, true), static::API_ROUNDING_PRECISION);
+        $shippingNoTax = round($cart->getTotalShippingCost(null, false), static::API_ROUNDING_PRECISION);
         $wrapping = round($cart->getGiftWrappingPrice(), static::API_ROUNDING_PRECISION);
+        $wrappingNoTax = round($cart->getGiftWrappingPrice(false), static::API_ROUNDING_PRECISION);
         $remaining = round($remaining - $shipping - $wrapping, static::API_ROUNDING_PRECISION);
         $cartItems = $cart->getProducts();
 
@@ -2561,33 +2569,6 @@ class Mollie extends PaymentModule
             }
         }
 
-        $totalWithTax = array_sum(array_map(function ($cartItem) {
-            return $cartItem['total_wt'];
-        }, $cartItems));
-        $totalWithoutTax = array_sum(array_map(function ($cartItem) {
-            return $cartItem['total'];
-        }, $cartItems));
-        $averageProductTax = round((($totalWithTax - $totalWithoutTax) / $totalWithTax) * 100, static::API_ROUNDING_PRECISION);
-        if ($shipping > 0) {
-            $aItems[] = [
-                'name'        => 'Shipping',
-                'quantity'    => 1,
-                'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
-                'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
-                'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping * $averageProductTax / ($averageProductTax + 100))),
-                'vatRate'     => $averageProductTax,
-            ];
-        }
-        if ($wrapping > 0) {
-            $aItems[] = [
-                'name'        => 'Gift wrapping',
-                'quantity'    => 1,
-                'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
-                'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
-                'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping * $averageProductTax / ($averageProductTax + 100))), 'vatRate'     => $averageProductTax,
-            ];
-        }
-
         // Compensate for order total rounding inaccuracies
         if (round($remaining, static::API_ROUNDING_PRECISION) < 0) {
             foreach (array_reverse($aItems) as &$items) {
@@ -2607,6 +2588,34 @@ class Mollie extends PaymentModule
             }
         }
 
+        if ($shipping > 0) {
+            $taxRate = (($shipping - $shippingNoTax) / $shippingNoTax) * 100;
+            $aItems['shipping'] = [
+                [
+                    'name'        => $mollie->l('Shipping'),
+                    'quantity'    => 1,
+                    'unitPrice'   => ['currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)],
+                    'totalAmount' => ['currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)],
+                    'vatAmount'   => ['currency' => $oCurrency->iso_code, 'value' => round($shipping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)],
+                    'vatRate'     => $taxRate,
+                ],
+            ];
+        }
+        if ($wrapping > 0) {
+            $taxRate = (($wrapping - $wrappingNoTax) / $wrappingNoTax) * 100;
+            $aItems['wrapping'] = [
+                [
+                    'name'        => $mollie->l('Gift wrapping'),
+                    'quantity'    => 1,
+                    'unitPrice'   => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)],
+                    'totalAmount' => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)],
+                    'vatAmount'   => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)],
+                    'vatRate'     => $taxRate,
+                ],
+            ];
+        }
+
+        // Ungroup all the cart lines, just one level
         $newItems = array();
         foreach ($aItems as &$items) {
             foreach ($items as &$item) {
