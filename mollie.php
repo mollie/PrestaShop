@@ -2624,29 +2624,29 @@ class Mollie extends PaymentModule
 
         if ($shipping > 0) {
             $taxRate = (($shipping - $shippingNoTax) / $shippingNoTax) * 100;
-            $aItems['shipping'] = [
-                [
+            $aItems['shipping'] = array(
+                array(
                     'name'        => $mollie->l('Shipping'),
                     'quantity'    => 1,
-                    'unitPrice'   => ['currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)],
-                    'totalAmount' => ['currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)],
-                    'vatAmount'   => ['currency' => $oCurrency->iso_code, 'value' => round($shipping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)],
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)),
                     'vatRate'     => $taxRate,
-                ],
-            ];
+                ),
+            );
         }
         if ($wrapping > 0) {
             $taxRate = (($wrapping - $wrappingNoTax) / $wrappingNoTax) * 100;
-            $aItems['wrapping'] = [
-                [
+            $aItems['wrapping'] = array(
+                array(
                     'name'        => $mollie->l('Gift wrapping'),
                     'quantity'    => 1,
-                    'unitPrice'   => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)],
-                    'totalAmount' => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)],
-                    'vatAmount'   => ['currency' => $oCurrency->iso_code, 'value' => round($wrapping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)],
+                    'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
+                    'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)),
                     'vatRate'     => $taxRate,
-                ],
-            ];
+                ),
+            );
         }
 
         // Ungroup all the cart lines, just one level
@@ -5742,11 +5742,14 @@ class Mollie extends PaymentModule
      *
      * @return Tab[]|null
      *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
      * @since 3.3.2
      */
     public static function getTabTreeByClass($class)
     {
-        $tabs = [];
+        $tabs = array();
         $depth = 10;
         $tab = Tab::getInstanceFromClassName($class);
         while (Validate::isLoadedObject($tab) && $depth > 0) {
