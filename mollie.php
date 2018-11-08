@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.2
      */
-    public static $defaultMethodAvailibity = array(
+    public static $defaultMethodAvailability = array(
         'creditcard'     => array(),
         'klarnapaylater' => array('nl', 'de', 'at', 'fi'),
         'klarnasliceit'  => array('de', 'at', 'fi'),
@@ -5721,6 +5721,9 @@ class Mollie extends PaymentModule
      * @param int|null $idLang
      *
      * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      *
      * @since 3.3.2
      */
