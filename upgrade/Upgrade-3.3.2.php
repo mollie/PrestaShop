@@ -42,7 +42,7 @@ if (!defined('_PS_VERSION_')) {
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  */
-function upgrade_module_3_3_0()
+function upgrade_module_3_3_2()
 {
     Configuration::deleteByName('MOLLIE_USE_PROFILE_WEBHOOK');
 
