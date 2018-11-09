@@ -784,6 +784,7 @@ class Mollie extends PaymentModule
         $descriptionStatus = $this->l('`%s` payments get status `%s`');
         $messageMail = $this->l('Send mails when %s');
         $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
+        $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
         $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
         $statuses = array();
         foreach ($this->statuses as $name => $val) {
@@ -2607,7 +2608,7 @@ class Mollie extends PaymentModule
 
         // Compensate for order total rounding inaccuracies
         if (round($remaining, static::API_ROUNDING_PRECISION) < 0) {
-            foreach (array_reverse($aItems) as $items) {
+            foreach (array_reverse($aItems) as $index => $items) {
                 $totalAmount = array_sum(array_map(function ($item) {
                     return (float) $item['totalAmount']['value'];
                 }, $items));
@@ -2619,7 +2620,7 @@ class Mollie extends PaymentModule
                     continue;
                 }
 
-                $items = static::spreadCartLineGroup($items);
+                $aItems[(count($aItems) - 1) - $index] = static::spreadCartLineGroup($items);
                 break;
             }
         }
