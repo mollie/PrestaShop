@@ -784,7 +784,6 @@ class Mollie extends PaymentModule
         $descriptionStatus = $this->l('`%s` payments get status `%s`');
         $messageMail = $this->l('Send mails when %s');
         $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
-        $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
         $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
         $statuses = array();
         foreach ($this->statuses as $name => $val) {
