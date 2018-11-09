@@ -839,12 +839,14 @@ class Mollie extends PaymentModule
                 'class'    => 'fixed-width-xxl',
             ),
             array(
-                'type'     => 'text',
-                'label'    => $this->l('Description'),
-                'desc'     => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
-                'name'     => static::MOLLIE_DESCRIPTION,
-                'required' => true,
-                'class'    => 'fixed-width-xxl',
+                'type'          => 'mollie-description',
+                'label'         => $this->l('Description'),
+                'desc'          => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
+                'name'          => static::MOLLIE_DESCRIPTION,
+                'required'      => true,
+                'class'         => 'fixed-width-xxl',
+                'depends'       => static::MOLLIE_API,
+                'depends_value' => static::MOLLIE_PAYMENTS_API,
             ),
         );
 

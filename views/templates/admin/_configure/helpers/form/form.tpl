@@ -88,7 +88,7 @@
       (function () {
         function initMollieCarriers() {
           var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
-          if (typeof source === 'undefined') {
+          if (source == null) {
             return setTimeout(initMollieCarriers, 100);
           }
 
@@ -228,7 +228,7 @@
       (function () {
         function initMollieCarriersAuto() {
           var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
-          if (typeof source === 'undefined') {
+          if (source == null) {
             return setTimeout(initMollieCarriersAuto, 100);
           }
 
@@ -295,7 +295,7 @@
       (function () {
         function initMollieCheckboxAuto() {
           var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
-          if (typeof source === 'undefined') {
+          if (source == null) {
             return setTimeout(initMollieCheckboxAuto, 100);
           }
 
@@ -320,6 +320,45 @@
         }
 
         initMollieCheckboxAuto();
+      }());
+    </script>
+  {elseif $input.type === 'mollie-description'}
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_info" style="display: none" class="{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}info{else}alert alert-info{/if}">{l s='This option is not required for the currently selected API' mod='mollie'}</div>
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
+      {$input.type = 'text'}
+      {$smarty.block.parent}
+    </div>
+    <script type="text/javascript">
+      (function () {
+        function initMollieDescriptionAuto() {
+          var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
+          if (source == null) {
+            return setTimeout(function () {
+              initMollieDescriptionAuto.apply(null, arguments);
+            }, 100);
+          }
+
+          function checkInput (e) {
+            var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
+            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
+            if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
+              container.style.display = 'block';
+              info.style.display = 'none';
+            } else {
+              container.style.display = 'none';
+              info.style.display = 'block';
+            }
+          }
+
+          source.addEventListener('change', checkInput);
+          checkInput({
+            target: {
+              value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
+            }
+          });
+        }
+
+        initMollieDescriptionAuto();
       }());
     </script>
   {else}
