@@ -3144,12 +3144,23 @@ class Mollie extends PaymentModule
         if (empty($methods)) {
             $methods = array();
         }
+        $countryCode = Tools::strtolower($this->context->country->iso_code);
+        $unavailableMethods = array();
+        foreach (static::$defaultMethodAvailability as $methodName => $countries) {
+            if (!in_array($methodName, array('klarnapaylater', 'klarnasliceit'))) {
+                continue;
+            }
+            if (!in_array($countryCode, $countries)) {
+                $unavailableMethods[] = $methodName;
+            }
+        }
 
         foreach ($methods as $index => $method) {
             if (!isset(static::$methodCurrencies[$method['id']])
                 || !in_array($iso, static::$methodCurrencies[$method['id']])
                 || empty($method['enabled'])
                 || isset($method['available']) && !$method['available']
+                || in_array($method['id'], $unavailableMethods)
             ) {
                 unset($methods[$index]);
             }
