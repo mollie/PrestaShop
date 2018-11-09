@@ -2544,7 +2544,7 @@ class Mollie extends PaymentModule
             $idProductAttribute = number_format($cartItem['id_product_attribute']);
             $idCustomization = number_format($cartItem['id_customization']);
 
-            $productHash = "{$idProduct}-{$idProductAttribute}-{$idCustomization}";
+            $productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
 
             if (!isset($aItems[$productHash])) {
                 $aItems[$productHash] = array();
@@ -2568,6 +2568,7 @@ class Mollie extends PaymentModule
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => $totalAmount),
                     'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => $vatAmount),
                     'vatRate'     => $vatRate,
+                    'sku'         => $productHash,
                 );
                 $remaining -= $totalAmount;
 
@@ -2583,6 +2584,7 @@ class Mollie extends PaymentModule
                         'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => $totalAmount),
                         'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => $vatAmount),
                         'vatRate'     => $vatRate,
+                        'sku'         => $productHash,
                     );
                 }
                 $remaining -= $totalAmount;
@@ -2600,6 +2602,7 @@ class Mollie extends PaymentModule
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => $totalAmount),
                     'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => $vatAmount),
                     'vatRate'     => $vatRate,
+                    'sku'         => $productHash,
                 );
                 $remaining -= $unitPrice * $quantity;
             }
