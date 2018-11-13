@@ -67,7 +67,7 @@ function upgrade_module_3_3_0($module)
 
     // Major changes, need to clear the cache
     if (!isset(Mollie::$cacheEmpty)) {
-        if (method_exists('Tools', 'clearCache')) {
+        if (method_exists('Tools', 'clearAllCache')) {
             Tools::clearAllCache();
         }
         if (method_exists('Tools', 'clearCache')) {
