@@ -4028,6 +4028,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * This function replaces the PaymentModule::validateOrder method in order to support the new Cart => Order flow.
      * This flow is applicable only to the Orders API.
@@ -4509,7 +4510,9 @@ class Mollie extends PaymentModule
                                 Mail::Send(
                                     (int) $order->id_lang,
                                     'voucher',
-                                    $this->l(
+                                    version_compare(_PS_VERSION_, '1.7.0.0', '<')
+                                    ? sprintf(Mail::l('New voucher for your order %s'), $order->reference)
+                                    : $this->trans(
                                         'New voucher for your order %s',
                                         array($order->reference),
                                         'Emails.Subject',
@@ -4687,7 +4690,9 @@ class Mollie extends PaymentModule
                             Mail::Send(
                                 (int) $order->id_lang,
                                 'order_conf',
-                                $this->l(
+                                version_compare(_PS_VERSION_, '1.7.0.0', '<')
+                                    ? Mail::l('Order confirmation', (int) $order->id_lang)
+                                    : $this->trans(
                                     'Order confirmation',
                                     array(),
                                     'Emails.Subject',
