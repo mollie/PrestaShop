@@ -2627,7 +2627,7 @@ class Mollie extends PaymentModule
             }
         }
 
-        if ($shipping > 0) {
+        if (round($shipping, 2) > 0) {
             $taxRate = (($shipping - $shippingNoTax) / $shippingNoTax) * 100;
             $aItems['shipping'] = array(
                 array(
@@ -2640,7 +2640,7 @@ class Mollie extends PaymentModule
                 ),
             );
         }
-        if ($wrapping > 0) {
+        if (round($wrapping, 2) > 0) {
             $taxRate = (($wrapping - $wrappingNoTax) / $wrappingNoTax) * 100;
             $aItems['wrapping'] = array(
                 array(
