@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import axios from 'axios';
+import axios from '../axios';
 import xss from 'xss';
 import styles from './css/qrcode.css';
 

@@ -33,8 +33,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import classnames from 'classnames';
-import axios from 'axios';
 
+import axios from '../../misc/axios';
 import LoadingDots from '../../misc/components/LoadingDots';
 import ConfigCarrierError from './CarrierConfigError';
 

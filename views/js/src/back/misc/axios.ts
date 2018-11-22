@@ -30,54 +30,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import swal from 'sweetalert';
-import xss from 'xss';
-import _ from 'lodash';
-import axios from '../misc/axios';
+import axios from 'axios';
 
-const showError = (message: string) => {
-  swal({
-    icon: 'error',
-    title: _.get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
-    text: xss(message),
-  }).then();
-};
-
-const handleClick = async (config: any, translations: ITranslations): Promise<void> => {
-  const steps = [
-    {
-      action: 'downloadUpdate',
-      defaultError: translations.unableToConnect,
-    },
-    {
-      action: 'downloadUpdate',
-      defaultError: translations.unableToUnzip,
-    },
-    {
-      action: 'downloadUpdate',
-      defaultError: translations.unableToConnect,
-    },
-  ];
-
-  for (let step of steps) {
-    try {
-      const { data } = await axios.get(`${config.endpoint}&action=${step.action}`);
-      if (!_.get(data, 'success')) {
-        showError(_.get(data, 'message', step.defaultError));
-      }
-    } catch (e) {
-      console.error(e);
-      showError(step.defaultError);
-    }
-  }
-
-  swal({
-    icon: 'success',
-    text: translations.updated
-  }).then();
-};
-
-export const updater = (button: HTMLElement, config: any, translations: ITranslations) => {
-  button.onclick = () => handleClick(config, translations);
-};
+export default axios.create({
+  transformResponse: [res => JSON.parse(res.replace(/^[^{\[]*/mg, '').replace(/([^}\]]*)$/mg, ''))],
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+});
 

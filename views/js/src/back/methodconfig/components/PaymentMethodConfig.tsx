@@ -31,7 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
-import axios from 'axios';
+import axios from '../../misc/axios';
 import PaymentMethods from './PaymentMethods';
 import LoadingDots from '../../misc/components/LoadingDots';
 import _ from 'lodash';

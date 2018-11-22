@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import axios from 'axios';
+import axios from '../../misc/axios';
 import store from '../store';
 import _ from 'lodash';
 
