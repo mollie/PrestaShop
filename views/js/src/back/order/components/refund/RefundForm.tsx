@@ -133,7 +133,7 @@ class RefundForm extends Component<IProps> {
             <RefundButton
               refundPayment={this.refundPayment}
               loading={loading}
-              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+              disabled={parseFloat(payment.settlementAmount.value) <= payment.amountRefunded ? parseFloat(payment.amountRefunded.value) : 0}
             />
             <span>
                 {translations.remaining}:
@@ -169,7 +169,7 @@ class RefundForm extends Component<IProps> {
               <RefundButton
                 refundPayment={this.refundPayment}
                 loading={loading}
-                disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+                disabled={parseFloat(payment.settlementAmount.value) <= payment.amountRefunded ? parseFloat(payment.amountRefunded.value) : 0}
               />
             </div>
             <div className="form-group">
