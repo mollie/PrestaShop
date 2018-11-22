@@ -126,9 +126,6 @@ class RefundForm extends Component<IProps> {
     const { translations, payment, currencies, config: { legacy } } = this.props;
 
     if (legacy) {
-      if (!payment.amountRefunded) {
-        return <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>;
-      }
       return (
         <>
           <h3>{translations.refund}</h3>
@@ -161,10 +158,6 @@ class RefundForm extends Component<IProps> {
           </span>
         </>
       );
-    }
-
-    if (!payment.amountRefunded) {
-      return <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>;
     }
 
     return (

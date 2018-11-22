@@ -40,6 +40,7 @@ interface IProps {
   // Redux
   translations?: ITranslations,
   config?: IMollieOrderConfig,
+  payment?: IMollieApiPayment,
 }
 
 const Div = styled.div`
@@ -51,14 +52,15 @@ const Div = styled.div`
 
 class RefundInfo extends Component<IProps> {
   render() {
-    const { translations, config: { legacy } } = this.props;
+    const { translations, config: { legacy }, payment } = this.props;
 
     if (legacy) {
       return (
         <>
           <h3>{translations.refunds}</h3>
-          <RefundHistory/>
-          <RefundForm/>
+          {payment.amountRefunded && <RefundHistory/>}
+          {payment.amountRefunded && <RefundForm/>}
+          {!payment.amountRefunded && <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>}
         </>
       );
     }
@@ -66,8 +68,9 @@ class RefundInfo extends Component<IProps> {
     return (
       <Div className="col-md-6 panel">
         <div className="panel-heading">{translations.refunds}</div>
-        <RefundHistory/>
-        <RefundForm/>
+        {payment.amountRefunded && <RefundHistory/>}
+        {payment.amountRefunded && <RefundForm/>}
+        {!payment.amountRefunded && <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
       </Div>
     )
   }
@@ -75,6 +78,7 @@ class RefundInfo extends Component<IProps> {
 
 export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
+    payment: state.payment,
     translations: state.translations,
     config: state.config,
   })
