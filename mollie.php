@@ -256,7 +256,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Mollie Payment Module');
+        $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the Mollie Payment Module?');
