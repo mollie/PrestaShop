@@ -98,6 +98,7 @@
         unableToShip: '{l s='Unable to ship' mod='mollie' js=1}',
         unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
         unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
+        refundsAreCurrentlyUnavailable: '{l s='Refunds are currently unavailable' mod='mollie' js=1}'
       },
       {$currencies|json_encode nofilter}
     );

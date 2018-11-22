@@ -126,6 +126,9 @@ class RefundForm extends Component<IProps> {
     const { translations, payment, currencies, config: { legacy } } = this.props;
 
     if (legacy) {
+      if (!payment.amountRefunded) {
+        return <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>;
+      }
       return (
         <>
           <h3>{translations.refund}</h3>
@@ -133,7 +136,7 @@ class RefundForm extends Component<IProps> {
             <RefundButton
               refundPayment={this.refundPayment}
               loading={loading}
-              disabled={parseFloat(payment.settlementAmount.value) <= payment.amountRefunded ? parseFloat(payment.amountRefunded.value) : 0}
+              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
             />
             <span>
                 {translations.remaining}:
@@ -160,6 +163,10 @@ class RefundForm extends Component<IProps> {
       );
     }
 
+    if (!payment.amountRefunded) {
+      return <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>;
+    }
+
     return (
       <>
         <h4>{translations.refund}</h4>
@@ -169,7 +176,7 @@ class RefundForm extends Component<IProps> {
               <RefundButton
                 refundPayment={this.refundPayment}
                 loading={loading}
-                disabled={parseFloat(payment.settlementAmount.value) <= payment.amountRefunded ? parseFloat(payment.amountRefunded.value) : 0}
+                disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
               />
             </div>
             <div className="form-group">
