@@ -124,7 +124,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     protected function processNewQrCode()
     {
         header('Content-Type: application/json;charset=UTF-8');
-        @ob_clean();
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
         $context = Context::getContext();
@@ -186,7 +185,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      */
     protected function processGetStatus()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
         if (empty($this->context->cart)) {
             die(json_encode(array(
@@ -267,7 +265,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     protected function processCartAmount()
     {
         header('Content-Type: application/json;charset=UTF-8');
-        @ob_clean();
         /** @var Context $context */
         $context = Context::getContext();
         /** @var Cart $cart */

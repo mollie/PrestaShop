@@ -520,7 +520,6 @@ class Mollie extends PaymentModule
     public function getContent()
     {
         if (Tools::getValue('ajax')) {
-            @ob_clean();
             header('Content-Type: application/json;charset=UTF-8');
 
             if (!method_exists($this, 'displayAjax'.Tools::ucfirst(Tools::getValue('action')))) {
@@ -2906,7 +2905,6 @@ class Mollie extends PaymentModule
      */
     public function ajaxProcessDownloadUpdate()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $latestVersion = $this->getLatestVersion();
@@ -2945,7 +2943,6 @@ class Mollie extends PaymentModule
      */
     public function ajaxProcessInstallUpdate()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $result = $this->unzipModule();
@@ -2970,7 +2967,6 @@ class Mollie extends PaymentModule
      */
     public function ajaxProcessRunUpgrade()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $result = $this->runUpgradeModule();
@@ -5129,7 +5125,6 @@ class Mollie extends PaymentModule
      */
     public function displayAjaxMollieMethodConfig()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $methodsForConfig = $this->getMethodsForConfig();
@@ -5210,7 +5205,6 @@ class Mollie extends PaymentModule
      */
     public function displayAjaxMollieCarrierConfig()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
 
         return array('success' => true, 'carriers' => static::carrierConfig());
@@ -5226,7 +5220,6 @@ class Mollie extends PaymentModule
      */
     public function displayAjaxMollieOrderInfo()
     {
-        @ob_clean();
         header('Content-Type: application/json;charset=UTF-8');
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
