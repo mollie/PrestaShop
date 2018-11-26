@@ -2609,7 +2609,7 @@ class Mollie extends PaymentModule
 
         // Compensate for order total rounding inaccuracies
         if (round($remaining, static::API_ROUNDING_PRECISION) < 0) {
-            foreach (array_reverse($aItems) as $index => $items) {
+            foreach (array_reverse($aItems) as $hash => $items) {
                 $totalAmount = array_sum(array_map(function ($item) {
                     return (float) $item['totalAmount']['value'];
                 }, $items));
@@ -2621,34 +2621,53 @@ class Mollie extends PaymentModule
                     continue;
                 }
 
-                $aItems[(count($aItems) - 1) - $index] = static::spreadCartLineGroup($items);
+                $aItems[$hash] = static::spreadCartLineGroup($items);
                 break;
             }
         }
+        $averageProductTaxRate = round(array_sum(array_map(function ($item) {
+            return array_sum(array_column($item, 'vatRate'));
+        }, $aItems)) / count($aItems), static::API_ROUNDING_PRECISION);
 
         if (round($shipping, 2) > 0) {
-            $taxRate = (($shipping - $shippingNoTax) / $shippingNoTax) * 100;
             $aItems['shipping'] = array(
                 array(
                     'name'        => $mollie->l('Shipping'),
                     'quantity'    => 1,
                     'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($shipping, static::API_ROUNDING_PRECISION)),
-                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)),
-                    'vatRate'     => $taxRate,
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($shipping * $averageProductTaxRate / ($averageProductTaxRate + 100), static::API_ROUNDING_PRECISION)),
+                    'vatRate'     => $averageProductTaxRate,
                 ),
             );
         }
         if (round($wrapping, 2) > 0) {
-            $taxRate = (($wrapping - $wrappingNoTax) / $wrappingNoTax) * 100;
             $aItems['wrapping'] = array(
                 array(
                     'name'        => $mollie->l('Gift wrapping'),
                     'quantity'    => 1,
                     'unitPrice'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
                     'totalAmount' => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping, static::API_ROUNDING_PRECISION)),
-                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping * $taxRate / ($taxRate + 100), static::API_ROUNDING_PRECISION)),
-                    'vatRate'     => $taxRate,
+                    'vatAmount'   => array('currency' => $oCurrency->iso_code, 'value' => round($wrapping * $averageProductTaxRate / ($averageProductTaxRate + 100), static::API_ROUNDING_PRECISION)),
+                    'vatRate'     => $averageProductTaxRate,
+                ),
+            );
+        }
+
+        $mollieOrderLinesAmount = array_sum(array_map(function ($line) {
+            return array_sum(array_column(array_column($line, 'totalAmount'), 'value'));
+        }, $aItems));
+        $difference = $mollieOrderLinesAmount - round($amount, static::API_ROUNDING_PRECISION);
+        if ($difference >= 0.01) {
+            $aItems['discount'] = array(
+                array(
+                    'name'        => 'Discount',
+                    'type'        => 'discount',
+                    'quantity'    => 1,
+                    'unitPrice'   => array('currency' => Tools::strtoupper($oCurrency->iso_code), 'value' => '-'.number_format($difference, static::API_ROUNDING_PRECISION, '.', '')),
+                    'totalAmount' => array('currency' => Tools::strtoupper($oCurrency->iso_code), 'value' => '-'.number_format($difference, static::API_ROUNDING_PRECISION, '.', '')),
+                    'vatAmount'   => array('currency' => Tools::strtoupper($oCurrency->iso_code), 'value' => '-'.number_format(round($difference, static::API_ROUNDING_PRECISION) * (($averageProductTaxRate / 100) / (1 + ($averageProductTaxRate/ 100))), static::API_ROUNDING_PRECISION, '.', '')),
+                    'vatRate'     => $averageProductTaxRate,
                 ),
             );
         }
@@ -2698,7 +2717,8 @@ class Mollie extends PaymentModule
         $totalAmount = Tools::ps_round($newUnitPrice * $quantity, static::API_ROUNDING_PRECISION);
         $vatRate = $cartLineGroup[0]['vatRate'];
         $vatAmount = $totalAmount * ($vatRate / ($vatRate + 100));
-        if (abs($roundingDifference) >= 0.01 && $quantity > 1) {
+
+        if ($roundingDifference >= 0.01 && $quantity > 1) {
             $newCartLineGroup[$productHash][] = array(
                 'name'        => $cartLineGroup[0]['name'],
                 'quantity'    => (int) $quantity - 1,
