@@ -50,7 +50,7 @@ interface IProps {
 
 class OrderLinesTableFooter extends Component<IProps> {
   get shippable() {
-    for (let line of Object.values(this.props.order.lines)) {
+    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
       if (line.shippableQuantity >= 1) {
         return true;
       }
@@ -60,7 +60,7 @@ class OrderLinesTableFooter extends Component<IProps> {
   }
 
   get refundable() {
-    for (let line of Object.values(this.props.order.lines)) {
+    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
       if (line.refundableQuantity >= 1) {
         return true;
       }
@@ -70,7 +70,7 @@ class OrderLinesTableFooter extends Component<IProps> {
   }
 
   get cancelable() {
-    for (let line of Object.values(this.props.order.lines)) {
+    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
       if (line.cancelableQuantity >= 1) {
         return true;
       }
@@ -89,7 +89,7 @@ class OrderLinesTableFooter extends Component<IProps> {
             <div className="btn-group" role="group">
               <button
                 type="button"
-                onClick={() => ship(_.compact(order.lines))}
+                onClick={() => ship(_.compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-primary"
                 disabled={loading || !this.shippable}
                 style={{
@@ -110,7 +110,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               </button>
               <button
                 type="button"
-                onClick={() => refund(_.compact(order.lines))}
+                onClick={() => refund(_.compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-default"
                 disabled={loading || !this.refundable}
                 style={{
@@ -131,7 +131,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               </button>
               <button
                 type="button"
-                onClick={() => cancel(_.compact(order.lines))}
+                onClick={() => cancel(_.compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-default"
                 disabled={loading || !this.cancelable}
                 style={{

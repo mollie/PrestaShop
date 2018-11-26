@@ -19,18 +19,19 @@ interface IProps {
 class OrderLinesTableActions extends Component<IProps> {
   render() {
     const { config: { legacy }, translations, line, loading, shipLine, cancelLine, refundLine } = this.props;
+    console.log(line.type);
 
     let shipButton = (
       <button
         style={{
-          cursor: line.shippableQuantity < 1 ? 'not-allowed' : 'pointer',
+          cursor: (loading || line.shippableQuantity < 1 || line.type === 'discount') ? 'not-allowed' : 'pointer',
           width: legacy ? '100px': 'auto',
           textAlign: legacy ? 'left': 'inherit',
           opacity: ((loading || line.refundableQuantity < 1) && legacy) ? 0.8 : 1,
         }}
         className={classnames({ 'btn': !legacy, 'btn-default': !legacy })}
         title=""
-        disabled={loading || line.shippableQuantity < 1}
+        disabled={loading || line.shippableQuantity < 1 || line.type === 'discount'}
         onClick={() => shipLine([line])}
       >
         {legacy && <img
@@ -47,28 +48,28 @@ class OrderLinesTableActions extends Component<IProps> {
     const refundButton = legacy ? (
       <button
         style={{
-          cursor: line.refundableQuantity < 1 ? 'not-allowed' : 'pointer',
+          cursor: (loading || line.refundableQuantity < 1 || line.type) === 'discount'? 'not-allowed' : 'pointer',
           width: '100px',
           textAlign: 'left',
-          opacity: (loading || line.refundableQuantity < 1) ? 0.8 : 1,
+          opacity: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
         }}
         title=""
-        disabled={loading || line.refundableQuantity < 1}
+        disabled={loading || line.refundableQuantity < 1 || line.type === 'discount'}
         onClick={() => refundLine([line])}
       >
         <img
           src="../img/admin/money.gif"
           style={{
-            filter: (loading || line.refundableQuantity < 1) ? 'grayscale(100%)' : null,
-            WebkitFilter: (loading || line.refundableQuantity < 1) ? 'grayscale(100%)' : null,
+            filter: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : null,
+            WebkitFilter: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : null,
           }}
         /> {translations.refund}
       </button>
     ) : (
       <a
         style={{
-          cursor: (loading || line.refundableQuantity < 1) ? 'not-allowed' : 'pointer',
-          opacity: (loading || line.refundableQuantity < 1) ? 0.8 : 1,
+          cursor: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 'not-allowed' : 'pointer',
+          opacity: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
         }}
         onClick={() => line.refundableQuantity > 0 && refundLine([line])}
       >
@@ -82,25 +83,25 @@ class OrderLinesTableActions extends Component<IProps> {
           cursor: line.cancelableQuantity < 1 ? 'not-allowed' : 'pointer',
           width: '100px',
           textAlign: 'left',
-          opacity: (loading || line.refundableQuantity < 1) ? 0.8 : 1,
+          opacity: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
         }}
         title=""
-        disabled={loading || line.cancelableQuantity < 1}
+        disabled={loading || line.cancelableQuantity < 1 || line.type === 'discount'}
         onClick={() => cancelLine([line])}
       >
         <img
           src="../img/admin/disabled.gif"
           style={{
-            filter: (loading || line.cancelableQuantity < 1) ? 'grayscale(100%)' : null,
-            WebkitFilter: (loading || line.cancelableQuantity < 1) ? 'grayscale(100%)' : null,
+            filter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : null,
+            WebkitFilter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : null,
           }}
         /> {translations.cancel}
       </button>
     ) : (
       <a
         style={{
-          cursor: (loading || line.cancelableQuantity < 1) ? 'not-allowed' : 'pointer',
-          opacity: (loading || line.cancelableQuantity < 1) ? 0.8 : 1,
+          cursor: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'not-allowed' : 'pointer',
+          opacity: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
         }}
         onClick={() => line.cancelableQuantity > 0 && cancelLine([line])}
       >
@@ -128,7 +129,7 @@ class OrderLinesTableActions extends Component<IProps> {
             'dropdown-toggle': !legacy,
           })}
           data-toggle={legacy ? null : 'dropdown'}
-          disabled={loading || (line.refundableQuantity < 1 && line.cancelableQuantity < 1)}
+          disabled={loading || (line.refundableQuantity < 1 && line.cancelableQuantity < 1) || line.type === 'discount'}
         >
           <span className="caret">&nbsp;</span>
         </button>
