@@ -2367,7 +2367,7 @@ class Mollie extends PaymentModule
             $module = Module::getInstanceByName('mollie');
             $module->currentOrderReference = $orderReference = Order::generateReference();
         }
-        $description = static::generateDescriptionFromCart($cartId);
+        $description = static::generateDescriptionFromCart($cartId, $orderReference);
         $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
