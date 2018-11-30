@@ -115,10 +115,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             }
         }
 
-        // Simulate webhook call (Orders API does not call the webhook on cancel)
         if ($cart instanceof Cart
             && !$cart->orderExists()
-            && (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API || Mollie::isLocalEnvironment())
             && isset($data['mollie_info']['transaction_id'])
         ) {
             $webhookController = new MollieWebhookModuleFrontController();
