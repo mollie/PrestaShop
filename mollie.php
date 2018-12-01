@@ -298,6 +298,7 @@ class Mollie extends PaymentModule
             \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
+            'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
         );
 
         // Load all translatable text here so we have a single translation point
@@ -309,6 +310,7 @@ class Mollie extends PaymentModule
             \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('refunded'),
             \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('bankwire pending'),
             static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('partially refunded'),
+            'created'                                                                                                                         => $this->l('created'),
             'This payment method is not available.'                                                                                           => $this->l('This payment method is not available.'),
             'Click here to continue'                                                                                                          => $this->l('Click here to continue'),
             'This payment method is only available for Euros.'                                                                                => $this->l('This payment method is only available for Euros.'),
