@@ -303,14 +303,14 @@ class Mollie extends PaymentModule
 
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('paid'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                   => $this->l('authorized'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                     => $this->l('canceled'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                      => $this->l('expired'),
-            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('refunded'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('bankwire pending'),
-            static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('partially refunded'),
-            'created'                                                                                                                         => $this->l('created'),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('Paid'),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                   => $this->l('Authorized'),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                     => $this->l('Canceled'),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                      => $this->l('Expired'),
+            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('Refunded'),
+            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('Bankwire pending'),
+            static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('Partially refunded'),
+            'created'                                                                                                                         => $this->l('Created'),
             'This payment method is not available.'                                                                                           => $this->l('This payment method is not available.'),
             'Click here to continue'                                                                                                          => $this->l('Click here to continue'),
             'This payment method is only available for Euros.'                                                                                => $this->l('This payment method is only available for Euros.'),
@@ -977,11 +977,21 @@ class Mollie extends PaymentModule
             );
         }
 
-        foreach ($statuses as $status) {
+        foreach (array_filter($statuses, function ($status) {
+            return in_array($status['name'], array(
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
+                \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                static::PARTIAL_REFUND_CODE,
+            ));
+        }) as $status) {
             $input[] = array(
                 'type'  => 'mollie-h3',
                 'name'  => '',
-                'title' => sprintf($this->l('%s statuses'), $status['name']),
+                'title' => sprintf($this->l('%s statuses'), $this->lang($status['name'])),
             );
             $input[] = array(
                 'type'    => 'select',
