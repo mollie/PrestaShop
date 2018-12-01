@@ -109,7 +109,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     /**
      * @param string|\MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $transaction
      *
-     * @return string
+     * @return string|\MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order
      *
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
@@ -188,10 +188,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
-                && $psPayment['bank_status'] === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN
-                && ($apiPayment->isPaid() ||
-                    $apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order && $apiPayment->isAuthorized()
-                )
+                && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
+                && ($apiPayment->isPaid() || $apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order && $apiPayment->isAuthorized())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];

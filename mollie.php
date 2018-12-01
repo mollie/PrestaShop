@@ -1400,11 +1400,12 @@ class Mollie extends PaymentModule
         try {
             $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
                 sprintf(
-                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` = \'%s\'',
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
                     _DB_PREFIX_.'mollie_payments',
                     bqSQL($column),
                     pSQL($id),
-                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID
+                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED
                 )
             );
         } catch (PrestaShopDatabaseException $e) {

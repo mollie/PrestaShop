@@ -129,6 +129,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             && !$cart->orderExists()
             && isset($data['mollie_info']['transaction_id'])
         ) {
+            if (!Tools::isSubmit('module')) {
+                $_GET['module'] = $this->module->name;
+            }
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($data['mollie_info']['transaction_id']);
             $data['mollie_info'] = Mollie::getPaymentBy('transaction_id', $data['mollie_info']['transaction_id']);
@@ -146,6 +149,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
                 switch ($data['mollie_info']['bank_status']) {
+                    case 'created':
+                        $data['wait'] = true;
+                        break;
                     case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
                         $data['wait'] = true;
                         break;
@@ -291,12 +297,16 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             )));
         }
 
-        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
-        $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($transactionId);
+
+        if (!Tools::isSubmit('module')) {
+            $_GET['module'] = $this->module->name;
+        }
         $webhookController = new MollieWebhookModuleFrontController();
-        $apiPayment = $webhookController->processTransaction($apiPayment);
+        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
+        $apiPayment = $webhookController->processTransaction($transactionId);
 
         switch ($apiPayment->status) {
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
                 $status = static::SUCCESS;
                 break;
@@ -306,9 +316,10 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         die(json_encode(array(
-            'success' => true,
-            'status'  => $status,
-            'href'    => $this->context->link->getPageLink(
+            'success'  => true,
+            'status'   => $status,
+            'response' => json_encode($apiPayment),
+            'href'     => $this->context->link->getPageLink(
                 'order-confirmation',
                 true,
                 null,
