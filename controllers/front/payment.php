@@ -207,7 +207,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $customer->secure_key
             );
 
-            $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>')
+            $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                 ? Order::getIdByCartId((int) $cart->id)
                 : Order::getOrderByCartId((int) $cart->id);
 

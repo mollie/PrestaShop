@@ -98,7 +98,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'OK';
         }
 
-        return $this->processTransaction(Tools::getValue('id'));
+        $payment = $this->processTransaction(Tools::getValue('id'));
+        if (is_string($payment)) {
+            return $payment;
+        }
+
+        return 'OK';
     }
 
     /**
@@ -113,6 +118,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
+     * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
      */
     public function processTransaction($transaction)
     {
@@ -146,7 +152,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $this->setCountryContextIfNotSet($apiPayment);
 
-        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>')
+        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
             ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
@@ -208,7 +214,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     $cart->secure_key
                 );
 
-                $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>')
+                $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                     ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
                     : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
             }
@@ -229,7 +235,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction, Mollie::NOTICE);
         }
 
-        return 'OK';
+        return $apiPayment;
     }
 
     /**

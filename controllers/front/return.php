@@ -43,14 +43,19 @@ require_once dirname(__FILE__).'/../../mollie.php';
  * Class MollieReturnModuleFrontController
  *
  * @property Context? $context
- * @property Mollie       $module
+ * @property Mollie   $module
  */
 class MollieReturnModuleFrontController extends ModuleFrontController
 {
+    const PENDING = 1;
+    const SUCCESS = 2;
+
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
     public $display_column_left = false;
+    /** @var bool $display_column_left */
+    public $display_column_right = false;
 
     /**
      * Unset the cart id from cookie if the order exists
@@ -83,6 +88,11 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
+        if (Tools::getValue('ajax')) {
+            $this->processAjax();
+            exit;
+        }
+
         parent::initContent();
 
         $data = array();
@@ -130,13 +140,17 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             if ($data['mollie_info'] === false) {
                 $data['mollie_info'] = array();
                 $data['msg_details'] = $this->module->lang('The order with this id does not exist.');
+            } elseif ($data['mollie_info']['method'] === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
+                && $data['mollie_info']['bank_status'] === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+            ) {
+                $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
                 switch ($data['mollie_info']['bank_status']) {
                     case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
-                        $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
+                        $data['wait'] = true;
                         break;
                     case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
-                        Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
+                        $data['wait'] = true;
                         break;
                     case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
@@ -159,7 +173,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                                     array(
                                         'id_cart'   => (int) $cart->id,
                                         'id_module' => (int) $this->module->id,
-                                        'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>')
+                                        'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                                             ? Order::getIdByCartId((int) $cart->id)
                                             : Order::getOrderByCartId((int) $cart->id),
                                         'key'       => $cart->secure_key,
@@ -187,7 +201,21 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign($data);
         $this->context->smarty->assign('link', $this->context->link);
-        $this->setTemplate('mollie_return.tpl');
+
+        if (!empty($data['wait'])) {
+            $this->context->smarty->assign(
+                'checkStatusEndpoint',
+                $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'return',
+                    array('ajax' => 1, 'action' => 'getStatus', 'transaction_id' => $data['mollie_info']['transaction_id']),
+                    true
+                )
+            );
+            $this->setTemplate('mollie_wait.tpl');
+        } else {
+            $this->setTemplate('mollie_return.tpl');
+        }
     }
 
     /**
@@ -208,5 +236,91 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         parent::setTemplate($template, $params, $locale);
+    }
+
+    /**
+     * Process ajax calls
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopException
+     * @throws SmartyException
+     *
+     * @since 3.3.2
+     */
+    protected function processAjax()
+    {
+        if (empty($this->context->customer->id)) {
+            return;
+        }
+
+        switch (Tools::getValue('action')) {
+            case 'getStatus':
+                $this->processGetStatus();
+                break;
+        }
+
+        exit;
+    }
+
+    /**
+     * Get payment status, can be regularly polled
+     *
+     * @throws PrestaShopException
+     * @throws Adapter_Exception
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws SmartyException
+     *
+     * @since 3.3.2
+     */
+    protected function processGetStatus()
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+
+        $transactionId = Tools::getValue('transaction_id');
+        $dbPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
+        $cart = new Cart($dbPayment['cart_id']);
+        if (!Validate::isLoadedObject($cart)) {
+            die(json_encode(array(
+                'success' => false,
+            )));
+        }
+
+        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
+            die(json_encode(array(
+                'success' => false,
+            )));
+        }
+
+        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
+        $apiPayment = $this->module->api->{Mollie::selectedApi()}->get($transactionId);
+        $webhookController = new MollieWebhookModuleFrontController();
+        $apiPayment = $webhookController->processTransaction($apiPayment);
+
+        switch ($apiPayment->status) {
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+                $status = static::SUCCESS;
+                break;
+            default:
+                $status = static::PENDING;
+                break;
+        }
+
+        die(json_encode(array(
+            'success' => true,
+            'status'  => $status,
+            'href'    => $this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                null,
+                array(
+                    'id_cart'   => (int) $cart->id,
+                    'id_module' => (int) $this->module->id,
+                    'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+                        ? Order::getIdByCartId((int) $cart->id)
+                        : Order::getOrderByCartId((int) $cart->id),
+                    'key'       => $cart->secure_key,
+                )
+            )
+        )));
     }
 }
