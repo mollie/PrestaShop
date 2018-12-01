@@ -985,7 +985,7 @@ class Mollie extends PaymentModule
                 \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
                 \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
                 \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                static::PARTIAL_REFUND_CODE,
+                'partial_refund',
             ));
         }) as $status) {
             $input[] = array(
