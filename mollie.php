@@ -2456,9 +2456,7 @@ class Mollie extends PaymentModule
                         'region'          => (string) State::getNameById($billing->id_state),
                         'country'         => (string) Country::getIsoById($billing->id_country),
                     );
-                    if ($billing->postcode) {
-                        $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode;
-                    }
+                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
                 }
                 if (isset($context->cart->id_address_delivery)) {
                     $shipping = new Address((int) $context->cart->id_address_delivery);
@@ -2468,9 +2466,7 @@ class Mollie extends PaymentModule
                         'region'          => (string) State::getNameById($shipping->id_state),
                         'country'         => (string) Country::getIsoById($shipping->id_country),
                     );
-                    if ($shipping->postcode) {
-                        $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode;
-                    }
+                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
                 }
             }
         }
@@ -2487,9 +2483,7 @@ class Mollie extends PaymentModule
                     'region'          => (string) State::getNameById($billing->id_state),
                     'country'         => (string) Country::getIsoById($billing->id_country),
                 );
-                if ($billing->postcode) {
-                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode;
-                }
+                $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
             }
             if (isset($cart->id_address_delivery)) {
                 $shipping = new Address((int) $cart->id_address_delivery);
@@ -2502,9 +2496,7 @@ class Mollie extends PaymentModule
                     'region'          => (string) State::getNameById($shipping->id_state),
                     'country'         => (string) Country::getIsoById($shipping->id_country),
                 );
-                if ($shipping->postcode) {
-                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode;
-                }
+                $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
             }
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines($amount);
