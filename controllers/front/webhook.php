@@ -33,6 +33,9 @@
  * @codingStandardsIgnoreStart
  */
 
+use MollieModule\Mollie\Api\Resources\Payment;
+use MollieModule\Mollie\Api\Resources\ResourceFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -130,13 +133,20 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'NO ID';
         }
 
-        if (!$transaction instanceof \MollieModule\Mollie\Api\Resources\Payment
-            && !$transaction instanceof \MollieModule\Mollie\Api\Resources\Order
-        ) {
+        // Ensure that we are dealing with a Payment object, in case of transaction ID or Order object, convert to Payment object
+        if (!$transaction instanceof \MollieModule\Mollie\Api\Resources\Payment) {
             try {
-                /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
+                if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Order) {
+                    $transaction = $transaction->id;
+                }
                 $apiToUse = Tools::substr($transaction, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
-                $apiPayment = $this->module->api->{$apiToUse}->get($transaction);
+                if ($apiToUse === Mollie::MOLLIE_ORDERS_API) {
+                    $apiOrder = $this->module->api->{Mollie::MOLLIE_ORDERS_API}->get($transaction, array('embed' => 'payments'));
+                    $apiPayment = ResourceFactory::createFromApiResult($apiOrder->_embedded->payments[0], new Payment($this->module->api));
+                    $apiPayment->metadata = $apiOrder->metadata;
+                } else {
+                    $apiPayment = $this->module->api->{Mollie::MOLLIE_PAYMENTS_API}->get($transaction);
+                }
             } catch (Exception $e) {
                 if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
                     Logger::addLog(__METHOD__.' said: Could not retrieve payment details for transaction_id "'.$transaction.'". Reason: '.$e->getMessage(), Mollie::WARNING);
@@ -157,18 +167,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
-            if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order
-                && ($apiPayment->calculateAmountRefunded()->value > 0 || $apiPayment->isCanceled())
-            ) {
-                /** @var \MollieModule\Mollie\Api\Resources\Order $apiPayment */
-                if ((float) $apiPayment->amount->value - (float) $apiPayment->calculateAmountCanceled()->value <= 0) {
-                    $this->module->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\OrderStatus::STATUS_CANCELED);
-                } elseif ((float) $apiPayment->amountRefunded->value >= (float) $apiPayment->amount->value) {
-                    $this->module->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
-                } else {
-                    $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
-                }
-            } elseif ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Payment && ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks())) {
+            if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
                 ) {
@@ -189,7 +188,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
-                && ($apiPayment->isPaid() || $apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order && $apiPayment->isAuthorized())
+                && $apiPayment->isPaid()
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];

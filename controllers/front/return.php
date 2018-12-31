@@ -48,7 +48,7 @@ require_once dirname(__FILE__).'/../../mollie.php';
 class MollieReturnModuleFrontController extends ModuleFrontController
 {
     const PENDING = 1;
-    const SUCCESS = 2;
+    const DONE = 2;
 
     /** @var bool $ssl */
     public $ssl = true;
@@ -294,9 +294,19 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $apiPayment = $webhookController->processTransaction($transactionId);
 
         switch ($apiPayment->status) {
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
+                $status = static::DONE;
+            die(json_encode(array(
+                'success'  => true,
+                'status'   => $status,
+                'response' => json_encode($apiPayment),
+                'href'     => $this->context->link->getPagelink('order', true, null, array('step' => 3))
+            )));
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
-                $status = static::SUCCESS;
+                $status = static::DONE;
                 break;
             default:
                 $status = static::PENDING;
