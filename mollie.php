@@ -68,6 +68,8 @@ class Mollie extends PaymentModule
     public $currentOrderReference;
     /** @var string $selectedApi */
     public static $selectedApi;
+    /** @var bool $cacheCleared Indicates whether the Smarty cache has been cleared during updates */
+    public static $cacheCleared;
     /**
      * Currency restrictions per payment method
      *

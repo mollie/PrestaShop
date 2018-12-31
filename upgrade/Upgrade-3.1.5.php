@@ -57,14 +57,14 @@ function upgrade_module_3_1_5()
     Configuration::deleteByName('MOLLIE_STATUS_CANCELLED');
 
     // Major changes, need to clear the cache
-    if (!isset(Mollie::$cacheEmpty)) {
+    if (!Mollie::$cacheCleared) {
         if (method_exists('Tools', 'clearAllCache')) {
             Tools::clearAllCache();
         }
         if (method_exists('Tools', 'clearCache')) {
             Tools::clearCache();
         }
-        Mollie::$cacheEmpty = true;
+        Mollie::$cacheCleared = true;
     }
 
     return true;
