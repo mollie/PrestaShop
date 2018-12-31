@@ -125,18 +125,6 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             }
         }
 
-        if ($cart instanceof Cart
-            && !$cart->orderExists()
-            && isset($data['mollie_info']['transaction_id'])
-        ) {
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->module->name;
-            }
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($data['mollie_info']['transaction_id']);
-            $data['mollie_info'] = Mollie::getPaymentBy('transaction_id', $data['mollie_info']['transaction_id']);
-        }
-
         if (isset($data['auth']) && $data['auth']) {
             // any paid payments for this cart?
 
