@@ -184,7 +184,7 @@ A partir de la versión 2.0.0 y posteriores, el módulo Mollie funciona en modo 
 
 # Licencia #
 [Licencia de BSD (Berkeley Software Distribution)](http://www.opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013-2018, Mollie B.V.
+Copyright (c) 2013-2019, Mollie B.V.
 
 # Soporte #
 

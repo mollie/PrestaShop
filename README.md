@@ -185,7 +185,7 @@ And how about working at a [technology driven organization](https://jobs.mollie.
 
 # License #
 [BSD (Berkeley Software Distribution) License](http://www.opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013-2018, Mollie B.V.
+Copyright (c) 2013-2019, Mollie B.V.
 
 # Support #
 

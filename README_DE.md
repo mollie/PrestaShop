@@ -184,7 +184,7 @@ Und was halten Sie davon, für ein [technologie-betriebenes Unternehmen](https:/
 
 # Lizenz #
 [BSD (Berkeley Software Distribution)-Lizenz](http://www.opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013-2018, Mollie B.V.
+Copyright (c) 2013-2019, Mollie B.V.
 
 # Support #
 
