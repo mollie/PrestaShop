@@ -2471,9 +2471,7 @@ class Mollie extends PaymentModule
                     $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
                 }
             }
-        }
-
-        if (static::selectedApi() === static::MOLLIE_ORDERS_API) {
+        } elseif (static::selectedApi() === static::MOLLIE_ORDERS_API) {
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int) $cart->id_address_invoice);
                 $paymentData['billingAddress'] = array(
