@@ -250,7 +250,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.3.2';
+        $this->version = '3.3.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -2714,7 +2714,7 @@ class Mollie extends PaymentModule
      *
      * @return array Spread amounts
      *
-     * @since 3.4.0
+     * @since 3.3.3
      */
     public static function spreadAmountEvenly($amount, $qty)
     {
@@ -2756,7 +2756,7 @@ class Mollie extends PaymentModule
      * @return array[]
      *
      * @since 3.2.2
-     * @since 3.4.0 Omits VAT details
+     * @since 3.3.3 Omits VAT details
      */
     public static function spreadCartLineGroup($cartLineGroup, $newTotal)
     {
