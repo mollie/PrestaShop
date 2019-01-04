@@ -2616,9 +2616,15 @@ class Mollie extends PaymentModule
             }, $aItem);
         }
 
-        $averageProductTaxRate = round(array_sum(array_map(function ($item) {
-            return array_sum(array_column($item, 'vatRate'));
-        }, $aItems)) / count($aItems), $apiRoundingPrecision);
+        $averageProductTaxRate = 0;
+        $averageProductTaxQuantity = 0;
+        foreach ($aItems as $group) {
+            foreach ($group as $item) {
+                $averageProductTaxRate += $item['vatRate'] * $item['quantity'];
+                $averageProductTaxQuantity += $item['quantity'];
+            }
+        }
+        $averageProductTaxRate = round($averageProductTaxRate / $averageProductTaxQuantity, $apiRoundingPrecision);
 
         // Add shipping
         if (round($shipping, 2) > 0) {
