@@ -104,11 +104,6 @@ class MollieReturnModuleFrontController extends ModuleFrontController
          */
         if (Tools::getIsset('ref')) {
             $idOrder = (int) Tools::getValue('id');
-            $idCart = (int) Cart::getCartByOrderId($idOrder);
-            if ($idCart) {
-                $cart = new Cart($idCart);
-            }
-
             // Check if user is allowed to be on the return page
             $data['auth'] = Order::getUniqReferenceOf($idOrder) === Tools::getValue('ref');
             if ($data['auth']) {
