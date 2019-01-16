@@ -3466,7 +3466,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param string $user
+     * Create a Mollie account using the legacy Reseller API
+     *
      * @param string $name
      * @param string $company
      * @param string $address
