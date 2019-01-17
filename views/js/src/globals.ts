@@ -217,3 +217,9 @@ export interface IMollieApiRefund {
   settlementAmount: string;
   status: string;
 }
+
+export enum QrStatus {
+  pending = 1,
+  success = 2,
+  refresh = 3,
+}

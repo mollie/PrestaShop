@@ -30,52 +30,62 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import swal from 'sweetalert';
-import xss from 'xss';
+import React, { Component } from 'react';
+import styled from 'styled-components';
 
-import Banks from './components/Banks';
-import { IBanks, ITranslations } from '../../globals';
-
-declare let window: any;
-
-export function mollieBanks(banks: IBanks, translations: ITranslations) {
-  let issuer = '';
-  function _setIssuer(newIssuer: string) {
-    issuer = newIssuer;
-  }
-
-  const wrapper = document.createElement('DIV');
-  render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
-  const elem = wrapper.firstChild as Element;
-
-  swal({
-    title: xss(translations.chooseYourBank),
-    content: {
-      element: elem,
-    },
-    buttons: {
-      cancel: {
-        text: xss(translations.cancel),
-        value: null,
-      },
-      confirm: {
-        text: xss(translations.choose),
-        value: true,
-      },
-    },
-  }).then((value: any) => {
-    try {
-      unmountComponentAtNode(wrapper);
-    } catch (e) {
-    }
-
-    if (value) {
-      const win = window.open(banks[issuer].href, '_self');
-      win.opener = null;
-    }
-  });
+const SpinnerDiv = styled.div`
+&&&& {
+  position: absolute;
+  top: 110px;
+  left: 90px;
 }
 
+&&&& > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+&&&& .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+&&&& .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+0%, 80%, 100% {
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  } 40% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+`;
+
+
+export default class Spinner extends Component {
+  render() {
+    return (
+      <SpinnerDiv>
+        <div className="bounce1"/>
+        <div className="bounce2"/>
+        <div className="bounce3"/>
+      </SpinnerDiv>
+    );
+  }
+}

@@ -30,52 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import swal from 'sweetalert';
-import xss from 'xss';
+import { render } from 'react-dom';
+import QrCode from './components/QrCode';
 
-import Banks from './components/Banks';
-import { IBanks, ITranslations } from '../../globals';
-
-declare let window: any;
-
-export function mollieBanks(banks: IBanks, translations: ITranslations) {
-  let issuer = '';
-  function _setIssuer(newIssuer: string) {
-    issuer = newIssuer;
-  }
-
-  const wrapper = document.createElement('DIV');
-  render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
-  const elem = wrapper.firstChild as Element;
-
-  swal({
-    title: xss(translations.chooseYourBank),
-    content: {
-      element: elem,
-    },
-    buttons: {
-      cancel: {
-        text: xss(translations.cancel),
-        value: null,
-      },
-      confirm: {
-        text: xss(translations.choose),
-        value: true,
-      },
-    },
-  }).then((value: any) => {
-    try {
-      unmountComponentAtNode(wrapper);
-    } catch (e) {
-    }
-
-    if (value) {
-      const win = window.open(banks[issuer].href, '_self');
-      win.opener = null;
-    }
-  });
+export function qrCode(target: string|HTMLElement, title: string, center: boolean) {
+  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
+  render(<QrCode title={title} center={center}/>, elem);
 }
-

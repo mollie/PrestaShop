@@ -136,6 +136,7 @@ module.exports = {
       {
         test: /\.(tsx?)|(jsx?)$/,
         include: [
+          path.join(__dirname, 'globals.ts'),
           path.join(__dirname, 'front'),
           path.join(__dirname, 'back'),
         ],
@@ -172,24 +173,6 @@ module.exports = {
             sourceMap: true,
           },
         },
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'typings-for-css-modules-loader',
-            options: {
-              modules: true,
-              importLoaders: true,
-              localIdentName: '[name]__[local]___[hash:base64:5]',
-            },
-          },
-        ],
-        include: [
-          path.join(__dirname, 'front'),
-          path.join(__dirname, 'back'),
-        ],
       },
     ],
   },

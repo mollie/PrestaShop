@@ -80,12 +80,12 @@
           var elem = document.createElement('script');
           elem.type = 'text/javascript';
           elem.onload = function () {
-            new window.MollieModule.front.MollieBanks(banks, translations);
+            window.MollieModule.front.mollieBanks(banks, translations);
           };
           document.querySelector('head').appendChild(elem);
           elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
         } else {
-          new window.MollieModule.front.MollieBanks(banks, translations);
+          window.MollieModule.front.mollieBanks(banks, translations);
         }
       }
 

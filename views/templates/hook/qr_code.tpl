@@ -65,7 +65,7 @@
         return setTimeout(initQrCode, 100);
       }
 
-      new window.MollieModule.front.QrCode(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
+      window.MollieModule.front.qrCode(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
     }());
   </script>
 {/if}
