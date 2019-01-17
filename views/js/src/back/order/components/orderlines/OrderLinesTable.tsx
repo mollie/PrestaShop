@@ -35,9 +35,9 @@ import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import swal from 'sweetalert';
-import _ from 'lodash';
 import xss from 'xss';
 import { Dispatch } from 'redux';
+import { isEmpty, get } from 'lodash';
 
 import OrderLinesTableHeader from './OrderLinesTableHeader';
 import { formatCurrency } from '../../../misc/tools';
@@ -107,7 +107,7 @@ class OrderLinesTable extends Component<IProps> {
       const checkSwalButton = async (): Promise<void> => {
         const elem: HTMLInputElement = document.querySelector('.swal-button.swal-button--confirm');
 
-        elem.disabled = tracking && (_.isEmpty(tracking.code.replace(/\s+/, '')) || _.isEmpty(tracking.carrier.replace(/\s+/, '')));
+        elem.disabled = tracking && (isEmpty(tracking.code.replace(/\s+/, '')) || isEmpty(tracking.carrier.replace(/\s+/, '')));
       };
 
       const updateTracking = (newTracking: IMollieTracking) => {
@@ -268,9 +268,9 @@ class OrderLinesTable extends Component<IProps> {
                 {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
                 {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
                 {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}
-                <td>{formatCurrency(parseFloat(line.unitPrice.value), _.get(currencies, line.unitPrice.currency))}</td>
-                <td>{formatCurrency(parseFloat(line.vatAmount.value), _.get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
-                <td>{formatCurrency(parseFloat(line.totalAmount.value), _.get(currencies, line.totalAmount.currency))}</td>
+                <td>{formatCurrency(parseFloat(line.unitPrice.value), get(currencies, line.unitPrice.currency))}</td>
+                <td>{formatCurrency(parseFloat(line.vatAmount.value), get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
+                <td>{formatCurrency(parseFloat(line.totalAmount.value), get(currencies, line.totalAmount.currency))}</td>
                 <td className={classnames({
                   'actions': !legacy,
                 })}>

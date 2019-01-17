@@ -32,11 +32,11 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
-
 import swal from 'sweetalert';
 import xss from 'xss';
 import { Dispatch } from 'redux';
+import { get } from 'lodash';
+
 import { updatePayment } from '../../store/actions';
 import RefundButton from './RefundButton';
 import PartialRefundButton from './PartialRefundButton';
@@ -55,8 +55,8 @@ interface IProps {
 }
 
 interface IState {
-  loading: boolean,
-  refundInput: string,
+  loading: boolean;
+  refundInput: string;
 }
 
 class RefundForm extends Component<IProps> {
@@ -141,7 +141,7 @@ class RefundForm extends Component<IProps> {
             </span>
             <input
               type="text"
-              placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
+              placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
               disabled={loading}
               value={refundInput}
               onChange={({ target: { value: refundInput } }: any) => this.setState({ refundInput })}
@@ -181,7 +181,7 @@ class RefundForm extends Component<IProps> {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), _.get(currencies, payment.amountRemaining.currency))}
+                  placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
                   disabled={loading}
                   value={refundInput}
                   onChange={({ target: { value: refundInput } }: any) => this.setState({ refundInput })}

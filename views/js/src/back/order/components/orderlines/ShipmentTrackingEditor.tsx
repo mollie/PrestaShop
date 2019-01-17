@@ -32,7 +32,8 @@
  */
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import _ from 'lodash';
+import { get, isEmpty } from 'lodash';
+
 import { IMollieOrderConfig, IMollieTracking, ITranslations } from '../../../../globals';
 
 interface IProps {
@@ -78,11 +79,11 @@ text-align: left!important;
 class ShipmentTrackingEditor extends Component<IProps> {
   readonly state: IState = {
     skipTracking: false,
-    carrier: _.get(this.props, 'config.tracking.carrier', ''),
-    carrierChanged: !!_.get(this.props, 'config.tracking.carrier', false),
-    code: _.get(this.props, 'config.tracking.code', ''),
-    codeChanged: !!_.get(this.props, 'config.tracking.code', false),
-    url: _.get(this.props, 'config.tracking.url', ''),
+    carrier: get(this.props, 'config.tracking.carrier', ''),
+    carrierChanged: !!get(this.props, 'config.tracking.carrier', false),
+    code: get(this.props, 'config.tracking.code', ''),
+    codeChanged: !!get(this.props, 'config.tracking.code', false),
+    url: get(this.props, 'config.tracking.url', ''),
   };
 
   componentDidMount() {
@@ -101,13 +102,13 @@ class ShipmentTrackingEditor extends Component<IProps> {
   get carrierInvalid() {
     const { skipTracking, carrier, carrierChanged } = this.state;
 
-    return !skipTracking && _.isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
+    return !skipTracking && isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
   }
 
   get codeInvalid() {
     const { skipTracking, code, codeChanged } = this.state;
 
-    return !skipTracking && _.isEmpty(code.replace(/\s+/, '')) && codeChanged;
+    return !skipTracking && isEmpty(code.replace(/\s+/, '')) && codeChanged;
   }
 
   updateSkipTracking = (skipTracking: boolean): void => {

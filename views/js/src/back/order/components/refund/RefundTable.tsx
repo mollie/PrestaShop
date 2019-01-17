@@ -34,7 +34,8 @@ import React, { Component } from 'react';
 import RefundTableHeader from './RefundTableHeader';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import _ from 'lodash';
+import { get } from 'lodash';
+
 import { formatCurrency } from '../../../misc/tools';
 import { ICurrencies, IMollieApiPayment, IMollieApiRefund } from '../../../../globals';
 
@@ -57,7 +58,7 @@ class RefundTable extends Component<IProps> {
               <tr key={refund.id} style={{ marginBottom: '100px' }}>
                 <td style={{ width: '100px' }}><strong>{refund.id}</strong></td>
                 <td>{moment(refund.createdAt).format('YYYY-MM-DD HH:mm:ss')}</td>
-                <td>{formatCurrency(parseFloat(refund.amount.value), _.get(currencies, refund.amount.currency))}</td>
+                <td>{formatCurrency(parseFloat(refund.amount.value), get(currencies, refund.amount.currency))}</td>
               </tr>
             ))}
           </tbody>

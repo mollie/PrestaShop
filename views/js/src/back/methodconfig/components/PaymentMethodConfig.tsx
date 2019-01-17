@@ -31,10 +31,11 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
+
 import axios from '../../misc/axios';
 import PaymentMethods from './PaymentMethods';
 import LoadingDots from '../../misc/components/LoadingDots';
-import _ from 'lodash';
 import PaymentMethodsError from './PaymentMethodsError';
 import { IMollieMethodConfig, IMolliePaymentMethodItem, ITranslations } from '../../../globals';
 
@@ -85,7 +86,7 @@ class PaymentMethodConfig extends Component<IProps> {
       return <LoadingDots/>;
     }
 
-    if (methods === null || !_.isArray(methods) || _.isArray(methods) && _.isEmpty(methods)) {
+    if (methods === null || !Array.isArray(methods) || Array.isArray(methods) && isEmpty(methods)) {
       return <PaymentMethodsError message={message} translations={translations} config={config} retry={this.init}/>;
     }
 

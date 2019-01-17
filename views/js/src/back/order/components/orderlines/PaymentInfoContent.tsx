@@ -33,8 +33,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { get } from 'lodash';
+
 import { formatCurrency } from '../../../misc/tools';
-import _ from 'lodash';
 import { ICurrencies, IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
@@ -55,9 +56,7 @@ class PaymentInfoContent extends Component<IProps> {
         {!legacy && <h4>{translations.transactionInfo}</h4>}
         <strong>{translations.transactionId}</strong>: <span>{order.id}</span><br/>
         <strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span><br/>
-        <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), _.get(currencies, order.amount.currency))}</span><br/>
-        {/*<div><strong>{translations.refunded}</strong>: <span>{formatCurrency(parseFloat(order.amountRefunded.value), _.get(currencies, order.amountRefunded.currency))}</span></div>*/}
-        {/*<div><strong style={{ textDecoration: 'underline' }}>{translations.currentAmount}</strong>: <span>{formatCurrency(parseFloat(order.settlementAmount.value) - parseFloat(order.amountRefunded.value), _.get(currencies, order.settlementAmount.currency))}</span></div>*/}
+        <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))}</span><br/>
       </>
     );
   }

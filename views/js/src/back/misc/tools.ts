@@ -30,8 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import _ from 'lodash';
 import version_compare from 'locutus/php/info/version_compare';
+import { get } from 'lodash';
+
 import { ICurrency } from '../../globals';
 
 declare let window: any;
@@ -140,7 +141,7 @@ export const formatCurrency = (price: number, currency: ICurrency) => {
     || typeof window.formatCurrencyCldr !== 'undefined'
   ) {
     // PrestaShop 1.7 CLDR
-    return (new Intl.NumberFormat(_.get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
+    return (new Intl.NumberFormat(get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
   }
 
   return psFormatCurrency(price, currency.format, currency.sign, currency.blank);

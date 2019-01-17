@@ -32,9 +32,10 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
+import { compact } from 'lodash';
+
 import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
@@ -90,7 +91,7 @@ class OrderLinesTableFooter extends Component<IProps> {
             <div className="btn-group" role="group">
               <button
                 type="button"
-                onClick={() => ship(_.compact(order.lines.filter(line => line.type !== 'discount')))}
+                onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-primary"
                 disabled={loading || !this.shippable}
                 style={{
@@ -111,7 +112,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               </button>
               <button
                 type="button"
-                onClick={() => refund(_.compact(order.lines.filter(line => line.type !== 'discount')))}
+                onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-default"
                 disabled={loading || !this.refundable}
                 style={{
@@ -132,7 +133,7 @@ class OrderLinesTableFooter extends Component<IProps> {
               </button>
               <button
                 type="button"
-                onClick={() => cancel(_.compact(order.lines.filter(line => line.type !== 'discount')))}
+                onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
                 className="btn btn-default"
                 disabled={loading || !this.cancelable}
                 style={{

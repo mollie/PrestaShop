@@ -32,8 +32,8 @@
  */
 import React, { Component } from 'react';
 import { SortableContainer, arrayMove } from 'react-sortable-hoc';
-import _ from 'lodash';
 import styled from 'styled-components';
+import { cloneDeep, find } from 'lodash';
 
 import PaymentMethod from './PaymentMethod';
 import {
@@ -109,26 +109,26 @@ class PaymentMethods extends Component<IProps> {
   }
 
   onToggle = (id: string, enabled: boolean) => {
-    const methods = _.cloneDeep(this.state.methods);
-    const method = _.find(methods, item => item.id === id);
+    const methods = cloneDeep(this.state.methods);
+    const method = find(methods, item => item.id === id);
     method.enabled = enabled;
     this.setState({ methods });
   };
 
   onArrowClicked = ({ oldIndex, newIndex}: any) => {
     this.setState({
-      methods: arrayMove(_.cloneDeep(this.state.methods), oldIndex, newIndex),
+      methods: arrayMove(cloneDeep(this.state.methods), oldIndex, newIndex),
     });
   };
 
   onSortEnd = ({ oldIndex, newIndex }: any) => {
     this.setState({
-      methods: arrayMove(_.cloneDeep(this.state.methods), oldIndex, newIndex),
+      methods: arrayMove(cloneDeep(this.state.methods), oldIndex, newIndex),
     });
   };
 
   shouldCancelStart = ({ target }: any) => {
-    return _.includes(['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'], target.tagName.toUpperCase());
+    return ['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(target.tagName.toUpperCase());
   };
 
   render() {

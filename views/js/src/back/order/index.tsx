@@ -33,7 +33,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import viewportSize from 'viewport-size';
-import _ from 'lodash';
+import { throttle } from 'lodash';
 
 import store from './store';
 import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations, updateViewportWidth } from './store/actions';
@@ -58,7 +58,7 @@ export const orderInfo = (
   }, 0);
 
   // Listen for window resizes
-  window.addEventListener('resize', _.throttle(() => {
+  window.addEventListener('resize', throttle(() => {
     store.dispatch(updateViewportWidth(viewportSize.getWidth()));
   }, 200));
 

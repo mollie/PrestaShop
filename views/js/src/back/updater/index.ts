@@ -32,14 +32,15 @@
  */
 import swal from 'sweetalert';
 import xss from 'xss';
-import _ from 'lodash';
 import axios from '../misc/axios';
+import { get } from 'lodash';
+
 import { ITranslations } from '../../globals';
 
 const showError = (message: string) => {
   swal({
     icon: 'error',
-    title: _.get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
+    title: get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
     text: xss(message),
   }).then();
 };
@@ -63,8 +64,8 @@ const handleClick = async (config: any, translations: ITranslations): Promise<vo
   for (let step of steps) {
     try {
       const { data } = await axios.get(`${config.endpoint}&action=${step.action}`);
-      if (!_.get(data, 'success')) {
-        showError(_.get(data, 'message', step.defaultError));
+      if (!get(data, 'success')) {
+        showError(get(data, 'message', step.defaultError));
       }
     } catch (e) {
       console.error(e);

@@ -31,12 +31,12 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
-import _ from 'lodash';
-// @ts-ignore
 import { Table, Tr } from 'styled-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components';
+import { compact, filter, findIndex, cloneDeep, remove, forEach, range } from 'lodash';
+
 import { IMollieOrderLine, ITranslations } from '../../../../globals';
 
 interface IProps {
@@ -95,10 +95,10 @@ class OrderLinesEditor extends Component<IProps> {
   updateQty = (lineId: string, qty: number) => {
     const { lines } = this.state;
     const { edited, lineType } = this.props;
-    let newLines = _.compact(_.cloneDeep(lines));
-    newLines = _.filter(newLines, line => line[`${lineType}Quantity`] > 0);
+    let newLines = compact(cloneDeep(lines));
+    newLines = filter(newLines, line => line[`${lineType}Quantity`] > 0);
 
-    const newLineIndex = _.findIndex(newLines, item => item.id === lineId);
+    const newLineIndex = findIndex(newLines, item => item.id === lineId);
     if (newLineIndex < 0) {
       return;
     }
@@ -108,9 +108,9 @@ class OrderLinesEditor extends Component<IProps> {
     } else if (newLines.length > 1) {
       newLines.splice(newLineIndex, 1);
     }
-    const stateLines = _.cloneDeep(newLines);
+    const stateLines = cloneDeep(newLines);
     this.setState({lines: stateLines});
-    _.forEach(newLines, (newLine) => {
+    forEach(newLines, (newLine) => {
       if (typeof newLine.quantity === 'undefined') {
         return;
       }
@@ -124,8 +124,8 @@ class OrderLinesEditor extends Component<IProps> {
   render() {
     const { lineType } = this.props;
     const { lines: origLines } = this.state;
-    const lines = _.cloneDeep(origLines);
-    _.remove(lines, line => line[`${lineType}Quantity`] < 1);
+    const lines = cloneDeep(origLines);
+    remove(lines, line => line[`${lineType}Quantity`] < 1);
 
 
     return (
@@ -139,7 +139,7 @@ class OrderLinesEditor extends Component<IProps> {
                   value={line.newQuantity || line[`${lineType}Quantity`]}
                   onChange={({ target: { value: qty }}: any) => this.updateQty(line.id, parseInt(qty, 10))}
                 >
-                  {_.range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
+                  {range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
                     <QuantityOption key={qty} value={qty}>{qty}x</QuantityOption>
                   ))}
                 </QuantitySelect>

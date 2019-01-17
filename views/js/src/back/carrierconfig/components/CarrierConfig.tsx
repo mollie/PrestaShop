@@ -31,8 +31,8 @@
  * @link       https://www.mollie.nl
  */
 import React, { Component } from 'react';
-import _ from 'lodash';
 import classnames from 'classnames';
+import { find, cloneDeep, forEach, isEmpty } from 'lodash';
 
 import axios from '../../misc/axios';
 import LoadingDots from '../../misc/components/LoadingDots';
@@ -63,7 +63,7 @@ class CarrierConfig extends Component<IProps> {
 
   get carrierConfig() {
     const carriers: IMollieCarrierConfigItems = {};
-    _.forEach(this.state.carriers, (carrier) => {
+    forEach(this.state.carriers, (carrier) => {
       carriers[carrier.id_carrier] = carrier;
     });
 
@@ -85,9 +85,9 @@ class CarrierConfig extends Component<IProps> {
   };
 
   updateCarrierConfig = (id: string, key: string, value: string|null) => {
-    const carriers = _.cloneDeep(this.state.carriers);
+    const carriers = cloneDeep(this.state.carriers);
 
-    const config = _.find(carriers, item => item.id_carrier === id);
+    const config = find(carriers, item => item.id_carrier === id);
     if (typeof config === 'undefined') {
       return;
     }
@@ -104,7 +104,7 @@ class CarrierConfig extends Component<IProps> {
       return <LoadingDots/>;
     }
 
-    if (!_.isArray(carriers) || _.isArray(carriers) && _.isEmpty(carriers)) {
+    if (!Array.isArray(carriers) || Array.isArray(carriers) && isEmpty(carriers)) {
       return <ConfigCarrierError message={message} retry={this.init}/>;
     }
 

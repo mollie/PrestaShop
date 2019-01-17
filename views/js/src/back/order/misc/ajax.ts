@@ -32,7 +32,8 @@
  */
 import axios from '../../misc/axios';
 import store from '../store';
-import _ from 'lodash';
+import { defaults } from 'lodash';
+
 import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking } from '../../../globals';
 
 export const retrievePayment = async (transactionId: string): Promise<IMollieApiPayment|null> => {
@@ -85,7 +86,7 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
       throw data.detailed ? data.detailed : data.message;
     }
 
-    return _.defaults(data, { success: false, payment: null });
+    return defaults(data, { success: false, payment: null });
   } catch (e) {
     if (typeof e === 'string') {
       throw e;
@@ -109,7 +110,7 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
     if (!data.success && typeof data.message === 'string') {
       throw data.detailed ? data.detailed : data.message;
     }
-    return _.defaults(data, { success: false, order: null });
+    return defaults(data, { success: false, order: null });
   } catch (e) {
     if (typeof e === 'string') {
       throw e;
@@ -133,7 +134,7 @@ export const cancelOrder = async (transactionId: string, orderLines?: Array<IMol
     if (!data.success && typeof data.message === 'string') {
       throw data.detailed ? data.detailed : data.message;
     }
-    return _.defaults(data, { success: false, order: null });
+    return defaults(data, { success: false, order: null });
   } catch (e) {
     if (typeof e === 'string') {
       throw e;
@@ -159,7 +160,7 @@ export const shipOrder = async (transactionId: string, orderLines?: Array<IMolli
       throw data.detailed ? data.detailed : data.message;
     }
 
-    return _.defaults(data, { success: false, order: null });
+    return defaults(data, { success: false, order: null });
   } catch (e) {
     if (typeof e === 'string') {
       throw e;
