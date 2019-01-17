@@ -40,6 +40,7 @@ import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTrans
 import MolliePanel from './components/MolliePanel';
 import { retrieveOrder, retrievePayment } from './misc/ajax';
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '../../globals';
+import { Provider } from 'react-redux';
 
 export const orderInfo = (
   target: any,
@@ -66,7 +67,12 @@ export const orderInfo = (
   store.dispatch(updateTranslations(translations));
   store.dispatch(updateConfig(config));
 
-  return render(<MolliePanel store={store}/>, typeof target === 'string' ? document.querySelector(target) : target);
+  return render(
+    <Provider store={store}>
+      <MolliePanel/>
+    </Provider>,
+    typeof target === 'string' ? document.querySelector(target) : target
+  );
 };
 
 

@@ -35,12 +35,9 @@ import RefundPanel from './refund/RefundPanel';
 import store from '../store';
 import { connect, Provider } from 'react-redux';
 import OrderPanel from './orderlines/OrderPanel';
-import { Store } from 'redux';
 import { IMollieApiOrder, IMollieApiPayment } from '../../../globals';
 
 interface IProps {
-  store: Store;
-
   payment?: IMollieApiPayment;
   order?: IMollieApiOrder;
 }
