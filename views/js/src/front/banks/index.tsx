@@ -31,60 +31,45 @@
  * @link       https://www.mollie.nl
  */
 import '@babel/polyfill';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 import swal from 'sweetalert';
 import xss from 'xss';
-import styles from './css/banks.css';
 import { IBanks, ITranslations } from '../../globals';
+
 
 declare let window: any;
 
-export class MollieBanks {
-  constructor(public banks: IBanks, public translations: ITranslations) {
-    this.banks = banks;
-    this.translations = translations;
-
-    this.initBanks();
-  }
-
-  initBanks = () => {
-    const elem = document.createElement('div');
-    elem.id = 'mollie-banks-list';
-    let content = '<ul>';
-    for (let bank of Object.values(this.banks)) {
-      content += `<div class="${styles['radio']} ${styles['radio-primary']}">
-  <input type="radio" id="${xss(bank.id)}" name="mollie-bank" value="${xss(bank.id)}">
-  <label for="${xss(bank.id)}" style="line-height: 24px;">
-      <img src="${xss(bank.image.size2x)}" alt="${xss(bank.image.size2x)}" style="height: 24px; width: auto"> ${xss(bank.name)}
-  </label>
-</div>`;
-    }
-    content += '</ul>';
-    if (window.mollieQrEnabled) {
-      content += `<div id="mollie-qr-code"/>`;
-    }
-    elem.innerHTML = content;
-    elem.querySelector('input').checked = true;
-
-    // @ts-ignore
-    swal({
-      title: xss(this.translations.chooseYourBank),
-      content: elem,
-      buttons: {
-        cancel: xss(this.translations.cancel),
-        confirm: xss(this.translations.choose),
-      },
-    }).then((value: any) => {
-      if (value) {
-        const issuer = (elem.querySelector('input[name="mollie-bank"]:checked') as HTMLInputElement).value;
-        const win = window.open(this.banks[issuer].href, '_self');
-        win.opener = null;
-      } else {
-        [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((item: HTMLElement) => {
-          item.parentElement.removeChild(item);
-        });
-      }
-    });
-
-    new window.MollieModule.front.QrCode(document.getElementById('mollie-qr-code'), this.translations.orPayByIdealQr);
+export default function (banks: IBanks, translations: ITranslations) {
+  const state = {
+    issuer: '',
+    setIssuer: (newIssuer: string) => {
+      this.issuer = newIssuer;
+    },
   };
+
+  const wrapper = document.createElement('DIV');
+  ReactDOM.render(<Banks/>, wrapper);
+  const elem = wrapper.firstChild;
+
+
+  swal({
+    title: xss(this.translations.chooseYourBank),
+    content: elem,
+    buttons: {
+      cancel: xss(this.translations.cancel),
+      confirm: xss(this.translations.choose),
+    },
+  }).then((value: any) => {
+    if (value) {
+      const win = window.open(this.banks[state.issuer].href, '_self');
+      win.opener = null;
+    } else {
+      [].slice.call(document.querySelectorAll('.swal-overlay')).forEach((item: HTMLElement) => {
+        item.parentElement.removeChild(item);
+      });
+    }
+  });
 }
+
