@@ -63,17 +63,18 @@ color: #555;
 ` as any;
 
 const QuantitySelect = styled.select`
-cursor: pointer!important;
--moz-appearance: none!important;
--webkit-appearance: none!important;
-appearance: none!important;
-color: #555!important;
-border: 0!important;
-background-color: transparent!important;
-display: inline-block!important;
-height: auto!important;
-padding: 0 25px 0 5px!important;
-font-size: medium!important;
+&&&& {
+  cursor: pointer!important;
+  appearance: none!important;
+  color: #555!important;
+  border: 0!important;
+  background-color: transparent!important;
+  display: inline-block!important;
+  height: auto!important;
+  padding: 0 25px 0 5px!important;
+  font-size: medium!important;
+}
+
 ` as any;
 
 const QuantityOption = styled.option`
@@ -132,7 +133,7 @@ class OrderLinesEditor extends Component<IProps> {
       <Table bordered>
         <tbody>
           {lines.map((line) => (
-            <Tr key={line.id}>
+            <Tr key={line.id} light>
               <td style={{ color: '#555' }}>{line.name}</td>
               <td style={{ color: '#555' }}>
                 <QuantitySelect
