@@ -2030,6 +2030,14 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayPaymentEU()
     {
+        // Please update your one page checkout module if it depends on `displayPaymentEU`
+        // Mollie does no longer support this hook on PresaShop v1.7 or higher
+        // due to the problems caused by mixing the hooks `paymentOptions` and `displayPaymentEU`
+        // Only uncomment the following three lines if you have no other choice:
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return array();
+        }
+
         $methods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($methods as $apiMethod) {
