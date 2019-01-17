@@ -91,6 +91,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws SmartyException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     protected function executeWebhook()
     {
@@ -102,7 +103,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'OK';
         }
 
-        $payment = $this->processTransaction(Tools::getValue('id'));
+        $transactionId = Tools::getValue('id');
+        if (Tools::substr($transactionId, 0, 3) === 'ord') {
+            $payment = $this->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
+        } else {
+            $payment = $this->processTransaction($this->module->api->payments->get($transactionId));
+        }
         if (is_string($payment)) {
             return $payment;
         }
@@ -123,6 +129,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      *
      * @since 3.3.0
      * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
+     * @since 3.3.2 Returns the ApiPayment instead of ApiPayment / ApiOrder
      */
     public function processTransaction($transaction)
     {
@@ -143,7 +150,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 // Single payment
                 $apiPayment = $transaction;
             }
-        } else {
+        }
+
+        if (!isset($apiPayment)) {
             $apiPayments = array();
             /** @var \MollieModule\Mollie\Api\Resources\Order $transaction */
             foreach ($transaction->_embedded->payments as $embeddedPayment) {
@@ -187,7 +196,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         }
                     }
                 }
-
+            }
+            if (isset($apiPayment)) {
+                $apiPayment->metadata = $transaction->metadata;
             }
         }
 
@@ -197,7 +208,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $psPayment = Mollie::getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
-        $apiPayment->metadata = $transaction->metadata;
         $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
             ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);

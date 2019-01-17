@@ -196,7 +196,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
         if (Mollie::isLocalEnvironment()) {
             /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
-            $apiPayment = $this->module->api->{Mollie::selectedApi()}->get(Tools::getValue('transaction_id'));
+            $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->module->name;
             }
@@ -222,6 +222,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
         switch ($payment['bank_status']) {
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
                 $status = static::SUCCESS;
                 break;
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:

@@ -268,7 +268,15 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $transactionId = Tools::getValue('transaction_id');
         $dbPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
         $cart = new Cart($dbPayment['cart_id']);
-        $order = Order::getByCartId($dbPayment['cart_id']);
+        if (!Validate::isLoadedObject($cart)) {
+            die(json_encode(array(
+                'success' => false,
+            )));
+        }
+        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+            ? Order::getIdByCartId((int) $cart->id)
+            : Order::getOrderByCartId((int) $cart->id);
+        $order = new Order((int) $orderId);
         if (Validate::isLoadedObject($order)) {
             die(json_encode(array(
                 'success'  => true,
@@ -281,9 +289,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                     array(
                         'id_cart'   => (int) $cart->id,
                         'id_module' => (int) $this->module->id,
-                        'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                            ? Order::getIdByCartId((int) $cart->id)
-                            : Order::getOrderByCartId((int) $cart->id),
+                        'id_order'  => (int) $order->id,
                         'key'       => $cart->secure_key,
                     )
                 )
