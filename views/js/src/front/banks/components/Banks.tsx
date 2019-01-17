@@ -145,7 +145,7 @@ export default class Banks extends Component<IProps> {
 
   public render() {
     const firstBankId = (Object.values(this.props.banks) as Array<IBank>)[0].id;
-    const { banks } = this.props;
+    const { banks, translations } = this.props;
 
     return (
       <div>
@@ -170,7 +170,7 @@ export default class Banks extends Component<IProps> {
             </Radio>
           ))}
         </ul>
-        {window.mollieQrEnabled && <QrCode center/>}
+        {window.mollieQrEnabled && <QrCode title={translations.orPayByIdealQr} center/>}
       </div>
     );
   }
