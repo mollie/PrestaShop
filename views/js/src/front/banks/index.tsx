@@ -42,7 +42,7 @@ import { IBanks, ITranslations } from '../../globals';
 declare let window: any;
 
 export function mollieBanks(banks: IBanks, translations: ITranslations) {
-  let issuer = '';
+  let issuer = Object.values(banks)[0].id;
   function _setIssuer(newIssuer: string) {
     issuer = newIssuer;
   }
