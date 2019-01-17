@@ -135,7 +135,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         // Ensure that we are dealing with a Payment object, in case of transaction ID or Order object, convert to Payment object
-        if (!$transaction instanceof \MollieModule\Mollie\Api\Resources\Payment) {
+        if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Payment) {
+            $apiPayment = $transaction;
+            $transaction = $apiPayment->id;
+        } else {
             try {
                 if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Order) {
                     $transaction = $transaction->id;
@@ -146,21 +149,33 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     $apiPayments = array();
                     foreach ($apiOrder->_embedded->payments as $embeddedPayment) {
                         $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
-                        $apiPayment->metadata = $apiOrder->metadata;
                         $apiPayments[] = $apiPayment;
                         unset($apiPayment);
                     }
                     if (count($apiPayments) === 1) {
                         $apiPayment = $apiPayments[0];
                     } else {
-                        // In case of multiple payments, the one with the paid status is leading, second is final status
+                        // In case of multiple payments, the one with the paid status is leading
                         foreach ($apiPayments as $payment) {
-                            if (in_array($payment->status, array(PaymentStatus::STATUS_PAID))) {
+                            if (in_array($payment->status, array(PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED))) {
                                 $apiPayment = $payment;
                                 break;
                             }
                         }
-                        // In case there is no paid payment, we are going to look for the second-best candidate
+
+                        // In case there is no paid payment, we are going to look for any pending payments
+                        if (!isset($apiPayment)) {
+                            foreach ($apiPayments as $payment) {
+                                if (in_array($payment->status, array(
+                                    PaymentStatus::STATUS_PENDING,
+                                ))) {
+                                    $apiPayment = $payment;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // No pending payments found, which means that we should take one of the payments with a final status
                         if (!isset($apiPayment)) {
                             foreach ($apiPayments as $payment) {
                                 if (in_array($payment->status, array(
@@ -173,11 +188,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                                 }
                             }
                         }
-                        // No final statuses, take the first payment
-                        if (isset($apiPayment)) {
-                            $apiPayment = $apiPayments[0];
-                        }
                     }
+                    $apiPayment->metadata = $apiOrder->metadata;
                 } else {
                     $apiPayment = $this->module->api->{Mollie::MOLLIE_PAYMENTS_API}->get($transaction);
                 }
@@ -188,9 +200,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
                 return 'NOT OK';
             }
-        } else {
-            $apiPayment = $transaction;
-            $transaction = $apiPayment->id;
         }
         $psPayment = Mollie::getPaymentBy('transaction_id', $transaction);
 
@@ -222,7 +231,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $this->module->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
-                && $apiPayment->isPaid()
+                && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
