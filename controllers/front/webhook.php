@@ -74,6 +74,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws SmartyException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      */
     public function initContent()
     {
@@ -217,9 +218,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
                 ) {
-                    $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
-                } else {
                     $this->module->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                } else {
+                    $this->module->setOrderStatus($orderId, Mollie::PARTIAL_REFUND_CODE);
                 }
             } elseif ($psPayment['method'] === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $psPayment['bank_status'] === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN

@@ -1622,17 +1622,20 @@ class Mollie extends PaymentModule
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws SmartyException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since      3.0.0
+     *
      * @deprecated 3.3.0
      */
     protected function doRefund($orderId, $transactionId)
     {
-        return $this->doPaymentRefund($orderId, $transactionId);
+        return $this->doPaymentRefund($transactionId);
     }
 
     /**
-     * @param int        $orderId       PrestaShop Order ID
      * @param string     $transactionId Transaction/Mollie Order ID
      * @param float|null $amount        Amount to refund, refund all if `null`
      *
@@ -1641,10 +1644,14 @@ class Mollie extends PaymentModule
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws SmartyException
+     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
+     * @since 3.3.2 Omit $orderId
      */
-    protected function doPaymentRefund($orderId, $transactionId, $amount = null)
+    protected function doPaymentRefund($transactionId, $amount = null)
     {
         try {
             /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
@@ -1672,22 +1679,15 @@ class Mollie extends PaymentModule
             );
         }
 
-        // Tell status to shop
-        $this->setOrderStatus($orderId, \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
-
-        // Save status in mollie_payments table
-        try {
-            Db::getInstance()->update(
-                'mollie_payments',
-                array(
-                    'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
-                    'bank_status' => \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-                ),
-                '`order_id` = '.(int) $orderId
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            static::tryAddOrderReferenceColumn();
-            throw $e;
+        if (Mollie::isLocalEnvironment()) {
+            // Refresh payment on local environments
+            /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+            $apiPayment = $this->api->payments->get($transactionId);
+            if (!Tools::isSubmit('module')) {
+                $_GET['module'] = $this->name;
+            }
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($apiPayment);
         }
 
         return array(
@@ -1725,6 +1725,17 @@ class Mollie extends PaymentModule
                 $shipment['tracking'] = $tracking;
             }
             $order->createShipment($shipment);
+
+            if (Mollie::isLocalEnvironment()) {
+                // Refresh payment on local environments
+                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                $apiPayment = $this->api->orders->get($transactionId);
+                if (!Tools::isSubmit('module')) {
+                    $_GET['module'] = $this->name;
+                }
+                $webhookController = new MollieWebhookModuleFrontController();
+                $webhookController->processTransaction($apiPayment);
+            }
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
@@ -1741,10 +1752,16 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param string     $transactionId
-     * @param array      $lines
+     * @param string $transactionId
+     * @param array  $lines
      *
      * @return array
+     *
+     * @throws Adapter_Exception
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
      */
@@ -1764,6 +1781,17 @@ class Mollie extends PaymentModule
                 }, $lines),
             );
             $order->refund($refund);
+
+            if (Mollie::isLocalEnvironment()) {
+                // Refresh payment on local environments
+                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                $apiPayment = $this->api->orders->get($transactionId);
+                if (!Tools::isSubmit('module')) {
+                    $_GET['module'] = $this->name;
+                }
+                $webhookController = new MollieWebhookModuleFrontController();
+                $webhookController->processTransaction($apiPayment);
+            }
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
@@ -1785,8 +1813,14 @@ class Mollie extends PaymentModule
      *
      * @return array
      *
-     * @since 3.3.0
+     * @throws Adapter_Exception
      * @throws ErrorException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     *
+     * @since 3.3.0
      */
     protected function doCancelOrderLines($transactionId, $lines = array())
     {
@@ -1801,6 +1835,17 @@ class Mollie extends PaymentModule
                     $cancelableLines[] = array('id' => $line['id'], 'quantity' => $line['quantity']);
                 }
                 $order->cancelLines(array('lines' => $cancelableLines));
+            }
+
+            if (Mollie::isLocalEnvironment()) {
+                // Refresh payment on local environments
+                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                $apiPayment = $this->api->orders->get($transactionId);
+                if (!Tools::isSubmit('module')) {
+                    $_GET['module'] = $this->name;
+                }
+                $webhookController = new MollieWebhookModuleFrontController();
+                $webhookController->processTransaction($apiPayment);
             }
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             return array(
@@ -5307,9 +5352,9 @@ class Mollie extends PaymentModule
                         }
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
-                            $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id']);
+                            $status = $this->doPaymentRefund($mollieData['transaction_id']);
                         } else {
-                            $status = $this->doPaymentRefund($mollieData['order_id'], $mollieData['transaction_id'], $input['amount']);
+                            $status = $this->doPaymentRefund($mollieData['transaction_id'], $input['amount']);
                         }
 
                         return array(
