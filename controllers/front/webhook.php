@@ -111,9 +111,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param string|\MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $transaction
+     * @param \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $transaction
      *
-     * @return string|\MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order
+     * @return string|\MollieModule\Mollie\Api\Resources\Payment Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
      *
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
@@ -134,77 +134,70 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return 'NO ID';
         }
 
-        // Ensure that we are dealing with a Payment object, in case of transaction ID or Order object, convert to Payment object
+        // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
         if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Payment) {
-            $apiPayment = $transaction;
-            $transaction = $apiPayment->id;
+            if (!empty($transaction->orderId) && Tools::substr($transaction->orderId, 0, 3) === 'ord') {
+                // Part of order
+                $transaction = $this->module->api->{Mollie::MOLLIE_ORDERS_API}->get($transaction->orderId, array('embed' => 'payments'));
+            } else {
+                // Single payment
+                $apiPayment = $transaction;
+            }
         } else {
-            try {
-                if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Order) {
-                    $transaction = $transaction->id;
-                }
-                $apiToUse = Tools::substr($transaction, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
-                if ($apiToUse === Mollie::MOLLIE_ORDERS_API) {
-                    $apiOrder = $this->module->api->{Mollie::MOLLIE_ORDERS_API}->get($transaction, array('embed' => 'payments'));
-                    $apiPayments = array();
-                    foreach ($apiOrder->_embedded->payments as $embeddedPayment) {
-                        $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
-                        $apiPayments[] = $apiPayment;
-                        unset($apiPayment);
+            $apiPayments = array();
+            /** @var \MollieModule\Mollie\Api\Resources\Order $transaction */
+            foreach ($transaction->_embedded->payments as $embeddedPayment) {
+                $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
+                $apiPayments[] = $apiPayment;
+                unset($apiPayment);
+            }
+            if (count($apiPayments) === 1) {
+                $apiPayment = $apiPayments[0];
+            } else {
+                // In case of multiple payments, the one with the paid status is leading
+                foreach ($apiPayments as $payment) {
+                    if (in_array($payment->status, array(PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED))) {
+                        $apiPayment = $payment;
+                        break;
                     }
-                    if (count($apiPayments) === 1) {
-                        $apiPayment = $apiPayments[0];
-                    } else {
-                        // In case of multiple payments, the one with the paid status is leading
-                        foreach ($apiPayments as $payment) {
-                            if (in_array($payment->status, array(PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED))) {
-                                $apiPayment = $payment;
-                                break;
-                            }
-                        }
+                }
 
-                        // In case there is no paid payment, we are going to look for any pending payments
-                        if (!isset($apiPayment)) {
-                            foreach ($apiPayments as $payment) {
-                                if (in_array($payment->status, array(
-                                    PaymentStatus::STATUS_PENDING,
-                                ))) {
-                                    $apiPayment = $payment;
-                                    break;
-                                }
-                            }
-                        }
-
-                        // No pending payments found, which means that we should take one of the payments with a final status
-                        if (!isset($apiPayment)) {
-                            foreach ($apiPayments as $payment) {
-                                if (in_array($payment->status, array(
-                                    PaymentStatus::STATUS_CANCELED,
-                                    PaymentStatus::STATUS_FAILED,
-                                    PaymentStatus::STATUS_EXPIRED,
-                                ))) {
-                                    $apiPayment = $payment;
-                                    break;
-                                }
-                            }
+                // No paid/authorized payments found, looking for payments with a final status
+                if (!isset($apiPayment)) {
+                    foreach ($apiPayments as $payment) {
+                        if (in_array($payment->status, array(
+                            PaymentStatus::STATUS_CANCELED,
+                            PaymentStatus::STATUS_FAILED,
+                            PaymentStatus::STATUS_EXPIRED,
+                        ))) {
+                            $apiPayment = $payment;
+                            break;
                         }
                     }
-                    $apiPayment->metadata = $apiOrder->metadata;
-                } else {
-                    $apiPayment = $this->module->api->{Mollie::MOLLIE_PAYMENTS_API}->get($transaction);
-                }
-            } catch (Exception $e) {
-                if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                    Logger::addLog(__METHOD__.' said: Could not retrieve payment details for transaction_id "'.$transaction.'". Reason: '.$e->getMessage(), Mollie::WARNING);
                 }
 
-                return 'NOT OK';
+                // In case there is no final payments, we are going to look for any pending payments
+                if (!isset($apiPayment)) {
+                    foreach ($apiPayments as $payment) {
+                        if (in_array($payment->status, array(
+                            PaymentStatus::STATUS_PENDING,
+                        ))) {
+                            $apiPayment = $payment;
+                            break;
+                        }
+                    }
+                }
+
             }
         }
-        $psPayment = Mollie::getPaymentBy('transaction_id', $transaction);
 
+        if (!isset($apiPayment)) {
+            return 'NOT OK';
+        }
+
+        $psPayment = Mollie::getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
-
+        $apiPayment->metadata = $transaction->metadata;
         $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
             ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -264,15 +257,15 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);
 
-        if (!$this->savePaymentStatus($transaction, $apiPayment->status, $orderId)) {
+        if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
             if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
+                Logger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction->id.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
             }
         }
 
         // Log successful webhook requests in extended log mode only
         if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ALL) {
-            Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction, Mollie::NOTICE);
+            Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie::NOTICE);
         }
 
         return $apiPayment;

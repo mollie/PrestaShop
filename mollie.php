@@ -5133,7 +5133,7 @@ class Mollie extends PaymentModule
     public function getFilteredApiOrder($transactionId, $process = false)
     {
         /** @var \MollieModule\Mollie\Api\Resources\Order $order */
-        $order = $this->api->orders->get($transactionId);
+        $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
         if ($process) {
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->name;

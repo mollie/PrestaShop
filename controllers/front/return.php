@@ -268,6 +268,27 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $transactionId = Tools::getValue('transaction_id');
         $dbPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
         $cart = new Cart($dbPayment['cart_id']);
+        $order = Order::getByCartId($dbPayment['cart_id']);
+        if (Validate::isLoadedObject($order)) {
+            die(json_encode(array(
+                'success'  => true,
+                'status'   => static::DONE,
+                'response' => null,
+                'href'     => $this->context->link->getPageLink(
+                    'order-confirmation',
+                    true,
+                    null,
+                    array(
+                        'id_cart'   => (int) $cart->id,
+                        'id_module' => (int) $this->module->id,
+                        'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+                            ? Order::getIdByCartId((int) $cart->id)
+                            : Order::getOrderByCartId((int) $cart->id),
+                        'key'       => $cart->secure_key,
+                    )
+                )
+            )));
+        }
         if (!Validate::isLoadedObject($cart)) {
             die(json_encode(array(
                 'success' => false,
@@ -285,8 +306,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $_GET['module'] = $this->module->name;
         }
         $webhookController = new MollieWebhookModuleFrontController();
+        $apiToUse = Tools::substr($transactionId, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
         /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
-        $apiPayment = $webhookController->processTransaction($transactionId);
+        $apiPayment = $webhookController->processTransaction($this->module->api->{$apiToUse}->get($transactionId, array('embed' => 'payments')));
 
         switch ($apiPayment->status) {
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
