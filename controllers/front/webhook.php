@@ -146,7 +146,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if ($transaction instanceof \MollieModule\Mollie\Api\Resources\Payment) {
             if (!empty($transaction->orderId) && Tools::substr($transaction->orderId, 0, 3) === 'ord') {
                 // Part of order
-                $transaction = $this->module->api->{Mollie::MOLLIE_ORDERS_API}->get($transaction->orderId, array('embed' => 'payments'));
+                $transaction = $this->module->api->orders->get($transaction->orderId, array('embed' => 'payments'));
             } else {
                 // Single payment
                 $apiPayment = $transaction;

@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use MollieModule\Mollie\Api\Types\PaymentMethod;
+
 if (!defined('_PS_VERSION_')) {
     return;
 }
@@ -215,6 +217,8 @@ class Mollie extends PaymentModule
         'displayBackOfficeHeader',
         'displayOrderConfirmation',
     );
+
+    public $extra_mail_vars = array();
 
     /** @var array $methods */
     public static $methods = array(
@@ -1333,7 +1337,8 @@ class Mollie extends PaymentModule
     /**
      * @param int        $order
      * @param string|int $statusId
-     * @param bool|null  $useExistingPayment
+     * @param bool|null  $useExistngPayment
+     * @param array      $templateVars
      *
      * @return void
      *
@@ -1344,8 +1349,9 @@ class Mollie extends PaymentModule
      * @since 3.3.2 Accept both Order ID and Order object
      * @since 3.3.2 Accept both Mollie status string and PrestaShop status ID
      * @since 3.3.2 $useExistingPayment option
+     * @since 3.3.4 Accepts template vars for the corresponding email template
      */
-    public function setOrderStatus($order, $statusId, $useExistingPayment = null)
+    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = array())
     {
         if (is_string($statusId)) {
             $status = $statusId;
@@ -1392,7 +1398,7 @@ class Mollie extends PaymentModule
         Logger::addLog($status);
         if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
             Logger::addLog('addWithEmail');
-            $history->addWithemail();
+            $history->addWithemail(true, $templateVars);
         } else {
             Logger::addLog('add');
             $history->add();
@@ -1710,7 +1716,7 @@ class Mollie extends PaymentModule
     {
         try {
             /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId);
+            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             $shipment = array(
                 'lines' => array_map(function ($line) {
                     return array_intersect_key(
@@ -1729,7 +1735,7 @@ class Mollie extends PaymentModule
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId);
+                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
@@ -1769,7 +1775,7 @@ class Mollie extends PaymentModule
     {
         try {
             /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId);
+            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             $refund = array(
                 'lines' => array_map(function ($line) {
                     return array_intersect_key(
@@ -1785,7 +1791,7 @@ class Mollie extends PaymentModule
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId);
+                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
@@ -1826,7 +1832,7 @@ class Mollie extends PaymentModule
     {
         try {
             /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId);
+            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             if ($lines === array()) {
                 $order->cancel();
             } else {
@@ -1840,7 +1846,7 @@ class Mollie extends PaymentModule
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId);
+                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
@@ -2523,6 +2529,16 @@ class Mollie extends PaymentModule
                     $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
                 }
             }
+
+            switch ($method) {
+                case PaymentMethod::BANKTRANSFER:
+                    $paymentData['billingEmail'] = $customer->email;
+                    $paymentData['locale'] = static::getWebshopLocale();
+                    break;
+                case PaymentMethod::BITCOIN:
+                    $paymentData['billingEmail'] = $customer->email;
+                    break;
+            }
         } elseif (static::selectedApi() === static::MOLLIE_ORDERS_API) {
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int) $cart->id_address_invoice);
@@ -2553,11 +2569,16 @@ class Mollie extends PaymentModule
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines($amount);
             $paymentData['payment'] = array();
+            if (!static::isLocalEnvironment()) {
+                $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
+                    'mollie',
+                    'webhook',
+                    array(),
+                    true
+                );
+            }
             if ($issuer) {
                 $paymentData['payment']['issuer'] = $issuer;
-            }
-            if (empty($paymentData['payment'])) {
-                unset($paymentData['payment']);
             }
         }
 
@@ -3991,10 +4012,10 @@ class Mollie extends PaymentModule
                         }
                     }
                     // Set the order state
-                    $this->setOrderStatus($order, $idOrderState, true);
+                    $this->setOrderStatus($order, $idOrderState, true, $extraVars);
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') && $orderDetail->getStockState()) {
-                        $this->setOrderStatus($order, Configuration::get('PS_OS_OUTOFSTOCK'), true);
+                        $this->setOrderStatus($order, Configuration::get('PS_OS_OUTOFSTOCK'), true, $extraVars);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
@@ -4704,12 +4725,12 @@ class Mollie extends PaymentModule
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Set the order status
-                    $this->setOrderStatus($order->id, $idOrderState, true);
+                    $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
                         ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
                     ) {
-                        $this->setOrderStatus($order, Configuration::get($order->valid ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true);
+                        $this->setOrderStatus($order, Configuration::get($order->valid ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true, $extraVars);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
@@ -5603,7 +5624,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $apiPayment = $this->api->orders->get($dbPayment['transaction_id']);
+            $apiPayment = $this->api->orders->get($dbPayment['transaction_id'], array('embed' => 'payments'));
             $shippableItems = 0;
             foreach ($apiPayment->lines as $line) {
                 $shippableItems += $line->shippableQuantity;

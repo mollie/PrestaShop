@@ -146,7 +146,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Order::generateReference()
         );
         try {
-            $payment = $this->createPayment($paymentData);
+            $apiPayment = $this->createPayment($paymentData);
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
@@ -160,17 +160,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
             return;
         }
-        $orderReference = isset($payment->metadata->order_reference) ? pSQL($payment->metadata->order_reference) : '';
+        $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
         // Store payment linked to cart
-        if ($payment->method !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($apiPayment->method !== \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(
                     'mollie_payments',
                     array(
                         'cart_id'         => (int) $cart->id,
-                        'method'          => pSQL($payment->method),
-                        'transaction_id'  => pSQL($payment->id),
+                        'method'          => pSQL($apiPayment->method),
+                        'transaction_id'  => pSQL($apiPayment->id),
                         'order_reference' => pSQL($orderReference),
                         'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                         'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
@@ -182,8 +182,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             }
         }
 
-        $status = $payment->status;
-        if (!isset($this->module->statuses[$payment->status])) {
+        $status = $apiPayment->status;
+        if (!isset($this->module->statuses[$apiPayment->status])) {
             $status = 'open';
         }
 
@@ -193,15 +193,30 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentStatus = Configuration::get('PS_OS_BANKWIRE');
         }
 
-        if ($payment->method === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($apiPayment->method === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+            // Set the `banktransfer` details
+            if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order) {
+                $details = $apiPayment->_embedded->payments[0]->details->transferReference;
+                $address = "IBAN: {$apiPayment->_embedded->payments[0]->details->bankAccount} / BIC: {$apiPayment->_embedded->payments[0]->details->bankBic}";
+            } else {
+                $details = $apiPayment->details->transferReference;
+                $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
+            }
+
+            $extraVars = array(
+                '{bankwire_owner}'   => 'Stichting Mollie Payments',
+                '{bankwire_details}' => $details,
+                '{bankwire_address}' => $address,
+            );
+
             $this->module->currentOrderReference = $orderReference;
             $this->module->validateMollieOrder(
                 (int) $cart->id,
                 $paymentStatus,
                 $originalAmount,
-                isset(Mollie::$methods[$payment->method]) ? Mollie::$methods[$payment->method] : $this->module->name,
+                isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : $this->module->name,
                 null,
-                array(),
+                $extraVars,
                 null,
                 false,
                 $customer->secure_key
@@ -218,8 +233,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                         'cart_id'         => (int) $cart->id,
                         'order_id'        => (int) $orderId,
                         'order_reference' => pSQL($orderReference),
-                        'method'          => pSQL($payment->method),
-                        'transaction_id'  => pSQL($payment->id),
+                        'method'          => pSQL($apiPayment->method),
+                        'transaction_id'  => pSQL($apiPayment->id),
                         'bank_status'     => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                         'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                     )
@@ -231,7 +246,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         // Go to payment url
-        Tools::redirect($payment->getCheckoutUrl());
+        Tools::redirect($apiPayment->getCheckoutUrl());
     }
 
     /**
@@ -283,8 +298,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      */
     protected function createPayment($data)
     {
-        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
-        $payment = $this->module->api->{Mollie::selectedApi()}->create($data);
+        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
+            /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
+            $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
+        } else {
+            /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+            $payment = $this->module->api->payments->create($data);
+        }
 
         return $payment;
     }

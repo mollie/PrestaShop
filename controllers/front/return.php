@@ -312,9 +312,11 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $_GET['module'] = $this->module->name;
         }
         $webhookController = new MollieWebhookModuleFrontController();
-        $apiToUse = Tools::substr($transactionId, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
-        /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $apiPayment */
-        $apiPayment = $webhookController->processTransaction($this->module->api->{$apiToUse}->get($transactionId, array('embed' => 'payments')));
+        if (Tools::substr($transactionId, 0, 3) === 'ord') {
+            $apiPayment = $webhookController->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
+        } else {
+            $apiPayment = $webhookController->processTransaction($this->module->api->payments->get($transactionId));
+        }
 
         switch ($apiPayment->status) {
             case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
