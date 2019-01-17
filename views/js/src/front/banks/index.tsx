@@ -67,14 +67,14 @@ export function mollieBanks(banks: IBanks, translations: ITranslations) {
       },
     },
   }).then((value: any) => {
-    try {
-      unmountComponentAtNode(wrapper);
-    } catch (e) {
-    }
-
     if (value) {
       const win = window.open(banks[issuer].href, '_self');
       win.opener = null;
+    } else {
+      try {
+        setTimeout(() => unmountComponentAtNode(wrapper), 2000);
+      } catch (e) {
+      }
     }
   });
 }
