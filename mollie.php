@@ -2300,15 +2300,16 @@ class Mollie extends PaymentModule
      */
     public function partialRefundOrderState()
     {
-        $stateExist = false;
+        $stateExists = false;
         $states = OrderState::getOrderStates((int) $this->context->language->id);
         foreach ($states as $state) {
-            if (in_array($this->lang('Mollie Partially Refunded'), $state)) {
-                $stateExist = true;
+            if (in_array($this->lang('Mollie Partially Refunded'), $state['name'])) {
+                Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $state[OrderState::$definition['primary']]);
+                $stateExists = true;
                 break;
             }
         }
-        if (!$stateExist) {
+        if (!$stateExists) {
             $orderState = new OrderState();
             $orderState->send_email = false;
             $orderState->color = '#6F8C9F';
