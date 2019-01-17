@@ -3210,7 +3210,9 @@ class Mollie extends PaymentModule
         $countryCode = Tools::strtolower($this->context->country->iso_code);
         $unavailableMethods = array();
         foreach (static::$defaultMethodAvailability as $methodName => $countries) {
-            if (!in_array($methodName, array('klarnapaylater', 'klarnasliceit'))) {
+            if (!in_array($methodName, array('klarnapaylater', 'klarnasliceit'))
+                || empty($countries)
+            ) {
                 continue;
             }
             if (!in_array($countryCode, $countries)) {
