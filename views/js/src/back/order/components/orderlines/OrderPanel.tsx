@@ -36,13 +36,14 @@ import { Dispatch } from 'redux';
 
 import { updateOrder } from '../../store/actions';
 import OrderPanelContent from './OrderPanelContent';
+import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  config?: IMollieOrderConfig,
-  translations?: ITranslations,
-  order?: IMollieApiOrder,
-  dispatchUpdateOrder?: Function,
+  config?: IMollieOrderConfig;
+  translations?: ITranslations;
+  order?: IMollieApiOrder;
+  dispatchUpdateOrder?: Function;
 }
 
 class OrderPanel extends Component<IProps> {

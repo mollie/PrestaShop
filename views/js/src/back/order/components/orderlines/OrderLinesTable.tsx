@@ -48,16 +48,23 @@ import { cancelOrder, refundOrder, shipOrder } from '../../misc/ajax';
 import { updateOrder } from '../../store/actions';
 import OrderLinesTableActions from './OrderLinesTableActions';
 import styled from 'styled-components';
+import {
+  ICurrencies,
+  IMollieApiOrder,
+  IMollieOrderConfig,
+  IMollieOrderLine,
+  IMollieTracking, ITranslations
+} from '../../../../globals';
 
 interface IProps {
   // Redux
-  order?: IMollieApiOrder,
-  currencies?: ICurrencies,
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
-  viewportWidth?: number,
+  order?: IMollieApiOrder;
+  currencies?: ICurrencies;
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
+  viewportWidth?: number;
 
-  dispatchUpdateOrder?: Function,
+  dispatchUpdateOrder?: Function;
 }
 
 interface IState {

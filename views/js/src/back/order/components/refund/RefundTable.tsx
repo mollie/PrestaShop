@@ -36,11 +36,12 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import { formatCurrency } from '../../../misc/tools';
+import { ICurrencies, IMollieApiPayment, IMollieApiRefund } from '../../../../globals';
 
 interface IProps {
   // Redux
-  payment?: IMollieApiPayment,
-  currencies?: ICurrencies,
+  payment?: IMollieApiPayment;
+  currencies?: ICurrencies;
 }
 
 class RefundTable extends Component<IProps> {

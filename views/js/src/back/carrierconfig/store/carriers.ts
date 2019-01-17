@@ -32,13 +32,14 @@
  */
 import { combineReducers } from 'redux';
 
-import { ReduxActionTypes } from './actions';
+import { IUpdateCarrierConfigAction, IUpdateTranslationsAction, ReduxActionTypes } from './actions';
+import { IMollieCarrierConfig, IMollieCarrierConfigItem, ITranslations } from '../../../globals';
 
 declare global {
   interface IMollieCarriersState {
-    translations: ITranslations,
-    config: IMollieCarrierConfig,
-    carriers: Array<IMollieCarrierConfigItem>,
+    translations: ITranslations;
+    config: IMollieCarrierConfig;
+    carriers: Array<IMollieCarrierConfigItem>;
   }
 }
 

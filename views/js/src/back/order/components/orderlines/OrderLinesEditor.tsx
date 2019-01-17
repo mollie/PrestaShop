@@ -37,18 +37,18 @@ import { Table, Tr } from 'styled-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components';
+import { IMollieOrderLine, ITranslations } from '../../../../globals';
 
 interface IProps {
-  lineType: 'shippable' | 'refundable' | 'cancelable',
-  translations: ITranslations,
-  lines: Array<IMollieOrderLine>,
-  edited: (newLines: Array<IMollieOrderLine>) => void,
+  lineType: 'shippable' | 'refundable' | 'cancelable';
+  translations: ITranslations;
+  lines: Array<IMollieOrderLine>;
+  edited: (newLines: Array<IMollieOrderLine>) => void;
 }
 
 interface IState {
-  lines: Array<IMollieOrderLine>,
+  lines: Array<IMollieOrderLine>;
 }
-
 
 const CloseIcon = styled(FontAwesomeIcon)`
 cursor: pointer;

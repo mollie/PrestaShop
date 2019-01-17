@@ -32,7 +32,6 @@
  */
 import React from 'react';
 import { render } from 'react-dom';
-// @ts-ignore
 import viewportSize from 'viewport-size';
 import _ from 'lodash';
 
@@ -40,11 +39,12 @@ import store from './store';
 import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations, updateViewportWidth } from './store/actions';
 import MolliePanel from './components/MolliePanel';
 import { retrieveOrder, retrievePayment } from './misc/ajax';
+import { ICurrencies, IMollieOrderConfig, ITranslations } from '../../globals';
 
 export const orderInfo = (
   target: any,
-  config: IMollieOrderConfig = {},
-  translations: ITranslations = {},
+  config: IMollieOrderConfig,
+  translations: ITranslations,
   currencies: ICurrencies
 ) => {
   setTimeout(async () => {

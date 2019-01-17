@@ -32,11 +32,12 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
-  viewportWidth?: number,
+  translations?: ITranslations;
+  viewportWidth?: number;
 }
 
 class OrderLinesTableHeader extends Component<IProps> {

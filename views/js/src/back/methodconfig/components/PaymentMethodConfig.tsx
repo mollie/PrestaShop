@@ -36,16 +36,17 @@ import PaymentMethods from './PaymentMethods';
 import LoadingDots from '../../misc/components/LoadingDots';
 import _ from 'lodash';
 import PaymentMethodsError from './PaymentMethodsError';
+import { IMollieMethodConfig, IMolliePaymentMethodItem, ITranslations } from '../../../globals';
 
 interface IProps {
-  config: IMollieMethodConfig,
-  translations: ITranslations,
-  target: string,
+  config: IMollieMethodConfig;
+  translations: ITranslations;
+  target: string;
 }
 
 interface IState {
-  methods: Array<IMolliePaymentMethodItem>,
-  message: string,
+  methods: Array<IMolliePaymentMethodItem>;
+  message: string;
 }
 
 class PaymentMethodConfig extends Component<IProps> {

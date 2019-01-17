@@ -36,8 +36,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 // Uncomment for analyzing webpack size (1/2)
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
   new webpack.optimize.ModuleConcatenationPlugin(),
@@ -50,26 +48,6 @@ const optimization = {
 };
 
 if (production) {
-  plugins.push(
-    new LodashModuleReplacementPlugin({
-      collections: true,
-      paths: true,
-      shorthands: true,
-      cloning: true,
-      chaining: true,
-      metadata: true,
-      caching: false,
-      exotics: false,
-      guards: false,
-      deburring: false,
-      unicode: false,
-      memoizing: false,
-      coercions: false,
-      currying: false,
-      flattening: false,
-      placeholders: false,
-    })
-  );
   optimization.minimizer.push(
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -167,7 +145,6 @@ module.exports = {
           options: {
             plugins: [
               '@babel/plugin-proposal-class-properties',
-              'babel-plugin-lodash',
             ],
             presets: [
               ['@babel/preset-env', {

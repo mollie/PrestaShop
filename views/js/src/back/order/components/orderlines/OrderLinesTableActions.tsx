@@ -3,17 +3,18 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faTruck, faUndo, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { IMollieOrderConfig, IMollieOrderLine, ITranslations } from '../../../../globals';
 
 interface IProps {
-  line: IMollieOrderLine,
-  loading: boolean,
-  shipLine: Function,
-  cancelLine: Function,
-  refundLine: Function,
+  line: IMollieOrderLine;
+  loading: boolean;
+  shipLine: Function;
+  cancelLine: Function;
+  refundLine: Function;
 
   // Redux
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
 
 class OrderLinesTableActions extends Component<IProps> {

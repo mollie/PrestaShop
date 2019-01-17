@@ -36,14 +36,15 @@ import classnames from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
+import { IMollieCarrierConfig, ITranslations } from '../../../globals';
 
 interface IProps {
-  retry: Function,
-  message?: string,
+  retry: Function;
+  message?: string;
 
   // Redux
-  translations?: ITranslations,
-  config?: IMollieCarrierConfig,
+  translations?: ITranslations;
+  config?: IMollieCarrierConfig;
 }
 
 const Code = styled.code`

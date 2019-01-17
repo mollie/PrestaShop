@@ -36,7 +36,12 @@ import _ from 'lodash';
 import styled from 'styled-components';
 
 import PaymentMethod from './PaymentMethod';
-import Error from './Error';
+import {
+  IMollieMethodConfig,
+  IMolliePaymentMethodConfigItem,
+  IMolliePaymentMethodItem,
+  ITranslations
+} from '../../../globals';
 
 const Section = styled.section`
 border: 2px solid #0c95fd!important;
@@ -74,14 +79,14 @@ const SortableList = SortableContainer(({ items, translations, onArrowClicked, o
 });
 
 interface IProps {
-  methods: Array<IMolliePaymentMethodItem>,
-  translations: ITranslations,
-  target: string,
-  config: IMollieMethodConfig,
+  methods: Array<IMolliePaymentMethodItem>;
+  translations: ITranslations;
+  target: string;
+  config: IMollieMethodConfig;
 }
 
 interface IState {
-  methods: Array<IMolliePaymentMethodItem>,
+  methods: Array<IMolliePaymentMethodItem>;
 }
 
 class PaymentMethods extends Component<IProps> {

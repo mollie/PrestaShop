@@ -35,12 +35,13 @@ import classnames from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
+import { IMollieMethodConfig, ITranslations } from '../../../globals';
 
 interface IProps {
-  translations: ITranslations,
-  config: IMollieMethodConfig,
-  message: string,
-  retry: Function,
+  translations: ITranslations;
+  config: IMollieMethodConfig;
+  message: string;
+  retry: Function;
 }
 
 const Code = styled.code`

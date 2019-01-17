@@ -37,13 +37,14 @@ import { updatePayment } from '../../store/actions';
 import LoadingDots from '../../../misc/components/LoadingDots';
 import PaymentInfo from './PaymentInfo';
 import RefundInfo from './RefundInfo';
+import { IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  config?: IMollieOrderConfig,
-  translations?: ITranslations,
-  payment?: IMollieApiPayment,
-  dispatchUpdatePayment?: Function,
+  config?: IMollieOrderConfig;
+  translations?: ITranslations;
+  payment?: IMollieApiPayment;
+  dispatchUpdatePayment?: Function;
 }
 
 class RefundPanel extends Component<IProps> {

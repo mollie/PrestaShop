@@ -37,6 +37,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import CarrierConfig from './components/CarrierConfig';
 import { updateConfig, updateTranslations } from './store/actions';
+import { IMollieCarrierConfig, ITranslations } from '../../globals';
 
 declare let window: any;
 

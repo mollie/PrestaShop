@@ -34,6 +34,7 @@ import '@babel/polyfill';
 import swal from 'sweetalert';
 import xss from 'xss';
 import styles from './css/banks.css';
+import { IBanks, ITranslations } from '../../globals';
 
 declare let window: any;
 

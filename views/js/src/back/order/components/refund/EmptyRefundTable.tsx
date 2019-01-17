@@ -33,10 +33,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import RefundTableHeader from './RefundTableHeader';
+import { ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
+  translations?: ITranslations;
 }
 
 class EmptyRefundTable extends Component<IProps> {

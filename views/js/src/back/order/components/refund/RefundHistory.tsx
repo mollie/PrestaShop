@@ -34,11 +34,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyRefundTable from './EmptyRefundTable';
 import RefundTable from './RefundTable';
+import { IMollieApiPayment, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  payment?: IMollieApiPayment,
-  translations?: ITranslations,
+  payment?: IMollieApiPayment;
+  translations?: ITranslations;
 }
 
 class RefundHistory extends Component<IProps> {

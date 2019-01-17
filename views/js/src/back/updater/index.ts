@@ -34,6 +34,7 @@ import swal from 'sweetalert';
 import xss from 'xss';
 import _ from 'lodash';
 import axios from '../misc/axios';
+import { ITranslations } from '../../globals';
 
 const showError = (message: string) => {
   swal({

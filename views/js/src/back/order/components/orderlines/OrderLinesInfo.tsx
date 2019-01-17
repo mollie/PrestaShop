@@ -35,12 +35,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import OrderLinesTable from './OrderLinesTable';
 import EmptyOrderLinesTable from './EmptyOrderLinesTable';
+import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
-  order?: IMollieApiOrder,
-  config?: IMollieOrderConfig,
+  translations?: ITranslations;
+  order?: IMollieApiOrder;
+  config?: IMollieOrderConfig;
 }
 
 const Div = styled.div`

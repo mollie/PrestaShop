@@ -34,15 +34,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
-  loading: boolean,
-  disabled: boolean,
-  refundPayment: any,
+  loading: boolean;
+  disabled: boolean;
+  refundPayment: any;
 
   // Redux
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
 
 class PartialRefundButton extends Component<IProps> {

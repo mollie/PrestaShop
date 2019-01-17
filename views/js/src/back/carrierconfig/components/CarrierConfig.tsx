@@ -37,16 +37,22 @@ import classnames from 'classnames';
 import axios from '../../misc/axios';
 import LoadingDots from '../../misc/components/LoadingDots';
 import ConfigCarrierError from './CarrierConfigError';
+import {
+  IMollieCarrierConfig,
+  IMollieCarrierConfigItem,
+  IMollieCarrierConfigItems,
+  ITranslations,
+} from '../../../globals';
 
 interface IProps {
-  config: IMollieCarrierConfig,
-  translations: ITranslations,
-  target: string,
+  config: IMollieCarrierConfig;
+  translations: ITranslations;
+  target: string;
 }
 
 interface IState {
-  carriers?: Array<IMollieCarrierConfigItem>,
-  message?: string,
+  carriers?: Array<IMollieCarrierConfigItem>;
+  message?: string;
 }
 
 class CarrierConfig extends Component<IProps> {

@@ -37,20 +37,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 import Switch from './Switch';
+import { IMollieMethodConfig, ITranslations } from '../../../globals';
 
 interface IProps {
-  position: number,
-  max: number,
-  enabled: boolean,
-  available: boolean,
-  name: string,
-  code: string,
-  imageUrl: string,
-  translations: ITranslations,
-  config: IMollieMethodConfig,
+  position: number;
+  max: number;
+  enabled: boolean;
+  available: boolean;
+  name: string;
+  code: string;
+  imageUrl: string;
+  translations: ITranslations;
+  config: IMollieMethodConfig;
 
-  moveMethod: Function,
-  onToggle: Function,
+  moveMethod: Function;
+  onToggle: Function;
 }
 
 declare let $: any;

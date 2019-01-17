@@ -33,13 +33,14 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { lighten, darken, rgba } from 'polished';
+import { ITranslations } from '../../../globals';
 
 interface IProps {
-  enabled: boolean,
-  onChange: any,
-  id: string,
-  translations: ITranslations,
-  legacy: boolean,
+  enabled: boolean;
+  onChange: any;
+  id: string;
+  translations: ITranslations;
+  legacy: boolean;
 }
 
 const Span = styled.span`

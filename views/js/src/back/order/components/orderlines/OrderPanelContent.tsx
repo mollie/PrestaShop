@@ -37,11 +37,12 @@ import classnames from 'classnames';
 import LoadingDots from '../../../misc/components/LoadingDots';
 import PaymentInfo from './PaymentInfo';
 import OrderLinesInfo from './OrderLinesInfo';
+import { IMollieApiOrder, IMollieOrderConfig } from '../../../../globals';
 
 interface IProps {
   // Redux
-  order?: IMollieApiOrder,
-  config?: IMollieOrderConfig,
+  order?: IMollieApiOrder;
+  config?: IMollieOrderConfig;
 }
 
 class OrderPanelContent extends Component<IProps> {

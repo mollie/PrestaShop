@@ -35,12 +35,13 @@ import RefundHistory from './RefundHistory';
 import RefundForm from './RefundForm';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
-  payment?: IMollieApiPayment,
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
+  payment?: IMollieApiPayment;
 }
 
 const Div = styled.div`

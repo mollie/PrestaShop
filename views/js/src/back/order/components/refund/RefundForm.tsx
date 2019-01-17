@@ -42,15 +42,16 @@ import RefundButton from './RefundButton';
 import PartialRefundButton from './PartialRefundButton';
 import { formatCurrency } from '../../../misc/tools';
 import { refundPayment } from '../../misc/ajax';
+import { ICurrencies, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  config?: IMollieOrderConfig,
-  payment?: IMollieApiPayment,
-  translations?: ITranslations,
-  currencies?: ICurrencies,
+  config?: IMollieOrderConfig;
+  payment?: IMollieApiPayment;
+  translations?: ITranslations;
+  currencies?: ICurrencies;
 
-  dispatchUpdatePayment?: Function,
+  dispatchUpdatePayment?: Function;
 }
 
 interface IState {

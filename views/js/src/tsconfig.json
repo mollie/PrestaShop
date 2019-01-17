@@ -7,14 +7,15 @@
     "noImplicitAny": true,
     "target": "es5",
     "jsx": "react",
+    "skipLibCheck": true,
     "noEmit": false,
     "pretty": true,
     "lib": [ "es2015", "es2016", "es2017", "dom" ],
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "globals.d.ts",
-    "./front/**/*",
-    "./back/**/*"
+    "globals.ts",
+    "front/**/*",
+    "back/**/*"
   ]
 }

@@ -30,29 +30,5 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-// Action types
-import { IMollieCarrierConfig, ITranslations } from '../../../globals';
-
-export enum ReduxActionTypes {
-  updateTranslations = 'UPDATE_MOLLIE_CARRIER_TRANSLATIONS',
-  updateConfig = 'UPDATE_MOLLIE_CARRIER_CONFIG',
-}
-
-// Action creators
-export interface IUpdateTranslationsAction {
-  type: string;
-  translations: ITranslations;
-}
-
-export interface IUpdateCarrierConfigAction {
-  type: string;
-  config: IMollieCarrierConfig;
-}
-
-export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
-  return { type: ReduxActionTypes.updateTranslations, translations };
-}
-
-export function updateConfig(config: IMollieCarrierConfig): IUpdateCarrierConfigAction {
-  return { type: ReduxActionTypes.updateConfig, config };
-}
+declare module 'viewport-size';
+declare module 'styled-table-component';

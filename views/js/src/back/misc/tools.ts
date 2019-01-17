@@ -32,6 +32,7 @@
  */
 import _ from 'lodash';
 import version_compare from 'locutus/php/info/version_compare';
+import { ICurrency } from '../../globals';
 
 declare let window: any;
 

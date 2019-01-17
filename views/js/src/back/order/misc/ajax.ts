@@ -33,8 +33,9 @@
 import axios from '../../misc/axios';
 import store from '../store';
 import _ from 'lodash';
+import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking } from '../../../globals';
 
-export const retrievePayment = async (transactionId: number): Promise<IMollieApiPayment|null> => {
+export const retrievePayment = async (transactionId: string): Promise<IMollieApiPayment|null> => {
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
 

@@ -33,14 +33,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { ITranslations } from '../../../../globals';
 
 interface IProps {
-  loading: boolean,
-  disabled: boolean,
-  refundPayment: any,
+  loading: boolean;
+  disabled: boolean;
+  refundPayment: any;
 
   // Redux
-  translations?: ITranslations,
+  translations?: ITranslations;
 }
 
 class RefundButton extends Component<IProps> {

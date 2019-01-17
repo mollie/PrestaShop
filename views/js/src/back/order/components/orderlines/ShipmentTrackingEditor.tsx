@@ -33,12 +33,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { IMollieOrderConfig, IMollieTracking, ITranslations } from '../../../../globals';
 
 interface IProps {
-  edited: (newLines: IMollieTracking) => void,
-  translations: ITranslations,
-  config: IMollieOrderConfig,
-  checkButtons: () => Promise<void>|void,
+  edited: (newLines: IMollieTracking) => void;
+  translations: ITranslations;
+  config: IMollieOrderConfig;
+  checkButtons: () => Promise<void>|void;
 }
 
 interface IState {

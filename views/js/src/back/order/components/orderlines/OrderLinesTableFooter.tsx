@@ -35,17 +35,18 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
+import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
-  loading: boolean,
-  ship: Function,
-  refund: Function,
-  cancel: Function,
+  loading: boolean;
+  ship: Function;
+  refund: Function;
+  cancel: Function;
 
   // Redux
-  order?: IMollieApiOrder,
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
+  order?: IMollieApiOrder;
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
 
 class OrderLinesTableFooter extends Component<IProps> {

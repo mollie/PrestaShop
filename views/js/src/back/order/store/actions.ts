@@ -31,6 +31,8 @@
  * @link       https://www.mollie.nl
  */
 // Action types
+import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../globals';
+
 export enum ReduxActionTypes {
   updateTranslations = 'UPDATE_MOLLIE_ORDER_TRANSLATIONS',
   updateConfig = 'UPDATE_MOLLIE_ORDER_CONFIG',
@@ -41,36 +43,34 @@ export enum ReduxActionTypes {
 }
 
 // Action creators
-declare global {
-  interface IUpdateTranslationsAction {
-    type: string,
-    translations: ITranslations,
-  }
+export interface IUpdateTranslationsAction {
+  type: string;
+  translations: ITranslations;
+}
 
-  interface IUpdateConfigAction {
-    type: string,
-    config: IMollieOrderConfig,
-  }
+export interface IUpdateConfigAction {
+  type: string;
+  config: IMollieOrderConfig;
+}
 
-  interface IUpdateOrderAction {
-    type: string,
-    order: IMollieApiOrder,
-  }
+export interface IUpdateOrderAction {
+  type: string;
+  order: IMollieApiOrder;
+}
 
-  interface IUpdatePaymentAction {
-    type: string,
-    payment: IMollieApiPayment,
-  }
+export interface IUpdatePaymentAction {
+  type: string;
+  payment: IMollieApiPayment;
+}
 
-  interface IUpdateCurrenciesAction {
-    type: string,
-    currencies: ICurrencies,
-  }
+export interface IUpdateCurrenciesAction {
+  type: string;
+  currencies: ICurrencies;
+}
 
-  interface IUpdateViewportWidthAction {
-    type: string,
-    width: number,
-  }
+export interface IUpdateViewportWidthAction {
+  type: string;
+  width: number;
 }
 
 export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {

@@ -36,13 +36,14 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { formatCurrency } from '../../../misc/tools';
+import { ICurrencies, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
-  currencies?: ICurrencies,
-  payment?: IMollieApiPayment,
-  config?: IMollieOrderConfig,
+  translations?: ITranslations;
+  currencies?: ICurrencies;
+  payment?: IMollieApiPayment;
+  config?: IMollieOrderConfig;
 }
 
 class PaymentInfoContent extends Component<IProps> {

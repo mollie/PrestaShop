@@ -33,11 +33,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import OrderLinesTableHeader from './OrderLinesTableHeader';
+import { IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  translations?: ITranslations,
-  config?: IMollieOrderConfig,
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
 
 class EmptyOrderLinesTable extends Component<IProps> {

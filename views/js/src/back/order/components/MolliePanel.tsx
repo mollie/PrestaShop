@@ -36,12 +36,13 @@ import store from '../store';
 import { connect, Provider } from 'react-redux';
 import OrderPanel from './orderlines/OrderPanel';
 import { Store } from 'redux';
+import { IMollieApiOrder, IMollieApiPayment } from '../../../globals';
 
 interface IProps {
-  store: Store,
+  store: Store;
 
-  payment?: IMollieApiPayment,
-  order?: IMollieApiOrder,
+  payment?: IMollieApiPayment;
+  order?: IMollieApiOrder;
 }
 
 class MolliePanel extends Component<IProps> {

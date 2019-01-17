@@ -34,16 +34,23 @@ import { combineReducers } from 'redux';
 // @ts-ignore
 import viewportSize from 'viewport-size';
 
-import { ReduxActionTypes } from './actions';
+import {
+  IUpdateConfigAction,
+  IUpdateCurrenciesAction,
+  IUpdateOrderAction,
+  IUpdatePaymentAction, IUpdateTranslationsAction, IUpdateViewportWidthAction,
+  ReduxActionTypes
+} from './actions';
+import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../globals';
 
 declare global {
   interface IMollieOrderState {
-    translations: ITranslations,
-    config: IMollieOrderConfig,
-    viewportWidth: number,
-    order: IMollieApiOrder,
-    payment: IMollieApiPayment,
-    currencies: ICurrencies,
+    translations: ITranslations;
+    config: IMollieOrderConfig;
+    viewportWidth: number;
+    order: IMollieApiOrder;
+    payment: IMollieApiPayment;
+    currencies: ICurrencies;
   }
 }
 

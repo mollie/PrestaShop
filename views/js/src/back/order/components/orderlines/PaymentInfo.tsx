@@ -35,13 +35,14 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import PaymentInfoContent from './PaymentInfoContent';
+import { ICurrencies, IMollieApiOrder, IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
   // Redux
-  order?: IMollieApiOrder,
-  translations?: ITranslations,
-  currencies?: ICurrencies,
-  config?: IMollieOrderConfig,
+  order?: IMollieApiOrder;
+  translations?: ITranslations;
+  currencies?: ICurrencies;
+  config?: IMollieOrderConfig;
 }
 
 const Div = styled.div`
