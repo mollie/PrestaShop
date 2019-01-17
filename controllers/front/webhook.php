@@ -35,6 +35,7 @@
 
 use MollieModule\Mollie\Api\Resources\Payment;
 use MollieModule\Mollie\Api\Resources\ResourceFactory;
+use MollieModule\Mollie\Api\Types\PaymentStatus;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -142,8 +143,41 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $apiToUse = Tools::substr($transaction, 0, 3) === 'ord' ? Mollie::MOLLIE_ORDERS_API : Mollie::MOLLIE_PAYMENTS_API;
                 if ($apiToUse === Mollie::MOLLIE_ORDERS_API) {
                     $apiOrder = $this->module->api->{Mollie::MOLLIE_ORDERS_API}->get($transaction, array('embed' => 'payments'));
-                    $apiPayment = ResourceFactory::createFromApiResult($apiOrder->_embedded->payments[0], new Payment($this->module->api));
-                    $apiPayment->metadata = $apiOrder->metadata;
+                    $apiPayments = array();
+                    foreach ($apiOrder->_embedded->payments as $embeddedPayment) {
+                        $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
+                        $apiPayment->metadata = $apiOrder->metadata;
+                        $apiPayments[] = $apiPayment;
+                        unset($apiPayment);
+                    }
+                    if (count($apiPayments) === 1) {
+                        $apiPayment = $apiPayments[0];
+                    } else {
+                        // In case of multiple payments, the one with the paid status is leading, second is final status
+                        foreach ($apiPayments as $payment) {
+                            if (in_array($payment->status, array(PaymentStatus::STATUS_PAID))) {
+                                $apiPayment = $payment;
+                                break;
+                            }
+                        }
+                        // In case there is no paid payment, we are going to look for the second-best candidate
+                        if (!isset($apiPayment)) {
+                            foreach ($apiPayments as $payment) {
+                                if (in_array($payment->status, array(
+                                    PaymentStatus::STATUS_CANCELED,
+                                    PaymentStatus::STATUS_FAILED,
+                                    PaymentStatus::STATUS_EXPIRED,
+                                ))) {
+                                    $apiPayment = $payment;
+                                    break;
+                                }
+                            }
+                        }
+                        // No final statuses, take the first payment
+                        if (isset($apiPayment)) {
+                            $apiPayment = $apiPayments[0];
+                        }
+                    }
                 } else {
                     $apiPayment = $this->module->api->{Mollie::MOLLIE_PAYMENTS_API}->get($transaction);
                 }
