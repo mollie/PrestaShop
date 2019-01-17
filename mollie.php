@@ -1977,8 +1977,6 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     *
-     * @fixme: find a solution for 1.7 currencies
      */
     public function hookDisplayAdminOrder($params)
     {
