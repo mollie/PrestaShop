@@ -2303,7 +2303,7 @@ class Mollie extends PaymentModule
         $stateExists = false;
         $states = OrderState::getOrderStates((int) $this->context->language->id);
         foreach ($states as $state) {
-            if (in_array($this->lang('Mollie Partially Refunded'), $state['name'])) {
+            if ($this->lang('Mollie partially refunded') === $state['name']) {
                 Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $state[OrderState::$definition['primary']]);
                 $stateExists = true;
                 break;
