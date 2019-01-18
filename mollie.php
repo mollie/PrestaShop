@@ -5599,7 +5599,8 @@ class Mollie extends PaymentModule
 
         if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
                 || in_array($orderStatusNumber, $checkStatuses)
-            ) || $shipmentInfo === null) {
+            ) || $shipmentInfo === null
+        ) {
             return;
         }
 
@@ -5618,22 +5619,23 @@ class Mollie extends PaymentModule
         }
 
         $length = Tools::strlen(\MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
-        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== \MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX) {
+        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== \MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
+        ) {
             // No need to check regular payments
             return;
         }
 
         try {
-            $apiPayment = $this->api->orders->get($dbPayment['transaction_id'], array('embed' => 'payments'));
+            $apiOrder = $this->api->orders->get($dbPayment['transaction_id']);
             $shippableItems = 0;
-            foreach ($apiPayment->lines as $line) {
+            foreach ($apiOrder->lines as $line) {
                 $shippableItems += $line->shippableQuantity;
             }
             if ($shippableItems <= 0) {
                 return;
             }
 
-            $apiPayment->shipAll(array('tracking' => $shipmentInfo));
+            $apiOrder->shipAll($shipmentInfo);
         } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
             Logger::addLog("Mollie module error: {$e->getMessage()}");
             return;
@@ -5667,7 +5669,7 @@ class Mollie extends PaymentModule
             || !Validate::isLoadedObject($deliveryAddress)
             || !$carrierConfig
         ) {
-            return null;
+            return array();
         }
 
         if ($carrierConfig['source'] === static::MOLLIE_CARRIER_NO_TRACKING_INFO) {
@@ -5693,9 +5695,11 @@ class Mollie extends PaymentModule
                             $tracktrace = $info['tracktrace'];
 
                             return array(
-                                'carrier' => 'PostNL',
-                                'code'    => $info['tracktrace'],
-                                'url'     => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
+                                'tracking' => array(
+                                    'carrier' => 'PostNL',
+                                    'code'    => $info['tracktrace'],
+                                    'url'     => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
+                                ),
                             );
                         }
                     } catch (PrestaShopDatabaseException $e) {
@@ -5719,9 +5723,11 @@ class Mollie extends PaymentModule
             }
 
             return array(
-                'carrier' => $carrier->name,
-                'code'    => $shippingNumber,
-                'url'     => str_replace('@', $shippingNumber, $carrier->url),
+                'tracking' => array(
+                    'carrier' => $carrier->name,
+                    'code'    => $shippingNumber,
+                    'url'     => str_replace('@', $shippingNumber, $carrier->url),
+                ),
             );
         }
 
@@ -5755,17 +5761,19 @@ class Mollie extends PaymentModule
             );
 
             return array(
-                'carrier' => $carrier->name,
-                'code'    => $shippingNumber,
-                'url'     => str_ireplace(
-                    array_keys($info),
-                    array_values($info),
-                    $carrierConfig['custom_url']
+                'tracking' => array(
+                    'carrier' => $carrier->name,
+                    'code'    => $shippingNumber,
+                    'url'     => str_ireplace(
+                        array_keys($info),
+                        array_values($info),
+                        $carrierConfig['custom_url']
+                    ),
                 ),
             );
         }
 
-        return null;
+        return array();
     }
 
     /**
