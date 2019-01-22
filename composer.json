@@ -14,16 +14,6 @@
     "autoload": {
         "classmap": ["vendor/", "controllers/"]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/firstred/mollie-api-php"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/firstred/mollie-reseller-api"
-        }
-    ],
     "config": {
         "platform": {
             "php": "5.3.29"
