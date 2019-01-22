@@ -1,6 +1,7 @@
 {
-    "name": "mollie/prestashop",
-    "description": "Mollie module for PrestaShop",
+  "name": "mollie/prestashop",
+  "license": "BSD-2.0",
+  "description": "Mollie module for PrestaShop",
     "require": {
         "firstred/mollie-api-php": "~2.2.0",
         "firstred/mollie-reseller-api": "~1.10.2",
