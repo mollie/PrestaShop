@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "exit 0"
   },
   "author": "Martijn Diederiks <info@trendweb.nl>",
   "license": "AFL-3.0",
@@ -32,7 +32,6 @@
     "styled-table-component": "^3.0.1",
     "sweetalert": "^2.1.2",
     "viewport-size": "^0.0.1",
-    "webpack": "^4.28.4",
     "xss": "^1.0.3"
   },
   "devDependencies": {
@@ -58,6 +57,7 @@
     "typings-for-css-modules-loader": "^1.7.0",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack-bundle-analyzer": "^3.0.2",
+    "webpack": "^4.28.4",
     "webpack-cli": "^3.1.2"
   },
   "resolutions": {

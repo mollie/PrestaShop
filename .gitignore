@@ -6,3 +6,5 @@ yarn-error.log
 package-lock.json
 .idea/
 build/
+prestashop/
+.codecept.phar

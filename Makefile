@@ -144,7 +144,7 @@ ifeq (,$(wildcard views/js/dist/))
 endif
 	@cp views/js/src/index.php views/js/dist/index.php
 	@cd views/js/src/; \
-		webpack --mode ${NODE_ENV}
+		node_modules/.bin/webpack --mode ${NODE_ENV}
 ifeq ($(NODE_ENV),production)
 	@mv views/js/dist/front.min.js views/js/dist/front-v$(MODULE_VERSION).min.js
 	@mv views/js/dist/back.min.js views/js/dist/back-v$(MODULE_VERSION).min.js
