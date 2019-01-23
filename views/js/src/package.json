@@ -48,7 +48,7 @@
     "@types/react": "^16.4.16",
     "@types/react-dom": "^16.0.9",
     "@types/react-fontawesome": "^1.6.4",
-    "@types/react-redux": "^6.0.9",
+    "@types/react-redux": "^7.0.0",
     "@types/react-sortable-hoc": "^0.6.4",
     "@types/styled-components": "^4.0.1",
     "@types/styled-system": "^3.0.4",
