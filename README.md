@@ -21,12 +21,11 @@ Our Multi-currency system allows you to receive payments from customers worldwid
 Choose the best payment provider available for your online PrestaShop store. Create your new merchant account at [Mollie.com](https://www.mollie.com/). 
 Download and install the Mollie PrestaShop payment module and start receiving online payments now! -->
 
-
-## Made and maintained by [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
-
 [![Build Status](https://travis-ci.org/mollie/PrestaShop.svg?branch=master)](https://travis-ci.org/mollie/PrestaShop)
 [![Greenkeeper badge](https://badges.greenkeeper.io/mollie/PrestaShop.svg)](https://greenkeeper.io/)
 [![Release badge](https://img.shields.io/github/release/mollie/PrestaShop.svg)](https://github.com/mollie/PrestaShop/releases/latest)
+
+## Made and maintained by [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
 
 ## Compatible with PrestaShop 1.5 to 1.7 ##
 
