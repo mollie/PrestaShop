@@ -68,7 +68,7 @@ before_script:
       cp ./build/mollie-v${MOLLIE_MODULE_VERSION}.zip ./tests/_data/mollie.zip
     fi
   - if [[ $TEST_ACCEPTANCE ]]; then yarn global add chromedriver; fi
-  # Run docker + phantomjs and wait until up
+  # Run docker + headless Chrome and wait until PrestaShop is installed
   - >
     if [[ ${PRESTASHOP_VERSION} ]]; then
       git clone https://github.com/PrestaShop/PrestaShop --depth 1 --branch ${PRESTASHOP_VERSION} prestashop
