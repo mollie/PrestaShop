@@ -62,15 +62,15 @@ matrix:
 before_script:
   # Build the release
   - >
-    if [[ "${TEST_UNIT}" = true ]] || [[ "${TEST_ACCEPTANCE}" = true ]]; then
+    if [ "${TEST_UNIT}" = "true" ] || [ "${TEST_ACCEPTANCE}" = "true" ]; then
       export MOLLIE_MODULE_VERSION=$(sed -ne "s/\\\$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" mollie.php | awk '{$1=$1};1')
       make r
       cp ./build/mollie-v${MOLLIE_MODULE_VERSION}.zip ./tests/_data/mollie.zip
     fi
-  - if [[ $TEST_ACCEPTANCE ]]; then yarn global add chromedriver; fi
+  - if [ "$TEST_ACCEPTANCE" = "true" ]; then yarn global add chromedriver; fi
   # Run docker + headless Chrome and wait until PrestaShop is installed
   - >
-    if [[ ${PRESTASHOP_VERSION} ]]; then
+    if [ ${PRESTASHOP_VERSION} ]; then
       git clone https://github.com/PrestaShop/PrestaShop --depth 1 --branch ${PRESTASHOP_VERSION} prestashop
       docker-compose up -d
       nohup chromedriver --url-base=/wd/hub &
@@ -84,10 +84,10 @@ before_script:
 
 script:
   # Syntax checker
-  - if [[ "$TEST_SYNTAX" = true ]]; then find controllers sql translations upgrade views countries.php mollie.php -name '*.php' | xargs -n 1 -P4 php -l; fi
+  - if [ "$TEST_SYNTAX" = "true" ]; then find controllers sql translations upgrade views countries.php mollie.php -name '*.php' | xargs -n 1 -P4 php -l; fi
   # Unit tests (Codeception)
-  - if [[ "$TEST_UNIT" = true ]]; then php codecept.phar run unit; fi
+  - if [ "$TEST_UNIT" = "true" ]; then php codecept.phar run unit; fi
   # Acceptance tests (Codeception)
-  - if [[ "$TEST_ACCEPTANCE" = true ]]; then php codecept.phar run acceptance; fi
+  - if [ "$TEST_ACCEPTANCE" = "true" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then php codecept.phar run acceptance; fi
   # Frontend tests (Jest)
-  - if [[ "$TEST_FRONTEND" = true ]]; then cd views/js/src/ && yarn test; fi
+  - if [ "$TEST_FRONTEND" = "true" ]; then cd views/js/src/ && yarn test; fi
