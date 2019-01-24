@@ -1,5 +1,6 @@
 language: php
-node_js: 10
+node_js:
+  - 8
 sudo: true
 services:
   - docker
@@ -24,13 +25,13 @@ matrix:
   include:
     - php: 5.3
       dist: precise
-      env: TEST_SYNTAX=true
+      env: TEST_SYNTAX=true SKIP_NODE=true
     - php: 5.4
       dist: precise
-      env: TEST_SYNTAX=true
+      env: TEST_SYNTAX=true SKIP_NODE=true
     - php: 5.5
       dist: precise
-      env: TEST_SYNTAX=true
+      env: TEST_SYNTAX=true SKIP_NODE=true
     - php: 5.6
       env: TEST_SYNTAX=true
     - php: 7.0
@@ -61,8 +62,11 @@ matrix:
       env: PRESTASHOP_VERSION="1.7.5.0" TEST_ACCEPTANCE=true
 
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH="$HOME/.yarn/bin:$PATH"
+  - >
+    if [ "${SKIP_NODE}" != "true" ]; then
+      curl -o- -L https://yarnpkg.com/install.sh | bash
+      export PATH="$HOME/.yarn/bin:$PATH"
+    fi
 
 before_script:
   # Build the release
