@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-MODULE_NAME:=$(shell basename $$PWD)
+MODULE_NAME:=mollie
 MODULE_VERSION:=$(shell sed -ne "s/\\\$$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" ${MODULE_NAME}.php | awk '{$$1=$$1};1')
 
 COLOR_BLACK:=\u001b[30m
