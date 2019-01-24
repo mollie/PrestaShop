@@ -24,7 +24,9 @@ Download and install the Mollie PrestaShop payment module and start receiving on
 
 ## Made and maintained by [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
 
+[![Build Status](https://travis-ci.org/mollie/PrestaShop.svg?branch=master)](https://travis-ci.org/mollie/PrestaShop)
 [![Greenkeeper badge](https://badges.greenkeeper.io/mollie/PrestaShop.svg)](https://greenkeeper.io/)
+[![Release badge](https://img.shields.io/github/release/mollie/PrestaShop.svg)](https://github.com/mollie/PrestaShop/releases/latest)
 
 ## Compatible with PrestaShop 1.5 to 1.7 ##
 
