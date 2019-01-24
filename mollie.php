@@ -2659,11 +2659,12 @@ class Mollie extends PaymentModule
                     'targetVat'   => $vatRate,
                 ),
             );
+            $remaining += $totalDiscounts;
         }
 
         // Compensate for order total rounding inaccuracies
-        if (round($remaining, $apiRoundingPrecision) < 0) {
-            $remaining = round($remaining, $apiRoundingPrecision);
+        $remaining = round($remaining, $apiRoundingPrecision);
+        if ($remaining < 0) {
             foreach (array_reverse($aItems) as $hash => $items) {
                 // Grab the line group's total amount
                 $totalAmount = array_sum(array_column($items, 'totalAmount'));
@@ -2678,6 +2679,14 @@ class Mollie extends PaymentModule
 
                 // Otherwise spread the cart line again with the updated total
                 $aItems[$hash] = static::spreadCartLineGroup($items, $totalAmount - $remaining);
+                break;
+            }
+        } elseif ($remaining > 0) {
+            foreach (array_reverse($aItems) as $hash => $items) {
+                // Grab the line group's total amount
+                $totalAmount = array_sum(array_column($items, 'totalAmount'));
+                // Otherwise spread the cart line again with the updated total
+                $aItems[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         }
