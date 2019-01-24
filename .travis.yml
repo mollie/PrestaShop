@@ -11,7 +11,6 @@ env:
   global:
     - COMPOSER_NO_INTERACTION=1
     - PRESTASHOP_PORT=8090
-    - PHANTOMJS_PORT=4444
 
 cache:
   - yarn
@@ -63,7 +62,7 @@ matrix:
 
 before_install:
   - >
-    if [ "${SKIP_NODE}" != "true" ]; then
+    if [ "$SKIP_NODE" != "true" ]; then
       curl -o- -L https://yarnpkg.com/install.sh | bash
       export PATH="$HOME/.yarn/bin:$PATH"
     fi
@@ -71,7 +70,7 @@ before_install:
 before_script:
   # Build the release
   - >
-    if [ "${TEST_UNIT}" = "true" ] || [ "${TEST_ACCEPTANCE}" = "true" ]; then
+    if [ "$TEST_UNIT" = "true" ] || [ "$TEST_ACCEPTANCE" = "true" ]; then
       export MOLLIE_MODULE_VERSION=$(sed -ne "s/\\\$this->version *= *['\"]\([^'\"]*\)['\"] *;.*/\1/p" mollie.php | awk '{$1=$1};1')
       make r
       cp ./build/mollie-v${MOLLIE_MODULE_VERSION}.zip ./tests/_data/mollie.zip
@@ -79,7 +78,7 @@ before_script:
   - if [ "$TEST_ACCEPTANCE" = "true" ]; then yarn global add chromedriver; fi
   # Run docker + headless Chrome and wait until PrestaShop is installed
   - >
-    if [ ${PRESTASHOP_VERSION} ]; then
+    if [ $PRESTASHOP_VERSION ]; then
       git clone https://github.com/PrestaShop/PrestaShop --depth 1 --branch ${PRESTASHOP_VERSION} prestashop
       docker-compose up -d
       nohup chromedriver --url-base=/wd/hub &
@@ -97,6 +96,6 @@ script:
   # Unit tests (Codeception)
   - if [ "$TEST_UNIT" = "true" ]; then php codecept.phar run unit; fi
   # Acceptance tests (Codeception)
-  - if [ "$TEST_ACCEPTANCE" = "true" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then php codecept.phar run acceptance; fi
+  - if [ "$TEST_ACCEPTANCE" = "true" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then php codecept.phar run acceptance; fi
   # Frontend tests (Jest)
   - if [ "$TEST_FRONTEND" = "true" ]; then cd views/js/src/ && yarn test; fi
