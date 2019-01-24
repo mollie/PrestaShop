@@ -1,4 +1,5 @@
 language: php
+node_js: 10
 sudo: true
 services:
   - docker
