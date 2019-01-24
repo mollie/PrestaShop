@@ -2607,6 +2607,8 @@ class Mollie extends PaymentModule
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cart->getGiftWrappingPrice(), $apiRoundingPrecision) : 0;
         $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
         $cartItems = $cart->getProducts();
+        $cartSummary = $cart->getSummaryDetails();
+        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
 
         $aItems = array();
         /* Item */
@@ -2642,6 +2644,23 @@ class Mollie extends PaymentModule
             }
         }
 
+        // Add discount if applicable
+        if ($totalDiscounts >= 0.01) {
+            $totalDiscountsNoTax = round($cartSummary['total_discounts_tax_exc'], $apiRoundingPrecision);
+            $vatRate = round((($totalDiscounts - $totalDiscountsNoTax) / $totalDiscountsNoTax) * 100, $apiRoundingPrecision);
+
+            $aItems['discount'] = array(
+                array(
+                    'name'        => 'Discount',
+                    'type'        => 'discount',
+                    'quantity'    => 1,
+                    'unitPrice'   => - round($totalDiscounts, $apiRoundingPrecision),
+                    'totalAmount' => - round($totalDiscounts, $apiRoundingPrecision),
+                    'targetVat'   => $vatRate,
+                ),
+            );
+        }
+
         // Compensate for order total rounding inaccuracies
         if (round($remaining, $apiRoundingPrecision) < 0) {
             $remaining = round($remaining, $apiRoundingPrecision);
@@ -2670,22 +2689,25 @@ class Mollie extends PaymentModule
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
                 $unitPriceNoTax = round($line['unitPrice'] / (1 + ($targetVat / 100)), $apiRoundingPrecision);
-                $sku = $line['sku'];
 
                 // Calculate VAT
                 $totalAmount = round($unitPrice * $quantity, $apiRoundingPrecision);
                 $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
                 $vatAmount = $totalAmount * ($actualVatRate / ($actualVatRate + 100));
 
-                return array(
+                $newItem = array(
                     'name'        => $line['name'],
                     'quantity'    => (int) $quantity,
-                    'sku'         => $sku,
-                    'unitPrice'   => $unitPrice,
-                    'totalAmount' => $totalAmount,
+                    'unitPrice'   => round($unitPrice, $apiRoundingPrecision),
+                    'totalAmount' => round($totalAmount, $apiRoundingPrecision),
                     'vatRate'     => round($actualVatRate, $apiRoundingPrecision),
                     'vatAmount'   => round($vatAmount, $apiRoundingPrecision),
                 );
+                if (isset($line['sku'])) {
+                    $newItem['sku'] = $line['sku'];
+                }
+
+                return $newItem;
             }, $aItem);
         }
 
@@ -2722,25 +2744,6 @@ class Mollie extends PaymentModule
                     'unitPrice'   => round($wrapping, $apiRoundingPrecision),
                     'totalAmount' => round($wrapping, $apiRoundingPrecision),
                     'vatAmount'   => round($wrapping * $averageProductTaxRate / ($averageProductTaxRate + 100), static::API_ROUNDING_PRECISION),
-                    'vatRate'     => $averageProductTaxRate,
-                ),
-            );
-        }
-
-        // Add discount if applicable
-        $mollieOrderLinesAmount = array_sum(array_map(function ($line) {
-            return array_sum(array_column(array_column($line, 'totalAmount'), 'value'));
-        }, $aItems));
-        $difference = $mollieOrderLinesAmount - round($amount, $apiRoundingPrecision);
-        if ($difference >= 0.01) {
-            $aItems['discount'] = array(
-                array(
-                    'name'        => 'Discount',
-                    'type'        => 'discount',
-                    'quantity'    => 1,
-                    'unitPrice'   => '-'.number_format($difference, $apiRoundingPrecision, '.', ''),
-                    'totalAmount' => '-'.number_format($difference, $apiRoundingPrecision, '.', ''),
-                    'vatAmount'   => '-'.number_format(round($difference, $apiRoundingPrecision) * (($averageProductTaxRate / 100) / (1 + ($averageProductTaxRate/ 100))), $apiRoundingPrecision, '.', ''),
                     'vatRate'     => $averageProductTaxRate,
                 ),
             );
@@ -3336,7 +3339,7 @@ class Mollie extends PaymentModule
                 unset($dbMethods[$index]);
             }
         }
-        
+
         if (!is_array($dbMethods)) {
             $dbMethods = array();
             $configMethods = array();
@@ -4637,8 +4640,8 @@ class Mollie extends PaymentModule
                                     (int) $order->id_lang,
                                     'voucher',
                                     version_compare(_PS_VERSION_, '1.7.0.0', '<')
-                                    ? sprintf(Mail::l('New voucher for your order %s'), $order->reference)
-                                    : $this->trans(
+                                        ? sprintf(Mail::l('New voucher for your order %s'), $order->reference)
+                                        : $this->trans(
                                         'New voucher for your order %s',
                                         array($order->reference),
                                         'Emails.Subject',
