@@ -33,8 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use MollieModule\Mollie\Api\Types\PaymentMethod;
-
 if (!defined('_PS_VERSION_')) {
     return;
 }
@@ -2531,11 +2529,11 @@ class Mollie extends PaymentModule
             }
 
             switch ($method) {
-                case PaymentMethod::BANKTRANSFER:
+                case \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
                     $paymentData['locale'] = static::getWebshopLocale();
                     break;
-                case PaymentMethod::BITCOIN:
+                case \MollieModule\Mollie\Api\Types\PaymentMethod::BITCOIN:
                     $paymentData['billingEmail'] = $customer->email;
                     break;
             }
