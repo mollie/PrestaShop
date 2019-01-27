@@ -2720,40 +2720,34 @@ class Mollie extends PaymentModule
             }, $aItem);
         }
 
-        $averageProductTaxRate = 0;
-        $averageProductTaxQuantity = 0;
-        foreach ($aItems as $group) {
-            foreach ($group as $item) {
-                $averageProductTaxRate += $item['vatRate'] * $item['quantity'];
-                $averageProductTaxQuantity += $item['quantity'];
-            }
-        }
-        $averageProductTaxRate = round($averageProductTaxRate / $averageProductTaxQuantity, $apiRoundingPrecision);
-
         // Add shipping
         if (round($shipping, 2) > 0) {
+            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
+
             $aItems['shipping'] = array(
                 array(
                     'name'        => $mollie->l('Shipping'),
                     'quantity'    => 1,
                     'unitPrice'   => round($shipping, $apiRoundingPrecision),
                     'totalAmount' => round($shipping, $apiRoundingPrecision),
-                    'vatAmount'   => round($shipping * $averageProductTaxRate / ($averageProductTaxRate + 100), static::API_ROUNDING_PRECISION),
-                    'vatRate'     => $averageProductTaxRate,
+                    'vatAmount'   => round($shipping * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
+                    'vatRate'     => $shippingVatRate,
                 ),
             );
         }
 
         // Add wrapping
         if (round($wrapping, 2) > 0) {
+            $wrappingVatRate = round(($cartSummary['total_wrapping'] - $cartSummary['total_wrapping_tax_exc']) / $cartSummary['total_wrapping_tax_exc'] * 100, $apiRoundingPrecision);
+
             $aItems['wrapping'] = array(
                 array(
                     'name'        => $mollie->l('Gift wrapping'),
                     'quantity'    => 1,
                     'unitPrice'   => round($wrapping, $apiRoundingPrecision),
                     'totalAmount' => round($wrapping, $apiRoundingPrecision),
-                    'vatAmount'   => round($wrapping * $averageProductTaxRate / ($averageProductTaxRate + 100), static::API_ROUNDING_PRECISION),
-                    'vatRate'     => $averageProductTaxRate,
+                    'vatAmount'   => round($wrapping * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
+                    'vatRate'     => $wrappingVatRate,
                 ),
             );
         }
