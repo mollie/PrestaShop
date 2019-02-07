@@ -103,9 +103,6 @@ It only takes 10 minutes to start receiving payments and there are no hidden fee
 ### PayPal
 [PayPal](https://www.mollie.com/en/payments/paypal) is a very popular payment method which is used worldwide. In a just few clicks, you can receive payments by bank transfer, credit card or PayPal balance.
 
-### Bitcoin
-[Bitcoin](https://www.mollie.com/en/payments/bitcoin) is a form of electronic money. The exchange rate is determined at the time of the transaction, so the amount and the payment are guaranteed.
-
 ### paysafecard
 [paysafecard](https://www.mollie.com/en/payments/paysafecard) is the most popular prepaid card for online payments. With paysafecard you can receive prepaid payments from 43 countries.
 
