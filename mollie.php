@@ -3267,7 +3267,7 @@ class Mollie extends PaymentModule
      * @since 3.0.0
      * @public ✓ This method is part of the public API
      */
-    protected function getMethodsForCheckout()
+    public function getMethodsForCheckout()
     {
         if (!Configuration::get(static::MOLLIE_API_KEY)) {
             return array();
@@ -3319,7 +3319,7 @@ class Mollie extends PaymentModule
      * @since 3.0.0
      * @public ✓ This method is part of the public API
      */
-    protected function getMethodsForConfig($active = false)
+    public function getMethodsForConfig($active = false)
     {
         $notAvailable = array();
         $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers'))->getArrayCopy();
