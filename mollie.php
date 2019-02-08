@@ -3263,7 +3263,9 @@ class Mollie extends PaymentModule
      * @return array
      *
      * @throws PrestaShopException
+     *
      * @since 3.0.0
+     * @public ✓ This method is part of the public API
      */
     protected function getMethodsForCheckout()
     {
@@ -3315,6 +3317,7 @@ class Mollie extends PaymentModule
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      *
      * @since 3.0.0
+     * @public ✓ This method is part of the public API
      */
     protected function getMethodsForConfig($active = false)
     {
@@ -5087,10 +5090,10 @@ class Mollie extends PaymentModule
     /**
      * Get the selected API
      *
-     * @since 3.3.0
      * @throws PrestaShopException
      *
      * @since 3.3.0
+     * @public ✓ This method is part of the public API
      */
     public static function selectedApi()
     {
