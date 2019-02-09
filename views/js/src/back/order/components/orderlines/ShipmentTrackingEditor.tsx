@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 
@@ -40,17 +40,9 @@ interface IProps {
   edited: (newLines: IMollieTracking) => void;
   translations: ITranslations;
   config: IMollieOrderConfig;
-  checkButtons: () => Promise<void>|void;
+  checkButtons: () => Promise<void> | void;
 }
 
-interface IState {
-  skipTracking: boolean,
-  carrier: string,
-  carrierChanged: boolean,
-  code: string,
-  codeChanged: boolean,
-  url: string,
-}
 
 const ErrorMessage = styled.p`
 margin-top: 2px;
@@ -76,19 +68,60 @@ const InputContainer = styled.div`
 text-align: left!important;
 `;
 
-class ShipmentTrackingEditor extends Component<IProps> {
-  readonly state: IState = {
-    skipTracking: false,
-    carrier: get(this.props, 'config.tracking.carrier', ''),
-    carrierChanged: !!get(this.props, 'config.tracking.carrier', false),
-    code: get(this.props, 'config.tracking.code', ''),
-    codeChanged: !!get(this.props, 'config.tracking.code', false),
-    url: get(this.props, 'config.tracking.url', ''),
-  };
+function ShipmentTrackingEditor(props: IProps) {
+  const [skipTracking, setSkipTracking] = useState<boolean>(false);
+  const [carrier, setCarrier] = useState<string>(get(props, 'config.tracking.carrier', ''));
+  const [carrierChanged, setCarrierChanged] = useState<boolean>(!!get(props, 'config.tracking.carrier', false));
+  const [code, setCode] = useState<string>(get(props, 'config.tracking.code', ''));
+  const [codeChanged, setCodeChanged] = useState<boolean>(!!get(props, 'config.tracking.code', ''));
+  const [url, setUrl] = useState<string>(get(props, 'config.tracking.url', ''));
+  const { translations, edited } = props;
 
-  componentDidMount() {
-    const { carrierChanged, carrier, code, url, skipTracking } = this.state;
-    const { edited } = this.props;
+  function getCarrierInvalid() {
+    return !skipTracking && isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
+  }
+
+  function getCodeInvalid() {
+    return !skipTracking && isEmpty(code.replace(/\s+/, '')) && codeChanged;
+  }
+
+  function updateSkipTracking(skipTracking: boolean): void {
+    setSkipTracking(skipTracking);
+    edited(skipTracking ? null : {
+      carrier,
+      code,
+      url,
+    });
+  }
+
+  function updateCarrier(carrier: string): void {
+    setCarrier(carrier);
+    setCarrierChanged(true);
+
+    edited({
+      carrier,
+      code,
+      url,
+    });
+  }
+
+  function updateCode(code: string): void {
+    setCode(code);
+    setCodeChanged(true);
+    edited({
+      carrier,
+      code,
+      url,
+    });
+  }
+
+  function updateUrl(url: string): void {
+    setUrl(url);
+    edited({ carrier, code, url });
+  }
+
+  useEffect(() => {
+    const { edited } = props;
 
     if (carrierChanged) {
       edited(skipTracking ? null : {
@@ -97,138 +130,73 @@ class ShipmentTrackingEditor extends Component<IProps> {
         url: url,
       });
     }
-  }
+  }, []);
 
-  get carrierInvalid() {
-    const { skipTracking, carrier, carrierChanged } = this.state;
-
-    return !skipTracking && isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
-  }
-
-  get codeInvalid() {
-    const { skipTracking, code, codeChanged } = this.state;
-
-    return !skipTracking && isEmpty(code.replace(/\s+/, '')) && codeChanged;
-  }
-
-  updateSkipTracking = (skipTracking: boolean): void => {
-    const { edited } = this.props;
-    this.setState({ skipTracking });
-    edited(skipTracking ? null : {
-      carrier: this.state.carrier,
-      code: this.state.code,
-      url: this.state.url,
-    });
-  };
-
-  updateCarrier = (carrier: string): void => {
-    const { edited } = this.props;
-    const { code, url } = this.state;
-
-    this.setState({
-      carrier,
-      carrierChanged: true,
-    });
-    edited({
-      carrier,
-      code,
-      url,
-    });
-  };
-
-  updateCode = (code: string): void => {
-    const { edited } = this.props;
-    const { carrier, url } = this.state;
-
-    this.setState({
-      code,
-      codeChanged: true,
-    });
-    edited({
-      carrier,
-      code,
-      url,
-    });
-  };
-
-  updateUrl = (url: string): void => {
-    const { edited } = this.props;
-    const { code, carrier } = this.state;
-
-    this.setState({ url });
-    edited({ carrier, code, url });
-  };
-
-  render() {
-    const { skipTracking, carrier, code, url } = this.state;
-    const { translations } = this.props;
-
-    return (
-      <div style={{ textAlign: 'left' }}>
-        <Label htmlFor="skipTracking">
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <Label htmlFor="skipTracking">
+        <Input
+          id="skipTracking"
+          name="skipTracking"
+          type="checkbox"
+          checked={skipTracking}
+          onChange={({ target: { checked: skipTracking } }: any) => updateSkipTracking(skipTracking)}
+        />
+        <span>&nbsp;{translations.skipTrackingDetails}</span>
+      </Label>
+      <br/>
+      <br/>
+      <FormGroup>
+        <Label htmlFor="input-carrier"><span>{translations.carrier} <sup>*</sup></span></Label>
+        <InputContainer>
           <Input
-            id="skipTracking"
-            name="skipTracking"
-            type="checkbox"
-            checked={skipTracking}
-            onChange={({ target: { checked: skipTracking } }: any) => this.updateSkipTracking(skipTracking)}
+            type="text"
+            placeholder={translations.egFedex}
+            className="l-form-control"
+            name="carrier"
+            id="input-carrier"
+            disabled={skipTracking}
+            value={carrier}
+            onChange={({ target: { value: carrier } }: any) => updateCarrier(carrier)}
           />
-          <span>&nbsp;{translations.skipTrackingDetails}</span>
-        </Label>
-        <br/>
-        <br/>
-        <FormGroup>
-          <Label htmlFor="input-carrier"><span>{translations.carrier} <sup>*</sup></span></Label>
-          <InputContainer>
-            <Input
-              type="text"
-              placeholder={translations.egFedex}
-              className="l-form-control"
-              name="carrier"
-              id="input-carrier"
-              disabled={skipTracking}
-              value={carrier}
-              onChange={({ target: { value: carrier } }: any) => this.updateCarrier(carrier)}
-            />
-            <ErrorMessage show={this.carrierInvalid}>
-              {translations.thisInfoIsRequired}
-            </ErrorMessage>
-          </InputContainer>
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="input-code"><span>{translations.trackingCode} <sup>*</sup></span></Label>
-          <InputContainer>
-            <Input
-              type="text"
-              name="code"
-              id="input-code"
-              value={code}
-              disabled={skipTracking}
-              onChange={({ target: { value: code } }: any) => this.updateCode(code)}
-            />
-            <ErrorMessage show={this.codeInvalid}>
-              {translations.thisInfoIsRequired}
-            </ErrorMessage>
-          </InputContainer>
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="input-url"><span><span>{translations.url}</span> ({translations.optional})</span></Label>
-          <InputContainer>
-            <Input
-              type="text"
-              className="l-form-control"
-              placeholder="https://"
-              name="url"
-              id="input-url"
-              value={url}
-              disabled={skipTracking}
-              onChange={({ target: { value: url } }: any) => this.updateUrl(url)}
-            />
-          </InputContainer>
-        </FormGroup>
-      </div>
-    )
-  }
+          <ErrorMessage show={getCarrierInvalid()}>
+            {translations.thisInfoIsRequired}
+          </ErrorMessage>
+        </InputContainer>
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="input-code"><span>{translations.trackingCode} <sup>*</sup></span></Label>
+        <InputContainer>
+          <Input
+            type="text"
+            name="code"
+            id="input-code"
+            value={code}
+            disabled={skipTracking}
+            onChange={({ target: { value: code } }: any) => updateCode(code)}
+          />
+          <ErrorMessage show={getCodeInvalid()}>
+            {translations.thisInfoIsRequired}
+          </ErrorMessage>
+        </InputContainer>
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="input-url"><span><span>{translations.url}</span> ({translations.optional})</span></Label>
+        <InputContainer>
+          <Input
+            type="text"
+            className="l-form-control"
+            placeholder="https://"
+            name="url"
+            id="input-url"
+            value={url}
+            disabled={skipTracking}
+            onChange={({ target: { value: url } }: any) => updateUrl(url)}
+          />
+        </InputContainer>
+      </FormGroup>
+    </div>
+  );
 }
 
 export default ShipmentTrackingEditor;

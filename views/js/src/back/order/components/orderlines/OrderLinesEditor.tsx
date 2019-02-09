@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Table, Tr } from 'styled-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle, faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -44,10 +44,6 @@ interface IProps {
   translations: ITranslations;
   lines: Array<IMollieOrderLine>;
   edited: (newLines: Array<IMollieOrderLine>) => void;
-}
-
-interface IState {
-  lines: Array<IMollieOrderLine>;
 }
 
 const CloseIcon = styled(FontAwesomeIcon)`
@@ -82,20 +78,11 @@ font-size: medium!important;
 color: #555!important;
 ` as any;
 
-class OrderLinesEditor extends Component<IProps> {
-  readonly state: IState = {
-    lines: this.props.lines,
-  };
+function OrderLinesEditor(props: IProps) {
+  const { edited, lineType } = props;
+  const [lines, setLines] = useState<Array<IMollieOrderLine>>(props.lines);
 
-  componentDidMount() {
-    const { lines, lineType } = this.props;
-
-    this.updateQty(lines[0].id, lines[0][`${lineType}Quantity`])
-  }
-
-  updateQty = (lineId: string, qty: number) => {
-    const { lines } = this.state;
-    const { edited, lineType } = this.props;
+  function updateQty (lineId: string, qty: number) {
     let newLines = compact(cloneDeep(lines));
     newLines = filter(newLines, line => line[`${lineType}Quantity`] > 0);
 
@@ -109,8 +96,7 @@ class OrderLinesEditor extends Component<IProps> {
     } else if (newLines.length > 1) {
       newLines.splice(newLineIndex, 1);
     }
-    const stateLines = cloneDeep(newLines);
-    this.setState({lines: stateLines});
+    setLines(cloneDeep(newLines));
     forEach(newLines, (newLine) => {
       if (typeof newLine.quantity === 'undefined') {
         return;
@@ -120,46 +106,42 @@ class OrderLinesEditor extends Component<IProps> {
       delete newLine.newQuantity;
     });
     edited(newLines);
-  };
-
-  render() {
-    const { lineType } = this.props;
-    const { lines: origLines } = this.state;
-    const lines = cloneDeep(origLines);
-    remove(lines, line => line[`${lineType}Quantity`] < 1);
-
-
-    return (
-      <Table bordered>
-        <tbody>
-          {lines.map((line) => (
-            <Tr key={line.id} light>
-              <td style={{ color: '#555' }}>{line.name}</td>
-              <td style={{ color: '#555' }}>
-                <QuantitySelect
-                  value={line.newQuantity || line[`${lineType}Quantity`]}
-                  onChange={({ target: { value: qty }}: any) => this.updateQty(line.id, parseInt(qty, 10))}
-                >
-                  {range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
-                    <QuantityOption key={qty} value={qty}>{qty}x</QuantityOption>
-                  ))}
-                </QuantitySelect>
-                <FontAwesomeIcon icon={faChevronDown} style={{ marginLeft: '-20px', pointerEvents: 'none' }}/>
-              </td>
-              <td style={{ display: lines.length > 1 ? 'auto' : 'none' }}>
-                <CloseIcon icon={faTimesCircle} onClick={() => this.updateQty(line.id, 0)}/>
-              </td>
-            </Tr>
-          ))}
-        </tbody>
-        {/*<tfoot>*/}
-          {/*<Tr light>*/}
-            {/*<td colSpan={3}>Test</td>*/}
-          {/*</Tr>*/}
-        {/*</tfoot>*/}
-      </Table>
-    )
   }
+
+  useEffect(() => {
+    const { lines, lineType } = props;
+
+    updateQty(lines[0].id, lines[0][`${lineType}Quantity`]);
+  }, []);
+
+  const renderLines = cloneDeep(lines);
+  remove(renderLines, line => line[`${lineType}Quantity`] < 1);
+
+  return (
+    <Table bordered>
+      <tbody>
+        {lines.map((line) => (
+          <Tr key={line.id} light>
+            <td style={{ color: '#555' }}>{line.name}</td>
+            <td style={{ color: '#555' }}>
+              <QuantitySelect
+                value={line.newQuantity || line[`${lineType}Quantity`]}
+                onChange={({ target: { value: qty }}: any) => updateQty(line.id, parseInt(qty, 10))}
+              >
+                {range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
+                  <QuantityOption key={qty} value={qty}>{qty}x</QuantityOption>
+                ))}
+              </QuantitySelect>
+              <FontAwesomeIcon icon={faChevronDown} style={{ marginLeft: '-20px', pointerEvents: 'none' }}/>
+            </td>
+            <td style={{ display: lines.length > 1 ? 'auto' : 'none' }}>
+              <CloseIcon icon={faTimesCircle} onClick={() => updateQty(line.id, 0)}/>
+            </td>
+          </Tr>
+        ))}
+      </tbody>
+    </Table>
+  )
 }
 
 export default OrderLinesEditor;

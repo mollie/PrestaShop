@@ -42,19 +42,15 @@ interface IProps {
   order?: IMollieApiOrder;
 }
 
-class MolliePanel extends Component<IProps> {
-  render () {
-    const { payment, order } = this.props;
-
-    return (
+function MolliePanel({ payment, order }: IProps) {
+  return (
     <Provider store={store}>
       <>
         {payment && <RefundPanel/>}
         {order && <OrderPanel/>}
       </>
     </Provider>
-    )
-  }
+  );
 }
 
 export default connect<{}, {}, IProps>(

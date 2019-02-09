@@ -45,27 +45,23 @@ interface IProps {
   currencies?: ICurrencies;
 }
 
-class RefundTable extends Component<IProps> {
-  render() {
-    const { payment, currencies } = this.props;
-
-    return (
-      <div className="table-responsive">
-        <table className="table">
-          <RefundTableHeader/>
-          <tbody>
-            {payment.refunds.map((refund: IMollieApiRefund) => (
-              <tr key={refund.id} style={{ marginBottom: '100px' }}>
-                <td style={{ width: '100px' }}><strong>{refund.id}</strong></td>
-                <td>{moment(refund.createdAt).format('YYYY-MM-DD HH:mm:ss')}</td>
-                <td>{formatCurrency(parseFloat(refund.amount.value), get(currencies, refund.amount.currency))}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+function RefundTable({ payment, currencies }: IProps) {
+  return (
+    <div className="table-responsive">
+      <table className="table">
+        <RefundTableHeader/>
+        <tbody>
+          {payment.refunds.map((refund: IMollieApiRefund) => (
+            <tr key={refund.id} style={{ marginBottom: '100px' }}>
+              <td style={{ width: '100px' }}><strong>{refund.id}</strong></td>
+              <td>{moment(refund.createdAt).format('YYYY-MM-DD HH:mm:ss')}</td>
+              <td>{formatCurrency(parseFloat(refund.amount.value), get(currencies, refund.amount.currency))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

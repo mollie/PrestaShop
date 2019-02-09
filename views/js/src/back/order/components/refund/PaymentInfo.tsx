@@ -36,6 +36,7 @@ import styled from 'styled-components';
 
 import PaymentInfoContent from './PaymentInfoContent';
 import { IMollieOrderConfig, ITranslations } from '../../../../globals';
+import { InferProps } from 'prop-types';
 
 interface IProps {
   // Redux
@@ -50,26 +51,22 @@ const Div = styled.div`
 }
 ` as any;
 
-class PaymentInfo extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy } } = this.props;
-
-    if (legacy) {
-      return (
-        <>
-          <PaymentInfoContent/>
-          <br/>
-        </>
-      );
-    }
-
+function PaymentInfo({ translations, config: { legacy } }: IProps) {
+  if (legacy) {
     return (
-      <Div className="col-md-3 panel">
-        <div className="panel-heading">{translations.paymentInfo}</div>
+      <>
         <PaymentInfoContent/>
-      </Div>
+        <br/>
+      </>
     );
   }
+
+  return (
+    <Div className="col-md-3 panel">
+      <div className="panel-heading">{translations.paymentInfo}</div>
+      <PaymentInfoContent/>
+    </Div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

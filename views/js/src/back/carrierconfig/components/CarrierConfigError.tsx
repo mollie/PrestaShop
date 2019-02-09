@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
@@ -51,36 +51,34 @@ const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-class ConfigCarrierError extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy }, retry, message } = this.props;
+function ConfigCarrierError(props: IProps) {
+  const { translations, config: { legacy }, retry, message } = props;
 
-    return (
-      <div
+  return (
+    <div
+      className={classnames({
+        'alert': !legacy,
+        'alert-danger': !legacy,
+        'error': legacy,
+      })}
+    >
+      {translations.unableToLoadCarriers}&nbsp;
+      {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
+      <button
         className={classnames({
-          'alert': !legacy,
-          'alert-danger': !legacy,
-          'error': legacy,
+          'btn': !legacy,
+          'btn-danger': !legacy,
+          'button': legacy,
         })}
+        onClick={(e) => {
+          e.preventDefault();
+          retry();
+        }}
       >
-        {translations.unableToLoadCarriers}&nbsp;
-        {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
-        <button
-          className={classnames({
-            'btn': !legacy,
-            'btn-danger': !legacy,
-            'button': legacy,
-          })}
-          onClick={(e) => {
-            e.preventDefault();
-            retry();
-          }}
-        >
-          {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
-        </button>
-      </div>
-    );
-  }
+        {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
+      </button>
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

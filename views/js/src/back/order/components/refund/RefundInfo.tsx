@@ -51,30 +51,26 @@ const Div = styled.div`
 }
 ` as any;
 
-class RefundInfo extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy }, payment } = this.props;
-
-    if (legacy) {
-      return (
-        <>
-          <h3>{translations.refunds}</h3>
-          {payment.amountRefunded && <RefundHistory/>}
-          {payment.amountRefunded && <RefundForm/>}
-          {!payment.amountRefunded && <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>}
-        </>
-      );
-    }
-
+function RefundInfo({ translations, config: { legacy }, payment }: IProps) {
+  if (legacy) {
     return (
-      <Div className="col-md-6 panel">
-        <div className="panel-heading">{translations.refunds}</div>
+      <>
+        <h3>{translations.refunds}</h3>
         {payment.amountRefunded && <RefundHistory/>}
         {payment.amountRefunded && <RefundForm/>}
-        {!payment.amountRefunded && <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
-      </Div>
-    )
+        {!payment.amountRefunded && <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>}
+      </>
+    );
   }
+
+  return (
+    <Div className="col-md-6 panel">
+      <div className="panel-heading">{translations.refunds}</div>
+      {payment.amountRefunded && <RefundHistory/>}
+      {payment.amountRefunded && <RefundForm/>}
+      {!payment.amountRefunded && <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
+    </Div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

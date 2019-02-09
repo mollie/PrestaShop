@@ -32,7 +32,7 @@
  */
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { lighten, darken, rgba } from 'polished';
+import { lighten, rgba } from 'polished';
 import { ITranslations } from '../../../globals';
 
 interface IProps {
@@ -134,12 +134,11 @@ input:checked + label {
 }
 ` as any;
 
-class Switch extends Component<IProps> {
-  render() {
-    const { enabled, onChange, id, translations } = this.props;
+function Switch(props: IProps) {
+  const { enabled, onChange, id, translations } = props;
 
-    return (
-      <Span {...this.props}>
+  return (
+    <Span {...props}>
         <input
           type="radio"
           data-mollie-check=""
@@ -169,8 +168,7 @@ class Switch extends Component<IProps> {
         </label>
         <a className="slide-button btn"/>
       </Span>
-    );
-  }
+  );
 }
 
 export default Switch;

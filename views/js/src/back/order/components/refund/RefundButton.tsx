@@ -34,6 +34,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { ITranslations } from '../../../../globals';
+import { InferProps } from 'prop-types';
 
 interface IProps {
   loading: boolean;
@@ -44,27 +45,23 @@ interface IProps {
   translations?: ITranslations;
 }
 
-class RefundButton extends Component<IProps> {
-  render() {
-    const { translations, loading, disabled, refundPayment } = this.props;
-
-    return (
-      <button
-        type="button"
-        className="btn btn-default"
-        disabled={loading || disabled}
-        onClick={() => refundPayment(false)}
-        style={{ marginRight: '10px' }}
-      >
-        <i className={classnames({
-          'icon': true,
-          'icon-undo': !loading,
-          'icon-circle-o-notch': loading,
-          'icon-spin': loading,
-        })}/> {translations.refundOrder}
-      </button>
-    );
-  }
+function RefundButton({ translations, loading, disabled, refundPayment }: IProps) {
+  return (
+    <button
+      type="button"
+      className="btn btn-default"
+      disabled={loading || disabled}
+      onClick={() => refundPayment(false)}
+      style={{ marginRight: '10px' }}
+    >
+      <i className={classnames({
+        'icon': true,
+        'icon-undo': !loading,
+        'icon-circle-o-notch': loading,
+        'icon-spin': loading,
+      })}/> {translations.refundOrder}
+    </button>
+  );
 }
 
 export default connect<{}, {}, IProps>(

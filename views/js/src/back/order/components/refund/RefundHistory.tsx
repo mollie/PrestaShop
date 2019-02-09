@@ -42,18 +42,14 @@ interface IProps {
   translations?: ITranslations;
 }
 
-class RefundHistory extends Component<IProps> {
-  render() {
-    const { translations, payment } = this.props;
-
-    return (
-      <>
-        <h4>{translations.refundHistory}</h4>
-        {!payment.refunds.length && <EmptyRefundTable/>}
-        {!!payment.refunds.length && <RefundTable/>}
-      </>
-    );
-  }
+function RefundHistory({ translations, payment }: IProps) {
+  return (
+    <>
+      <h4>{translations.refundHistory}</h4>
+      {!payment.refunds.length && <EmptyRefundTable/>}
+      {!!payment.refunds.length && <RefundTable/>}
+    </>
+  );
 }
 
 export default connect<{}, {}, IProps>(

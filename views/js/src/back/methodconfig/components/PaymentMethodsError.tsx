@@ -30,8 +30,8 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
-import classnames from 'classnames';
+import React from 'react';
+import cx from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
@@ -48,36 +48,34 @@ const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-class PaymentMethodsError extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy }, retry, message } = this.props;
+function PaymentMethodsError(props: IProps) {
+  const { translations, config: { legacy }, retry, message } = props;
 
-    return (
-      <div
-        className={classnames({
-          'alert': !legacy,
-          'alert-danger': !legacy,
-          'error': legacy,
+  return (
+    <div
+      className={cx({
+        'alert': !legacy,
+        'alert-danger': !legacy,
+        'error': legacy,
+      })}
+    >
+      {translations.unableToLoadMethods}&nbsp;
+      {message && <><br/><br/><span>{translations.error}: <Code>{message}</Code></span><br/><br/></>}
+      <button
+        className={cx({
+          'btn': !legacy,
+          'btn-danger': !legacy,
+          'button': legacy,
         })}
+        onClick={(e) => {
+          e.preventDefault();
+          retry();
+        }}
       >
-        {translations.unableToLoadMethods}&nbsp;
-        {message && <><br/><br/><span>{translations.error}: <Code>{message}</Code></span><br/><br/></>}
-        <button
-          className={classnames({
-            'btn': !legacy,
-            'btn-danger': !legacy,
-            'button': legacy,
-          })}
-          onClick={(e) => {
-            e.preventDefault();
-            retry();
-          }}
-        >
-          {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
-        </button>
-      </div>
-    );
-  }
+        {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
+      </button>
+    </div>
+  );
 }
 
 export default PaymentMethodsError;

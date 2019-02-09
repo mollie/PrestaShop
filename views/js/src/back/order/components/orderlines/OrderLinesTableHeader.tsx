@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { ITranslations } from '../../../../globals';
 
@@ -40,55 +40,53 @@ interface IProps {
   viewportWidth?: number;
 }
 
-class OrderLinesTableHeader extends Component<IProps> {
-  render() {
-    const { translations, viewportWidth } = this.props;
+function OrderLinesTableHeader(props: IProps) {
+  const { translations, viewportWidth } = props;
 
-    return (
-      <thead>
-        <tr>
+  return (
+    <thead>
+      <tr>
+        <th>
+          <span className="title_box"><strong>{translations.product}</strong></span>
+        </th>
+        <th>
+          <span className="title_box">{translations.status}</span>
+        </th>
+        {viewportWidth < 1390 && (
           <th>
-            <span className="title_box"><strong>{translations.product}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.status}</span>
-          </th>
-          {viewportWidth < 1390 && (
-            <th>
               <span className="title_box">
                 <span>{translations.shipped}</span>
                 <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.canceled}</span>
                 <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.refunded}</span>
                 </span>
+          </th>
+        )}
+        {viewportWidth >= 1390 && (
+          <>
+            <th>
+              <span className="title_box">{translations.shipped}</span>
             </th>
-          )}
-          {viewportWidth >= 1390 && (
-            <>
-              <th>
-                <span className="title_box">{translations.shipped}</span>
-              </th>
-              <th>
-                <span className="title_box">{translations.canceled}</span>
-              </th>
-              <th>
-                <span className="title_box">{translations.refunded}</span>
-              </th>
-            </>
-          )}
-          <th>
-            <span className="title_box">{translations.unitPrice}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.vatAmount}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.totalAmount}</span>
-          </th>
-          <th/>
-        </tr>
-      </thead>
-    );
-  }
+            <th>
+              <span className="title_box">{translations.canceled}</span>
+            </th>
+            <th>
+              <span className="title_box">{translations.refunded}</span>
+            </th>
+          </>
+        )}
+        <th>
+          <span className="title_box">{translations.unitPrice}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.vatAmount}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.totalAmount}</span>
+        </th>
+        <th/>
+      </tr>
+    </thead>
+  );
 }
 
 export default connect<{}, {}, IProps>(

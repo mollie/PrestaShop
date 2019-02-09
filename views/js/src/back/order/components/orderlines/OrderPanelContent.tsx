@@ -45,27 +45,25 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-class OrderPanelContent extends Component<IProps> {
-  render() {
-    const { order, config: { legacy } } = this.props;
+function OrderPanelContent(props: IProps) {
+  const { order, config: { legacy } } = props;
 
-    return (
-      <>
-        {!order && <LoadingDots/>}
-        {!!order && order.status && (
-          <div className={
-            classnames({
-              'panel-body': !legacy,
-              'row': !legacy,
-            })}
-          >
-            <PaymentInfo/>
-            <OrderLinesInfo/>
-          </div>
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      {!order && <LoadingDots/>}
+      {!!order && order.status && (
+        <div className={
+          classnames({
+            'panel-body': !legacy,
+            'row': !legacy,
+          })}
+        >
+          <PaymentInfo/>
+          <OrderLinesInfo/>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default connect<{}, {}, IProps>(

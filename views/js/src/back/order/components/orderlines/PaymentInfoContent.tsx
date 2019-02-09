@@ -46,20 +46,18 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-class PaymentInfoContent extends Component<IProps> {
-  render() {
-    const { translations, order, currencies, config: { legacy } } = this.props;
+function PaymentInfoContent(props: IProps) {
+  const { translations, order, currencies, config: { legacy } } = props;
 
-    return (
-      <>
-        {legacy && <h3>{translations.transactionInfo}</h3>}
-        {!legacy && <h4>{translations.transactionInfo}</h4>}
-        <strong>{translations.transactionId}</strong>: <span>{order.id}</span><br/>
-        <strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span><br/>
-        <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))}</span><br/>
-      </>
-    );
-  }
+  return (
+    <>
+      {legacy && <h3>{translations.transactionInfo}</h3>}
+      {!legacy && <h4>{translations.transactionInfo}</h4>}
+      <strong>{translations.transactionId}</strong>: <span>{order.id}</span><br/>
+      <strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span><br/>
+      <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))}</span><br/>
+    </>
+  );
 }
 
 export default connect<{}, {}, IProps>(

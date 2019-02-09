@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 
 import axios from '../../misc/axios';
@@ -45,55 +45,43 @@ interface IProps {
   target: string;
 }
 
-interface IState {
-  methods: Array<IMolliePaymentMethodItem>;
-  message: string;
-}
+function PaymentMethodConfig(props: IProps) {
+  const [methods, setMethods] = useState<Array<IMolliePaymentMethodItem>>(undefined);
+  const [message, setMessage] = useState<string>(undefined);
 
-class PaymentMethodConfig extends Component<IProps> {
-  readonly state: IState = {
-    methods: undefined,
-    message: '',
-  };
-
-  componentDidMount() {
-    setTimeout(this.init, 0);
-  }
-
-  init = async (): Promise<void> => {
+  async function init() {
     try {
-      this.setState({ methods: undefined });
-      const { config: { ajaxEndpoint } } = this.props;
-      const { data: { methods, message } = { methods: null, message: '' } } = await axios.post(ajaxEndpoint, {
+      const { config: { ajaxEndpoint } } = props;
+      const { data: { methods: newMethods, message: newMessage } = { methods: null, message: '' } } = await axios.post(ajaxEndpoint, {
         resource: 'orders',
         action: 'retrieve',
       });
 
-      this.setState({ methods, message });
+      setMethods(newMethods);
+      setMessage(newMessage);
     } catch (e) {
-      this.setState({
-        methods: null,
-        message: (e instanceof Error && typeof e.message !== 'undefined') ? e.message : 'Check the browser console for errors',
-      });
+      setMethods(null);
+      setMessage((e instanceof Error && typeof e.message !== 'undefined') ? e.message : 'Check the browser console for errors');
     }
-  };
-
-  render() {
-    const { target, translations, config } = this.props;
-    const { methods, message } = this.state;
-
-    if (typeof methods === 'undefined') {
-      return <LoadingDots/>;
-    }
-
-    if (methods === null || !Array.isArray(methods) || Array.isArray(methods) && isEmpty(methods)) {
-      return <PaymentMethodsError message={message} translations={translations} config={config} retry={this.init}/>;
-    }
-
-    return (
-      <PaymentMethods methods={methods} translations={translations} target={target} config={config}/>
-    );
   }
+
+  useEffect(() => {
+    init().then();
+  }, []);
+
+  const { target, translations, config } = props;
+
+  if (typeof methods === 'undefined') {
+    return <LoadingDots/>;
+  }
+
+  if (methods === null || !Array.isArray(methods) || Array.isArray(methods) && isEmpty(methods)) {
+    return <PaymentMethodsError message={message} translations={translations} config={config} retry={init}/>;
+  }
+
+  return (
+    <PaymentMethods methods={methods} translations={translations} target={target} config={config}/>
+  );
 }
 
 export default PaymentMethodConfig;

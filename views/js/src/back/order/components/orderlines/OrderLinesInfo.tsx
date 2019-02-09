@@ -51,29 +51,27 @@ const Div = styled.div`
 }
 ` as any;
 
-class OrderLinesInfo extends Component<IProps> {
-  render() {
-    const { translations, order, config: { legacy } } = this.props;
+function OrderLinesInfo(props: IProps) {
+  const { translations, order, config: { legacy } } = props;
 
-    if (legacy) {
-      return (
-        <>
-          {legacy && <h3>{translations.products}</h3>}
-          {!legacy && <h4>{translations.products}</h4>}
-          {!order || !order.lines.length && <EmptyOrderLinesTable/>}
-          {!!order && !!order.lines.length && <OrderLinesTable/>}
-        </>
-      );
-    }
-
+  if (legacy) {
     return (
-      <Div className="col-md-9 panel">
-        <div className="panel-heading">{translations.products}</div>
+      <>
+        {legacy && <h3>{translations.products}</h3>}
+        {!legacy && <h4>{translations.products}</h4>}
         {!order || !order.lines.length && <EmptyOrderLinesTable/>}
         {!!order && !!order.lines.length && <OrderLinesTable/>}
-      </Div>
-    )
+      </>
+    );
   }
+
+  return (
+    <Div className="col-md-9 panel">
+      <div className="panel-heading">{translations.products}</div>
+      {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+      {!!order && !!order.lines.length && <OrderLinesTable/>}
+    </Div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

@@ -39,26 +39,22 @@ interface IProps {
   translations?: ITranslations;
 }
 
-class RefundTableHeader extends Component<IProps> {
-  render() {
-    const { translations } = this.props;
-
-    return (
-      <thead>
-        <tr>
-          <th>
-            <span className="title_box"><strong>{translations.ID}</strong></span>
-          </th>
-          <th>
-            <span className="title_box">{translations.date}</span>
-          </th>
-          <th>
-            <span className="title_box">{translations.amount}</span>
-          </th>
-        </tr>
-      </thead>
-    );
-  }
+function RefundTableHeader({ translations }: IProps) {
+  return (
+    <thead>
+      <tr>
+        <th>
+          <span className="title_box"><strong>{translations.ID}</strong></span>
+        </th>
+        <th>
+          <span className="title_box">{translations.date}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.amount}</span>
+        </th>
+      </tr>
+    </thead>
+  );
 }
 
 export default connect<{}, {}, IProps>(

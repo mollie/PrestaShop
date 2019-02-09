@@ -47,57 +47,54 @@ interface IProps {
   dispatchUpdatePayment?: Function;
 }
 
-class RefundPanel extends Component<IProps> {
-  render() {
-    const { payment, config } = this.props;
-    if (Object.keys(config).length <= 0) {
-      return null;
-    }
-    const { moduleDir, legacy } = config;
+function RefundPanel({ payment, config }: IProps) {
+  if (Object.keys(config).length <= 0) {
+    return null;
+  }
+  const { moduleDir, legacy } = config;
 
-    if (legacy) {
-      return (
-        <fieldset style={{ marginTop: '14px' }}>
-          <legend className="panel-heading">
-            <img
-              src={`${moduleDir}views/img/logo_small.png`}
-              width="32"
-              height="32"
-              style={{ height: '16px', width: '16px', opacity: 0.8 }}
-            />
-            <span>Mollie</span>&nbsp;
-          </legend>
-          {!payment && <LoadingDots/>}
-          {!!payment && payment.status && (
-            <>
-              <PaymentInfo/>
-              <RefundInfo/>
-            </>
-          )}
-        </fieldset>
-      );
-    }
-
+  if (legacy) {
     return (
-      <div className="panel">
-        <div className="panel-heading">
+      <fieldset style={{ marginTop: '14px' }}>
+        <legend className="panel-heading">
           <img
-            src={`${moduleDir}views/img/mollie_panel_icon.png`}
+            src={`${moduleDir}views/img/logo_small.png`}
             width="32"
             height="32"
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
-          /> <span>Mollie</span>&nbsp;
-        </div>
+          />
+          <span>Mollie</span>&nbsp;
+        </legend>
         {!payment && <LoadingDots/>}
         {!!payment && payment.status && (
-          <div className="panel-body row">
+          <>
             <PaymentInfo/>
             <RefundInfo/>
-          </div>
+          </>
         )}
-      </div>
+      </fieldset>
     );
   }
+
+  return (
+    <div className="panel">
+      <div className="panel-heading">
+        <img
+          src={`${moduleDir}views/img/mollie_panel_icon.png`}
+          width="32"
+          height="32"
+          style={{ height: '16px', width: '16px', opacity: 0.8 }}
+        /> <span>Mollie</span>&nbsp;
+      </div>
+      {!payment && <LoadingDots/>}
+      {!!payment && payment.status && (
+        <div className="panel-body row">
+          <PaymentInfo/>
+          <RefundInfo/>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

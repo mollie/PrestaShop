@@ -30,14 +30,15 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { render } from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import swal from 'sweetalert';
 import xss from 'xss';
 import { Dispatch } from 'redux';
-import { isEmpty, get } from 'lodash';
+import { get, isEmpty } from 'lodash';
+import styled from 'styled-components';
 
 import OrderLinesTableHeader from './OrderLinesTableHeader';
 import { formatCurrency } from '../../../misc/tools';
@@ -47,13 +48,13 @@ import ShipmentTrackingEditor from './ShipmentTrackingEditor';
 import { cancelOrder, refundOrder, shipOrder } from '../../misc/ajax';
 import { updateOrder } from '../../store/actions';
 import OrderLinesTableActions from './OrderLinesTableActions';
-import styled from 'styled-components';
 import {
   ICurrencies,
   IMollieApiOrder,
   IMollieOrderConfig,
   IMollieOrderLine,
-  IMollieTracking, ITranslations
+  IMollieTracking,
+  ITranslations,
 } from '../../../../globals';
 
 interface IProps {
@@ -67,24 +68,18 @@ interface IProps {
   dispatchUpdateOrder?: Function;
 }
 
-interface IState {
-  loading: boolean,
-}
-
 const TableContainer = styled.div`
 @media (min-width: 1280px) {
   overflow: ${({ config: { legacy } }: IProps) => legacy ? 'inherit' : 'visible!important'};
 }
 ` as any;
 
-class OrderLinesTable extends Component<IProps> {
-  readonly state: IState = {
-    loading: false,
-  };
+function OrderLinesTable(props: IProps) {
+  const [loading, setLoading] = useState<boolean>(false);
 
-  ship = async (origLines: Array<IMollieOrderLine>) => {
+  async function ship(origLines: Array<IMollieOrderLine>) {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder, config } = this.props;
+    const { translations, order, dispatchUpdateOrder, config } = props;
 
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="shippable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
@@ -129,7 +124,7 @@ class OrderLinesTable extends Component<IProps> {
       }), checkSwalButton()]);
       if (input) {
         try {
-          this.setState({ loading: true });
+          setLoading(true);
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
             dispatchUpdateOrder(newOrder);
@@ -150,15 +145,15 @@ class OrderLinesTable extends Component<IProps> {
           }
           console.error(e);
         } finally {
-          this.setState({ loading: false });
+          setLoading(false);
         }
       }
     }
-  };
+  }
 
-  refund = async (origLines: Array<IMollieOrderLine>) => {
+  async function refund(origLines: Array<IMollieOrderLine>) {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder } = this.props;
+    const { translations, order, dispatchUpdateOrder } = props;
 
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="refundable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
@@ -174,7 +169,7 @@ class OrderLinesTable extends Component<IProps> {
     });
     if (input) {
       try {
-        this.setState({ loading: true });
+        setLoading(true);
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
@@ -195,14 +190,14 @@ class OrderLinesTable extends Component<IProps> {
         }
         console.error(e);
       } finally {
-        this.setState({ loading: false });
+        setLoading(false);
       }
     }
-  };
+  }
 
-  cancel = async (origLines: Array<IMollieOrderLine>) => {
+  async function cancel(origLines: Array<IMollieOrderLine>) {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder } = this.props;
+    const { translations, order, dispatchUpdateOrder } = props;
 
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="cancelable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
@@ -218,7 +213,7 @@ class OrderLinesTable extends Component<IProps> {
     });
     if (input) {
       try {
-        this.setState({ loading: true });
+        setLoading(true);
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
           dispatchUpdateOrder(newOrder);
@@ -239,57 +234,54 @@ class OrderLinesTable extends Component<IProps> {
         }
         console.error(e);
       } finally {
-        this.setState({ loading: false });
+        setLoading(false);
       }
     }
-  };
-
-  render() {
-    const { loading } = this.state;
-    const { order, currencies, config: { legacy }, viewportWidth } = this.props;
-
-    return (
-      <TableContainer
-        className={classnames({
-          'table-responsive': !legacy,
-        })}
-        {...this.props}
-      >
-        <table className={classnames({
-          'table': true,
-        })}>
-          <OrderLinesTableHeader/>
-          <tbody>
-            {order.lines.map((line: IMollieOrderLine) => (
-              <tr key={line.id} style={{ marginBottom: '100px' }}>
-                <td><strong>{line.quantity}x</strong> {line.name}</td>
-                <td>{line.status}</td>
-                {viewportWidth < 1390 && <td>{line.quantityShipped} / {line.quantityCanceled} / {line.quantityRefunded}</td>}
-                {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
-                {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
-                {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}
-                <td>{formatCurrency(parseFloat(line.unitPrice.value), get(currencies, line.unitPrice.currency))}</td>
-                <td>{formatCurrency(parseFloat(line.vatAmount.value), get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
-                <td>{formatCurrency(parseFloat(line.totalAmount.value), get(currencies, line.totalAmount.currency))}</td>
-                <td className={classnames({
-                  'actions': !legacy,
-                })}>
-                  <OrderLinesTableActions
-                    loading={loading}
-                    line={line}
-                    refundLine={this.refund}
-                    shipLine={this.ship}
-                    cancelLine={this.cancel}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <OrderLinesTableFooter loading={loading} ship={this.ship} refund={this.refund} cancel={this.cancel}/>
-        </table>
-      </TableContainer>
-    );
   }
+
+  const { order, currencies, config: { legacy }, viewportWidth } = props;
+
+  return (
+    <TableContainer
+      className={classnames({
+        'table-responsive': !legacy,
+      })}
+      {...props}
+    >
+      <table className={classnames({
+        'table': true,
+      })}>
+        <OrderLinesTableHeader/>
+        <tbody>
+          {order.lines.map((line: IMollieOrderLine) => (
+            <tr key={line.id} style={{ marginBottom: '100px' }}>
+              <td><strong>{line.quantity}x</strong> {line.name}</td>
+              <td>{line.status}</td>
+              {viewportWidth < 1390 && <td>{line.quantityShipped} / {line.quantityCanceled} / {line.quantityRefunded}</td>}
+              {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
+              {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
+              {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}
+              <td>{formatCurrency(parseFloat(line.unitPrice.value), get(currencies, line.unitPrice.currency))}</td>
+              <td>{formatCurrency(parseFloat(line.vatAmount.value), get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
+              <td>{formatCurrency(parseFloat(line.totalAmount.value), get(currencies, line.totalAmount.currency))}</td>
+              <td className={classnames({
+                'actions': !legacy,
+              })}>
+                <OrderLinesTableActions
+                  loading={loading}
+                  line={line}
+                  refundLine={refund}
+                  shipLine={ship}
+                  cancelLine={cancel}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <OrderLinesTableFooter loading={loading} ship={ship} refund={refund} cancel={cancel}/>
+      </table>
+    </TableContainer>
+  );
 }
 
 export default connect<{}, {}, IProps>(

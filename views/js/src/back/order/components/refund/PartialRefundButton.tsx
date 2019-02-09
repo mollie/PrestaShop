@@ -31,9 +31,9 @@
  * @link       https://www.mollie.nl
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import cx from 'classnames';
 import { IMollieOrderConfig, ITranslations } from '../../../../globals';
 
 interface IProps {
@@ -46,38 +46,34 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-class PartialRefundButton extends Component<IProps> {
-  render() {
-    const { translations, loading, disabled, refundPayment, config: { legacy } } = this.props;
+function PartialRefundButton({ translations, loading, disabled, refundPayment, config: { legacy } }: IProps) {
+  const content = (
+    <button
+      className="btn btn-default"
+      type="button"
+      disabled={loading || disabled}
+      onClick={() => refundPayment(true)}
+    >
+      {!legacy && (<i
+        className={cx({
+          'icon': true,
+          'icon-undo': !loading,
+          'icon-circle-o-notch': loading,
+          'icon-spin': loading,
+        })}
+      />)} {translations.partialRefund}
+    </button>
+  );
 
-    const content = (
-      <button
-        className="btn btn-default"
-        type="button"
-        disabled={loading || disabled}
-        onClick={() => refundPayment(true)}
-      >
-        {!legacy && (<i
-          className={classnames({
-            'icon': true,
-            'icon-undo': !loading,
-            'icon-circle-o-notch': loading,
-            'icon-spin': loading,
-          })}
-        />)} {translations.partialRefund}
-      </button>
-    );
-
-    if (legacy) {
-      return content;
-    }
-
-    return (
-      <div className="input-group-btn">
-        {content}
-      </div>
-    );
+  if (legacy) {
+    return content;
   }
+
+  return (
+    <div className="input-group-btn">
+      {content}
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

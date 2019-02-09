@@ -41,32 +41,28 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-class EmptyOrderLinesTable extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy } } = this.props;
-
-    if (legacy) {
-      return <div className="error">{translations.thereAreNoProducts}</div>;
-    }
-
-    return (
-      <div className="table-responsive">
-        <table className="table">
-          <OrderLinesTableHeader/>
-          <tbody>
-            <tr>
-              <td className="list-empty hidden-print" colSpan={3}>
-                <div className="list-empty-msg">
-                  <i className="icon-warning-sign list-empty-icon"/>
-                  {translations.thereAreNoProducts}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
+function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps) {
+  if (legacy) {
+    return <div className="error">{translations.thereAreNoProducts}</div>;
   }
+
+  return (
+    <div className="table-responsive">
+      <table className="table">
+        <OrderLinesTableHeader/>
+        <tbody>
+          <tr>
+            <td className="list-empty hidden-print" colSpan={3}>
+              <div className="list-empty-msg">
+                <i className="icon-warning-sign list-empty-icon"/>
+                {translations.thereAreNoProducts}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

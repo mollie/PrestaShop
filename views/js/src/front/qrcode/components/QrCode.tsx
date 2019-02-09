@@ -31,7 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import 'intersection-observer';
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { throttle } from 'lodash';
 
@@ -74,81 +74,34 @@ interface IProps {
   center?: boolean;
 }
 
-interface IState {
-  enoughSpace: boolean;
-  visible: boolean;
-  error: boolean;
-  image: string;
-}
+export default function QrCode({ title, center }: IProps) {
+  const [enoughSpace, setEnoughSpace] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [image, setImage] = useState<string>('');
+  const [initializing, setInitializing] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(true);
 
-export default class QrCode extends Component<IProps> {
-  public readonly state: IState = {
-    enoughSpace: false,
-    visible: false,
-    error: false,
-    image: '',
-  };
-  private initializing = false;
-  private ref = React.createRef<HTMLParagraphElement>();
-  private resizeHandler = throttle(() => {
-    this.checkWindowSize();
+  const ref = useRef<| null>(null);
+
+  const resizeHandler = throttle(() => {
+    checkWindowSize();
   }, 200);
-  private observer: IntersectionObserver;
-  private mounted = true;
 
-  static clearCache = (): void => {
+  function clearCache(): void {
     for (let key in window.localStorage) {
       if (key.indexOf('mollieqrcache') > -1) {
         window.localStorage.removeItem(key);
       }
     }
-  };
-
-  public componentDidMount(): void {
-    this.observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const { isIntersecting, intersectionRatio } = entry;
-
-        if (isIntersecting === true || intersectionRatio > 0) {
-          this.setState({ visible: true });
-          this.observer.disconnect();
-          this.observer = null;
-        }
-      });
-    }, {});
-    this.observer.observe(this.ref.current);
-    this.checkWindowSize();
-    window.addEventListener('resize', this.resizeHandler);
   }
 
-  public componentWillUnmount(): void {
-    this.mounted = false;
-    if (this.observer != null) {
-      this.observer.disconnect();
-      this.observer = null;
-    }
-    try {
-      window.removeEventListener('resize', this.resizeHandler);
-    } catch (e) {
-    }
+  function checkWindowSize(): void {
+    setEnoughSpace(window.innerWidth > 800 && window.innerHeight > 860);
   }
 
-  public componentDidUpdate(): void {
-    const { enoughSpace, visible, image } = this.state;
-    if (enoughSpace && visible && !image && !this.initializing) {
-      this.initializing = true;
-      this.grabAmount().then(this.initQrImage);
-    }
-  }
-
-  private checkWindowSize = (): void => {
-    this.setState({
-      enoughSpace: window.innerWidth > 800 && window.innerHeight > 860,
-    });
-  };
-
-  private pollStatus = (idTransaction: string): void => {
-    if (!this.mounted) {
+  function pollStatus(idTransaction: string): void {
+    if (!mounted) {
       return;
     }
 
@@ -156,7 +109,7 @@ export default class QrCode extends Component<IProps> {
       try {
         const { data } = await axios.get(`${window.MollieModule.urls.qrCodeStatus}&transaction_id=${idTransaction}`);
         if (data.status === QrStatus.success) {
-          QrCode.clearCache();
+          clearCache();
 
           // Never redirect to a different domain
           const a = document.createElement('A') as HTMLAnchorElement;
@@ -165,43 +118,43 @@ export default class QrCode extends Component<IProps> {
             window.location.href = data.href;
           }
         } else if (data.status === QrStatus.refresh) {
-          QrCode.clearCache();
-          this.grabNewUrl().then();
+          clearCache();
+          grabNewUrl().then();
         } else if (data.status === QrStatus.pending) {
-          this.pollStatus(idTransaction);
+          pollStatus(idTransaction);
         } else {
           console.error('Invalid payment status');
         }
       } catch (e) {
-        this.pollStatus(idTransaction);
+        pollStatus(idTransaction);
       }
     }, 5000);
-  };
+  }
 
-  private grabAmount = async (): Promise<number> => {
+  async function grabAmount(): Promise<number> {
     try {
       const { data: { amount } } = await axios.get(window.MollieModule.urls.cartAmount);
       return amount;
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
-  private grabNewUrl = async (): Promise<string> => {
+  async function grabNewUrl(): Promise<string> {
     try {
       const { data } = await axios.get(window.MollieModule.urls.qrCodeNew);
       window.localStorage.setItem('mollieqrcache-' + data.expires + '-' + data.amount, JSON.stringify({
         url: data.href,
         idTransaction: data.idTransaction,
       }));
-      this.setState({ image: data.href });
+      setImage(data.href);
       return data.idTransaction;
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
-  private initQrImage = (amount: number): void => {
+  function initQrImage(amount: number): void {
     let url: string = null;
     let idTransaction: string = null;
     if (typeof window.localStorage !== 'undefined') {
@@ -227,30 +180,60 @@ export default class QrCode extends Component<IProps> {
       }
 
       if (url && idTransaction) {
-        this.setState({ image: url });
-        this.pollStatus(idTransaction);
+        setImage(url);
+        pollStatus(idTransaction);
       } else {
-        this.grabNewUrl().then(this.pollStatus);
+        grabNewUrl().then(pollStatus);
       }
     }
-  };
-
-  public render() {
-    const { title, center } = this.props;
-    const { image, enoughSpace, visible, error } = this.state;
-
-    if (!enoughSpace || !visible || error) {
-      return <p ref={this.ref} style={{ width: '20px' }}>&nbsp;</p>;
-    }
-
-    return (
-      <>
-        <TitleSpan>{title}</TitleSpan>
-        <QrImageContainer center={center}>
-          {!image && <Spinner/>}
-          {image && <QrImage src={image} center={center}/>}
-        </QrImageContainer>
-      </>
-    );
   }
+
+  useEffect(() => {
+    setMounted(true);
+    let observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const { isIntersecting, intersectionRatio } = entry;
+
+        if (isIntersecting === true || intersectionRatio > 0) {
+          setVisible(true);
+          observer.disconnect();
+          observer = null;
+        }
+      });
+    }, {});
+    observer.observe(ref.current);
+    checkWindowSize();
+    window.addEventListener('resize', resizeHandler);
+
+    return () => {
+      setMounted(false);
+      if (observer != null) {
+        observer.disconnect();
+        observer = null;
+      }
+
+      window.removeEventListener('resize', resizeHandler);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (enoughSpace && visible && !image && !initializing) {
+      setInitializing(true);
+      grabAmount().then(initQrImage);
+    }
+  }, [enoughSpace, visible, image, initializing]);
+
+  if (!enoughSpace || !visible || error) {
+    return <p ref={ref} style={{ width: '20px' }}>&nbsp;</p>;
+  }
+
+  return (
+    <>
+      <TitleSpan>{title}</TitleSpan>
+      <QrImageContainer center={center}>
+        {!image && <Spinner/>}
+        {image && <QrImage src={image} center={center}/>}
+      </QrImageContainer>
+    </>
+  );
 }

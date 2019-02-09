@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import RefundTableHeader from './RefundTableHeader';
 import { ITranslations } from '../../../../globals';
@@ -40,28 +40,24 @@ interface IProps {
   translations?: ITranslations;
 }
 
-class EmptyRefundTable extends Component<IProps> {
-  render() {
-    const { translations } = this.props;
-
-    return (
-      <div className="table-responsive">
-        <table className="table">
-          <RefundTableHeader/>
-          <tbody>
-            <tr>
-              <td className="list-empty hidden-print" colSpan={3}>
-                <div className="list-empty-msg">
-                  <i className="icon-warning-sign list-empty-icon"/>
-                  {translations.thereAreNoRefunds}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+function EmptyRefundTable({ translations }: IProps) {
+  return (
+    <div className="table-responsive">
+      <table className="table">
+        <RefundTableHeader/>
+        <tbody>
+          <tr>
+            <td className="list-empty hidden-print" colSpan={3}>
+              <div className="list-empty-msg">
+                <i className="icon-warning-sign list-empty-icon"/>
+                {translations.thereAreNoRefunds}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

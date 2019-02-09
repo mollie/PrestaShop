@@ -50,29 +50,9 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-class OrderLinesTableFooter extends Component<IProps> {
-  get shippable() {
-    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
-      if (line.shippableQuantity >= 1) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  get refundable() {
-    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
-      if (line.refundableQuantity >= 1) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  get cancelable() {
-    for (let line of Object.values(this.props.order.lines.filter(line => line.type !== 'discount'))) {
+function OrderLinesTableFooter(props: IProps) {
+  function getCancelable() {
+    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
       if (line.cancelableQuantity >= 1) {
         return true;
       }
@@ -81,83 +61,101 @@ class OrderLinesTableFooter extends Component<IProps> {
     return false;
   }
 
-  render() {
-    const { translations, loading, order, ship, cancel, refund, config: { legacy } } = this.props;
+  function getShippable() {
+    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
+      if (line.shippableQuantity >= 1) {
+        return true;
+      }
+    }
 
-    return (
-      <tfoot>
-        <tr>
-          <td colSpan={10}>
-            <div className="btn-group" role="group">
-              <button
-                type="button"
-                onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
-                className="btn btn-primary"
-                disabled={loading || !this.shippable}
-                style={{
-                  cursor: (loading || !this.shippable) ? 'not-allowed' : 'pointer',
-                  opacity: (loading || !this.shippable) ? 0.8 : 1
-                }}
-              >
-                {legacy && (
-                  <img
-                    src="../img/admin/delivery.gif"
-                    style={{
-                      filter: (loading || !this.shippable) ? 'grayscale(100%)' : null,
-                      WebkitFilter: (loading || !this.shippable) ? 'grayscale(100%)' : null,
-                    }}
-                  />
-                )}
-                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/>} {translations.shipAll}
-              </button>
-              <button
-                type="button"
-                onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
-                className="btn btn-default"
-                disabled={loading || !this.refundable}
-                style={{
-                  cursor: (loading || !this.refundable) ? 'not-allowed' : 'pointer',
-                  opacity: (loading || !this.refundable) ? 0.8 : 1
-                }}
-              >
-                {legacy && (
-                  <img
-                    src="../img/admin/money.gif"
-                    style={{
-                      filter: (loading || !this.refundable) ? 'grayscale(100%)' : null,
-                      WebkitFilter: (loading || !this.refundable) ? 'grayscale(100%)' : null,
-                    }}
-                  />
-                )}
-                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/>} {translations.refundAll}
-              </button>
-              <button
-                type="button"
-                onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
-                className="btn btn-default"
-                disabled={loading || !this.cancelable}
-                style={{
-                  cursor: (loading || !this.cancelable) ? 'not-allowed' : 'pointer',
-                  opacity: (loading || !this.cancelable) ? 0.8 : 1
-                }}
-              >
-                {legacy && (
-                  <img
-                    src="../img/admin/disabled.gif"
-                    style={{
-                      filter: (loading || !this.cancelable) ? 'grayscale(100%)' : null,
-                      WebkitFilter: (loading || !this.cancelable) ? 'grayscale(100%)' : null,
-                    }}
-                  />
-                )}
-                {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/>} {translations.cancelAll}
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tfoot>
-    );
+    return false;
   }
+
+  function getRefundable() {
+    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
+      if (line.refundableQuantity >= 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  const { translations, loading, order, ship, cancel, refund, config: { legacy } } = props;
+
+  return (
+    <tfoot>
+      <tr>
+        <td colSpan={10}>
+          <div className="btn-group" role="group">
+            <button
+              type="button"
+              onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
+              className="btn btn-primary"
+              disabled={loading || !getShippable()}
+              style={{
+                cursor: (loading || !getShippable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !getShippable()) ? 0.8 : 1
+              }}
+            >
+              {legacy && (
+                <img
+                  src="../img/admin/delivery.gif"
+                  style={{
+                    filter: (loading || !getShippable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !getShippable()) ? 'grayscale(100%)' : null,
+                  }}
+                />
+              )}
+              {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/>} {translations.shipAll}
+            </button>
+            <button
+              type="button"
+              onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
+              className="btn btn-default"
+              disabled={loading || !getRefundable()}
+              style={{
+                cursor: (loading || !getRefundable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !getRefundable()) ? 0.8 : 1
+              }}
+            >
+              {legacy && (
+                <img
+                  src="../img/admin/money.gif"
+                  style={{
+                    filter: (loading || !getRefundable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !getRefundable()) ? 'grayscale(100%)' : null,
+                  }}
+                />
+              )}
+              {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/>} {translations.refundAll}
+            </button>
+            <button
+              type="button"
+              onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
+              className="btn btn-default"
+              disabled={loading || !getCancelable()}
+              style={{
+                cursor: (loading || !getCancelable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !getCancelable()) ? 0.8 : 1
+              }}
+            >
+              {legacy && (
+                <img
+                  src="../img/admin/disabled.gif"
+                  style={{
+                    filter: (loading || !getCancelable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !getCancelable()) ? 'grayscale(100%)' : null,
+                  }}
+                />
+              )}
+              {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/>} {translations.cancelAll}
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tfoot>
+  );
 }
 
 export default connect<{}, {}, IProps>(

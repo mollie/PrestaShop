@@ -77,15 +77,12 @@ const SpinnerDiv = styled.div`
 }
 `;
 
-
-export default class Spinner extends Component {
-  render() {
-    return (
-      <SpinnerDiv>
-        <div className="bounce1"/>
-        <div className="bounce2"/>
-        <div className="bounce3"/>
-      </SpinnerDiv>
-    );
-  }
+export default function Spinner() {
+  return (
+    <SpinnerDiv>
+      <div className="bounce1"/>
+      <div className="bounce2"/>
+      <div className="bounce3"/>
+    </SpinnerDiv>
+  );
 }

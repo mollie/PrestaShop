@@ -46,47 +46,44 @@ interface IProps {
   dispatchUpdateOrder?: Function;
 }
 
-class OrderPanel extends Component<IProps> {
-  render() {
-    const { config } = this.props;
-    const { legacy } = config;
-    if (Object.keys(config).length <= 0) {
-      return null;
-    }
-    const { moduleDir } = config;
+function OrderPanel(props: IProps) {
+  const { config: { legacy }, config } = props;
+  if (Object.keys(config).length <= 0) {
+    return null;
+  }
+  const { moduleDir } = config;
 
-    if (legacy) {
-      return (
-        <fieldset style={{ marginTop: '14px' }}>
-          <legend>
-            <img
-              src={`${moduleDir}views/img/logo_small.png`}
-              width="32"
-              height="32"
-              style={{ height: '16px', width: '16px', opacity: 0.8 }}
-            />
-            &nbsp;<span>Mollie</span>&nbsp;
-          </legend>
-          <OrderPanelContent/>
-        </fieldset>
-      );
-    }
-
+  if (legacy) {
     return (
-      <div className="panel">
-        <div className="panel-heading">
+      <fieldset style={{ marginTop: '14px' }}>
+        <legend>
           <img
-            src={`${moduleDir}views/img/mollie_panel_icon.png`}
+            src={`${moduleDir}views/img/logo_small.png`}
             width="32"
             height="32"
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           />
           &nbsp;<span>Mollie</span>&nbsp;
-        </div>
+        </legend>
         <OrderPanelContent/>
-      </div>
+      </fieldset>
     );
   }
+
+  return (
+    <div className="panel">
+      <div className="panel-heading">
+        <img
+          src={`${moduleDir}views/img/mollie_panel_icon.png`}
+          width="32"
+          height="32"
+          style={{ height: '16px', width: '16px', opacity: 0.8 }}
+        />
+        &nbsp;<span>Mollie</span>&nbsp;
+      </div>
+      <OrderPanelContent/>
+    </div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

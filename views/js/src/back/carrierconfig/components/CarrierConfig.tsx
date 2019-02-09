@@ -30,8 +30,8 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
-import classnames from 'classnames';
+import React, { useEffect, useState } from 'react';
+import cx from 'classnames';
 import { find, cloneDeep, forEach, isEmpty } from 'lodash';
 
 import axios from '../../misc/axios';
@@ -50,126 +50,120 @@ interface IProps {
   target: string;
 }
 
-interface IState {
-  carriers?: Array<IMollieCarrierConfigItem>;
-  message?: string;
-}
+function CarrierConfig(props: IProps) {
+  const [carriers, setCarriers] = useState<Array<IMollieCarrierConfigItem>>(undefined);
+  const [message, setMessage] = useState<string>(undefined);
 
-class CarrierConfig extends Component<IProps> {
-  state: IState = {};
-  componentDidMount() {
-    setTimeout(this.init, 0);
-  }
-
-  get carrierConfig() {
-    const carriers: IMollieCarrierConfigItems = {};
-    forEach(this.state.carriers, (carrier) => {
-      carriers[carrier.id_carrier] = carrier;
-    });
-
-    return carriers;
-  }
-
-  init = async (): Promise<void> => {
-    this.setState({ carriers: undefined });
-    const { config: { ajaxEndpoint } } = this.props;
+  async function init() {
+    const { config: { ajaxEndpoint } } = props;
     try {
       const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
 
-      this.setState({ carriers });
+      console.log(carriers);
+      setCarriers(carriers);
     } catch (e) {
       console.error(e);
 
-      this.setState({ carriers: null, message: (e && e instanceof Error) ? e.message : 'Check the browser console for errors' });
+      setCarriers(null);
+      setMessage((e && e instanceof Error) ? e.message : 'Check the browser console for errors');
     }
-  };
+  }
 
-  updateCarrierConfig = (id: string, key: string, value: string|null) => {
-    const carriers = cloneDeep(this.state.carriers);
+  function carrierConfig() {
+    const carrierConfig: IMollieCarrierConfigItems = {};
+    forEach(carriers, (carrier) => {
+      carrierConfig[carrier.id_carrier] = carrier;
+    });
 
-    const config = find(carriers, item => item.id_carrier === id);
+    return carrierConfig;
+  }
+
+  function updateCarrierConfig (id: string, key: string, value: string|null) {
+    const newCarriers = cloneDeep(carriers);
+    const config = find(newCarriers, item => item.id_carrier === id);
     if (typeof config === 'undefined') {
       return;
     }
     config[key] = value;
 
-    this.setState({ carriers: carriers });
-  };
-
-  render() {
-    const { translations, target, config: { legacy } } = this.props;
-    const { carriers, message } = this.state;
-
-    if (typeof carriers === 'undefined') {
-      return <LoadingDots/>;
-    }
-
-    if (!Array.isArray(carriers) || Array.isArray(carriers) && isEmpty(carriers)) {
-      return <ConfigCarrierError message={message} retry={this.init}/>;
-    }
-
-    return (
-      <>
-        <div className={classnames({
-          'alert': !legacy,
-          'alert-info': !legacy,
-          'warn': legacy,
-        })}
-        >
-          {translations.hereYouCanConfigureCarriers}
-          <br/>{translations.youCanUseTheFollowingVariables}
-          <ul>
-            <li><strong>@ </strong>: {translations.shippingNumber}</li>
-            <li><strong>%%shipping_number%% </strong>: {translations.shippingNumber}</li>
-            <li><strong>%%invoice.country_iso%%</strong>: {translations.invoiceCountryCode}</li>
-            <li><strong>%%invoice.postcode%% </strong>: {translations.invoicePostcode}</li>
-            <li><strong>%%delivery.country_iso%%</strong>: {translations.deliveryCountryCode}</li>
-            <li><strong>%%delivery.postcode%% </strong>: {translations.deliveryPostcode}</li>
-            <li><strong>%%lang_iso%% </strong>: {translations.languageCode}</li>
-          </ul>
-        </div>
-        <table className="list form alternate table">
-          <thead>
-            <tr>
-              <td className="left">{translations.name}</td>
-              <td className="left">{translations.urlSource}</td>
-              <td className="left">{translations.customUrl}</td>
-            </tr>
-          </thead>
-          <tbody>
-            {carriers.map((carrier) => (
-              <tr key={carrier.id_carrier}>
-                <td className="left">
-                  {carrier.name}
-                </td>
-                <td className="left">
-                  <select
-                    value={carrier.source}
-                    onChange={({ target: { value } }) => this.updateCarrierConfig(carrier.id_carrier, 'source', value)}
-                  >
-                    <option value="do_not_auto_ship">{translations.doNotAutoShip}</option>
-                    <option value="no_tracking_info">{translations.noTrackingInformation}</option>
-                    <option value="carrier_url">{translations.carrierUrl}</option>
-                    <option value="custom_url">{translations.customUrl}</option>
-                    {carrier.module && <option value="module">{translations.module}</option>}
-                  </select>
-                </td>
-                <td className="left">
-                  <input
-                    type="text"
-                    disabled={carrier.source !== 'custom_url'}
-                    value={carrier.custom_url}
-                    onChange={({ target: { value } }) => this.updateCarrierConfig(carrier.id_carrier, 'custom_url', value)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <input type="hidden" id={target} name={target} value={JSON.stringify(this.carrierConfig)}/>
-      </>
-    );
+    setCarriers(newCarriers);
   }
+
+  useEffect(() => {
+    init().then();
+  }, []);
+
+  const { translations, target, config: { legacy } } = props;
+
+  if (typeof carriers === 'undefined') {
+    return <LoadingDots/>;
+  }
+
+  if (!Array.isArray(carriers) || Array.isArray(carriers) && isEmpty(carriers)) {
+    return <ConfigCarrierError message={message} retry={init}/>;
+  }
+
+  return (
+    <>
+      <div className={cx({
+        'alert': !legacy,
+        'alert-info': !legacy,
+        'warn': legacy,
+      })}
+      >
+        {translations.hereYouCanConfigureCarriers}
+        <br/>{translations.youCanUseTheFollowingVariables}
+        <ul>
+          <li><strong>@ </strong>: {translations.shippingNumber}</li>
+          <li><strong>%%shipping_number%% </strong>: {translations.shippingNumber}</li>
+          <li><strong>%%invoice.country_iso%%</strong>: {translations.invoiceCountryCode}</li>
+          <li><strong>%%invoice.postcode%% </strong>: {translations.invoicePostcode}</li>
+          <li><strong>%%delivery.country_iso%%</strong>: {translations.deliveryCountryCode}</li>
+          <li><strong>%%delivery.postcode%% </strong>: {translations.deliveryPostcode}</li>
+          <li><strong>%%lang_iso%% </strong>: {translations.languageCode}</li>
+        </ul>
+      </div>
+      <table className="list form alternate table">
+        <thead>
+          <tr>
+            <td className="left">{translations.name}</td>
+            <td className="left">{translations.urlSource}</td>
+            <td className="left">{translations.customUrl}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {carriers.map((carrier) => (
+            <tr key={carrier.id_carrier}>
+              <td className="left">
+                {carrier.name}
+              </td>
+              <td className="left">
+                <select
+                  value={carrier.source}
+                  onChange={({ target: { value } }) => updateCarrierConfig(carrier.id_carrier, 'source', value)}
+                >
+                  <option value="do_not_auto_ship">{translations.doNotAutoShip}</option>
+                  <option value="no_tracking_info">{translations.noTrackingInformation}</option>
+                  <option value="carrier_url">{translations.carrierUrl}</option>
+                  <option value="custom_url">{translations.customUrl}</option>
+                  {carrier.module && <option value="module">{translations.module}</option>}
+                </select>
+              </td>
+              <td className="left">
+                <input
+                  type="text"
+                  disabled={carrier.source !== 'custom_url'}
+                  value={carrier.custom_url}
+                  onChange={({ target: { value } }) => updateCarrierConfig(carrier.id_carrier, 'custom_url', value)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <input type="hidden" id={target} name={target} value={JSON.stringify(carrierConfig())}/>
+    </>
+  );
 }
 
 export default CarrierConfig;

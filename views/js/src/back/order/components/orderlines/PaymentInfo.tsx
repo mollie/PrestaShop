@@ -52,23 +52,21 @@ const Div = styled.div`
 }
 ` as any;
 
-class PaymentInfo extends Component<IProps> {
-  render() {
-    const { translations, config: { legacy } } = this.props;
+function PaymentInfo(props: IProps) {
+  const { translations, config: { legacy } } = props;
 
-    if (legacy) {
-      return (
-        <PaymentInfoContent/>
-      );
-    }
-
+  if (legacy) {
     return (
-      <Div className="col-md-3 panel">
-        <div className="panel-heading">{translations.paymentInfo}</div>
-        <PaymentInfoContent/>
-      </Div>
+      <PaymentInfoContent/>
     );
   }
+
+  return (
+    <Div className="col-md-3 panel">
+      <div className="panel-heading">{translations.paymentInfo}</div>
+      <PaymentInfoContent/>
+    </Div>
+  );
 }
 
 export default connect<{}, {}, IProps>(

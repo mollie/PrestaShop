@@ -30,11 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ChangeEvent, Component } from 'react';
+import React, { ChangeEvent } from 'react';
 import xss from 'xss';
 import styled from 'styled-components';
 
-import { IBank, IBanks, ITranslations } from '../../../globals';
+import { IBanks, ITranslations } from '../../../globals';
 import QrCode from '../../qrcode/components/QrCode';
 
 const Radio = styled.div`
@@ -138,40 +138,37 @@ interface IProps {
   setIssuer: any;
 }
 
-export default class Banks extends Component<IProps> {
-  _handleChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-    this.props.setIssuer(value);
-  };
-
-  public render() {
-    const firstBankId = (Object.values(this.props.banks) as Array<IBank>)[0].id;
-    const { banks, translations } = this.props;
-
-    return (
-      <div>
-        <ul>
-          {Object.values(banks).map((bank) => (
-            <Radio key={bank.id}>
-              <input
-                type="radio"
-                defaultChecked={bank.id === firstBankId}
-                id={bank.id}
-                name="mollie-bank"
-                value={bank.id}
-                onChange={this._handleChange}
-              />
-              <label htmlFor={bank.id} style={{ lineHeight: '24px' }}>
-                <img
-                  src={bank.image.size2x}
-                  alt={xss(bank.name)}
-                  style={{ height: '24px', width: 'auto' }}
-                /> {bank.name}
-              </label>
-            </Radio>
-          ))}
-        </ul>
-        {window.mollieQrEnabled && <QrCode title={translations.orPayByIdealQr} center/>}
-      </div>
-    );
+export default function Banks({ banks, translations, setIssuer }: IProps) {
+  function _handleChange({ target: { value } }: ChangeEvent<HTMLInputElement>) {
+    setIssuer(value);
   }
+
+  const firstBankId = (Object.values(banks))[0].id;
+
+  return (
+    <div>
+      <ul>
+        {Object.values(banks).map((bank) => (
+          <Radio key={bank.id}>
+            <input
+              type="radio"
+              defaultChecked={bank.id === firstBankId}
+              id={bank.id}
+              name="mollie-bank"
+              value={bank.id}
+              onChange={_handleChange}
+            />
+            <label htmlFor={bank.id} style={{ lineHeight: '24px' }}>
+              <img
+                src={bank.image.size2x}
+                alt={xss(bank.name)}
+                style={{ height: '24px', width: 'auto' }}
+              /> {bank.name}
+            </label>
+          </Radio>
+        ))}
+      </ul>
+      {window.mollieQrEnabled && <QrCode title={translations.orPayByIdealQr} center/>}
+    </div>
+  );
 }
