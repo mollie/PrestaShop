@@ -30,8 +30,8 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
-import { SortableContainer, arrayMove } from 'react-sortable-hoc';
+import React, { useEffect, useState } from 'react';
+import { arrayMove, SortableContainer } from 'react-sortable-hoc';
 import styled from 'styled-components';
 import { cloneDeep, find } from 'lodash';
 
@@ -85,69 +85,50 @@ interface IProps {
   config: IMollieMethodConfig;
 }
 
-interface IState {
-  methods: Array<IMolliePaymentMethodItem>;
-}
+function PaymentMethods({ translations, config, methods: propsMethods, target }: IProps) {
+  const [methods, setMethods] = useState(propsMethods);
 
-class PaymentMethods extends Component<IProps> {
-  readonly state: IState = {
-    methods: this.props.methods,
-  };
-
-  componentDidMount() {
-    this.componentDidUpdate();
-  }
-
-  componentDidUpdate() {
-    const input: HTMLInputElement = document.getElementById(this.props.target) as HTMLInputElement;
+  useEffect(() => {
+    const input: HTMLInputElement = document.getElementById(target) as HTMLInputElement;
     if (input != null) {
-      input.value = JSON.stringify(this.state.methods.map((method: IMolliePaymentMethodItem, index: number): IMolliePaymentMethodConfigItem => ({
+      input.value = JSON.stringify(methods.map((method: IMolliePaymentMethodItem, index: number): IMolliePaymentMethodConfigItem => ({
         ...method,
         position: index,
       })));
     }
-  }
+  });
 
-  onToggle = (id: string, enabled: boolean) => {
-    const methods = cloneDeep(this.state.methods);
-    const method = find(methods, item => item.id === id);
+  function onToggle(id: string, enabled: boolean) {
+    const newMethods = cloneDeep(methods);
+    const method = find(newMethods, item => item.id === id);
     method.enabled = enabled;
-    this.setState({ methods });
-  };
-
-  onArrowClicked = ({ oldIndex, newIndex}: any) => {
-    this.setState({
-      methods: arrayMove(cloneDeep(this.state.methods), oldIndex, newIndex),
-    });
-  };
-
-  onSortEnd = ({ oldIndex, newIndex }: any) => {
-    this.setState({
-      methods: arrayMove(cloneDeep(this.state.methods), oldIndex, newIndex),
-    });
-  };
-
-  shouldCancelStart = ({ target }: any) => {
-    return ['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(target.tagName.toUpperCase());
-  };
-
-  render() {
-    const { methods } = this.state;
-    const { translations, config } = this.props;
-
-    return (
-      <SortableList
-        translations={translations}
-        items={methods}
-        onSortEnd={this.onSortEnd}
-        onArrowClicked={this.onArrowClicked}
-        onToggle={this.onToggle}
-        shouldCancelStart={this.shouldCancelStart}
-        config={config}
-        helperClass="sortable-helper"
-      />
-    );
+    setMethods(newMethods);
   }
+
+  function onArrowClicked({ oldIndex, newIndex}: any) {
+    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
+  }
+
+  function onSortEnd({ oldIndex, newIndex }: any) {
+    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
+  }
+
+  function shouldCancelStart({ target }: any) {
+    return ['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(target.tagName.toUpperCase());
+  }
+
+  return (
+    <SortableList
+      translations={translations}
+      items={methods}
+      onSortEnd={onSortEnd}
+      onArrowClicked={onArrowClicked}
+      onToggle={onToggle}
+      shouldCancelStart={shouldCancelStart}
+      config={config}
+      helperClass="sortable-helper"
+    />
+  );
 }
 
 export default PaymentMethods;

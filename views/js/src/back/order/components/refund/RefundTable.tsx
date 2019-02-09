@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import RefundTableHeader from './RefundTableHeader';
 import { connect } from 'react-redux';
 import moment from 'moment';

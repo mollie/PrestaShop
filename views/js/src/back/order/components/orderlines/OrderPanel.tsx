@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 

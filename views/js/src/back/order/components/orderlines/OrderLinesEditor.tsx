@@ -30,12 +30,12 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Tr } from 'styled-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components';
-import { compact, filter, findIndex, cloneDeep, remove, forEach, range } from 'lodash';
+import { cloneDeep, compact, filter, findIndex, forEach, range, remove } from 'lodash';
 
 import { IMollieOrderLine, ITranslations } from '../../../../globals';
 

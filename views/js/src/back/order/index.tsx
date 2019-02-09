@@ -36,7 +36,14 @@ import viewportSize from 'viewport-size';
 import { throttle } from 'lodash';
 
 import store from './store';
-import { updateConfig, updateCurrencies, updateOrder, updatePayment, updateTranslations, updateViewportWidth } from './store/actions';
+import {
+  updateConfig,
+  updateCurrencies,
+  updateOrder,
+  updatePayment,
+  updateTranslations,
+  updateViewportWidth
+} from './store/actions';
 import MolliePanel from './components/MolliePanel';
 import { retrieveOrder, retrievePayment } from './misc/ajax';
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '../../globals';

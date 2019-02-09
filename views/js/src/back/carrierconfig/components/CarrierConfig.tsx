@@ -32,7 +32,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
-import { find, cloneDeep, forEach, isEmpty } from 'lodash';
+import { cloneDeep, find, forEach, isEmpty } from 'lodash';
 
 import axios from '../../misc/axios';
 import LoadingDots from '../../misc/components/LoadingDots';

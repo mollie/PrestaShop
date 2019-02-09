@@ -38,7 +38,9 @@ import {
   IUpdateConfigAction,
   IUpdateCurrenciesAction,
   IUpdateOrderAction,
-  IUpdatePaymentAction, IUpdateTranslationsAction, IUpdateViewportWidthAction,
+  IUpdatePaymentAction,
+  IUpdateTranslationsAction,
+  IUpdateViewportWidthAction,
   ReduxActionTypes
 } from './actions';
 import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '../../../globals';

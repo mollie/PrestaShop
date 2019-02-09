@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import xss from 'xss';

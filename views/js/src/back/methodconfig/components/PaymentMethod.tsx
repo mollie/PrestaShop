@@ -30,11 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SortableElement } from 'react-sortable-hoc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronUp, faChevronDown, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 import Switch from './Switch';
 import { IMollieMethodConfig, ITranslations } from '../../../globals';

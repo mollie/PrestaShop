@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { lighten, rgba } from 'polished';
 import { ITranslations } from '../../../globals';

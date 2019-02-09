@@ -30,13 +30,12 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import PaymentInfoContent from './PaymentInfoContent';
 import { IMollieOrderConfig, ITranslations } from '../../../../globals';
-import { InferProps } from 'prop-types';
 
 interface IProps {
   // Redux

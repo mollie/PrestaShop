@@ -30,11 +30,10 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { ITranslations } from '../../../../globals';
-import { InferProps } from 'prop-types';
 
 interface IProps {
   loading: boolean;
