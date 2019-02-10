@@ -31,11 +31,15 @@
  * @link       https://www.mollie.nl
  */
 // Action types
-import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
+import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
 export enum ReduxActionTypes {
-  updateTranslations = 'UPDATE_MOLLIE_CARRIER_TRANSLATIONS',
-  updateConfig = 'UPDATE_MOLLIE_CARRIER_CONFIG',
+  updateTranslations = 'UPDATE_MOLLIE_ORDER_TRANSLATIONS',
+  updateConfig = 'UPDATE_MOLLIE_ORDER_CONFIG',
+  updateOrder = 'UPDATE_MOLLIE_ORDER',
+  updatePayment = 'UPDATE_MOLLIE_PAYMENT',
+  updateCurrencies = 'UPDATE_MOLLIE_CURRENCIES',
+  updateViewportWidth = 'UPDATE_MOLLIE_VIEWPORT_WIDTH',
 }
 
 // Action creators
@@ -44,15 +48,51 @@ export interface IUpdateTranslationsAction {
   translations: ITranslations;
 }
 
-export interface IUpdateCarrierConfigAction {
+export interface IUpdateConfigAction {
   type: string;
-  config: IMollieCarrierConfig;
+  config: IMollieOrderConfig;
+}
+
+export interface IUpdateOrderAction {
+  type: string;
+  order: IMollieApiOrder;
+}
+
+export interface IUpdatePaymentAction {
+  type: string;
+  payment: IMollieApiPayment;
+}
+
+export interface IUpdateCurrenciesAction {
+  type: string;
+  currencies: ICurrencies;
+}
+
+export interface IUpdateViewportWidthAction {
+  type: string;
+  width: number;
 }
 
 export function updateTranslations(translations: ITranslations): IUpdateTranslationsAction {
   return { type: ReduxActionTypes.updateTranslations, translations };
 }
 
-export function updateConfig(config: IMollieCarrierConfig): IUpdateCarrierConfigAction {
+export function updateCurrencies(currencies: ICurrencies): IUpdateCurrenciesAction {
+  return { type: ReduxActionTypes.updateCurrencies, currencies };
+}
+
+export function updateConfig(config: IMollieOrderConfig): IUpdateConfigAction {
   return { type: ReduxActionTypes.updateConfig, config };
+}
+
+export function updateOrder(order: IMollieApiOrder): IUpdateOrderAction {
+  return { type: ReduxActionTypes.updateOrder, order };
+}
+
+export function updatePayment(payment: IMollieApiPayment): IUpdatePaymentAction {
+  return { type: ReduxActionTypes.updatePayment, payment };
+}
+
+export function updateViewportWidth(width: number) : IUpdateViewportWidthAction {
+  return { type: ReduxActionTypes.updateViewportWidth, width };
 }

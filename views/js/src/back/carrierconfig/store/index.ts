@@ -31,7 +31,8 @@
  * @link       https://www.mollie.nl
  */
 import { createStore, Store } from 'redux';
-import carriersApp from './carriers';
+
+import carriersApp from '@carrierconfig/store/carriers';
 
 declare let window: any;
 

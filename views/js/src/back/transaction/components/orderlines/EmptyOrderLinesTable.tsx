@@ -31,10 +31,44 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import OrderLinesTableHeader from '@transaction/components/orderlines/OrderLinesTableHeader';
+import { IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
+
+function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps) {
+  if (legacy) {
+    return <div className="error">{translations.thereAreNoProducts}</div>;
+  }
+
+  return (
+    <div className="table-responsive">
+      <table className="table">
+        <OrderLinesTableHeader/>
+        <tbody>
+          <tr>
+            <td className="list-empty hidden-print" colSpan={3}>
+              <div className="list-empty-msg">
+                <i className="icon-warning-sign list-empty-icon"/>
+                {translations.thereAreNoProducts}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    config: state.config,
+  })
+)(EmptyOrderLinesTable);

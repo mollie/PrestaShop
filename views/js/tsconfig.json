@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "outDir": "./ignoreme/",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es5",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "noEmit": false,
+    "pretty": true,
+    "lib": [ "esnext", "dom" ],
+    "suppressImplicitAnyIndexErrors": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@carrierconfig/*": ["back/carrierconfig/*"],
+      "@methodconfig/*": ["back/methodconfig/*"],
+      "@transaction/*": ["back/transaction/*"],
+      "@updater/*": ["back/updater/*/"],
+      "@banks/*": ["front/banks/*"],
+      "@qrcode/*": ["front/qrcode/*"],
+      "@shared/*": ["shared/*"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

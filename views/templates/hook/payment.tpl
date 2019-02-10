@@ -62,8 +62,10 @@
 {if !empty($issuers['ideal']) && $issuer_setting === Mollie::ISSUERS_ON_CLICK}
   <script type="text/javascript">
     (function () {
-      if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
-        {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (chunk) {
+      if (typeof window.MollieModule === 'undefined'
+        || typeof window.MollieModule.bankList === 'undefined'
+      ) {
+        {Mollie::getWebpackChunks('bankList')|json_encode}.forEach(function (chunk) {
           var elem = document.createElement('script');
           elem.type = 'text/javascript';
           document.querySelector('head').appendChild(elem);
@@ -78,21 +80,23 @@
         var banks = {$issuers['ideal']|json_encode nofilter};
         var translations = {$mollie_translations|json_encode nofilter};
 
-        if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
-          {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (chunk) {
+        if (typeof window.MollieModule === 'undefined'
+          || typeof window.MollieModule.bankList === 'undefined'
+        ) {
+          {Mollie::getWebpackChunks('bankList')|json_encode}.forEach(function (chunk) {
             var elem = document.createElement('script');
             elem.type = 'text/javascript';
             elem.onload = function initMollieBanks() {
-              if (typeof window.MollieModule.front === 'undefined') {
+              if (typeof window.MollieModule.bankList === 'undefined') {
                 return setTimeout(initMollieBanks, 100);
               }
-              window.MollieModule.front.mollieBanks(banks, translations);
+              window.MollieModule.bankList.default(banks, translations);
             };
             document.querySelector('head').appendChild(elem);
             elem.src = chunk;
           });
         } else {
-          window.MollieModule.front.mollieBanks(banks, translations);
+          window.MollieModule.bankList.default(banks, translations);
         }
       }
 

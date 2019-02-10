@@ -31,10 +31,32 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import RefundPanel from './refund/RefundPanel';
+import store from '../store';
+import { connect, Provider } from 'react-redux';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import OrderPanel from '@transaction/components/orderlines/OrderPanel';
+import { IMollieApiOrder, IMollieApiPayment } from '@shared/globals';
+
+interface IProps {
+  payment?: IMollieApiPayment;
+  order?: IMollieApiOrder;
 }
+
+function MolliePanel({ payment, order }: IProps) {
+  return (
+    <Provider store={store}>
+      <>
+        {payment && <RefundPanel/>}
+        {order && <OrderPanel/>}
+      </>
+    </Provider>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    payment: state.payment,
+    order: state.order,
+  })
+)(MolliePanel);

@@ -35,9 +35,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { throttle } from 'lodash';
 
-import axios from '../../axios';
-import { QrStatus } from '../../../globals';
-import Spinner from './Spinner';
+import Spinner from '@qrcode/components/Spinner';
+import axios from '@shared/axios';
+import { QrStatus } from '@shared/globals';
 
 declare let window: any;
 

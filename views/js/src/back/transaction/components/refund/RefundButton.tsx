@@ -31,10 +31,42 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import { ITranslations } from '@shared/globals';
+
+interface IProps {
+  loading: boolean;
+  disabled: boolean;
+  refundPayment: any;
+
+  // Redux
+  translations?: ITranslations;
 }
+
+function RefundButton({ translations, loading, disabled, refundPayment }: IProps) {
+  return (
+    <button
+      type="button"
+      className="btn btn-default"
+      disabled={loading || disabled}
+      onClick={() => refundPayment(false)}
+      style={{ marginRight: '10px' }}
+    >
+      <i className={classnames({
+        'icon': true,
+        'icon-undo': !loading,
+        'icon-circle-o-notch': loading,
+        'icon-spin': loading,
+      })}/> {translations.refundOrder}
+    </button>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+  })
+)
+(RefundButton);

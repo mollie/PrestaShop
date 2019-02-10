@@ -30,11 +30,57 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+import 'intl';
+
 import React from 'react';
 import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { throttle } from 'lodash';
+import { Provider } from 'react-redux';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
-}
+import store from '@transaction/store';
+import {
+  updateConfig,
+  updateCurrencies,
+  updateOrder,
+  updatePayment,
+  updateTranslations,
+  updateViewportWidth
+} from './store/actions';
+import MolliePanel from './components/MolliePanel';
+import { retrieveOrder, retrievePayment } from './misc/ajax';
+import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+export default (
+  target: any,
+  config: IMollieOrderConfig,
+  translations: ITranslations,
+  currencies: ICurrencies
+) => {
+  setTimeout(async () => {
+    const { transactionId } = config;
+
+    if (transactionId.substr(0, 3) === 'ord') {
+      store.dispatch(updateOrder(await retrieveOrder(transactionId)));
+    } else {
+      store.dispatch(updatePayment(await retrievePayment(transactionId)));
+    }
+  }, 0);
+
+  // Listen for window resizes
+  window.addEventListener('resize', throttle(() => {
+    store.dispatch(updateViewportWidth(window.innerWidth));
+  }, 200));
+
+  store.dispatch(updateCurrencies(currencies));
+  store.dispatch(updateTranslations(translations));
+  store.dispatch(updateConfig(config));
+
+  return render(
+    <Provider store={store}>
+      <MolliePanel/>
+    </Provider>,
+    typeof target === 'string' ? document.querySelector(target) : target
+  );
+};
+
+

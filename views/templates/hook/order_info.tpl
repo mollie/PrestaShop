@@ -36,7 +36,7 @@
 <script type="text/javascript">
   (function () {
     window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-    window.MollieModule.back.orderInfo(
+    window.MollieModule.transactionInfo.default(
       "#mollie_order",
       {
         ajaxEndpoint: '{$ajaxEndpoint|escape:'javascript':'UTF-8'}',

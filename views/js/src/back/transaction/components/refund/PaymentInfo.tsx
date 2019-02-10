@@ -31,10 +31,46 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import PaymentInfoContent from '@transaction/components/refund/PaymentInfoContent';
+import { IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
+
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: -5px!important;
+  margin-right: 5px!important;
+}
+` as any;
+
+function PaymentInfo({ translations, config: { legacy } }: IProps) {
+  if (legacy) {
+    return (
+      <>
+        <PaymentInfoContent/>
+        <br/>
+      </>
+    );
+  }
+
+  return (
+    <Div className="col-md-3 panel">
+      <div className="panel-heading">{translations.paymentInfo}</div>
+      <PaymentInfoContent/>
+    </Div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    config: state.config,
+  })
+)(PaymentInfo);

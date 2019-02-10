@@ -31,10 +31,31 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import EmptyRefundTable from '@transaction/components/refund/EmptyRefundTable';
+import RefundTable from '@transaction/components/refund/RefundTable';
+import { IMollieApiPayment, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  payment?: IMollieApiPayment;
+  translations?: ITranslations;
 }
+
+function RefundHistory({ translations, payment }: IProps) {
+  return (
+    <>
+      <h4>{translations.refundHistory}</h4>
+      {!payment.refunds.length && <EmptyRefundTable/>}
+      {!!payment.refunds.length && <RefundTable/>}
+    </>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    payment: state.payment,
+  })
+)(RefundHistory);

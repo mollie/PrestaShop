@@ -30,11 +30,56 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import React from 'react';
+import { connect } from 'react-redux';
+import cx from 'classnames';
+
+import { IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  loading: boolean;
+  disabled: boolean;
+  refundPayment: any;
+
+  // Redux
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
 }
+
+function PartialRefundButton({ translations, loading, disabled, refundPayment, config: { legacy } }: IProps) {
+  const content = (
+    <button
+      className="btn btn-default"
+      type="button"
+      disabled={loading || disabled}
+      onClick={() => refundPayment(true)}
+    >
+      {!legacy && (<i
+        className={cx({
+          'icon': true,
+          'icon-undo': !loading,
+          'icon-circle-o-notch': loading,
+          'icon-spin': loading,
+        })}
+      />)} {translations.partialRefund}
+    </button>
+  );
+
+  if (legacy) {
+    return content;
+  }
+
+  return (
+    <div className="input-group-btn">
+      {content}
+    </div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    config: state.config,
+  })
+)(PartialRefundButton);

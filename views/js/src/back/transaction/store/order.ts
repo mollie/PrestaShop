@@ -31,15 +31,25 @@
  * @link       https://www.mollie.nl
  */
 import { combineReducers } from 'redux';
-
-import { IUpdateCarrierConfigAction, IUpdateTranslationsAction, ReduxActionTypes } from '@carrierconfig/store/actions';
-import { IMollieCarrierConfig, IMollieCarrierConfigItem, ITranslations } from '@shared/globals';
+import {
+  IUpdateConfigAction,
+  IUpdateCurrenciesAction,
+  IUpdateOrderAction,
+  IUpdatePaymentAction,
+  IUpdateTranslationsAction,
+  IUpdateViewportWidthAction,
+  ReduxActionTypes
+} from '@transaction/store/actions';
+import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
 declare global {
-  interface IMollieCarriersState {
+  interface IMollieOrderState {
     translations: ITranslations;
-    config: IMollieCarrierConfig;
-    carriers: Array<IMollieCarrierConfigItem>;
+    config: IMollieOrderConfig;
+    viewportWidth: number;
+    order: IMollieApiOrder;
+    payment: IMollieApiPayment;
+    currencies: ICurrencies;
   }
 }
 
@@ -52,7 +62,7 @@ const translations = (state: any = {}, action: IUpdateTranslationsAction): ITran
   }
 };
 
-const config = (state: any = {}, action: IUpdateCarrierConfigAction): IMollieCarrierConfig => {
+const config = (state: any = {}, action: IUpdateConfigAction): IMollieOrderConfig => {
   switch (action.type) {
     case ReduxActionTypes.updateConfig:
       return action.config;
@@ -61,9 +71,50 @@ const config = (state: any = {}, action: IUpdateCarrierConfigAction): IMollieCar
   }
 };
 
+const order = (state: IMollieApiOrder = null, action: IUpdateOrderAction): IMollieApiOrder => {
+  switch (action.type) {
+    case ReduxActionTypes.updateOrder:
+      return action.order;
+    default:
+      return state;
+  }
+};
+
+const payment = (state: IMollieApiPayment = null, action: IUpdatePaymentAction): IMollieApiPayment => {
+  switch (action.type) {
+    case ReduxActionTypes.updatePayment:
+      return action.payment;
+    default:
+      return state;
+  }
+};
+
+const currencies = (state: ICurrencies = {}, action: IUpdateCurrenciesAction): ICurrencies => {
+  switch (action.type) {
+    case ReduxActionTypes.updateCurrencies:
+      return action.currencies;
+    default:
+      return state;
+  }
+};
+
+const initialViewportwidth = window.innerWidth;
+const viewportWidth = (state = initialViewportwidth, action : IUpdateViewportWidthAction): number => {
+  switch (action.type) {
+    case ReduxActionTypes.updateViewportWidth:
+      return action.width;
+    default:
+      return state;
+  }
+};
+
 const checkoutApp = combineReducers({
   translations,
   config,
+  order,
+  payment,
+  currencies,
+  viewportWidth,
 });
 
 export default checkoutApp;

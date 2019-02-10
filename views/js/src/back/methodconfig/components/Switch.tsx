@@ -33,7 +33,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { lighten, rgba } from 'polished';
-import { ITranslations } from '../../../globals';
+
+import { ITranslations } from '@shared/globals';
 
 interface IProps {
   enabled: boolean;

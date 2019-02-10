@@ -31,10 +31,54 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import OrderLinesTable from '@transaction/components/orderlines/OrderLinesTable';
+import EmptyOrderLinesTable from '@transaction/components/orderlines/EmptyOrderLinesTable';
+import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
+  order?: IMollieApiOrder;
+  config?: IMollieOrderConfig;
 }
+
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: 5px!important;
+  margin-right: -5px!important;
+}
+` as any;
+
+function OrderLinesInfo(props: IProps) {
+  const { translations, order, config: { legacy } } = props;
+
+  if (legacy) {
+    return (
+      <>
+        {legacy && <h3>{translations.products}</h3>}
+        {!legacy && <h4>{translations.products}</h4>}
+        {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+        {!!order && !!order.lines.length && <OrderLinesTable/>}
+      </>
+    );
+  }
+
+  return (
+    <Div className="col-md-9 panel">
+      <div className="panel-heading">{translations.products}</div>
+      {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+      {!!order && !!order.lines.length && <OrderLinesTable/>}
+    </Div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+    order: state.order,
+    config: state.config,
+  })
+)(OrderLinesInfo);

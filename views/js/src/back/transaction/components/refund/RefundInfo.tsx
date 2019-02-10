@@ -31,10 +31,53 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import RefundHistory from '@transaction/components/refund/RefundHistory';
+import RefundForm from '@transaction/components/refund/RefundForm';
+import { IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
+  config?: IMollieOrderConfig;
+  payment?: IMollieApiPayment;
 }
+
+const Div = styled.div`
+@media only screen and (min-width: 992px) {
+  margin-left: 5px!important;
+  margin-right: -5px!important;
+}
+` as any;
+
+function RefundInfo({ translations, config: { legacy }, payment }: IProps) {
+  if (legacy) {
+    return (
+      <>
+        <h3>{translations.refunds}</h3>
+        {payment.amountRefunded && <RefundHistory/>}
+        {payment.amountRefunded && <RefundForm/>}
+        {!payment.amountRefunded && <div className="warn">{translations.refundsAreCurrentlyUnavailable}</div>}
+      </>
+    );
+  }
+
+  return (
+    <Div className="col-md-6 panel">
+      <div className="panel-heading">{translations.refunds}</div>
+      {payment.amountRefunded && <RefundHistory/>}
+      {payment.amountRefunded && <RefundForm/>}
+      {!payment.amountRefunded && <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
+    </Div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    payment: state.payment,
+    translations: state.translations,
+    config: state.config,
+  })
+)(RefundInfo);

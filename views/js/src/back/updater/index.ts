@@ -32,10 +32,10 @@
  */
 import swal from 'sweetalert';
 import xss from 'xss';
-import axios from '../misc/axios';
 import { get } from 'lodash';
 
-import { ITranslations } from '../../globals';
+import axios from '@shared/axios';
+import { ITranslations } from '@shared/globals';
 
 const showError = (message: string) => {
   swal({
@@ -79,7 +79,7 @@ const handleClick = async (config: any, translations: ITranslations): Promise<vo
   }).then();
 };
 
-export const updater = (button: HTMLElement, config: any, translations: ITranslations) => {
+export default (button: HTMLElement, config: any, translations: ITranslations) => {
   button.onclick = () => handleClick(config, translations);
 };
 

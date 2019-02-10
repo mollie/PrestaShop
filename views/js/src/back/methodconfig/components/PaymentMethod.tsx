@@ -36,8 +36,8 @@ import { SortableElement } from 'react-sortable-hoc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
-import Switch from './Switch';
-import { IMollieMethodConfig, ITranslations } from '../../../globals';
+import Switch from '@methodconfig/components/Switch';
+import { IMollieMethodConfig, ITranslations } from '@shared/globals';
 
 interface IProps {
   position: number;

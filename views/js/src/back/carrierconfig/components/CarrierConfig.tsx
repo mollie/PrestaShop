@@ -34,15 +34,15 @@ import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { cloneDeep, find, forEach, isEmpty } from 'lodash';
 
-import axios from '../../misc/axios';
-import LoadingDots from '../../misc/components/LoadingDots';
-import ConfigCarrierError from './CarrierConfigError';
+import axios from '@shared/axios';
+import LoadingDots from '@shared/components/LoadingDots';
+import ConfigCarrierError from '@carrierconfig/components/CarrierConfigError';
 import {
   IMollieCarrierConfig,
   IMollieCarrierConfigItem,
   IMollieCarrierConfigItems,
   ITranslations,
-} from '../../../globals';
+} from '@shared/globals';
 
 interface IProps {
   config: IMollieCarrierConfig;

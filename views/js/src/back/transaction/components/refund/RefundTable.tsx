@@ -31,10 +31,42 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import RefundTableHeader from './RefundTableHeader';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { get } from 'lodash';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import { formatCurrency } from '@shared/tools';
+import { ICurrencies, IMollieApiPayment, IMollieApiRefund } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  payment?: IMollieApiPayment;
+  currencies?: ICurrencies;
 }
+
+function RefundTable({ payment, currencies }: IProps) {
+  return (
+    <div className="table-responsive">
+      <table className="table">
+        <RefundTableHeader/>
+        <tbody>
+          {payment.refunds.map((refund: IMollieApiRefund) => (
+            <tr key={refund.id} style={{ marginBottom: '100px' }}>
+              <td style={{ width: '100px' }}><strong>{refund.id}</strong></td>
+              <td>{moment(refund.createdAt).format('YYYY-MM-DD HH:mm:ss')}</td>
+              <td>{formatCurrency(parseFloat(refund.amount.value), get(currencies, refund.amount.currency))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    payment: state.payment,
+    currencies: state.currencies,
+  })
+)(RefundTable);

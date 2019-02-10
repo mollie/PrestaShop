@@ -32,59 +32,71 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styled from 'styled-components';
+import { Dispatch } from 'redux';
 
-import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
+import { updateOrder } from '@transaction/store/actions';
+import OrderPanelContent from '@transaction/components/orderlines/OrderPanelContent';
+import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
 interface IProps {
-  retry: Function;
-  message?: string;
-
   // Redux
+  config?: IMollieOrderConfig;
   translations?: ITranslations;
-  config?: IMollieCarrierConfig;
+  order?: IMollieApiOrder;
+  dispatchUpdateOrder?: Function;
 }
 
-const Code = styled.code`
-  font-size: 14px!important;
-` as any;
+function OrderPanel(props: IProps) {
+  const { config: { legacy }, config } = props;
+  if (Object.keys(config).length <= 0) {
+    return null;
+  }
+  const { moduleDir } = config;
 
-function ConfigCarrierError(props: IProps) {
-  const { translations, config: { legacy }, retry, message } = props;
+  if (legacy) {
+    return (
+      <fieldset style={{ marginTop: '14px' }}>
+        <legend>
+          <img
+            src={`${moduleDir}views/img/logo_small.png`}
+            width="32"
+            height="32"
+            style={{ height: '16px', width: '16px', opacity: 0.8 }}
+          />
+          &nbsp;<span>Mollie</span>&nbsp;
+        </legend>
+        <OrderPanelContent/>
+      </fieldset>
+    );
+  }
 
   return (
-    <div
-      className={classnames({
-        'alert': !legacy,
-        'alert-danger': !legacy,
-        'error': legacy,
-      })}
-    >
-      {translations.unableToLoadCarriers}&nbsp;
-      {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
-      <button
-        className={classnames({
-          'btn': !legacy,
-          'btn-danger': !legacy,
-          'button': legacy,
-        })}
-        onClick={(e) => {
-          e.preventDefault();
-          retry();
-        }}
-      >
-        {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
-      </button>
+    <div className="panel">
+      <div className="panel-heading">
+        <img
+          src={`${moduleDir}views/img/mollie_panel_icon.png`}
+          width="32"
+          height="32"
+          style={{ height: '16px', width: '16px', opacity: 0.8 }}
+        />
+        &nbsp;<span>Mollie</span>&nbsp;
+      </div>
+      <OrderPanelContent/>
     </div>
   );
 }
 
 export default connect<{}, {}, IProps>(
-  (state: IMollieCarriersState): Partial<IProps> => ({
+  (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
     config: state.config,
+    order: state.order,
+  }),
+  (dispatch: Dispatch): Partial<IProps> => ({
+    dispatchUpdateOrder(order: IMollieApiOrder) {
+      dispatch(updateOrder(order));
+    }
   })
-)(ConfigCarrierError);
+)
+(OrderPanel);
+

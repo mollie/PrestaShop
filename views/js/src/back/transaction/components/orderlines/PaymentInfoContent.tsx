@@ -31,10 +31,40 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { get } from 'lodash';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import { formatCurrency } from '@shared/tools';
+import { ICurrencies, IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
+  currencies?: ICurrencies;
+  order?: IMollieApiOrder;
+  config?: IMollieOrderConfig;
 }
+
+function PaymentInfoContent(props: IProps) {
+  const { translations, order, currencies, config: { legacy } } = props;
+
+  return (
+    <>
+      {legacy && <h3>{translations.transactionInfo}</h3>}
+      {!legacy && <h4>{translations.transactionInfo}</h4>}
+      <strong>{translations.transactionId}</strong>: <span>{order.id}</span><br/>
+      <strong>{translations.date}</strong>: <span>{moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span><br/>
+      <strong>{translations.amount}</strong>: <span>{formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))}</span><br/>
+    </>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    order: state.order,
+    currencies: state.currencies,
+    translations: state.translations,
+    config: state.config,
+  })
+)(PaymentInfoContent);

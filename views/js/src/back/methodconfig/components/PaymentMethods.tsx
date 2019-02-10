@@ -35,13 +35,13 @@ import { arrayMove, SortableContainer } from 'react-sortable-hoc';
 import styled from 'styled-components';
 import { cloneDeep, find } from 'lodash';
 
-import PaymentMethod from './PaymentMethod';
+import PaymentMethod from '@methodconfig/components/PaymentMethod';
 import {
   IMollieMethodConfig,
   IMolliePaymentMethodConfigItem,
   IMolliePaymentMethodItem,
   ITranslations
-} from '../../../globals';
+} from '@shared/globals';
 
 const Section = styled.section`
 border: 2px solid #0c95fd!important;

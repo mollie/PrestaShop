@@ -35,7 +35,8 @@ import cx from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
-import { IMollieMethodConfig, ITranslations } from '../../../globals';
+
+import { IMollieMethodConfig, ITranslations } from '@shared/globals';
 
 interface IProps {
   translations: ITranslations;

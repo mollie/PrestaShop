@@ -31,10 +31,35 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import { ITranslations } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  translations?: ITranslations;
 }
+
+function RefundTableHeader({ translations }: IProps) {
+  return (
+    <thead>
+      <tr>
+        <th>
+          <span className="title_box"><strong>{translations.ID}</strong></span>
+        </th>
+        <th>
+          <span className="title_box">{translations.date}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.amount}</span>
+        </th>
+      </tr>
+    </thead>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    translations: state.translations,
+  })
+)(RefundTableHeader);

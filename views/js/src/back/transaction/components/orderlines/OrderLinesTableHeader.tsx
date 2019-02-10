@@ -32,59 +32,67 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styled from 'styled-components';
 
-import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
+import { ITranslations } from '@shared/globals';
 
 interface IProps {
-  retry: Function;
-  message?: string;
-
   // Redux
   translations?: ITranslations;
-  config?: IMollieCarrierConfig;
+  viewportWidth?: number;
 }
 
-const Code = styled.code`
-  font-size: 14px!important;
-` as any;
-
-function ConfigCarrierError(props: IProps) {
-  const { translations, config: { legacy }, retry, message } = props;
+function OrderLinesTableHeader(props: IProps) {
+  const { translations, viewportWidth } = props;
 
   return (
-    <div
-      className={classnames({
-        'alert': !legacy,
-        'alert-danger': !legacy,
-        'error': legacy,
-      })}
-    >
-      {translations.unableToLoadCarriers}&nbsp;
-      {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
-      <button
-        className={classnames({
-          'btn': !legacy,
-          'btn-danger': !legacy,
-          'button': legacy,
-        })}
-        onClick={(e) => {
-          e.preventDefault();
-          retry();
-        }}
-      >
-        {!legacy && <FontAwesomeIcon icon={faRedoAlt}/>}&nbsp;{translations.retry}?
-      </button>
-    </div>
+    <thead>
+      <tr>
+        <th>
+          <span className="title_box"><strong>{translations.product}</strong></span>
+        </th>
+        <th>
+          <span className="title_box">{translations.status}</span>
+        </th>
+        {viewportWidth < 1390 && (
+          <th>
+              <span className="title_box">
+                <span>{translations.shipped}</span>
+                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.canceled}</span>
+                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.refunded}</span>
+                </span>
+          </th>
+        )}
+        {viewportWidth >= 1390 && (
+          <>
+            <th>
+              <span className="title_box">{translations.shipped}</span>
+            </th>
+            <th>
+              <span className="title_box">{translations.canceled}</span>
+            </th>
+            <th>
+              <span className="title_box">{translations.refunded}</span>
+            </th>
+          </>
+        )}
+        <th>
+          <span className="title_box">{translations.unitPrice}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.vatAmount}</span>
+        </th>
+        <th>
+          <span className="title_box">{translations.totalAmount}</span>
+        </th>
+        <th/>
+      </tr>
+    </thead>
   );
 }
 
 export default connect<{}, {}, IProps>(
-  (state: IMollieCarriersState): Partial<IProps> => ({
+  (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
-    config: state.config,
+    viewportWidth: state.viewportWidth,
   })
-)(ConfigCarrierError);
+)(OrderLinesTableHeader);

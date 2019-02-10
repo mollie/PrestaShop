@@ -634,7 +634,9 @@ class Mollie extends PaymentModule
             'lang'                   => $this->lang,
         );
 
-        $this->context->controller->addJS(static::getWebpackChunks('back'));
+        $this->context->controller->addJS(static::getWebpackChunks('methodConfig'));
+        $this->context->controller->addJS(static::getWebpackChunks('carrierConfig'));
+//        $this->context->controller->addJS(static::getWebpackChunks('updater'));
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');

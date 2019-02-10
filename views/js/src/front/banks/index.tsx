@@ -35,12 +35,12 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import swal from 'sweetalert';
 import xss from 'xss';
 
-import Banks from './components/Banks';
-import { IBanks, ITranslations } from '../../globals';
+import Banks from '@banks/components/Banks';
+import { IBanks, ITranslations } from '@shared/globals';
 
 declare let window: any;
 
-export function mollieBanks(banks: IBanks, translations: ITranslations) {
+export default function (banks: IBanks, translations: ITranslations) {
   let issuer = Object.values(banks)[0].id;
   function _setIssuer(newIssuer: string) {
     issuer = newIssuer;

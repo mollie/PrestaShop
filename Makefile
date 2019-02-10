@@ -80,10 +80,10 @@ quick-clean:
 	@rm composer.lock 2>/dev/null || true
 
 # Webpack / node.js
-	@rm -rf views/js/src/node_modules/ 2>/dev/null || true
-	@rm views/js/src/package-lock.json 2>/dev/null || true
-	@rm views/js/src/yarn.lock 2>/dev/null || true
-	@rm views/js/src/yarn.lock 2>/dev/null || true
+	@rm -rf views/js/node_modules/ 2>/dev/null || true
+	@rm views/js/package-lock.json 2>/dev/null || true
+	@rm views/js/yarn.lock 2>/dev/null || true
+	@rm views/js/yarn.lock 2>/dev/null || true
 	@rm -rf views/js/dist/ 2>/dev/null || true
 
 composer:
@@ -119,13 +119,13 @@ node:
 # Download node modules
 # Skip if the node_modules directory already exists
 	@echo -e "${COLOR_BLUE}Downloading node_modules${COLOR_RESET}"
-ifeq (,$(wildcard views/js/src/node_modules/))
+ifeq (,$(wildcard views/js/node_modules/))
 # Avoid yarn when not available
 ifeq (,$(shell which yarn))
-	cd views/js/src/; \
+	cd views/js/; \
 		npm i
 else
-	cd views/js/src/; \
+	cd views/js/; \
 		yarn
 endif
 endif
@@ -143,8 +143,8 @@ endif
 ifeq (,$(wildcard views/js/dist/))
 	@mkdir -p views/js/dist/
 endif
-	@cp views/js/src/index.php views/js/dist/index.php
-	@cd views/js/src/; \
+	@cp views/js/index.php views/js/dist/index.php
+	@cd views/js/; \
 		node_modules/.bin/webpack --mode ${NODE_ENV}
 
 zip:

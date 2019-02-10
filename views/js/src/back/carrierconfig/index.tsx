@@ -34,17 +34,17 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { Provider } from 'react-redux';
 
-import store from './store';
-import CarrierConfig from './components/CarrierConfig';
-import { updateConfig, updateTranslations } from './store/actions';
-import { IMollieCarrierConfig, ITranslations } from '../../globals';
+import store from '@carrierconfig/store';
+import CarrierConfig from '@carrierconfig/components/CarrierConfig';
+import { updateConfig, updateTranslations } from '@carrierconfig/store/actions';
+import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
 
 declare let window: any;
 
 window.MollieModule = window.MollieModule || {};
 window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
 
-export const carrierConfig = (
+export default (
   target: string,
   config: IMollieCarrierConfig,
   translations: ITranslations

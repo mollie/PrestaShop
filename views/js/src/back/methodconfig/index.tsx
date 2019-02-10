@@ -32,9 +32,10 @@
  */
 import React from 'react';
 import { render } from 'react-dom';
-import PaymentMethodConfig from './components/PaymentMethodConfig';
-import { IMollieMethodConfig, ITranslations } from '../../globals';
 
-export const methodConfig = (target: string, config: IMollieMethodConfig, translations: ITranslations) => {
+import PaymentMethodConfig from '@methodconfig/components/PaymentMethodConfig';
+import { IMollieMethodConfig, ITranslations } from '@shared/globals';
+
+export default (target: string, config: IMollieMethodConfig, translations: ITranslations) => {
   render(<PaymentMethodConfig target={target} config={config} translations={translations}/>, document.getElementById(`${target}_container`));
 };

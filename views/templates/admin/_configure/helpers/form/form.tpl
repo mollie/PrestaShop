@@ -47,14 +47,13 @@
     <script type="text/javascript">
       (function initMollieMethodsConfig() {
         if (typeof window.MollieModule === 'undefined'
-          || typeof window.MollieModule.back === 'undefined'
-          || typeof window.MollieModule.back.methodConfig === 'undefined'
+          || typeof window.MollieModule.methodConfig === 'undefined'
         ) {
           return setTimeout(initMollieMethodsConfig, 100);
         }
 
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-        window.MollieModule.back.methodConfig(
+        window.MollieModule.methodConfig.default(
           '{$input.name|escape:'javascript':'UTF-8'}',
           {
             legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
@@ -94,14 +93,13 @@
 
           function initMollieCarrierConfig() {
             if (typeof window.MollieModule === 'undefined'
-              || typeof window.MollieModule.back === 'undefined'
-              || typeof window.MollieModule.back.carrierConfig === 'undefined'
+              || typeof window.MollieModule.carrierConfig === 'undefined'
             ) {
               return setTimeout(initMollieCarrierConfig, 100);
             }
 
             window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-            window.MollieModule.back.carrierConfig(
+            window.MollieModule.carrierConfig.default(
               '{$input.name|escape:'javascript':'UTF-8'}',
               {
                 legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},

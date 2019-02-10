@@ -33,11 +33,11 @@
 import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 
-import axios from '../../misc/axios';
-import PaymentMethods from './PaymentMethods';
-import LoadingDots from '../../misc/components/LoadingDots';
-import PaymentMethodsError from './PaymentMethodsError';
-import { IMollieMethodConfig, IMolliePaymentMethodItem, ITranslations } from '../../../globals';
+import PaymentMethods from '@methodconfig/components/PaymentMethods';
+import PaymentMethodsError from '@methodconfig/components/PaymentMethodsError';
+import axios from '@shared/axios';
+import { IMollieMethodConfig, IMolliePaymentMethodItem, ITranslations } from '@shared/globals';
+import LoadingDots from '@shared/components/LoadingDots';
 
 interface IProps {
   config: IMollieMethodConfig;

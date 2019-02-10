@@ -31,10 +31,44 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
-  const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+import PaymentInfo from '@transaction/components/orderlines/PaymentInfo';
+import OrderLinesInfo from '@transaction/components/orderlines/OrderLinesInfo';
+import LoadingDots from '@shared/components/LoadingDots';
+import { IMollieApiOrder, IMollieOrderConfig } from '@shared/globals';
+
+interface IProps {
+  // Redux
+  order?: IMollieApiOrder;
+  config?: IMollieOrderConfig;
 }
+
+function OrderPanelContent(props: IProps) {
+  const { order, config: { legacy } } = props;
+
+  return (
+    <>
+      {!order && <LoadingDots/>}
+      {!!order && order.status && (
+        <div className={
+          classnames({
+            'panel-body': !legacy,
+            'row': !legacy,
+          })}
+        >
+          <PaymentInfo/>
+          <OrderLinesInfo/>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default connect<{}, {}, IProps>(
+  (state: IMollieOrderState): Partial<IProps> => ({
+    order: state.order,
+    config: state.config,
+  })
+)(OrderPanelContent);

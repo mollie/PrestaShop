@@ -34,8 +34,8 @@ import React, { ChangeEvent } from 'react';
 import xss from 'xss';
 import styled from 'styled-components';
 
-import { IBanks, ITranslations } from '../../../globals';
-import QrCode from '../../qrcode/components/QrCode';
+import QrCode from '@qrcode/components/QrCode';
+import { IBanks, ITranslations } from '@shared/globals';
 
 const Radio = styled.div`
 &&&& {

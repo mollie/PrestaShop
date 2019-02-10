@@ -42,32 +42,31 @@
   </script>
   <div id="mollie-qr-code"></div>
   <script type="text/javascript">
-    (function () {
-      var scripts = document.getElementsByTagName('script');
-      var found = false;
-      for (var i = scripts.length; i--;) {
-        if (scripts[i].src && scripts[i].src.indexOf('{Mollie::getMediaPathForJavaScript('views/js/dist/front.min.js')|escape:'javascript':'UTF-8'}') > -1) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (resource) {
-          var newScript = document.createElement('SCRIPT');
-          newScript.src = resource;
-          newScript.type = 'text/javascript';
-          document.head.appendChild(newScript);
-        });
-      }
-    }());
     (function initQrCode() {
       if (typeof window.MollieModule === 'undefined'
-        || typeof window.MollieModule.front === 'undefined'
+        || typeof window.MollieModule.qrCode === 'undefined'
       ) {
+        var scripts = document.getElementsByTagName('script');
+        var found = false;
+        for (var i = scripts.length; i--;) {
+          if (scripts[i].src && scripts[i].src.indexOf('{Mollie::getMediaPathForJavaScript('views/js/dist/qrCode.min.js')|escape:'javascript':'UTF-8'}') > -1) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          {Mollie::getWebpackChunks('qrCode')|json_encode}.forEach(function (resource) {
+            var newScript = document.createElement('SCRIPT');
+            newScript.src = resource;
+            newScript.type = 'text/javascript';
+            document.head.appendChild(newScript);
+          });
+        }
+
         return setTimeout(initQrCode, 100);
       }
 
-      window.MollieModule.front.qrCode(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
+      window.MollieModule.qrCode.default(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
     }());
   </script>
 {/if}
