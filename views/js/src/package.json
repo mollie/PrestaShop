@@ -1,13 +1,16 @@
 {
   "name": "mollie",
-  "version": "3.2.0",
-  "description": "",
-  "main": "index.js",
+  "version": "3.4.0",
+  "description": "Frontend for the PrestaShop Mollie module",
+  "main": "dist/front.min.js",
   "scripts": {
     "test": "exit 0"
   },
-  "author": "Martijn Diederiks <info@trendweb.nl>",
-  "license": "AFL-3.0",
+  "authors": "Martijn Diederiks <info@trendweb.io> (https://trendweb.io)",
+  "maintainers": [
+    "Michael Dekker <info@trendweb.io> (https://trendweb.io)"
+  ],
+  "license": "BSD-2-Clause",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.13",
     "@fortawesome/free-solid-svg-icons": "^5.7.0",
