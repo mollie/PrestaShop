@@ -38,7 +38,7 @@ return json_decode("<%=
       .map(item => {
         return {
           name: item.id,
-          files: [...item.siblings.map(sibling => `${sibling}.min.js`), item.files[0]],
+          files: [...item.siblings.map(sibling => `${sibling}${htmlWebpackPlugin.options.production ? `-v${htmlWebpackPlugin.options.version}` : ''}.min.js`), item.files[0]],
         };
       }))
       .replace(/"/mg, '\\"')

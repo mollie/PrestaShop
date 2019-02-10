@@ -37,7 +37,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Uncomment for analyzing webpack size (1/2)
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const packageJson = require('./package.json');
+const { name, version } = require('./package.json');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
@@ -46,6 +46,8 @@ const plugins = [
     filename: 'manifest.php',
     template: 'manifest.php.tpl',
     inject: false,
+    production,
+    version,
   }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
  All rights reserved.
@@ -106,6 +108,7 @@ const optimization = {
   splitChunks: {
     chunks: 'all',
   },
+  namedChunks: true,
 };
 
 module.exports = {
@@ -118,10 +121,10 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '../dist'),
-    filename: `[name]${production ? `-v${packageJson.version}` : ''}.min.js`,
+    filename: `[name]${production ? `-v${version}` : ''}.min.js`,
     library: ['MollieModule', '[name]'],
     libraryTarget: 'var',
-    jsonpFunction: `webpackJsonP_${packageJson.name.replace(/[^a-z0-9_]/g, ' ').trim().replace(/\\s+/g, '_')}`
+    jsonpFunction: `webpackJsonP_${name.replace(/[^a-z0-9_]/g, ' ').trim().replace(/\\s+/g, '_')}`
   },
   devtool: production ? undefined : 'source-map',
   module: {
