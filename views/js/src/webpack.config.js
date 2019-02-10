@@ -44,7 +44,7 @@ const plugins = [
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   new HtmlWebpackPlugin({
     filename: 'manifest.php',
-    template: 'manifest.php',
+    template: 'manifest.php.tpl',
     inject: false,
   }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
