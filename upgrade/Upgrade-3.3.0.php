@@ -53,7 +53,9 @@ function upgrade_module_3_3_0($module)
                 WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
                 AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
                 AND COLUMN_NAME = \'order_reference\'')) {
-            Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+            Db::getInstance()->execute(
+                'ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)'
+            );
         }
     } catch (PrestaShopException $e) {
         Logger::addLog("Mollie update error: {$e->getMessage()}");
