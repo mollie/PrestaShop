@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright (c) 2012-2019, Mollie B.V.
  * All rights reserved.
@@ -30,55 +31,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
-import { render } from 'react-dom';
-import { throttle } from 'lodash';
 
-import store from './store';
-import {
-  updateConfig,
-  updateCurrencies,
-  updateOrder,
-  updatePayment,
-  updateTranslations,
-  updateViewportWidth
-} from './store/actions';
-import MolliePanel from './components/MolliePanel';
-import { retrieveOrder, retrievePayment } from './misc/ajax';
-import { ICurrencies, IMollieOrderConfig, ITranslations } from '../../globals';
-import { Provider } from 'react-redux';
-
-export const orderInfo = (
-  target: any,
-  config: IMollieOrderConfig,
-  translations: ITranslations,
-  currencies: ICurrencies
-) => {
-  setTimeout(async () => {
-    const { transactionId } = config;
-
-    if (transactionId.substr(0, 3) === 'ord') {
-      store.dispatch(updateOrder(await retrieveOrder(transactionId)));
-    } else {
-      store.dispatch(updatePayment(await retrievePayment(transactionId)));
-    }
-  }, 0);
-
-  // Listen for window resizes
-  window.addEventListener('resize', throttle(() => {
-    store.dispatch(updateViewportWidth(window.innerWidth));
-  }, 200));
-
-  store.dispatch(updateCurrencies(currencies));
-  store.dispatch(updateTranslations(translations));
-  store.dispatch(updateConfig(config));
-
-  return render(
-    <Provider store={store}>
-      <MolliePanel/>
-    </Provider>,
-    typeof target === 'string' ? document.querySelector(target) : target
-  );
-};
-
-
+return json_decode("<%= 
+    JSON.stringify(webpack.chunks
+      .map(item => {
+        return {
+          name: item.id,
+          files: [...item.siblings.map(sibling => `${sibling}.min.js`), item.files[0]],
+        };
+      }))
+      .replace(/"/mg, '\\"')
+%>", true);

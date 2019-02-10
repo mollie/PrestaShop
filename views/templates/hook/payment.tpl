@@ -63,10 +63,12 @@
   <script type="text/javascript">
     (function () {
       if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
-        var elem = document.createElement('script');
-        elem.type = 'text/javascript';
-        document.querySelector('head').appendChild(elem);
-        elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
+        {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (chunk) {
+          var elem = document.createElement('script');
+          elem.type = 'text/javascript';
+          document.querySelector('head').appendChild(elem);
+          elem.src = chunk;
+        });
       }
       window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
 
@@ -77,13 +79,18 @@
         var translations = {$mollie_translations|json_encode nofilter};
 
         if (typeof window.MollieModule === 'undefined' || typeof window.MollieModule.front === 'undefined') {
-          var elem = document.createElement('script');
-          elem.type = 'text/javascript';
-          elem.onload = function () {
-            window.MollieModule.front.mollieBanks(banks, translations);
-          };
-          document.querySelector('head').appendChild(elem);
-          elem.src = '{$mollie_front_app_path|escape:'javascript':'UTF-8' nofilter}';
+          {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (chunk) {
+            var elem = document.createElement('script');
+            elem.type = 'text/javascript';
+            elem.onload = function initMollieBanks() {
+              if (typeof window.MollieModule.front === 'undefined') {
+                return setTimeout(initMollieBanks, 100);
+              }
+              window.MollieModule.front.mollieBanks(banks, translations);
+            };
+            document.querySelector('head').appendChild(elem);
+            elem.src = chunk;
+          });
         } else {
           window.MollieModule.front.mollieBanks(banks, translations);
         }

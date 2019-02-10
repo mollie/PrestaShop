@@ -52,10 +52,12 @@
         }
       }
       if (!found) {
-        var newScript = document.createElement('SCRIPT');
-        newScript.src = '{Mollie::getMediaPathForJavaScript('views/js/dist/front.min.js')|escape:'javascript':'UTF-8'}';
-        newScript.type = 'text/javascript';
-        document.head.appendChild(newScript);
+        {Mollie::getWebpackChunks('front')|json_encode}.forEach(function (resource) {
+          var newScript = document.createElement('SCRIPT');
+          newScript.src = resource;
+          newScript.type = 'text/javascript';
+          document.head.appendChild(newScript);
+        });
       }
     }());
     (function initQrCode() {

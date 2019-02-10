@@ -31,9 +31,6 @@
  * @link       https://www.mollie.nl
  */
 import { combineReducers } from 'redux';
-// @ts-ignore
-import viewportSize from 'viewport-size';
-
 import {
   IUpdateConfigAction,
   IUpdateCurrenciesAction,
@@ -101,7 +98,7 @@ const currencies = (state: ICurrencies = {}, action: IUpdateCurrenciesAction): I
   }
 };
 
-const initialViewportwidth = viewportSize.getWidth();
+const initialViewportwidth = window.innerWidth;
 const viewportWidth = (state = initialViewportwidth, action : IUpdateViewportWidthAction): number => {
   switch (action.type) {
     case ReduxActionTypes.updateViewportWidth:

@@ -29,6 +29,7 @@ FILES+=views/css/**
 FILES+=views/img/**
 FILES+=views/js/index.php
 FILES+=views/js/dist/*.min.js
+FILES+=views/js/dist/*.php
 FILES+=views/js/dist/index.php
 FILES+=views/templates/**
 

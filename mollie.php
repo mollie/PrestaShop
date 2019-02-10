@@ -252,7 +252,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.3.6';
+        $this->version = '3.4.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -634,12 +634,7 @@ class Mollie extends PaymentModule
             'lang'                   => $this->lang,
         );
 
-        if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
-            $this->context->controller->addJS("{$this->_path}views/js/dist/back-v{$this->version}.min.js");
-        } else {
-            $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
-        }
-
+        $this->context->controller->addJS(static::getWebpackChunks('back'));
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -2001,12 +1996,7 @@ class Mollie extends PaymentModule
             );
         }
 
-        if (file_exists("{$this->local_path}views/js/dist/back-v{$this->version}.min.js")) {
-            $this->context->controller->addJS("{$this->_path}views/js/dist/back-v{$this->version}.min.js");
-        } else {
-            $this->context->controller->addJS($this->_path.'views/js/dist/back.min.js');
-        }
-
+        $this->context->controller->addJS(static::getWebpackChunks('back'));
         $this->context->smarty->assign(array(
             'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
@@ -2056,7 +2046,6 @@ class Mollie extends PaymentModule
             'msg_pay_with'           => $this->lang('Pay with %s'),
             'msg_bankselect'         => $this->lang('Select your bank:'),
             'module'                 => $this,
-            'mollie_front_app_path'  => file_exists("{$this->local_path}views/js/dist/front-v{$this->version}.min.js") ? static::getMediaPath("{$this->_path}views/js/dist/front-v{$this->version}.min.js") : static::getMediaPath("{$this->_path}views/js/dist/front.min.js"),
             'mollie_translations'    => array(
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
@@ -2375,33 +2364,6 @@ class Mollie extends PaymentModule
         }
 
         return $mediaUri;
-    }
-
-    /**
-     * Get media path for JS
-     *
-     * @param string      $relativeMediaUri
-     * @param string|null $cssMediaType
-     *
-     * @return array|bool|mixed|string
-     *
-     * @since 3.2.0
-     */
-    public static function getMediaPathForJavaScript($relativeMediaUri, $cssMediaType = null)
-    {
-        $version = static::getDatabaseVersion();
-        foreach (array('front.min.js', 'back.min.js') as $needle) {
-            if (Tools::substr($relativeMediaUri, -Tools::strlen($needle)) === $needle) {
-                $parts = explode('.', $relativeMediaUri);
-                $parts[count($parts) - 3] = "{$parts[count($parts) - 3]}-v{$version}";
-                $newRelativeMediaUri = implode('.', $parts);
-                if (file_exists(_PS_MODULE_DIR_."mollie/{$newRelativeMediaUri}")) {
-                    $relativeMediaUri = $newRelativeMediaUri;
-                }
-            }
-        }
-
-        return static::getMediaPath(_PS_MODULE_DIR_."mollie/{$relativeMediaUri}", $cssMediaType);
     }
 
     /**
@@ -3265,7 +3227,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopException
      *
      * @since 3.0.0
-     * @since 3.3.6 public
+     * @since 3.4.0 public
      *
      * @public ✓ This method is part of the public API
      */
@@ -3319,7 +3281,7 @@ class Mollie extends PaymentModule
      * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
      *
      * @since 3.0.0
-     * @since 3.3.6 public
+     * @since 3.4.0 public
      *
      * @public ✓ This method is part of the public API
      */
@@ -5842,6 +5804,50 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * Get the webpack chunks for a given name
+     *
+     * @param string $name
+     *
+     * @return array
+     *
+     * @since 3.4.0
+     */
+    public static function getWebpackChunks($name)
+    {
+        static $manifest = null;
+        if (!$manifest) {
+            $manifest = array();
+            foreach (include(_PS_MODULE_DIR_.'mollie/views/js/dist/manifest.php') as $chunk) {
+                $manifest[$chunk['name']] = array_map(function ($chunk) {
+                   return Mollie::getMediaPath(_PS_MODULE_DIR_."mollie/views/js/dist/{$chunk}");
+                }, $chunk['files']);
+            }
+        }
+
+        return isset($manifest[$name]) ? $manifest[$name] : array();
+    }
+
+    /**
+     * Checks if strings ends with the given needle
+     *
+     * @param string $haystack
+     * @param string $needle
+     *
+     * @return bool
+     *
+     * @since 3.4.0
+     */
+    protected static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+    /**
      * Get all status values from the form.
      *
      * @param $key string The key that is used in the HelperForm
@@ -5850,6 +5856,7 @@ class Mollie extends PaymentModule
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
      * @since 3.3.0
      */
     protected function getStatusesValue($key)

@@ -32,25 +32,28 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 // Uncomment for analyzing webpack size (1/2)
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const packageJson = require('./package.json');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
-  new webpack.optimize.ModuleConcatenationPlugin(),
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+  new HtmlWebpackPlugin({
+    filename: 'manifest.php',
+    template: 'manifest.php',
+    inject: false,
+  }),
   // Uncomment for analyzing webpack size (2/2)
   // new BundleAnalyzerPlugin(),
 ];
 const optimization = {
-  minimizer: [],
-};
-
-if (production) {
-  optimization.minimizer.push(
-    new UglifyJsPlugin({
-      uglifyOptions: {
+  minimizer: [
+    new TerserPlugin({
+      terserOptions: {
         compress: {
           warnings: false,
           conditionals: true,
@@ -65,55 +68,15 @@ if (production) {
         cache: true,
         parallel: true,
         output: {
-          comments: /^\**!|@preserve|@license|@cc_on/,
+          comments: false,
         },
       },
-    })
-  );
-  plugins.push(
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    })
-  );
-  plugins.push(
-    new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
- All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
- 
- - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
- 
- THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS \`\`AS IS'' AND ANY
- EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- DAMAGE.
- 
- @author     Mollie B.V. <info@mollie.nl>
- @copyright  Mollie B.V.
- @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- @category   Mollie
- @package    Mollie
- @link       https://www.mollie.nl`)
-  );
-} else {
-  plugins.push(
-    new webpack.LoaderOptionsPlugin({
-      debug: true,
-    })
-  );
-}
+    }),
+  ],
+  splitChunks: {
+    chunks: 'all',
+  },
+};
 
 module.exports = {
   entry: {
@@ -125,20 +88,20 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/assets/',
-    filename: '[name].min.js',
+    filename: `[name]${production ? `-v${packageJson.version}` : ''}.min.js`,
     library: ['MollieModule', '[name]'],
     libraryTarget: 'var',
+    jsonpFunction: `webpackJsonP_${packageJson.name.replace(/[^a-z0-9_]/g, ' ').trim().replace(/\\s+/g, '_')}`
   },
-  devtool: 'source-map',
+  devtool: production ? undefined : 'source-map',
   module: {
     rules: [
       {
         test: /\.(tsx?)|(jsx?)$/,
         include: [
-          path.join(__dirname, 'globals.ts'),
-          path.join(__dirname, 'front'),
-          path.join(__dirname, 'back'),
+          path.resolve(__dirname, 'globals.ts'),
+          path.resolve(__dirname, 'front'),
+          path.resolve(__dirname, 'back'),
         ],
         exclude: path.join(__dirname, 'node_modules'),
         use: {
@@ -164,13 +127,12 @@ module.exports = {
                     'opera >= 36',
                   ],
                 },
-                useBuiltIns: 'entry',
-                debug: false,
+                useBuiltIns: 'usage',
               }],
               '@babel/typescript',
               '@babel/react',
             ],
-            sourceMap: true,
+            sourceMap: !production,
           },
         },
       },

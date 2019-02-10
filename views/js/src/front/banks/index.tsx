@@ -30,7 +30,6 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import '@babel/polyfill';
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import swal from 'sweetalert';

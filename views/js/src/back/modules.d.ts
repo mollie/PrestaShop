@@ -30,5 +30,4 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-declare module 'viewport-size';
 declare module 'styled-table-component';
