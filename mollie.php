@@ -5804,11 +5804,11 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Get the webpack chunks for a given name
+     * Get the webpack chunks for a given entry name
      *
-     * @param string $name
+     * @param string $name Entry name
      *
-     * @return array
+     * @return array Array with chunk files, should be loaded in the given order
      *
      * @since 3.4.0
      */
