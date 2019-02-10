@@ -146,17 +146,10 @@ endif
 	@cp views/js/src/index.php views/js/dist/index.php
 	@cd views/js/src/; \
 		node_modules/.bin/webpack --mode ${NODE_ENV}
-ifeq ($(NODE_ENV),production)
-	@mv views/js/dist/front.min.js views/js/dist/front-v$(MODULE_VERSION).min.js
-	@mv views/js/dist/back.min.js views/js/dist/back-v$(MODULE_VERSION).min.js
-endif
 
 zip:
 	@echo -e "${COLOR_BLUE}Going to zip ${COLOR_GREEN}${MODULE_NAME}${COLOR_BLUE} version ${COLOR_GREEN}${MODULE_VERSION}${COLOR_RESET}"
 # Remove deprecated files from build
-	@rm vendor/firstred/mollie-api-php/composer.json 2>/dev/null || true
-	@rm vendor/firstred/mollie-reseller-api/composer.json 2>/dev/null || true
-	@rm vendor/firstred/mollie-reseller-api/Makefile 2>/dev/null || true
 	@mkdir -p build/${MODULE_NAME}
 	@$(foreach f,$(FILES),cp --parents -rf $(f) build/$(MODULE_NAME);)
 	@cd build/; zip -r -9 ${MODULE_NAME}-v${MODULE_VERSION}.zip ${MODULE_NAME}
