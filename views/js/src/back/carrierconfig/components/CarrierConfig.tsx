@@ -58,12 +58,9 @@ function CarrierConfig(props: IProps) {
     const { config: { ajaxEndpoint } } = props;
     try {
       const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
-
-      console.log(carriers);
       setCarriers(carriers);
     } catch (e) {
       console.error(e);
-
       setCarriers(null);
       setMessage((e && e instanceof Error) ? e.message : 'Check the browser console for errors');
     }
