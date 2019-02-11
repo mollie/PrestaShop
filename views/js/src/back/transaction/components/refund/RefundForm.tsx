@@ -32,7 +32,6 @@
  */
 import React, { ReactElement, useState } from 'react';
 import { connect } from 'react-redux';
-import swal from 'sweetalert';
 import xss from 'xss';
 import { Dispatch } from 'redux';
 import { get } from 'lodash';
@@ -43,6 +42,7 @@ import PartialRefundButton from '@transaction/components/refund/PartialRefundBut
 import { refundPayment as refundPaymentAjax } from '@transaction/misc/ajax';
 import { formatCurrency } from '@shared/tools';
 import { ICurrencies, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { SweetAlert } from 'sweetalert/typings/core';
 
 interface IProps {
   // Redux
@@ -68,16 +68,19 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
     if (partial) {
       amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
       if (isNaN(amount)) {
-        swal({
-          icon: 'error',
-          title: translations.invalidAmount,
-          text: translations.notAValidAmount,
-        }).then();
+        import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+          swal({
+            icon: 'error',
+            title: translations.invalidAmount,
+            text: translations.notAValidAmount,
+          }).then();
+        });
 
         return false;
       }
     }
 
+    const swal = await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert;
     const input = await swal({
       dangerMode: true,
       icon: 'warning',

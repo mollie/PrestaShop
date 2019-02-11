@@ -35,6 +35,8 @@
 <div id="mollie_order"></div>
 <script type="text/javascript">
   (function () {
+    window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+    window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
     window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
     window.MollieModule.transactionInfo.default(
       "#mollie_order",

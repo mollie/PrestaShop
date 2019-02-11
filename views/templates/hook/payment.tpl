@@ -65,6 +65,8 @@
       if (typeof window.MollieModule === 'undefined'
         || typeof window.MollieModule.bankList === 'undefined'
       ) {
+        window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         {Mollie::getWebpackChunks('bankList')|json_encode}.forEach(function (chunk) {
           var elem = document.createElement('script');
           elem.type = 'text/javascript';

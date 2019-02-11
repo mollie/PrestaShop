@@ -38,6 +38,8 @@
     ) {
       setTimeout(initMollieUpdater, 100);
     }
+    window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+    window.MollieModule.url.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
     window.MollieModule.updater.default(
       document.getElementById('mollie-update'),
       {

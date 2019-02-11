@@ -34,6 +34,7 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackRequireFrom = require('webpack-require-from');
 
 // Uncomment for analyzing webpack size (1/2)
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -50,6 +51,7 @@ const plugins = [
     production,
     version,
   }),
+  new WebpackRequireFrom({ variableName: 'MollieModule.urls.publicPath' }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
  All rights reserved.
  
@@ -143,6 +145,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/modules/mollie/views/js/dist/',
     filename: `[name]${production ? `-v${version}` : ''}.min.js`,
     library: ['MollieModule', '[name]'],
     libraryTarget: 'var',

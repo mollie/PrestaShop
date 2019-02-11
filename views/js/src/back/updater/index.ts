@@ -30,15 +30,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import swal from 'sweetalert';
 import xss from 'xss';
 import { get } from 'lodash';
 
 import axios from '@shared/axios';
 import { ITranslations } from '@shared/globals';
 
-const showError = (message: string): void => {
-  swal({
+const showError = async (message: string): void => {
+  await import(/* webpackPrefetch: true */ 'sweetalert')({
     icon: 'error',
     title: get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
     text: xss(message),

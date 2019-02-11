@@ -52,6 +52,8 @@
           return setTimeout(initMollieMethodsConfig, 100);
         }
 
+        window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
         window.MollieModule.methodConfig.default(
           '{$input.name|escape:'javascript':'UTF-8'}',
@@ -98,6 +100,8 @@
               return setTimeout(initMollieCarrierConfig, 100);
             }
 
+            window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+            window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
             window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
             window.MollieModule.carrierConfig.default(
               '{$input.name|escape:'javascript':'UTF-8'}',

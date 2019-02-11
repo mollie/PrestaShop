@@ -32,7 +32,6 @@
  */
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import swal from 'sweetalert';
 import xss from 'xss';
 
 import Banks from '@banks/components/Banks';
@@ -50,31 +49,33 @@ export default function (banks: IBanks, translations: ITranslations): void {
   render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
   const elem = wrapper.firstChild as Element;
 
-  swal({
-    title: xss(translations.chooseYourBank),
-    content: {
-      element: elem,
-    },
-    buttons: {
-      cancel: {
-        text: xss(translations.cancel),
-        value: null,
+  import(/* webpackPreload: true */ 'sweetalert').then(({ default: swal }) => {
+    swal({
+      title: xss(translations.chooseYourBank),
+      content: {
+        element: elem,
       },
-      confirm: {
-        text: xss(translations.choose),
-        value: true,
+      buttons: {
+        cancel: {
+          text: xss(translations.cancel),
+          value: null,
+        },
+        confirm: {
+          text: xss(translations.choose),
+          value: true,
+        },
       },
-    },
-  }).then((value: any) => {
-    if (value) {
-      const win = window.open(banks[issuer].href, '_self');
-      win.opener = null;
-    } else {
-      try {
-        setTimeout(() => unmountComponentAtNode(wrapper), 2000);
-      } catch (e) {
+    }).then((value: any) => {
+      if (value) {
+        const win = window.open(banks[issuer].href, '_self');
+        win.opener = null;
+      } else {
+        try {
+          setTimeout(() => unmountComponentAtNode(wrapper), 2000);
+        } catch (e) {
+        }
       }
-    }
+    });
   });
 }
 

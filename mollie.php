@@ -585,6 +585,7 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign(array(
             'link'       => Context::getContext()->link,
             'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
+            'publicPath' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
         ));
 
         $updateMessage = '';
@@ -2004,6 +2005,7 @@ class Mollie extends PaymentModule
             'transactionId' => $transaction['transaction_id'],
             'currencies'    => $currencies,
             'tracking'      => static::getShipmentInformation($params['id_order']),
+            'publicPath'    => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
         ));
 
         return $this->display(__FILE__, 'order_info.tpl');
@@ -2048,6 +2050,7 @@ class Mollie extends PaymentModule
             'msg_pay_with'           => $this->lang('Pay with %s'),
             'msg_bankselect'         => $this->lang('Select your bank:'),
             'module'                 => $this,
+            'publicPath'             => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
             'mollie_translations'    => array(
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
@@ -2164,6 +2167,7 @@ class Mollie extends PaymentModule
             'qrCodeEnabled' => Configuration::get(static::MOLLIE_QRENABLED),
             'qrAlign'       => 'left',
             'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
+            'publicPath'    => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
         ));
 
         $iso = Tools::strtolower($context->currency->iso_code);
