@@ -49,7 +49,7 @@ export default function (banks: IBanks, translations: ITranslations): void {
   render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
   const elem = wrapper.firstChild as Element;
 
-  import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+  import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
     swal({
       title: xss(translations.chooseYourBank),
       content: {
@@ -58,11 +58,10 @@ export default function (banks: IBanks, translations: ITranslations): void {
       buttons: {
         cancel: {
           text: xss(translations.cancel),
-          value: null,
+          visible: true,
         },
         confirm: {
           text: xss(translations.choose),
-          value: true,
         },
       },
     }).then((value: any) => {

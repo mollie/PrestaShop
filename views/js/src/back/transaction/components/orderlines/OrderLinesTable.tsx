@@ -85,13 +85,14 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     render(<OrderLinesEditor lineType="shippable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
 
-    const swal = await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert;
+    const { default: swal } = await import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
       buttons: {
         cancel: {
           text: xss(translations.cancel),
+          visible: true,
         },
         confirm: {
           text: xss(translations.OK),
@@ -127,6 +128,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         buttons: {
           cancel: {
             text: xss(translations.cancel),
+            visible: true,
           },
           confirm: {
             text: xss(translations.shipProducts),
@@ -142,7 +144,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
           if (success) {
             dispatchUpdateOrder(newOrder);
           } else {
-            import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+            import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
               swal({
                 icon: 'error',
                 title: xss(translations.anErrorOccurred),
@@ -152,7 +154,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
           }
         } catch (e) {
           if (typeof e === 'string') {
-            import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+            import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
               swal({
                 icon: 'error',
                 title: xss(translations.anErrorOccurred),
@@ -173,13 +175,14 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="refundable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
-    const swal = await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert;
+    const { default: swal }= await import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
       buttons: {
         cancel: {
           text: xss(translations.cancel),
+          visible: true,
         },
         confirm: {
           text: xss(translations.OK),
@@ -195,7 +198,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         if (success) {
           dispatchUpdateOrder(newOrder);
         } else {
-          import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+          import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
             swal({
               icon: 'error',
               title: xss(translations.anErrorOccurred),
@@ -205,7 +208,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         }
       } catch (e) {
         if (typeof e === 'string') {
-          import(/* webpackPrefetch */ 'sweetalert').then(({ default: swal }) => {
+          import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch */ 'sweetalert').then(({ default: swal }) => {
             swal({
               icon: 'error',
               title: xss(translations.anErrorOccurred),
@@ -226,13 +229,14 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     render(<OrderLinesEditor lineType="cancelable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
 
-    const swal = await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert;
+    const { default: swal } = await import(/* webpackChunkName: "node_module/sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
       buttons: {
         cancel: {
           text: xss(translations.cancel),
+          visible: true,
         },
         confirm: {
           text: xss(translations.OK),

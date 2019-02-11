@@ -39,7 +39,7 @@ import { ITranslations } from '@shared/globals';
 import { SweetAlert } from 'sweetalert/typings/core';
 
 const showError = async (message: string): Promise<void> => {
-  (await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert)({
+  (await import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert }).default({
     icon: 'error',
     title: get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
     text: xss(message),
@@ -74,7 +74,7 @@ const handleClick = async (config: any, translations: ITranslations): Promise<vo
     }
   }
 
-  import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+  import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
     swal({
       icon: 'success',
       text: translations.updated

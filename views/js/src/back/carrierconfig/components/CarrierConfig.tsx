@@ -43,7 +43,7 @@ import {
   ITranslations,
 } from '@shared/globals';
 
-const ConfigCarrierError = lazy(() => import('@carrierconfig/components/CarrierConfigError'));
+const ConfigCarrierError = lazy(() => import(/* webpackChunkName: "carrierConfig/CarrierConfigError" */ '@carrierconfig/components/CarrierConfigError'));
 
 interface IProps {
   config: IMollieCarrierConfig;
