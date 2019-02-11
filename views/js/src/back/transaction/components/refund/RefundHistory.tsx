@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import EmptyRefundTable from '@transaction/components/refund/EmptyRefundTable';
@@ -43,7 +43,7 @@ interface IProps {
   translations?: ITranslations;
 }
 
-function RefundHistory({ translations, payment }: IProps) {
+function RefundHistory({ translations, payment }: IProps): ReactElement<{}> {
   return (
     <>
       <h4>{translations.refundHistory}</h4>

@@ -30,9 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import cx from 'classnames';
 
 import PaymentInfo from '@transaction/components/orderlines/PaymentInfo';
 import OrderLinesInfo from '@transaction/components/orderlines/OrderLinesInfo';
@@ -45,15 +45,13 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function OrderPanelContent(props: IProps) {
-  const { order, config: { legacy } } = props;
-
+function OrderPanelContent({ order, config: { legacy } }: IProps): ReactElement<{}> {
   return (
     <>
       {!order && <LoadingDots/>}
       {!!order && order.status && (
         <div className={
-          classnames({
+          cx({
             'panel-body': !legacy,
             'row': !legacy,
           })}

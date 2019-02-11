@@ -56,7 +56,7 @@ export default (
     <Provider store={store}>
       <CarrierConfig translations={translations} config={config} target={target}/>
     </Provider>
-    ),
-    document.getElementById(`${target}_container`)
+  ),
+  document.getElementById(`${target}_container`)
   );
 };

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { arrayMove, SortableContainer } from 'react-sortable-hoc';
 import styled from 'styled-components';
 import { cloneDeep, find } from 'lodash';
@@ -52,7 +52,7 @@ margin: -1px!important;
 padding: 0;
 ` as any;
 
-const SortableList = SortableContainer(({ items, translations, onArrowClicked, onToggle, config }: any) => {
+const SortableList = SortableContainer(({ items, translations, onArrowClicked, onToggle, config }: any): ReactElement<{}> => {
   return (
     <Section className="module_list" style={{ maxWidth: '440px' }}>
       <Ul>
@@ -85,8 +85,27 @@ interface IProps {
   config: IMollieMethodConfig;
 }
 
-function PaymentMethods({ translations, config, methods: propsMethods, target }: IProps) {
+function PaymentMethods({ translations, config, methods: propsMethods, target }: IProps): ReactElement<{}> {
   const [methods, setMethods] = useState(propsMethods);
+
+  function _onToggle(id: string, enabled: boolean): void {
+    const newMethods = cloneDeep(methods);
+    const method = find(newMethods, item => item.id === id);
+    method.enabled = enabled;
+    setMethods(newMethods);
+  }
+
+  function _onArrowClicked({ oldIndex, newIndex}: any): void {
+    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
+  }
+
+  function _onSortEnd({ oldIndex, newIndex }: any): void {
+    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
+  }
+
+  function _shouldCancelStart({ target }: any): boolean {
+    return ['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(target.tagName.toUpperCase());
+  }
 
   useEffect(() => {
     const input: HTMLInputElement = document.getElementById(target) as HTMLInputElement;
@@ -98,33 +117,14 @@ function PaymentMethods({ translations, config, methods: propsMethods, target }:
     }
   });
 
-  function onToggle(id: string, enabled: boolean) {
-    const newMethods = cloneDeep(methods);
-    const method = find(newMethods, item => item.id === id);
-    method.enabled = enabled;
-    setMethods(newMethods);
-  }
-
-  function onArrowClicked({ oldIndex, newIndex}: any) {
-    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
-  }
-
-  function onSortEnd({ oldIndex, newIndex }: any) {
-    setMethods(arrayMove(cloneDeep(methods), oldIndex, newIndex));
-  }
-
-  function shouldCancelStart({ target }: any) {
-    return ['I', 'SVG', 'BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(target.tagName.toUpperCase());
-  }
-
   return (
     <SortableList
       translations={translations}
       items={methods}
-      onSortEnd={onSortEnd}
-      onArrowClicked={onArrowClicked}
-      onToggle={onToggle}
-      shouldCancelStart={shouldCancelStart}
+      onSortEnd={_onSortEnd}
+      onArrowClicked={_onArrowClicked}
+      onToggle={_onToggle}
+      shouldCancelStart={_shouldCancelStart}
       config={config}
       helperClass="sortable-helper"
     />

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import { ITranslations } from '@shared/globals';
@@ -40,7 +40,7 @@ interface IProps {
   translations?: ITranslations;
 }
 
-function RefundTableHeader({ translations }: IProps) {
+function RefundTableHeader({ translations }: IProps): ReactElement<{}> {
   return (
     <thead>
       <tr>

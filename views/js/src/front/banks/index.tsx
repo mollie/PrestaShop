@@ -40,9 +40,9 @@ import { IBanks, ITranslations } from '@shared/globals';
 
 declare let window: any;
 
-export default function (banks: IBanks, translations: ITranslations) {
+export default function (banks: IBanks, translations: ITranslations): void {
   let issuer = Object.values(banks)[0].id;
-  function _setIssuer(newIssuer: string) {
+  function _setIssuer(newIssuer: string): void {
     issuer = newIssuer;
   }
 

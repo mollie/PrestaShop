@@ -115,7 +115,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $tplData['link'] = $this->context->link;
                 $tplData['cartAmount'] = (int) ($this->context->cart->getOrderTotal(true) * 100);
                 $tplData['qrAlign'] = 'center';
-                $this->context->controller->addJS(Mollie::getWebpackChunks('front'));
+                $this->context->controller->addJS(Mollie::getWebpackChunks('bankList'));
                 $this->context->smarty->assign($tplData);
                 $this->setTemplate('mollie_issuers.tpl');
 

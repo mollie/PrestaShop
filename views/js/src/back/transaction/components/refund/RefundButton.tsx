@@ -30,9 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import cx from 'classnames';
 
 import { ITranslations } from '@shared/globals';
 
@@ -45,7 +45,7 @@ interface IProps {
   translations?: ITranslations;
 }
 
-function RefundButton({ translations, loading, disabled, refundPayment }: IProps) {
+function RefundButton({ translations, loading, disabled, refundPayment }: IProps): ReactElement<{}> {
   return (
     <button
       type="button"
@@ -54,7 +54,7 @@ function RefundButton({ translations, loading, disabled, refundPayment }: IProps
       onClick={() => refundPayment(false)}
       style={{ marginRight: '10px' }}
     >
-      <i className={classnames({
+      <i className={cx({
         'icon': true,
         'icon-undo': !loading,
         'icon-circle-o-notch': loading,
@@ -68,5 +68,4 @@ export default connect<{}, {}, IProps>(
   (state: IMollieOrderState): Partial<IProps> => ({
     translations: state.translations,
   })
-)
-(RefundButton);
+)(RefundButton);

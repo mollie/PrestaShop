@@ -37,7 +37,7 @@ import { get } from 'lodash';
 import axios from '@shared/axios';
 import { ITranslations } from '@shared/globals';
 
-const showError = (message: string) => {
+const showError = (message: string): void => {
   swal({
     icon: 'error',
     title: get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',

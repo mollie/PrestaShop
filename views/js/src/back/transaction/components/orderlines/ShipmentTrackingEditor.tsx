@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 
@@ -68,7 +68,7 @@ const InputContainer = styled.div`
 text-align: left!important;
 `;
 
-function ShipmentTrackingEditor(props: IProps) {
+function ShipmentTrackingEditor(props: IProps): ReactElement<{}> {
   const [skipTracking, setSkipTracking] = useState<boolean>(false);
   const [carrier, setCarrier] = useState<string>(get(props, 'config.tracking.carrier', ''));
   const [carrierChanged, setCarrierChanged] = useState<boolean>(!!get(props, 'config.tracking.carrier', false));
@@ -77,15 +77,15 @@ function ShipmentTrackingEditor(props: IProps) {
   const [url, setUrl] = useState<string>(get(props, 'config.tracking.url', ''));
   const { translations, edited } = props;
 
-  function getCarrierInvalid() {
+  function _getCarrierInvalid(): boolean {
     return !skipTracking && isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
   }
 
-  function getCodeInvalid() {
+  function _getCodeInvalid(): boolean {
     return !skipTracking && isEmpty(code.replace(/\s+/, '')) && codeChanged;
   }
 
-  function updateSkipTracking(skipTracking: boolean): void {
+  function _updateSkipTracking(skipTracking: boolean): void {
     setSkipTracking(skipTracking);
     edited(skipTracking ? null : {
       carrier,
@@ -94,7 +94,7 @@ function ShipmentTrackingEditor(props: IProps) {
     });
   }
 
-  function updateCarrier(carrier: string): void {
+  function _updateCarrier(carrier: string): void {
     setCarrier(carrier);
     setCarrierChanged(true);
 
@@ -105,7 +105,7 @@ function ShipmentTrackingEditor(props: IProps) {
     });
   }
 
-  function updateCode(code: string): void {
+  function _updateCode(code: string): void {
     setCode(code);
     setCodeChanged(true);
     edited({
@@ -115,7 +115,7 @@ function ShipmentTrackingEditor(props: IProps) {
     });
   }
 
-  function updateUrl(url: string): void {
+  function _updateUrl(url: string): void {
     setUrl(url);
     edited({ carrier, code, url });
   }
@@ -140,7 +140,7 @@ function ShipmentTrackingEditor(props: IProps) {
           name="skipTracking"
           type="checkbox"
           checked={skipTracking}
-          onChange={({ target: { checked: skipTracking } }: any) => updateSkipTracking(skipTracking)}
+          onChange={({ target: { checked: skipTracking } }: any) => _updateSkipTracking(skipTracking)}
         />
         <span>&nbsp;{translations.skipTrackingDetails}</span>
       </Label>
@@ -157,9 +157,9 @@ function ShipmentTrackingEditor(props: IProps) {
             id="input-carrier"
             disabled={skipTracking}
             value={carrier}
-            onChange={({ target: { value: carrier } }: any) => updateCarrier(carrier)}
+            onChange={({ target: { value: carrier } }: any) => _updateCarrier(carrier)}
           />
-          <ErrorMessage show={getCarrierInvalid()}>
+          <ErrorMessage show={_getCarrierInvalid()}>
             {translations.thisInfoIsRequired}
           </ErrorMessage>
         </InputContainer>
@@ -173,9 +173,9 @@ function ShipmentTrackingEditor(props: IProps) {
             id="input-code"
             value={code}
             disabled={skipTracking}
-            onChange={({ target: { value: code } }: any) => updateCode(code)}
+            onChange={({ target: { value: code } }: any) => _updateCode(code)}
           />
-          <ErrorMessage show={getCodeInvalid()}>
+          <ErrorMessage show={_getCodeInvalid()}>
             {translations.thisInfoIsRequired}
           </ErrorMessage>
         </InputContainer>
@@ -191,7 +191,7 @@ function ShipmentTrackingEditor(props: IProps) {
             id="input-url"
             value={url}
             disabled={skipTracking}
-            onChange={({ target: { value: url } }: any) => updateUrl(url)}
+            onChange={({ target: { value: url } }: any) => _updateUrl(url)}
           />
         </InputContainer>
       </FormGroup>

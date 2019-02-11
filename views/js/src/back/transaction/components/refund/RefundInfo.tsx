@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -52,7 +52,7 @@ const Div = styled.div`
 }
 ` as any;
 
-function RefundInfo({ translations, config: { legacy }, payment }: IProps) {
+function RefundInfo({ translations, config: { legacy }, payment }: IProps): ReactElement<{}> {
   if (legacy) {
     return (
       <>

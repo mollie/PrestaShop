@@ -30,10 +30,10 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { render } from 'react-dom';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import cx from 'classnames';
 import swal from 'sweetalert';
 import xss from 'xss';
 import { Dispatch } from 'redux';
@@ -74,22 +74,28 @@ const TableContainer = styled.div`
 }
 ` as any;
 
-function OrderLinesTable(props: IProps) {
+function OrderLinesTable(props: IProps): ReactElement<{}> {
+  const { translations, order, dispatchUpdateOrder, currencies, config: { legacy }, config, viewportWidth } = props;
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function ship(origLines: Array<IMollieOrderLine>) {
+  async function _ship(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder, config } = props;
 
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="shippable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
-    let el = reviewWrapper.firstChild;
+    let el: any = reviewWrapper.firstChild;
 
-    // @ts-ignore
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
-      buttons: [xss(translations.cancel), xss(translations.OK)],
+      buttons: {
+        cancel: {
+          text: xss(translations.cancel),
+        },
+        confirm: {
+          text: xss(translations.OK),
+        }
+      },
       closeOnClickOutside: false,
       content: el,
     });
@@ -105,7 +111,7 @@ function OrderLinesTable(props: IProps) {
         elem.disabled = tracking && (isEmpty(tracking.code.replace(/\s+/, '')) || isEmpty(tracking.carrier.replace(/\s+/, '')));
       };
 
-      const updateTracking = (newTracking: IMollieTracking) => {
+      const updateTracking = (newTracking: IMollieTracking): void => {
         tracking = newTracking;
         checkSwalButton().then();
       };
@@ -114,11 +120,17 @@ function OrderLinesTable(props: IProps) {
       trackingWrapper.innerHTML = '';
       render(<ShipmentTrackingEditor checkButtons={checkSwalButton} config={config} translations={translations} edited={newTracking => updateTracking(newTracking)}/>, trackingWrapper);
       el = trackingWrapper.firstChild;
-      // @ts-ignore
       [input] = await Promise.all([swal({
         title: xss(translations.trackingDetails),
         text: xss(translations.addTrackingInfo),
-        buttons: [xss(translations.cancel), xss(translations.shipProducts)],
+        buttons: {
+          cancel: {
+            text: xss(translations.cancel),
+          },
+          confirm: {
+            text: xss(translations.shipProducts),
+          },
+        },
         closeOnClickOutside: false,
         content: el,
       }), checkSwalButton()]);
@@ -151,19 +163,23 @@ function OrderLinesTable(props: IProps) {
     }
   }
 
-  async function refund(origLines: Array<IMollieOrderLine>) {
+  async function _refund(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder } = props;
-
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="refundable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
-    let el = reviewWrapper.firstChild;
+    let el: any = reviewWrapper.firstChild;
 
-    // @ts-ignore
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
-      buttons: [xss(translations.cancel), xss(translations.OK)],
+      buttons: {
+        cancel: {
+          text: xss(translations.cancel),
+        },
+        confirm: {
+          text: xss(translations.OK),
+        },
+      },
       closeOnClickOutside: false,
       content: el,
     });
@@ -195,19 +211,23 @@ function OrderLinesTable(props: IProps) {
     }
   }
 
-  async function cancel(origLines: Array<IMollieOrderLine>) {
+  async function _cancel(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
-    const { translations, order, dispatchUpdateOrder } = props;
-
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="cancelable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
-    let el = reviewWrapper.firstChild;
+    let el: any = reviewWrapper.firstChild;
 
-    // @ts-ignore
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
-      buttons: [xss(translations.cancel), xss(translations.OK)],
+      buttons: {
+        cancel: {
+          text: xss(translations.cancel),
+        },
+        confirm: {
+          text: xss(translations.OK),
+        },
+      },
       closeOnClickOutside: false,
       content: el,
     });
@@ -239,16 +259,14 @@ function OrderLinesTable(props: IProps) {
     }
   }
 
-  const { order, currencies, config: { legacy }, viewportWidth } = props;
-
   return (
     <TableContainer
-      className={classnames({
+      className={cx({
         'table-responsive': !legacy,
       })}
       {...props}
     >
-      <table className={classnames({
+      <table className={cx({
         'table': true,
       })}>
         <OrderLinesTableHeader/>
@@ -264,21 +282,21 @@ function OrderLinesTable(props: IProps) {
               <td>{formatCurrency(parseFloat(line.unitPrice.value), get(currencies, line.unitPrice.currency))}</td>
               <td>{formatCurrency(parseFloat(line.vatAmount.value), get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
               <td>{formatCurrency(parseFloat(line.totalAmount.value), get(currencies, line.totalAmount.currency))}</td>
-              <td className={classnames({
+              <td className={cx({
                 'actions': !legacy,
               })}>
                 <OrderLinesTableActions
                   loading={loading}
                   line={line}
-                  refundLine={refund}
-                  shipLine={ship}
-                  cancelLine={cancel}
+                  refundLine={_refund}
+                  shipLine={_ship}
+                  cancelLine={_cancel}
                 />
               </td>
             </tr>
           ))}
         </tbody>
-        <OrderLinesTableFooter loading={loading} ship={ship} refund={refund} cancel={cancel}/>
+        <OrderLinesTableFooter loading={loading} ship={_ship} refund={_refund} cancel={_cancel}/>
       </table>
     </TableContainer>
   );

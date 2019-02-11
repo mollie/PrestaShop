@@ -93,6 +93,6 @@ export function updatePayment(payment: IMollieApiPayment): IUpdatePaymentAction 
   return { type: ReduxActionTypes.updatePayment, payment };
 }
 
-export function updateViewportWidth(width: number) : IUpdateViewportWidthAction {
+export function updateViewportWidth(width: number): IUpdateViewportWidthAction {
   return { type: ReduxActionTypes.updateViewportWidth, width };
 }

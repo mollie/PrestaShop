@@ -33,7 +33,7 @@
 import axios from 'axios';
 
 export default axios.create({
-  transformResponse: [res => JSON.parse(res.replace(/^[^{\[]*/mg, '').replace(/([^}\]]*)$/mg, ''))],
+  transformResponse: [res => JSON.parse(res.replace(/^[^{[]*/mg, '').replace(/([^}\]]*)$/mg, ''))],
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     'Content-Type': 'application/json',

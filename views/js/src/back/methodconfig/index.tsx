@@ -36,6 +36,6 @@ import { render } from 'react-dom';
 import PaymentMethodConfig from '@methodconfig/components/PaymentMethodConfig';
 import { IMollieMethodConfig, ITranslations } from '@shared/globals';
 
-export default (target: string, config: IMollieMethodConfig, translations: ITranslations) => {
+export default (target: string, config: IMollieMethodConfig, translations: ITranslations): void => {
   render(<PaymentMethodConfig target={target} config={config} translations={translations}/>, document.getElementById(`${target}_container`));
 };

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import xss from 'xss';
@@ -59,11 +59,11 @@ interface IState {
   refundInput: string;
 }
 
-function RefundForm({ translations, payment: { id: transactionId }, payment, currencies, config: { legacy }, dispatchUpdatePayment }: IProps) {
+function RefundForm({ translations, payment: { id: transactionId }, payment, currencies, config: { legacy }, dispatchUpdatePayment }: IProps): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
   const [refundInput, setRefundInput] = useState<string>('');
 
-  async function refundPayment(partial = false) {
+  async function _refundPayment(partial = false): Promise<boolean> {
     let amount;
     if (partial) {
       amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
@@ -78,15 +78,18 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
       }
     }
 
-    // @ts-ignore
     const input = await swal({
       dangerMode: true,
       icon: 'warning',
       title: xss(translations.areYouSure),
       text: xss(translations.areYouSureYouWantToRefund),
       buttons: {
-        cancel: xss(translations.cancel),
-        confirm: xss(translations.refund),
+        cancel: {
+          text: xss(translations.cancel),
+        },
+        confirm: {
+          text: xss(translations.refund),
+        },
       },
     });
     if (input) {
@@ -118,32 +121,32 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
       <>
         <h3>{translations.refund}</h3>
         <span>
-            <RefundButton
-              refundPayment={refundPayment}
-              loading={loading}
-              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
-            />
-            <span>
-                {translations.remaining}:
-            </span>
-            <input
-              type="text"
-              placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
-              disabled={loading}
-              value={refundInput}
-              onChange={({ target: { value } }: any) => setRefundInput(value)}
-              style={{
-                width: '80px',
-                height: '15px',
-                margin: '-2px 4px 0 4px',
-              }}
-            />
-            <PartialRefundButton
-              refundPayment={refundPayment}
-              loading={loading}
-              disabled={parseFloat(payment.amountRemaining.value) <= 0}
-            />
+          <RefundButton
+            refundPayment={_refundPayment}
+            loading={loading}
+            disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+          />
+          <span>
+            {translations.remaining}:
           </span>
+          <input
+            type="text"
+            placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
+            disabled={loading}
+            value={refundInput}
+            onChange={({ target: { value } }: any) => setRefundInput(value)}
+            style={{
+              width: '80px',
+              height: '15px',
+              margin: '-2px 4px 0 4px',
+            }}
+          />
+          <PartialRefundButton
+            refundPayment={_refundPayment}
+            loading={loading}
+            disabled={parseFloat(payment.amountRemaining.value) <= 0}
+          />
+        </span>
       </>
     );
   }
@@ -155,7 +158,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
         <div className="form-inline">
           <div className="form-group">
             <RefundButton
-              refundPayment={refundPayment}
+              refundPayment={_refundPayment}
               loading={loading}
               disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
             />
@@ -175,7 +178,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
                 style={{ width: '80px' }}
               />
               <PartialRefundButton
-                refundPayment={refundPayment}
+                refundPayment={_refundPayment}
                 loading={loading}
                 disabled={parseFloat(payment.amountRemaining.value) <= 0}
               />
@@ -199,6 +202,5 @@ export default connect<{}, {}, IProps>(
       dispatch(updatePayment(payment));
     }
   })
-)
-(RefundForm);
+)(RefundForm);
 

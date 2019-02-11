@@ -636,7 +636,7 @@ class Mollie extends PaymentModule
 
         $this->context->controller->addJS(static::getWebpackChunks('methodConfig'));
         $this->context->controller->addJS(static::getWebpackChunks('carrierConfig'));
-//        $this->context->controller->addJS(static::getWebpackChunks('updater'));
+        $this->context->controller->addJS(static::getWebpackChunks('updater'));
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -1998,7 +1998,7 @@ class Mollie extends PaymentModule
             );
         }
 
-        $this->context->controller->addJS(static::getWebpackChunks('back'));
+        $this->context->controller->addJS(static::getWebpackChunks('transactionInfo'));
         $this->context->smarty->assign(array(
             'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],

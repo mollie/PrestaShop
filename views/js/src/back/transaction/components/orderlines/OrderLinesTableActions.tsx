@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,9 +18,7 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function OrderLinesTableActions(props: IProps) {
-  const { config: { legacy }, translations, line, loading, shipLine, cancelLine, refundLine } = props;
-
+function OrderLinesTableActions({ config: { legacy }, translations, line, loading, shipLine, cancelLine, refundLine }: IProps): ReactElement<{}> {
   let shipButton = (
     <button
       style={{
@@ -36,6 +34,7 @@ function OrderLinesTableActions(props: IProps) {
     >
       {legacy && <img
         src="../img/admin/delivery.gif"
+        alt={translations.ship}
         style={{
           filter: (loading || line.shippableQuantity < 1) ? 'grayscale(100%)' : undefined,
           WebkitFilter: (loading || line.shippableQuantity < 1) ? 'grayscale(100%)' : undefined,
@@ -59,6 +58,7 @@ function OrderLinesTableActions(props: IProps) {
     >
       <img
         src="../img/admin/money.gif"
+        alt={translations.refund}
         style={{
           filter: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
           WebkitFilter: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
@@ -72,6 +72,7 @@ function OrderLinesTableActions(props: IProps) {
         opacity: (loading || line.refundableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
       }}
       onClick={() => line.refundableQuantity > 0 && refundLine([line])}
+      role="button"
     >
       <FontAwesomeIcon icon={!loading ? faUndo : faCircleNotch } spin={loading}/> {translations.refund}
     </a>
@@ -91,6 +92,7 @@ function OrderLinesTableActions(props: IProps) {
     >
       <img
         src="../img/admin/disabled.gif"
+        alt={translations.cancel}
         style={{
           filter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
           WebkitFilter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
@@ -104,6 +106,7 @@ function OrderLinesTableActions(props: IProps) {
         opacity: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
       }}
       onClick={() => line.cancelableQuantity > 0 && cancelLine([line])}
+      role="button"
     >
       <FontAwesomeIcon icon={!loading ? faTimes : faCircleNotch} spin={loading}/> {translations.cancel}
     </a>

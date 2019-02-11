@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 
 import PaymentMethods from '@methodconfig/components/PaymentMethods';
@@ -45,11 +45,11 @@ interface IProps {
   target: string;
 }
 
-function PaymentMethodConfig(props: IProps) {
+function PaymentMethodConfig(props: IProps): ReactElement<{}> {
   const [methods, setMethods] = useState<Array<IMolliePaymentMethodItem>>(undefined);
   const [message, setMessage] = useState<string>(undefined);
 
-  async function init() {
+  async function _init(): Promise<void> {
     try {
       const { config: { ajaxEndpoint } } = props;
       const { data: { methods: newMethods, message: newMessage } = { methods: null, message: '' } } = await axios.post(ajaxEndpoint, {
@@ -66,7 +66,7 @@ function PaymentMethodConfig(props: IProps) {
   }
 
   useEffect(() => {
-    init().then();
+    _init().then();
   }, []);
 
   const { target, translations, config } = props;
@@ -75,8 +75,8 @@ function PaymentMethodConfig(props: IProps) {
     return <LoadingDots/>;
   }
 
-  if (methods === null || !Array.isArray(methods) || Array.isArray(methods) && isEmpty(methods)) {
-    return <PaymentMethodsError message={message} translations={translations} config={config} retry={init}/>;
+  if (methods === null || !Array.isArray(methods) || (Array.isArray(methods) && isEmpty(methods))) {
+    return <PaymentMethodsError message={message} translations={translations} config={config} retry={_init}/>;
   }
 
   return (

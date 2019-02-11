@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./ignoreme/",
     "sourceMap": true,
-    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "noImplicitAny": true,
     "target": "es5",

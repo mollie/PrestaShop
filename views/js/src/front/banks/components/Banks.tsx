@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, ReactElement } from 'react';
 import xss from 'xss';
 import styled from 'styled-components';
 
@@ -138,8 +138,8 @@ interface IProps {
   setIssuer: any;
 }
 
-export default function Banks({ banks, translations, setIssuer }: IProps) {
-  function _handleChange({ target: { value } }: ChangeEvent<HTMLInputElement>) {
+export default function Banks({ banks, translations, setIssuer }: IProps): ReactElement<{}> {
+  function _handleChange({ target: { value } }: ChangeEvent<HTMLInputElement>): void {
     setIssuer(value);
   }
 

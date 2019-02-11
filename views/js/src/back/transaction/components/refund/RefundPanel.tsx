@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { updatePayment } from '@transaction/store/actions';
@@ -47,7 +47,7 @@ interface IProps {
   dispatchUpdatePayment?: Function;
 }
 
-function RefundPanel({ payment, config }: IProps) {
+function RefundPanel({ payment, config }: IProps): ReactElement<{}> {
   if (Object.keys(config).length <= 0) {
     return null;
   }
@@ -61,6 +61,7 @@ function RefundPanel({ payment, config }: IProps) {
             src={`${moduleDir}views/img/logo_small.png`}
             width="32"
             height="32"
+            alt=""
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           />
           <span>Mollie</span>&nbsp;
@@ -83,6 +84,7 @@ function RefundPanel({ payment, config }: IProps) {
           src={`${moduleDir}views/img/mollie_panel_icon.png`}
           width="32"
           height="32"
+          alt=""
           style={{ height: '16px', width: '16px', opacity: 0.8 }}
         /> <span>Mollie</span>&nbsp;
       </div>
@@ -108,6 +110,5 @@ export default connect<{}, {}, IProps>(
       dispatch(updatePayment(payment));
     }
   })
-)
-(RefundPanel);
+)(RefundPanel);
 

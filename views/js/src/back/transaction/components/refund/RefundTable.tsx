@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import RefundTableHeader from './RefundTableHeader';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -45,7 +45,7 @@ interface IProps {
   currencies?: ICurrencies;
 }
 
-function RefundTable({ payment, currencies }: IProps) {
+function RefundTable({ payment, currencies }: IProps): ReactElement<{}> {
   return (
     <div className="table-responsive">
       <table className="table">

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -46,8 +46,7 @@ interface IProps {
   dispatchUpdateOrder?: Function;
 }
 
-function OrderPanel(props: IProps) {
-  const { config: { legacy }, config } = props;
+function OrderPanel({ config: { legacy }, config }: IProps): ReactElement<{}> {
   if (Object.keys(config).length <= 0) {
     return null;
   }
@@ -61,6 +60,7 @@ function OrderPanel(props: IProps) {
             src={`${moduleDir}views/img/logo_small.png`}
             width="32"
             height="32"
+            alt="Mollie logo"
             style={{ height: '16px', width: '16px', opacity: 0.8 }}
           />
           &nbsp;<span>Mollie</span>&nbsp;
@@ -77,6 +77,7 @@ function OrderPanel(props: IProps) {
           src={`${moduleDir}views/img/mollie_panel_icon.png`}
           width="32"
           height="32"
+          alt="Mollie logo"
           style={{ height: '16px', width: '16px', opacity: 0.8 }}
         />
         &nbsp;<span>Mollie</span>&nbsp;
@@ -97,6 +98,4 @@ export default connect<{}, {}, IProps>(
       dispatch(updateOrder(order));
     }
   })
-)
-(OrderPanel);
-
+)(OrderPanel);

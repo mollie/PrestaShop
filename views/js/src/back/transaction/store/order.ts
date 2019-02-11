@@ -99,7 +99,7 @@ const currencies = (state: ICurrencies = {}, action: IUpdateCurrenciesAction): I
 };
 
 const initialViewportwidth = window.innerWidth;
-const viewportWidth = (state = initialViewportwidth, action : IUpdateViewportWidthAction): number => {
+const viewportWidth = (state = initialViewportwidth, action: IUpdateViewportWidthAction): number => {
   switch (action.type) {
     case ReduxActionTypes.updateViewportWidth:
       return action.width;

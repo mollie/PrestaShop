@@ -31,7 +31,7 @@
  * @link       https://www.mollie.nl
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 
@@ -47,7 +47,7 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function PartialRefundButton({ translations, loading, disabled, refundPayment, config: { legacy } }: IProps) {
+function PartialRefundButton({ translations, loading, disabled, refundPayment, config: { legacy } }: IProps): ReactElement<{}> {
   const content = (
     <button
       className="btn btn-default"

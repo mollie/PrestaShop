@@ -30,9 +30,9 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import cx from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
@@ -52,12 +52,12 @@ const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-function ConfigCarrierError(props: IProps) {
+function ConfigCarrierError(props: IProps): ReactElement<{}> {
   const { translations, config: { legacy }, retry, message } = props;
 
   return (
     <div
-      className={classnames({
+      className={cx({
         'alert': !legacy,
         'alert-danger': !legacy,
         'error': legacy,
@@ -66,7 +66,7 @@ function ConfigCarrierError(props: IProps) {
       {translations.unableToLoadCarriers}&nbsp;
       {message && <><br/><br/>{translations.error}: <Code>{message}</Code><br/><br/></>}
       <button
-        className={classnames({
+        className={cx({
           'btn': !legacy,
           'btn-danger': !legacy,
           'button': legacy,

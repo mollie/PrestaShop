@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import OrderLinesTableHeader from '@transaction/components/orderlines/OrderLinesTableHeader';
@@ -42,7 +42,7 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps) {
+function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps): ReactElement<{}> {
   if (legacy) {
     return <div className="error">{translations.thereAreNoProducts}</div>;
   }

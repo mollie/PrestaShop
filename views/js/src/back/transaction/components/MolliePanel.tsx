@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import RefundPanel from './refund/RefundPanel';
 import store from '../store';
 import { connect, Provider } from 'react-redux';
@@ -43,7 +43,7 @@ interface IProps {
   order?: IMollieApiOrder;
 }
 
-function MolliePanel({ payment, order }: IProps) {
+function MolliePanel({ payment, order }: IProps): ReactElement<{}> {
   return (
     <Provider store={store}>
       <>

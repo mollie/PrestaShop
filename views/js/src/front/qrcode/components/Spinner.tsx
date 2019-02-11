@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 
 const SpinnerDiv = styled.div`
@@ -77,7 +77,7 @@ const SpinnerDiv = styled.div`
 }
 `;
 
-export default function Spinner() {
+export default function Spinner(): ReactElement<{}> {
   return (
     <SpinnerDiv>
       <div className="bounce1"/>

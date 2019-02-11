@@ -30,6 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+/*eslint @typescript-eslint/camelcase:off, eqeqeq:off */
 import version_compare from 'locutus/php/info/version_compare';
 import { get } from 'lodash';
 
@@ -37,7 +38,37 @@ import { ICurrency } from './globals';
 
 declare let window: any;
 
-export const formattedNumberToFloat = (price: string | number, currencyFormat: number, currencySign: string) => {
+function ceilf(value: number, precision?: number): number {
+  if (typeof precision === 'undefined') {
+    precision = 0;
+  }
+
+  const precisionFactor = precision === 0 ? 1 : Math.pow(10, precision);
+  const tmp = value * precisionFactor;
+  const tmp2 = String(tmp);
+  if (tmp2[tmp2.length - 1] === '0') {
+    return value;
+  }
+
+  return Math.ceil(value * precisionFactor) / precisionFactor;
+}
+
+function floorf(value: number, precision?: number): number {
+  if (typeof precision === 'undefined') {
+    precision = 0;
+  }
+
+  const precisionFactor = precision === 0 ? 1 : Math.pow(10, precision);
+  const tmp = value * precisionFactor;
+  const tmp2 = String(tmp);
+  if (tmp2[tmp2.length - 1] === '0') {
+    return value;
+  }
+
+  return Math.floor(value * precisionFactor) / precisionFactor;
+}
+
+export const formattedNumberToFloat = (price: string | number, currencyFormat: number, currencySign: string): number|string => {
   if (typeof price === 'number') {
     price = String(price);
   }
@@ -55,100 +86,8 @@ export const formattedNumberToFloat = (price: string | number, currencyFormat: n
   return price;
 };
 
-export const psFormatCurrency = (price: string | number, currencyFormat: number, currencySign: string, currencyBlank: string) => {
-  if (typeof price === 'string') {
-    price = parseFloat(price);
-  }
-  let currency = 'EUR';
-  if (typeof window.currency_iso_code !== 'undefined' && window.currency_iso_code.length === 3) {
-    currency = window.currency_iso_code;
-  } else if (typeof window.currency === 'object'
-    && typeof window.currency.iso_code !== 'undefined'
-    && window.currency.iso_code.length === 3
-  ) {
-    currency = window.currency.iso_code;
-  }
-
-  let displayPrecision;
-  if (typeof window.priceDisplayPrecision !== 'undefined') {
-    displayPrecision = window.priceDisplayPrecision;
-  }
-
-  try {
-    if (typeof window.currencyModes !== 'undefined'
-      && typeof window.currencyModes[currency] !== 'undefined'
-      && window.currencyModes[currency]
-    ) {
-      price = psRound(price.toFixed(10), displayPrecision);
-      let locale = document.documentElement.lang;
-      if (locale.length === 5) {
-        locale = locale.substring(0, 2).toLowerCase() + '-' + locale.substring(3, 5).toUpperCase();
-      } else if (typeof window.full_language_code !== 'undefined' && window.full_language_code.length === 5) {
-        locale = window.full_language_code.substring(0, 2).toLowerCase() + '-' + window.full_language_code.substring(3, 5).toUpperCase();
-      } else if (window.getBrowserLocale().length === 5) {
-        locale = window.getBrowserLocale().substring(0, 2).toLowerCase() + '-' + window.getBrowserLocale().substring(3, 5).toUpperCase();
-      }
-
-      // @ts-ignore
-      let formattedCurrency = price.toLocaleString(locale, {
-        style: 'currency',
-        currency: 'USD',
-        currencyDisplay: 'code',
-      });
-      if (currencySign) {
-        formattedCurrency = formattedCurrency.replace('USD', currencySign);
-      }
-
-      return formattedCurrency;
-    }
-  } catch (e) {
-    // Just continue, Intl data is not available on every browser and crashes
-  }
-
-  let blank = '';
-
-  price = psRound(price.toFixed(10), displayPrecision);
-  if (typeof currencyBlank !== 'undefined' && currencyBlank) {
-    blank = ' ';
-  }
-
-  if (currencyFormat == 1) {
-    return currencySign + blank + formatNumber(price, displayPrecision, ',', '.');
-  }
-  if (currencyFormat == 2) {
-    return (formatNumber(price, displayPrecision, ' ', ',') + blank + currencySign);
-  }
-  if (currencyFormat == 3) {
-    return (currencySign + blank + formatNumber(price, displayPrecision, '.', ','));
-  }
-  if (currencyFormat == 4) {
-    return (formatNumber(price, displayPrecision, ',', '.') + blank + currencySign);
-  }
-  if (currencyFormat == 5) {
-    return (currencySign + blank + formatNumber(price, displayPrecision, '\'', '.'));
-  }
-
-  return price;
-};
-
-export const formatCurrency = (price: number, currency: ICurrency) => {
-  if (typeof currency === 'undefined') {
-    console.error('Currency undefined');
-    return '';
-  }
-
-  if ((typeof window._PS_VERSION_ === 'string' && version_compare(window._PS_VERSION_, '1.7.0.0', '>='))
-    || typeof window.formatCurrencyCldr !== 'undefined'
-  ) {
-    // PrestaShop 1.7 CLDR
-    return (new Intl.NumberFormat(get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
-  }
-
-  return psFormatCurrency(price, currency.format, currency.sign, currency.blank);
-};
-
 // Return a formatted number
-export const formatNumber = (value: number | string, numberOfDecimal: number | string, thousenSeparator: string, virgule: string) => {
+export const formatNumber = (value: number | string, numberOfDecimal: number | string, thousenSeparator: string, virgule: string): string => {
   if (typeof numberOfDecimal === 'string') {
     numberOfDecimal = parseInt(numberOfDecimal, 10);
   }
@@ -175,7 +114,7 @@ export const formatNumber = (value: number | string, numberOfDecimal: number | s
   return absValString + virgule + (deciString ? deciString : '00');
 };
 
-function psRoundHelper(value: number, mode: number) {
+function psRoundHelper(value: number, mode: number): number {
   // From PHP Math.c
   let tmpValue;
   if (value >= 0.0) {
@@ -280,37 +219,7 @@ export const psRound = (value: number | string, places?: number): number => {
   }
 };
 
-function ceilf(value: number, precision?: number): number {
-  if (typeof precision === 'undefined') {
-    precision = 0;
-  }
-
-  const precisionFactor = precision === 0 ? 1 : Math.pow(10, precision);
-  const tmp = value * precisionFactor;
-  const tmp2 = String(tmp);
-  if (tmp2[tmp2.length - 1] === '0') {
-    return value;
-  }
-
-  return Math.ceil(value * precisionFactor) / precisionFactor;
-}
-
-function floorf(value: number, precision?: number) {
-  if (typeof precision === 'undefined') {
-    precision = 0;
-  }
-
-  const precisionFactor = precision === 0 ? 1 : Math.pow(10, precision);
-  const tmp = value * precisionFactor;
-  const tmp2 = String(tmp);
-  if (tmp2[tmp2.length - 1] === '0') {
-    return value;
-  }
-
-  return Math.floor(value * precisionFactor) / precisionFactor;
-}
-
-export const getNumberFormat = (currencyFormat: number | string) => {
+export const getNumberFormat = (currencyFormat: number | string): any => {
   if (typeof currencyFormat === 'string') {
     currencyFormat = parseInt(currencyFormat, 10);
   }
@@ -343,7 +252,7 @@ export const getNumberFormat = (currencyFormat: number | string) => {
   }
 };
 
-export const findGetParameter = (parameterName: string) => {
+export const findGetParameter = (parameterName: string): any => {
   let result = null;
   let tmp = [];
   const items = window.location.search.substr(1).split('&');
@@ -373,4 +282,95 @@ export const formatMoneyValue = (val: string | number): number => {
   }
 
   return val;
+};
+
+export const psFormatCurrency = (price: string | number, currencyFormat: number, currencySign: string, currencyBlank: string): string => {
+  if (typeof price === 'string') {
+    price = parseFloat(price);
+  }
+  let currency = 'EUR';
+  if (typeof window.currency_iso_code !== 'undefined' && window.currency_iso_code.length === 3) {
+    currency = window.currency_iso_code;
+  } else if (typeof window.currency === 'object'
+    && typeof window.currency.iso_code !== 'undefined'
+    && window.currency.iso_code.length === 3
+  ) {
+    currency = window.currency.iso_code;
+  }
+
+  let displayPrecision;
+  if (typeof window.priceDisplayPrecision !== 'undefined') {
+    displayPrecision = window.priceDisplayPrecision;
+  }
+
+  try {
+    if (typeof window.currencyModes !== 'undefined'
+      && typeof window.currencyModes[currency] !== 'undefined'
+      && window.currencyModes[currency]
+    ) {
+      price = psRound(price.toFixed(10), displayPrecision);
+      let locale = document.documentElement.lang;
+      if (locale.length === 5) {
+        locale = locale.substring(0, 2).toLowerCase() + '-' + locale.substring(3, 5).toUpperCase();
+      } else if (typeof window.full_language_code !== 'undefined' && window.full_language_code.length === 5) {
+        locale = window.full_language_code.substring(0, 2).toLowerCase() + '-' + window.full_language_code.substring(3, 5).toUpperCase();
+      } else if (window.getBrowserLocale().length === 5) {
+        locale = window.getBrowserLocale().substring(0, 2).toLowerCase() + '-' + window.getBrowserLocale().substring(3, 5).toUpperCase();
+      }
+
+      let formattedCurrency = price.toLocaleString(locale, {
+        style: 'currency',
+        currency: 'USD',
+        currencyDisplay: 'code',
+      });
+      if (currencySign) {
+        formattedCurrency = formattedCurrency.replace('USD', currencySign);
+      }
+
+      return formattedCurrency;
+    }
+  } catch (e) {
+    // Just continue, Intl data is not available on every browser and crashes
+  }
+
+  let blank = '';
+
+  price = psRound(price.toFixed(10), displayPrecision);
+  if (typeof currencyBlank !== 'undefined' && currencyBlank) {
+    blank = ' ';
+  }
+
+  if (currencyFormat == 1) {
+    return currencySign + blank + formatNumber(price, displayPrecision, ',', '.');
+  }
+  if (currencyFormat == 2) {
+    return (formatNumber(price, displayPrecision, ' ', ',') + blank + currencySign);
+  }
+  if (currencyFormat == 3) {
+    return (currencySign + blank + formatNumber(price, displayPrecision, '.', ','));
+  }
+  if (currencyFormat == 4) {
+    return (formatNumber(price, displayPrecision, ',', '.') + blank + currencySign);
+  }
+  if (currencyFormat == 5) {
+    return (currencySign + blank + formatNumber(price, displayPrecision, '\'', '.'));
+  }
+
+  return String(price);
+};
+
+export const formatCurrency = (price: number, currency: ICurrency): string => {
+  if (typeof currency === 'undefined') {
+    console.error('Currency undefined');
+    return '';
+  }
+
+  if ((typeof window._PS_VERSION_ === 'string' && version_compare(window._PS_VERSION_, '1.7.0.0', '>='))
+    || typeof window.formatCurrencyCldr !== 'undefined'
+  ) {
+    // PrestaShop 1.7 CLDR
+    return (new Intl.NumberFormat(get(document.documentElement, 'lang'), { style: 'currency', currency: currency.iso_code })).format(price);
+  }
+
+  return psFormatCurrency(price, currency.format, currency.sign, currency.blank);
 };

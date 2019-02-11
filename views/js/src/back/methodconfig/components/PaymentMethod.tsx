@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
 import { SortableElement } from 'react-sortable-hoc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -113,7 +113,7 @@ display: block;
 width: 40px;
 text-align: center;
 margin: 0 auto;
-${( { legacy }: any) => legacy ? 'height: 24px;line-height: 24px;' : ''}
+${({ legacy }: any) => legacy ? 'height: 24px;line-height: 24px;' : ''}
 ` as any;
 
 const ArrowButton = styled.button`
@@ -151,7 +151,7 @@ margin-right: 2px!important;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-${( { legacy }: any) => legacy ? 'height: 20px;line-height: 20px;' : ''}
+${({ legacy }: any) => legacy ? 'height: 20px;line-height: 20px;' : ''}
 ` as any;
 
 const ButtonBox = styled.div`
@@ -159,12 +159,22 @@ margin: 0 auto;
 text-align: center;
 ` as any;
 
-function PaymentMethod(props: IProps) {
-  const [enabled, setEnabled] = useState(props.enabled);
-
-  function toggleMethod (enabled: boolean) {
-    const { onToggle } = this.props;
-    onToggle(this.props.code, enabled);
+function PaymentMethod({
+  enabled,
+  onToggle,
+  code,
+  translations,
+  position,
+  max,
+  name,
+  imageUrl,
+  moveMethod,
+  available,
+  config: { legacy }
+}: IProps
+): ReactElement<{}> {
+  function _toggleMethod(enabled: boolean): void {
+    onToggle(code, enabled);
   }
 
   useEffect(() => {
@@ -172,18 +182,6 @@ function PaymentMethod(props: IProps) {
       $('[data-toggle=tooltip]').tooltip();
     }
   });
-
-  const {
-    translations,
-    position,
-    max,
-    name,
-    code,
-    imageUrl,
-    moveMethod,
-    available,
-    config: { legacy },
-  } = props;
 
   return (
     <Li last={position >= max} legacy={legacy}>
@@ -230,9 +228,9 @@ function PaymentMethod(props: IProps) {
       </IconColumn>
       <InfoColumn>
         <div style={{ display: 'inline-block', marginTop: '5px' }}>
-            <span>
-              {name}
-            </span>
+          <span>
+            {name}
+          </span>
         </div>
         {!available && (
           <p
@@ -251,7 +249,7 @@ function PaymentMethod(props: IProps) {
           id={code}
           translations={translations}
           enabled={enabled}
-          onChange={({ target: { value }}: any) => this.toggleMethod(!!value)}
+          onChange={({ target: { value } }: any) => _toggleMethod(!!value)}
           legacy={legacy}
         />
         }

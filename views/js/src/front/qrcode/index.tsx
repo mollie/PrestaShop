@@ -34,7 +34,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import QrCode from '@qrcode/components/QrCode';
 
-export default function (target: string|HTMLElement, title: string, center: boolean) {
+export default function (target: string|HTMLElement, title: string, center: boolean): void {
   const elem = (typeof target === 'string' ? document.getElementById(target) : target);
   render(<QrCode title={title} center={center}/>, elem);
 }

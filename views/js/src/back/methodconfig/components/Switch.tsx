@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { lighten, rgba } from 'polished';
 
@@ -135,40 +135,41 @@ input:checked + label {
 }
 ` as any;
 
-function Switch(props: IProps) {
+function Switch(props: IProps): ReactElement<{}> {
   const { enabled, onChange, id, translations } = props;
 
   return (
     <Span {...props}>
-        <input
-          type="radio"
-          data-mollie-check=""
-          name={`MOLLIE_METHOD_ENABLED_${id}`}
-          id={`MOLLIE_METHOD_ENABLED_on_${id}`}
-          value="1"
-          checked={enabled}
-          onChange={onChange}
-        />
-          <label
-            htmlFor={`MOLLIE_METHOD_ENABLED_on_${id}`}
-          >
-            {translations.yes.toUpperCase()}
-            </label>
-          <input
-            type="radio"
-            name={`MOLLIE_METHOD_ENABLED_${id}`}
-            id={`MOLLIE_METHOD_ENABLED_off_${id}`}
-            value=""
-            checked={!enabled}
-            onChange={onChange}
-          />
-        <label
-          htmlFor={`MOLLIE_METHOD_ENABLED_off_${id}`}
-        >
-          {translations.no.toUpperCase()}
-        </label>
-        <a className="slide-button btn"/>
-      </Span>
+      <input
+        type="radio"
+        data-mollie-check=""
+        name={`MOLLIE_METHOD_ENABLED_${id}`}
+        id={`MOLLIE_METHOD_ENABLED_on_${id}`}
+        value="1"
+        checked={enabled}
+        onChange={onChange}
+      />
+      <label
+        htmlFor={`MOLLIE_METHOD_ENABLED_on_${id}`}
+      >
+        {translations.yes.toUpperCase()}
+      </label>
+      <input
+        type="radio"
+        name={`MOLLIE_METHOD_ENABLED_${id}`}
+        id={`MOLLIE_METHOD_ENABLED_off_${id}`}
+        value=""
+        checked={!enabled}
+        onChange={onChange}
+      />
+      <label
+        htmlFor={`MOLLIE_METHOD_ENABLED_off_${id}`}
+      >
+        {translations.no.toUpperCase()}
+      </label> {
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      } <a className="slide-button btn"/>
+    </Span>
   );
 }
 

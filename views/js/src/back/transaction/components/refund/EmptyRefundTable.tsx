@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import RefundTableHeader from '@transaction/components/refund/RefundTableHeader';
@@ -41,7 +41,7 @@ interface IProps {
   translations?: ITranslations;
 }
 
-function EmptyRefundTable({ translations }: IProps) {
+function EmptyRefundTable({ translations }: IProps): ReactElement<{}> {
   return (
     <div className="table-responsive">
       <table className="table">

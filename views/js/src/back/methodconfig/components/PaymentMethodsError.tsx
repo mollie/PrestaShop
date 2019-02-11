@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import cx from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -49,9 +49,7 @@ const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-function PaymentMethodsError(props: IProps) {
-  const { translations, config: { legacy }, retry, message } = props;
-
+function PaymentMethodsError({ translations, config: { legacy }, retry, message }: IProps): ReactElement<{}> {
   return (
     <div
       className={cx({

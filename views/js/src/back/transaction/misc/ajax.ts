@@ -34,7 +34,7 @@ import axios from '@shared/axios';
 import store from '../store';
 import { defaults } from 'lodash';
 
-import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking } from '../../../globals';
+import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking } from '@shared/globals';
 
 export const retrievePayment = async (transactionId: string): Promise<IMollieApiPayment|null> => {
   try {

@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { get } from 'lodash';
@@ -46,7 +46,7 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function PaymentInfoContent({ translations, payment, currencies, config: { legacy } }: IProps) {
+function PaymentInfoContent({ translations, payment, currencies, config: { legacy } }: IProps): ReactElement<{}> {
   return (
     <>
       {legacy && <h3>{translations.transactionInfo}</h3>}

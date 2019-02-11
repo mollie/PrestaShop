@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import { ITranslations } from '@shared/globals';
@@ -41,9 +41,7 @@ interface IProps {
   viewportWidth?: number;
 }
 
-function OrderLinesTableHeader(props: IProps) {
-  const { translations, viewportWidth } = props;
-
+function OrderLinesTableHeader({ translations, viewportWidth }: IProps): ReactElement<{}> {
   return (
     <thead>
       <tr>
@@ -55,11 +53,11 @@ function OrderLinesTableHeader(props: IProps) {
         </th>
         {viewportWidth < 1390 && (
           <th>
-              <span className="title_box">
-                <span>{translations.shipped}</span>
-                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.canceled}</span>
-                <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.refunded}</span>
-                </span>
+            <span className="title_box">
+              <span>{translations.shipped}</span>
+              <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.canceled}</span>
+              <br/> <span style={{ whiteSpace: 'nowrap' }}>/ {translations.refunded}</span>
+            </span>
           </th>
         )}
         {viewportWidth >= 1390 && (

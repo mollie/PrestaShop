@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import cx from 'classnames';
 import { cloneDeep, find, forEach, isEmpty } from 'lodash';
 
@@ -50,11 +50,11 @@ interface IProps {
   target: string;
 }
 
-function CarrierConfig(props: IProps) {
+function CarrierConfig(props: IProps): ReactElement<{}> {
   const [carriers, setCarriers] = useState<Array<IMollieCarrierConfigItem>>(undefined);
   const [message, setMessage] = useState<string>(undefined);
 
-  async function init() {
+  async function _init(): Promise<void> {
     const { config: { ajaxEndpoint } } = props;
     try {
       const { data: { carriers } = { carriers: null } } = await axios.get(ajaxEndpoint);
@@ -66,18 +66,18 @@ function CarrierConfig(props: IProps) {
     }
   }
 
-  function carrierConfig() {
+  function _carrierConfig(): IMollieCarrierConfigItems {
     const carrierConfig: IMollieCarrierConfigItems = {};
-    forEach(carriers, (carrier) => {
+    forEach(carriers, (carrier: IMollieCarrierConfigItem) => {
       carrierConfig[carrier.id_carrier] = carrier;
     });
 
     return carrierConfig;
   }
 
-  function updateCarrierConfig (id: string, key: string, value: string|null) {
+  function _updateCarrierConfig (id: string, key: string, value: string|null): void {
     const newCarriers = cloneDeep(carriers);
-    const config = find(newCarriers, item => item.id_carrier === id);
+    const config = find(newCarriers, (item: IMollieCarrierConfigItem) => item.id_carrier === id);
     if (typeof config === 'undefined') {
       return;
     }
@@ -87,7 +87,7 @@ function CarrierConfig(props: IProps) {
   }
 
   useEffect(() => {
-    init().then();
+    _init().then();
   }, []);
 
   const { translations, target, config: { legacy } } = props;
@@ -96,8 +96,8 @@ function CarrierConfig(props: IProps) {
     return <LoadingDots/>;
   }
 
-  if (!Array.isArray(carriers) || Array.isArray(carriers) && isEmpty(carriers)) {
-    return <ConfigCarrierError message={message} retry={init}/>;
+  if (!Array.isArray(carriers) || (Array.isArray(carriers) && isEmpty(carriers))) {
+    return <ConfigCarrierError message={message} retry={_init}/>;
   }
 
   return (
@@ -137,7 +137,7 @@ function CarrierConfig(props: IProps) {
               <td className="left">
                 <select
                   value={carrier.source}
-                  onChange={({ target: { value } }) => updateCarrierConfig(carrier.id_carrier, 'source', value)}
+                  onChange={({ target: { value } }) => _updateCarrierConfig(carrier.id_carrier, 'source', value)}
                 >
                   <option value="do_not_auto_ship">{translations.doNotAutoShip}</option>
                   <option value="no_tracking_info">{translations.noTrackingInformation}</option>
@@ -151,14 +151,14 @@ function CarrierConfig(props: IProps) {
                   type="text"
                   disabled={carrier.source !== 'custom_url'}
                   value={carrier.custom_url}
-                  onChange={({ target: { value } }) => updateCarrierConfig(carrier.id_carrier, 'custom_url', value)}
+                  onChange={({ target: { value } }) => _updateCarrierConfig(carrier.id_carrier, 'custom_url', value)}
                 />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <input type="hidden" id={target} name={target} value={JSON.stringify(carrierConfig())}/>
+      <input type="hidden" id={target} name={target} value={JSON.stringify(_carrierConfig())}/>
     </>
   );
 }

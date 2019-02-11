@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
@@ -50,9 +50,9 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function OrderLinesTableFooter(props: IProps) {
-  function getCancelable() {
-    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
+function OrderLinesTableFooter({ translations, loading, order, ship, cancel, refund, config: { legacy } }: IProps): ReactElement<{}> {
+  function isCancelable(): boolean {
+    for (let line of Object.values(order.lines.filter(line => line.type !== 'discount'))) {
       if (line.cancelableQuantity >= 1) {
         return true;
       }
@@ -61,8 +61,8 @@ function OrderLinesTableFooter(props: IProps) {
     return false;
   }
 
-  function getShippable() {
-    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
+  function isShippable(): boolean {
+    for (let line of Object.values(order.lines.filter(line => line.type !== 'discount'))) {
       if (line.shippableQuantity >= 1) {
         return true;
       }
@@ -71,8 +71,8 @@ function OrderLinesTableFooter(props: IProps) {
     return false;
   }
 
-  function getRefundable() {
-    for (let line of Object.values(props.order.lines.filter(line => line.type !== 'discount'))) {
+  function isRefundable(): boolean {
+    for (let line of Object.values(order.lines.filter(line => line.type !== 'discount'))) {
       if (line.refundableQuantity >= 1) {
         return true;
       }
@@ -80,8 +80,6 @@ function OrderLinesTableFooter(props: IProps) {
 
     return false;
   }
-
-  const { translations, loading, order, ship, cancel, refund, config: { legacy } } = props;
 
   return (
     <tfoot>
@@ -92,18 +90,19 @@ function OrderLinesTableFooter(props: IProps) {
               type="button"
               onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
               className="btn btn-primary"
-              disabled={loading || !getShippable()}
+              disabled={loading || !isShippable()}
               style={{
-                cursor: (loading || !getShippable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !getShippable()) ? 0.8 : 1
+                cursor: (loading || !isShippable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !isShippable()) ? 0.8 : 1
               }}
             >
               {legacy && (
                 <img
                   src="../img/admin/delivery.gif"
+                  alt=""
                   style={{
-                    filter: (loading || !getShippable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !getShippable()) ? 'grayscale(100%)' : null,
+                    filter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
                   }}
                 />
               )}
@@ -113,18 +112,19 @@ function OrderLinesTableFooter(props: IProps) {
               type="button"
               onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
               className="btn btn-default"
-              disabled={loading || !getRefundable()}
+              disabled={loading || !isRefundable()}
               style={{
-                cursor: (loading || !getRefundable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !getRefundable()) ? 0.8 : 1
+                cursor: (loading || !isRefundable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !isRefundable()) ? 0.8 : 1
               }}
             >
               {legacy && (
                 <img
                   src="../img/admin/money.gif"
+                  alt=""
                   style={{
-                    filter: (loading || !getRefundable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !getRefundable()) ? 'grayscale(100%)' : null,
+                    filter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
                   }}
                 />
               )}
@@ -134,18 +134,19 @@ function OrderLinesTableFooter(props: IProps) {
               type="button"
               onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
               className="btn btn-default"
-              disabled={loading || !getCancelable()}
+              disabled={loading || !isCancelable()}
               style={{
-                cursor: (loading || !getCancelable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !getCancelable()) ? 0.8 : 1
+                cursor: (loading || !isCancelable()) ? 'not-allowed' : 'pointer',
+                opacity: (loading || !isCancelable()) ? 0.8 : 1
               }}
             >
               {legacy && (
                 <img
                   src="../img/admin/disabled.gif"
+                  alt=""
                   style={{
-                    filter: (loading || !getCancelable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !getCancelable()) ? 'grayscale(100%)' : null,
+                    filter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
+                    WebkitFilter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
                   }}
                 />
               )}

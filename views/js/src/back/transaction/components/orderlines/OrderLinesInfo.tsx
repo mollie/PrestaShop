@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -52,15 +52,13 @@ const Div = styled.div`
 }
 ` as any;
 
-function OrderLinesInfo(props: IProps) {
-  const { translations, order, config: { legacy } } = props;
-
+function OrderLinesInfo({ translations, order, config: { legacy } }: IProps): ReactElement<{}> {
   if (legacy) {
     return (
       <>
         {legacy && <h3>{translations.products}</h3>}
         {!legacy && <h4>{translations.products}</h4>}
-        {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+        {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
         {!!order && !!order.lines.length && <OrderLinesTable/>}
       </>
     );
@@ -69,7 +67,7 @@ function OrderLinesInfo(props: IProps) {
   return (
     <Div className="col-md-9 panel">
       <div className="panel-heading">{translations.products}</div>
-      {!order || !order.lines.length && <EmptyOrderLinesTable/>}
+      {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
       {!!order && !!order.lines.length && <OrderLinesTable/>}
     </Div>
   );

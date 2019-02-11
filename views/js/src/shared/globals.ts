@@ -65,7 +65,7 @@ export interface IMollieOrderConfig {
   initialStatus: string;
   transactionId: string;
   legacy: boolean;
-  tracking?: IMollieTracking,
+  tracking?: IMollieTracking;
 }
 
 export interface IMollieCarrierConfig {

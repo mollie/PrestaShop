@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const BounceAnimation = keyframes`
@@ -46,7 +46,7 @@ const DotWrapper = styled.div`
 ` as any;
 
 interface IDotProps {
-  delay: string,
+  delay: string;
 }
 
 const Dot = styled.div`
@@ -61,7 +61,7 @@ const Dot = styled.div`
   animation-delay: ${(props: IDotProps) => props.delay};
 ` as any;
 
-function LoadingDots() {
+function LoadingDots(): ReactElement<{}> {
   return (
     <DotWrapper>
       <Dot delay="0s" />
