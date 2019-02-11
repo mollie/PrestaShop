@@ -149,7 +149,7 @@ module.exports = {
     filename: `[name]${production ? `-v${version}` : ''}.min.js`,
     library: ['MollieModule', '[name]'],
     libraryTarget: 'var',
-    jsonpFunction: `webpackJsonP_${name.replace(/[^a-z0-9_]/g, ' ').trim().replace(/\\s+/g, '_')}`
+    jsonpFunction: `webpackJsonP_${name.replace(/[^a-z0-9_]/g, ' ').trim().replace(/\\s+/g, '_')}`,
   },
   devtool: production ? undefined : 'source-map',
   module: {

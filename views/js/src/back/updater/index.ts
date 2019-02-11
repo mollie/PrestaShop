@@ -36,8 +36,10 @@ import { get } from 'lodash';
 import axios from '@shared/axios';
 import { ITranslations } from '@shared/globals';
 
-const showError = async (message: string): void => {
-  await import(/* webpackPrefetch: true */ 'sweetalert')({
+import { SweetAlert } from 'sweetalert/typings/core';
+
+const showError = async (message: string): Promise<void> => {
+  (await import(/* webpackPrefetch: true */ 'sweetalert') as never as SweetAlert)({
     icon: 'error',
     title: get(document, 'documentElement.lang', 'en') === 'nl' ? 'Fout' : 'Error',
     text: xss(message),
@@ -72,10 +74,12 @@ const handleClick = async (config: any, translations: ITranslations): Promise<vo
     }
   }
 
-  swal({
-    icon: 'success',
-    text: translations.updated
-  }).then();
+  import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+    swal({
+      icon: 'success',
+      text: translations.updated
+    }).then();
+  });
 };
 
 export default (button: HTMLElement, config: any, translations: ITranslations) => {

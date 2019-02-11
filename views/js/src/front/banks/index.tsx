@@ -49,7 +49,7 @@ export default function (banks: IBanks, translations: ITranslations): void {
   render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
   const elem = wrapper.firstChild as Element;
 
-  import(/* webpackPreload: true */ 'sweetalert').then(({ default: swal }) => {
+  import(/* webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
     swal({
       title: xss(translations.chooseYourBank),
       content: {

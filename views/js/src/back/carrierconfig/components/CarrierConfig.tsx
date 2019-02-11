@@ -30,19 +30,20 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, Suspense, useEffect, useState, lazy } from 'react';
 import cx from 'classnames';
 import { cloneDeep, find, forEach, isEmpty } from 'lodash';
 
 import axios from '@shared/axios';
 import LoadingDots from '@shared/components/LoadingDots';
-import ConfigCarrierError from '@carrierconfig/components/CarrierConfigError';
 import {
   IMollieCarrierConfig,
   IMollieCarrierConfigItem,
   IMollieCarrierConfigItems,
   ITranslations,
 } from '@shared/globals';
+
+const ConfigCarrierError = lazy(() => import('@carrierconfig/components/CarrierConfigError'));
 
 interface IProps {
   config: IMollieCarrierConfig;
@@ -75,7 +76,7 @@ function CarrierConfig(props: IProps): ReactElement<{}> {
     return carrierConfig;
   }
 
-  function _updateCarrierConfig (id: string, key: string, value: string|null): void {
+  function _updateCarrierConfig(id: string, key: string, value: string|null): void {
     const newCarriers = cloneDeep(carriers);
     const config = find(newCarriers, (item: IMollieCarrierConfigItem) => item.id_carrier === id);
     if (typeof config === 'undefined') {
@@ -97,7 +98,11 @@ function CarrierConfig(props: IProps): ReactElement<{}> {
   }
 
   if (!Array.isArray(carriers) || (Array.isArray(carriers) && isEmpty(carriers))) {
-    return <ConfigCarrierError message={message} retry={_init}/>;
+    return (
+      <Suspense fallback={<LoadingDots/>}>
+        <ConfigCarrierError message={message} retry={_init}/>
+      </Suspense>
+    );
   }
 
   return (
