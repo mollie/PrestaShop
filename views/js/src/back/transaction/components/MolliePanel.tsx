@@ -37,8 +37,8 @@ import store from '@transaction/store';
 import Spinner from '@qrcode/components/Spinner';
 import { IMollieApiOrder, IMollieApiPayment } from '@shared/globals';
 
-const RefundPanel = lazy(() => import('@transaction/components/refund/RefundPanel'));
-const OrderPanel = lazy(() => import('@transaction/components/orderlines/OrderPanel'));
+const RefundPanel = lazy(() => import(/* webpackChunkName: "transaction_RefundPanel" */ '@transaction/components/refund/RefundPanel'));
+const OrderPanel = lazy(() => import(/* webpackChunkName: "transaction_OrderPanel" */ '@transaction/components/orderlines/OrderPanel'));
 
 interface IProps {
   payment?: IMollieApiPayment;

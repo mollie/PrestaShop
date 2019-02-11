@@ -68,7 +68,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
     if (partial) {
       amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
       if (isNaN(amount)) {
-        import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+        import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
           swal({
             icon: 'error',
             title: translations.invalidAmount,
@@ -80,7 +80,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
       }
     }
 
-    const { default: swal } = await import(/* webpackChunkName: "node_modules/sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
+    const { default: swal } = await import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
     const input = await swal({
       dangerMode: true,
       icon: 'warning',
