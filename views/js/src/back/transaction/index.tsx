@@ -31,6 +31,9 @@
  * @link       https://www.mollie.nl
  */
 import React, { lazy, Suspense } from 'react';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { throttle } from 'lodash';
 
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
@@ -46,9 +49,6 @@ export default function transactionInfo (
 ): void {
   (async function () {
     const [
-      { render },
-      { default: { throttle } },
-      { Provider },
       { default: store },
       {
         updateConfig,
@@ -60,9 +60,6 @@ export default function transactionInfo (
       },
       { retrieveOrder, retrievePayment },
     ] = await Promise.all([
-      import(/* webpackPrefetch: true, webpackChunkName: "react",  */ 'react-dom'),
-      import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
-      import(/* webpackPrefetch: true, webpackChunkName: "react" */ 'react-redux'),
       import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
       import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store/actions'),
       import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/misc/ajax'),

@@ -31,6 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import axios from '@shared/axios';
+import { defaults } from 'lodash';
 
 import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking } from '@shared/globals';
 
@@ -83,10 +84,8 @@ export const retrieveOrder = async (transactionId: string): Promise<IMollieApiOr
 export const refundPayment = async (transactionId: string, amount?: number): Promise<any> => {
   const [
     { default: store },
-    { default: { defaults } },
   ] = await Promise.all([
       import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
-      import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -115,10 +114,8 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
 export const refundOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
   const [
     { default: store },
-    { default: { defaults } },
   ] = await Promise.all([
     import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -146,10 +143,8 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
 export const cancelOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
   const [
     { default: store },
-    { default: { defaults } },
   ] = await Promise.all([
     import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -177,10 +172,8 @@ export const cancelOrder = async (transactionId: string, orderLines?: Array<IMol
 export const shipOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>, tracking?: IMollieTracking): Promise<any> => {
   const [
     { default: store },
-    { default: { defaults } },
   ] = await Promise.all([
     import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;

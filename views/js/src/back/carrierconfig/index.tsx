@@ -31,6 +31,9 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+
 import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
 
 export default (
@@ -40,14 +43,10 @@ export default (
 ) => {
   (async function() {
     const [
-      { default: { render } },
-      { Provider },
       { default: store },
       { updateConfig, updateTranslations },
       { default: CarrierConfig },
     ] = await Promise.all([
-      import(/* webpackChunkName: "react" */ 'react-dom'),
-      import(/* webpackChunkName: "react" */ 'react-redux'),
       import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/store'),
       import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/store/actions'),
       import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/components/CarrierConfig'),

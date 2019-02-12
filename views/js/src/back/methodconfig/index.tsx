@@ -31,16 +31,15 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
+import { render } from 'react-dom';
 
 import { IMollieMethodConfig, ITranslations } from '@shared/globals';
 
 export default (target: string, config: IMollieMethodConfig, translations: ITranslations): void => {
   (async function () {
     const [
-      { default: { render } },
       { default: PaymentMethodConfig },
     ] = await Promise.all([
-      import(/* webpackPrefetch: true, webpackChunkName: "react",  */ 'react-dom'),
       import(/* webpackPrefetch: true, webpackChunkName: "methodconfig" */ '@methodconfig/components/PaymentMethodConfig'),
     ]);
 

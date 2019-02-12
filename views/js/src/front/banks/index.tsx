@@ -31,6 +31,7 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
 import xss from 'xss';
 
 import { IBanks, ITranslations } from '@shared/globals';
@@ -46,11 +47,9 @@ export default function bankList(banks: IBanks, translations: ITranslations): vo
   (async function () {
     const [
       { default: Banks },
-      { default: { render, unmountComponentAtNode } },
       { default: swal },
     ] = await Promise.all([
       import(/* webpackPrefetch: true, webpackChunkName: "banks" */ '@banks/components/Banks'),
-      import(/* webpackPrefetch: true, webpackChunkName: "react" */ 'react-dom'),
       import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert'),
     ]);
     const wrapper = document.createElement('DIV');
