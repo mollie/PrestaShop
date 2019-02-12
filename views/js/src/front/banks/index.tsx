@@ -49,9 +49,9 @@ export default function bankList(banks: IBanks, translations: ITranslations): vo
       { default: { render, unmountComponentAtNode } },
       { default: swal },
     ] = await Promise.all([
-      import(/* webpackPreload: true, webpackChunkName: "banks" */ '@banks/components/Banks'),
-      import(/* webpackPreload: true, webpackChunkName: "react" */ 'react-dom'),
-      import(/* webpackPreload: true, webpackChunkName: "sweetalert" */ 'sweetalert'),
+      import(/* webpackPrefetch: true, webpackChunkName: "banks" */ '@banks/components/Banks'),
+      import(/* webpackPrefetch: true, webpackChunkName: "react" */ 'react-dom'),
+      import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert'),
     ]);
     const wrapper = document.createElement('DIV');
     render(

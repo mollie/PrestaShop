@@ -46,9 +46,9 @@
     <input type="hidden" id="{$input.name|escape:'htmlall':'UTF-8'}" name="{$input.name|escape:'htmlall':'UTF-8'}">
     <script type="text/javascript">
       (function () {
+        window.mollieModulePublicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function initMollieMethodsConfig() {
@@ -93,9 +93,9 @@
     <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
     <script type="text/javascript">
       (function () {
+        window.mollieModulePublicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function () {

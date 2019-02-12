@@ -33,9 +33,9 @@
 <button id="mollie-update" type="button" class="btn btn-primary pull-right"><i class="icon icon-cloud-download"></i> {l s='Update this module' mod='mollie'}</button>
 <script type="text/javascript">
   (function () {
+    window.mollieModulePublicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
     window.MollieModule = window.MollieModule || {ldelim}{rdelim};
     window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-    window.MollieModule.url.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
     window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
   }());
   (function initMollieUpdater() {

@@ -36,9 +36,9 @@ import { IMollieApiOrder, IMollieApiPayment, IMollieOrderLine, IMollieTracking }
 
 export const retrievePayment = async (transactionId: string): Promise<IMollieApiPayment|null> => {
   const [
-    { default: store }
+    { default: store },
   ] = await Promise.all([
-    import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -61,7 +61,7 @@ export const retrieveOrder = async (transactionId: string): Promise<IMollieApiOr
   const [
     { default: store }
   ] = await Promise.all([
-    import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -85,8 +85,8 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
     { default: store },
     { default: { defaults } },
   ] = await Promise.all([
-      import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
-      import(/* webpackPreload: true, webpackChunkName: "vendors" */ 'lodash'),
+      import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+      import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -117,8 +117,8 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
     { default: store },
     { default: { defaults } },
   ] = await Promise.all([
-    import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPreload: true, webpackChunkName: "vendors" */ 'lodash'),
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -148,8 +148,8 @@ export const cancelOrder = async (transactionId: string, orderLines?: Array<IMol
     { default: store },
     { default: { defaults } },
   ] = await Promise.all([
-    import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPreload: true, webpackChunkName: "vendors" */ 'lodash'),
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;
@@ -179,8 +179,8 @@ export const shipOrder = async (transactionId: string, orderLines?: Array<IMolli
     { default: store },
     { default: { defaults } },
   ] = await Promise.all([
-    import(/* webpackPreload: true, webpackChunkName: "transaction" */ '@transaction/store'),
-    import(/* webpackPreload: true, webpackChunkName: "vendors" */ 'lodash'),
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+    import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
   ]);
   try {
     const ajaxEndpoint = store.getState().config.ajaxEndpoint;

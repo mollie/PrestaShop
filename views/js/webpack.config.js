@@ -52,7 +52,7 @@ const plugins = [
     version,
     chunksSortMode: 'none',
   }),
-  new WebpackRequireFrom({ variableName: 'MollieModule.urls.publicPath' }),
+  new WebpackRequireFrom({ variableName: 'mollieModulePublicPath' }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
  All rights reserved.
  
