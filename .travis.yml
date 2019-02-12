@@ -1,6 +1,6 @@
 language: php
 node_js:
-  - 8
+  - 9
 sudo: true
 services:
   - docker
