@@ -635,9 +635,7 @@ class Mollie extends PaymentModule
             'lang'                   => $this->lang,
         );
 
-        $this->context->controller->addJS(static::getWebpackChunks('methodConfig'));
-        $this->context->controller->addJS(static::getWebpackChunks('carrierConfig'));
-        $this->context->controller->addJS(static::getWebpackChunks('updater'));
+        $this->context->controller->addJS(static::getWebpackChunks('app'));
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -1999,7 +1997,7 @@ class Mollie extends PaymentModule
             );
         }
 
-        $this->context->controller->addJS(static::getWebpackChunks('transactionInfo'));
+        $this->context->controller->addJS(static::getWebpackChunks('app'));
         $this->context->smarty->assign(array(
             'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
@@ -5812,13 +5810,13 @@ class Mollie extends PaymentModule
     /**
      * Get the webpack chunks for a given entry name
      *
-     * @param string $name Entry name
+     * @param string $entry Entry name
      *
      * @return array Array with chunk files, should be loaded in the given order
      *
      * @since 3.4.0
      */
-    public static function getWebpackChunks($name)
+    public static function getWebpackChunks($entry)
     {
         static $manifest = null;
         if (!$manifest) {
@@ -5830,7 +5828,7 @@ class Mollie extends PaymentModule
             }
         }
 
-        return isset($manifest[$name]) ? $manifest[$name] : array();
+        return isset($manifest[$entry]) ? $manifest[$entry] : array();
     }
 
     /**

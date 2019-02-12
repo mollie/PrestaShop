@@ -85,7 +85,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     render(<OrderLinesEditor lineType="shippable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
 
-    const { default: swal } = await import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
+    const { default: swal } = await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
@@ -144,7 +144,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
           if (success) {
             dispatchUpdateOrder(newOrder);
           } else {
-            import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+            import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
                 icon: 'error',
                 title: xss(translations.anErrorOccurred),
@@ -154,7 +154,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
           }
         } catch (e) {
           if (typeof e === 'string') {
-            import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+            import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
                 icon: 'error',
                 title: xss(translations.anErrorOccurred),
@@ -175,7 +175,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     const reviewWrapper = document.createElement('DIV');
     render(<OrderLinesEditor lineType="refundable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
-    const { default: swal }= await import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
+    const { default: swal }= await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),
@@ -198,7 +198,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         if (success) {
           dispatchUpdateOrder(newOrder);
         } else {
-          import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+          import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
             swal({
               icon: 'error',
               title: xss(translations.anErrorOccurred),
@@ -208,7 +208,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         }
       } catch (e) {
         if (typeof e === 'string') {
-          import(/* webpackChunkName: "sweetalert", webpackPrefetch */ 'sweetalert').then(({ default: swal }) => {
+          import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
             swal({
               icon: 'error',
               title: xss(translations.anErrorOccurred),
@@ -229,7 +229,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     render(<OrderLinesEditor lineType="cancelable" translations={translations} lines={origLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
 
-    const { default: swal } = await import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
+    const { default: swal } = await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
       title: xss(translations.reviewShipment),
       text: xss(translations.reviewShipmentProducts),

@@ -11,9 +11,20 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     }
   },
   "plugins": [
+    "import",
     "@typescript-eslint",
     "react-hooks"
   ],
@@ -33,5 +44,13 @@
     "@typescript-eslint/no-explicit-any": "off",
     "react-hooks/rules-of-hooks": "error",
     "no-console": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": "*.[jt]s"
+    },
+    {
+      "files": "*.[jt]sx"
+    }
+  ]
 }

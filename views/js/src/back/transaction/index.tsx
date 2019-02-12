@@ -30,57 +30,67 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import 'intl';
+import React, { lazy, Suspense } from 'react';
 
-import React from 'react';
-import { render } from 'react-dom';
-import { throttle } from 'lodash';
-import { Provider } from 'react-redux';
-
-import store from '@transaction/store';
-import {
-  updateConfig,
-  updateCurrencies,
-  updateOrder,
-  updatePayment,
-  updateTranslations,
-  updateViewportWidth
-} from './store/actions';
-import MolliePanel from './components/MolliePanel';
-import { retrieveOrder, retrievePayment } from './misc/ajax';
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
-export default (
+import LoadingDots from '@shared/components/LoadingDots';
+
+const MolliePanel = lazy(() => import('@transaction/components/MolliePanel'));
+
+export default function transactionInfo (
   target: any,
   config: IMollieOrderConfig,
   translations: ITranslations,
   currencies: ICurrencies
-) => {
-  setTimeout(async () => {
-    const { transactionId } = config;
+): void {
+  (async function () {
+    const [
+      { render },
+      { default: { throttle } },
+      { Provider },
+      { default: store },
+      {
+        updateConfig,
+        updateCurrencies,
+        updateOrder,
+        updatePayment,
+        updateTranslations,
+        updateViewportWidth,
+      },
+      { retrieveOrder, retrievePayment },
+    ] = await Promise.all([
+      import(/* webpackPrefetch: true, webpackChunkName: "react",  */ 'react-dom'),
+      import(/* webpackPrefetch: true, webpackChunkName: "vendors" */ 'lodash'),
+      import(/* webpackPrefetch: true, webpackChunkName: "react" */ 'react-redux'),
+      import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+      import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store/actions'),
+      import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/misc/ajax'),
+    ]);
 
+    // Listen for window resizes
+    window.addEventListener('resize', throttle(() => {
+      store.dispatch(updateViewportWidth(window.innerWidth));
+    }, 200));
+
+    store.dispatch(updateCurrencies(currencies));
+    store.dispatch(updateTranslations(translations));
+    store.dispatch(updateConfig(config));
+
+    const { transactionId } = config;
     if (transactionId.substr(0, 3) === 'ord') {
       store.dispatch(updateOrder(await retrieveOrder(transactionId)));
     } else {
       store.dispatch(updatePayment(await retrievePayment(transactionId)));
     }
-  }, 0);
 
-  // Listen for window resizes
-  window.addEventListener('resize', throttle(() => {
-    store.dispatch(updateViewportWidth(window.innerWidth));
-  }, 200));
-
-  store.dispatch(updateCurrencies(currencies));
-  store.dispatch(updateTranslations(translations));
-  store.dispatch(updateConfig(config));
-
-  return render(
-    <Provider store={store}>
-      <MolliePanel/>
-    </Provider>,
-    typeof target === 'string' ? document.querySelector(target) : target
-  );
+    render(
+      <Provider store={store}>
+        <Suspense fallback={<LoadingDots/>}>
+          <MolliePanel/>
+        </Suspense>
+      </Provider>,
+      typeof target === 'string' ? document.querySelector(target) : target
+    );
+  }());
 };
-
-

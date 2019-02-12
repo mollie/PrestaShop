@@ -31,6 +31,7 @@
 * @link       https://www.mollie.nl
 *}
 {if Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API}
+  <div id="mollie-qr-code"></div>
   <script type="text/javascript">
     (function () {
       window.MollieModule = window.MollieModule || { };
@@ -40,34 +41,22 @@
       window.MollieModule.urls.cartAmount = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'cartAmount', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
       window.MollieModule.urls.qrCodeStatus = '{$link->getModuleLink('mollie', 'qrcode', ['ajax' => '1', 'action' => 'qrCodeStatus', 'rand' => time()], Tools::usingSecureMode())|escape:'javascript':'UTF-8' nofilter}';
     }());
-  </script>
-  <div id="mollie-qr-code"></div>
-  <script type="text/javascript">
     (function initQrCode() {
       if (typeof window.MollieModule === 'undefined'
-        || typeof window.MollieModule.qrCode === 'undefined'
+        || typeof window.MollieModule.app === 'undefined'
+        || typeof window.MollieModule.app.default === 'undefined'
+        || typeof window.MollieModule.app.default.qrCode === 'undefined'
       ) {
-        var scripts = document.getElementsByTagName('script');
-        var found = false;
-        for (var i = scripts.length; i--;) {
-          if (scripts[i].src && scripts[i].src.indexOf('{Mollie::getMediaPathForJavaScript('views/js/dist/qrCode.min.js')|escape:'javascript':'UTF-8'}') > -1) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          {Mollie::getWebpackChunks('qrCode')|json_encode}.forEach(function (resource) {
-            var newScript = document.createElement('SCRIPT');
-            newScript.src = resource;
-            newScript.type = 'text/javascript';
-            document.head.appendChild(newScript);
-          });
-        }
-
         return setTimeout(initQrCode, 100);
       }
 
-      window.MollieModule.qrCode.default(document.getElementById('mollie-qr-code'), '{l s='or scan the iDEAL QR code' mod='mollie' js=1}', false);
+      window.MollieModule.app.qrCode().then(function (fn) {
+        fn.default(
+          document.getElementById('mollie-qr-code'),
+          '{l s='or scan the iDEAL QR code' mod='mollie' js=1}',
+          false
+        );
+      });
     }());
   </script>
 {/if}

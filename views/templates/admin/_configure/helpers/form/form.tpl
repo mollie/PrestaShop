@@ -45,33 +45,39 @@
     <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
     <input type="hidden" id="{$input.name|escape:'htmlall':'UTF-8'}" name="{$input.name|escape:'htmlall':'UTF-8'}">
     <script type="text/javascript">
-      (function initMollieMethodsConfig() {
-        if (typeof window.MollieModule === 'undefined'
-          || typeof window.MollieModule.methodConfig === 'undefined'
-        ) {
-          return setTimeout(initMollieMethodsConfig, 100);
-        }
-
+      (function () {
+        window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
         window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-        window.MollieModule.methodConfig.default(
-          '{$input.name|escape:'javascript':'UTF-8'}',
-          {
-            legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
-            ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieMethodConfig',
-            moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}'
-          },
-          {
-            yes: '{l s='Yes' mod='mollie' js=1}',
-            no: '{l s='No' mod='mollie' js=1}',
-            notAvailable: '{l s='Not available' mod='mollie' js=1}',
-            thisPaymentMethodIsNotAvailableOnPaymentsApi: '{l s='This payment method is not available on the Payments API. Switch to the Orders API below in order to activate this method.' mod='mollie' js=1}',
-            unableToLoadMethods: '{l s='Unable to load payment methods' mod='mollie' js=1}',
-            retry: '{l s='Retry' mod='mollie' js=1}',
-            error: '{l s='Error' mod='mollie' js=1}'
-          }
-        )
+      }());
+      (function initMollieMethodsConfig() {
+        if (typeof window.MollieModule === 'undefined'
+          || typeof window.MollieModule.app === 'undefined'
+          || typeof window.MollieModule.app.default === 'undefined'
+          || typeof window.MollieModule.app.default.methodConfig === 'undefined'
+        ) {
+          return setTimeout(initMollieMethodsConfig, 100);
+        }
+        window.MollieModule.app.default.methodConfig().then(function (fn) {
+          fn.default(
+            '{$input.name|escape:'javascript':'UTF-8'}',
+            {
+              legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
+              ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieMethodConfig',
+              moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}'
+            },
+            {
+              yes: '{l s='Yes' mod='mollie' js=1}',
+              no: '{l s='No' mod='mollie' js=1}',
+              notAvailable: '{l s='Not available' mod='mollie' js=1}',
+              thisPaymentMethodIsNotAvailableOnPaymentsApi: '{l s='This payment method is not available on the Payments API. Switch to the Orders API below in order to activate this method.' mod='mollie' js=1}',
+              unableToLoadMethods: '{l s='Unable to load payment methods' mod='mollie' js=1}',
+              retry: '{l s='Retry' mod='mollie' js=1}',
+              error: '{l s='Error' mod='mollie' js=1}'
+            }
+          );
+        });
       }());
     </script>
   {elseif $input.type === 'mollie-h1'}
@@ -87,6 +93,12 @@
     <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
     <script type="text/javascript">
       (function () {
+        window.MollieModule = window.MollieModule || {ldelim}{rdelim};
+        window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+        window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
+      }());
+      (function () {
         function initMollieCarriers() {
           var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
           if (source == null) {
@@ -95,41 +107,42 @@
 
           function initMollieCarrierConfig() {
             if (typeof window.MollieModule === 'undefined'
-              || typeof window.MollieModule.carrierConfig === 'undefined'
+              || typeof window.MollieModule.app === 'undefined'
+              || typeof window.MollieModule.app.default === 'undefined'
+              || typeof window.MollieModule.app.default.carrierConfig === 'undefined'
             ) {
               return setTimeout(initMollieCarrierConfig, 100);
             }
 
-            window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-            window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
-            window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-            window.MollieModule.carrierConfig.default(
-              '{$input.name|escape:'javascript':'UTF-8'}',
-              {
-                legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
-                ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieCarrierConfig'
-              },
-              {
-                name: '{l s='Name' mod='mollie' js=1}',
-                urlSource: '{l s='URL Source' mod='mollie' js=1}',
-                carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
-                customUrl: '{l s='Custom URL' mod='mollie' js=1}',
-                module: '{l s='Module' mod='mollie' js=1}',
-                doNotAutoShip: '{l s='Do not automatically ship' mod='mollie' js=1}',
-                noTrackingInformation: '{l s='No tracking information' mod='mollie' js=1}',
-                hereYouCanConfigureCarriers: '{l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie' js=1}',
-                youCanUseTheFollowingVariables: '{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}',
-                shippingNumber: '{l s='Shipping number' mod='mollie' js=1}',
-                invoiceCountryCode: '{l s='Billing country code' mod='mollie' js=1}',
-                invoicePostcode: '{l s='Billing postcode' mod='mollie' js=1}',
-                deliveryCountryCode: '{l s='Shipping country code' mod='mollie' js=1}',
-                deliveryPostcode: '{l s='Shipping postcode' mod='mollie' js=1}',
-                languageCode: '{l s='2-letter language code' mod='mollie' js=1}',
-                unableToLoadCarriers: '{l s='Unable to load carrier list' mod='mollie' js=1}',
-                retry: '{l s='Retry' mod='mollie' js=1}',
-                error: '{l s='Error' mod='mollie' js=1}'
-              }
-            )
+            window.MollieModule.app.default.carrierConfig().then(function (fn) {
+              fn.default(
+                '{$input.name|escape:'javascript':'UTF-8'}',
+                {
+                  legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
+                  ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieCarrierConfig'
+                },
+                {
+                  name: '{l s='Name' mod='mollie' js=1}',
+                  urlSource: '{l s='URL Source' mod='mollie' js=1}',
+                  carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
+                  customUrl: '{l s='Custom URL' mod='mollie' js=1}',
+                  module: '{l s='Module' mod='mollie' js=1}',
+                  doNotAutoShip: '{l s='Do not automatically ship' mod='mollie' js=1}',
+                  noTrackingInformation: '{l s='No tracking information' mod='mollie' js=1}',
+                  hereYouCanConfigureCarriers: '{l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie' js=1}',
+                  youCanUseTheFollowingVariables: '{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}',
+                  shippingNumber: '{l s='Shipping number' mod='mollie' js=1}',
+                  invoiceCountryCode: '{l s='Billing country code' mod='mollie' js=1}',
+                  invoicePostcode: '{l s='Billing postcode' mod='mollie' js=1}',
+                  deliveryCountryCode: '{l s='Shipping country code' mod='mollie' js=1}',
+                  deliveryPostcode: '{l s='Shipping postcode' mod='mollie' js=1}',
+                  languageCode: '{l s='2-letter language code' mod='mollie' js=1}',
+                  unableToLoadCarriers: '{l s='Unable to load carrier list' mod='mollie' js=1}',
+                  retry: '{l s='Retry' mod='mollie' js=1}',
+                  error: '{l s='Error' mod='mollie' js=1}'
+                }
+              );
+            });
           }
 
           function checkInput (e) {

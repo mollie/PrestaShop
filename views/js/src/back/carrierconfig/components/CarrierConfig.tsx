@@ -43,7 +43,7 @@ import {
   ITranslations,
 } from '@shared/globals';
 
-const ConfigCarrierError = lazy(() => import(/* webpackChunkName: "carrierconfig_CarrierConfigError" */ '@carrierconfig/components/CarrierConfigError'));
+const ConfigCarrierError = lazy(() => import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/components/CarrierConfigError'));
 
 interface IProps {
   config: IMollieCarrierConfig;
@@ -99,7 +99,7 @@ function CarrierConfig(props: IProps): ReactElement<{}> {
 
   if (!Array.isArray(carriers) || (Array.isArray(carriers) && isEmpty(carriers))) {
     return (
-      <Suspense fallback={<LoadingDots/>}>
+      <Suspense fallback={null}>
         <ConfigCarrierError message={message} retry={_init}/>
       </Suspense>
     );

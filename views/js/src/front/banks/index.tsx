@@ -31,26 +31,36 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
 import xss from 'xss';
 
-import Banks from '@banks/components/Banks';
 import { IBanks, ITranslations } from '@shared/globals';
 
 declare let window: any;
 
-export default function (banks: IBanks, translations: ITranslations): void {
+export default function bankList(banks: IBanks, translations: ITranslations): void {
   let issuer = Object.values(banks)[0].id;
   function _setIssuer(newIssuer: string): void {
     issuer = newIssuer;
   }
 
-  const wrapper = document.createElement('DIV');
-  render(<Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>, wrapper);
-  const elem = wrapper.firstChild as Element;
+  (async function () {
+    const [
+      { default: Banks },
+      { default: { render, unmountComponentAtNode } },
+      { default: swal },
+    ] = await Promise.all([
+      import(/* webpackPreload: true, webpackChunkName: "banks" */ '@banks/components/Banks'),
+      import(/* webpackPreload: true, webpackChunkName: "react" */ 'react-dom'),
+      import(/* webpackPreload: true, webpackChunkName: "sweetalert" */ 'sweetalert'),
+    ]);
+    const wrapper = document.createElement('DIV');
+    render(
+      <Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>,
+      wrapper
+    );
+    const elem = wrapper.firstChild as Element;
 
-  import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
-    swal({
+    const value = await swal({
       title: xss(translations.chooseYourBank),
       content: {
         element: elem,
@@ -64,17 +74,16 @@ export default function (banks: IBanks, translations: ITranslations): void {
           text: xss(translations.choose),
         },
       },
-    }).then((value: any) => {
-      if (value) {
-        const win = window.open(banks[issuer].href, '_self');
-        win.opener = null;
-      } else {
-        try {
-          setTimeout(() => unmountComponentAtNode(wrapper), 2000);
-        } catch (e) {
-        }
-      }
     });
-  });
+    if (value) {
+      const win = window.open(banks[issuer].href, '_self');
+      win.opener = null;
+    } else {
+      try {
+        setTimeout(() => unmountComponentAtNode(wrapper), 2000);
+      } catch (e) {
+      }
+    }
+  }());
 }
 

@@ -18,7 +18,7 @@
       "@carrierconfig/*": ["back/carrierconfig/*"],
       "@methodconfig/*": ["back/methodconfig/*"],
       "@transaction/*": ["back/transaction/*"],
-      "@updater/*": ["back/updater/*/"],
+      "@updater/*": ["back/updater/*"],
       "@banks/*": ["front/banks/*"],
       "@qrcode/*": ["front/qrcode/*"],
       "@shared/*": ["shared/*"]

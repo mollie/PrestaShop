@@ -61,45 +61,31 @@
 
 {if !empty($issuers['ideal']) && $issuer_setting === Mollie::ISSUERS_ON_CLICK}
   <script type="text/javascript">
-    (function () {
+    (function initMollieBanks() {
       if (typeof window.MollieModule === 'undefined'
-        || typeof window.MollieModule.bankList === 'undefined'
+        || typeof window.MollieModule.app === 'undefined'
+        || typeof window.MollieModule.app.default === 'undefined'
+        || typeof window.MollieModule.app.default.bankList === 'undefined'
       ) {
-        window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
-        {Mollie::getWebpackChunks('bankList')|json_encode}.forEach(function (chunk) {
+        {Mollie::getWebpackChunks('app')|json_encode nofilter}.forEach(function (chunk) {
           var elem = document.createElement('script');
           elem.type = 'text/javascript';
           document.querySelector('head').appendChild(elem);
           elem.src = chunk;
         });
+
+        return setTimeout(initMollieBanks, 100);
       }
-      window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
+      // Preload
+      window.MollieModule.app.default.bankList();
 
       function showBanks(event) {
         event.preventDefault();
-
         var banks = {$issuers['ideal']|json_encode nofilter};
         var translations = {$mollie_translations|json_encode nofilter};
-
-        if (typeof window.MollieModule === 'undefined'
-          || typeof window.MollieModule.bankList === 'undefined'
-        ) {
-          {Mollie::getWebpackChunks('bankList')|json_encode}.forEach(function (chunk) {
-            var elem = document.createElement('script');
-            elem.type = 'text/javascript';
-            elem.onload = function initMollieBanks() {
-              if (typeof window.MollieModule.bankList === 'undefined') {
-                return setTimeout(initMollieBanks, 100);
-              }
-              window.MollieModule.bankList.default(banks, translations);
-            };
-            document.querySelector('head').appendChild(elem);
-            elem.src = chunk;
-          });
-        } else {
-          window.MollieModule.bankList.default(banks, translations);
-        }
+        window.MollieModule.app.default.bankList().then(function (fn) {
+          fn.default(banks, translations);
+        });
       }
 
       var idealBtn = document.getElementById('mollie_link_ideal');

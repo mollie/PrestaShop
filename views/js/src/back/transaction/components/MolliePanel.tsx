@@ -30,15 +30,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, Suspense, lazy } from 'react';
+import React, { lazy, ReactElement, Suspense } from 'react';
 import { connect, Provider } from 'react-redux';
 
 import store from '@transaction/store';
-import Spinner from '@qrcode/components/Spinner';
 import { IMollieApiOrder, IMollieApiPayment } from '@shared/globals';
 
-const RefundPanel = lazy(() => import(/* webpackChunkName: "transaction_RefundPanel" */ '@transaction/components/refund/RefundPanel'));
-const OrderPanel = lazy(() => import(/* webpackChunkName: "transaction_OrderPanel" */ '@transaction/components/orderlines/OrderPanel'));
+const RefundPanel = lazy(() => import(/* webpackChunkName: "transactionRefund" */ '@transaction/components/refund/RefundPanel'));
+const OrderPanel = lazy(() => import(/* webpackChunkName: "transactionOrder" */ '@transaction/components/orderlines/OrderPanel'));
 
 interface IProps {
   payment?: IMollieApiPayment;
@@ -50,12 +49,12 @@ function MolliePanel({ payment, order }: IProps): ReactElement<{}> {
     <Provider store={store}>
       <>
         {payment && (
-          <Suspense fallback={<Spinner/>}>
+          <Suspense fallback={null}>
             <RefundPanel/>
           </Suspense>
         )}
         {order && (
-          <Suspense fallback={<Spinner/>}>
+          <Suspense fallback={null}>
             <OrderPanel/>
           </Suspense>
         )}

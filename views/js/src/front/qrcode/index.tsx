@@ -31,10 +31,21 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render } from 'react-dom';
-import QrCode from '@qrcode/components/QrCode';
 
 export default function (target: string|HTMLElement, title: string, center: boolean): void {
   const elem = (typeof target === 'string' ? document.getElementById(target) : target);
-  render(<QrCode title={title} center={center}/>, elem);
+  (async function () {
+    const [
+      { default: QrCode },
+      { default: { render } },
+    ] = await Promise.all([
+      import(/* webpackChunkName: "banks" */ '@qrcode/components/QrCode'),
+      import(/* webpackChunkName: "react" */ 'react-dom'),
+    ]);
+    render(
+      <QrCode title={title} center={center}/>,
+      elem
+    );
+  }());
+
 }

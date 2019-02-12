@@ -31,32 +31,38 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Provider } from 'react-redux';
-
-import store from '@carrierconfig/store';
-import CarrierConfig from '@carrierconfig/components/CarrierConfig';
-import { updateConfig, updateTranslations } from '@carrierconfig/store/actions';
 import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
-
-declare let window: any;
-
-window.MollieModule = window.MollieModule || {};
-window.MollieModule.unmountComponentAtNode = unmountComponentAtNode;
 
 export default (
   target: string,
   config: IMollieCarrierConfig,
   translations: ITranslations
 ) => {
-  store.dispatch(updateConfig(config));
-  store.dispatch(updateTranslations(translations));
+  (async function() {
+    const [
+      { default: { render } },
+      { Provider },
+      { default: store },
+      { updateConfig, updateTranslations },
+      { default: CarrierConfig },
+    ] = await Promise.all([
+      import(/* webpackChunkName: "react" */ 'react-dom'),
+      import(/* webpackChunkName: "react" */ 'react-redux'),
+      import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/store'),
+      import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/store/actions'),
+      import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/components/CarrierConfig'),
+    ]);
 
-  return render((
-    <Provider store={store}>
-      <CarrierConfig translations={translations} config={config} target={target}/>
-    </Provider>
-  ),
-  document.getElementById(`${target}_container`)
-  );
+    store.dispatch(updateConfig(config));
+    store.dispatch(updateTranslations(translations));
+
+    return render(
+      (
+        <Provider store={store}>
+          <CarrierConfig translations={translations} config={config} target={target}/>
+        </Provider>
+      ),
+      document.getElementById(`${target}_container`)
+    );
+  }());
 };

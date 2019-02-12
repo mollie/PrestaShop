@@ -30,6 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+/* eslint-disable */
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -42,7 +43,6 @@ const { name, version } = require('./package.json');
 
 const production = (process.env.NODE_ENV === 'production');
 const plugins = [
-  new webpack.optimize.ModuleConcatenationPlugin(),
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   new HtmlWebpackPlugin({
     filename: 'manifest.php',
@@ -50,6 +50,7 @@ const plugins = [
     inject: false,
     production,
     version,
+    chunksSortMode: 'none',
   }),
   new WebpackRequireFrom({ variableName: 'MollieModule.urls.publicPath' }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
@@ -110,35 +111,13 @@ const optimization = {
   ],
   splitChunks: {
     chunks: 'all',
-    cacheGroups: {
-      vendors: {
-        minSize: 50000,
-        test: /[\\/]node_modules[\\/]/,
-        priority: -10,
-        enforce: true,
-      },
-      default: {
-        minSize: 50000,
-        minChunks: 1,
-        priority: -20,
-        enforce: true,
-      },
-    },
-  },
-  runtimeChunk: {
-    name: 'vendors',
   },
   namedChunks: true,
 };
 
 module.exports = {
   entry: {
-    carrierConfig: ['./src/back/carrierconfig/index.tsx'],
-    methodConfig: ['./src/back/methodconfig/index.tsx'],
-    transactionInfo: ['./src/back/transaction/index.tsx'],
-    updater: ['./src/back/updater/index.ts'],
-    bankList: ['./src/front/banks/index.tsx'],
-    qrCode: ['./src/front/qrcode/index.tsx'],
+    app: ['./src/index.ts'],
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],

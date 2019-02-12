@@ -68,7 +68,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
     if (partial) {
       amount = parseFloat(refundInput.replace(/[^0-9.,]/g, '').replace(',', '.'));
       if (isNaN(amount)) {
-        import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert').then(({ default: swal }) => {
+        import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
           swal({
             icon: 'error',
             title: translations.invalidAmount,
@@ -80,7 +80,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
       }
     }
 
-    const { default: swal } = await import(/* webpackChunkName: "sweetalert", webpackPrefetch: true */ 'sweetalert') as never as { default: SweetAlert };
+    const { default: swal } = await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     const input = await swal({
       dangerMode: true,
       icon: 'warning',
@@ -135,7 +135,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
           </span>
           <input
             type="text"
-            placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
+            placeholder={formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
             disabled={loading}
             value={refundInput}
             onChange={({ target: { value } }: any) => setRefundInput(value)}
@@ -175,7 +175,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
               <input
                 type="text"
                 className="form-control"
-                placeholder={'' + formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
+                placeholder={formatCurrency(parseFloat(payment.amountRemaining.value), get(currencies, payment.amountRemaining.currency))}
                 disabled={loading}
                 value={refundInput}
                 onChange={({ target: { value } }: any) => setRefundInput(value)}
