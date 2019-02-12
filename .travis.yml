@@ -1,6 +1,7 @@
 language: php
+dist: xenial
 node_js:
-  - 9
+  - 10
 sudo: true
 services:
   - docker
