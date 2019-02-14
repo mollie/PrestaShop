@@ -30,12 +30,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ChangeEvent, ReactElement } from 'react';
+import React, { ChangeEvent, ReactElement, Suspense, lazy } from 'react';
 import xss from 'xss';
 import styled from 'styled-components';
 
-import QrCode from '@qrcode/components/QrCode';
 import { IBanks, ITranslations } from '@shared/globals';
+import LoadingDotsCentered from '@shared/components/LoadingDotsCentered';
+
+const QrCode = lazy(() => import(/* webpackChunkName: "banks" */ '@qrcode/components/QrCode'));
 
 const Radio = styled.div`
 &&&& {
@@ -168,7 +170,11 @@ export default function Banks({ banks, translations, setIssuer }: IProps): React
           </Radio>
         ))}
       </ul>
-      {window.mollieQrEnabled && <QrCode title={translations.orPayByIdealQr} center/>}
+      {window.mollieQrEnabled && (
+        <Suspense fallback={<LoadingDotsCentered/>}>
+          <QrCode title={translations.orPayByIdealQr} center/>
+        </Suspense>
+      )}
     </div>
   );
 }

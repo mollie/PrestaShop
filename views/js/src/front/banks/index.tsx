@@ -30,11 +30,15 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
+import swal from 'sweetalert';
 import xss from 'xss';
 
 import { IBanks, ITranslations } from '@shared/globals';
+import LoadingDotsCentered from '@shared/components/LoadingDotsCentered';
+
+const Banks = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "banks" */ '@banks/components/Banks'));
 
 declare let window: any;
 
@@ -45,16 +49,15 @@ export default function bankList(banks: IBanks, translations: ITranslations): vo
   }
 
   (async function () {
-    const [
-      { default: Banks },
-      { default: swal },
-    ] = await Promise.all([
-      import(/* webpackPrefetch: true, webpackChunkName: "banks" */ '@banks/components/Banks'),
-      import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert'),
-    ]);
     const wrapper = document.createElement('DIV');
     render(
-      <Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>,
+      (
+        <div>
+          <Suspense fallback={<LoadingDotsCentered/>}>
+            <Banks banks={banks} translations={translations} setIssuer={_setIssuer}/>
+          </Suspense>
+        </div>
+      ),
       wrapper
     );
     const elem = wrapper.firstChild as Element;

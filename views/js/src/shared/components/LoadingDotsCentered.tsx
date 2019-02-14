@@ -77,7 +77,7 @@ const SpinnerDiv = styled.div`
 }
 `;
 
-export default function Spinner(): ReactElement<{}> {
+export default function LoadingDotsCentered(): ReactElement<{}> {
   return (
     <SpinnerDiv>
       <div className="bounce1"/>

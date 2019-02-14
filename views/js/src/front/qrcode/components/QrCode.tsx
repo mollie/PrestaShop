@@ -35,7 +35,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { throttle } from 'lodash';
 
-import Spinner from '@qrcode/components/Spinner';
+import LoadingDotsCentered from '@shared/components/LoadingDotsCentered';
 import axios from '@shared/axios';
 import { QrStatus } from '@shared/globals';
 
@@ -231,7 +231,7 @@ export default function QrCode({ title, center }: IProps): ReactElement<{}> {
     <>
       <TitleSpan>{title}</TitleSpan>
       <QrImageContainer center={center}>
-        {!image && <Spinner/>}
+        {!image && <LoadingDotsCentered/>}
         {image && <QrImage src={image} center={center}/>}
       </QrImageContainer>
     </>
