@@ -31,7 +31,8 @@ return array(
     'patchers' => array(
         function ($filePath, $prefix, $content) {
             // Change the content here. vendor = pre-scoper at this time
-            if (strpos($filePath, __DIR__.'/pre-scoper/vendor/php-curl-class/php-curl-class/') !== false) {
+            $curlPath = __DIR__.'/pre-scoper/vendor/php-curl-class/php-curl-class/';
+            if (substr($filePath, 0, strlen($curlPath)) === $curlPath) {
                 $content = preg_replace(
                     '~'.preg_quote("'\\\\Curl\\\\", '~').'~',
                     "'\\\\\\\\$prefix\\\\\\\\Curl\\\\\\\\",
@@ -42,8 +43,32 @@ return array(
                     "\"\\\\\\\\$prefix\\\\\\\\Curl\\\\\\\\",
                     $content
                 );
-                return $content;
             }
+
+            $molliePath = __DIR__.'/pre-scoper/vendor/firstred/mollie-api-php/';
+            if (substr($filePath, 0, strlen($molliePath )) === $molliePath ) {
+                $content = preg_replace(
+                    '~'.preg_quote("'Mollie\\\\Api\\\\", '~').'~',
+                    "'$prefix\\\\\\\\Mollie\\\\\\\\Api\\\\\\\\",
+                    $content
+                );
+                $content = preg_replace(
+                    '~'.preg_quote("\"Mollie\\\\Api\\\\", '~').'~',
+                    "\"$prefix\\\\\\\\Mollie\\\\\\\\Api\\\\\\\\",
+                    $content
+                );
+                $content = preg_replace(
+                    '~'.preg_quote("'\\\\Mollie\\\\Api\\\\", '~').'~',
+                    "'\\\\\\\\$prefix\\\\\\\\Mollie\\\\\\\\Api\\\\\\\\",
+                    $content
+                );
+                $content = preg_replace(
+                    '~'.preg_quote("\"\\\\\Mollie\\\\Api\\\\", '~').'~',
+                    "\"\\\\\\\\$prefix\\\\\\\\Mollie\\\\\\\\Api\\\\\\\\",
+                    $content
+                );
+            }
+
             return $content;
         },
     ),
