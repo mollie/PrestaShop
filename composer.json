@@ -2,23 +2,27 @@
   "name": "mollie/prestashop",
   "license": "BSD-2.0",
   "description": "Mollie module for PrestaShop",
-    "require": {
-        "firstred/mollie-api-php": "~2.2.0",
-        "firstred/mollie-reseller-api": "~1.10.2",
-        "ext-curl": "*",
-        "ext-json": "*",
-        "ext-simplexml": "*",
-        "symfony/polyfill-php55": "^1.9",
-        "symfony/polyfill-mbstring": "^1.9",
-        "symfony/polyfill-php54": "^1.9"
-    },
-    "autoload": {
-        "classmap": ["vendor/", "controllers/"]
-    },
-    "config": {
-        "platform": {
-            "php": "5.3.29"
-        }
-    },
-    "type": "prestashop-module"
+  "require": {
+    "firstred/mollie-api-php": "^2.7.0-beta.1",
+    "firstred/mollie-reseller-api": "~1.10.2",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-simplexml": "*",
+    "symfony/polyfill-php55": "^1.9",
+    "symfony/polyfill-mbstring": "^1.9",
+    "symfony/polyfill-php54": "^1.9"
+  },
+  "autoload": {
+    "classmap": [
+      "vendor/",
+      "controllers/"
+    ]
+  },
+  "config": {
+    "platform": {
+      "php": "5.3.29"
+    }
+  },
+  "type": "prestashop-module",
+  "minimum-stability": "beta"
 }
