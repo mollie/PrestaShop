@@ -195,12 +195,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if ($apiPayment->method === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
             // Set the `banktransfer` details
             if ($apiPayment instanceof \MollieModule\Mollie\Api\Resources\Order) {
-                $details = $apiPayment->_embedded->payments[0]->details->transferReference;
-                $address = "IBAN: {$apiPayment->_embedded->payments[0]->details->bankAccount} / BIC: {$apiPayment->_embedded->payments[0]->details->bankBic}";
-            } else {
-                $details = $apiPayment->details->transferReference;
-                $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
+                // If this is an order, take the first payment
+                $apiPayment = $apiPayment->payments();
+                $apiPayment = $apiPayment[0];
             }
+
+            $details = $apiPayment->details->transferReference;
+            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
 
             $extraVars = array(
                 '{bankwire_owner}'   => 'Stichting Mollie Payments',

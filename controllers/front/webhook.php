@@ -155,53 +155,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         if (!isset($apiPayment)) {
-            $apiPayments = array();
+            // If this transaction wasn't a standalone payment, we will need to take the first order payment
             /** @var \MollieModule\Mollie\Api\Resources\Order $transaction */
-            foreach ($transaction->_embedded->payments as $embeddedPayment) {
-                $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
-                $apiPayments[] = $apiPayment;
-                unset($apiPayment);
-            }
-            if (count($apiPayments) === 1) {
-                $apiPayment = $apiPayments[0];
-            } else {
-                // In case of multiple payments, the one with the paid status is leading
-                foreach ($apiPayments as $payment) {
-                    if (in_array($payment->status, array(PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED))) {
-                        $apiPayment = $payment;
-                        break;
-                    }
-                }
-
-                // No paid/authorized payments found, looking for payments with a final status
-                if (!isset($apiPayment)) {
-                    foreach ($apiPayments as $payment) {
-                        if (in_array($payment->status, array(
-                            PaymentStatus::STATUS_CANCELED,
-                            PaymentStatus::STATUS_FAILED,
-                            PaymentStatus::STATUS_EXPIRED,
-                        ))) {
-                            $apiPayment = $payment;
-                            break;
-                        }
-                    }
-                }
-
-                // In case there is no final payments, we are going to look for any pending payments
-                if (!isset($apiPayment)) {
-                    foreach ($apiPayments as $payment) {
-                        if (in_array($payment->status, array(
-                            PaymentStatus::STATUS_PENDING,
-                        ))) {
-                            $apiPayment = $payment;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (isset($apiPayment)) {
-                $apiPayment->metadata = $transaction->metadata;
-            }
+            $apiPayments = $transaction->payments();
+            $metadata = $transaction->metadata;
+            $apiPayment = $apiPayments[0];
+            $apiPayment->metadata = $metadata;
+            unset($apiPayments);
+            unset($metadata);
         }
 
         if (!isset($apiPayment)) {
