@@ -52,7 +52,7 @@ const plugins = [
     version,
     chunksSortMode: 'none',
   }),
-  new WebpackRequireFrom({ variableName: 'mollieModulePublicPath' }),
+  new WebpackRequireFrom({ variableName: 'window.MollieModule.urls.publicPath' }),
   new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
  All rights reserved.
  
@@ -124,7 +124,6 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/modules/mollie/views/js/dist/',
     filename: `[name]${production ? `-v${version}` : ''}.min.js`,
     library: ['MollieModule', '[name]'],
     libraryTarget: 'var',
@@ -138,7 +137,7 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'src'),
         ],
-        exclude: path.join(__dirname, 'node_modules'),
+        exclude: path.resolve(__dirname, 'node_modules'),
         use: {
           loader: 'babel-loader',
           options: {

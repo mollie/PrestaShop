@@ -34,7 +34,7 @@
 <script type="text/javascript">
   (function () {
     var request = new XMLHttpRequest();
-    request.open('GET', '{$mollieProcessUrl|escape:'javascript'}&action=MollieMethodConfig', true);
+    request.open('GET', '{$mollieProcessUrl|escape:'javascript':'UTF-8'}&action=MollieMethodConfig', true);
     request.send();
     request = null;
   }());
