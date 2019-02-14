@@ -1389,12 +1389,9 @@ class Mollie extends PaymentModule
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
-        Logger::addLog($status);
         if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
-            Logger::addLog('addWithEmail');
             $history->addWithemail(true, $templateVars);
         } else {
-            Logger::addLog('add');
             $history->add();
         }
     }
