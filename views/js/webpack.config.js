@@ -90,19 +90,6 @@ const optimization = {
   minimizer: [
     new TerserPlugin({
       terserOptions: {
-        compress: {
-          warnings: false,
-          conditionals: true,
-          unused: true,
-          comparisons: true,
-          sequences: true,
-          dead_code: true,
-          evaluate: true,
-          if_return: true,
-          join_vars: true,
-        },
-        cache: true,
-        parallel: true,
         output: {
           comments: /^\**!/,
         },
