@@ -3,7 +3,7 @@
   "license": "BSD-2.0",
   "description": "Mollie module for PrestaShop",
   "require": {
-    "firstred/mollie-api-php": "^2.7.0-beta.1",
+    "firstred/mollie-api-php": "^2.7.0",
     "firstred/mollie-reseller-api": "~1.10.2",
     "ext-curl": "*",
     "ext-json": "*",
@@ -23,6 +23,5 @@
       "php": "5.3.29"
     }
   },
-  "type": "prestashop-module",
-  "minimum-stability": "beta"
+  "type": "prestashop-module"
 }
