@@ -33,8 +33,11 @@
  * @codingStandardsIgnoreStart
  */
 
-return json_decode("<%= 
-    JSON.stringify(webpack.chunks
+return json_decode("<%=
+  JSON.stringify(
+    webpack
+      .chunks
+      .filter(item => Object.keys(webpackConfig.entry).includes(item.id))
       .map(item => {
         return {
           name: item.id,
