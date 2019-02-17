@@ -85,7 +85,7 @@ interface IProps {
   config: IMollieMethodConfig;
 }
 
-function PaymentMethods({ translations, config, methods: propsMethods, target }: IProps): ReactElement<{}> {
+export default function PaymentMethods({ translations, config, methods: propsMethods, target }: IProps): ReactElement<{}> {
   const [methods, setMethods] = useState(propsMethods);
 
   function _onToggle(id: string, enabled: boolean): void {
@@ -130,5 +130,3 @@ function PaymentMethods({ translations, config, methods: propsMethods, target }:
     />
   );
 }
-
-export default PaymentMethods;

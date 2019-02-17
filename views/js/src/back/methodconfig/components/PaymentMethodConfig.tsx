@@ -45,7 +45,7 @@ interface IProps {
   target: string;
 }
 
-function PaymentMethodConfig(props: IProps): ReactElement<{}> {
+export default function PaymentMethodConfig(props: IProps): ReactElement<{}> {
   const [methods, setMethods] = useState<Array<IMolliePaymentMethodItem>>(undefined);
   const [message, setMessage] = useState<string>(undefined);
 
@@ -83,5 +83,3 @@ function PaymentMethodConfig(props: IProps): ReactElement<{}> {
     <PaymentMethods methods={methods} translations={translations} target={target} config={config}/>
   );
 }
-
-export default PaymentMethodConfig;

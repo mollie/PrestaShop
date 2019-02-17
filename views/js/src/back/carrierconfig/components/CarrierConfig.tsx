@@ -51,7 +51,7 @@ interface IProps {
   target: string;
 }
 
-function CarrierConfig(props: IProps): ReactElement<{}> {
+export default function CarrierConfig(props: IProps): ReactElement<{}> {
   const [carriers, setCarriers] = useState<Array<IMollieCarrierConfigItem>>(undefined);
   const [message, setMessage] = useState<string>(undefined);
 
@@ -167,5 +167,3 @@ function CarrierConfig(props: IProps): ReactElement<{}> {
     </>
   );
 }
-
-export default CarrierConfig;

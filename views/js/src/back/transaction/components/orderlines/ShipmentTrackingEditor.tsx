@@ -68,7 +68,7 @@ const InputContainer = styled.div`
 text-align: left!important;
 `;
 
-function ShipmentTrackingEditor(props: IProps): ReactElement<{}> {
+export default function ShipmentTrackingEditor(props: IProps): ReactElement<{}> {
   const [skipTracking, setSkipTracking] = useState<boolean>(false);
   const [carrier, setCarrier] = useState<string>(get(props, 'config.tracking.carrier', ''));
   const [carrierChanged, setCarrierChanged] = useState<boolean>(!!get(props, 'config.tracking.carrier', false));
@@ -198,5 +198,3 @@ function ShipmentTrackingEditor(props: IProps): ReactElement<{}> {
     </div>
   );
 }
-
-export default ShipmentTrackingEditor;

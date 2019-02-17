@@ -78,7 +78,7 @@ font-size: medium!important;
 color: #555!important;
 ` as any;
 
-function OrderLinesEditor({ edited, lines, lineType }: IProps): ReactElement<{}> {
+export default function OrderLinesEditor({ edited, lines, lineType }: IProps): ReactElement<{}> {
   const [stateLines, setStateLines] = useState<Array<IMollieOrderLine>>(lines);
 
   function _updateQty(lineId: string, qty: number): void {
@@ -123,7 +123,7 @@ function OrderLinesEditor({ edited, lines, lineType }: IProps): ReactElement<{}>
             <td style={{ color: '#555' }}>
               <QuantitySelect
                 value={line.newQuantity || line[`${lineType}Quantity`]}
-                onChange={({ target: { value: qty }}: any) => _updateQty(line.id, parseInt(qty, 10))}
+                onChange={({ target: { value: qty } }: any) => _updateQty(line.id, parseInt(qty, 10))}
               >
                 {range(1, line[`${lineType}Quantity`] + 1).map((qty) => (
                   <QuantityOption key={qty} value={qty}>{qty}x</QuantityOption>
@@ -140,4 +140,3 @@ function OrderLinesEditor({ edited, lines, lineType }: IProps): ReactElement<{}>
     </Table>
   )
 }
-export default OrderLinesEditor;

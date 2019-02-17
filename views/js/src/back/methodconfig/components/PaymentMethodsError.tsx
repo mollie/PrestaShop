@@ -49,7 +49,7 @@ const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-function PaymentMethodsError({ translations, config: { legacy }, retry, message }: IProps): ReactElement<{}> {
+export default function PaymentMethodsError({ translations, config: { legacy }, retry, message }: IProps): ReactElement<{}> {
   return (
     <div
       className={cx({
@@ -76,5 +76,3 @@ function PaymentMethodsError({ translations, config: { legacy }, retry, message 
     </div>
   );
 }
-
-export default PaymentMethodsError;

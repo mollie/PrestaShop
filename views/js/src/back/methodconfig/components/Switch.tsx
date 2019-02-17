@@ -135,7 +135,7 @@ input:checked + label {
 }
 ` as any;
 
-function Switch(props: IProps): ReactElement<{}> {
+export default function Switch(props: IProps): ReactElement<{}> {
   const { enabled, onChange, id, translations } = props;
 
   return (
@@ -172,5 +172,3 @@ function Switch(props: IProps): ReactElement<{}> {
     </Span>
   );
 }
-
-export default Switch;
