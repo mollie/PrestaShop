@@ -30,11 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 
 import OrderLinesTableHeader from '@transaction/components/orderlines/OrderLinesTableHeader';
 import { IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   // Redux
@@ -42,7 +42,12 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps): ReactElement<{}> {
+export default function EmptyOrderLinesTable(): ReactElement<{}> {
+  const { translations, config: { legacy } }: IProps = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    config: state.config,
+  })), []);
+
   if (legacy) {
     return <div className="error">{translations.thereAreNoProducts}</div>;
   }
@@ -65,10 +70,3 @@ function EmptyOrderLinesTable({ translations, config: { legacy } }: IProps): Rea
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-  })
-)(EmptyOrderLinesTable);

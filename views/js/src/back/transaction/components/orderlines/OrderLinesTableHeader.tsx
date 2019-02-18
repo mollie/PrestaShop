@@ -30,10 +30,10 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 
 import { ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   // Redux
@@ -41,7 +41,12 @@ interface IProps {
   viewportWidth?: number;
 }
 
-function OrderLinesTableHeader({ translations, viewportWidth }: IProps): ReactElement<{}> {
+export default function OrderLinesTableHeader(): ReactElement<{}> {
+  const { translations, viewportWidth }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    viewportWidth: state.viewportWidth,
+  })), []);
+
   return (
     <thead>
       <tr>
@@ -87,10 +92,3 @@ function OrderLinesTableHeader({ translations, viewportWidth }: IProps): ReactEl
     </thead>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    viewportWidth: state.viewportWidth,
-  })
-)(OrderLinesTableHeader);

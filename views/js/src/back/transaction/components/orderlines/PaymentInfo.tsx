@@ -30,20 +30,11 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import styled from 'styled-components';
+import { useMappedState } from 'redux-react-hook';
 
 import PaymentInfoContent from '@transaction/components/orderlines/PaymentInfoContent';
-import { ICurrencies, IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
-
-interface IProps {
-  // Redux
-  order?: IMollieApiOrder;
-  translations?: ITranslations;
-  currencies?: ICurrencies;
-  config?: IMollieOrderConfig;
-}
 
 const Div = styled.div`
 @media only screen and (min-width: 992px) {
@@ -52,7 +43,14 @@ const Div = styled.div`
 }
 ` as any;
 
-function PaymentInfo({ translations, config: { legacy } }: IProps): ReactElement<{}> {
+export default function PaymentInfo(): ReactElement<{}> {
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    order: state.order,
+    currencies: state.currencies,
+    config: state.config,
+  })), []);
+
   if (legacy) {
     return (
       <PaymentInfoContent/>
@@ -66,12 +64,3 @@ function PaymentInfo({ translations, config: { legacy } }: IProps): ReactElement
     </Div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    order: state.order,
-    currencies: state.currencies,
-    config: state.config,
-  })
-)(PaymentInfo);

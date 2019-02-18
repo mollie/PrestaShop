@@ -30,30 +30,29 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import cx from 'classnames';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 
 import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   retry: Function;
   message?: string;
-
-  // Redux
-  translations?: ITranslations;
-  config?: IMollieCarrierConfig;
 }
 
 const Code = styled.code`
   font-size: 14px!important;
 ` as any;
 
-function ConfigCarrierError(props: IProps): ReactElement<{}> {
-  const { translations, config: { legacy }, retry, message } = props;
+export default function ConfigCarrierError({ retry, message }: IProps): ReactElement<{}> {
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieCarriersState): any => ({
+    translations: state.translations,
+    config: state.config,
+  })), []);
 
   return (
     <div
@@ -81,10 +80,3 @@ function ConfigCarrierError(props: IProps): ReactElement<{}> {
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieCarriersState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-  })
-)(ConfigCarrierError);

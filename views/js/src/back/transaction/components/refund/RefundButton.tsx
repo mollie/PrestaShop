@@ -30,22 +30,21 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import cx from 'classnames';
-
-import { ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   loading: boolean;
   disabled: boolean;
   refundPayment: any;
-
-  // Redux
-  translations?: ITranslations;
 }
 
-function RefundButton({ translations, loading, disabled, refundPayment }: IProps): ReactElement<{}> {
+export default function RefundButton({ loading, disabled, refundPayment }: IProps): ReactElement<{}> {
+  const { translations,  }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+  })), []);
+
   return (
     <button
       type="button"
@@ -63,9 +62,3 @@ function RefundButton({ translations, loading, disabled, refundPayment }: IProps
     </button>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-  })
-)(RefundButton);

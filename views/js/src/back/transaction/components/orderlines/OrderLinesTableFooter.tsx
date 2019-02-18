@@ -30,13 +30,13 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 import { compact } from 'lodash';
 
 import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   loading: boolean;
@@ -50,7 +50,13 @@ interface IProps {
   config?: IMollieOrderConfig;
 }
 
-function OrderLinesTableFooter({ translations, loading, order, ship, cancel, refund, config: { legacy } }: IProps): ReactElement<{}> {
+export default function OrderLinesTableFooter({ loading, ship, cancel, refund }: IProps): ReactElement<{}> {
+  const { translations, order, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    order: state.order,
+    config: state.config,
+  })), []);
+
   function isCancelable(): boolean {
     for (let line of Object.values(order.lines.filter(line => line.type !== 'discount'))) {
       if (line.cancelableQuantity >= 1) {
@@ -158,11 +164,3 @@ function OrderLinesTableFooter({ translations, loading, order, ship, cancel, ref
     </tfoot>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    order: state.order,
-    config: state.config,
-  })
-)(OrderLinesTableFooter);

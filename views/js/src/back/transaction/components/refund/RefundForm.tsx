@@ -30,10 +30,8 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback, useState } from 'react';
 import xss from 'xss';
-import { Dispatch } from 'redux';
 import { get } from 'lodash';
 
 import { updatePayment } from '@transaction/store/actions';
@@ -41,27 +39,21 @@ import RefundButton from '@transaction/components/refund/RefundButton';
 import PartialRefundButton from '@transaction/components/refund/PartialRefundButton';
 import { refundPayment as refundPaymentAjax } from '@transaction/misc/ajax';
 import { formatCurrency } from '@shared/tools';
-import { ICurrencies, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { IMollieApiPayment } from '@shared/globals';
 import { SweetAlert } from 'sweetalert/typings/core';
+import { useDispatch, useMappedState } from 'redux-react-hook';
 
-interface IProps {
-  // Redux
-  config?: IMollieOrderConfig;
-  payment?: IMollieApiPayment;
-  translations?: ITranslations;
-  currencies?: ICurrencies;
-
-  dispatchUpdatePayment?: Function;
-}
-
-interface IState {
-  loading: boolean;
-  refundInput: string;
-}
-
-function RefundForm({ translations, payment: { id: transactionId }, payment, currencies, config: { legacy }, dispatchUpdatePayment }: IProps): ReactElement<{}> {
+export default function RefundForm(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
   const [refundInput, setRefundInput] = useState<string>('');
+  const { translations, payment: { id: transactionId }, payment, currencies, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    config: state.config,
+    payment: state.payment,
+    currencies: state.currencies,
+  }),), []);
+  const dispatch = useDispatch();
+  const _dispatchUpdatePayment = (payment: IMollieApiPayment) => useCallback(() => dispatch(updatePayment(payment)), []);
 
   async function _refundPayment(partial = false): Promise<boolean> {
     let amount;
@@ -102,7 +94,7 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
         const { success = false, payment = null } = await refundPaymentAjax(transactionId, amount);
         if (success) {
           if (payment) {
-            dispatchUpdatePayment(payment);
+            _dispatchUpdatePayment(payment);
             setRefundInput('');
           }
         } else {
@@ -193,18 +185,4 @@ function RefundForm({ translations, payment: { id: transactionId }, payment, cur
     </>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-    payment: state.payment,
-    currencies: state.currencies,
-  }),
-  (dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdatePayment(payment: IMollieApiPayment) {
-      dispatch(updatePayment(payment));
-    }
-  })
-)(RefundForm);
 

@@ -30,27 +30,21 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import React, { ReactElement, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
 
-import { updateOrder } from '@transaction/store/actions';
 import OrderPanelContent from '@transaction/components/orderlines/OrderPanelContent';
-import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
-interface IProps {
-  // Redux
-  config?: IMollieOrderConfig;
-  translations?: ITranslations;
-  order?: IMollieApiOrder;
-  dispatchUpdateOrder?: Function;
-}
+export default function OrderPanel(): ReactElement<{}> {
+  const { config: { legacy, moduleDir }, config } = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    config: state.config,
+    order: state.order,
+  })), []);
 
-function OrderPanel({ config: { legacy }, config }: IProps): ReactElement<{}> {
   if (Object.keys(config).length <= 0) {
     return null;
   }
-  const { moduleDir } = config;
 
   if (legacy) {
     return (
@@ -86,16 +80,3 @@ function OrderPanel({ config: { legacy }, config }: IProps): ReactElement<{}> {
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-    order: state.order,
-  }),
-  (dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdateOrder(order: IMollieApiOrder) {
-      dispatch(updateOrder(order));
-    }
-  })
-)(OrderPanel);

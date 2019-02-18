@@ -30,24 +30,19 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { updatePayment } from '@transaction/store/actions';
+import React, { ReactElement, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
+
 import PaymentInfo from '@transaction/components/refund/PaymentInfo';
 import RefundInfo from '@transaction/components/refund/RefundInfo';
-import { IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
 import LoadingDots from '@shared/components/LoadingDots';
 
-interface IProps {
-  // Redux
-  config?: IMollieOrderConfig;
-  translations?: ITranslations;
-  payment?: IMollieApiPayment;
-  dispatchUpdatePayment?: Function;
-}
+export default function RefundPanel(): ReactElement<{}> {
+  const { payment, config }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    config: state.config,
+    payment: state.payment,
+  }),), []);
 
-function RefundPanel({ payment, config }: IProps): ReactElement<{}> {
   if (Object.keys(config).length <= 0) {
     return null;
   }
@@ -98,17 +93,4 @@ function RefundPanel({ payment, config }: IProps): ReactElement<{}> {
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-    payment: state.payment,
-  }),
-  (dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdatePayment(payment: IMollieApiPayment) {
-      dispatch(updatePayment(payment));
-    }
-  })
-)(RefundPanel);
 

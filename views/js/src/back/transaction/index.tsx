@@ -32,7 +32,7 @@
  */
 import React, { lazy, Suspense } from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
+import { StoreContext } from 'redux-react-hook'
 import { throttle } from 'lodash';
 
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
@@ -82,11 +82,11 @@ export default function transactionInfo (
     }
 
     render(
-      <Provider store={store}>
+      <StoreContext.Provider value={store}>
         <Suspense fallback={<LoadingDots/>}>
           <MolliePanel/>
         </Suspense>
-      </Provider>,
+      </StoreContext.Provider>,
       typeof target === 'string' ? document.querySelector(target) : target
     );
   }());

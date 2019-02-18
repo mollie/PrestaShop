@@ -30,23 +30,19 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { lazy, ReactElement, Suspense } from 'react';
-import { connect, Provider } from 'react-redux';
+import React, { lazy, ReactElement, Suspense, useMemo } from 'react';
+import { StoreContext } from 'redux-react-hook';
 
 import store from '@transaction/store';
-import { IMollieApiOrder, IMollieApiPayment } from '@shared/globals';
 
 const RefundPanel = lazy(() => import(/* webpackChunkName: "transactionRefund" */ '@transaction/components/refund/RefundPanel'));
 const OrderPanel = lazy(() => import(/* webpackChunkName: "transactionOrder" */ '@transaction/components/orderlines/OrderPanel'));
 
-interface IProps {
-  payment?: IMollieApiPayment;
-  order?: IMollieApiOrder;
-}
+export default function MolliePanel(): ReactElement<{}> {
+  const { payment, order }: Partial<IMollieOrderState> = useMemo(() => store.getState(), []) as any;
 
-function MolliePanel({ payment, order }: IProps): ReactElement<{}> {
   return (
-    <Provider store={store}>
+    <StoreContext.Provider value={store}>
       <>
         {payment && (
           <Suspense fallback={null}>
@@ -59,13 +55,6 @@ function MolliePanel({ payment, order }: IProps): ReactElement<{}> {
           </Suspense>
         )}
       </>
-    </Provider>
+    </StoreContext.Provider>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    payment: state.payment,
-    order: state.order,
-  })
-)(MolliePanel);

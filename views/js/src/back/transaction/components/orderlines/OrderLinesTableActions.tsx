@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { useMappedState } from 'redux-react-hook';
 
-import { IMollieOrderConfig, IMollieOrderLine, ITranslations } from '@shared/globals';
+import { IMollieOrderLine } from '@shared/globals';
 
 interface IProps {
   line: IMollieOrderLine;
@@ -12,13 +12,14 @@ interface IProps {
   shipLine: Function;
   cancelLine: Function;
   refundLine: Function;
-
-  // Redux
-  translations?: ITranslations;
-  config?: IMollieOrderConfig;
 }
 
-function OrderLinesTableActions({ config: { legacy }, translations, line, loading, shipLine, cancelLine, refundLine }: IProps): ReactElement<{}> {
+export default function OrderLinesTableActions({ line, loading, shipLine, cancelLine, refundLine }: IProps): ReactElement<{}> {
+  const { config: { legacy }, translations }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    config: state.config,
+  })), []);
+
   let shipButton = (
     <button
       style={{
@@ -153,10 +154,3 @@ function OrderLinesTableActions({ config: { legacy }, translations, line, loadin
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-  })
-)(OrderLinesTableActions);

@@ -31,23 +31,22 @@
  * @link       https://www.mollie.nl
  */
 
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import cx from 'classnames';
-
-import { IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   loading: boolean;
   disabled: boolean;
   refundPayment: any;
-
-  // Redux
-  translations?: ITranslations;
-  config?: IMollieOrderConfig;
 }
 
-function PartialRefundButton({ translations, loading, disabled, refundPayment, config: { legacy } }: IProps): ReactElement<{}> {
+export default function PartialRefundButton({ loading, disabled, refundPayment }: IProps): ReactElement<{}> {
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    config: state.config,
+  })), []);
+
   const content = (
     <button
       className="btn btn-default"
@@ -76,10 +75,3 @@ function PartialRefundButton({ translations, loading, disabled, refundPayment, c
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    config: state.config,
-  })
-)(PartialRefundButton);

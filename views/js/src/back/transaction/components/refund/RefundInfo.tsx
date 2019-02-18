@@ -30,20 +30,12 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import styled from 'styled-components';
 
 import RefundHistory from '@transaction/components/refund/RefundHistory';
 import RefundForm from '@transaction/components/refund/RefundForm';
-import { IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
-
-interface IProps {
-  // Redux
-  translations?: ITranslations;
-  config?: IMollieOrderConfig;
-  payment?: IMollieApiPayment;
-}
+import { useMappedState } from 'redux-react-hook';
 
 const Div = styled.div`
 @media only screen and (min-width: 992px) {
@@ -52,7 +44,13 @@ const Div = styled.div`
 }
 ` as any;
 
-function RefundInfo({ translations, config: { legacy }, payment }: IProps): ReactElement<{}> {
+export default function RefundInfo(): ReactElement<{}> {
+  const { translations, config: { legacy }, payment }: Partial<IMollieOrderState> = useCallback(useMappedState( (state: IMollieOrderState): any => ({
+    payment: state.payment,
+    translations: state.translations,
+    config: state.config,
+  })), []);
+
   if (legacy) {
     return (
       <>
@@ -73,11 +71,3 @@ function RefundInfo({ translations, config: { legacy }, payment }: IProps): Reac
     </Div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    payment: state.payment,
-    translations: state.translations,
-    config: state.config,
-  })
-)(RefundInfo);

@@ -30,18 +30,16 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 
 import RefundTableHeader from '@transaction/components/refund/RefundTableHeader';
-import { ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
-interface IProps {
-  // Redux
-  translations?: ITranslations;
-}
+export default function EmptyRefundTable(): ReactElement<{}> {
+  const { translations }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations
+  })), []);
 
-function EmptyRefundTable({ translations }: IProps): ReactElement<{}> {
   return (
     <div className="table-responsive">
       <table className="table">
@@ -60,9 +58,3 @@ function EmptyRefundTable({ translations }: IProps): ReactElement<{}> {
     </div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations
-  })
-)(EmptyRefundTable);

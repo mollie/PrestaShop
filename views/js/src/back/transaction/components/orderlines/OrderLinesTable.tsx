@@ -30,14 +30,14 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { render } from 'react-dom';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import cx from 'classnames';
 import xss from 'xss';
 import { get, isEmpty } from 'lodash';
 import styled from 'styled-components';
+import { useDispatch, useMappedState } from 'redux-react-hook';
+import { SweetAlert } from 'sweetalert/typings/core';
 
 import OrderLinesTableHeader from '@transaction/components/orderlines/OrderLinesTableHeader';
 import OrderLinesTableFooter from '@transaction/components/orderlines//OrderLinesTableFooter';
@@ -47,36 +47,25 @@ import { cancelOrder, refundOrder, shipOrder } from '@transaction/misc/ajax';
 import { updateOrder } from '@transaction/store/actions';
 import OrderLinesTableActions from '@transaction/components/orderlines//OrderLinesTableActions';
 import { formatCurrency } from '@shared/tools';
-import {
-  ICurrencies,
-  IMollieApiOrder,
-  IMollieOrderConfig,
-  IMollieOrderLine,
-  IMollieTracking,
-  ITranslations,
-} from '@shared/globals';
-import { SweetAlert } from 'sweetalert/typings/core';
-
-interface IProps {
-  // Redux
-  order?: IMollieApiOrder;
-  currencies?: ICurrencies;
-  translations?: ITranslations;
-  config?: IMollieOrderConfig;
-  viewportWidth?: number;
-
-  dispatchUpdateOrder?: Function;
-}
+import { IMollieApiOrder, IMollieOrderLine, IMollieTracking, } from '@shared/globals';
 
 const TableContainer = styled.div`
 @media (min-width: 1280px) {
-  overflow: ${({ config: { legacy } }: IProps) => legacy ? 'inherit' : 'visible!important'};
+  overflow: ${({ config: { legacy } }: Partial<IMollieOrderState>) => legacy ? 'inherit' : 'visible!important'};
 }
 ` as any;
 
-function OrderLinesTable(props: IProps): ReactElement<{}> {
-  const { translations, order, dispatchUpdateOrder, currencies, config: { legacy }, config, viewportWidth } = props;
+export default function OrderLinesTable(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
+  const { translations, order, currencies, config: { legacy }, config, viewportWidth }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    order: state.order,
+    currencies: state.currencies,
+    translations: state.translations,
+    config: state.config,
+    viewportWidth: state.viewportWidth,
+  })), []);
+  const dispatch = useDispatch();
+  const _dispatchUpdateOrder = (order: IMollieApiOrder) => useCallback(() => dispatch(updateOrder(order)), []);
 
   async function _ship(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
@@ -142,7 +131,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
           setLoading(true);
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
-            dispatchUpdateOrder(newOrder);
+            _dispatchUpdateOrder(newOrder);
           } else {
             import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
@@ -196,7 +185,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
-          dispatchUpdateOrder(newOrder);
+          _dispatchUpdateOrder(newOrder);
         } else {
           import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
             swal({
@@ -250,7 +239,7 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
-          dispatchUpdateOrder(newOrder);
+          _dispatchUpdateOrder(newOrder);
         } else {
           swal({
             icon: 'error',
@@ -278,7 +267,11 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
       className={cx({
         'table-responsive': !legacy,
       })}
-      {...props}
+      order={order}
+      currencies={currencies}
+      translations={translations}
+      config={config}
+      viewportWidth={viewportWidth}
     >
       <table className={cx({
         'table': true,
@@ -315,18 +308,3 @@ function OrderLinesTable(props: IProps): ReactElement<{}> {
     </TableContainer>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    order: state.order,
-    currencies: state.currencies,
-    translations: state.translations,
-    config: state.config,
-    viewportWidth: state.viewportWidth,
-  }),
-  (dispatch: Dispatch): Partial<IProps> => ({
-    dispatchUpdateOrder(order: IMollieApiOrder) {
-      dispatch(updateOrder(order));
-    }
-  })
-)(OrderLinesTable);

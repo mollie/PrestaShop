@@ -30,22 +30,20 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import cx from 'classnames';
 
 import PaymentInfo from '@transaction/components/orderlines/PaymentInfo';
 import OrderLinesInfo from '@transaction/components/orderlines/OrderLinesInfo';
 import LoadingDots from '@shared/components/LoadingDots';
-import { IMollieApiOrder, IMollieOrderConfig } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
-interface IProps {
-  // Redux
-  order?: IMollieApiOrder;
-  config?: IMollieOrderConfig;
-}
+export default function OrderPanelContent(): ReactElement<{}> {
+  const { order, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState( (state: IMollieOrderState): any => ({
+    order: state.order,
+    config: state.config,
+  })), []);
 
-function OrderPanelContent({ order, config: { legacy } }: IProps): ReactElement<{}> {
   return (
     <>
       {!order && <LoadingDots/>}
@@ -63,10 +61,3 @@ function OrderPanelContent({ order, config: { legacy } }: IProps): ReactElement<
     </>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    order: state.order,
-    config: state.config,
-  })
-)(OrderPanelContent);

@@ -30,20 +30,18 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
 
 import EmptyRefundTable from '@transaction/components/refund/EmptyRefundTable';
 import RefundTable from '@transaction/components/refund/RefundTable';
-import { IMollieApiPayment, ITranslations } from '@shared/globals';
 
-interface IProps {
-  // Redux
-  payment?: IMollieApiPayment;
-  translations?: ITranslations;
-}
+export default function RefundHistory(): ReactElement<{}> {
+  const { translations, payment }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    payment: state.payment,
+  })), []);
 
-function RefundHistory({ translations, payment }: IProps): ReactElement<{}> {
   return (
     <>
       <h4>{translations.refundHistory}</h4>
@@ -52,10 +50,3 @@ function RefundHistory({ translations, payment }: IProps): ReactElement<{}> {
     </>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    payment: state.payment,
-  })
-)(RefundHistory);

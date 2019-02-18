@@ -30,13 +30,13 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
+import React, { ReactElement, useCallback } from 'react';
 import styled from 'styled-components';
 
 import OrderLinesTable from '@transaction/components/orderlines/OrderLinesTable';
 import EmptyOrderLinesTable from '@transaction/components/orderlines/EmptyOrderLinesTable';
 import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
+import { useMappedState } from 'redux-react-hook';
 
 interface IProps {
   // Redux
@@ -52,7 +52,13 @@ const Div = styled.div`
 }
 ` as any;
 
-function OrderLinesInfo({ translations, order, config: { legacy } }: IProps): ReactElement<{}> {
+export default function OrderLinesInfo(): ReactElement<{}> {
+  const { translations, order, config: { legacy } }: IProps = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    translations: state.translations,
+    order: state.order,
+    config: state.config,
+  })), []);
+
   if (legacy) {
     return (
       <>
@@ -72,11 +78,3 @@ function OrderLinesInfo({ translations, order, config: { legacy } }: IProps): Re
     </Div>
   );
 }
-
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    translations: state.translations,
-    order: state.order,
-    config: state.config,
-  })
-)(OrderLinesInfo);

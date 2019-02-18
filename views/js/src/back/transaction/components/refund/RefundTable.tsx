@@ -30,22 +30,21 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import RefundTableHeader from './RefundTableHeader';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import { get } from 'lodash';
+import { useMappedState } from 'redux-react-hook';
 
 import { formatCurrency } from '@shared/tools';
-import { ICurrencies, IMollieApiPayment, IMollieApiRefund } from '@shared/globals';
+import { IMollieApiRefund } from '@shared/globals';
 
-interface IProps {
-  // Redux
-  payment?: IMollieApiPayment;
-  currencies?: ICurrencies;
-}
+export default function RefundTable(): ReactElement<{}> {
+  const { payment, currencies }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+    payment: state.payment,
+    currencies: state.currencies,
+  })), []);
 
-function RefundTable({ payment, currencies }: IProps): ReactElement<{}> {
   return (
     <div className="table-responsive">
       <table className="table">
@@ -64,9 +63,3 @@ function RefundTable({ payment, currencies }: IProps): ReactElement<{}> {
   );
 }
 
-export default connect<{}, {}, IProps>(
-  (state: IMollieOrderState): Partial<IProps> => ({
-    payment: state.payment,
-    currencies: state.currencies,
-  })
-)(RefundTable);
