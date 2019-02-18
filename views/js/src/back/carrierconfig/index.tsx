@@ -31,8 +31,8 @@
  * @link       https://www.mollie.nl
  */
 import React from 'react';
+import { StoreContext } from 'redux-react-hook';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
 
 import { IMollieCarrierConfig, ITranslations } from '@shared/globals';
 
@@ -57,9 +57,9 @@ export default (
 
     return render(
       (
-        <Provider store={store}>
+        <StoreContext.Provider value={store}>
           <CarrierConfig translations={translations} config={config} target={target}/>
-        </Provider>
+        </StoreContext.Provider>
       ),
       document.getElementById(`${target}_container`)
     );
