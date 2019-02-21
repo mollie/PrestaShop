@@ -2565,10 +2565,10 @@ class Mollie extends PaymentModule
 
         $remaining = round($amount, $apiRoundingPrecision);
         $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
-        $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cart->getGiftWrappingPrice(), $apiRoundingPrecision) : 0;
-        $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
-        $cartItems = $cart->getProducts();
         $cartSummary = $cart->getSummaryDetails();
+        $cartItems = $cart->getProducts();
+        $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+        $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
         $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
 
         $aItems = array();
