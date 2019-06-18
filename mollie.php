@@ -639,6 +639,9 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
+
+        $html .= $this->getSettingsForm();
+
         if (!Configuration::get(static::MOLLIE_API_KEY)) {
             $html .= $this->generateAccountForm();
         }
@@ -762,6 +765,43 @@ class Mollie extends PaymentModule
                 'mollie_new_zipcode' => Tools::isSubmit('mollie_new_zipcode') ? Tools::getValue('mollie_new_zipcode') : trim(Configuration::get('PS_SHOP_CODE')),
                 'mollie_new_city'    => Tools::isSubmit('mollie_new_city') ? Tools::getValue('mollie_new_city') : trim(Configuration::get('PS_SHOP_CITY')),
                 'mollie_new_country' => Tools::isSubmit('mollie_new_country') ? Tools::getValue('mollie_new_country') : Country::getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID')),
+            ),
+            'languages'    => $this->context->controller->getLanguages(),
+            'id_language'  => $this->context->language->id,
+        );
+
+        return $helper->generateForm(array($fields));
+    }
+
+    protected function getSettingsForm()
+    {
+        $fields = array(
+            'form' => array(
+                'tabs' => array(
+                    'general_settings' => $this->l('General settings'),
+                    'advanced_settings' => $this->l('Advanced settings'),
+                ),
+                'input' => array(
+                ),
+            ),
+        );
+
+        $helper = new HelperForm();
+
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = $this->context->language->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitNewAccount';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        $helper->tpl_vars = array(
+            'fields_value' => array(
             ),
             'languages'    => $this->context->controller->getLanguages(),
             'id_language'  => $this->context->language->id,
