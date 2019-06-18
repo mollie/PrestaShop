@@ -639,12 +639,7 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-
         $html .= $this->getSettingsForm();
-
-        if (!Configuration::get(static::MOLLIE_API_KEY)) {
-            $html .= $this->generateAccountForm();
-        }
 
         return $html.$this->generateSettingsForm();
     }
@@ -775,14 +770,17 @@ class Mollie extends PaymentModule
 
     protected function getSettingsForm()
     {
+        $isApiKeyProvided = Configuration::get(static::MOLLIE_API_KEY);
+
+        $inputs = [];
+        if (!$isApiKeyProvided) {
+            $inputs = $this->getAccountSettingsSection();
+        }
+
         $fields = array(
             'form' => array(
-                'tabs' => array(
-                    'general_settings' => $this->l('General settings'),
-                    'advanced_settings' => $this->l('Advanced settings'),
-                ),
-                'input' => array(
-                ),
+                'tabs' => $this->getSettingTabs($isApiKeyProvided),
+                'input' => array($inputs),
             ),
         );
 
@@ -808,6 +806,45 @@ class Mollie extends PaymentModule
         );
 
         return $helper->generateForm(array($fields));
+    }
+
+    protected function getSettingTabs($isApiKeyProvided)
+    {
+        $tabs = array(
+            'general_settings' => $this->l('General settings'),
+        );
+
+        if ($isApiKeyProvided) {
+            $tabs['advanced_settings'] = $this->l('Advanced settings');
+        }
+
+        return $tabs;
+    }
+
+    protected function getAccountSettingsSection()
+    {
+        return array(
+            'type'    => 'switch',
+            'label'   => $this->l('Do you already have a Mollie account?'),
+            'name'    => 'mollie_account_switch',
+            'tab' => 'general_settings',
+            'is_bool' => true,
+            'values'  => array(
+                array(
+                    'id'    => 'active_on',
+                    'value' => true,
+                    'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                ),
+                array(
+                    'id'    => 'active_off',
+                    'value' => false,
+                    'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                ),
+            ),
+            'desc' => $this->context->smarty->fetch(
+                $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
+            ),
+        );
     }
 
     /**
