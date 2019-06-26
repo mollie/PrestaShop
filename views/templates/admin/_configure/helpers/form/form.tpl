@@ -152,6 +152,7 @@
               if (input == null) {
                 var newInput = document.createElement('DIV');
                 newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
+                container.closest('.form-group').style.display = 'block';
                 container.appendChild(newInput);
                 initMollieCarrierConfig();
               }
@@ -161,9 +162,9 @@
                 window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
               }
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-              container.innerHTML = '<div class="info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
+              container.closest('.form-group').style.display = 'none';
               {else}
-              container.innerHTML = '<div class="alert alert-info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
+              container.closest('.form-group').style.display = 'none';
               {/if}
             }
           }
@@ -249,13 +250,11 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
+
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
             }
           }
 
@@ -316,13 +315,10 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
             }
           }
 
@@ -355,13 +351,12 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
+              $(container.closest('.form-group')).prev('.form-group').css( "display", "block" );
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
+              $(container.closest('.form-group')).prev('.form-group').css( "display", "none" );
             }
           }
 

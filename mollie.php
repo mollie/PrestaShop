@@ -835,7 +835,7 @@ class Mollie extends PaymentModule
             ),
         );
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
-        return array(
+        $input =  array(
             array(
                 'type' => 'switch',
                 'label' => $this->l('Do you already have a Mollie account?'),
@@ -872,23 +872,6 @@ class Mollie extends PaymentModule
             ),
             array(
                 'type'  => 'mollie-h2',
-                'name'  => '',
-                'tab' => $generalSettings,
-                'title' => $this->l('Mollie Settings'),
-            ),
-            array(
-                'type'          => 'mollie-description',
-                'label'         => $this->l('Description'),
-                'tab' => $generalSettings,
-                'desc'          => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
-                'name'          => static::MOLLIE_DESCRIPTION,
-                'required'      => true,
-                'class'         => 'fixed-width-xxl',
-                'depends'       => static::MOLLIE_API,
-                'depends_value' => static::MOLLIE_PAYMENTS_API,
-            ),
-            array(
-                'type'  => 'mollie-h2',
                 'tab' => $generalSettings,
                 'name'  => '',
                 'title' => $this->l('Mollie API'),
@@ -913,6 +896,23 @@ class Mollie extends PaymentModule
                     'id'    => 'id',
                     'name'  => 'name',
                 ),
+            ),
+            array(
+                'type'  => 'mollie-h2',
+                'name'  => '',
+                'tab' => $generalSettings,
+                'title' => $this->l('Mollie Settings'),
+            ),
+            array(
+                'type'          => 'mollie-description',
+                'label'         => $this->l('Description'),
+                'tab' => $generalSettings,
+                'desc'          => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
+                'name'          => static::MOLLIE_DESCRIPTION,
+                'required'      => true,
+                'class'         => 'fixed-width-xxl',
+                'depends'       => static::MOLLIE_API,
+                'depends_value' => static::MOLLIE_PAYMENTS_API,
             ),
             array(
                 'type'  => 'mollie-h3',
@@ -1004,7 +1004,10 @@ class Mollie extends PaymentModule
                 'tab' => $generalSettings,
                 'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
             ),
-            array(
+        );
+
+        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+            $input[] = array(
                 'type'    => 'switch',
                 'label'   => $this->l('Enable iDEAL QR'),
                 'tab' => $generalSettings,
@@ -1022,8 +1025,18 @@ class Mollie extends PaymentModule
                         'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                     ),
                 ),
-            )
-        );
+            );
+        } else {
+            $input[] = array(
+                'type'    => 'mollie-warning',
+                'label'   => $this->l('Enable iDEAL QR'),
+                'tab' => $generalSettings,
+                'name'    => static::MOLLIE_QRENABLED,
+                'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
+            );
+        }
+
+        return $input;
     }
 
     protected function getAdvancedSettingsSection()
@@ -1058,6 +1071,101 @@ class Mollie extends PaymentModule
             );
         }
 
+
+
+        $lang = Context::getContext()->language->id;
+        $messageStatus = $this->l('Status for %s payments');
+        $descriptionStatus = $this->l('`%s` payments get status `%s`');
+        $messageMail = $this->l('Send mails when %s');
+        $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
+        $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
+        $statuses = array();
+        foreach ($this->statuses as $name => $val) {
+            if ($name === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+                continue;
+            }
+
+            $val = (int) $val;
+            if ($val) {
+                $desc = Tools::strtolower(
+                    sprintf(
+                        $descriptionStatus,
+                        $this->lang($name),
+                        Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                            'SELECT `name`
+                            FROM `'._DB_PREFIX_.'order_state_lang`
+                            WHERE `id_order_state` = '.(int) $val.'
+                            AND `id_lang` = '.(int) $lang
+                        )
+                    )
+                );
+            } else {
+                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang($name));
+            }
+            $statuses[] = array(
+                'name'             => $name,
+                'key'              => @constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
+                'value'            => $val,
+                'description'      => $desc,
+                'message'          => sprintf($messageStatus, $this->lang($name)),
+                'key_mail'         => @constant('static::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+                'value_mail'       => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+                'description_mail' => sprintf($descriptionMail, $this->lang($name)),
+                'message_mail'     => sprintf($messageMail, $this->lang($name)),
+            );
+        }
+        $input[] = array(
+            'type'  => 'mollie-h2',
+            'name'  => '',
+            'tab' => $advancedSettings,
+            'title' => $this->l('Order statuses'),
+        );
+
+        foreach (array_filter($statuses, function ($status) {
+            return in_array($status['name'], array(
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
+                \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                'partial_refund',
+            ));
+        }) as $status) {
+            if (!in_array($status['name'], array('paid', 'partial_refund'))) {
+                $input[] = array(
+                    'type'    => 'switch',
+                    'label'   => $status['message_mail'],
+                    'tab' => $advancedSettings,
+                    'name'    => $status['key_mail'],
+                    'is_bool' => true,
+                    'values'  => array(
+                        array(
+                            'id'    => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id'    => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                );
+            }
+            $input[] = array(
+                'type'    => 'select',
+                'label'   => $status['message'],
+                'tab' => $advancedSettings,
+                'desc'    => $status['description'],
+                'name'    => $status['key'],
+                'options' => array(
+                    'query' => $allStatuses,
+                    'id'    => 'id_order_state',
+                    'name'  => 'name',
+                ),
+            );
+        }
         $input = array_merge($input, array(
             array(
                 'type'  => 'mollie-h2',
@@ -1103,113 +1211,6 @@ class Mollie extends PaymentModule
                 'class'    => 'long-text',
             ),
         ));
-
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-        } else {
-            $input[] = array(
-                'type'    => 'mollie-warning',
-                'label'   => $this->l('Enable iDEAL QR'),
-                'tab' => $advancedSettings,
-                'name'    => static::MOLLIE_QRENABLED,
-                'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
-            );
-        }
-
-        $lang = Context::getContext()->language->id;
-        $messageStatus = $this->l('Status for %s payments');
-        $descriptionStatus = $this->l('`%s` payments get status `%s`');
-        $messageMail = $this->l('Send mails when %s');
-        $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
-        $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
-        $statuses = array();
-        foreach ($this->statuses as $name => $val) {
-            if ($name === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
-                continue;
-            }
-
-            $val = (int) $val;
-            if ($val) {
-                $desc = Tools::strtolower(
-                    sprintf(
-                        $descriptionStatus,
-                        $this->lang($name),
-                        Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
-                            'SELECT `name`
-                            FROM `'._DB_PREFIX_.'order_state_lang`
-                            WHERE `id_order_state` = '.(int) $val.'
-                            AND `id_lang` = '.(int) $lang
-                        )
-                    )
-                );
-            } else {
-                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang($name));
-            }
-            $statuses[] = array(
-                'name'             => $name,
-                'key'              => @constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
-                'value'            => $val,
-                'description'      => $desc,
-                'message'          => sprintf($messageStatus, $this->lang($name)),
-                'key_mail'         => @constant('static::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
-                'value_mail'       => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
-                'description_mail' => sprintf($descriptionMail, $this->lang($name)),
-                'message_mail'     => sprintf($messageMail, $this->lang($name)),
-            );
-        }
-
-        foreach (array_filter($statuses, function ($status) {
-            return in_array($status['name'], array(
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
-                \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                'partial_refund',
-            ));
-        }) as $status) {
-            $input[] = array(
-                'type'  => 'mollie-h3',
-                'name'  => '',
-                'tab' => $advancedSettings,
-                'class' => 'form-separator',
-                'title' => sprintf($this->l('%s statuses'), $this->lang($status['name'])),
-            );
-            $input[] = array(
-                'type'    => 'select',
-                'label'   => $status['message'],
-                'tab' => $advancedSettings,
-                'desc'    => $status['description'],
-                'name'    => $status['key'],
-                'options' => array(
-                    'query' => $allStatuses,
-                    'id'    => 'id_order_state',
-                    'name'  => 'name',
-                ),
-            );
-            if (!in_array($status['name'], array('paid', 'partial_refund'))) {
-                $input[] = array(
-                    'type'    => 'switch',
-                    'label'   => $status['message_mail'],
-                    'tab' => $advancedSettings,
-                    'name'    => $status['key_mail'],
-                    'is_bool' => true,
-                    'values'  => array(
-                        array(
-                            'id'    => 'active_on',
-                            'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
-                            'id'    => 'active_off',
-                            'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                );
-            }
-        }
-
         $orderStatuses = array(
             array(
                 'name'           => $this->l('Disable this status'),
