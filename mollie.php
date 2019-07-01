@@ -633,6 +633,7 @@ class Mollie extends PaymentModule
             'val_logger'             => Configuration::get(static::MOLLIE_DEBUG_LOG),
             'val_save'               => $this->l('Save'),
             'lang'                   => $this->lang,
+            'logo_url'               => $this->getPathUri() . 'views/img/mollie_logo.png',
         );
 
         $this->context->controller->addJS(static::getWebpackChunks('app'));
