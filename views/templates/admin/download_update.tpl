@@ -35,7 +35,7 @@
   (function () {
     window.MollieModule = window.MollieModule || {ldelim}{rdelim};
     window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-    window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+    window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
     window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
   }());
   (function initMollieUpdater() {
@@ -51,7 +51,7 @@
       fn.default(
         document.getElementById('mollie-update'),
         {
-          endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie&ajax=1',
+          endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&module_name=mollie&ajax=1',
         },
         {
           error: '{l s='Error' mod='mollie' js=1}',

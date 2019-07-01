@@ -114,7 +114,7 @@
           unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
           refundsAreCurrentlyUnavailable: '{l s='Refunds are currently unavailable' mod='mollie' js=1}'
         },
-        {$currencies|json_encode nofilter}
+        {$currencies|json_encode}
       );
     });
   }());

@@ -48,7 +48,7 @@
       (function () {
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function initMollieMethodsConfig() {
@@ -95,7 +95,7 @@
       (function () {
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function () {

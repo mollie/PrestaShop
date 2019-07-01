@@ -101,7 +101,7 @@
   (function awaitMolliePaymentStatus() {
     var timeout = 3000;
     var request = new XMLHttpRequest();
-    request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
+    request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8'}', true);
 
     request.onload = function() {
       if (request.status >= 200 && request.status < 400) {
