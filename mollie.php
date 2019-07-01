@@ -772,7 +772,7 @@ class Mollie extends PaymentModule
     {
         $isApiKeyProvided = Configuration::get(static::MOLLIE_API_KEY);
 
-        $inputs = $this->getAccountSettingsSection();
+        $inputs = $this->getAccountSettingsSection($isApiKeyProvided);
 
         if ($isApiKeyProvided) {
             $inputs = array_merge($inputs, $this->getAdvancedSettingsSection());
@@ -818,222 +818,246 @@ class Mollie extends PaymentModule
             'general_settings' => $this->l('General settings'),
         );
 
-//        if ($isApiKeyProvided) {
+        if ($isApiKeyProvided) {
             $tabs['advanced_settings'] = $this->l('Advanced settings');
-//        }
+        }
 
         return $tabs;
     }
 
-    protected function getAccountSettingsSection()
+    protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
         $orderStatuses = array(
             array(
-                'name'           => $this->l('Disable this status'),
+                'name' => $this->l('Disable this status'),
                 'id_order_state' => '0',
             ),
         );
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
-        $input =  array(
-            array(
-                'type' => 'switch',
-                'label' => $this->l('Do you already have a Mollie account?'),
-                'name' => 'mollie_account_switch',
-                'tab' => $generalSettings,
-                'is_bool' => true,
-                'values' => array(
-                    array(
-                        'id' => 'active_on',
-                        'value' => true,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+        if ($isApiKeyProvided) {
+            $input = array(
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('API Key'),
+                    'tab' => $generalSettings,
+                    'desc' => static::ppTags(
+                        $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
                     ),
-                    array(
-                        'id' => 'active_off',
-                        'value' => false,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ),
-                ),
-                'desc' => $this->context->smarty->fetch(
-                    $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
-                ),
-            ),
-            array(
-                'type'     => 'text',
-                'label'    => $this->l('API Key'),
-                'tab' => $generalSettings,
-                'desc'     => static::ppTags(
-                    $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                    array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
-                ),
-                'name'     => static::MOLLIE_API_KEY,
-                'required' => true,
-                'class'    => 'fixed-width-xxl',
-            ),
-            array(
-                'type'  => 'mollie-h2',
-                'tab' => $generalSettings,
-                'name'  => '',
-                'title' => $this->l('Mollie API'),
-            ),
-            array(
-                'type'    => 'select',
-                'label'   => $this->l('Select which Mollie API to use'),
-                'tab' => $generalSettings,
-                'desc'    => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
-                'name'    => static::MOLLIE_API,
-                'options' => array(
-                    'query' => array(
-                        array(
-                            'id'   => static::MOLLIE_PAYMENTS_API,
-                            'name' => $this->l('Payments API'),
-                        ),
-                        array(
-                            'id'   => static::MOLLIE_ORDERS_API,
-                            'name' => $this->l('Orders API'),
-                        ),
-                    ),
-                    'id'    => 'id',
-                    'name'  => 'name',
-                ),
-            ),
-            array(
-                'type'  => 'mollie-h2',
-                'name'  => '',
-                'tab' => $generalSettings,
-                'title' => $this->l('Mollie Settings'),
-            ),
-            array(
-                'type'          => 'mollie-description',
-                'label'         => $this->l('Description'),
-                'tab' => $generalSettings,
-                'desc'          => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
-                'name'          => static::MOLLIE_DESCRIPTION,
-                'required'      => true,
-                'class'         => 'fixed-width-xxl',
-                'depends'       => static::MOLLIE_API,
-                'depends_value' => static::MOLLIE_PAYMENTS_API,
-            ),
-            array(
-                'type'  => 'mollie-h3',
-                'tab' => $generalSettings,
-                'name'  => '',
-                'title' => $this->l('Orders API'),
-            ),
-            array(
-                'type'           => 'mollie-carriers',
-                'label'          => $this->l('Shipment information'),
-                'tab' => $generalSettings,
-                'name'           => static::MOLLIE_TRACKING_URLS,
-                'depends'        => static::MOLLIE_API,
-                'depends_value'  => static::MOLLIE_ORDERS_API,
-            ),
-            array(
-                'type'    => 'mollie-carrier-switch',
-                'label'   => $this->l('Automatically ship when marked as `shipped`'),
-                'tab' => $generalSettings,
-                'name'    => static::MOLLIE_AUTO_SHIP_MAIN,
-                'desc'    => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
-                'is_bool' => true,
-                'values'  => array(
-                    array(
-                        'id'    => 'active_on',
-                        'value' => true,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                    ),
-                    array(
-                        'id'    => 'active_off',
-                        'value' => false,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ),
-                ),
-                'depends'        => static::MOLLIE_API,
-                'depends_value'  => static::MOLLIE_ORDERS_API,
-            ),
-            array(
-                'type'     => 'checkbox',
-                'label'    => $this->l('Automatically ship when one of these statuses is reached'),
-                'tab' => $generalSettings,
-                'desc'     =>
-                    $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
-                'name'     => static::MOLLIE_AUTO_SHIP_STATUSES,
-                'multiple' => true,
-                'values'   => array(
-                    'query' => $orderStatuses,
-                    'id'    => 'id_order_state',
-                    'name'  => 'name',
-                ),
-                'expand'   => (count($orderStatuses) > 10) ? array(
-                    'print_total' => count($orderStatuses),
-                    'default'     => 'show',
-                    'show'        => array('text' => $this->l('Show'), 'icon' => 'plus-sign-alt'),
-                    'hide'        => array('text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'),
-                ) : null,
-                'depends'        => static::MOLLIE_API,
-                'depends_value'  => static::MOLLIE_ORDERS_API,
-            ),
-            array(
-                'type'    => 'select',
-                'label'   => $this->l('Issuer list'),
-                'tab' => $generalSettings,
-                'desc'    => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
-                'name'    => static::MOLLIE_ISSUERS,
-                'options' => array(
-                    'query' => array(
-                        array(
-                            'id'   => static::ISSUERS_ON_CLICK,
-                            'name' => $this->l('On click'),
-                        ),
-                        array(
-                            'id'   => static::ISSUERS_OWN_PAGE,
-                            'name' => $this->l('Own page'),
-                        ),
-                        array(
-                            'id'   => static::ISSUERS_PAYMENT_PAGE,
-                            'name' => $this->l('Payment page'),
-                        ),
-                    ),
-                    'id'    => 'id',
-                    'name'  => 'name',
-                ),
-            ),
-            array(
-                'type'    => 'mollie-methods',
-                'name'    => static::METHODS_CONFIG,
-                'label'   => $this->l('Payment methods'),
-                'tab' => $generalSettings,
-                'desc'    => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
-            ),
-        );
-
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-            $input[] = array(
-                'type'    => 'switch',
-                'label'   => $this->l('Enable iDEAL QR'),
-                'tab' => $generalSettings,
-                'name'    => static::MOLLIE_QRENABLED,
-                'is_bool' => true,
-                'values'  => array(
-                    array(
-                        'id'    => 'active_on',
-                        'value' => true,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                    ),
-                    array(
-                        'id'    => 'active_off',
-                        'value' => false,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ),
-                ),
+                    'name' => static::MOLLIE_API_KEY,
+                    'required' => true,
+                    'class' => 'fixed-width-xxl',
+                )
             );
         } else {
-            $input[] = array(
-                'type'    => 'mollie-warning',
-                'label'   => $this->l('Enable iDEAL QR'),
-                'tab' => $generalSettings,
-                'name'    => static::MOLLIE_QRENABLED,
-                'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
+            $input = array(
+                array(
+                    'type' => 'mollie-switch',
+                    'label' => $this->l('Do you already have a Mollie account?'),
+                    'name' => 'mollie_account_switch',
+                    'tab' => $generalSettings,
+                    'is_bool' => true,
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                    'desc' => $this->context->smarty->fetch(
+                        $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
+                    ),
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('API Key'),
+                    'tab' => $generalSettings,
+                    'desc' => static::ppTags(
+                        $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
+                    ),
+                    'name' => static::MOLLIE_API_KEY,
+                    'required' => true,
+                    'class' => 'fixed-width-xxl',
+                )
             );
+        }
+        if ($isApiKeyProvided) {
+
+
+            $input = array_merge($input, array(
+                    array(
+                        'type' => 'mollie-h2',
+                        'tab' => $generalSettings,
+                        'name' => '',
+                        'title' => $this->l('Mollie API'),
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('Select which Mollie API to use'),
+                        'tab' => $generalSettings,
+                        'desc' => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
+                        'name' => static::MOLLIE_API,
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id' => static::MOLLIE_PAYMENTS_API,
+                                    'name' => $this->l('Payments API'),
+                                ),
+                                array(
+                                    'id' => static::MOLLIE_ORDERS_API,
+                                    'name' => $this->l('Orders API'),
+                                ),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+                    array(
+                        'type' => 'mollie-h2',
+                        'name' => '',
+                        'tab' => $generalSettings,
+                        'title' => $this->l('Mollie Settings'),
+                    ),
+                    array(
+                        'type' => 'mollie-description',
+                        'label' => $this->l('Description'),
+                        'tab' => $generalSettings,
+                        'desc' => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
+                        'name' => static::MOLLIE_DESCRIPTION,
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                        'depends' => static::MOLLIE_API,
+                        'depends_value' => static::MOLLIE_PAYMENTS_API,
+                    ),
+                    array(
+                        'type' => 'mollie-h3',
+                        'tab' => $generalSettings,
+                        'name' => '',
+                        'title' => $this->l('Orders API'),
+                    ),
+                    array(
+                        'type' => 'mollie-carriers',
+                        'label' => $this->l('Shipment information'),
+                        'tab' => $generalSettings,
+                        'name' => static::MOLLIE_TRACKING_URLS,
+                        'depends' => static::MOLLIE_API,
+                        'depends_value' => static::MOLLIE_ORDERS_API,
+                    ),
+                    array(
+                        'type' => 'mollie-carrier-switch',
+                        'label' => $this->l('Automatically ship when marked as `shipped`'),
+                        'tab' => $generalSettings,
+                        'name' => static::MOLLIE_AUTO_SHIP_MAIN,
+                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            ),
+                        ),
+                        'depends' => static::MOLLIE_API,
+                        'depends_value' => static::MOLLIE_ORDERS_API,
+                    ),
+                    array(
+                        'type' => 'checkbox',
+                        'label' => $this->l('Automatically ship when one of these statuses is reached'),
+                        'tab' => $generalSettings,
+                        'desc' =>
+                            $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
+                        'name' => static::MOLLIE_AUTO_SHIP_STATUSES,
+                        'multiple' => true,
+                        'values' => array(
+                            'query' => $orderStatuses,
+                            'id' => 'id_order_state',
+                            'name' => 'name',
+                        ),
+                        'expand' => (count($orderStatuses) > 10) ? array(
+                            'print_total' => count($orderStatuses),
+                            'default' => 'show',
+                            'show' => array('text' => $this->l('Show'), 'icon' => 'plus-sign-alt'),
+                            'hide' => array('text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'),
+                        ) : null,
+                        'depends' => static::MOLLIE_API,
+                        'depends_value' => static::MOLLIE_ORDERS_API,
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('Issuer list'),
+                        'tab' => $generalSettings,
+                        'desc' => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
+                        'name' => static::MOLLIE_ISSUERS,
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id' => static::ISSUERS_ON_CLICK,
+                                    'name' => $this->l('On click'),
+                                ),
+                                array(
+                                    'id' => static::ISSUERS_OWN_PAGE,
+                                    'name' => $this->l('Own page'),
+                                ),
+                                array(
+                                    'id' => static::ISSUERS_PAYMENT_PAGE,
+                                    'name' => $this->l('Payment page'),
+                                ),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+                    array(
+                        'type' => 'mollie-methods',
+                        'name' => static::METHODS_CONFIG,
+                        'label' => $this->l('Payment methods'),
+                        'tab' => $generalSettings,
+                        'desc' => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
+                    ),
+                )
+            );
+
+            if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+                $input[] = array(
+                    'type' => 'switch',
+                    'label' => $this->l('Enable iDEAL QR'),
+                    'tab' => $generalSettings,
+                    'name' => static::MOLLIE_QRENABLED,
+                    'is_bool' => true,
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => true,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => false,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                );
+            } else {
+                $input[] = array(
+                    'type' => 'mollie-warning',
+                    'label' => $this->l('Enable iDEAL QR'),
+                    'tab' => $generalSettings,
+                    'name' => static::MOLLIE_QRENABLED,
+                    'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
+                );
+            }
         }
 
         return $input;
