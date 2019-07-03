@@ -608,7 +608,7 @@ class Mollie extends PaymentModule
         if (Tools::isSubmit("submit{$this->name}")) {
             $resultMessage = $this->getSaveResult($errors);
             if (!empty($errors)) {
-                $this->context->controller->errors[] = $resultMessage;
+                $this->context->controller->errors = $resultMessage;
             } else {
                 $this->context->controller->confirmations[] = $resultMessage;
             }
@@ -844,7 +844,7 @@ class Mollie extends PaymentModule
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
+                        array($this->display(__FILE__, 'views/templates/admin/mollie_profile.tpl'))
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
@@ -881,7 +881,7 @@ class Mollie extends PaymentModule
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array('<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">')
+                        array($this->display(__FILE__, 'views/templates/admin/mollie_profile.tpl'))
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
@@ -1076,7 +1076,7 @@ class Mollie extends PaymentModule
                 'tab' => $advancedSettings,
                 'desc'    => static::ppTags(
                     $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                    array('<a href="https://en.wikipedia.org/wiki/Locale">')
+                    array($this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl'))
                 ),
                 'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
                 'options' => array(
@@ -1284,9 +1284,15 @@ class Mollie extends PaymentModule
                     'type'    => 'select',
                     'label'   => $this->l('Log level'),
                     'tab' => $advancedSettings,
-                    'desc'    => static::ppTags(
+                    'desc' => static::ppTags(
                         $this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
-                        array("<a href='{$this->context->link->getAdminLink('AdminLogs')}'>")
+                        array(
+                            $this->display(
+                                __FILE__,
+                                'views/templates/admin/view_logs.tpl',
+                                ['logs' => $this->context->link->getAdminLink('AdminLogs')]
+                            )
+                        )
                     ),
                     'name'    => static::MOLLIE_DEBUG_LOG,
                     'options' => array(
@@ -1619,7 +1625,10 @@ class Mollie extends PaymentModule
             }
             $resultMessage = $this->l('The configuration has been saved!');
         } else {
-            $resultMessage = 'The configuration could not be saved:<br /> - '.implode('<br /> - ', $errors);
+            $resultMessage = array();
+            foreach ($errors as $error) {
+                $resultMessage[] = $error;
+            }
         }
 
         return $resultMessage;

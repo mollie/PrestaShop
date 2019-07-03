@@ -457,6 +457,7 @@
         initMollieAccount();
       }());
     </script>
+
   {else}
     {$smarty.block.parent}
   {/if}
