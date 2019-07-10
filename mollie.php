@@ -2571,33 +2571,6 @@ class Mollie extends PaymentModule
             );
             $paymentData['issuer'] = $issuer;
 
-            if (isset($context->cart)) {
-                if (isset($context->cart->id_customer)) {
-                    $buyer = new Customer($context->cart->id_customer);
-                    $paymentData['billingEmail'] = (string) $buyer->email;
-                }
-                if (isset($context->cart->id_address_invoice)) {
-                    $billing = new Address((int) $context->cart->id_address_invoice);
-                    $paymentData['billingAddress'] = array(
-                        'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
-                        'city'            => (string) $billing->city,
-                        'region'          => (string) State::getNameById($billing->id_state),
-                        'country'         => (string) Country::getIsoById($billing->id_country),
-                    );
-                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
-                }
-                if (isset($context->cart->id_address_delivery)) {
-                    $shipping = new Address((int) $context->cart->id_address_delivery);
-                    $paymentData['shippingAddress'] = array(
-                        'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
-                        'city'            => (string) $shipping->city,
-                        'region'          => (string) State::getNameById($shipping->id_state),
-                        'country'         => (string) Country::getIsoById($shipping->id_country),
-                    );
-                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
-                }
-            }
-
             switch ($method) {
                 case \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
@@ -3930,24 +3903,29 @@ class Mollie extends PaymentModule
                             }
                             $customizationText = Tools::rtrimString($customizationText, '---<br />');
                             $customizationQuantity = (int) $product['customization_quantity'];
-                            $productsList .=
-                                '<tr style="background-color: '.($key % 2 ? '#DDE2E6' : '#EBECEE').';">
-								<td style="padding: 0.6em 0.4em;width: 15%;">'.$product['reference'].'</td>
-								<td style="padding: 0.6em 0.4em;width: 30%;"><strong>'.$product['name'].(isset($product['attributes']) ? ' - '.$product['attributes'] : '').' - '.Tools::displayError('Customized').(!empty($customizationText) ? ' - '.$customizationText : '').'</strong></td>
-								<td style="padding: 0.6em 0.4em; width: 20%;">'.Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false).'</td>
-								<td style="padding: 0.6em 0.4em; width: 15%;">'.$customizationQuantity.'</td>
-								<td style="padding: 0.6em 0.4em; width: 20%;">'.Tools::displayPrice($customizationQuantity * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false).'</td>
-							</tr>';
+                            $productsList .= $this->display(
+                                __FILE__, 'views/templates/front/product.tpl',
+                                array(
+                                    'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
+                                    'product' => $product,
+                                    'customizationText' => Tools::displayError('Customized').(!empty($customizationText) ? ' - '.$customizationText : ''),
+                                    'price' => Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
+                                    'customizationQuantity' => $customizationQuantity,
+                                    'fullPrice' => Tools::displayPrice($customizationQuantity * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
+
+                                ));
                         }
                         if (!$customizationQuantity || (int) $product['cart_quantity'] > $customizationQuantity) {
-                            $productsList .=
-                                '<tr style="background-color: '.($key % 2 ? '#DDE2E6' : '#EBECEE').';">
-								<td style="padding: 0.6em 0.4em;width: 15%;">'.$product['reference'].'</td>
-								<td style="padding: 0.6em 0.4em;width: 30%;"><strong>'.$product['name'].(isset($product['attributes']) ? ' - '.$product['attributes'] : '').'</strong></td>
-								<td style="padding: 0.6em 0.4em; width: 20%;">'.Tools::displayPrice(Product::getTaxCalculationMethod((int) $this->context->customer->id) == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false).'</td>
-								<td style="padding: 0.6em 0.4em; width: 15%;">'.((int) $product['cart_quantity'] - $customizationQuantity).'</td>
-								<td style="padding: 0.6em 0.4em; width: 20%;">'.Tools::displayPrice(((int) $product['cart_quantity'] - $customizationQuantity) * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false).'</td>
-							</tr>';
+                            $productsList .= $this->display(
+                                __FILE__, 'views/templates/front/product.tpl',
+                                array(
+                                    'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
+                                    'product' => $product,
+                                    'customizationText' => Tools::displayError('Customized').(!empty($customizationText) ? ' - '.$customizationText : ''),
+                                    'price' => Tools::displayPrice(Product::getTaxCalculationMethod((int) $this->context->customer->id) == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
+                                    'customizationQuantity' => ((int) $product['cart_quantity'] - $customizationQuantity),
+                                    'fullPrice' => Tools::displayPrice(((int) $product['cart_quantity'] - $customizationQuantity) * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
+                                ));
                         }
                         // Check if is not a virutal product for the displaying of shipping
                         if (!$product['is_virtual']) {
