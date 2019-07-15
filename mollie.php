@@ -3864,12 +3864,11 @@ class Mollie extends PaymentModule
                 $order = $orderList[$key];
                 if (!$orderCreationFailed && isset($order->id)) {
                     if (!$secureKey) {
-                        $message .= '<br />'.Tools::displayError('Warning: the secure key is empty, check your payment account before validation');
+                        $message .= Tools::displayError('Warning: the secure key is empty, check your payment account before validation');
                     }
                     // Optional message to attach to this order
                     if (isset($message) & !empty($message)) {
                         $msg = new Message();
-                        $message = strip_tags($message, '<br>');
                         if (Validate::isCleanHtml($message)) {
                             $msg->message = $message;
                             $msg->id_order = (int) $order->id;
@@ -3908,23 +3907,23 @@ class Mollie extends PaymentModule
                                 array(
                                     'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
                                     'product' => $product,
-                                    'customizationText' => Tools::displayError('Customized').(!empty($customizationText) ? ' - '.$customizationText : ''),
+                                    'customizationText' => Tools::displayError('Customized') . (!empty($customizationText) ? ' - ' . $customizationText : ''),
                                     'price' => Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
                                     'customizationQuantity' => $customizationQuantity,
                                     'fullPrice' => Tools::displayPrice($customizationQuantity * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
 
                                 ));
                         }
-                        if (!$customizationQuantity || (int) $product['cart_quantity'] > $customizationQuantity) {
+                        if (!$customizationQuantity || (int)$product['cart_quantity'] > $customizationQuantity) {
                             $productsList .= $this->display(
                                 __FILE__, 'views/templates/front/product.tpl',
                                 array(
                                     'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
                                     'product' => $product,
-                                    'customizationText' => Tools::displayError('Customized').(!empty($customizationText) ? ' - '.$customizationText : ''),
-                                    'price' => Tools::displayPrice(Product::getTaxCalculationMethod((int) $this->context->customer->id) == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
-                                    'customizationQuantity' => ((int) $product['cart_quantity'] - $customizationQuantity),
-                                    'fullPrice' => Tools::displayPrice(((int) $product['cart_quantity'] - $customizationQuantity) * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
+                                    'customizationText' => Tools::displayError('Customized') . (!empty($customizationText) ? ' - ' . $customizationText : ''),
+                                    'price' => Tools::displayPrice(Product::getTaxCalculationMethod((int)$this->context->customer->id) == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
+                                    'customizationQuantity' => ((int)$product['cart_quantity'] - $customizationQuantity),
+                                    'fullPrice' => Tools::displayPrice(((int)$product['cart_quantity'] - $customizationQuantity) * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
                                 ));
                         }
                         // Check if is not a virutal product for the displaying of shipping

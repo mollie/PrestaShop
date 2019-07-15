@@ -36,4 +36,4 @@
     <td style="padding: 0.6em 0.4em; width: 20%;">{$price|escape:'htmlall':'UTF-8'}</td>
     <td style="padding: 0.6em 0.4em; width: 15%;">{$customizationQuantity|escape:'htmlall':'UTF-8'}</td>
     <td style="padding: 0.6em 0.4em; width: 20%;">{$fullPrice|escape:'htmlall':'UTF-8'}</td>
-</tr>'
+</tr>
