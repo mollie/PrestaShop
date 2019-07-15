@@ -30,4 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<a href="https://en.wikipedia.org/wiki/Locale">
+<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">

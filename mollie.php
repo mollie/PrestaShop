@@ -844,7 +844,7 @@ class Mollie extends PaymentModule
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array($this->display(__FILE__, 'views/templates/admin/mollie_profile.tpl'))
+                        array($this->display(__FILE__, 'views/templates/admin/profile.tpl'))
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
@@ -881,7 +881,7 @@ class Mollie extends PaymentModule
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array($this->display(__FILE__, 'views/templates/admin/mollie_profile.tpl'))
+                        array($this->display(__FILE__, 'views/templates/admin/profile.tpl'))
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
@@ -4030,7 +4030,7 @@ class Mollie extends PaymentModule
                             array(
                                 'error' => Tools::displayError('Voucher name:'),
                                 'cartRuleName' => $cartRule['obj']->name,
-                                'price' => T($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice(
+                                'price' => ($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice(
                                     $values['tax_incl'],
                                     $this->context->currency,
                                     false
