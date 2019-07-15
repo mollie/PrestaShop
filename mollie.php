@@ -1230,7 +1230,7 @@ class Mollie extends PaymentModule
                 'tab' => $advancedSettings,
                 'desc'     => static::ppTags(
                     $this->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
-                    array('<kbd>')
+                    array($this->display(__FILE__, 'views/templates/front/kbd.tpl'))
                 ),
                 'name'     => static::MOLLIE_CSS,
                 'class'    => 'long-text',
@@ -3892,15 +3892,16 @@ class Mollie extends PaymentModule
                             foreach ($customizedDatas[$product['id_product']][$product['id_product_attribute']][$order->id_address_delivery] as $customization) {
                                 if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
                                     foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
-                                        $customizationText .= $text['name'].': '.$text['value'].'<br />';
+                                        $customizationText .= $text['name'].': '.$text['value'] .
+                                            $this->display(__FILE__, 'views/templates/front/product.tpl');
                                     }
                                 }
                                 if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                                    $customizationText .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])).'<br />';
+                                    $customizationText .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . $this->display(__FILE__, 'views/templates/front/product.tpl');
                                 }
-                                $customizationText .= '---<br />';
+                                $customizationText .= '---' . $this->display(__FILE__, 'views/templates/front/product.tpl');
                             }
-                            $customizationText = Tools::rtrimString($customizationText, '---<br />');
+                            $customizationText = Tools::rtrimString($customizationText, '---' . $this->display(__FILE__, 'views/templates/front/product.tpl'));
                             $customizationQuantity = (int) $product['customization_quantity'];
                             $productsList .= $this->display(
                                 __FILE__, 'views/templates/front/product.tpl',
@@ -4024,11 +4025,17 @@ class Mollie extends PaymentModule
                             $cartRuleToUpdate->quantity = max(0, $cartRuleToUpdate->quantity - 1);
                             $cartRuleToUpdate->update();
                         }
-                        $cartRulesList .= '
-						<tr>
-							<td colspan="4" style="padding:0.6em 0.4em;text-align:right">'.Tools::displayError('Voucher name:').' '.$cartRule['obj']->name.'</td>
-							<td style="padding:0.6em 0.4em;text-align:right">'.($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice($values['tax_incl'], $this->context->currency, false).'</td>
-						</tr>';
+                        $cartRulesList .= $this->display(
+                            __FILE__, 'views/templates/front/cart_rules_list.tpl',
+                            array(
+                                'error' => Tools::displayError('Voucher name:'),
+                                'cartRuleName' => $cartRule['obj']->name,
+                                'price' => T($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice(
+                                    $values['tax_incl'],
+                                    $this->context->currency,
+                                    false
+                                    ),
+                            ));
                     }
                     // Specify order id for message
                     $oldMessage = Message::getMessageByCartId((int) $this->context->cart->id);
@@ -4090,14 +4097,20 @@ class Mollie extends PaymentModule
                             '{email}'                => $this->context->customer->email,
                             '{delivery_block_txt}'   => $this->_getFormatedAddress($delivery, "\n"),
                             '{invoice_block_txt}'    => $this->_getFormatedAddress($invoice, "\n"),
-                            '{delivery_block_html}'  => $this->_getFormatedAddress($delivery, '<br />', array(
-                                'firstname' => '<span style="font-weight:bold;">%s</span>',
-                                'lastname'  => '<span style="font-weight:bold;">%s</span>',
-                            )),
-                            '{invoice_block_html}'   => $this->_getFormatedAddress($invoice, '<br />', array(
-                                'firstname' => '<span style="font-weight:bold;">%s</span>',
-                                'lastname'  => '<span style="font-weight:bold;">%s</span>',
-                            )),
+                            '{delivery_block_html}' => $this->_getFormatedAddress(
+                                $delivery,
+                                $this->display(__FILE__, 'views/templates/front/cart_rules_list.tpl'),
+                                array(
+                                    'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                    'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                )),
+                            '{invoice_block_html}' => $this->_getFormatedAddress(
+                                $invoice,
+                                $this->display(__FILE__, 'views/templates/front/cart_rules_list.tpl'),
+                                array(
+                                    'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                    'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                )),
                             '{delivery_company}'     => $delivery->company,
                             '{delivery_firstname}'   => $delivery->firstname,
                             '{delivery_lastname}'    => $delivery->lastname,
@@ -4467,12 +4480,12 @@ class Mollie extends PaymentModule
                 $order = $orderList[$key];
                 if (isset($order->id)) {
                     if (!$secureKey) {
-                        $message .= '<br />'.$this->l('Warning: the secure key is empty, check your payment account before validation');
+                        $message .= $this->display(__FILE__, 'views/templates/front/break.tpl').$this->l('Warning: the secure key is empty, check your payment account before validation');
                     }
                     // Optional message to attach to this order
                     if (isset($message) & !empty($message)) {
                         $msg = new Message();
-                        $message = strip_tags($message, '<br>');
+                        $message = strip_tags($message, $this->display(__FILE__, 'views/templates/front/break.tpl'));
                         if (Validate::isCleanHtml($message)) {
                             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                                 Logger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
@@ -4599,11 +4612,11 @@ class Mollie extends PaymentModule
                                 $customizationText = '';
                                 if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
                                     foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
-                                        $customizationText .= '<strong>'.$text['name'].'</strong>: '.$text['value'].'<br />';
+                                        $customizationText .= $this->display(__FILE__, 'views/templates/front/strong.tpl', array('text' => $text['name'])) . ': '.$text['value'].$this->display(__FILE__, 'views/templates/front/break.tpl');
                                     }
                                 }
                                 if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                                    $customizationText .= sprintf($this->l('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])).'<br />';
+                                    $customizationText .= sprintf($this->l('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])).$this->display(__FILE__, 'views/templates/front/break.tpl');
                                 }
                                 $customizationQuantity = (int) $customization['quantity'];
                                 $productVarTpl['customization'][] = array(
@@ -4805,13 +4818,13 @@ class Mollie extends PaymentModule
                             '{email}'                => $this->context->customer->email,
                             '{delivery_block_txt}'   => $this->_getFormatedAddress($delivery, "\n"),
                             '{invoice_block_txt}'    => $this->_getFormatedAddress($invoice, "\n"),
-                            '{delivery_block_html}'  => $this->_getFormatedAddress($delivery, '<br />', array(
-                                'firstname' => '<span style="font-weight:bold;">%s</span>',
-                                'lastname'  => '<span style="font-weight:bold;">%s</span>',
+                            '{delivery_block_html}'  => $this->_getFormatedAddress($delivery, $this->display(__FILE__, 'views/templates/front/break.tpl'), array(
+                                'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                'lastname'  => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
                             )),
-                            '{invoice_block_html}'   => $this->_getFormatedAddress($invoice, '<br />', array(
-                                'firstname' => '<span style="font-weight:bold;">%s</span>',
-                                'lastname'  => '<span style="font-weight:bold;">%s</span>',
+                            '{invoice_block_html}'   => $this->_getFormatedAddress($invoice, $this->display(__FILE__, 'views/templates/front/break.tpl'), array(
+                                'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                                'lastname'  => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
                             )),
                             '{delivery_company}'     => $delivery->company,
                             '{delivery_firstname}'   => $delivery->firstname,
@@ -5100,7 +5113,7 @@ class Mollie extends PaymentModule
                     $content = Tools::file_get_contents($rootDir.$path.$file);
 
                     $namespacePattern = '[\\a-z0-9_]*[\\]';
-                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P<classname>'.basename($file, '.php').'(?:Core)?)'.'(?:\s+extends\s+'.$namespacePattern.'[a-z][a-z0-9_]*)?(?:\s+implements\s+'.$namespacePattern.'[a-z][\\a-z0-9_]*(?:\s*,\s*'.$namespacePattern.'[a-z][\\a-z0-9_]*)*)?\s*\{#i';
+                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P' . $this->display(__FILE__, 'views/templates/front/classname.tpl') . basename($file, '.php').'(?:Core)?)'.'(?:\s+extends\s+'.$namespacePattern.'[a-z][a-z0-9_]*)?(?:\s+implements\s+'.$namespacePattern.'[a-z][\\a-z0-9_]*(?:\s*,\s*'.$namespacePattern.'[a-z][\\a-z0-9_]*)*)?\s*\{#i';
 
                     if (preg_match($pattern, $content, $m)) {
                         $classes[$m['classname']] = array(
