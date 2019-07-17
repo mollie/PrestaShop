@@ -371,7 +371,7 @@ class Mollie extends PaymentModule
         }
 
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')
-            && version_compare(_PS_VERSION_, '1.7.6.0', '<=')
+            && version_compare(_PS_VERSION_, '1.7.0.5', '<')
         ) {
             // Bugfix generating invoices on 1.7.0.x => Register Admin/PDF displayPrice Smarty function when missing
             try {
