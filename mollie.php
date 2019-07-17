@@ -2045,6 +2045,7 @@ class Mollie extends PaymentModule
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
         $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/src/front/apple_payment.js');
     }
 
     /**
@@ -3345,6 +3346,12 @@ class Mollie extends PaymentModule
             ) {
                 unset($methods[$index]);
             }
+            if (
+                $method['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::APPLEPAY
+                && $_COOKIE['isApplePayMethod'] === '0'
+            ) {
+                unset($methods[$index]);
+            }
         }
 
         return $methods;
@@ -3369,7 +3376,7 @@ class Mollie extends PaymentModule
     public function getMethodsForConfig($active = false)
     {
         $notAvailable = array();
-        $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers'))->getArrayCopy();
+        $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
