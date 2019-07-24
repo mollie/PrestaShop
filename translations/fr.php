@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{mollie}prestashop>mollie_09748ce33c8a71296b20ba8c3bd1d13e'] = 'Module de paiement Mollie';
-$_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Mollie Payments';
+$_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Mollie Paiements';
 $_MODULE['<{mollie}prestashop>mollie_48dedcf43487615c84c1bbbf6fe76c76'] = 'Etes-vous sûr de vouloir installer le module de paiement Mollie ? ';
 $_MODULE['<{mollie}prestashop>mollie_ab552f085567bbe63872c10a3596cd27'] = 'Erreur paiement :';
 $_MODULE['<{mollie}prestashop>mollie_76e084771e78c194efd0e2d5b8920bea'] = 'Payé';
@@ -11,7 +11,7 @@ $_MODULE['<{mollie}prestashop>mollie_f7d543c9b824323b84ab11668002f207'] = 'Autor
 $_MODULE['<{mollie}prestashop>mollie_d5c39a1d9aced393f835f334a1fb9206'] = 'Annulé';
 $_MODULE['<{mollie}prestashop>mollie_c4bfb2a0bab0e91bc7dcfbe3bbec246e'] = 'Expiré';
 $_MODULE['<{mollie}prestashop>mollie_ad32204fca182b862a5f97a5534c03a2'] = 'Remboursé';
-$_MODULE['<{mollie}prestashop>mollie_542ba101e183aea6bc8dab5b1ec5ef7f'] = 'virement en attente';
+$_MODULE['<{mollie}prestashop>mollie_542ba101e183aea6bc8dab5b1ec5ef7f'] = 'Virement en attente';
 $_MODULE['<{mollie}prestashop>mollie_837cbb7173db2e32b3783e87597dac90'] = 'Partiellement remboursé';
 $_MODULE['<{mollie}prestashop>mollie_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Cette méthode de paiement n\'est pas disponible.';
 $_MODULE['<{mollie}prestashop>mollie_96d0e2862e0167af0c2fd0c99fe6bc5d'] = 'Cliquez ici pour continuer';
@@ -261,7 +261,7 @@ $_MODULE['<{mollie}prestashop>mollie_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Livra
 $_MODULE['<{mollie}prestashop>mollie_3a6e70059673992f825826f7cf89278d'] = 'La règle panier "%1s" (ID %2s) utilisée n\'est pas valide et a été retirée du panier';
 $_MODULE['<{mollie}prestashop>mollie_3a1048f8aa3a9f6b604fcf7982811752'] = 'Attention : il n\'y a pas de clé sécurisée. Vérifiez votre compte de paiement avant validation';
 $_MODULE['<{mollie}prestashop>mollie_26beb437d3323bd4bfb0811b3e891315'] = '%d image(s)';
-$_MODULE['<{mollie}prestashop>mollie_0791970c961c09eb8caaa61aba6a3ca4'] = 'Une erreur s\'est produite lor de la sauvegarde du message';
+$_MODULE['<{mollie}prestashop>mollie_0791970c961c09eb8caaa61aba6a3ca4'] = 'Une erreur s\'est produite lors de la sauvegarde du message';
 $_MODULE['<{mollie}prestashop>mollie_ed13b3693357ebed3751cb71cb639e65'] = 'Pas de transporteur';
 $_MODULE['<{mollie}prestashop>mollie_b08d3867be98e6fff3233cd40ab8134a'] = 'La création de la commande a échoué';
 $_MODULE['<{mollie}prestashop>mollie_43423b4056880b08f2c9aa50d8670531'] = 'Impossible de charger le panier ou une commande a déjà été passée avec ce panier.';
