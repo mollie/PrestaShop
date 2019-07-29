@@ -204,6 +204,7 @@ class Mollie extends PaymentModule
 
     const STATUS_PAID_ON_BACKORDER = "paid_on_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_on_backorder";
+    const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
 
     /**
      * Hooks for this module
@@ -3388,7 +3389,7 @@ class Mollie extends PaymentModule
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
-            }, $this->api->methods->all()->getArrayCopy());
+            }, $this->api->methods->all(['includeWallets' => 'applepay'])->getArrayCopy());
             $orderApiMethods = array_map(function ($item) {
                 return $item->id;
             }, $apiMethods);
@@ -4379,6 +4380,9 @@ class Mollie extends PaymentModule
                         $order->id_carrier = 0;
                         $idCarrier = 0;
                     }
+
+                    $withTaxes = $this->isCartWithTaxes($idCart);
+
                     $order->id_customer = (int) $this->context->cart->id_customer;
                     $order->id_address_invoice = (int) $this->context->cart->id_address_invoice;
                     $order->id_address_delivery = (int) $idAddress;
@@ -4402,21 +4406,21 @@ class Mollie extends PaymentModule
                     $amountPaid = !$dontTouchAmount ? Tools::ps_round((float) $amountPaid, 2) : $amountPaid;
                     $order->total_paid_real = 0;
                     $order->total_products = (float) $this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
                     $order->total_discounts_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
-                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
                     $order->total_discounts = $order->total_discounts_tax_incl;
                     $order->total_shipping_tax_excl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, false, null, $order->product_list);
-                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, true, null, $order->product_list);
+                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, $withTaxes, null, $order->product_list);
                     $order->total_shipping = $order->total_shipping_tax_incl;
                     if (!is_null($carrier) && Validate::isLoadedObject($carrier)) {
                         $order->carrier_tax_rate = $carrier->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
                     }
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
-                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
                     $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
+                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal($withTaxes, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
@@ -4444,7 +4448,7 @@ class Mollie extends PaymentModule
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
-                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
+                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, $withTaxes, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
@@ -4983,6 +4987,24 @@ class Mollie extends PaymentModule
         }
 
         return false;
+    }
+
+    /**
+     *
+     *
+     * @param $idCart
+     * @return bool
+     */
+    private function isCartWithTaxes($idCart) {
+        $cart = new Cart($idCart);
+        $customer = new Customer($cart->id_customer);
+        $group_price_display_method = Group::getPriceDisplayMethod($customer->id_default_group);
+        $withTaxes = true;
+        if ($group_price_display_method === $this::PRICE_DISPLAY_METHOD_NO_TAXES) {
+            $withTaxes = false;
+        }
+
+        return $withTaxes;
     }
 
     /**
