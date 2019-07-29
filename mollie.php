@@ -202,6 +202,9 @@ class Mollie extends PaymentModule
 
     const API_ROUNDING_PRECISION = 2;
 
+    const STATUS_PAID_ON_BACKORDER = "paid_on_backorder";
+    const STATUS_PENDING_ON_BACKORDER = "pending_on_backorder";
+
     /**
      * Hooks for this module
      *
@@ -254,7 +257,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.0';
+        $this->version = '3.5.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -305,6 +308,9 @@ class Mollie extends PaymentModule
             \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
+            $this::STATUS_PENDING_ON_BACKORDER                              => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
+
         );
 
         // Load all translatable text here so we have a single translation point
@@ -4811,7 +4817,7 @@ class Mollie extends PaymentModule
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
                         ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
                     ) {
-                        $this->setOrderStatus($order, Configuration::get($order->valid ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true, $extraVars);
+                        $this->setOrderStatus($order, Configuration::get($this->isPaid($idOrderState) ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true, $extraVars);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
@@ -4961,6 +4967,22 @@ class Mollie extends PaymentModule
             Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
+    }
+
+    /**
+     * Checks if status is paid
+     *
+     * @param $statusId
+     * @return bool
+     */
+    private function isPaid($statusId) {
+        $status = array_search($statusId, $this->statuses,false);
+        if ($status === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID
+            || $status === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
