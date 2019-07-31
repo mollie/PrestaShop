@@ -30,4 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8'}</h4>
+<a href="https://www.mollie.com/dashboard/signup/4602094" target="_blank">
+    {l s='Click here' mod='mollie'}
+</a>
+&nbsp;{l s='to create a new account' mod='mollie'}

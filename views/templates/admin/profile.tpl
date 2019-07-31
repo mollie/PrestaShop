@@ -30,4 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8'}</h4>
+<a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank" rel="noopener noreferrer">

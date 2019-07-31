@@ -48,7 +48,7 @@
       (function () {
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function initMollieMethodsConfig() {
@@ -95,7 +95,7 @@
       (function () {
         window.MollieModule = window.MollieModule || {ldelim}{rdelim};
         window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8' nofilter}';
+        window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
         window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
       }());
       (function () {
@@ -152,6 +152,7 @@
               if (input == null) {
                 var newInput = document.createElement('DIV');
                 newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
+                container.closest('.form-group').style.display = 'block';
                 container.appendChild(newInput);
                 initMollieCarrierConfig();
               }
@@ -161,9 +162,9 @@
                 window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
               }
               {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-              container.innerHTML = '<div class="info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
+              container.closest('.form-group').style.display = 'none';
               {else}
-              container.innerHTML = '<div class="alert alert-info">{l s='This option is not required for the currently selected API' mod='mollie' js=1}</div>';
+              container.closest('.form-group').style.display = 'none';
               {/if}
             }
           }
@@ -249,13 +250,11 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
+
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
             }
           }
 
@@ -316,13 +315,10 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
             }
           }
 
@@ -355,13 +351,12 @@
 
           function checkInput (e) {
             var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-            var info = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_info');
             if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-              container.style.display = 'block';
-              info.style.display = 'none';
+              container.closest('.form-group').style.display = 'block';
+              $(container.closest('.form-group')).prev('.form-group').css( "display", "block" );
             } else {
-              container.style.display = 'none';
-              info.style.display = 'block';
+              container.closest('.form-group').style.display = 'none';
+              $(container.closest('.form-group')).prev('.form-group').css( "display", "none" );
             }
           }
 
@@ -376,6 +371,93 @@
         initMollieDescriptionAuto();
       }());
     </script>
+  {elseif $input.type === 'mollie-switch'}
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_info" style="display: none" class="{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}info{else}alert alert-info{/if}">{l s='This option is not required for the currently selected API' mod='mollie'}</div>
+    <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
+      {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
+        {foreach $input.values as $value}
+          <input
+                  type="radio"
+                  name="{$input.name|escape:'htmlall':'UTF-8'}"
+                  id="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}"
+                  value={if {$value.value|escape:'htmlall':'UTF-8'} == 1} "1" {else} "0" {/if}
+                  {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+                  {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+          >
+          <label class="t" for="{$input.name|escape:'htmlall':'UTF-8'}_{$value.id|escape:'htmlall':'UTF-8'}">
+            {if isset($input.is_bool) && $input.is_bool == true}
+              {if $value.value == 1}
+                <img
+                        src="../img/admin/enabled.gif"
+                        alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                        title="{$value.label|escape:'htmlall':'UTF-8'}"
+                />
+              {else}
+                <img
+                        src="../img/admin/disabled.gif"
+                        alt="{$value.label|escape:'htmlall':'UTF-8'}"
+                        title="{$value.label|escape:'htmlall':'UTF-8'}"
+                />
+              {/if}
+            {else}
+              {$value.label|escape:'htmlall':'UTF-8'}
+            {/if}
+          </label>
+          {if isset($input.br) && $input.br}<br />{/if}
+          {if isset($value.p) && $value.p}<p>{$value.p|escape:'htmlall':'UTF-8'}</p>{/if}
+        {/foreach}
+      {else}
+        <span class="switch prestashop-switch fixed-width-lg">
+          {foreach $input.values as $value}
+            <input
+                    type="radio"
+                    name="{$input.name|escape:'htmlall':'UTF-8'}"{if $value.value == 1}
+              id="{$input.name|escape:'htmlall':'UTF-8'}_on"{else}id="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}
+              value={if {$value.value|escape:'htmlall':'UTF-8'} == 1} "1" {else} "0" {/if}
+              {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
+                    {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
+            />
+          {strip}
+            <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
+            {if $value.value == 1}
+              {l s='Yes' mod='mollie'}
+            {else}
+              {l s='No' mod='mollie'}
+            {/if}
+          </label>
+          {/strip}
+          {/foreach}
+          <a class="slide-button btn"></a>
+        </span>
+      {/if}
+    </div>
+    <script type="text/javascript">
+      (function () {
+        function initMollieAccount() {
+          var source = $('input[name="MOLLIE_ACCOUNT_SWITCH"]');
+
+          function checkInput(e) {
+            if ($('input[name="MOLLIE_ACCOUNT_SWITCH"]:checked').val() == '0') {
+              e.closest('.form-group').next('.form-group').hide();
+              e.closest('.form-group').find('.help-block').show();
+            } else {
+              e.closest('.form-group').next('.form-group').show();
+              e.closest('.form-group').find('.help-block').hide();
+            }
+          }
+          setTimeout(function () {
+            checkInput(source);
+          }, 100);
+
+          $(source).on('change', function () {
+            checkInput(source);
+          });
+        }
+
+        initMollieAccount();
+      }());
+    </script>
+
   {else}
     {$smarty.block.parent}
   {/if}

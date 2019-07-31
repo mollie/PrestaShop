@@ -36,16 +36,16 @@
       <div class="mollie_issuer">
         <div class="mollie_text_center">
           {if count($issuers)}
-            <span style="font-size: 24px; font-weight: 700; margin-bottom:10px">{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</span>
+            <span style="font-size: 24px; font-weight: 700; margin-bottom:10px">{$msg_bankselect|escape:'htmlall':'UTF-8'}</span>
             {foreach $issuers as $issuer}
               <button
                 type="submit"
                 name="issuer"
                 class="mollie_button"
-                value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}"
+                value="{$issuer->id|escape:'htmlall':'UTF-8'}"
               >
-                <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8' nofilter}">
-                <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
+                <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8'}">
+                <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8'}</p>
               </button>
             {/foreach}
             <input
@@ -58,10 +58,10 @@
             {/block}
           {/if}
           <span class="clearfix" style="font-size: 20px; margin-bottom:10px; margin-top:10px">{l s='or choose a different payment method' mod='mollie'}</span>
-          <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}"
+          <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8'}"
              class="mollie_btn mollie_btn_primary"
           >
-            {$msg_return|escape:'htmlall':'UTF-8' nofilter}
+            {$msg_return|escape:'htmlall':'UTF-8'}
           </a>
         </div>
       </div>

@@ -30,4 +30,10 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8'}</h4>
+<tr style="background-color: {$color|escape:'htmlall':'UTF-8'}">
+    <td style="padding: 0.6em 0.4em;width: 15%;">{$product.reference|escape:'htmlall':'UTF-8'}</td>
+    <td style="padding: 0.6em 0.4em;width: 30%;"><strong>{$product.name|escape:'htmlall':'UTF-8'}{$product.attributes|escape:'htmlall':'UTF-8'} - {$customizationText|escape:'htmlall':'UTF-8'}</strong></td>
+    <td style="padding: 0.6em 0.4em; width: 20%;">{$price|escape:'htmlall':'UTF-8'}</td>
+    <td style="padding: 0.6em 0.4em; width: 15%;">{$customizationQuantity|escape:'htmlall':'UTF-8'}</td>
+    <td style="padding: 0.6em 0.4em; width: 20%;">{$fullPrice|escape:'htmlall':'UTF-8'}</td>
+</tr>

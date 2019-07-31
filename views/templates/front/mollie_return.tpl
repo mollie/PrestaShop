@@ -31,7 +31,7 @@
 * @link       https://www.mollie.nl
 *}
 <h2>{l s='Welcome back' mod='mollie'}</h2>
-<p>{$msg_details|escape:'htmlall':'UTF-8' nofilter}</p>
-<a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8' nofilter}">
+<p>{$msg_details|escape:'htmlall':'UTF-8'}</p>
+<a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8'}">
   <i class="icon icon-chevron-left"></i> {l s='Continue shopping' mod='mollie'}
 </a>

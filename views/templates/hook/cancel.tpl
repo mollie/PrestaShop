@@ -31,5 +31,5 @@
 * @link       https://www.mollie.nl
 *}
 <h4 id="mollie-cancel">
-  {$cancelMessage|escape:'html':'UTF-8' nofilter nofilter}
+  {$cancelMessage|escape:'html':'UTF-8'}
 </h4>

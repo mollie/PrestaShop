@@ -101,6 +101,7 @@
   (function awaitMolliePaymentStatus() {
     var timeout = 3000;
     var request = new XMLHttpRequest();
+    // nofilter is needed for url with variables
     request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
 
     request.onload = function() {

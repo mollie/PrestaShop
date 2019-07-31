@@ -30,4 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8'}</h4>
+<tr>
+    <td colspan="4" style="padding:0.6em 0.4em;text-align:right">{$error|escape:'htmlall':'UTF-8'} {$cartRuleName|escape:'htmlall':'UTF-8'}</td>
+    <td style="padding:0.6em 0.4em;text-align:right">{$price|escape:'htmlall':'UTF-8'}</td>
+</tr>

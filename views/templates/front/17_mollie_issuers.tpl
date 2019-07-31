@@ -31,7 +31,7 @@
 * @link       https://www.mollie.nl
 *}
 <!doctype html>
-<html lang="{$language.iso_code|escape:'htmlall':'UTF-8' nofilter}">
+<html lang="{$language.iso_code|escape:'htmlall':'UTF-8'}">
 <head>
   {block name='head'}
     {include file='_partials/head.tpl'}
@@ -52,34 +52,34 @@
               <div class="col-sm-12 col-md-4">
                 <div class="text-sm-center">
                   {if count($issuers)}
-                    <a href="{$urls.base_url|escape:'htmlall':'UTF-8' nofilter}">
+                    <a href="{$urls.base_url|escape:'htmlall':'UTF-8'}">
                       <img class="logo img-responsive"
-                           src="{$shop.logo|escape:'htmlall':'UTF-8' nofilter}"
-                           alt="{$shop.name|escape:'htmlall':'UTF-8' nofilter}"
+                           src="{$shop.logo|escape:'htmlall':'UTF-8'}"
+                           alt="{$shop.name|escape:'htmlall':'UTF-8'}"
                       >
                     </a>
                     <br/>
                     <br/>
-                    <h4>{$msg_bankselect|escape:'htmlall':'UTF-8' nofilter}</h4>
+                    <h4>{$msg_bankselect|escape:'htmlall':'UTF-8'}</h4>
                     {foreach $issuers as $issuer}
                       <button type="submit"
                               name="issuer"
                               class="mollie_button"
-                              value="{$issuer->id|escape:'htmlall':'UTF-8' nofilter}"
+                              value="{$issuer->id|escape:'htmlall':'UTF-8'}"
                       >
-                        <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8' nofilter}">
-                        <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8' nofilter}</p>
+                        <img src="{$issuer->image->svg|escape:'htmlall':'UTF-8'}">
+                        <p class="mollie_p">{$issuer->name|escape:'htmlall':'UTF-8'}</p>
                       </button>
                     {/foreach}
                     <input type="hidden" name="method" value="ideal">
                   {/if}
                   {include file='module:mollie/views/templates/hook/qr_code.tpl'}
                   <a
-                    href="{$urls.pages.order|escape:'htmlall':'UTF-8' nofilter}"
+                    href="{$urls.pages.order|escape:'htmlall':'UTF-8'}"
                     class="btn btn-primary"
                     style="margin-top: 10px"
                   >
-                    {$msg_return|escape:'htmlall':'UTF-8' nofilter}
+                    {$msg_return|escape:'htmlall':'UTF-8'}
                   </a>
                 </div>
               </div>
