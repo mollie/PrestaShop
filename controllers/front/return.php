@@ -126,8 +126,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             if ($data['mollie_info'] === false) {
                 $data['mollie_info'] = array();
                 $data['msg_details'] = $this->module->lang('The order with this id does not exist.');
-            } elseif ($data['mollie_info']['method'] === \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER
-                && $data['mollie_info']['bank_status'] === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+            } elseif ($data['mollie_info']['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
+                && $data['mollie_info']['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
             ) {
                 $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
@@ -135,23 +135,23 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                     case 'created':
                         $data['wait'] = true;
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
                         $data['wait'] = true;
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
                         $data['wait'] = true;
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                         Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
                         $data['msg_details'] = $this->module->lang('Unfortunately your payment was expired.');
                         break;
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
-                    case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+                    case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
                         // Validate the Order
                         if (isset($cart) && Validate::isLoadedObject($cart)) {
                             Tools::redirect(
@@ -319,9 +319,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         switch ($apiPayment->status) {
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                 $status = static::DONE;
             die(json_encode(array(
                 'success'  => true,
@@ -329,8 +329,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 'response' => json_encode($apiPayment),
                 'href'     => $this->context->link->getPagelink('order', true, null, array('step' => 3))
             )));
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
                 $status = static::DONE;
                 break;
             default:

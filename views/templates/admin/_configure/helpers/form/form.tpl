@@ -434,10 +434,10 @@
     <script type="text/javascript">
       (function () {
         function initMollieAccount() {
-          var source = $('input[name="mollie_account_switch"]');
+          var source = $('input[name="MOLLIE_ACCOUNT_SWITCH"]');
 
           function checkInput(e) {
-            if ($('input[name="mollie_account_switch"]:checked').val() == '0') {
+            if ($('input[name="MOLLIE_ACCOUNT_SWITCH"]:checked').val() == '0') {
               e.closest('.form-group').next('.form-group').hide();
               e.closest('.form-group').find('.help-block').show();
             } else {

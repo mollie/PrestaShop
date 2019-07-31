@@ -58,7 +58,7 @@ if (!function_exists('\\Hough\\Psr7\\str')) {
  */
 class Mollie extends PaymentModule
 {
-    /** @var \MollieModule\Mollie\Api\MollieApiClient|null */
+    /** @var \Mollie\Api\MollieApiClient|null */
     public $api = null;
     /** @var array $statuses */
     public $statuses = array();
@@ -159,6 +159,7 @@ class Mollie extends PaymentModule
     const DEBUG_LOG_ALL = 2;
 
     const MOLLIE_API_KEY = 'MOLLIE_API_KEY';
+    const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_DESCRIPTION = 'MOLLIE_DESCRIPTION';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
@@ -205,6 +206,7 @@ class Mollie extends PaymentModule
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
+    const APPLEPAY = 'applepay';
 
     /**
      * Hooks for this module
@@ -274,11 +276,11 @@ class Mollie extends PaymentModule
         $this->controllers = array('payment', 'return', 'webhook', 'qrcode');
 
         try {
-            $this->api = new \MollieModule\Mollie\Api\MollieApiClient();
+            $this->api = new \Mollie\Api\MollieApiClient();
             if (Configuration::get(static::MOLLIE_API_KEY)) {
                 try {
                     $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
-                } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+                } catch (\Mollie\Api\Exceptions\ApiException $e) {
                 }
             } elseif (!empty($this->context->employee)
                 && Tools::getValue('Mollie_Api_Key')
@@ -293,20 +295,20 @@ class Mollie extends PaymentModule
                 $this->api->addVersionString('PrestaShop/'._PS_VERSION_);
                 $this->api->addVersionString("MolliePrestaShop/{$this->version}");
             }
-        } catch (\MollieModule\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+        } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             Logger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $this->warning = $this->l('Payment error:').$e->getMessage();
             Logger::addLog(__METHOD__.' said: '.$this->warning, static::CRASH);
         }
 
         $this->statuses = array(
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
-            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
@@ -316,12 +318,12 @@ class Mollie extends PaymentModule
 
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('Paid'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                   => $this->l('Authorized'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                     => $this->l('Canceled'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                      => $this->l('Expired'),
-            \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('Refunded'),
-            \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('Bankwire pending'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('Paid'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                   => $this->l('Authorized'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                     => $this->l('Canceled'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                      => $this->l('Expired'),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('Refunded'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('Bankwire pending'),
             static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('Partially refunded'),
             'created'                                                                                                                         => $this->l('Created'),
             'This payment method is not available.'                                                                                           => $this->l('This payment method is not available.'),
@@ -460,6 +462,7 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_CANCELED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_EXPIRED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_REFUNDED);
+        Configuration::deleteByName(static::MOLLIE_ACCOUNT_SWITCH);
 
         return parent::uninstall();
     }
@@ -509,6 +512,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
 
         Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
     }
@@ -865,7 +869,7 @@ class Mollie extends PaymentModule
                 array(
                     'type' => 'mollie-switch',
                     'label' => $this->l('Do you already have a Mollie account?'),
-                    'name' => 'mollie_account_switch',
+                    'name' => static::MOLLIE_ACCOUNT_SWITCH,
                     'tab' => $generalSettings,
                     'is_bool' => true,
                     'values' => array(
@@ -1115,7 +1119,7 @@ class Mollie extends PaymentModule
         $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
         $statuses = array();
         foreach ($this->statuses as $name => $val) {
-            if ($name === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+            if ($name === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
                 continue;
             }
 
@@ -1157,12 +1161,12 @@ class Mollie extends PaymentModule
 
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], array(
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
-                \MollieModule\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-                \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+                \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
+                \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
+                \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
+                \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
+                \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                 'partial_refund',
             ));
         }) as $status) {
@@ -1259,6 +1263,9 @@ class Mollie extends PaymentModule
 
         $this->aasort($orderStatuses, 'id_order_state');
 
+        $this->context->smarty->assign(array(
+            'logs' => $this->context->link->getAdminLink('AdminLogs')
+        ));
         $input = array_merge(
             $input,
             array(
@@ -1296,11 +1303,7 @@ class Mollie extends PaymentModule
                     'desc' => static::ppTags(
                         $this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
                         array(
-                            $this->display(
-                                __FILE__,
-                                'views/templates/admin/view_logs.tpl',
-                                ['logs' => $this->context->link->getAdminLink('AdminLogs')]
-                            )
+                            $this->display(__FILE__, 'views/templates/admin/view_logs.tpl')
                         )
                     ),
                     'name'    => static::MOLLIE_DEBUG_LOG,
@@ -1357,6 +1360,7 @@ class Mollie extends PaymentModule
             static::MOLLIE_MAIL_WHEN_CANCELED    => Configuration::get(static::MOLLIE_MAIL_WHEN_CANCELED),
             static::MOLLIE_MAIL_WHEN_EXPIRED     => Configuration::get(static::MOLLIE_MAIL_WHEN_EXPIRED),
             static::MOLLIE_MAIL_WHEN_REFUNDED    => Configuration::get(static::MOLLIE_MAIL_WHEN_REFUNDED),
+            static::MOLLIE_ACCOUNT_SWITCH        => Configuration::get(static::MOLLIE_ACCOUNT_SWITCH),
 
             static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
             static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
@@ -1528,8 +1532,8 @@ class Mollie extends PaymentModule
                     _DB_PREFIX_.'mollie_payments',
                     bqSQL($column),
                     pSQL($id),
-                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                    \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED
+                    \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
+                    \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
@@ -1625,7 +1629,7 @@ class Mollie extends PaymentModule
                 $this->statuses[Tools::strtolower($name)] = $new;
                 Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
 
-                if ($name != \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
+                if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
                     Configuration::updateValue(
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
@@ -1736,7 +1740,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since      3.0.0
@@ -1758,7 +1762,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
@@ -1767,7 +1771,7 @@ class Mollie extends PaymentModule
     protected function doPaymentRefund($transactionId, $amount = null)
     {
         try {
-            /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+            /** @var \Mollie\Api\Resources\Payment $payment */
             $payment = $this->api->payments->get($transactionId);
             if ($amount) {
                 $payment->refund(array(
@@ -1784,7 +1788,7 @@ class Mollie extends PaymentModule
                     ),
                 ));
             }
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'status'      => 'fail',
                 'msg_fail'    => $this->lang('The order could not be refunded!'),
@@ -1794,7 +1798,7 @@ class Mollie extends PaymentModule
 
         if (Mollie::isLocalEnvironment()) {
             // Refresh payment on local environments
-            /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+            /** @var \Mollie\Api\Resources\Payment $payment */
             $apiPayment = $this->api->payments->get($transactionId);
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->name;
@@ -1822,7 +1826,7 @@ class Mollie extends PaymentModule
     protected function doShipOrderLines($transactionId, $lines = array(), $tracking = null)
     {
         try {
-            /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
+            /** @var \Mollie\Api\Resources\Order $payment */
             $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             $shipment = array(
                 'lines' => array_map(function ($line) {
@@ -1841,7 +1845,7 @@ class Mollie extends PaymentModule
 
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
-                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                /** @var \Mollie\Api\Resources\Payment $payment */
                 $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
@@ -1849,7 +1853,7 @@ class Mollie extends PaymentModule
                 $webhookController = new MollieWebhookModuleFrontController();
                 $webhookController->processTransaction($apiPayment);
             }
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
                 'message'  => $this->lang('The product(s) could not be shipped!'),
@@ -1881,7 +1885,7 @@ class Mollie extends PaymentModule
     protected function doRefundOrderLines($transactionId, $lines = array())
     {
         try {
-            /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
+            /** @var \Mollie\Api\Resources\Order $payment */
             $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             $refund = array(
                 'lines' => array_map(function ($line) {
@@ -1897,7 +1901,7 @@ class Mollie extends PaymentModule
 
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
-                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                /** @var \Mollie\Api\Resources\Payment $payment */
                 $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
@@ -1905,7 +1909,7 @@ class Mollie extends PaymentModule
                 $webhookController = new MollieWebhookModuleFrontController();
                 $webhookController->processTransaction($apiPayment);
             }
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
                 'message'  => $this->lang('The product(s) could not be refunded!'),
@@ -1938,7 +1942,7 @@ class Mollie extends PaymentModule
     protected function doCancelOrderLines($transactionId, $lines = array())
     {
         try {
-            /** @var \MollieModule\Mollie\Api\Resources\Order $payment */
+            /** @var \Mollie\Api\Resources\Order $payment */
             $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
             if ($lines === array()) {
                 $order->cancel();
@@ -1952,7 +1956,7 @@ class Mollie extends PaymentModule
 
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
-                /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+                /** @var \Mollie\Api\Resources\Payment $payment */
                 $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
@@ -1960,7 +1964,7 @@ class Mollie extends PaymentModule
                 $webhookController = new MollieWebhookModuleFrontController();
                 $webhookController->processTransaction($apiPayment);
             }
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
                 'message'  => $this->lang('The product(s) could not be canceled!'),
@@ -1978,14 +1982,14 @@ class Mollie extends PaymentModule
     /**
      * @return array
      *
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws PrestaShopException
      */
     public function getIssuerList()
     {
         $methods = array();
         foreach ($this->api->methods->all(array('include' => 'issuers')) as $method) {
-            /** @var \MollieModule\Mollie\Api\Resources\Method $method */
+            /** @var \Mollie\Api\Resources\Method $method */
             foreach ((array) $method->issuers as $issuer) {
                 if (!$issuer) {
                     continue;
@@ -2136,8 +2140,8 @@ class Mollie extends PaymentModule
         $apiMethods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+            if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
@@ -2145,7 +2149,7 @@ class Mollie extends PaymentModule
                         array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
                         true
                     );
-                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+                    $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
                 }
             }
         }
@@ -2194,8 +2198,8 @@ class Mollie extends PaymentModule
         $methods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($methods as $apiMethod) {
-            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+            if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
@@ -2203,7 +2207,7 @@ class Mollie extends PaymentModule
                         array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
                         true
                     );
-                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+                    $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
                 }
             }
         }
@@ -2254,8 +2258,8 @@ class Mollie extends PaymentModule
         $methods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($methods as $apiMethod) {
-            if ($apiMethod['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+            if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
@@ -2263,7 +2267,7 @@ class Mollie extends PaymentModule
                         array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
                         true
                     );
-                    $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+                    $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
                 }
             }
         }
@@ -2272,8 +2276,8 @@ class Mollie extends PaymentModule
         $cart = $context->cart;
 
         $context->smarty->assign(array(
-            'idealIssuers'  => isset($issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL])
-                ? $issuerList[\MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL]
+            'idealIssuers'  => isset($issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL])
+                ? $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL]
                 : array(),
             'link'          => $this->context->link,
             'qrCodeEnabled' => Configuration::get(static::MOLLIE_QRENABLED),
@@ -2292,7 +2296,7 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            if ($method['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL
+            if ($method['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL
                 && Configuration::get(static::MOLLIE_ISSUERS) === static::ISSUERS_ON_CLICK
             ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -2359,7 +2363,7 @@ class Mollie extends PaymentModule
     public function hookDisplayOrderConfirmation()
     {
         $payment = $this->getPaymentBy('cart_id', (int) Tools::getValue('id_cart'));
-        if ($payment && $payment['bank_status'] == \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
+        if ($payment && $payment['bank_status'] == \Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
             $this->context->smarty->assign('okMessage', $this->lang('Thank you. Your payment has been received.'));
 
             return $this->display(__FILE__, 'ok.tpl');
@@ -2582,11 +2586,11 @@ class Mollie extends PaymentModule
             $paymentData['issuer'] = $issuer;
 
             switch ($method) {
-                case \MollieModule\Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
+                case \Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
                     $paymentData['locale'] = static::getWebshopLocale();
                     break;
-                case \MollieModule\Mollie\Api\Types\PaymentMethod::BITCOIN:
+                case \Mollie\Api\Types\PaymentMethod::BITCOIN:
                     $paymentData['billingEmail'] = $customer->email;
                     break;
             }
@@ -3356,7 +3360,7 @@ class Mollie extends PaymentModule
                 unset($methods[$index]);
             }
             if (
-                $method['id'] === \MollieModule\Mollie\Api\Types\PaymentMethod::APPLEPAY
+                $method['id'] === $this::APPLEPAY
                 && $_COOKIE['isApplePayMethod'] === '0'
             ) {
                 unset($methods[$index]);
@@ -3375,7 +3379,7 @@ class Mollie extends PaymentModule
      *
      * @throws PrestaShopException
      *
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      *
      * @since 3.0.0
      * @since 3.4.0 public
@@ -4981,8 +4985,8 @@ class Mollie extends PaymentModule
      */
     private function isPaid($statusId) {
         $status = array_search($statusId, $this->statuses,false);
-        if ($status === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID
-            || $status === \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+        if ($status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
+            || $status === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
             return true;
         }
 
@@ -5241,7 +5245,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
@@ -5249,7 +5253,7 @@ class Mollie extends PaymentModule
      */
     public function getFilteredApiPayment($transactionId, $process = false)
     {
-        /** @var \MollieModule\Mollie\Api\Resources\Payment $payment */
+        /** @var \Mollie\Api\Resources\Payment $payment */
         $payment = $this->api->payments->get($transactionId);
         if ($process) {
             if (!Tools::isSubmit('module')) {
@@ -5315,7 +5319,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      *
      * @since 3.3.0
@@ -5323,7 +5327,7 @@ class Mollie extends PaymentModule
      */
     public function getFilteredApiOrder($transactionId, $process = false)
     {
-        /** @var \MollieModule\Mollie\Api\Resources\Order $order */
+        /** @var \Mollie\Api\Resources\Order $order */
         $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
         if ($process) {
             if (!Tools::isSubmit('module')) {
@@ -5384,7 +5388,7 @@ class Mollie extends PaymentModule
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $methodsForConfig = $this->getMethodsForConfig();
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success' => false,
                 'methods' => null,
@@ -5744,8 +5748,8 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $length = Tools::strlen(\MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
-        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== \MollieModule\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
+        $length = Tools::strlen(\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
+        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== \Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
         ) {
             // No need to check regular payments
             return;
@@ -5762,7 +5766,7 @@ class Mollie extends PaymentModule
             }
 
             $apiOrder->shipAll($shipmentInfo);
-        } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\Mollie\Api\Exceptions\ApiException $e) {
             Logger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         } catch (Exception $e) {

@@ -62,7 +62,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function initContent()
     {
@@ -77,8 +77,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             if (is_array($dbPayment)) {
                 try {
                     $apiPayment = $this->module->api->payments->get($dbPayment['transaction_id']);
-                    $canceled = $apiPayment->status !== \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID;
-                } catch (\MollieModule\Mollie\Api\Exceptions\ApiException $e) {
+                    $canceled = $apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_PAID;
+                } catch (\Mollie\Api\Exceptions\ApiException $e) {
                 }
             }
 
@@ -96,7 +96,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function processAjax()
     {
@@ -116,7 +116,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \MollieModule\Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
      */
     protected function processNewQrCode()
@@ -138,7 +138,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         $payment = $mollie->api->{Mollie::selectedApi()}->create(Mollie::getPaymentData(
             $orderTotal,
             Tools::strtoupper($this->context->currency->iso_code),
-            \MollieModule\Mollie\Api\Types\PaymentMethod::IDEAL,
+            \Mollie\Api\Types\PaymentMethod::IDEAL,
             null,
             (int) $cart->id,
             $customer->secure_key,
@@ -154,7 +154,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                     'cart_id'        => (int) $cart->id,
                     'method'         => pSQL($payment->method),
                     'transaction_id' => pSQL($payment->id),
-                    'bank_status'    => \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'bank_status'    => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
                 )
             );
@@ -193,7 +193,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         if (Mollie::isLocalEnvironment()) {
-            /** @var \MollieModule\Mollie\Api\Resources\Payment|\MollieModule\Mollie\Api\Resources\Order $payment */
+            /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $payment */
             $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->module->name;
@@ -219,11 +219,11 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         switch ($payment['bank_status']) {
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_PAID:
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
                 $status = static::SUCCESS;
                 break;
-            case \MollieModule\Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
+            case \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
                 $status = static::PENDING;
                 break;
             default:
