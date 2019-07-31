@@ -202,8 +202,8 @@ class Mollie extends PaymentModule
 
     const API_ROUNDING_PRECISION = 2;
 
-    const STATUS_PAID_ON_BACKORDER = "paid_on_backorder";
-    const STATUS_PENDING_ON_BACKORDER = "pending_on_backorder";
+    const STATUS_PAID_ON_BACKORDER = "paid_backorder";
+    const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
 
     /**

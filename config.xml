@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<module>
-    <name>mollie</name>
-    <displayName><![CDATA[Mollie]]></displayName>
-    <version><![CDATA[3.4.0]]></version>
-    <description><![CDATA[Mollie Payments]]></description>
-    <author><![CDATA[Mollie B.V.]]></author>
-    <tab><![CDATA[payments_gateways]]></tab>
-	<confirmUninstall><![CDATA[Are you sure you want to uninstall the Mollie Payment Module?]]></confirmUninstall>
-    <is_configurable>1</is_configurable>
-    <need_instance>1</need_instance>
+        <module>
+            <name>mollie</name>
+            <displayName><![CDATA[Mollie]]></displayName>
+            <version><![CDATA[3.5.0]]></version>
+            <description><![CDATA[Mollie Payments]]></description>
+            <author><![CDATA[Mollie B.V.]]></author>
+            <tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall>Are you sure you want to uninstall the Mollie Payment Module?</confirmUninstall>
+            <is_configurable>1</is_configurable>
+            <need_instance>1</need_instance>
 	<limited_countries></limited_countries>
-</module>
+        </module>
