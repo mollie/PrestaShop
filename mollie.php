@@ -87,7 +87,7 @@ class Mollie extends PaymentModule
         'giftcard'        => array('eur'),
         'giropay'         => array('eur'),
         'ideal'           => array('eur'),
-        'applepay'        => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
+        'applepay'        => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
         'inghomepay'      => array('eur'),
         'kbc'             => array('eur'),
         'bancontact'      => array('eur'),
