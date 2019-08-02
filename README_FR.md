@@ -21,7 +21,7 @@ Choose the best payment provider available for your online PrestaShop store. Cre
 Download and install the Mollie PrestaShop payment module and start receiving online payments now! -->
 
 
-## Fabriqué et maintenu par [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
+## Fabriqué et maintenu par [Invertus](https://www.invertus.eu). ##
 
 ## Compatible avec PrestaShop 1.5 à 1.7 ##
 
