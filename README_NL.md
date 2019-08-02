@@ -20,7 +20,7 @@ Ontvang wereldwijd betalingen van klanten dankzij ons Multi-currency systeem. Mo
 Kies de beste betaalprovider voor uw PrestaShop webwinkel. Maak direct uw merchant account aan op [Mollie.com](https://www.mollie.com/).
 Download en installeer de Mollie betaalmodule voor PrestaShop om direct online betalingen te ontvangen! -->
 
-## Verzorgd door [Snowy Cat Software](https://www.snowycatsoftware.com/). ##
+## Verzorgd door [Invertus](https://www.invertus.eu). ##
 
 ## Voor PrestaShop 1.5 tot en met 1.7 ##
 
