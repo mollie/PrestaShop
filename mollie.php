@@ -1662,7 +1662,7 @@ class Mollie extends PaymentModule
                 ? 'https://api.github.com/repos/mollie/thirtybees/releases/latest'
                 : 'https://api.github.com/repos/mollie/PrestaShop/releases/latest');
         }
-        $curl = new \MollieModule\Curl\Curl();
+        $curl = new \Curl\Curl();
         $response = $curl->get($url);
         if (!is_object($response)) {
             throw new PrestaShopException($this->l('Warning: Could not retrieve update file from github.'));
@@ -3188,7 +3188,7 @@ class Mollie extends PaymentModule
     {
         $zipLocation = _PS_MODULE_DIR_.$moduleName.'.zip';
         if (@!file_exists($zipLocation)) {
-            $curl = new \MollieModule\Curl\Curl();
+            $curl = new \Curl\Curl();
             $curl->setOpt(CURLOPT_ENCODING, '');
             $curl->setOpt(CURLOPT_FOLLOWLOCATION, 1);
             if (!$curl->download($location, _PS_MODULE_DIR_.'mollie-update.zip')) {

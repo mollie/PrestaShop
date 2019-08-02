@@ -33,9 +33,9 @@
  * @codingStandardsIgnoreStart
  */
 
-use MollieModule\Mollie\Api\Resources\Payment;
-use MollieModule\Mollie\Api\Resources\ResourceFactory;
-use MollieModule\Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Resources\Payment;
+use Mollie\Api\Resources\ResourceFactory;
+use Mollie\Api\Types\PaymentStatus;
 
 if (!defined('_PS_VERSION_')) {
     exit;
