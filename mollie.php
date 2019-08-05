@@ -2115,13 +2115,13 @@ class Mollie extends PaymentModule
             );
         }
 
-        $this->context->controller->addJS(static::getWebpackChunks('app'));
         $this->context->smarty->assign(array(
             'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
             'currencies'    => $currencies,
             'tracking'      => static::getShipmentInformation($params['id_order']),
             'publicPath'    => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
+            'webPackChunks' => static::getWebpackChunks('app'),
         ));
 
         return $this->display(__FILE__, 'order_info.tpl');

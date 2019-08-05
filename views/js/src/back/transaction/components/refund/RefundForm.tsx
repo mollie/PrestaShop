@@ -146,18 +146,23 @@ export default function RefundForm(): ReactElement<{}> {
       </>
     );
   }
-
+  let html;
+  if (payment.settlementAmount) {
+    html = (<RefundButton
+        refundPayment={_refundPayment}
+        loading={loading}
+        disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+    />);
+  } else {
+    html = '';
+  }
   return (
     <>
       <h4>{translations.refund}</h4>
       <div className="well well-sm">
         <div className="form-inline">
           <div className="form-group">
-            <RefundButton
-              refundPayment={_refundPayment}
-              loading={loading}
-              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
-            />
+            {html}
           </div>
           <div className="form-group">
             <div className="input-group" style={{ minWidth: '100px' }}>

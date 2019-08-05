@@ -119,3 +119,6 @@
     });
   }());
 </script>
+{foreach $webPackChunks as $webPackChunk}
+<script type="text/javascript" src="{$webPackChunk}"></script>
+{/foreach}
