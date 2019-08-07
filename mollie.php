@@ -96,6 +96,8 @@ class Mollie extends PaymentModule
         'sofort'          => array('eur'),
         'klarnapaylater'  => array('eur'),
         'klarnasliceit'   => array('eur'),
+         'mybank'         => array('eur'),
+
     );
     /**
      * Default payment method availability
@@ -130,6 +132,7 @@ class Mollie extends PaymentModule
             'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'pt', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 'pt', 're',
             'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'es', 'se', 'ch', 'gb', 'uk',
         ),
+        'mybank'          => array(),
     );
 
     // The Addons version does not include the GitHub updater
@@ -247,6 +250,7 @@ class Mollie extends PaymentModule
         'klarnapaylater'  => 'Pay later.',
         'klarnaspliceit'  => 'Slice it.',
         'applepay'        => 'Apple Pay',
+        'mybank'          => 'MyBank',
     );
 
     /**
@@ -260,7 +264,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.0';
+        $this->version = '3.4.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -369,6 +373,7 @@ class Mollie extends PaymentModule
             'eps'                                                                                                                             => $this->l('eps'),
             'Pay later.'                                                                                                                      => $this->l('Pay later.'),
             'Slice it.'                                                                                                                       => $this->l('Slice it.'),
+            'MyBank'                                                                                                                          => $this->l('MyBank'),
         );
 
         // Register json Smarty function when missing, happens on older 1.5; some 1.6 versions
