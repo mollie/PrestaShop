@@ -264,7 +264,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.1';
+        $this->version = '3.4.2';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1630,7 +1630,6 @@ class Mollie extends PaymentModule
                 $name = Tools::strtoupper($name);
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
                 $this->statuses[Tools::strtolower($name)] = $new;
-                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
 
                 if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
                     Configuration::updateValue(
