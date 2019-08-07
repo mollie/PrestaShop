@@ -1492,8 +1492,6 @@ class Mollie extends PaymentModule
             return (int) $item['id_order_state'];
         }, $order->getHistory(Context::getContext()->language->id));
         if (!Validate::isLoadedObject($order)
-            || $statusId === (int) $order->current_state
-            || in_array($statusId, $history)
             || !$status
         ) {
             return;
