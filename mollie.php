@@ -4821,13 +4821,18 @@ class Mollie extends PaymentModule
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
-                    // Set the order status
-                    $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
                         ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
                     ) {
-                        $this->setOrderStatus($order, Configuration::get($this->isPaid($idOrderState) ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), true, $extraVars);
+                        $outOfStock = 'PS_OS_OUTOFSTOCK_UNPAID';
+                        if ($this->isPaid($idOrderState)) {
+                            $outOfStock = 'PS_OS_OUTOFSTOCK_PAID';
+                        }
+                        $this->setOrderStatus($order, (int) Configuration::get($outOfStock), true, $extraVars);
+                    } else {
+                        // Set the order status
+                        $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
