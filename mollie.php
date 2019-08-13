@@ -2587,6 +2587,33 @@ class Mollie extends PaymentModule
             );
             $paymentData['issuer'] = $issuer;
 
+            if (isset($context->cart) && Tools::getValue('method') === 'paypal') {
+                if (isset($context->cart->id_customer)) {
+                    $buyer = new Customer($context->cart->id_customer);
+                    $paymentData['billingEmail'] = (string) $buyer->email;
+                }
+                if (isset($context->cart->id_address_invoice)) {
+                    $billing = new Address((int) $context->cart->id_address_invoice);
+                    $paymentData['billingAddress'] = array(
+                        'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
+                        'city'            => (string) $billing->city,
+                        'region'          => (string) State::getNameById($billing->id_state),
+                        'country'         => (string) Country::getIsoById($billing->id_country),
+                    );
+                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
+                }
+                if (isset($context->cart->id_address_delivery)) {
+                    $shipping = new Address((int) $context->cart->id_address_delivery);
+                    $paymentData['shippingAddress'] = array(
+                        'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
+                        'city'            => (string) $shipping->city,
+                        'region'          => (string) State::getNameById($shipping->id_state),
+                        'country'         => (string) Country::getIsoById($shipping->id_country),
+                    );
+                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
+                }
+            }
+
             switch ($method) {
                 case \Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
@@ -3395,7 +3422,7 @@ class Mollie extends PaymentModule
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
-            }, $this->api->methods->all(['includeWallets' => 'applepay'])->getArrayCopy());
+            }, $this->api->methods->all(array('includeWallets' => 'applepay'))->getArrayCopy());
             $orderApiMethods = array_map(function ($item) {
                 return $item->id;
             }, $apiMethods);
