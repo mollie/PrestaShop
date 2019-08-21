@@ -1701,7 +1701,7 @@ class Mollie extends PaymentModule
         return $resultMessage;
     }
 
-    private function updateMethodCountries($idMethod, $idCountries, $allCountries = 0)
+    private function updateMethodCountries($idMethod, $idCountries)
     {
 
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . $idMethod . '"';
@@ -1709,9 +1709,13 @@ class Mollie extends PaymentModule
             return false;
         }
         foreach ($idCountries as $idCountry) {
+            $allCountries = 0;
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_country` (id_method, id_country, all_countries) VALUES (';
 
-            $sql .= '"' . $idMethod . '", ' . (int)$idCountry . ', ' . (int)$allCountries . ')';
+            if ($idCountry === '0') {
+                $allCountries = 1;
+            }
+            $sql .= '"' . pSQL($idMethod) . '", ' . (int)$idCountry . ', ' . (int)$allCountries . ')';
 
             if (!Db::getInstance()->execute($sql)) {
                 $response = false;
@@ -3468,7 +3472,24 @@ class Mollie extends PaymentModule
             }
         }
 
+        foreach ($methods as $index => $method) {
+            if(!$this->checkIfMethodIsAvailableInCountry($method['id'], $countryCode)) {
+                unset($methods[$index]);
+            }
+        }
+
         return $methods;
+    }
+
+    public function checkIfMethodIsAvailableInCountry($methodId, $countryISO)
+    {
+        $country = Country::getByIso($countryISO);
+        $sql = new DbQuery();
+        $sql->select('`id_mol_country`');
+        $sql->from('mol_country');
+        $sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = ' . (int)$country . ' OR all_countries = 1)');
+
+        return Db::getInstance()->getValue($sql);
     }
 
     /**
@@ -6264,6 +6285,7 @@ class Mollie extends PaymentModule
                 'name' => $country['name'],
             );
         }
+
         return $countriesWithNames;
     }
 }
