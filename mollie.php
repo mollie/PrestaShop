@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Doctrine\DBAL\Connection;
+
 if (!defined('_PS_VERSION_')) {
     return;
 }
@@ -210,6 +212,7 @@ class Mollie extends PaymentModule
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
     const APPLEPAY = 'applepay';
+    const MOLLIE_COUNTRIES = 'country_';
 
     /**
      * Hooks for this module
@@ -520,6 +523,8 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
 
         Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
+
+
     }
 
     /**
@@ -1048,6 +1053,23 @@ class Mollie extends PaymentModule
                 )
             );
 
+
+
+            foreach ($this->getMethodsForConfig() as $method) {
+                $input[] = array(
+                    'type' => 'select',
+                    'tab' => $generalSettings,
+                    'label' => $this->l($method['name']),
+                    'name' => 'country_' . $method['id'],
+                    'class' => 'chosen',
+                    'multiple' => true,
+                    'options' => array(
+                        'query' => $this->getActiveCountriesList(),
+                        'id' => 'id',
+                        'name' => 'name',
+                    ),
+                );
+            }
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
                 $input[] = array(
                     'type' => 'switch',
@@ -1374,6 +1396,17 @@ class Mollie extends PaymentModule
             static::MOLLIE_AUTO_SHIP_MAIN  => Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN),
         );
 
+        foreach ($this->getMethodsForConfig() as $method) {
+            $countryIds = $this->getMethodCountryIds($method['id']);
+            if ($countryIds) {
+                $configFields = array_merge($configFields, array($this::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds));
+                continue;
+            }
+            $configFields = array_merge($configFields, array($this::MOLLIE_COUNTRIES . $method['id'] . '[]' => []));
+        }
+        $configFields = array_merge($configFields, array('country_ideal[]' => ''));
+
+
         $checkStatuses = array();
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
             $checkConfs = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES), true);
@@ -1389,6 +1422,19 @@ class Mollie extends PaymentModule
         $configFields = array_merge($configFields, $checkStatuses);
 
         return $configFields;
+    }
+
+    public function getMethodCountryIds($methodId)
+    {
+        $sql = 'SELECT id_country FROM `' . _DB_PREFIX_ . 'mol_country` WHERE id_method = "' . pSQL($methodId) . '"';
+
+        $countryIds = Db::getInstance()->executeS($sql);
+        $countryIdsArray = [];
+        foreach ($countryIds as $countryId) {
+            $countryIdsArray[] = $countryId['id_country'];
+        }
+
+        return $countryIdsArray;
     }
 
     /**
@@ -1638,6 +1684,12 @@ class Mollie extends PaymentModule
                     );
                 }
             }
+            foreach ($this->getMethodsForConfig() as $method) {
+                $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
+                if ($countries) {
+                    $this->updateMethodCountries($method['id'], $countries);
+                }
+            }
             $resultMessage = $this->l('The configuration has been saved!');
         } else {
             $resultMessage = array();
@@ -1647,6 +1699,26 @@ class Mollie extends PaymentModule
         }
 
         return $resultMessage;
+    }
+
+    private function updateMethodCountries($idMethod, $idCountries, $allCountries = 0)
+    {
+
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . $idMethod . '"';
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+        foreach ($idCountries as $idCountry) {
+            $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_country` (id_method, id_country, all_countries) VALUES (';
+
+            $sql .= '"' . $idMethod . '", ' . (int)$idCountry . ', ' . (int)$allCountries . ')';
+
+            if (!Db::getInstance()->execute($sql)) {
+                $response = false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -3462,6 +3534,7 @@ class Mollie extends PaymentModule
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
                     'issuers'   => $apiMethod->issuers,
+                    'countries' => $this->getActiveCountriesList()
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -3471,6 +3544,7 @@ class Mollie extends PaymentModule
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
                     'issuers'   => $apiMethod->issuers,
+                    'countries' => $this->getActiveCountriesList()
                 );
             }
         }
@@ -5488,6 +5562,7 @@ class Mollie extends PaymentModule
         return array(
             'success' => true,
             'methods' => $methodsForConfig,
+            'countries' => $this->getActiveCountriesList(),
         );
     }
 
@@ -6172,5 +6247,23 @@ class Mollie extends PaymentModule
         return in_array($tld, array('localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'))
             || (filter_var($host, FILTER_VALIDATE_IP)
                 && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
+    }
+
+    public function getActiveCountriesList($onlyActive = true)
+    {
+        $langId = $this->context->language->id;
+        $countries = Country::getCountries($langId, $onlyActive);
+        $countriesWithNames = array();
+        $countriesWithNames[] = array(
+            'id' => 0,
+            'name' => $this->l('All')
+        );
+        foreach ($countries as $key => $country) {
+            $countriesWithNames[] =  array(
+                'id' => $key,
+                'name' => $country['name'],
+            );
+        }
+        return $countriesWithNames;
     }
 }
