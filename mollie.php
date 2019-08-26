@@ -661,10 +661,11 @@ class Mollie extends PaymentModule
             'val_save'               => $this->l('Save'),
             'lang'                   => $this->lang,
             'logo_url'               => $this->getPathUri() . 'views/img/mollie_logo.png',
+            'webpack_urls'            => static::getWebpackChunks('app'),
         );
 
         $this->context->controller->addJS($this->getPathUri() . 'views/js/src/back/method_countries.js');
-        $this->context->controller->addJS(static::getWebpackChunks('app'));
+//        $this->context->controller->addJS(static::getWebpackChunks('app'));
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
