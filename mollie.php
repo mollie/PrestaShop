@@ -1404,8 +1404,6 @@ class Mollie extends PaymentModule
             }
             $configFields = array_merge($configFields, array($this::MOLLIE_COUNTRIES . $method['id'] . '[]' => []));
         }
-        $configFields = array_merge($configFields, array('country_ideal[]' => ''));
-
 
         $checkStatuses = array();
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
@@ -1686,9 +1684,7 @@ class Mollie extends PaymentModule
             }
             foreach ($this->getMethodsForConfig() as $method) {
                 $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
-                if ($countries) {
-                    $this->updateMethodCountries($method['id'], $countries);
-                }
+                $this->updateMethodCountries($method['id'], $countries);
             }
             $resultMessage = $this->l('The configuration has been saved!');
         } else {
@@ -1708,6 +1704,11 @@ class Mollie extends PaymentModule
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
+
+        if ($idCountries === false) {
+            return true;
+        }
+
         foreach ($idCountries as $idCountry) {
             $allCountries = 0;
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_country` (id_method, id_country, all_countries) VALUES (';
