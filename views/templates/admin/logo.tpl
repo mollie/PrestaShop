@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
 *}
-<div style="width: 100%; align-content: center; text-align: center;">
+<div style="width: 263px; align-content: center; text-align: left; padding-bottom: 12px;">
   <img src="{$logo_url|escape:'htmlall':'UTF-8'}" style="max-width:100%; height:auto; margin: 0 auto">
 </div>
 
