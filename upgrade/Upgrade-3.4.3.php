@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright (c) 2012-2019, Mollie B.V.
  * All rights reserved.
  *
@@ -29,8 +30,28 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
-*}
-<div style="width: 263px; align-content: center; text-align: left; padding-bottom: 12px;">
-  <img src="{$logo_url|escape:'htmlall':'UTF-8'}" style="max-width:100%; height:auto; margin: 0 auto">
-</div>
+ */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * @return bool
+ *
+ * @throws PrestaShopDatabaseException
+ * @throws PrestaShopException
+ */
+function upgrade_module_3_4_3()
+{
+    $query = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_country` (
+				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_method`         VARCHAR(64),
+				`id_country`        INT(64),
+				`all_countries` tinyint
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
+    if (!Db::getInstance()->execute($query)) {
+        return false;
+    }
+}
