@@ -33,8 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Doctrine\DBAL\Connection;
-
 if (!defined('_PS_VERSION_')) {
     return;
 }
@@ -664,8 +662,7 @@ class Mollie extends PaymentModule
             'webpack_urls'            => static::getWebpackChunks('app'),
         );
 
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/src/back/method_countries.js');
-//        $this->context->controller->addJS(static::getWebpackChunks('app'));
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -1059,67 +1056,69 @@ class Mollie extends PaymentModule
                 )
             );
 
-            $input[] = array(
-                'type' => 'mollie-h3',
-                'tab' => $generalSettings,
-                'name' => '',
-                'title' => $this->l('Method countries'),
-            );
-
-            $input[] = array(
-                'type' => 'switch',
-                'label' => $this->l('Enable country restrictions'),
-                'tab' => $generalSettings,
-                'name' => static::MOLLIE_METHOD_COUNTRIES,
-                'is_bool' => true,
-                'values' => array(
-                    array(
-                        'id' => 'active_on',
-                        'value' => 1,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                    ),
-                    array(
-                        'id' => 'active_off',
-                        'value' => 0,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ),
-                ),
-            );
-
-            $input[] = array(
-                'type' => 'switch',
-                'label' => $this->l('Expand a list of payment methods'),
-                'tab' => $generalSettings,
-                'name' => static::MOLLIE_METHOD_COUNTRIES_DISPLAY,
-                'is_bool' => true,
-                'values' => array(
-                    array(
-                        'id' => 'active_on',
-                        'value' => 1,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                    ),
-                    array(
-                        'id' => 'active_off',
-                        'value' => 0,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ),
-                ),
-            );
-
-            foreach ($this->getMethodsForConfig() as $method) {
+            if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
                 $input[] = array(
-                    'type' => 'select',
+                    'type' => 'mollie-h3',
                     'tab' => $generalSettings,
-                    'label' => $method['name'],
-                    'name' => 'country_' . $method['id'],
-                    'class' => 'chosen col-md-6 js-country',
-                    'multiple' => true,
-                    'options' => array(
-                        'query' => $this->getActiveCountriesList(),
-                        'id' => 'id',
-                        'name' => 'name',
+                    'name' => '',
+                    'title' => $this->l('Method countries'),
+                );
+
+                $input[] = array(
+                    'type' => 'switch',
+                    'label' => $this->l('Enable country restrictions'),
+                    'tab' => $generalSettings,
+                    'name' => static::MOLLIE_METHOD_COUNTRIES,
+                    'is_bool' => true,
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
                     ),
                 );
+
+                $input[] = array(
+                    'type' => 'switch',
+                    'label' => $this->l('Expand a list of payment methods'),
+                    'tab' => $generalSettings,
+                    'name' => static::MOLLIE_METHOD_COUNTRIES_DISPLAY,
+                    'is_bool' => true,
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        ),
+                    ),
+                );
+
+                foreach ($this->getMethodsForConfig() as $method) {
+                    $input[] = array(
+                        'type' => 'select',
+                        'tab' => $generalSettings,
+                        'label' => $method['name'],
+                        'name' => 'country_' . $method['id'],
+                        'class' => 'chosen col-md-6 js-country',
+                        'multiple' => true,
+                        'options' => array(
+                            'query' => $this->getActiveCountriesList(),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    );
+                }
             }
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
                 $input[] = array(
@@ -2203,7 +2202,7 @@ class Mollie extends PaymentModule
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
         $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/src/front/apple_payment.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
     }
 
     /**
@@ -3539,10 +3538,12 @@ class Mollie extends PaymentModule
             }
         }
 
-        if (Configuration::get('MOLLIE_METHOD_COUNTRIES')) {
-            foreach ($methods as $index => $method) {
-                if(!$this->checkIfMethodIsAvailableInCountry($method['id'], $countryCode)) {
-                    unset($methods[$index]);
+        if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
+            if (Configuration::get('MOLLIE_METHOD_COUNTRIES')) {
+                foreach ($methods as $index => $method) {
+                    if (!$this->checkIfMethodIsAvailableInCountry($method['id'], $countryCode)) {
+                        unset($methods[$index]);
+                    }
                 }
             }
         }
