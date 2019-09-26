@@ -2201,8 +2201,13 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader()
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
-        $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
         $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+
+        //todo:: should only work on front office
+        $this->context->smarty->assign(array(
+            'custom_css'   => Configuration::get(static::MOLLIE_CSS),
+        ));
+        return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
     }
 
     /**
@@ -2399,6 +2404,7 @@ class Mollie extends PaymentModule
             return array();
         }
 
+        dump('test2');
         $methods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($methods as $apiMethod) {
@@ -3499,6 +3505,7 @@ class Mollie extends PaymentModule
      */
     public function getMethodsForCheckout()
     {
+        dump('test');
         if (!Configuration::get(static::MOLLIE_API_KEY)) {
             return array();
         }
