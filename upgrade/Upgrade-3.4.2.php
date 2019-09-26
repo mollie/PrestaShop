@@ -53,4 +53,6 @@ function upgrade_module_3_4_2()
         Configuration::get(Mollie::MOLLIE_STATUS_PARTIAL_REFUND)
     );
     Configuration::updateGlobalValue(Mollie::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+
+    return true;
 }
