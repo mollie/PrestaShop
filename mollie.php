@@ -2404,7 +2404,6 @@ class Mollie extends PaymentModule
             return array();
         }
 
-        dump('test2');
         $methods = $this->getMethodsForCheckout();
         $issuerList = array();
         foreach ($methods as $apiMethod) {
@@ -3630,8 +3629,7 @@ class Mollie extends PaymentModule
                     'enabled'   => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
-                    'countries' => $this->getActiveCountriesList()
+                    'issuers'   => $apiMethod->issuers
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -3640,8 +3638,7 @@ class Mollie extends PaymentModule
                     'enabled'   => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
-                    'countries' => $this->getActiveCountriesList()
+                    'issuers'   => $apiMethod->issuers
                 );
             }
         }
