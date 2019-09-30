@@ -523,6 +523,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
         Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
+        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
 
         Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
 

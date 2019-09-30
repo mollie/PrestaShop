@@ -30,4 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<link rel="stylesheet" href="{$custom_css}" type="text/css" media="all">
+<link rel="stylesheet" href="{if isset($custom_css)}{$custom_css}{/if}" type="text/css" media="all">
