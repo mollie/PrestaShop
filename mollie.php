@@ -523,6 +523,7 @@ class Mollie extends PaymentModule
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
         Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
+        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
 
         Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
 
@@ -1109,7 +1110,7 @@ class Mollie extends PaymentModule
                         'type' => 'select',
                         'tab' => $generalSettings,
                         'label' => $method['name'],
-                        'name' => 'country_' . $method['id'],
+                        'name' => 'country_' . $method['id'] . '[]',
                         'class' => 'chosen col-md-6 js-country',
                         'multiple' => true,
                         'options' => array(
@@ -1770,7 +1771,7 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        if ($idCountries === false) {
+        if ($idCountries == false) {
             return true;
         }
 
@@ -2201,8 +2202,13 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader()
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
-        $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
         $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+
+        //todo:: should only work on front office
+        $this->context->smarty->assign(array(
+            'custom_css'   => Configuration::get(static::MOLLIE_CSS),
+        ));
+        return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
     }
 
     /**
@@ -3624,8 +3630,7 @@ class Mollie extends PaymentModule
                     'enabled'   => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
-                    'countries' => $this->getActiveCountriesList()
+                    'issuers'   => $apiMethod->issuers
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -3634,8 +3639,7 @@ class Mollie extends PaymentModule
                     'enabled'   => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
-                    'countries' => $this->getActiveCountriesList()
+                    'issuers'   => $apiMethod->issuers
                 );
             }
         }
@@ -4244,10 +4248,10 @@ class Mollie extends PaymentModule
                             array(
                                 'error' => Tools::displayError('Voucher name:'),
                                 'cartRuleName' => $cartRule['obj']->name,
-                                'price' => ($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice(
-                                    $values['tax_incl'],
-                                    $this->context->currency,
-                                    false
+                                'price' => ($values['tax_incl'] != 0.00 ? '-' : '') . Tools::displayPrice(
+                                        $values['tax_incl'],
+                                        $this->context->currency,
+                                        false
                                     ),
                             ));
                     }
@@ -6175,7 +6179,7 @@ class Mollie extends PaymentModule
             $manifest = array();
             foreach (include(_PS_MODULE_DIR_.'mollie/views/js/dist/manifest.php') as $chunk) {
                 $manifest[$chunk['name']] = array_map(function ($chunk) {
-                   return Mollie::getMediaPath(_PS_MODULE_DIR_."mollie/views/js/dist/{$chunk}");
+                    return Mollie::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
                 }, $chunk['files']);
             }
         }

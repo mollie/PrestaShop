@@ -54,4 +54,6 @@ function upgrade_module_3_4_3()
     if (!Db::getInstance()->execute($query)) {
         return false;
     }
+
+    return true;
 }
