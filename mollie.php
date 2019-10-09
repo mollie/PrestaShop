@@ -3603,6 +3603,9 @@ class Mollie extends PaymentModule
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        if (!$dbMethods) {
+            $dbMethods = [];
+        }
         $keys = array('id', 'name', 'enabled', 'image', 'issuers', 'position');
         foreach ($dbMethods as $index => $dbMethod) {
             if (count(array_intersect($keys, array_keys($dbMethod))) !== count($keys)) {
