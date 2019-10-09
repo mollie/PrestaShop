@@ -471,6 +471,15 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_EXPIRED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_REFUNDED);
         Configuration::deleteByName(static::MOLLIE_ACCOUNT_SWITCH);
+        Configuration::deleteByName(static::MOLLIE_METHOD_COUNTRIES);
+        Configuration::deleteByName(static::MOLLIE_METHOD_COUNTRIES_DISPLAY);
+        Configuration::deleteByName(static::MOLLIE_API);
+        Configuration::deleteByName(static::MOLLIE_AUTO_SHIP_STATUSES);
+        Configuration::deleteByName(static::MOLLIE_TRACKING_URLS);
+        Configuration::deleteByName(static::MOLLIE_METHODS_LAST_CHECK);
+        Configuration::deleteByName(static::METHODS_CONFIG);
+
+        include(dirname(__FILE__).'/sql/uninstall.php');
 
         return parent::uninstall();
     }
@@ -664,6 +673,7 @@ class Mollie extends PaymentModule
         );
 
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -3602,6 +3612,9 @@ class Mollie extends PaymentModule
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
+        if (!$dbMethods) {
+            $dbMethods = [];
+        }
         $keys = array('id', 'name', 'enabled', 'image', 'issuers', 'position');
         foreach ($dbMethods as $index => $dbMethod) {
             if (count(array_intersect($keys, array_keys($dbMethod))) !== count($keys)) {

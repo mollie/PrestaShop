@@ -64,6 +64,10 @@
     box-shadow: 2px 2px 16px -2px rgba(0,0,0,0.75);
 }
 
-.form-group.form-separator{
+.form-group.form-separator {
     margin-left: 0;
+}
+
+#module_form .mollie-input-error {
+    border: 1px solid #f13340;
 }

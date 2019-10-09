@@ -31,9 +31,14 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
 $(document).ready(function() {
-    document.cookie = 'isApplePayMethod = 0';
-    if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
-        document.cookie = 'isApplePayMethod = 1';
-    }
+    $('#module_form').on('submit', function () {
+        var description = $('#MOLLIE_DESCRIPTION');
+        if (description.val() === '') {
+            event.preventDefault();
+            description.addClass('mollie-input-error');
+            $('.alert.alert-success').hide();
+        }
+    })
 });
