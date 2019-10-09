@@ -471,6 +471,15 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_EXPIRED);
         Configuration::deleteByName(static::MOLLIE_MAIL_WHEN_REFUNDED);
         Configuration::deleteByName(static::MOLLIE_ACCOUNT_SWITCH);
+        Configuration::deleteByName(static::MOLLIE_METHOD_COUNTRIES);
+        Configuration::deleteByName(static::MOLLIE_METHOD_COUNTRIES_DISPLAY);
+        Configuration::deleteByName(static::MOLLIE_API);
+        Configuration::deleteByName(static::MOLLIE_AUTO_SHIP_STATUSES);
+        Configuration::deleteByName(static::MOLLIE_TRACKING_URLS);
+        Configuration::deleteByName(static::MOLLIE_METHODS_LAST_CHECK);
+        Configuration::deleteByName(static::METHODS_CONFIG);
+
+        include(dirname(__FILE__).'/sql/uninstall.php');
 
         return parent::uninstall();
     }
