@@ -41,19 +41,19 @@ function toggleCountries(showCountries)
     }
 }
 
-$(() => {
+$(document).ready(function() {
     jQuery('.chosen').chosen("destroy");
     jQuery('.chosen').chosen({inherit_select_classes: true});
 
     $('select').on('change', function () {
-        const selectedValues = $(this).val();
+        var selectedValues = $(this).val();
         if (jQuery.inArray('0', selectedValues) !== -1) {
             $(this).val('0');
             $('select').trigger("chosen:updated");
         }
     });
 
-    const countriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
+    var countriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
     toggleCountries(countriesSwitch);
 
     countriesSwitch.on('change', function () {
