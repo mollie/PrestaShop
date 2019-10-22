@@ -4634,8 +4634,8 @@ class Mollie extends PaymentModule
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal($withTaxes, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
+                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), (int) _PS_PRICE_COMPUTE_PRECISION_);
+                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal($withTaxes, Cart::BOTH, $order->product_list, $idCarrier), (int) _PS_PRICE_COMPUTE_PRECISION_);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
@@ -4654,7 +4654,7 @@ class Mollie extends PaymentModule
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
-                    if ($orderStatus->logable && number_format($cartTotalPaid, _PS_PRICE_COMPUTE_PRECISION_) != number_format($amountPaid, _PS_PRICE_COMPUTE_PRECISION_)) {
+                    if ($orderStatus->logable && number_format($cartTotalPaid, (int) _PS_PRICE_COMPUTE_PRECISION_) != number_format($amountPaid, (int) _PS_PRICE_COMPUTE_PRECISION_)) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
                     $orderList[] = $order;
