@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
         'sofort'          => array('eur'),
         'klarnapaylater'  => array('eur'),
         'klarnasliceit'   => array('eur'),
-         'mybank'         => array('eur'),
+        'mybank'         => array('eur'),
 
     );
     /**
@@ -210,8 +210,7 @@ class Mollie extends PaymentModule
 
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
-    const MOLLIE_ON_BACKORDER_PAID = 'MOLLIE_ON_BACKORDER_PAID';
-    const MOLLIE_ON_BACKORDER_NOT_PAID = 'MOLLIE_ON_BACKORDER_NOT_PAID';
+    const STATUS_ON_BACKORDER = "on_backorder";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
     const APPLEPAY = 'applepay';
     const MOLLIE_COUNTRIES = 'country_';
@@ -324,16 +323,10 @@ class Mollie extends PaymentModule
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
             $this::STATUS_PENDING_ON_BACKORDER                              => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
+            $this::STATUS_ON_BACKORDER                                      => Configuration::get('PS_OS_OUTOFSTOCK'),
 
         );
 
-        if (!Configuration::get('PS_OS_OUTOFSTOCK_PAID')) {
-            $mollieStatuses= array(
-                self::MOLLIE_ON_BACKORDER_PAID        => Configuration::get(self::MOLLIE_ON_BACKORDER_PAID),
-                self::MOLLIE_ON_BACKORDER_NOT_PAID        => Configuration::get(self::MOLLIE_ON_BACKORDER_NOT_PAID),
-            );
-            $this->statuses = array_merge($this->statuses, $mollieStatuses);
-        }
         // Load all translatable text here so we have a single translation point
         $this->lang = array(
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('Paid'),
@@ -443,9 +436,7 @@ class Mollie extends PaymentModule
 
         $this->initConfig();
         $this->setDefaultCarrierStatuses();
-        if (!Configuration::get('PS_OS_OUTOFSTOCK_PAID')) {
-            $this->createMollieOrderStatus();
-        }
+
         include(dirname(__FILE__).'/sql/install.php');
 
         return true;
@@ -492,7 +483,6 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_METHODS_LAST_CHECK);
         Configuration::deleteByName(static::METHODS_CONFIG);
 
-        $this->uninstallMollieOrderStatus();
         include(dirname(__FILE__).'/sql/uninstall.php');
 
         return parent::uninstall();
@@ -5055,13 +5045,12 @@ class Mollie extends PaymentModule
                         $orderStatus = (int) Configuration::get($outOfStock);
 
                         if (!$orderStatus) {
-                            $outOfStock = 'MOLLIE_ON_BACKORDER_NOT_PAID';
-                            if ($this->isPaid($idOrderState)) {
-                                $outOfStock = 'MOLLIE_ON_BACKORDER_PAID';
-                            }
-                            $orderStatus = (int) Configuration::get($outOfStock);
+                            $this->setOrderStatus($order->id, (int)$idOrderState, true, $extraVars);
+                            $outOfStockId = _PS_OS_OUTOFSTOCK_;
+                            $this->setOrderStatus($order->id, (int)$outOfStockId, true, $extraVars);
+                        } else {
+                            $this->setOrderStatus($order, $orderStatus, true, $extraVars);
                         }
-                        $this->setOrderStatus($order, $orderStatus, true, $extraVars);
                     } else {
                         // Set the order status
                         $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
@@ -6397,59 +6386,5 @@ class Mollie extends PaymentModule
         }
 
         return $countriesWithNames;
-    }
-
-    private function createMollieOrderStatus()
-    {
-        $success = true;
-        $success &= $this->createOrderStatus(
-            self::MOLLIE_ON_BACKORDER_PAID,
-            $this->l('On backorder (paid)'),
-            '#fe68b4'
-        );
-        $success &= $this->createOrderStatus(
-            self::MOLLIE_ON_BACKORDER_NOT_PAID,
-            $this->l('On backorder (not paid)'),
-            '#fe68b4'
-        );
-
-        return $success;
-    }
-
-    private function uninstallMollieOrderStatus()
-    {
-        $orderState = new OrderState(Configuration::get(self::MOLLIE_ON_BACKORDER_PAID));
-        $orderState->deleted = 1;
-        $orderState->update();
-
-        $orderState = new OrderState(Configuration::get(self::MOLLIE_ON_BACKORDER_NOT_PAID));
-        $orderState->deleted = 1;
-        $orderState->update();
-    }
-
-    private function createOrderStatus($configName, $name, $color, $sendEmail = false, $hidden = false)
-    {
-        $orderState = new OrderState();
-        $orderState->send_email = $sendEmail;
-        $orderState->color = $color;
-        $orderState->hidden = $hidden;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->module_name = $this->name;
-        $orderState->name = [];
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = $this->l($name);
-        }
-        if (!$orderState->add()) {
-            return false;
-        }
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/backorder.gif';
-        $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-        @copy($source, $destination);
-        Configuration::updateValue($configName, (int)$orderState->id);
-
-        return true;
     }
 }
