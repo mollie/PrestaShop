@@ -4571,7 +4571,7 @@ class Mollie extends PaymentModule
                             if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
                                 $error = sprintf(Tools::displayError('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart'), (int) $rule->id, $ruleName);
                             } else {
-                                $error = $this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart', array($ruleName, (int) $rule->id), 'Admin.Payment.Notification');
+                                $error = sprintf($this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart'), array($ruleName, (int) $rule->id));
                             }
                             Logger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
                         }
@@ -5012,7 +5012,7 @@ class Mollie extends PaymentModule
                         $customerMessage->message = $updateMessage->message;
                         $customerMessage->private = 1;
                         if (!$customerMessage->add()) {
-                            $this->context->controller->errors[] = $this->l('An error occurred while saving message', array(), 'Admin.Payment.Notification');
+                            $this->context->controller->errors[] = $this->l('An error occurred while saving message');
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
@@ -5103,7 +5103,7 @@ class Mollie extends PaymentModule
                             '{invoice_other}'        => $invoice->other,
                             '{order_name}'           => $order->getUniqReference(),
                             '{date}'                 => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier', array(), 'Admin.Payment.Notification') : $carrier->name,
+                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier') : $carrier->name,
                             '{payment}'              => Tools::substr($order->payment, 0, 255),
                             '{products}'             => $productListHtml,
                             '{products_txt}'         => $productListTxt,
@@ -5184,7 +5184,7 @@ class Mollie extends PaymentModule
                         );
                     }
                 } else {
-                    $error = $this->l('Order creation failed', array(), 'Admin.Payment.Notification');
+                    $error = $this->l('Order creation failed');
                     Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
@@ -5199,7 +5199,7 @@ class Mollie extends PaymentModule
 
             return true;
         } else {
-            $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart', array(), 'Admin.Payment.Notification');
+            $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart');
             Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
