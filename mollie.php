@@ -2178,7 +2178,7 @@ class Mollie extends PaymentModule
      */
     protected function addCSSFile($file = null)
     {
-        if (is_null($file)) {
+        if (!is_null($file)) {
             $file = Configuration::get(static::MOLLIE_CSS);
         }
         if (empty($file)) {
@@ -2217,12 +2217,6 @@ class Mollie extends PaymentModule
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
-
-        //todo:: should only work on front office
-        $this->context->smarty->assign(array(
-            'custom_css'   => Configuration::get(static::MOLLIE_CSS),
-        ));
-        return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
     }
 
     /**
@@ -2232,11 +2226,6 @@ class Mollie extends PaymentModule
     public function hookDisplayBackOfficeHeader()
     {
         $html = '';
-        if ($this->context->controller instanceof AdminOrdersController && version_compare(_PS_VERSION_, '1.6.0.0', '<')
-            || $this->context->controller instanceof AdminModulesController && Tools::getValue('configure') === $this->name
-        ) {
-            $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
-        }
 
         if ($this->context->controller instanceof AdminOrdersController) {
             $this->context->smarty->assign(array(
