@@ -4019,8 +4019,8 @@ class Mollie extends PaymentModule
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), 2);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), 2);
+                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
@@ -4034,7 +4034,7 @@ class Mollie extends PaymentModule
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
                     if ($orderStatus->logable
-                        && number_format($cartTotalPaid, 2) != number_format($amountPaid, 2)
+                        && number_format($cartTotalPaid, 2) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)
                     ) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
