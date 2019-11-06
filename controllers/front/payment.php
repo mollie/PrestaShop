@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Exceptions\ApiException;
+
 if (!defined('_PS_VERSION_')) {
     return;
 }
@@ -146,7 +148,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         );
         try {
             $apiPayment = $this->createPayment($paymentData);
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage().'. Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
@@ -298,14 +300,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      */
     protected function createPayment($data)
     {
-        if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
-            /** @var \Mollie\Api\Resources\Order $payment */
-            $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
-        } else {
-            /** @var \Mollie\Api\Resources\Payment $payment */
-            $payment = $this->module->api->payments->create($data);
+        try {
+            if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
+                /** @var \Mollie\Api\Resources\Order $payment */
+                $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
+            } else {
+                /** @var \Mollie\Api\Resources\Payment $payment */
+                $payment = $this->module->api->payments->create($data);
+            }
+        } catch (Exception $e) {
+            throw new ApiException();
         }
-
         return $payment;
     }
 
