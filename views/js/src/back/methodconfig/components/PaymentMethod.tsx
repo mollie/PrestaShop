@@ -44,6 +44,7 @@ interface IProps {
   max: number;
   enabled: boolean;
   available: boolean;
+  tipEnableSSL: boolean;
   name: string;
   code: string;
   imageUrl: string;
@@ -170,6 +171,7 @@ function PaymentMethod({
   imageUrl,
   moveMethod,
   available,
+                         tipEnableSSL,
   config: { legacy }
 }: IProps
 ): ReactElement<{}> {
@@ -232,7 +234,19 @@ function PaymentMethod({
             {name}
           </span>
         </div>
-        {!available && (
+        {!available && tipEnableSSL &&(
+          <p
+            style={{
+              float: 'right',
+              marginRight: '20px'
+            }}
+            title={translations.thisPaymentMethodNeedsSSLEnabled}
+            data-toggle="tooltip"
+          >
+            <FontAwesomeIcon icon={faExclamationTriangle}/> {translations.notAvailable}
+          </p>
+        )}
+        {!available && !tipEnableSSL &&(
           <p
             style={{
               float: 'right',
