@@ -3639,7 +3639,13 @@ class Mollie extends PaymentModule
         $methodsFromDb = array_keys($configMethods);
         $methods = array();
         $deferredMethods = array();
+        $isSSLEnabled = Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
         foreach ($apiMethods as $apiMethod) {
+            $tipEnableSSL = false;
+            if ($apiMethod->id === self::APPLEPAY && !$isSSLEnabled) {
+                $notAvailable[] = $apiMethod->id;
+                $tipEnableSSL = true;
+            }
             if (!in_array($apiMethod->id, $methodsFromDb) || !isset($configMethods[$apiMethod->id]['position'])) {
                 $deferredMethods[] = array(
                     'id'        => $apiMethod->id,
@@ -3647,7 +3653,8 @@ class Mollie extends PaymentModule
                     'enabled'   => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers
+                    'issuers'   => $apiMethod->issuers,
+                    'tipEnableSSL' => $tipEnableSSL
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -3656,7 +3663,8 @@ class Mollie extends PaymentModule
                     'enabled'   => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers
+                    'issuers'   => $apiMethod->issuers,
+                    'tipEnableSSL' => $tipEnableSSL
                 );
             }
         }

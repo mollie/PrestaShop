@@ -102,6 +102,7 @@ export interface IMolliePaymentMethodItem {
   name: string;
   enabled: boolean;
   available?: boolean;
+  tipEnableSSL?: boolean;
   image: IMolliePaymentMethodImage;
   issuers: Array<IMolliePaymentIssuer>;
 }
