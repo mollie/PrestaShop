@@ -33,7 +33,7 @@
  */
 $(document).ready(function() {
     document.cookie = 'isApplePayMethod = 0';
-    if (window.ApplePaySession) {
+    if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
         document.cookie = 'isApplePayMethod = 1';
     }
 });

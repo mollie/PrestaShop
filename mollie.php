@@ -1746,6 +1746,7 @@ class Mollie extends PaymentModule
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
+                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 $this->statuses[Tools::strtolower($name)] = $new;
 
                 if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
@@ -2216,7 +2217,9 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader()
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+        }
     }
 
     /**
@@ -3534,7 +3537,7 @@ class Mollie extends PaymentModule
             if (!isset(static::$methodCurrencies[$method['id']])
                 || !in_array($iso, static::$methodCurrencies[$method['id']])
                 || empty($method['enabled'])
-                || isset($method['available']) && !$method['available']
+                || (isset($method['available']) && !$method['available'])
                 || in_array($method['id'], $unavailableMethods)
             ) {
                 unset($methods[$index]);
