@@ -57,7 +57,10 @@
                 yes: '{l s='Yes' mod='mollie' js=1}',
                 no: '{l s='No' mod='mollie' js=1}',
                 notAvailable: '{l s='Not available' mod='mollie' js=1}',
-                thisPaymentMethodIsNotAvailableOnPaymentsApi: '{l s='This payment method is not available on the Payments API. Switch to the Orders API below in order to activate this method.' mod='mollie' js=1}',
+                thisPaymentMethodIsNotAvailableOnPaymentsApi:
+                        '{l s='This payment method is not available on the Payments API. Switch to the Orders API below in order to activate this method.' mod='mollie' js=1}',
+                thisPaymentMethodNeedsSSLEnabled:
+                        '{l s='You need to enable SSL for this payment method' mod='mollie' js=1}',
                 unableToLoadMethods: '{l s='Unable to load payment methods' mod='mollie' js=1}',
                 retry: '{l s='Retry' mod='mollie' js=1}',
                 error: '{l s='Error' mod='mollie' js=1}'
