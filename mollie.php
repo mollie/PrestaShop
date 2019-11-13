@@ -3542,11 +3542,12 @@ class Mollie extends PaymentModule
             ) {
                 unset($methods[$index]);
             }
-            if (
-                $method['id'] === $this::APPLEPAY
-                && $_COOKIE['isApplePayMethod'] === '0'
-            ) {
-                unset($methods[$index]);
+            if ($method['id'] === self::APPLEPAY) {
+                if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+                    unset($methods[$index]);
+                } elseif ($_COOKIE['isApplePayMethod'] === '0') {
+                    unset($methods[$index]);
+                }
             }
         }
 
