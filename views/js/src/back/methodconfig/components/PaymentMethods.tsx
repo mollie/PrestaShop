@@ -64,6 +64,7 @@ const SortableList = SortableContainer(({ items, translations, onArrowClicked, o
             code={item.id}
             enabled={item.enabled}
             available={item.available}
+            tipEnableSSL={item.tipEnableSSL}
             translations={translations}
             position={index}
             max={items.length - 1}

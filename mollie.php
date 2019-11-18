@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
         'sofort'          => array('eur'),
         'klarnapaylater'  => array('eur'),
         'klarnasliceit'   => array('eur'),
-         'mybank'         => array('eur'),
+        'mybank'         => array('eur'),
 
     );
     /**
@@ -210,9 +210,12 @@ class Mollie extends PaymentModule
 
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
+    const STATUS_ON_BACKORDER = "on_backorder";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
     const APPLEPAY = 'applepay';
     const MOLLIE_COUNTRIES = 'country_';
+
+    const PS_PRICE_COMPUTE_PRECISION = 2;
 
     /**
      * Hooks for this module
@@ -267,7 +270,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.5';
+        $this->version = '3.4.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -320,6 +323,7 @@ class Mollie extends PaymentModule
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
             $this::STATUS_PENDING_ON_BACKORDER                              => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
+            $this::STATUS_ON_BACKORDER                                      => Configuration::get('PS_OS_OUTOFSTOCK'),
 
         );
 
@@ -1742,6 +1746,7 @@ class Mollie extends PaymentModule
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
+                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 $this->statuses[Tools::strtolower($name)] = $new;
 
                 if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
@@ -2174,7 +2179,7 @@ class Mollie extends PaymentModule
      */
     protected function addCSSFile($file = null)
     {
-        if (is_null($file)) {
+        if (!is_null($file)) {
             $file = Configuration::get(static::MOLLIE_CSS);
         }
         if (empty($file)) {
@@ -2212,13 +2217,9 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader()
     {
         $this->addCSSFile($this->_path.'views/css/front.css');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
-
-        //todo:: should only work on front office
-        $this->context->smarty->assign(array(
-            'custom_css'   => Configuration::get(static::MOLLIE_CSS),
-        ));
-        return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+        }
     }
 
     /**
@@ -2228,11 +2229,6 @@ class Mollie extends PaymentModule
     public function hookDisplayBackOfficeHeader()
     {
         $html = '';
-        if ($this->context->controller instanceof AdminOrdersController && version_compare(_PS_VERSION_, '1.6.0.0', '<')
-            || $this->context->controller instanceof AdminModulesController && Tools::getValue('configure') === $this->name
-        ) {
-            $this->addCSSFile(Configuration::get(static::MOLLIE_CSS));
-        }
 
         if ($this->context->controller instanceof AdminOrdersController) {
             $this->context->smarty->assign(array(
@@ -3541,16 +3537,17 @@ class Mollie extends PaymentModule
             if (!isset(static::$methodCurrencies[$method['id']])
                 || !in_array($iso, static::$methodCurrencies[$method['id']])
                 || empty($method['enabled'])
-                || isset($method['available']) && !$method['available']
+                || (isset($method['available']) && !$method['available'])
                 || in_array($method['id'], $unavailableMethods)
             ) {
                 unset($methods[$index]);
             }
-            if (
-                $method['id'] === $this::APPLEPAY
-                && $_COOKIE['isApplePayMethod'] === '0'
-            ) {
-                unset($methods[$index]);
+            if ($method['id'] === self::APPLEPAY) {
+                if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+                    unset($methods[$index]);
+                } elseif ($_COOKIE['isApplePayMethod'] === '0') {
+                    unset($methods[$index]);
+                }
             }
         }
 
@@ -3635,7 +3632,13 @@ class Mollie extends PaymentModule
         $methodsFromDb = array_keys($configMethods);
         $methods = array();
         $deferredMethods = array();
+        $isSSLEnabled = Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
         foreach ($apiMethods as $apiMethod) {
+            $tipEnableSSL = false;
+            if ($apiMethod->id === self::APPLEPAY && !$isSSLEnabled) {
+                $notAvailable[] = $apiMethod->id;
+                $tipEnableSSL = true;
+            }
             if (!in_array($apiMethod->id, $methodsFromDb) || !isset($configMethods[$apiMethod->id]['position'])) {
                 $deferredMethods[] = array(
                     'id'        => $apiMethod->id,
@@ -3643,7 +3646,8 @@ class Mollie extends PaymentModule
                     'enabled'   => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers
+                    'issuers'   => $apiMethod->issuers,
+                    'tipEnableSSL' => $tipEnableSSL
                 );
             } else {
                 $methods[$configMethods[$apiMethod->id]['position']] = array(
@@ -3652,7 +3656,8 @@ class Mollie extends PaymentModule
                     'enabled'   => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers
+                    'issuers'   => $apiMethod->issuers,
+                    'tipEnableSSL' => $tipEnableSSL
                 );
             }
         }
@@ -4026,8 +4031,8 @@ class Mollie extends PaymentModule
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), 2);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), 2);
+                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
@@ -4041,7 +4046,7 @@ class Mollie extends PaymentModule
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
                     if ($orderStatus->logable
-                        && number_format($cartTotalPaid, 2) != number_format($amountPaid, 2)
+                        && number_format($cartTotalPaid, 2) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)
                     ) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
@@ -4567,7 +4572,7 @@ class Mollie extends PaymentModule
                             if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
                                 $error = sprintf(Tools::displayError('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart'), (int) $rule->id, $ruleName);
                             } else {
-                                $error = $this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart', array($ruleName, (int) $rule->id), 'Admin.Payment.Notification');
+                                $error = sprintf($this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart'), array($ruleName, (int) $rule->id));
                             }
                             Logger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
                         }
@@ -4634,8 +4639,8 @@ class Mollie extends PaymentModule
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal($withTaxes, Cart::BOTH, $order->product_list, $idCarrier), _PS_PRICE_COMPUTE_PRECISION_);
+                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
@@ -4654,7 +4659,7 @@ class Mollie extends PaymentModule
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
-                    if ($orderStatus->logable && number_format($cartTotalPaid, _PS_PRICE_COMPUTE_PRECISION_) != number_format($amountPaid, _PS_PRICE_COMPUTE_PRECISION_)) {
+                    if ($orderStatus->logable && number_format($cartTotalPaid, self::PS_PRICE_COMPUTE_PRECISION) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
                     $orderList[] = $order;
@@ -5008,7 +5013,7 @@ class Mollie extends PaymentModule
                         $customerMessage->message = $updateMessage->message;
                         $customerMessage->private = 1;
                         if (!$customerMessage->add()) {
-                            $this->context->controller->errors[] = $this->l('An error occurred while saving message', array(), 'Admin.Payment.Notification');
+                            $this->context->controller->errors[] = $this->l('An error occurred while saving message');
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
@@ -5038,7 +5043,15 @@ class Mollie extends PaymentModule
                         if ($this->isPaid($idOrderState)) {
                             $outOfStock = 'PS_OS_OUTOFSTOCK_PAID';
                         }
-                        $this->setOrderStatus($order, (int) Configuration::get($outOfStock), true, $extraVars);
+                        $orderStatus = (int) Configuration::get($outOfStock);
+
+                        if (!$orderStatus) {
+                            $this->setOrderStatus($order->id, (int)$idOrderState, true, $extraVars);
+                            $outOfStockId = _PS_OS_OUTOFSTOCK_;
+                            $this->setOrderStatus($order->id, (int)$outOfStockId, true, $extraVars);
+                        } else {
+                            $this->setOrderStatus($order, $orderStatus, true, $extraVars);
+                        }
                     } else {
                         // Set the order status
                         $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
@@ -5091,7 +5104,7 @@ class Mollie extends PaymentModule
                             '{invoice_other}'        => $invoice->other,
                             '{order_name}'           => $order->getUniqReference(),
                             '{date}'                 => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier', array(), 'Admin.Payment.Notification') : $carrier->name,
+                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier') : $carrier->name,
                             '{payment}'              => Tools::substr($order->payment, 0, 255),
                             '{products}'             => $productListHtml,
                             '{products_txt}'         => $productListTxt,
@@ -5172,7 +5185,7 @@ class Mollie extends PaymentModule
                         );
                     }
                 } else {
-                    $error = $this->l('Order creation failed', array(), 'Admin.Payment.Notification');
+                    $error = $this->l('Order creation failed');
                     Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
@@ -5187,7 +5200,7 @@ class Mollie extends PaymentModule
 
             return true;
         } else {
-            $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart', array(), 'Admin.Payment.Notification');
+            $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart');
             Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
