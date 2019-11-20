@@ -58,9 +58,9 @@ $(document).ready(function () {
     var verificationCode = mollie.createComponent('verificationCode', options);
     verificationCode.mount('#verification-code');
 
-    var form = $('#mollie-iframe-form');
+    var $mollieCardToken = $('input[name="mollieCardToken"]');
     var isResubmit = false;
-    $('input[name="mollieCardToken"]').closest('form').on('submit', function (event) {
+    $mollieCardToken.closest('form').on('submit', function (event) {
         var $form = $(this);
         if (isResubmit) {
             return;
@@ -68,24 +68,15 @@ $(document).ready(function () {
         event.preventDefault();
         mollie.createToken().then(function (token) {
             if (token.error) {
-                $('.js-mollie-alert').closest('article').show();
-                $('.js-mollie-alert').text(token.error.message);
+                var $mollieAlert = $('.js-mollie-alert');
+                $mollieAlert.closest('article').show();
+                $mollieAlert.text(token.error.message);
                 return;
             }
-            // Add token to the form
             $('input[name="mollieCardToken"]').val(token.token);
-            // tokenInput.value = token.token;
 
-            // $form.append(
-            //     '<input type="hidden" name="mollie_token" value="' + token.token + '" />'
-            // );
-
-            // Re-submit form to the server
             isResubmit = true;
             $form.submit();
         });
-
-
     });
-
 });
