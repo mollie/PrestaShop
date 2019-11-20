@@ -2273,6 +2273,11 @@ class Mollie extends PaymentModule
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
+            $this->context->controller->registerJavascript(
+                'mollie_iframe_js',
+                'https://js.mollie.com/v1/mollie.js',
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 150)
+            );
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
@@ -2542,6 +2547,7 @@ class Mollie extends PaymentModule
             } elseif($method['id'] === PaymentMethod::CREDITCARD &&
                 Configuration::get(self::MOLLIE_IFRAME)
             ) {
+
                 $this->context->smarty->assign([
                     'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
                     'price' => $this->context->cart->getOrderTotal(),

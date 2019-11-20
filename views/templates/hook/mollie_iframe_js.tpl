@@ -30,44 +30,5 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-
-
-<div class="mollie-container">
-    <div class="container">
-        <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
-            <li class="js-mollie-alert"></li>
-        </article>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <label>{l s='Card holder' mod='mollie'}</label>
-            <div id="card-holder" class="mollie-input">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-
-            <label>{l s='Card number' mod='mollie'}</label>
-            <div id="card-number" class="mollie-input">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-5">
-            <label>{l s='Expiry date' mod='mollie'}</label>
-            <div id="expiry-date" class="mollie-input">
-            </div>
-        </div>
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-5">
-            <label>{l s='CVC' mod='mollie'}</label>
-            <div id="verification-code" class="mollie-input">
-            </div>
-        </div>
-    </div>
-</div>
-
-
+<script src="{$mollieIFrameJS}"></script>
 

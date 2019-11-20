@@ -32,6 +32,10 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
+    var $cardHolder = $('#card-holder');
+    if (!$cardHolder.length) {
+        return;
+    }
     var mollie = Mollie(profileId, {locale: 'nl_NL', testMode: true});
 
     var options = {
@@ -46,6 +50,7 @@ $(document).ready(function () {
             }
         }
     };
+
     var cardHolder = mollie.createComponent('cardHolder', options);
     cardHolder.mount('#card-holder');
 

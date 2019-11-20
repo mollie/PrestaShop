@@ -243,9 +243,19 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 );
             } catch (PrestaShopDatabaseException $e) {
                 Mollie::tryAddOrderReferenceColumn();
-                throw $e;
+                $redirectLink = $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    null,
+                    [
+                        'step' => 1,
+                    ]
+                );
+                $this->errors[] = $this->l('Failed to validate order');
+                $this->redirectWithNotifications($redirectLink);
             }
         }
+
 
         // Go to payment url
         Tools::redirect($apiPayment->getCheckoutUrl());

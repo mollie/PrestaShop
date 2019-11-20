@@ -17,20 +17,8 @@
     padding: 5px;
 }
 .mollie-container {
-    /*position: relative;*/
-    /*max-width: 520px;*/
     overflow: hidden;
-    background: #fafafa;
     width: calc(100% - 80px);
-    /*margin: 40px auto 0;*/
     padding: 20px 40px 40px 40px;
-    /*box-shadow: 0 0 20px*/
-    /*rgba(0,0,0,.05),0 20px 40px rgba(0,0,0,.05);*/
+
 }
-/*.header-amount {*/
-/*    text-align: center;*/
-/*    font-size: 24px;*/
-/*    line-height: 1.2;*/
-/*    font-weight: 800;*/
-/*    letter-spacing: -.5px;*/
-/*}*/
