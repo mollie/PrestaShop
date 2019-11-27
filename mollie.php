@@ -79,7 +79,6 @@ class Mollie extends PaymentModule
         'banktransfer'    => array('eur'),
         'belfius'         => array('eur'),
         'bitcoin'         => array('eur'),
-        'cartasi'         => array('eur'),
         'cartesbancaires' => array('eur'),
         'creditcard'      => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
         'directdebit'     => array('eur'),
@@ -125,7 +124,6 @@ class Mollie extends PaymentModule
         'bitcoin'         => array(),
         'paysafecard'     => array(),
         'banktransfer'    => array(),
-        'cartasi'         => array('it'),
         'cartesbancaires' => array('fr'),
         'directdebit'     => array(
             'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
@@ -239,7 +237,6 @@ class Mollie extends PaymentModule
         'banktransfer'    => 'Bank',
         'belfius'         => 'Belfius',
         'bitcoin'         => 'Bitcoin',
-        'cartasi'         => 'CartaSi',
         'cartesbancaires' => 'Cartes Bancaires',
         'creditcard'      => 'Credit Card',
         'directdebit'     => 'Direct Debit',
@@ -361,7 +358,6 @@ class Mollie extends PaymentModule
             'Awaiting Mollie payment'                                                                                                         => $this->l('Awaiting Mollie payment'),
             'Mollie partially refunded'                                                                                                       => $this->l('Mollie partially refunded'),
             'iDEAL'                                                                                                                           => $this->l('iDEAL'),
-            'CartaSi'                                                                                                                         => $this->l('CartaSi'),
             'Cartes Bancaires'                                                                                                                => $this->l('Cartes Bancaires'),
             'Credit card'                                                                                                                     => $this->l('Credit card'),
             'Bancontact'                                                                                                                      => $this->l('Bancontact'),
@@ -3666,7 +3662,7 @@ class Mollie extends PaymentModule
             return (array) $apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach (array('cartasi' => 'CartaSi', 'cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
+            foreach (array('cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = array(
                         'id'        => $id,
