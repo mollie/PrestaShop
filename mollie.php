@@ -427,6 +427,7 @@ class Mollie extends PaymentModule
         foreach ($this->hooks as $hook) {
             $this->registerHook($hook);
         }
+        $this->registerHook('actionValidateOrder');
 
         if (!$this->partialRefundOrderState()) {
             $this->_errors[] = 'Unable to install Mollie partially refunded order state';
@@ -4626,18 +4627,18 @@ class Mollie extends PaymentModule
                     $amountPaid = !$dontTouchAmount ? Tools::ps_round((float) $amountPaid, 2) : $amountPaid;
                     $order->total_paid_real = 0;
                     $order->total_products = (float) $this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
                     $order->total_discounts_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
-                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
                     $order->total_discounts = $order->total_discounts_tax_incl;
                     $order->total_shipping_tax_excl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, false, null, $order->product_list);
-                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, $withTaxes, null, $order->product_list);
+                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, true, null, $order->product_list);
                     $order->total_shipping = $order->total_shipping_tax_incl;
                     if (!is_null($carrier) && Validate::isLoadedObject($carrier)) {
                         $order->carrier_tax_rate = $carrier->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
                     }
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
-                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
                     $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
@@ -6387,5 +6388,10 @@ class Mollie extends PaymentModule
         }
 
         return $countriesWithNames;
+    }
+
+    public function hookActionValidateOrder()
+    {
+        $test = 1;
     }
 }
