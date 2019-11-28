@@ -46,14 +46,13 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 export default function RefundForm(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
   const [refundInput, setRefundInput] = useState<string>('');
-  const { translations, payment: { id: transactionId }, payment, currencies, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, payment: { id: transactionId }, payment, currencies, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
     payment: state.payment,
     currencies: state.currencies,
-  }),), []);
+  }),);
   const dispatch = useDispatch();
-  const _dispatchUpdatePayment = (payment: IMollieApiPayment) => useCallback(() => dispatch(updatePayment(payment)), []);
 
   async function _refundPayment(partial = false): Promise<boolean> {
     let amount;
@@ -94,7 +93,7 @@ export default function RefundForm(): ReactElement<{}> {
         const { success = false, payment = null } = await refundPaymentAjax(transactionId, amount);
         if (success) {
           if (payment) {
-            _dispatchUpdatePayment(payment);
+            dispatch(updatePayment(payment));
             setRefundInput('');
           }
         } else {

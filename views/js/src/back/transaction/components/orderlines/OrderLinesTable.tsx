@@ -57,16 +57,14 @@ const TableContainer = styled.div`
 
 export default function OrderLinesTable(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
-  const { translations, order, currencies, config: { legacy }, config, viewportWidth }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, order, currencies, config: { legacy }, config, viewportWidth }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     order: state.order,
     currencies: state.currencies,
     translations: state.translations,
     config: state.config,
     viewportWidth: state.viewportWidth,
-  })), []);
-  //todo: help!!!!
+  }));
   const dispatch = useDispatch();
-  const _dispatchUpdateOrder = (order: IMollieApiOrder) => useCallback(() => dispatch(updateOrder(order)), []);
 
   async function _ship(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
@@ -132,7 +130,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
           setLoading(true);
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
-            _dispatchUpdateOrder(newOrder);
+            dispatch(updateOrder(newOrder));
           } else {
             import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
@@ -186,7 +184,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
-          _dispatchUpdateOrder(newOrder);
+          dispatch(updateOrder(newOrder));
         } else {
           import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
             swal({
@@ -240,7 +238,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
-          _dispatchUpdateOrder(newOrder);
+          dispatch(updateOrder(newOrder));
         } else {
           swal({
             icon: 'error',
