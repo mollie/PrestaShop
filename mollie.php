@@ -423,7 +423,6 @@ class Mollie extends PaymentModule
         foreach ($this->hooks as $hook) {
             $this->registerHook($hook);
         }
-        $this->registerHook('actionValidateOrder');
 
         if (!$this->partialRefundOrderState()) {
             $this->_errors[] = 'Unable to install Mollie partially refunded order state';
@@ -1441,7 +1440,6 @@ class Mollie extends PaymentModule
 
             static::MOLLIE_STATUS_OPEN           => Configuration::get(static::MOLLIE_STATUS_OPEN),
             static::MOLLIE_STATUS_PAID           => Configuration::get(static::MOLLIE_STATUS_PAID),
-            static::MOLLIE_STATUS_CANCELED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             static::MOLLIE_STATUS_CANCELED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             static::MOLLIE_STATUS_EXPIRED        => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             static::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
@@ -6384,10 +6382,5 @@ class Mollie extends PaymentModule
         }
 
         return $countriesWithNames;
-    }
-
-    public function hookActionValidateOrder()
-    {
-        $test = 1;
     }
 }
