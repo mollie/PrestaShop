@@ -2544,7 +2544,8 @@ class Mollie extends PaymentModule
                 }
 
                 $paymentOptions[] = $newOption;
-            } elseif($method['id'] === PaymentMethod::CREDITCARD &&
+            } elseif(
+            ($method['id'] === PaymentMethod::CREDITCARD || $method['id'] === PaymentMethod::CREDITCARD) &&
                 Configuration::get(self::MOLLIE_IFRAME)
             ) {
 

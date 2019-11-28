@@ -33,6 +33,7 @@
 
 
 <div class="mollie-container">
+    <label>{l s='Enter your card information' mod='mollie'}</label>
     <div class="container">
         <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
             <li class="js-mollie-alert"></li>

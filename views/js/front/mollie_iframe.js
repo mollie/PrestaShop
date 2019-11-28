@@ -38,19 +38,28 @@ $(document).ready(function () {
     }
     var mollie = Mollie(profileId, {locale: 'nl_NL', testMode: true});
 
+    // var options = {
+    //     styles: {
+    //         base: {
+    //             color: '#000',
+    //             fontSize: '10px;',
+    //             padding: '10px 15px',
+    //             '::placeholder': {
+    //                 color: 'rgba(68, 68, 68, 0.2)'
+    //             }
+    //         }
+    //     }
+    // };
+
     var options = {
         styles: {
             base: {
-                color: '#000',
-                fontSize: '10px;',
-                padding: '10px 15px',
                 '::placeholder': {
                     color: 'rgba(68, 68, 68, 0.2)'
                 }
             }
         }
     };
-
     var cardHolder = mollie.createComponent('cardHolder', options);
     cardHolder.mount('#card-holder');
 
