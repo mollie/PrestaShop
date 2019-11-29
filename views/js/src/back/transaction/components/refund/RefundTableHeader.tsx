@@ -34,9 +34,9 @@ import React, { ReactElement, useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
 
 export default function RefundTableHeader(): ReactElement<{}> {
-  const { translations }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
-  })), []);
+  }));
 
   return (
     <thead>

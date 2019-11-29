@@ -40,10 +40,10 @@ import { formatCurrency } from '@shared/tools';
 import { IMollieApiRefund } from '@shared/globals';
 
 export default function RefundTable(): ReactElement<{}> {
-  const { payment, currencies }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { payment, currencies }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     payment: state.payment,
     currencies: state.currencies,
-  })), []);
+  }));
 
   return (
     <div className="table-responsive">

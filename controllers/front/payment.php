@@ -83,7 +83,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        if (in_array($method, array('cartasi', 'cartesbancaires'))) {
+        if (in_array($method, array('cartesbancaires'))) {
             $method = 'creditcard';
         }
         $issuer = Tools::getValue('issuer') ?: null;

@@ -41,9 +41,9 @@ interface IProps {
 }
 
 export default function RefundButton({ loading, disabled, refundPayment }: IProps): ReactElement<{}> {
-  const { translations,  }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations,  }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
-  })), []);
+  }));
 
   return (
     <button
