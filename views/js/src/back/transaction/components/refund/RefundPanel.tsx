@@ -38,10 +38,10 @@ import RefundInfo from '@transaction/components/refund/RefundInfo';
 import LoadingDots from '@shared/components/LoadingDots';
 
 export default function RefundPanel(): ReactElement<{}> {
-  const { payment, config }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { payment, config }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     config: state.config,
     payment: state.payment,
-  }),), []);
+  }),);
 
   if (Object.keys(config).length <= 0) {
     return null;

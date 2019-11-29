@@ -42,10 +42,10 @@ interface IProps {
 }
 
 export default function PartialRefundButton({ loading, disabled, refundPayment }: IProps): ReactElement<{}> {
-  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   const content = (
     <button
