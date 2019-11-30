@@ -507,34 +507,34 @@ class Mollie extends PaymentModule
      */
     protected function initConfig()
     {
-        Configuration::updateGlobalValue(static::MOLLIE_API_KEY, '');
-        Configuration::updateGlobalValue(static::MOLLIE_DESCRIPTION, 'Cart %');
-        Configuration::updateGlobalValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-        Configuration::updateGlobalValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
-        Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
-        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
-        Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
-        Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
-        Configuration::updateGlobalValue(static::MOLLIE_METHOD_COUNTRIES, 0);
-        Configuration::updateGlobalValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
-        Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(
+        Configuration::updateValue(static::MOLLIE_API_KEY, '');
+        Configuration::updateValue(static::MOLLIE_DESCRIPTION, 'Cart %');
+        Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
+        Configuration::updateValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
+        Configuration::updateValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
+        Configuration::updateValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
+        Configuration::updateValue(static::MOLLIE_QRENABLED, false);
+        Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
+        Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
+        Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, false);
+        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
+        Configuration::updateValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        Configuration::updateValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateValue(
             static::MOLLIE_STATUS_PARTIAL_REFUND,
             Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND)
         );
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_PAID, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
-        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_PAID, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        Configuration::updateValue(static::MOLLIE_ACCOUNT_SWITCH, false);
+        Configuration::updateValue(static::MOLLIE_CSS, '');
 
-        Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
+        Configuration::updateValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
 
 
     }
@@ -5477,15 +5477,9 @@ class Mollie extends PaymentModule
      */
     public function getFilteredApiPayment($transactionId, $process = false)
     {
+        //todo: fix order states here!!!
         /** @var \Mollie\Api\Resources\Payment $payment */
         $payment = $this->api->payments->get($transactionId);
-        if ($process) {
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->name;
-            }
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($payment);
-        }
 
         if ($payment && method_exists($payment, 'refunds')) {
             $refunds = $payment->refunds();
@@ -5734,7 +5728,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success' => isset($status['status']) && $status['status'] === 'success',
-                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment()),
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], true),
                         );
                     case 'retrieve':
                         // Check order view permissions
@@ -5746,7 +5740,7 @@ class Mollie extends PaymentModule
                         }
                         return array(
                             'success' => true,
-                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment())
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], false)
                         );
                     default:
                         return array('success' => false);
@@ -5769,7 +5763,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success'  => true,
-                            'order'    => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment()),
+                            'order'    => static::getFilteredApiOrder($input['transactionId'], false),
                             'tracking' => $tracking,
                         );
                     case 'ship':
