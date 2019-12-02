@@ -60,12 +60,16 @@ $(document).ready(function () {
     mountMollieComponents(methodId);
 
     $('input[data-module-name="mollie"]').on('change', function () {
+        var paymentOption = $(this).attr('id');
+        var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
+        if(!methodId) {
+            return;
+        }
         cardHolderInput.unmount();
         carNumberInput.unmount();
         expiryDateInput.unmount();
         verificationCodeInput.unmount();
-        var paymentOption = $(this).attr('id');
-        var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
+
         mountMollieComponents(methodId);
     });
 
