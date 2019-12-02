@@ -36,23 +36,44 @@ $(document).ready(function () {
     if (!$mollieContainers.length) {
         return;
     }
-    $mollieContainers.each(function () {
-        var mollie = Mollie(profileId, {locale: 'en_US', testMode: true});
-        var options = {
-            styles: {
-                base: {
-                    '::placeholder': {
-                        color: 'rgba(68, 68, 68, 0.2)'
-                    }
+    var options = {
+        styles: {
+            base: {
+                '::placeholder': {
+                    color: 'rgba(68, 68, 68, 0.2)'
                 }
             }
-        };
-        var methodId = $(this).find('input[name="method-id"]').val();
+        }
+    };
+    var mollie = Mollie(profileId, {locale: 'en_US', testMode: true});
+    var cardHolder = mollie.createComponent('cardHolder', options);
+    var cardNumber = mollie.createComponent('cardNumber', options);
+    var expiryDate = mollie.createComponent('expiryDate', options);
+    var verificationCode = mollie.createComponent('verificationCode', options);
 
-        mountMollieField(this,'#card-holder', methodId, mollie, 'cardHolder', options);
-        mountMollieField(this,'#card-number', methodId, mollie, 'cardNumber', options);
-        mountMollieField(this,'#expiry-date', methodId, mollie, 'expiryDate', options);
-        mountMollieField(this,'#verification-code', methodId, mollie, 'verificationCode', options);
+    var cardHolderInput;
+    var carNumberInput;
+    var expiryDateInput;
+    var verificationCodeInput;
+
+    var methodId = $(this).find('input[name="method-id"]').val();
+    mountMollieComponents(methodId);
+
+    $('input[data-module-name="mollie"]').on('change', function () {
+        cardHolderInput.unmount();
+        carNumberInput.unmount();
+        expiryDateInput.unmount();
+        verificationCodeInput.unmount();
+        var paymentOption = $(this).attr('id');
+        var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
+        mountMollieComponents(methodId);
+    });
+
+    function mountMollieComponents(methodId) {
+        cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder);
+        carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber);
+        expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate);
+        verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode);
 
         var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
         var isResubmit = false;
@@ -70,20 +91,18 @@ $(document).ready(function () {
                     return;
                 }
                 $mollieCardToken.val(token.token);
-
                 isResubmit = true;
                 $form.submit();
             });
         });
-    });
+    }
 
-    function mountMollieField(mollieContainer,holderId, methodId, mollie, componentName, options) {
+    function mountMollieField(mollieContainer, holderId, methodId, inputHolder) {
         var invalidClass = 'is-invalid';
         var cardHolderId = holderId + '-' + methodId;
-        var cardHolder = mollie.createComponent(componentName, options);
-        cardHolder.mount(cardHolderId);
+        inputHolder.mount(cardHolderId);
         var cardHolderError = $(cardHolderId + '-error');
-        cardHolder.addEventListener('change', function (event) {
+        inputHolder.addEventListener('change', function (event) {
             if (event.error && event.touched) {
                 cardHolderError.find('p').text(event.error);
                 $(cardHolderId).addClass(invalidClass);
@@ -92,5 +111,7 @@ $(document).ready(function () {
                 $(cardHolderId).removeClass(invalidClass);
             }
         });
+
+        return inputHolder;
     }
 });
