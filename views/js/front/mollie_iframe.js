@@ -32,65 +32,65 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
-    var $cardHolder = $('#card-holder');
-    if (!$cardHolder.length) {
+    var $mollieContainers = $('.mollie-iframe-container');
+    if (!$mollieContainers.length) {
         return;
     }
-    var mollie = Mollie(profileId, {locale: 'nl_NL', testMode: true});
-
-    // var options = {
-    //     styles: {
-    //         base: {
-    //             color: '#000',
-    //             fontSize: '10px;',
-    //             padding: '10px 15px',
-    //             '::placeholder': {
-    //                 color: 'rgba(68, 68, 68, 0.2)'
-    //             }
-    //         }
-    //     }
-    // };
-
-    var options = {
-        styles: {
-            base: {
-                '::placeholder': {
-                    color: 'rgba(68, 68, 68, 0.2)'
+    $mollieContainers.each(function () {
+        var mollie = Mollie(profileId, {locale: 'en_US', testMode: true});
+        var options = {
+            styles: {
+                base: {
+                    '::placeholder': {
+                        color: 'rgba(68, 68, 68, 0.2)'
+                    }
                 }
             }
-        }
-    };
-    var cardHolder = mollie.createComponent('cardHolder', options);
-    cardHolder.mount('#card-holder');
+        };
+        var methodId = $(this).find('input[name="method-id"]').val();
 
-    var cardNumber = mollie.createComponent('cardNumber', options);
-    cardNumber.mount('#card-number');
+        mountMollieField(this,'#card-holder', methodId, mollie, 'cardHolder', options);
+        mountMollieField(this,'#card-number', methodId, mollie, 'cardNumber', options);
+        mountMollieField(this,'#expiry-date', methodId, mollie, 'expiryDate', options);
+        mountMollieField(this,'#verification-code', methodId, mollie, 'verificationCode', options);
 
-    var expiryDate = mollie.createComponent('expiryDate', options);
-    expiryDate.mount('#expiry-date');
-
-    var verificationCode = mollie.createComponent('verificationCode', options);
-    verificationCode.mount('#verification-code');
-
-    var $mollieCardToken = $('input[name="mollieCardToken"]');
-    var isResubmit = false;
-    $mollieCardToken.closest('form').on('submit', function (event) {
-        var $form = $(this);
-        if (isResubmit) {
-            return;
-        }
-        event.preventDefault();
-        mollie.createToken().then(function (token) {
-            if (token.error) {
-                var $mollieAlert = $('.js-mollie-alert');
-                $mollieAlert.closest('article').show();
-                $mollieAlert.text(token.error.message);
+        var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
+        var isResubmit = false;
+        $mollieCardToken.closest('form').on('submit', function (event) {
+            var $form = $(this);
+            if (isResubmit) {
                 return;
             }
-            $('input[name="mollieCardToken"]').val(token.token);
+            event.preventDefault();
+            mollie.createToken().then(function (token) {
+                if (token.error) {
+                    var $mollieAlert = $('.js-mollie-alert');
+                    $mollieAlert.closest('article').show();
+                    $mollieAlert.text(token.error.message);
+                    return;
+                }
+                $mollieCardToken.val(token.token);
 
-            isResubmit = true;
-            $form.submit();
+                isResubmit = true;
+                $form.submit();
+            });
         });
     });
+
+    function mountMollieField(mollieContainer,holderId, methodId, mollie, componentName, options) {
+        var invalidClass = 'is-invalid';
+        var cardHolderId = holderId + '-' + methodId;
+        var cardHolder = mollie.createComponent(componentName, options);
+        cardHolder.mount(cardHolderId);
+        var cardHolderError = $(cardHolderId + '-error');
+        cardHolder.addEventListener('change', function (event) {
+            if (event.error && event.touched) {
+                cardHolderError.find('p').text(event.error);
+                $(cardHolderId).addClass(invalidClass);
+            } else {
+                cardHolderError.find('p').text('');
+                $(cardHolderId).removeClass(invalidClass);
+            }
+        });
+    }
 });

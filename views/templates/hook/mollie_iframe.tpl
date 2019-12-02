@@ -32,7 +32,8 @@
 *}
 
 
-<div class="mollie-container">
+<div class="mollie-iframe-container">
+    <input type="hidden" value="{$methodId}" name="method-id">
     <label>{l s='Enter your card information' mod='mollie'}</label>
     <div class="container">
         <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
@@ -42,7 +43,10 @@
     <div class="row">
         <div class="col-lg-12">
             <label>{l s='Card holder' mod='mollie'}</label>
-            <div id="card-holder" class="mollie-input">
+            <div id="card-holder-{$methodId}" class="mollie-input card-holder">
+            </div>
+            <div role="alert" id="card-holder-{$methodId}-error" class="error">
+                <p class="mollie-input-error"></p>
             </div>
         </div>
     </div>
@@ -50,21 +54,30 @@
         <div class="col-lg-12">
 
             <label>{l s='Card number' mod='mollie'}</label>
-            <div id="card-number" class="mollie-input">
+            <div id="card-number-{$methodId}" class="mollie-input card-number">
+            </div>
+            <div role="alert" id="card-number-{$methodId}-error" class="error">
+                <p class="mollie-input-error"></p>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-5">
             <label>{l s='Expiry date' mod='mollie'}</label>
-            <div id="expiry-date" class="mollie-input">
+            <div id="expiry-date-{$methodId}" class="mollie-input expiry-date">
+            </div>
+            <div role="alert" id="expiry-date-{$methodId}-error" class="error">
+                <p class="mollie-input-error"></p>
             </div>
         </div>
         <div class="col-md-2">
         </div>
         <div class="col-md-5">
             <label>{l s='CVC' mod='mollie'}</label>
-            <div id="verification-code" class="mollie-input">
+            <div id="verification-code-{$methodId}" class="mollie-input verification-code">
+            </div>
+            <div role="alert" id="verification-code-{$methodId}-error" class="error">
+                <p class="mollie-input-error"></p>
             </div>
         </div>
     </div>

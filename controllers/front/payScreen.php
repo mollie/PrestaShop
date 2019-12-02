@@ -17,7 +17,8 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 
         $cartId = $this->context->cart->id;
         $secureKey = $this->context->customer->secure_key;
-        $cardToken = Tools::getValue('mollieCardToken');
+        $method = Tools::getValue('method');
+        $cardToken = Tools::getValue('mollieCardToken' . $method);
 
         $orderId = Order::getOrderByCartId($this->context->cart->id);
         $mollie = new \Mollie\Api\MollieApiClient();

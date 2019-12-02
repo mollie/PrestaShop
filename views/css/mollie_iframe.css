@@ -12,8 +12,7 @@
 /*    padding: 5px;*/
 /*}*/
 
-.mollie-container {
-    overflow: hidden;
+.mollie-iframe-container {
     width: calc(100% - 80px);
     /*padding: 20px 40px 40px 40px;*/
     padding-bottom: 20px;
@@ -47,4 +46,11 @@
     box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);
 }
 
+p.mollie-input-error {
+    color: red;
+}
 
+.mollie-input.is-invalid {
+    background: #FFF0F0;;
+    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);
+}

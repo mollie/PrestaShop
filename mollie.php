@@ -2545,14 +2545,15 @@ class Mollie extends PaymentModule
 
                 $paymentOptions[] = $newOption;
             } elseif(
-            ($method['id'] === PaymentMethod::CREDITCARD || $method['id'] === PaymentMethod::CREDITCARD) &&
+            ($method['id'] === PaymentMethod::CREDITCARD || $method['id'] === 'cartesbancaires') &&
                 Configuration::get(self::MOLLIE_IFRAME)
             ) {
 
                 $this->context->smarty->assign([
                     'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
                     'price' => $this->context->cart->getOrderTotal(),
-                    'priceSign' => $this->context->currency->getSign()
+                    'priceSign' => $this->context->currency->getSign(),
+                    'methodId' => $method['id']
                 ]);
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
@@ -2563,7 +2564,7 @@ class Mollie extends PaymentModule
                         [
                             [
                                 'type' => 'hidden',
-                                'name' => 'mollieCardToken',
+                                'name' => "mollieCardToken{$method['id']}",
                                 'value' => ''
                             ]
                         ]
