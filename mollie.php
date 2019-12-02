@@ -2061,8 +2061,6 @@ class Mollie extends PaymentModule
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
-                $webhookController = new MollieWebhookModuleFrontController();
-                $webhookController->processTransaction($apiPayment);
             }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
@@ -5547,13 +5545,13 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Api\Resources\Order $order */
         $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-        if ($process) {
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->name;
-            }
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($order);
-        }
+//        if ($process) {
+//            if (!Tools::isSubmit('module')) {
+//                $_GET['module'] = $this->name;
+//            }
+//            $webhookController = new MollieWebhookModuleFrontController();
+//            $webhookController->processTransaction($order);
+//        }
 
         if ($order && method_exists($order, 'refunds')) {
             $refunds = $order->refunds();
@@ -5785,7 +5783,7 @@ class Mollie extends PaymentModule
                             );
                         }
                         $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], false)));
                     case 'cancel':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
