@@ -41,7 +41,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
             "method" => "creditcard",
             "amount" => [
                 "currency" => $this->context->currency->iso_code,
-                "value" => (string)$this->context->cart->getOrderTotal()
+                "value" => number_format($this->context->cart->getOrderTotal(),2)
             ],
             "description" => "Order #1",
             "redirectUrl" => $validateUrl,
