@@ -62,7 +62,7 @@ $(document).ready(function () {
     $('input[data-module-name="mollie"]').on('change', function () {
         var paymentOption = $(this).attr('id');
         var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
-        if(!methodId) {
+        if (!methodId) {
             return;
         }
         cardHolderInput.unmount();
@@ -73,11 +73,13 @@ $(document).ready(function () {
         mountMollieComponents(methodId);
     });
 
+
     function mountMollieComponents(methodId) {
-        cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder);
-        carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber);
-        expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate);
-        verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode);
+        cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
+        carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
+        expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
+        verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
+
 
         var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
         var isResubmit = false;
@@ -101,7 +103,7 @@ $(document).ready(function () {
         });
     }
 
-    function mountMollieField(mollieContainer, holderId, methodId, inputHolder) {
+    function mountMollieField(mollieContainer, holderId, methodId, inputHolder, methodName) {
         var invalidClass = 'is-invalid';
         var cardHolderId = holderId + '-' + methodId;
         inputHolder.mount(cardHolderId);
@@ -116,6 +118,16 @@ $(document).ready(function () {
             }
         });
 
+        inputHolder.addEventListener("focus", function () {
+            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-focused', true);
+        });
+
+        inputHolder.addEventListener("blur", function () {
+            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-focused', false);
+        });
+        inputHolder.addEventListener("change", function (event) {
+            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-dirty', event.dirty);
+        });
         return inputHolder;
     }
 });

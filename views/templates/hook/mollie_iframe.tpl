@@ -40,36 +40,27 @@
         </article>
     </div>
     <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
-    <div class="form-group form-group--card-holder">
+    <div class="form-group form-group-card-holder {$methodId}">
         <label class="mollie-label">{l s='Card holder' mod='mollie'}</label>
-        <div id="card-holder-{$methodId}" class="mollie-input card-holder" style="height: 40px">
-        </div>
-        <div role="alert" id="card-holder-{$methodId}-error" class="error">
-            <label class="mollie-input-error"></label>
+        <div id="card-holder-{$methodId}" class="mollie-input card-holder">
         </div>
     </div>
+    <div role="alert" id="card-holder-{$methodId}-error" class="error">
+        <label class="mollie-input-error"></label>
+    </div>
     <div class="inline-form-group">
-        <div class="form-group form-group--card-number">
+        <div class="form-group form-group-card-number {$methodId}">
             <label class="mollie-label">{l s='Card number' mod='mollie'}</label>
-            <div id="card-number-{$methodId}" class="mollie-input card-number"style="height: 40px">
-            </div>
-            <div role="alert" id="card-number-{$methodId}-error" class="error">
-                <label class="mollie-input-error"></label>
+            <div id="card-number-{$methodId}" class="mollie-input card-number">
             </div>
         </div>
-        <div class="form-group form-group--expiry-date">
-            <div id="expiry-date-{$methodId}" class="mollie-input expiry-date"style="height: 40px">
-            </div>
-            <div role="alert" id="expiry-date-{$methodId}-error" class="error">
-                <label class="mollie-input-error"></label>
+        <div class="form-group form-group-expiry-date {$methodId}">
+            <div id="expiry-date-{$methodId}" class="mollie-input expiry-date">
             </div>
         </div>
-        <div class="form-group form-group--verification-code">
+        <div class="form-group form-group-verification-code {$methodId}">
             <label class="mollie-label">{l s='CVC' mod='mollie'}</label>
-            <div id="verification-code-{$methodId}" class="mollie-input verification-code"style="height: 40px">
-            </div>
-            <div role="alert" id="verification-code-{$methodId}-error" class="error">
-                <label class="mollie-input-error"></label>
+            <div id="verification-code-{$methodId}" class="mollie-input verification-code">
             </div>
         </div>
     </div>
