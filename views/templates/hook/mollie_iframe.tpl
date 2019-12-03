@@ -39,8 +39,9 @@
             <li class="js-mollie-alert"></li>
         </article>
     </div>
+    <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
     <div class="form-group form-group--card-holder">
-        <label>{l s='Card holder' mod='mollie'}</label>
+        <label class="mollie-label">{l s='Card holder' mod='mollie'}</label>
         <div id="card-holder-{$methodId}" class="mollie-input card-holder">
         </div>
         <div role="alert" id="card-holder-{$methodId}-error" class="error">
@@ -49,7 +50,7 @@
     </div>
     <div class="inline-form-group">
         <div class="form-group form-group--card-number">
-            <label>{l s='Card number' mod='mollie'}</label>
+            <label class="mollie-label">{l s='Card number' mod='mollie'}</label>
             <div id="card-number-{$methodId}" class="mollie-input card-number">
             </div>
             <div role="alert" id="card-number-{$methodId}-error" class="error">
@@ -64,7 +65,7 @@
             </div>
         </div>
         <div class="form-group form-group--verification-code">
-            <label>{l s='CVC' mod='mollie'}</label>
+            <label class="mollie-label">{l s='CVC' mod='mollie'}</label>
             <div id="verification-code-{$methodId}" class="mollie-input verification-code">
             </div>
             <div role="alert" id="verification-code-{$methodId}-error" class="error">

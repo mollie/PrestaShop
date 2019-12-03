@@ -62,7 +62,7 @@
 
 
 
-.mollie-iframe-container label {
+.mollie-iframe-container .mollie-label {
     position: absolute;
     top: 15px;
     left: 15px;
@@ -131,4 +131,9 @@
     display: flex;
     flex-wrap: wrap;
     margin: 15px 0 0;
+}
+
+.mollie-information-label {
+    font-size: 15px;
+    padding-bottom: 10px;
 }
