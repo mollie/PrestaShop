@@ -46,9 +46,9 @@
 /*    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);*/
 /*}*/
 
-/*p.mollie-input-error {*/
-/*    color: red;*/
-/*}*/
+label.mollie-input-error {
+    color: red;
+}
 
 /*.mollie-input.is-invalid {*/
 /*    background: #FFF0F0;;*/
@@ -73,7 +73,7 @@
 /*    position: relative;*/
 /*}*/
 
-.mollie-component {
+.mollie-input {
     width: 100%;
     border-radius: 10px;
     background-color: #fff;
@@ -83,24 +83,24 @@
     transition: all 0.05s ease;
 }
 
-.mollie-component--cardNumber {
+.mollie-input.card-number{
     border-radius: 10px 10px 0 0;
 }
 
-.mollie-component--expiryDate {
+.mollie-input.expiry-date {
     border-radius: 0 0 0 10px;
 }
 
-.mollie-component--verificationCode {
+.mollie-input.verification-code {
     border-radius: 0 0 10px 0;
 }
 
-.mollie-component.has-focus {
+.mollie-input.has-focus {
     box-shadow: inset 0px 0px 0px 2px #07f, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
     0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
 }
 
-.mollie-component.is-invalid {
+.mollie-input.is-invalid {
     box-shadow: 0px 0px 0px 1px #f33, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
     0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
     background-color: #fff0f0;

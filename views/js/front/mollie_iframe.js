@@ -108,10 +108,10 @@ $(document).ready(function () {
         var cardHolderError = $(cardHolderId + '-error');
         inputHolder.addEventListener('change', function (event) {
             if (event.error && event.touched) {
-                cardHolderError.find('p').text(event.error);
+                cardHolderError.find('label').text(event.error);
                 $(cardHolderId).addClass(invalidClass);
             } else {
-                cardHolderError.find('p').text('');
+                cardHolderError.find('label').text('');
                 $(cardHolderId).removeClass(invalidClass);
             }
         });
