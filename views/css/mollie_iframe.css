@@ -19,38 +19,116 @@
 }
 
 
-.mollie-input {
+/*.mollie-input {*/
+/*    width: 100%;*/
+/*    height: 34px;*/
+/*    background-color: #FFF;*/
+/*    padding: 10px 15px;*/
+/*    border-radius: 6px;*/
+/*    color: #222;*/
+/*    transition: all .05s ease;*/
+/*    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);*/
+/*}*/
+
+/*.mollie-input::placeholder {*/
+/*    color: #888;*/
+/*    font-size: 14px;*/
+/*    line-height: 1.2;*/
+/*}*/
+
+/*.mollie-input:focus, .mollie-input:active {*/
+/*    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);*/
+/*    border: 2px solid #07f;*/
+/*}*/
+
+/*.mollie-input.error {*/
+/*    background-color: #FFF0F0;*/
+/*    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);*/
+/*}*/
+
+/*p.mollie-input-error {*/
+/*    color: red;*/
+/*}*/
+
+/*.mollie-input.is-invalid {*/
+/*    background: #FFF0F0;;*/
+/*    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);*/
+/*}*/
+
+
+
+
+
+
+
+
+.mollie-iframe-container label {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #999;
+}
+
+/*.form-group {*/
+/*    position: relative;*/
+/*}*/
+
+.mollie-component {
     width: 100%;
-    height: 34px;
-    background-color: #FFF;
-    padding: 10px 15px;
-    border-radius: 6px;
-    color: #222;
-    transition: all .05s ease;
-    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: inset 0px 0px 0px 0px transparent,
+    0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+    transition: all 0.05s ease;
 }
 
-.mollie-input::placeholder {
-    color: #888;
-    font-size: 14px;
-    line-height: 1.2;
+.mollie-component--cardNumber {
+    border-radius: 10px 10px 0 0;
 }
 
-.mollie-input:focus, .mollie-input:active {
-    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
-    border: 2px solid #07f;
+.mollie-component--expiryDate {
+    border-radius: 0 0 0 10px;
 }
 
-.mollie-input.error {
-    background-color: #FFF0F0;
-    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);
+.mollie-component--verificationCode {
+    border-radius: 0 0 10px 0;
 }
 
-p.mollie-input-error {
-    color: red;
+.mollie-component.has-focus {
+    box-shadow: inset 0px 0px 0px 2px #07f, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
+    0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
 }
 
-.mollie-input.is-invalid {
-    background: #FFF0F0;;
-    box-shadow: 0px 1px 1px 0px rgba(255, 51, 68, 0.1), 0px 1px 3px 0px rgba(255, 51, 68, 0.1);
+.mollie-component.is-invalid {
+    box-shadow: 0px 0px 0px 1px #f33, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
+    0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+    background-color: #fff0f0;
+}
+
+
+.form-group--expiry-date,
+.form-group--verification-code {
+    width: 50%;
+    flex: 0 1 auto;
+}
+
+.form-group--card-number {
+    width: 100%;
+    flex: 0 1 auto;
+}
+.inline-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0 0;
+}
+.mollie-iframe-container .form-group {
+    position: relative;
+    margin: 0;
+}
+
+.inline-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0 0;
 }

@@ -34,50 +34,41 @@
 
 <div class="mollie-iframe-container">
     <input type="hidden" value="{$methodId}" name="method-id">
-    <label>{l s='Enter your card information' mod='mollie'}</label>
     <div class="container">
         <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
             <li class="js-mollie-alert"></li>
         </article>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <label>{l s='Card holder' mod='mollie'}</label>
-            <div id="card-holder-{$methodId}" class="mollie-input card-holder">
-            </div>
-            <div role="alert" id="card-holder-{$methodId}-error" class="error">
-                <p class="mollie-input-error"></p>
-            </div>
+    <div class="form-group form-group--card-holder">
+        <label>{l s='Card holder' mod='mollie'}</label>
+        <div id="card-holder-{$methodId}" class="mollie-input card-holder">
+        </div>
+        <div role="alert" id="card-holder-{$methodId}-error" class="error">
+            <label class="mollie-input-error"></label>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-
+    <div class="inline-form-group">
+        <div class="form-group form-group--card-number">
             <label>{l s='Card number' mod='mollie'}</label>
             <div id="card-number-{$methodId}" class="mollie-input card-number">
             </div>
             <div role="alert" id="card-number-{$methodId}-error" class="error">
-                <p class="mollie-input-error"></p>
+                <label class="mollie-input-error"></label>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-5">
-            <label>{l s='Expiry date' mod='mollie'}</label>
+        <div class="form-group form-group--expiry-date">
             <div id="expiry-date-{$methodId}" class="mollie-input expiry-date">
             </div>
             <div role="alert" id="expiry-date-{$methodId}-error" class="error">
-                <p class="mollie-input-error"></p>
+                <label class="mollie-input-error"></label>
             </div>
         </div>
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-5">
+        <div class="form-group form-group--verification-code">
             <label>{l s='CVC' mod='mollie'}</label>
             <div id="verification-code-{$methodId}" class="mollie-input verification-code">
             </div>
             <div role="alert" id="verification-code-{$methodId}-error" class="error">
-                <p class="mollie-input-error"></p>
+                <label class="mollie-input-error"></label>
             </div>
         </div>
     </div>

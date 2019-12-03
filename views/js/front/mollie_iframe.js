@@ -39,9 +39,9 @@ $(document).ready(function () {
     var options = {
         styles: {
             base: {
-                '::placeholder': {
-                    color: 'rgba(68, 68, 68, 0.2)'
-                }
+                color: "#222",
+                fontSize: "15px;",
+                padding: "15px"
             }
         }
     };
