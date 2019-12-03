@@ -323,11 +323,14 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                 $status = static::DONE;
+            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
+            $href .= $apiPayment->details->failureReason ?
+            "#message={$apiPayment->details->failureReason}" : '';
             die(json_encode(array(
                 'success'  => true,
                 'status'   => $status,
                 'response' => json_encode($apiPayment),
-                'href'     => $this->context->link->getPagelink('order', true, null, array('step' => 3))
+                'href'     => $href
             )));
             case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:

@@ -2272,6 +2272,10 @@ class Mollie extends PaymentModule
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+            Media::addJsDef([
+                'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            ]);
+            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
             $this->context->controller->registerJavascript(
                 'mollie_iframe_js',
