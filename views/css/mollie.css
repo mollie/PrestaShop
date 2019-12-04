@@ -71,3 +71,11 @@
 #module_form .mollie-input-error {
     border: 1px solid #f13340;
 }
+
+.js-mollie-payment-error .error-text {
+    margin: 0;
+}
+
+.mollie-signature {
+    padding-top: 20px;
+}

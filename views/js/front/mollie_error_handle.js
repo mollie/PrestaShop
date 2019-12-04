@@ -31,22 +31,21 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
-$(document).ready(function() {
-    $('#module_form').on('submit', function () {
-        var description = $('#MOLLIE_DESCRIPTION');
-        var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
-        var profile = $('#MOLLIE_PROFILE_ID');
-        if (description.val() === '' || (isProfileChecked && profile.val() === '')) {
-            event.preventDefault();
-            description.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-        }
-
-        if (profile.val().substring(0, 4) !== 'pfl_') {
-            event.preventDefault();
-            description.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-        }
-    })
+$(document).ready(function () {
+    var hashTag = document.URL.substr(document.URL.indexOf('#')+1);
+    if (hashTag) {
+        // parent.location.hash = '';
+        $.ajax({
+            url: ajaxUrl,
+            method: 'GET',
+            data: {
+                'hashTag': hashTag,
+                ajax: 1,
+                action: 'displayCheckoutError'
+            },
+            success: function (response) {
+                $('#checkout-payment-step').prepend(response);
+            }
+        })
+    }
 });
