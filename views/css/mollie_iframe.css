@@ -6,11 +6,11 @@
 
 label.mollie-input-error {
     color: red;
+    padding-top: 10px;
 }
 
 .mollie-iframe-container .mollie-label {
     position: absolute;
-    top: 15px;
     left: 15px;
     color: #999;
 }
@@ -68,6 +68,8 @@ label.mollie-input-error {
 .mollie-iframe-container .form-group {
     position: relative;
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 .inline-form-group {

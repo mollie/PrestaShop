@@ -75,3 +75,7 @@
 .js-mollie-payment-error .error-text {
     margin: 0;
 }
+
+.mollie-signature {
+    padding-top: 20px;
+}
