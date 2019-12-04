@@ -5831,7 +5831,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success' => isset($status['status']) && $status['status'] === 'success',
-                            'payment' => static::getFilteredApiPayment($input['transactionId'], true),
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], false),
                         );
                     case 'retrieve':
                         // Check order view permissions
