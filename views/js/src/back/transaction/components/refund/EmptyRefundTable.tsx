@@ -36,9 +36,9 @@ import RefundTableHeader from '@transaction/components/refund/RefundTableHeader'
 import { useMappedState } from 'redux-react-hook';
 
 export default function EmptyRefundTable(): ReactElement<{}> {
-  const { translations }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations
-  })), []);
+  }));
 
   return (
     <div className="table-responsive">

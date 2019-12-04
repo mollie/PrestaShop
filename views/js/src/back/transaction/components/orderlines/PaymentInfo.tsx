@@ -44,12 +44,12 @@ const Div = styled.div`
 ` as any;
 
 export default function PaymentInfo(): ReactElement<{}> {
-  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     order: state.order,
     currencies: state.currencies,
     config: state.config,
-  })), []);
+  }));
 
   if (legacy) {
     return (

@@ -45,11 +45,11 @@ const Div = styled.div`
 ` as any;
 
 export default function RefundInfo(): ReactElement<{}> {
-  const { translations, config: { legacy }, payment }: Partial<IMollieOrderState> = useCallback(useMappedState( (state: IMollieOrderState): any => ({
+  const { translations, config: { legacy }, payment }: Partial<IMollieOrderState> = useMappedState( (state: IMollieOrderState): any => ({
     payment: state.payment,
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   if (legacy) {
     return (

@@ -87,7 +87,6 @@ class Mollie extends PaymentModule
         'banktransfer'    => array('eur'),
         'belfius'         => array('eur'),
         'bitcoin'         => array('eur'),
-        'cartasi'         => array('eur'),
         'cartesbancaires' => array('eur'),
         'creditcard'      => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
         'directdebit'     => array('eur'),
@@ -133,7 +132,6 @@ class Mollie extends PaymentModule
         'bitcoin'         => array(),
         'paysafecard'     => array(),
         'banktransfer'    => array(),
-        'cartasi'         => array('it'),
         'cartesbancaires' => array('fr'),
         'directdebit'     => array(
             'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
@@ -249,7 +247,6 @@ class Mollie extends PaymentModule
         'banktransfer'    => 'Bank',
         'belfius'         => 'Belfius',
         'bitcoin'         => 'Bitcoin',
-        'cartasi'         => 'CartaSi',
         'cartesbancaires' => 'Cartes Bancaires',
         'creditcard'      => 'Credit Card',
         'directdebit'     => 'Direct Debit',
@@ -280,7 +277,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.6';
+        $this->version = '3.4.7';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -371,7 +368,6 @@ class Mollie extends PaymentModule
             'Awaiting Mollie payment'                                                                                                         => $this->l('Awaiting Mollie payment'),
             'Mollie partially refunded'                                                                                                       => $this->l('Mollie partially refunded'),
             'iDEAL'                                                                                                                           => $this->l('iDEAL'),
-            'CartaSi'                                                                                                                         => $this->l('CartaSi'),
             'Cartes Bancaires'                                                                                                                => $this->l('Cartes Bancaires'),
             'Credit card'                                                                                                                     => $this->l('Credit card'),
             'Bancontact'                                                                                                                      => $this->l('Bancontact'),
@@ -523,36 +519,36 @@ class Mollie extends PaymentModule
      */
     protected function initConfig()
     {
-        Configuration::updateGlobalValue(static::MOLLIE_API_KEY, '');
-        Configuration::updateGlobalValue(static::MOLLIE_PROFILE_ID, '');
-        Configuration::updateGlobalValue(static::MOLLIE_DESCRIPTION, 'Cart %');
-        Configuration::updateGlobalValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-        Configuration::updateGlobalValue(static::MOLLIE_IFRAME, false);
-        Configuration::updateGlobalValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
-        Configuration::updateGlobalValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
-        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
-        Configuration::updateGlobalValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
-        Configuration::updateGlobalValue(static::MOLLIE_QRENABLED, false);
-        Configuration::updateGlobalValue(static::MOLLIE_METHOD_COUNTRIES, 0);
-        Configuration::updateGlobalValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
-        Configuration::updateGlobalValue(static::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        Configuration::updateGlobalValue(
+        Configuration::updateValue(static::MOLLIE_API_KEY, '');
+        Configuration::updateValue(static::MOLLIE_PROFILE_ID, '');
+        Configuration::updateValue(static::MOLLIE_DESCRIPTION, 'Cart %');
+        Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
+        Configuration::updateValue(static::MOLLIE_IFRAME, false);
+        Configuration::updateValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
+        Configuration::updateValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
+        Configuration::updateValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
+        Configuration::updateValue(static::MOLLIE_QRENABLED, false);
+        Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
+        Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
+        Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, false);
+        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
+        Configuration::updateValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        Configuration::updateValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
+        Configuration::updateValue(
             static::MOLLIE_STATUS_PARTIAL_REFUND,
             Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND)
         );
-        Configuration::updateGlobalValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_PAID, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
-        Configuration::updateGlobalValue(static::MOLLIE_ACCOUNT_SWITCH, false);
-        Configuration::updateGlobalValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_PAID, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_CANCELED, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_EXPIRED, true);
+        Configuration::updateValue(static::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        Configuration::updateValue(static::MOLLIE_ACCOUNT_SWITCH, false);
+        Configuration::updateValue(static::MOLLIE_CSS, '');
 
-        Configuration::updateGlobalValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
+        Configuration::updateValue(static::MOLLIE_API, static::MOLLIE_ORDERS_API);
 
 
     }
@@ -2116,8 +2112,6 @@ class Mollie extends PaymentModule
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
-                $webhookController = new MollieWebhookModuleFrontController();
-                $webhookController->processTransaction($apiPayment);
             }
         } catch (ApiException $e) {
             return array(
@@ -3770,7 +3764,7 @@ class Mollie extends PaymentModule
             return (array) $apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach (array('cartasi' => 'CartaSi', 'cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
+            foreach (array('cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = array(
                         'id'        => $id,
@@ -4731,18 +4725,18 @@ class Mollie extends PaymentModule
                     $amountPaid = !$dontTouchAmount ? Tools::ps_round((float) $amountPaid, 2) : $amountPaid;
                     $order->total_paid_real = 0;
                     $order->total_products = (float) $this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
                     $order->total_discounts_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
-                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
                     $order->total_discounts = $order->total_discounts_tax_incl;
                     $order->total_shipping_tax_excl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, false, null, $order->product_list);
-                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, $withTaxes, null, $order->product_list);
+                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, true, null, $order->product_list);
                     $order->total_shipping = $order->total_shipping_tax_incl;
                     if (!is_null($carrier) && Validate::isLoadedObject($carrier)) {
                         $order->carrier_tax_rate = $carrier->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
                     }
                     $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
-                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal($withTaxes, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
                     $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
@@ -5663,13 +5657,6 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Api\Resources\Order $order */
         $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-        if ($process) {
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->name;
-            }
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($order);
-        }
 
         if ($order && method_exists($order, 'refunds')) {
             $refunds = $order->refunds();
@@ -5844,7 +5831,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success' => isset($status['status']) && $status['status'] === 'success',
-                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment()),
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], true),
                         );
                     case 'retrieve':
                         // Check order view permissions
@@ -5856,7 +5843,7 @@ class Mollie extends PaymentModule
                         }
                         return array(
                             'success' => true,
-                            'payment' => static::getFilteredApiPayment($input['transactionId'], static::isLocalEnvironment())
+                            'payment' => static::getFilteredApiPayment($input['transactionId'], false)
                         );
                     default:
                         return array('success' => false);
@@ -5879,7 +5866,7 @@ class Mollie extends PaymentModule
 
                         return array(
                             'success'  => true,
-                            'order'    => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment()),
+                            'order'    => static::getFilteredApiOrder($input['transactionId'], false),
                             'tracking' => $tracking,
                         );
                     case 'ship':
@@ -5901,7 +5888,7 @@ class Mollie extends PaymentModule
                             );
                         }
                         $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
+                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], false)));
                     case 'cancel':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {

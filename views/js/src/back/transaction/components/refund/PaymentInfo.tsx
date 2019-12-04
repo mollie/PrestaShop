@@ -44,10 +44,10 @@ const Div = styled.div`
 ` as any;
 
 export default function PaymentInfo(): ReactElement<{}> {
-  const { translations, config: { legacy } } = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, config: { legacy } } = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   if (legacy) {
     return (

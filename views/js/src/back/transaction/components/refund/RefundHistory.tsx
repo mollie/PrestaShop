@@ -37,10 +37,10 @@ import EmptyRefundTable from '@transaction/components/refund/EmptyRefundTable';
 import RefundTable from '@transaction/components/refund/RefundTable';
 
 export default function RefundHistory(): ReactElement<{}> {
-  const { translations, payment }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, payment }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     payment: state.payment,
-  })), []);
+  }));
 
   return (
     <>

@@ -38,12 +38,12 @@ import { formatCurrency } from '@shared/tools';
 import { useMappedState } from 'redux-react-hook';
 
 export default function PaymentInfoContent(): ReactElement<{}> {
-  const { translations, order, currencies, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, order, currencies, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     order: state.order,
     currencies: state.currencies,
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   return (
     <>
