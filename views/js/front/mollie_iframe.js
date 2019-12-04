@@ -56,6 +56,13 @@ $(document).ready(function () {
     var expiryDateInput;
     var verificationCodeInput;
 
+    var fieldMap = {
+        'card-holder': 0,
+        'card-number': 1,
+        'expiry-date': 2,
+        'verification-code': 3
+    };
+    var fieldErrors = {};
     var methodId = $(this).find('input[name="method-id"]').val();
     mountMollieComponents(methodId);
 
@@ -79,7 +86,6 @@ $(document).ready(function () {
         carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
         verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
-
 
         var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
         var isResubmit = false;
@@ -107,14 +113,15 @@ $(document).ready(function () {
         var invalidClass = 'is-invalid';
         var cardHolderId = holderId + '-' + methodId;
         inputHolder.mount(cardHolderId);
-        var cardHolderError = $(cardHolderId + '-error');
         inputHolder.addEventListener('change', function (event) {
             if (event.error && event.touched) {
-                cardHolderError.find('label').text(event.error);
                 $(cardHolderId).addClass(invalidClass);
+                fieldErrors[fieldMap[methodName]] = event.error;
+                handleErrors();
             } else {
-                cardHolderError.find('label').text('');
+                fieldErrors[fieldMap[methodName]] = '';
                 $(cardHolderId).removeClass(invalidClass);
+                handleErrors();
             }
         });
 
@@ -129,5 +136,22 @@ $(document).ready(function () {
             $('.form-group-' + methodName + '.' + methodId).toggleClass('is-dirty', event.dirty);
         });
         return inputHolder;
+    }
+
+    function handleErrors() {
+        var $errorField = $('#mollie-field-error');
+        var hasError = 0;
+        jQuery.each(fieldErrors, function (key, fieldError) {
+            if (fieldError) {
+                $errorField.find('label').text(fieldError);
+                $errorField.show();
+                hasError = 1;
+                return false;
+            }
+        });
+        if (!hasError) {
+            $errorField.find('label').text('');
+            $errorField.hide();
+        }
     }
 });

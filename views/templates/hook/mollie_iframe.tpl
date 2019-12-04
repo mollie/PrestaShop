@@ -45,9 +45,6 @@
         <div id="card-holder-{$methodId}" class="mollie-input card-holder">
         </div>
     </div>
-    <div role="alert" id="card-holder-{$methodId}-error" class="error">
-        <label class="mollie-input-error"></label>
-    </div>
     <div class="inline-form-group">
         <div class="form-group form-group-card-number {$methodId}">
             <label class="mollie-label">{l s='Card number' mod='mollie'}</label>
@@ -63,6 +60,9 @@
             <div id="verification-code-{$methodId}" class="mollie-input verification-code">
             </div>
         </div>
+    </div>
+    <div role="alert" id="mollie-field-error" class="error">
+        <label class="mollie-input-error"></label>
     </div>
 </div>
 
