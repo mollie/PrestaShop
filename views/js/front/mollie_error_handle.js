@@ -44,7 +44,11 @@ $(document).ready(function () {
                 action: 'displayCheckoutError'
             },
             success: function (response) {
-                $('#checkout-payment-step').prepend(response);
+                if (isPS17) {
+                    $('#checkout-payment-step').prepend(response);
+                } else {
+                    $('#HOOK_PAYMENT').prepend(response);
+                }
             }
         })
     }
