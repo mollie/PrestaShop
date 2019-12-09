@@ -11,6 +11,8 @@ $(document).ready(function () {
             'type': 'inline',
             'content': $('#mollie-iframe-container').html()
         });
+        fieldErrors = {};
+        handleErrors();
         mountMollieComponents();
     });
 
