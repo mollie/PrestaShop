@@ -40,8 +40,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
     {
         $errorMessages = explode('#', Tools::getValue('hashTag'));
         foreach ($errorMessages as $errorMessage) {
-            if (strpos($errorMessage, 'message=') === 0) {
-                $errorMessage = str_replace('message=', '', $errorMessage);
+            if (strpos($errorMessage, 'mollieMessage=') === 0) {
+                $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
                 $this->context->smarty->assign(array(
                     'errorMessage'   => $errorMessage
 

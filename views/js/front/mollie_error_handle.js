@@ -34,7 +34,7 @@
 $(document).ready(function () {
     var hashTag = document.URL.substr(document.URL.indexOf('#')+1);
     if (hashTag) {
-        // parent.location.hash = '';
+        parent.location.hash = '';
         $.ajax({
             url: ajaxUrl,
             method: 'GET',
