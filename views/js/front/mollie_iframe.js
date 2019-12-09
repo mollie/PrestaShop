@@ -76,10 +76,11 @@ $(document).ready(function () {
         carNumberInput.unmount();
         expiryDateInput.unmount();
         verificationCodeInput.unmount();
-
+        fieldErrors = {};
+        handleErrors();
+        $('.mollie-input').removeClass('is-invalid');
         mountMollieComponents(methodId);
     });
-
 
     function mountMollieComponents(methodId) {
         cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
