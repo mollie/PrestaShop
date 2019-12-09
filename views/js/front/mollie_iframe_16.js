@@ -27,7 +27,7 @@ $(document).ready(function () {
             }
         }
     };
-    var mollie = Mollie(profileId, {locale: 'en_US', testMode: true});
+    var mollie = Mollie(profileId, {testMode: true});
     var cardHolder = mollie.createComponent('cardHolder', options);
     var cardNumber = mollie.createComponent('cardNumber', options);
     var expiryDate = mollie.createComponent('expiryDate', options);
@@ -45,8 +45,6 @@ $(document).ready(function () {
         'verification-code': 3
     };
     var fieldErrors = {};
-
-
 
     function mountMollieComponents() {
         cardHolderInput = mountMollieField(this, '.fancybox-outer #card-holder', cardHolder, 'card-holder');
@@ -105,7 +103,7 @@ $(document).ready(function () {
     }
 
     function handleErrors() {
-        var $errorField = $('#mollie-field-error');
+        var $errorField = $('.mollie-field-error');
         var hasError = 0;
         jQuery.each(fieldErrors, function (key, fieldError) {
             if (fieldError) {

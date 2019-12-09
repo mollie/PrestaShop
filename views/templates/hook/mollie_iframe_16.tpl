@@ -41,13 +41,13 @@
         </div>
         <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
         <div class="form-group form-group-card-holder">
-            <label class="mollie-label">{l s='Card holder' mod='mollie'}</label>
+            <label class="mollie-label" for="card-holder">{l s='Card holder' mod='mollie'}</label>
             <div id="card-holder" class="mollie-input card-holder">
             </div>
         </div>
         <div class="inline-form-group">
             <div class="form-group form-group-card-number">
-                <label class="mollie-label">{l s='Card number' mod='mollie'}</label>
+                <label class="mollie-label" for="card-number">{l s='Card number' mod='mollie'}</label>
                 <div id="card-number" class="mollie-input card-number">
                 </div>
             </div>
@@ -56,13 +56,13 @@
                 </div>
             </div>
             <div class="form-group form-group-verification-code">
-                <label class="mollie-label">{l s='CVC' mod='mollie'}</label>
+                <label class="mollie-label" for="verification-code">{l s='CVC' mod='mollie'}</label>
                 <div id="verification-code"
                      class="mollie-input verification-code">
                 </div>
             </div>
         </div>
-        <div role="alert" id="mollie-field-error" class="error">
+        <div role="alert" class="error mollie-field-error">
             <label class="mollie-input-error"></label>
         </div>
         <div class="row">
