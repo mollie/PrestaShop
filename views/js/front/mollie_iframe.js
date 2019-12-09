@@ -45,7 +45,7 @@ $(document).ready(function () {
             }
         }
     };
-    var mollie = Mollie(profileId, {locale: 'en_US', testMode: true});
+    var mollie = Mollie(profileId, {locale: isoCode, testMode: true});
     var cardHolder = mollie.createComponent('cardHolder', options);
     var cardNumber = mollie.createComponent('cardNumber', options);
     var expiryDate = mollie.createComponent('expiryDate', options);
@@ -144,14 +144,12 @@ $(document).ready(function () {
         jQuery.each(fieldErrors, function (key, fieldError) {
             if (fieldError) {
                 $errorField.find('label').text(fieldError);
-                $errorField.show();
                 hasError = 1;
                 return false;
             }
         });
         if (!hasError) {
             $errorField.find('label').text('');
-            $errorField.hide();
         }
     }
 });

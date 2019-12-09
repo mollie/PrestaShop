@@ -2254,6 +2254,7 @@ class Mollie extends PaymentModule
         if ($this->context->controller instanceof OrderControllerCore) {
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
+                'isoCode' => $this->context->language->locale,
             ]);
             if ($this->isVersion17()) {
                 $this->context->controller->registerJavascript(
