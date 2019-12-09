@@ -2256,9 +2256,14 @@ class Mollie extends PaymentModule
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
             ]);
             if ($this->isVersion17()) {
+                $this->context->controller->registerJavascript(
+                    'mollie_iframe_js',
+                    'https://js.mollie.com/v1/mollie.js',
+                    array('server' => 'remote', 'position' => 'bottom', 'priority' => 150)
+                );
                 $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
-
             } else {
+                $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
                 $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
             }
             Media::addJsDef([
@@ -2266,8 +2271,6 @@ class Mollie extends PaymentModule
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-            $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
-
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
