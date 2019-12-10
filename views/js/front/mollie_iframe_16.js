@@ -32,6 +32,23 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
+    $('.mollie_method.js_call_iframe').on('click', function () {
+        event.preventDefault();
+        $.fancybox({
+            'padding': 0,
+            'max-width': 200,
+            'width' : 200,
+            'height': 'auto',
+            'fitToView': true,
+            'autoSize': true,
+            'type': 'inline',
+            'content': $('#mollie-iframe-container').html()
+        });
+        fieldErrors = {};
+        handleErrors();
+        mountMollieComponents();
+    });
+
     var $mollieContainers = $('.mollie-iframe-container');
     if (!$mollieContainers.length) {
         return;
@@ -63,32 +80,14 @@ $(document).ready(function () {
         'verification-code': 3
     };
     var fieldErrors = {};
-    var methodId = $(this).find('input[name="method-id"]').val();
-    mountMollieComponents(methodId);
 
-    $('input[data-module-name="mollie"]').on('change', function () {
-        var paymentOption = $(this).attr('id');
-        var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
-        if (!methodId) {
-            return;
-        }
-        cardHolderInput.unmount();
-        carNumberInput.unmount();
-        expiryDateInput.unmount();
-        verificationCodeInput.unmount();
-        fieldErrors = {};
-        handleErrors();
-        $('.mollie-input').removeClass('is-invalid');
-        mountMollieComponents(methodId);
-    });
+    function mountMollieComponents() {
+        cardHolderInput = mountMollieField(this, '.fancybox-outer #card-holder', cardHolder, 'card-holder');
+        carNumberInput = mountMollieField(this, '.fancybox-outer #card-number', cardNumber, 'card-number');
+        expiryDateInput = mountMollieField(this, '.fancybox-outer #expiry-date', expiryDate, 'expiry-date');
+        verificationCodeInput = mountMollieField(this, '.fancybox-outer #verification-code', verificationCode, 'verification-code');
 
-    function mountMollieComponents(methodId) {
-        cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
-        carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
-        expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
-        verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
-
-        var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
+        var $mollieCardToken = $('input[name="mollieCardToken"]');
         var isResubmit = false;
         $mollieCardToken.closest('form').on('submit', function (event) {
             var $form = $(this);
@@ -110,37 +109,36 @@ $(document).ready(function () {
         });
     }
 
-    function mountMollieField(mollieContainer, holderId, methodId, inputHolder, methodName) {
+    function mountMollieField(mollieContainer, holderId, inputHolder, methodName) {
         var invalidClass = 'is-invalid';
-        var cardHolderId = holderId + '-' + methodId;
-        inputHolder.mount(cardHolderId);
+        inputHolder.mount(holderId);
         inputHolder.addEventListener('change', function (event) {
             if (event.error && event.touched) {
-                $(cardHolderId).addClass(invalidClass);
+                $(holderId).addClass(invalidClass);
                 fieldErrors[fieldMap[methodName]] = event.error;
                 handleErrors();
             } else {
                 fieldErrors[fieldMap[methodName]] = '';
-                $(cardHolderId).removeClass(invalidClass);
+                $(holderId).removeClass(invalidClass);
                 handleErrors();
             }
         });
 
         inputHolder.addEventListener("focus", function () {
-            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-focused', true);
+            $('.form-group-' + methodName).toggleClass('is-focused', true);
         });
 
         inputHolder.addEventListener("blur", function () {
-            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-focused', false);
+            $('.form-group-' + methodName).toggleClass('is-focused', false);
         });
         inputHolder.addEventListener("change", function (event) {
-            $('.form-group-' + methodName + '.' + methodId).toggleClass('is-dirty', event.dirty);
+            $('.form-group-' + methodName).toggleClass('is-dirty', event.dirty);
         });
         return inputHolder;
     }
 
     function handleErrors() {
-        var $errorField = $('#mollie-field-error');
+        var $errorField = $('.mollie-field-error');
         var hasError = 0;
         jQuery.each(fieldErrors, function (key, fieldError) {
             if (fieldError) {

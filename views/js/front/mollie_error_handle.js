@@ -34,7 +34,7 @@
 $(document).ready(function () {
     var hashTag = document.URL.substr(document.URL.indexOf('#')+1);
     if (hashTag) {
-        // parent.location.hash = '';
+        parent.location.hash = '';
         $.ajax({
             url: ajaxUrl,
             method: 'GET',
@@ -44,7 +44,11 @@ $(document).ready(function () {
                 action: 'displayCheckoutError'
             },
             success: function (response) {
-                $('#checkout-payment-step').prepend(response);
+                if (isPS17) {
+                    $('#checkout-payment-step').prepend(response);
+                } else {
+                    $('#HOOK_PAYMENT').prepend(response);
+                }
             }
         })
     }

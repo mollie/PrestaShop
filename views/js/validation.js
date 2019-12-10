@@ -43,7 +43,7 @@ $(document).ready(function() {
             $('.alert.alert-success').hide();
         }
 
-        if (profile.val().substring(0, 4) !== 'pfl_') {
+        if (profile.val().substring(0, 4) !== 'pfl_' && isProfileChecked) {
             event.preventDefault();
             description.addClass('mollie-input-error');
             $('.alert.alert-success').hide();

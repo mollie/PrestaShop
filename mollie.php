@@ -2254,18 +2254,25 @@ class Mollie extends PaymentModule
         if ($this->context->controller instanceof OrderControllerCore) {
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
+                'isoCode' => $this->context->language->language_code,
             ]);
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+            if ($this->isVersion17()) {
+                $this->context->controller->registerJavascript(
+                    'mollie_iframe_js',
+                    'https://js.mollie.com/v1/mollie.js',
+                    array('server' => 'remote', 'position' => 'bottom', 'priority' => 150)
+                );
+                $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+            } else {
+                $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
+                $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
+            }
             Media::addJsDef([
                 'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+                'isPS17' => $this->isVersion17(),
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-            $this->context->controller->registerJavascript(
-                'mollie_iframe_js',
-                'https://js.mollie.com/v1/mollie.js',
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 150)
-            );
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
@@ -2360,8 +2367,10 @@ class Mollie extends PaymentModule
             }
         }
 
+        $isIFrameEnabled = Configuration::get(self::MOLLIE_IFRAME);
         $cart = Context::getContext()->cart;
         $smarty->assign(array(
+            'mollieIframe' => $isIFrameEnabled,
             'link'                   => $this->context->link,
             'cartAmount'             => (int) ($cart->getOrderTotal(true) * 100),
             'methods'                => $apiMethods,
@@ -2381,7 +2390,11 @@ class Mollie extends PaymentModule
             ),
         ));
 
-        return $this->display(__FILE__, 'addjsdef.tpl').$this->display(__FILE__, 'payment.tpl');
+        $iframeDisplay = '';
+        if (!$this->isVersion17() && $isIFrameEnabled) {
+            $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
+        }
+        return $this->display(__FILE__, 'addjsdef.tpl').$this->display(__FILE__, 'payment.tpl').$iframeDisplay;
     }
 
     /**
@@ -6462,12 +6475,17 @@ class Mollie extends PaymentModule
             'name' => $this->l('All')
         );
         foreach ($countries as $key => $country) {
-            $countriesWithNames[] =  array(
+            $countriesWithNames[] = array(
                 'id' => $key,
                 'name' => $country['name'],
             );
         }
 
         return $countriesWithNames;
+    }
+
+    public function isVersion17()
+    {
+        return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
     }
 }
