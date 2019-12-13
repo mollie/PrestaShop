@@ -269,7 +269,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.0';
+        $this->version = '3.5.2';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -290,6 +290,8 @@ class Mollie extends PaymentModule
                 try {
                     $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
                 } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                    $this->context->controller->errors[] = 'test';
+                    return;
                 }
             } elseif (!empty($this->context->employee)
                 && Tools::getValue('Mollie_Api_Key')
@@ -1796,7 +1798,13 @@ class Mollie extends PaymentModule
             }
 
             if ($mollieApiKey) {
-                $this->api->setApiKey($mollieApiKey);
+                try {
+                    $this->api->setApiKey($mollieApiKey);
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                    Configuration::updateValue(static::MOLLIE_API_KEY, null);
+                    return $this->l('Wrong API Key!');
+                }
                 if ($this->api->methods !== null) {
                     foreach ($this->getMethodsForConfig() as $method) {
                         $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
@@ -3696,7 +3704,12 @@ class Mollie extends PaymentModule
     public function getMethodsForConfig($active = false)
     {
         $notAvailable = array();
-        $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
+        try {
+            $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+            return array();
+        }
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
