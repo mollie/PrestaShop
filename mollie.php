@@ -290,7 +290,6 @@ class Mollie extends PaymentModule
                 try {
                     $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
                 } catch (\Mollie\Api\Exceptions\ApiException $e) {
-                    $this->context->controller->errors[] = 'test';
                     return;
                 }
             } elseif (!empty($this->context->employee)
