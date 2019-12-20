@@ -520,6 +520,7 @@ class Mollie extends PaymentModule
         Configuration::updateValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
         Configuration::updateValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
         Configuration::updateValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_TRACKING_URLS, '');
         Configuration::updateValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
         Configuration::updateValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
@@ -1578,7 +1579,7 @@ class Mollie extends PaymentModule
             );
         }
         if (count($dbConfig) !== count($configCarriers)) {
-            Configuration::updateValue(static::MOLLIE_TRACKING_URLS, ($configCarriers));
+            Configuration::updateValue(static::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
         }
 
         return $configCarriers;
@@ -1781,7 +1782,6 @@ class Mollie extends PaymentModule
                 static::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(static::MOLLIE_TRACKING_URLS)))
             );
-
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
