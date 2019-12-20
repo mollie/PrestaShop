@@ -1725,7 +1725,7 @@ class Mollie extends PaymentModule
         $mollieApiKey = Tools::getValue(static::MOLLIE_API_KEY);
         $mollieProfileId = Tools::getValue(static::MOLLIE_PROFILE_ID);
 
-        if (!empty($mollieApiKey) && strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
+        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
             $errors[] = $this->l('The API key needs to start with test or live.');
         }
 
