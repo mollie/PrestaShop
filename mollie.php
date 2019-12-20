@@ -682,6 +682,7 @@ class Mollie extends PaymentModule
 
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');

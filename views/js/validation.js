@@ -45,7 +45,7 @@ $(document).ready(function() {
 
         if (profile.val().substring(0, 4) !== 'pfl_' && isProfileChecked) {
             event.preventDefault();
-            description.addClass('mollie-input-error');
+            profile.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
         }
     })
