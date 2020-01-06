@@ -4716,8 +4716,6 @@ class Mollie extends PaymentModule
                         $idCarrier = 0;
                     }
 
-                    $withTaxes = $this->isCartWithTaxes($idCart);
-
                     $order->id_customer = (int) $this->context->cart->id_customer;
                     $order->id_address_invoice = (int) $this->context->cart->id_address_invoice;
                     $order->id_address_delivery = (int) $idAddress;
@@ -4783,7 +4781,7 @@ class Mollie extends PaymentModule
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
-                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, $withTaxes, $packageList[$idAddress][$idPackage]['id_warehouse']);
+                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
