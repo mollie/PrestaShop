@@ -37,7 +37,7 @@ $(document).ready(function() {
         var description = $('#MOLLIE_DESCRIPTION');
         var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
         var profile = $('#MOLLIE_PROFILE_ID');
-        var selectedAPI = $('input[name="MOLLIE_API"]').val();
+        var selectedAPI = $('select[name="MOLLIE_API"]').val();
         if (description.val() === '' && selectedAPI === payment_api) {
             event.preventDefault();
             description.addClass('mollie-input-error');
@@ -52,7 +52,7 @@ $(document).ready(function() {
             return;
         }
 
-        if (profile.val().substring(0, 4) !== 'pfl_') {
+        if (isProfileChecked && profile.val().substring(0, 4) !== 'pfl_') {
             event.preventDefault();
             profile.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
