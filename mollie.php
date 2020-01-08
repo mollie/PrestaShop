@@ -883,12 +883,7 @@ class Mollie extends PaymentModule
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
-        $orderStatuses = array(
-            array(
-                'name' => $this->l('Disable this status'),
-                'id_order_state' => '0',
-            ),
-        );
+        $orderStatuses = array();
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
         if ($isApiKeyProvided) {
             $input = array(
@@ -6071,8 +6066,7 @@ class Mollie extends PaymentModule
         }
         $shipmentInfo = static::getShipmentInformation($idOrder);
 
-        if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
-                || in_array($orderStatusNumber, $checkStatuses)
+        if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
             ) || $shipmentInfo === null
         ) {
             return;
