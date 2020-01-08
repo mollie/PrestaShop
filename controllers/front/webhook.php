@@ -279,6 +279,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ALL) {
             Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie::NOTICE);
         }
+        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) $this->module->statuses[$apiPayment->status], 'id_order' => (int) $orderId));
 
         return $apiPayment;
     }
