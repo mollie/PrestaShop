@@ -167,11 +167,11 @@
                 window.MollieModule.unmountComponentAtNode(container);
                 window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
               }
-              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-              container.closest('.form-group').style.display = 'none';
-              {else}
-              container.closest('.form-group').style.display = 'none';
-              {/if}
+{*              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}*}
+{*              container.closest('.form-group').style.display = 'none';*}
+{*              {else}*}
+{*              container.closest('.form-group').style.display = 'none';*}
+{*              {/if}*}
             }
           }
 

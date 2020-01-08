@@ -105,6 +105,7 @@ $(document).ready(function () {
                     $mollieAlert.text(token.error.message);
                     return;
                 }
+
                 $mollieCardToken.val(token.token);
                 isResubmit = true;
                 $form.submit();
