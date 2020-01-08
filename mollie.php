@@ -678,8 +678,16 @@ class Mollie extends PaymentModule
             'lang'                   => $this->lang,
             'logo_url'               => $this->getPathUri() . 'views/img/mollie_logo.png',
             'webpack_urls'            => static::getWebpackChunks('app'),
+            'description_message' => $this->l('Description cannot be empty'),
+            'Profile_id_message' => $this->l('Wrong profile ID')
         );
 
+       Media::addJsDef([
+           'description_message' => $this->l('Description cannot be empty'),
+           'profile_id_message' => $this->l('Wrong profile ID'),
+           'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
+           'payment_api' => static::MOLLIE_PAYMENTS_API,
+       ]);
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');

@@ -37,16 +37,26 @@ $(document).ready(function() {
         var description = $('#MOLLIE_DESCRIPTION');
         var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
         var profile = $('#MOLLIE_PROFILE_ID');
-        if (description.val() === '' || (isProfileChecked && profile.val() === '')) {
+        var selectedAPI = $('input[name="MOLLIE_API"]').val();
+        if (description.val() === '' && selectedAPI === payment_api) {
             event.preventDefault();
             description.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
+            showErrorMessage(description_message);
         }
-
-        if (profile.val().substring(0, 4) !== 'pfl_' && isProfileChecked) {
+        if (isProfileChecked && profile.val() === '') {
             event.preventDefault();
             profile.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
+            showErrorMessage(profile_id_message_empty);
+            return;
+        }
+
+        if (profile.val().substring(0, 4) !== 'pfl_') {
+            event.preventDefault();
+            profile.addClass('mollie-input-error');
+            $('.alert.alert-success').hide();
+            showErrorMessage(profile_id_message);
         }
     })
 });
