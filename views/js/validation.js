@@ -58,5 +58,15 @@ $(document).ready(function() {
             $('.alert.alert-success').hide();
             showErrorMessage(profile_id_message);
         }
+    });
+
+    var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
+    var $profileId = $('#MOLLIE_PROFILE_ID');
+    $profileSwitch.on('change', function () {
+        if ($profileSwitch.prop('checked')) {
+            $profileId.closest('.form-group').show();
+        } else {
+            $profileId.closest('.form-group').hide();
+        }
     })
 });
