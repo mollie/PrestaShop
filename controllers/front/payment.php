@@ -88,44 +88,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
         $issuer = Tools::getValue('issuer') ?: null;
 
-        // If no issuer was set yet and the issuer list has its own page, show issuer list here
-        if (!$issuer
-            && Configuration::get(Mollie::MOLLIE_ISSUERS) === Mollie::ISSUERS_OWN_PAGE
-            && $method === \Mollie\Api\Types\PaymentMethod::IDEAL
-        ) {
-            $tplData = array();
-            try {
-                $issuers = $this->module->getIssuerList();
-            } catch (\Mollie\Api\Exceptions\ApiException $e) {
-                $this->setTemplate('error.tpl');
-                $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
-                    ? $e->getMessage()
-                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
-                return;
-            } catch (PrestaShopException $e) {
-                $this->setTemplate('error.tpl');
-                $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
-                    ? $e->getMessage()
-                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
-                return;
-            }
-            $tplData['issuers'] = isset($issuers[\Mollie\Api\Types\PaymentMethod::IDEAL]) ? $issuers[\Mollie\Api\Types\PaymentMethod::IDEAL] : array();
-            if (!empty($tplData['issuers'])) {
-                $tplData['msg_bankselect'] = $this->module->lang['Select your bank:'];
-                $tplData['msg_ok'] = $this->module->lang['OK'];
-                $tplData['msg_return'] = $this->module->lang['Different payment method'];
-                $tplData['link'] = $this->context->link;
-                $tplData['cartAmount'] = (int) ($this->context->cart->getOrderTotal(true) * 100);
-                $tplData['qrAlign'] = 'center';
-                $tplData['publicPath'] = __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/';
-                $this->context->controller->addJS(Mollie::getWebpackChunks('app'));
-                $this->context->smarty->assign($tplData);
-                $this->setTemplate('mollie_issuers.tpl');
-
-                return;
-            }
-        }
-
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH

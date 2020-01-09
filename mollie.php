@@ -151,7 +151,6 @@ class Mollie extends PaymentModule
     const LOGOS_HIDE = 'hide';
 
     const ISSUERS_ON_CLICK = 'on-click';
-    const ISSUERS_OWN_PAGE = 'own-page';
     const ISSUERS_PAYMENT_PAGE = 'payment-page';
     const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
@@ -269,7 +268,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.1';
+        $this->version = '3.5.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1056,10 +1055,6 @@ class Mollie extends PaymentModule
                                 array(
                                     'id' => static::ISSUERS_ON_CLICK,
                                     'name' => $this->l('On click'),
-                                ),
-                                array(
-                                    'id' => static::ISSUERS_OWN_PAGE,
-                                    'name' => $this->l('Own page'),
                                 ),
                                 array(
                                     'id' => static::ISSUERS_PAYMENT_PAGE,
