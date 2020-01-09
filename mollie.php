@@ -269,7 +269,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.0';
+        $this->version = '3.5.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -290,6 +290,7 @@ class Mollie extends PaymentModule
                 try {
                     $this->api->setApiKey(Configuration::get(static::MOLLIE_API_KEY));
                 } catch (\Mollie\Api\Exceptions\ApiException $e) {
+                    return;
                 }
             } elseif (!empty($this->context->employee)
                 && Tools::getValue('Mollie_Api_Key')
@@ -519,6 +520,7 @@ class Mollie extends PaymentModule
         Configuration::updateValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
         Configuration::updateValue(static::MOLLIE_ISSUERS, static::ISSUERS_ON_CLICK);
         Configuration::updateValue(static::MOLLIE_CSS, '');
+        Configuration::updateValue(static::MOLLIE_TRACKING_URLS, '');
         Configuration::updateValue(static::MOLLIE_DEBUG_LOG, static::DEBUG_LOG_ERRORS);
         Configuration::updateValue(static::MOLLIE_QRENABLED, false);
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
@@ -676,10 +678,19 @@ class Mollie extends PaymentModule
             'lang'                   => $this->lang,
             'logo_url'               => $this->getPathUri() . 'views/img/mollie_logo.png',
             'webpack_urls'            => static::getWebpackChunks('app'),
+            'description_message' => $this->l('Description cannot be empty'),
+            'Profile_id_message' => $this->l('Wrong profile ID')
         );
 
+       Media::addJsDef([
+           'description_message' => $this->l('Description cannot be empty'),
+           'profile_id_message' => $this->l('Wrong profile ID'),
+           'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
+           'payment_api' => static::MOLLIE_PAYMENTS_API,
+       ]);
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
         $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
@@ -1577,7 +1588,7 @@ class Mollie extends PaymentModule
             );
         }
         if (count($dbConfig) !== count($configCarriers)) {
-            Configuration::updateValue(static::MOLLIE_TRACKING_URLS, ($configCarriers));
+            Configuration::updateValue(static::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
         }
 
         return $configCarriers;
@@ -1723,7 +1734,7 @@ class Mollie extends PaymentModule
         $mollieApiKey = Tools::getValue(static::MOLLIE_API_KEY);
         $mollieProfileId = Tools::getValue(static::MOLLIE_PROFILE_ID);
 
-        if (!empty($mollieApiKey) && strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
+        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
             $errors[] = $this->l('The API key needs to start with test or live.');
         }
 
@@ -1780,7 +1791,6 @@ class Mollie extends PaymentModule
                 static::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(static::MOLLIE_TRACKING_URLS)))
             );
-
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
@@ -1796,7 +1806,13 @@ class Mollie extends PaymentModule
             }
 
             if ($mollieApiKey) {
-                $this->api->setApiKey($mollieApiKey);
+                try {
+                    $this->api->setApiKey($mollieApiKey);
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                    Configuration::updateValue(static::MOLLIE_API_KEY, null);
+                    return $this->l('Wrong API Key!');
+                }
                 if ($this->api->methods !== null) {
                     foreach ($this->getMethodsForConfig() as $method) {
                         $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
@@ -3696,7 +3712,12 @@ class Mollie extends PaymentModule
     public function getMethodsForConfig($active = false)
     {
         $notAvailable = array();
-        $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
+        try {
+            $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+            return array();
+        }
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
@@ -4703,8 +4724,6 @@ class Mollie extends PaymentModule
                         $idCarrier = 0;
                     }
 
-                    $withTaxes = $this->isCartWithTaxes($idCart);
-
                     $order->id_customer = (int) $this->context->cart->id_customer;
                     $order->id_address_invoice = (int) $this->context->cart->id_address_invoice;
                     $order->id_address_delivery = (int) $idAddress;
@@ -4770,7 +4789,7 @@ class Mollie extends PaymentModule
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
-                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, $withTaxes, $packageList[$idAddress][$idPackage]['id_warehouse']);
+                    $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);

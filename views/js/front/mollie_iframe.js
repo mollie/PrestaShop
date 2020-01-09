@@ -68,7 +68,9 @@ $(document).ready(function () {
 
     $('input[data-module-name="mollie"]').on('change', function () {
         var paymentOption = $(this).attr('id');
-        var methodId = $('#' + paymentOption + '-additional-information').find('input[name="method-id"]').val();
+        var $additionalInformation = $('#' + paymentOption + '-additional-information');
+        $additionalInformation.addClass('mollie-addition-info');
+        var methodId = $additionalInformation.find('input[name="method-id"]').val();
         if (!methodId) {
             return;
         }

@@ -90,3 +90,9 @@ label.mollie-input-error {
 .is-dirty label.mollie-label {
     display: none !important;
 }
+
+@media (max-width: 412px) {
+    body#checkout .additional-information.mollie-addition-info {
+        margin-left: 0;
+    }
+}

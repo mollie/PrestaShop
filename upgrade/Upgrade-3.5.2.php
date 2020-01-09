@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright (c) 2012-2019, Mollie B.V.
  * All rights reserved.
@@ -29,34 +30,28 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
- * @codingStandardsIgnoreStart
  */
 
-$(document).ready(function() {
-    $('#module_form').on('submit', function () {
-        var description = $('#MOLLIE_DESCRIPTION');
-        var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
-        var profile = $('#MOLLIE_PROFILE_ID');
-        var selectedAPI = $('select[name="MOLLIE_API"]').val();
-        if (description.val() === '' && selectedAPI === payment_api) {
-            event.preventDefault();
-            description.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-            showErrorMessage(description_message);
-        }
-        if (isProfileChecked && profile.val() === '') {
-            event.preventDefault();
-            profile.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-            showErrorMessage(profile_id_message_empty);
-            return;
-        }
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-        if (isProfileChecked && profile.val().substring(0, 4) !== 'pfl_') {
-            event.preventDefault();
-            profile.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-            showErrorMessage(profile_id_message);
-        }
-    })
-});
+/**
+ * @return bool
+ *
+ * @throws PrestaShopDatabaseException
+ * @throws PrestaShopException
+ */
+function upgrade_module_3_5_2()
+{
+    $trackingConfigId = Configuration::getIdByName(Mollie::MOLLIE_TRACKING_URLS);
+
+    $query = 'DELETE FROM`'._DB_PREFIX_.'configuration_lang` 
+            WHERE id_configuration = "' . pSQL($trackingConfigId) . '"';
+
+    if (!Db::getInstance()->execute($query)) {
+        return false;
+    }
+
+    return true;
+}
