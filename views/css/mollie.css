@@ -79,3 +79,7 @@
 .mollie-signature {
     padding-top: 20px;
 }
+
+.mollie_button {
+    width: 100%;
+}

@@ -319,6 +319,7 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
