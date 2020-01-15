@@ -2247,7 +2247,12 @@ class Mollie extends PaymentModule
                 $file = str_replace('{OVERRIDE}', _PS_THEME_OVERRIDE_DIR_, $file);
             }
         }
-        $this->context->controller->addCSS($file);
+
+        return $file;
+
+//        $this->context->controller->registerStylesheet(sha1($file), $file, ['media' => 'all', 'priority' => 80]);
+
+//        $this->context->controller->addCSS($file);
     }
 
     // Hooks
@@ -2257,7 +2262,6 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayHeader()
     {
-        $this->addCSSFile($this->_path.'views/css/front.css');
         if ($this->context->controller instanceof OrderControllerCore) {
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
@@ -2283,6 +2287,10 @@ class Mollie extends PaymentModule
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
+            $this->context->smarty->assign(array(
+                'custom_css'   => Configuration::get(static::MOLLIE_CSS),
+            ));
+            return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
         }
     }
 

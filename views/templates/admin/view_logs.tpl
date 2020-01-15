@@ -30,4 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<a href='{$logs|escape:'htmlall':'UTF-8'}'>
+<a href='{$logs|escape:'htmlall':'UTF-8'}' target="_blank">
