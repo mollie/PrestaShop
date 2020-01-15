@@ -62,11 +62,24 @@ $(document).ready(function() {
 
     var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
     var $profileId = $('#MOLLIE_PROFILE_ID');
+    hideElementIfNotChecked($profileSwitch, $profileId);
     $profileSwitch.on('change', function () {
-        if ($profileSwitch.prop('checked')) {
-            $profileId.closest('.form-group').show();
+        hideElementIfNotChecked($profileSwitch, $profileId);
+    });
+
+    var $enableCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES"]');
+    var $showCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
+    hideElementIfNotChecked($enableCountriesSwitch, $showCountriesSwitch);
+    $enableCountriesSwitch.on('change', function () {
+        hideElementIfNotChecked($enableCountriesSwitch, $showCountriesSwitch);
+    });
+
+    function hideElementIfNotChecked($switch, $elementToHide) {
+        if ($switch.prop('checked')) {
+            $elementToHide.closest('.form-group').show();
         } else {
-            $profileId.closest('.form-group').hide();
+            $elementToHide.closest('.form-group').hide();
         }
-    })
+    }
+
 });
