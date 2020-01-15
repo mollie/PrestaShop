@@ -60,7 +60,6 @@ export default function WarningContent(): ReactElement<{}> {
             message = '';
     }
 
-    debugger;
     if (!message) {
         return (
             <>
