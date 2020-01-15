@@ -35,6 +35,7 @@ import xss from 'xss';
 import { get } from 'lodash';
 
 import { updatePayment } from '@transaction/store/actions';
+import { updateWarning } from '@transaction/store/actions';
 import RefundButton from '@transaction/components/refund/RefundButton';
 import PartialRefundButton from '@transaction/components/refund/PartialRefundButton';
 import { refundPayment as refundPaymentAjax } from '@transaction/misc/ajax';
@@ -93,6 +94,7 @@ export default function RefundForm(): ReactElement<{}> {
         const { success = false, payment = null } = await refundPaymentAjax(transactionId, amount);
         if (success) {
           if (payment) {
+            dispatch(updateWarning('refunded'));
             dispatch(updatePayment(payment));
             setRefundInput('');
           }
@@ -110,7 +112,6 @@ export default function RefundForm(): ReactElement<{}> {
       }
     }
   }
-
   if (legacy) {
     return (
       <>

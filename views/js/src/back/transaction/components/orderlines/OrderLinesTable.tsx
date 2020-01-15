@@ -44,7 +44,7 @@ import OrderLinesTableFooter from '@transaction/components/orderlines//OrderLine
 import OrderLinesEditor from '@transaction/components/orderlines//OrderLinesEditor';
 import ShipmentTrackingEditor from '@transaction/components/orderlines//ShipmentTrackingEditor';
 import { cancelOrder, refundOrder, shipOrder } from '@transaction/misc/ajax';
-import { updateOrder } from '@transaction/store/actions';
+import {updateOrder, updateWarning} from '@transaction/store/actions';
 import OrderLinesTableActions from '@transaction/components/orderlines//OrderLinesTableActions';
 import { formatCurrency } from '@shared/tools';
 import { IMollieApiOrder, IMollieOrderLine, IMollieTracking, } from '@shared/globals';
@@ -131,6 +131,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
             dispatch(updateOrder(newOrder));
+            dispatch(updateWarning('shipped'));
           } else {
             import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
@@ -184,6 +185,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
+          dispatch(updateWarning('refunded'));
           dispatch(updateOrder(newOrder));
         } else {
           import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
@@ -239,6 +241,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
           dispatch(updateOrder(newOrder));
+          dispatch(updateWarning('canceled'));
         } else {
           swal({
             icon: 'error',

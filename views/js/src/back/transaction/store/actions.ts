@@ -38,6 +38,7 @@ export enum ReduxActionTypes {
   updateConfig = 'UPDATE_MOLLIE_ORDER_CONFIG',
   updateOrder = 'UPDATE_MOLLIE_ORDER',
   updatePayment = 'UPDATE_MOLLIE_PAYMENT',
+  updateWarning = 'UPDATE_MOLLIE_WARNING',
   updateCurrencies = 'UPDATE_MOLLIE_CURRENCIES',
   updateViewportWidth = 'UPDATE_MOLLIE_VIEWPORT_WIDTH',
 }
@@ -61,6 +62,11 @@ export interface IUpdateOrderAction {
 export interface IUpdatePaymentAction {
   type: string;
   payment: IMollieApiPayment;
+}
+
+export interface IUpdateWarningAction {
+  type: string;
+  orderWarning: string;
 }
 
 export interface IUpdateCurrenciesAction {
@@ -95,4 +101,8 @@ export function updatePayment(payment: IMollieApiPayment): IUpdatePaymentAction 
 
 export function updateViewportWidth(width: number): IUpdateViewportWidthAction {
   return { type: ReduxActionTypes.updateViewportWidth, width };
+}
+
+export function updateWarning(status: string): IUpdateWarningAction {
+  return { type: ReduxActionTypes.updateWarning, orderWarning: status };
 }

@@ -30,55 +30,47 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, useCallback } from 'react';
-import { useMappedState } from 'redux-react-hook';
+import React, {ReactElement, useCallback} from 'react';
+import cx from 'classnames';
 
-import OrderPanelContent from '@transaction/components/orderlines/OrderPanelContent';
-import WarningContent from '@transaction/components/orderlines/WarningContent';
+import PaymentInfo from '@transaction/components/orderlines/PaymentInfo';
+import OrderLinesInfo from '@transaction/components/orderlines/OrderLinesInfo';
+import LoadingDots from '@shared/components/LoadingDots';
+import {useMappedState} from 'redux-react-hook';
 
-export default function OrderPanel(): ReactElement<{}> {
-  const { config: { legacy, moduleDir }, config } = useCallback(useMappedState((state: IMollieOrderState): any => ({
-    translations: state.translations,
-    config: state.config,
-    order: state.order,
-  })), []);
+export default function WarningContent(): ReactElement<{}> {
 
-  if (Object.keys(config).length <= 0) {
-    return null;
-  }
+    const {orderWarning, translations} = useMappedState((state): any => ({
+        orderWarning: state.orderWarning,
+        translations: state.translations,
+    }));
 
-  if (legacy) {
+    let message = '';
+    switch (orderWarning) {
+        case "refunded" :
+            message = translations.refundWarning;
+            break;
+        case "shipped":
+            message = translations.shipmentWarning;
+            break;
+        case "canceled":
+            message = translations.cancelWarning;
+            break;
+        default:
+            message = '';
+    }
+
+    debugger;
+    if (!message) {
+        return (
+            <>
+            </>
+        );
+    }
+
     return (
-      <fieldset style={{ marginTop: '14px' }}>
-        <legend>
-          <img
-            src={`${moduleDir}views/img/logo_small.png`}
-            width="32"
-            height="32"
-            alt="Mollie logo"
-            style={{ height: '16px', width: '16px', opacity: 0.8 }}
-          />
-          &nbsp;<span>Mollie</span>&nbsp;
-        </legend>
-        <OrderPanelContent/>
-      </fieldset>
+        <>
+            <div className="alert alert-success">{message}</div>
+        </>
     );
-  }
-
-  return (
-    <div className="panel">
-      <div className="panel-heading">
-        <img
-          src={`${moduleDir}views/img/mollie_panel_icon.png`}
-          width="32"
-          height="32"
-          alt="Mollie logo"
-          style={{ height: '16px', width: '16px', opacity: 0.8 }}
-        />
-        &nbsp;<span>Mollie</span>&nbsp;
-      </div>
-        <WarningContent/>
-      <OrderPanelContent/>
-    </div>
-  );
 }
