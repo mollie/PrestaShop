@@ -79,7 +79,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         if (Configuration::get(Mollie::DEBUG_LOG_ALL)) {
-            Logger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
+            PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
         }
 
         die($this->executeWebhook());
@@ -98,8 +98,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     protected function executeWebhook()
     {
         if (Tools::getValue('testByMollie')) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie::NOTICE);
+            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) >= Mollie::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie::NOTICE);
             }
 
             return 'OK';
@@ -136,11 +136,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     public function processTransaction($transaction)
     {
         if (empty($transaction)) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Received webhook request without proper transaction ID.', Mollie::WARNING);
+            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) >= Mollie::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request without proper transaction ID.', Mollie::WARNING);
             }
 
-            return 'NO ID';
+            return $this->module->l('Transaction failed', 'webhook');
         }
 
         // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
@@ -205,7 +205,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         if (!isset($apiPayment)) {
-            return 'NOT OK';
+            return $this->module->l('Transaction failed', 'webhook');
         }
 
         $psPayment = Mollie::getPaymentBy('transaction_id', $transaction->id);
@@ -270,14 +270,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);
 
         if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
-            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                Logger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction->id.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
+            if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) >= Mollie::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction->id.'". Reason: '.Db::getInstance()->getMsgError(), Mollie::WARNING);
             }
         }
 
         // Log successful webhook requests in extended log mode only
         if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ALL) {
-            Logger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie::NOTICE);
+            PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie::NOTICE);
         }
         Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) $this->module->statuses[$apiPayment->status], 'id_order' => (int) $orderId));
 

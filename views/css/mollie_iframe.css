@@ -96,3 +96,7 @@ label.mollie-input-error {
         margin-left: 0;
     }
 }
+
+#mollie-notifications {
+    margin-bottom: 0;
+}

@@ -58,7 +58,7 @@ function upgrade_module_3_3_0($module)
             );
         }
     } catch (PrestaShopException $e) {
-        Logger::addLog("Mollie update error: {$e->getMessage()}");
+        PrestaShopLogger::addLog("Mollie update error: {$e->getMessage()}");
     }
 
     if (method_exists($module, 'setDefaultCarrierStatuses')) {

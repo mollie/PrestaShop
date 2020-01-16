@@ -175,8 +175,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         break;
                     default:
                         $data['msg_details'] = $this->module->lang('The transaction has an unexpected status.');
-                        if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) == Mollie::DEBUG_LOG_ERRORS) {
-                            Logger::addLog(__METHOD__.'said: The transaction has an unexpected status ('.$data['mollie_info']['bank_status'].')', Mollie::WARNING);
+                        if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) >= Mollie::DEBUG_LOG_ERRORS) {
+                            PrestaShopLogger::addLog(__METHOD__.'said: The transaction has an unexpected status ('.$data['mollie_info']['bank_status'].')', Mollie::WARNING);
                         }
                         break;
                 }
@@ -312,10 +312,25 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $_GET['module'] = $this->module->name;
         }
         $webhookController = new MollieWebhookModuleFrontController();
+
         if (Tools::substr($transactionId, 0, 3) === 'ord') {
             $apiPayment = $webhookController->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
         } else {
             $apiPayment = $webhookController->processTransaction($this->module->api->payments->get($transactionId));
+        }
+
+        if (!isset($apiPayment->status)) {
+            $status = static::DONE;
+            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
+            $tagMessage = str_replace(' ', '_', $apiPayment);
+            $href .= "#mollieMessage={$tagMessage}";
+
+            die(json_encode(array(
+                'success'  => true,
+                'status'   => $status,
+                'response' => json_encode($apiPayment),
+                'href'     => $href
+            )));
         }
 
         switch ($apiPayment->status) {
@@ -326,6 +341,10 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
             if (isset($apiPayment->details->failureMessage)) {
                 $tagMessage = str_replace(' ', '_', $apiPayment->details->failureMessage);
+                $href .= "#mollieMessage={$tagMessage}";
+            } else {
+                $message = $this->module->l('Payment was canceled', 'return');
+                $tagMessage = str_replace(' ', '_', $message);
                 $href .= "#mollieMessage={$tagMessage}";
             }
             die(json_encode(array(

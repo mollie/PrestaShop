@@ -213,7 +213,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                         'step' => 1,
                     ]
                 );
-                $this->errors[] = $this->l('Failed to validate order');
+                $this->errors[] = $this->l('Failed to validate order', 'payment');
                 $this->redirectWithNotifications($redirectLink);
             }
         }
@@ -281,7 +281,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $payment = $this->module->api->payments->create($data);
             }
         } catch (Exception $e) {
-            throw new ApiException();
+            throw new ApiException($e->getMessage());
         }
         return $payment;
     }
