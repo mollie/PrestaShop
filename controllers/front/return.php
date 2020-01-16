@@ -131,57 +131,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             ) {
                 $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
-                switch ($data['mollie_info']['bank_status']) {
-                    case 'created':
-                        $data['wait'] = true;
-                        break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_OPEN:
-                        $data['wait'] = true;
-                        break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_PENDING:
-                        $data['wait'] = true;
-                        break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
-                        $message = $this->module->l('Payment was canceled', 'return');
-                        $tagMessage = str_replace(' ', '_', $message);
-                        $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
-                        $href .= "#mollieMessage={$tagMessage}";
-                        Tools::redirect($href);
-                        break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
-                        $data['msg_details'] = $this->module->lang('Unfortunately your payment was expired.');
-                        break;
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
-                    case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
-                        // Validate the Order
-                        if (isset($cart) && Validate::isLoadedObject($cart)) {
-                            Tools::redirect(
-                                $this->context->link->getPageLink(
-                                    'order-confirmation',
-                                    true,
-                                    null,
-                                    array(
-                                        'id_cart'   => (int) $cart->id,
-                                        'id_module' => (int) $this->module->id,
-                                        'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                                            ? Order::getIdByCartId((int) $cart->id)
-                                            : Order::getOrderByCartId((int) $cart->id),
-                                        'key'       => $cart->secure_key,
-                                    )
-                                )
-                            );
-                        }
-
-                        $data['msg_details'] = $this->module->lang('Thank you. Your order has been received.');
-                        break;
-                    default:
-                        $data['msg_details'] = $this->module->lang('The transaction has an unexpected status.');
-                        if (Configuration::get(Mollie::MOLLIE_DEBUG_LOG) >= Mollie::DEBUG_LOG_ERRORS) {
-                            PrestaShopLogger::addLog(__METHOD__.'said: The transaction has an unexpected status ('.$data['mollie_info']['bank_status'].')', Mollie::WARNING);
-                        }
-                        break;
-                }
+                $data['wait'] = true;
             }
         } else {
             // Not allowed? Don't make query but redirect.
