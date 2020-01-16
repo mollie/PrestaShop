@@ -142,10 +142,12 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         $data['wait'] = true;
                         break;
                     case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
-                        Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
-                        break;
                     case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
-                        Tools::redirect($this->context->link->getPagelink('order', true, null, array('step' => 3)));
+                        $message = $this->module->l('Payment was canceled', 'return');
+                        $tagMessage = str_replace(' ', '_', $message);
+                        $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
+                        $href .= "#mollieMessage={$tagMessage}";
+                        Tools::redirect($href);
                         break;
                     case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
                         $data['msg_details'] = $this->module->lang('Unfortunately your payment was expired.');
