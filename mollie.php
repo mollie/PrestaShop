@@ -6206,10 +6206,10 @@ class Mollie extends PaymentModule
                 $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
                 $shippingNumber = $orderCarrier->tracking_number;
             }
-
-            if (!$shippingNumber || !$carrier->name) {
-                return array();
-            }
+//
+//            if (!$shippingNumber || !$carrier->name) {
+//                return array();
+//            }
 
             $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
             $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));
