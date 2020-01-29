@@ -315,7 +315,7 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+//            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             \Mollie\Api\Types\PaymentStatus::STATUS_FAILED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
@@ -1002,10 +1002,10 @@ class Mollie extends PaymentModule
                     ),
                     array(
                         'type' => 'mollie-carrier-switch',
-                        'label' => $this->l('Automatically ship when marked as `shipped`'),
+                        'label' => $this->l('Automatically ship on marked statuses'),
                         'tab' => $generalSettings,
                         'name' => static::MOLLIE_AUTO_SHIP_MAIN,
-                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
+                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
                         'is_bool' => true,
                         'values' => array(
                             array(

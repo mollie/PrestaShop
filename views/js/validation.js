@@ -67,6 +67,13 @@ $(document).ready(function() {
         hideElementIfNotChecked($profileSwitch, $profileId);
     });
 
+    var $automaticallyShipSwitch = $('input[name="MOLLIE_AS_MAIN"]');
+    var $statusesContainer = $('#MOLLIE_AS_STATUSES_container');
+    hideElementIfNotChecked($automaticallyShipSwitch, $statusesContainer);
+    $automaticallyShipSwitch.on('change', function () {
+        hideElementIfNotChecked($automaticallyShipSwitch, $statusesContainer);
+    });
+
     var $enableCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES"]');
     var $showCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
     hideElementIfNotChecked($enableCountriesSwitch, $showCountriesSwitch);
