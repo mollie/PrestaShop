@@ -16,6 +16,7 @@ label.mollie-input-error {
     position: absolute;
     left: 15px;
     color: #999;
+    pointer-events: none;
 }
 
 .mollie-input {
