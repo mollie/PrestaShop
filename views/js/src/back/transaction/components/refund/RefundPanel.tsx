@@ -36,6 +36,7 @@ import { useMappedState } from 'redux-react-hook';
 import PaymentInfo from '@transaction/components/refund/PaymentInfo';
 import RefundInfo from '@transaction/components/refund/RefundInfo';
 import LoadingDots from '@shared/components/LoadingDots';
+import WarningContent from "@transaction/components/orderlines/WarningContent";
 
 export default function RefundPanel(): ReactElement<{}> {
   const { payment, config }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
@@ -61,6 +62,7 @@ export default function RefundPanel(): ReactElement<{}> {
           />
           <span>Mollie</span>&nbsp;
         </legend>
+        <WarningContent/>
         {!payment && <LoadingDots/>}
         {!!payment && payment.status && (
           <>
@@ -83,6 +85,7 @@ export default function RefundPanel(): ReactElement<{}> {
           style={{ height: '16px', width: '16px', opacity: 0.8 }}
         /> <span>Mollie</span>&nbsp;
       </div>
+      <WarningContent/>
       {!payment && <LoadingDots/>}
       {!!payment && payment.status && (
         <div className="panel-body row">

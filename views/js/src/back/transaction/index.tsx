@@ -38,6 +38,7 @@ import { throttle } from 'lodash';
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
 import LoadingDots from '@shared/components/LoadingDots';
+import {updateWarning} from "@transaction/store/actions";
 
 const MolliePanel = lazy(() => import('@transaction/components/MolliePanel'));
 

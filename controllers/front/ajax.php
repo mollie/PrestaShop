@@ -42,6 +42,7 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         foreach ($errorMessages as $errorMessage) {
             if (strpos($errorMessage, 'mollieMessage=') === 0) {
                 $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
+                $errorMessage = str_replace('_', ' ', $errorMessage);
                 $this->context->smarty->assign(array(
                     'errorMessage'   => $errorMessage
 

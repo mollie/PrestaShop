@@ -37,7 +37,7 @@ import {
   IUpdateOrderAction,
   IUpdatePaymentAction,
   IUpdateTranslationsAction,
-  IUpdateViewportWidthAction,
+  IUpdateViewportWidthAction, IUpdateWarningAction,
   ReduxActionTypes
 } from '@transaction/store/actions';
 import { ICurrencies, IMollieApiOrder, IMollieApiPayment, IMollieOrderConfig, ITranslations } from '@shared/globals';
@@ -50,6 +50,7 @@ declare global {
     order: IMollieApiOrder;
     payment: IMollieApiPayment;
     currencies: ICurrencies;
+    orderWarning: string;
   }
 }
 
@@ -108,6 +109,15 @@ const viewportWidth = (state = initialViewportwidth, action: IUpdateViewportWidt
   }
 };
 
+const orderWarning = (state: any = {}, action: IUpdateWarningAction): string => {
+  switch (action.type) {
+    case ReduxActionTypes.updateWarning:
+      return action.orderWarning;
+    default:
+      return state;
+  }
+};
+
 const checkoutApp = combineReducers({
   translations,
   config,
@@ -115,6 +125,7 @@ const checkoutApp = combineReducers({
   payment,
   currencies,
   viewportWidth,
+  orderWarning,
 });
 
 export default checkoutApp;

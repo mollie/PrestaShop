@@ -151,7 +151,6 @@ class Mollie extends PaymentModule
     const LOGOS_HIDE = 'hide';
 
     const ISSUERS_ON_CLICK = 'on-click';
-    const ISSUERS_OWN_PAGE = 'own-page';
     const ISSUERS_PAYMENT_PAGE = 'payment-page';
     const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
@@ -180,7 +179,7 @@ class Mollie extends PaymentModule
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
     const MOLLIE_STATUS_CANCELED = 'MOLLIE_STATUS_CANCELED';
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
-    const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_PARTIAL_REFUND';
+    const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_STATUS_PARTIAL_REFUND';
     const MOLLIE_STATUS_REFUNDED = 'MOLLIE_STATUS_REFUNDED';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
@@ -269,7 +268,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.2';
+        $this->version = '3.5.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -306,19 +305,20 @@ class Mollie extends PaymentModule
                 $this->api->addVersionString("MolliePrestaShop/{$this->version}");
             }
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
-            Logger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
+            PrestaShopLogger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $this->warning = $this->l('Payment error:').$e->getMessage();
-            Logger::addLog(__METHOD__.' said: '.$this->warning, static::CRASH);
+            PrestaShopLogger::addLog(__METHOD__.' said: '.$this->warning, static::CRASH);
         }
 
         $this->statuses = array(
             \Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+//            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
             static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
@@ -883,12 +883,7 @@ class Mollie extends PaymentModule
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
-        $orderStatuses = array(
-            array(
-                'name' => $this->l('Disable this status'),
-                'id_order_state' => '0',
-            ),
-        );
+        $orderStatuses = array();
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
         if ($isApiKeyProvided) {
             $input = array(
@@ -1007,10 +1002,10 @@ class Mollie extends PaymentModule
                     ),
                     array(
                         'type' => 'mollie-carrier-switch',
-                        'label' => $this->l('Automatically ship when marked as `shipped`'),
+                        'label' => $this->l('Automatically ship on marked statuses'),
                         'tab' => $generalSettings,
                         'name' => static::MOLLIE_AUTO_SHIP_MAIN,
-                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order has been marked as `shipped`'),
+                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
                         'is_bool' => true,
                         'values' => array(
                             array(
@@ -1060,10 +1055,6 @@ class Mollie extends PaymentModule
                                 array(
                                     'id' => static::ISSUERS_ON_CLICK,
                                     'name' => $this->l('On click'),
-                                ),
-                                array(
-                                    'id' => static::ISSUERS_OWN_PAGE,
-                                    'name' => $this->l('Own page'),
                                 ),
                                 array(
                                     'id' => static::ISSUERS_PAYMENT_PAGE,
@@ -2256,7 +2247,8 @@ class Mollie extends PaymentModule
                 $file = str_replace('{OVERRIDE}', _PS_THEME_OVERRIDE_DIR_, $file);
             }
         }
-        $this->context->controller->addCSS($file);
+
+        return $file;
     }
 
     // Hooks
@@ -2266,7 +2258,6 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayHeader()
     {
-        $this->addCSSFile($this->_path.'views/css/front.css');
         if ($this->context->controller instanceof OrderControllerCore) {
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
@@ -2292,6 +2283,10 @@ class Mollie extends PaymentModule
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
+            $this->context->smarty->assign(array(
+                'custom_css'   => Configuration::get(static::MOLLIE_CSS),
+            ));
+            return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
         }
     }
 
@@ -4547,7 +4542,7 @@ class Mollie extends PaymentModule
                     }
                 } else {
                     $error = Tools::displayError('Order creation failed');
-                    Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
+                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
@@ -4557,7 +4552,7 @@ class Mollie extends PaymentModule
             return true;
         } else {
             $error = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
-            Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
+            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
     }
@@ -4608,7 +4603,7 @@ class Mollie extends PaymentModule
         }
 
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-            Logger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
         }
         if (!isset($this->context)) {
             $this->context = Context::getContext();
@@ -4631,17 +4626,17 @@ class Mollie extends PaymentModule
         }
         $orderStatus = new OrderState((int) $idOrderState, (int) $this->context->language->id);
         if (!Validate::isLoadedObject($orderStatus)) {
-            Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
             throw new PrestaShopException('Can\'t load Order status');
         }
         if (!$this->active) {
-            Logger::addLog(__CLASS__.'::validateMollieOrder - Module is not active', 3, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Module is not active', 3, null, 'Cart', (int) $idCart, true);
             die(Tools::displayError());
         }
         // Does order already exists ?
         if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
             if ($secureKey !== false && $secureKey != $this->context->cart->secure_key) {
-                Logger::addLog(__CLASS__.'::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int) $idCart, true);
                 die(Tools::displayError());
             }
             // For each package, generate an order
@@ -4661,7 +4656,7 @@ class Mollie extends PaymentModule
             $orderDetailList = array();
 
             if (!$this->currentOrderReference || Order::getByReference($this->currentOrderReference)->count()) {
-                Logger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
                 throw new PrestaShopException('Order reference not set before call to '.__CLASS__.'::validateMollieOrder');
             }
             $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
@@ -4697,7 +4692,7 @@ class Mollie extends PaymentModule
                             } else {
                                 $error = sprintf($this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart'), array($ruleName, (int) $rule->id));
                             }
-                            Logger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
+                            PrestaShopLogger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
                         }
                     }
                 }
@@ -4768,12 +4763,12 @@ class Mollie extends PaymentModule
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Creating order
                     $result = $order->add();
                     if (!$result) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
                         throw new PrestaShopException('Can\'t save Order');
                     }
                     // Amount paid by customer is not the right one -> Status = payment error
@@ -4785,14 +4780,14 @@ class Mollie extends PaymentModule
                     }
                     $orderList[] = $order;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
                     $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Adding an entry in order_carrier table
                     if (!is_null($carrier)) {
@@ -4811,11 +4806,11 @@ class Mollie extends PaymentModule
                 $this->context->country = $context_country;
             }
             if (!$this->context->country->active) {
-                Logger::addLog(__CLASS__.'::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
                 throw new PrestaShopException('The order address country is not active.');
             }
             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                Logger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
             }
             // Register Payment only if the order status validate the order
             if ($orderStatus->logable) {
@@ -4828,7 +4823,7 @@ class Mollie extends PaymentModule
                     $transaction_id = null;
                 }
                 if (isset($order) && !$order->addOrderPayment($amountPaid, null, $transaction_id)) {
-                    Logger::addLog(__CLASS__.'::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int) $idCart, true);
+                    PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int) $idCart, true);
                     throw new PrestaShopException('Can\'t save Order Payment');
                 }
             }
@@ -4849,7 +4844,7 @@ class Mollie extends PaymentModule
                         $message = strip_tags($message, $this->display(__FILE__, 'views/templates/front/break.tpl'));
                         if (Validate::isCleanHtml($message)) {
                             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                                Logger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
                             }
                             $msg->message = $message;
                             $msg->id_cart = (int) $idCart;
@@ -5138,7 +5133,7 @@ class Mollie extends PaymentModule
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Hook validate order
                     Hook::exec('actionValidateOrder', array(
@@ -5154,7 +5149,7 @@ class Mollie extends PaymentModule
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        Logger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
                     }
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
@@ -5254,7 +5249,7 @@ class Mollie extends PaymentModule
                             $fileAttachment = null;
                         }
                         if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                            Logger::addLog(__CLASS__.'::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
+                            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
                         }
                         $orderLanguage = new Language((int) $order->id_lang);
                         if (Validate::isEmail($this->context->customer->email)) {
@@ -5307,7 +5302,7 @@ class Mollie extends PaymentModule
                     }
                 } else {
                     $error = $this->l('Order creation failed');
-                    Logger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
+                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
@@ -5316,13 +5311,13 @@ class Mollie extends PaymentModule
                 $this->currentOrder = (int) $order->id;
             }
             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                Logger::addLog(__CLASS__.'::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
             }
 
             return true;
         } else {
             $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart');
-            Logger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
+            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
             die($error);
         }
     }
@@ -5926,7 +5921,7 @@ class Mollie extends PaymentModule
                 }
             }
         } catch (Exception $e) {
-            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return array('success' => false);
         }
 
@@ -6071,8 +6066,7 @@ class Mollie extends PaymentModule
         }
         $shipmentInfo = static::getShipmentInformation($idOrder);
 
-        if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && $orderStatus->shipped
-                || in_array($orderStatusNumber, $checkStatuses)
+        if (!(Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
             ) || $shipmentInfo === null
         ) {
             return;
@@ -6081,10 +6075,10 @@ class Mollie extends PaymentModule
         try {
             $dbPayment = static::getPaymentBy('order_id', (int) $idOrder);
         } catch (PrestaShopDatabaseException $e) {
-            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         } catch (PrestaShopException $e) {
-            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         }
         if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
@@ -6111,10 +6105,10 @@ class Mollie extends PaymentModule
 
             $apiOrder->shipAll($shipmentInfo);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         } catch (Exception $e) {
-            Logger::addLog("Mollie module error: {$e->getMessage()}");
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         }
     }
@@ -6212,10 +6206,10 @@ class Mollie extends PaymentModule
                 $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
                 $shippingNumber = $orderCarrier->tracking_number;
             }
-
-            if (!$shippingNumber || !$carrier->name) {
-                return array();
-            }
+//
+//            if (!$shippingNumber || !$carrier->name) {
+//                return array();
+//            }
 
             $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
             $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));

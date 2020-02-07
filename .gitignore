@@ -8,3 +8,4 @@ package-lock.json
 build/
 prestashop/
 .codecept.phar
+/translations/

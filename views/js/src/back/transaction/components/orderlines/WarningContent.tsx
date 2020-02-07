@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright (c) 2012-2019, Mollie B.V.
  * All rights reserved.
@@ -31,52 +30,46 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
+import React, {ReactElement, useCallback} from 'react';
+import cx from 'classnames';
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+import PaymentInfo from '@transaction/components/orderlines/PaymentInfo';
+import OrderLinesInfo from '@transaction/components/orderlines/OrderLinesInfo';
+import LoadingDots from '@shared/components/LoadingDots';
+import {useMappedState} from 'redux-react-hook';
 
-/**
- * @param Mollie $module
- *
- * @return bool
- *
- * @throws PrestaShopDatabaseException
- * @throws PrestaShopException
- */
-function upgrade_module_3_3_0($module)
-{
-    try {
-        if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
-                SELECT COUNT(*)
-                FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
-                AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
-                AND COLUMN_NAME = \'order_reference\'')) {
-            Db::getInstance()->execute(
-                'ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)'
-            );
-        }
-    } catch (PrestaShopException $e) {
-        PrestaShopLogger::addLog("Mollie update error: {$e->getMessage()}");
+export default function WarningContent(): ReactElement<{}> {
+
+    const {orderWarning, translations} = useMappedState((state): any => ({
+        orderWarning: state.orderWarning,
+        translations: state.translations,
+    }));
+
+    let message = '';
+    switch (orderWarning) {
+        case "refunded" :
+            message = translations.refundWarning;
+            break;
+        case "shipped":
+            message = translations.shipmentWarning;
+            break;
+        case "canceled":
+            message = translations.cancelWarning;
+            break;
+        default:
+            message = '';
     }
 
-    if (method_exists($module, 'setDefaultCarrierStatuses')) {
-        $module->setDefaultCarrierStatuses();
+    if (!message) {
+        return (
+            <>
+            </>
+        );
     }
 
-    Configuration::updateValue('MOLLIE_API', 'payments');
-
-    // Major changes, need to clear the cache
-    if (!Mollie::$cacheCleared) {
-        if (method_exists('Tools', 'clearAllCache')) {
-            Tools::clearAllCache();
-        }
-        if (method_exists('Tools', 'clearCache')) {
-            Tools::clearCache();
-        }
-        Mollie::$cacheCleared = true;
-    }
-
-    return true;
+    return (
+        <>
+            <div className="alert alert-success">{message}</div>
+        </>
+    );
 }

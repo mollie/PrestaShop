@@ -32,8 +32,9 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
-    var hashTag = document.URL.substr(document.URL.indexOf('#')+1);
-    if (hashTag) {
+    var hasHashTag = document.URL.indexOf('#');
+    if (hasHashTag >= 0) {
+        var hashTag = document.URL.substr(document.URL.indexOf('#')+1);
         parent.location.hash = '';
         $.ajax({
             url: ajaxUrl,

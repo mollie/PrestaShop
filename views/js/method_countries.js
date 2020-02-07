@@ -32,9 +32,9 @@
  * @codingStandardsIgnoreStart
  */
 
-function toggleCountries(showCountries)
+function toggleCountries(showCountries, countriesEnabledSwitch)
 {
-    if (showCountries.attr('checked')) {
+    if (showCountries.attr('checked') && countriesEnabledSwitch.attr('checked')) {
         $('div.js-country').closest('.form-group').show();
     } else {
         $('div.js-country').closest('.form-group').fadeOut('slow');
@@ -53,10 +53,16 @@ $(document).ready(function() {
         }
     });
 
-    var countriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
-    toggleCountries(countriesSwitch);
 
-    countriesSwitch.on('change', function () {
-        toggleCountries(countriesSwitch);
-    })
+    var $countriesEnabledSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES"]');
+    var $countriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
+    toggleCountries($countriesSwitch, $countriesEnabledSwitch);
+
+    $countriesSwitch.on('change', function () {
+        toggleCountries($countriesSwitch, $countriesEnabledSwitch);
+    });
+
+    $countriesEnabledSwitch.on('change', function () {
+        toggleCountries($countriesSwitch, $countriesEnabledSwitch);
+    });
 });

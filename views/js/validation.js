@@ -58,5 +58,35 @@ $(document).ready(function() {
             $('.alert.alert-success').hide();
             showErrorMessage(profile_id_message);
         }
-    })
+    });
+
+    var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
+    var $profileId = $('#MOLLIE_PROFILE_ID');
+    hideElementIfNotChecked($profileSwitch, $profileId);
+    $profileSwitch.on('change', function () {
+        hideElementIfNotChecked($profileSwitch, $profileId);
+    });
+
+    var $automaticallyShipSwitch = $('input[name="MOLLIE_AS_MAIN"]');
+    var $statusesContainer = $('#MOLLIE_AS_STATUSES_container');
+    hideElementIfNotChecked($automaticallyShipSwitch, $statusesContainer);
+    $automaticallyShipSwitch.on('change', function () {
+        hideElementIfNotChecked($automaticallyShipSwitch, $statusesContainer);
+    });
+
+    var $enableCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES"]');
+    var $showCountriesSwitch = $('input[name="MOLLIE_METHOD_COUNTRIES_DISPLAY"]');
+    hideElementIfNotChecked($enableCountriesSwitch, $showCountriesSwitch);
+    $enableCountriesSwitch.on('change', function () {
+        hideElementIfNotChecked($enableCountriesSwitch, $showCountriesSwitch);
+    });
+
+    function hideElementIfNotChecked($switch, $elementToHide) {
+        if ($switch.prop('checked')) {
+            $elementToHide.closest('.form-group').show();
+        } else {
+            $elementToHide.closest('.form-group').hide();
+        }
+    }
+
 });

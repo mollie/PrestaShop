@@ -114,8 +114,8 @@ abstract class Module
         return true;
     }
 
-    public function l($string, $specific = false, $locale = null)
-    {
-        return $string;
-    }
+//    public function l($string, $specific = false, $locale = null)
+//    {
+//        return $string;
+//    }
 }
