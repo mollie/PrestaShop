@@ -45,7 +45,7 @@ $(document).ready(function () {
             }
         }
     };
-    var mollie = Mollie(profileId, {locale: isoCode, testMode: false});
+    var mollie = Mollie(profileId, {locale: isoCode, testMode: isTestMode});
     var cardHolder = mollie.createComponent('cardHolder', options);
     var cardNumber = mollie.createComponent('cardNumber', options);
     var expiryDate = mollie.createComponent('expiryDate', options);

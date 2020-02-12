@@ -2259,9 +2259,11 @@ class Mollie extends PaymentModule
     public function hookActionFrontControllerSetMedia()
     {
         if ($this->context->controller instanceof OrderControllerCore) {
+
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
                 'isoCode' => $this->context->language->language_code,
+                'isTestMode' => self::isTestMode()
             ]);
             if ($this->isVersion17()) {
                 $this->context->controller->registerJavascript(
@@ -6500,5 +6502,15 @@ class Mollie extends PaymentModule
     public function isVersion17()
     {
         return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
+    }
+
+    public static function isTestMode()
+    {
+        $apiKey = Configuration::get(self::MOLLIE_API_KEY);
+        if (strpos($apiKey, 'test') === 0) {
+            return true;
+        }
+
+        return false;
     }
 }
