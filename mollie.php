@@ -85,7 +85,7 @@ class Mollie extends PaymentModule
         'eps'             => array('eur'),
         'giftcard'        => array('eur'),
         'giropay'         => array('eur'),
-        'ideal'           => array('eur'),
+        'ideal'           => array('eur', 'euh'),
         'applepay'        => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
         'inghomepay'      => array('eur'),
         'kbc'             => array('eur'),
@@ -226,9 +226,9 @@ class Mollie extends PaymentModule
         'displayPaymentEU',
         'paymentOptions',
         'displayAdminOrder',
-        'displayHeader',
         'displayBackOfficeHeader',
         'displayOrderConfirmation',
+        'hookActionFrontControllerSetMedia'
     );
 
     public $extra_mail_vars = array();
@@ -268,7 +268,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.3';
+        $this->version = '3.5.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -2256,7 +2256,7 @@ class Mollie extends PaymentModule
     /**
      * @throws PrestaShopException
      */
-    public function hookDisplayHeader()
+    public function hookActionFrontControllerSetMedia()
     {
         if ($this->context->controller instanceof OrderControllerCore) {
             Media::addJsDef([
