@@ -85,7 +85,7 @@ class Mollie extends PaymentModule
         'eps'             => array('eur'),
         'giftcard'        => array('eur'),
         'giropay'         => array('eur'),
-        'ideal'           => array('eur', 'euh'),
+        'ideal'           => array('eur'),
         'applepay'        => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
         'inghomepay'      => array('eur'),
         'kbc'             => array('eur'),
@@ -4626,8 +4626,8 @@ class Mollie extends PaymentModule
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
             $context_country = $this->context->country;
         }
-        $orderStatus = new OrderState((int) $idOrderState, (int) $this->context->language->id);
-        if (!Validate::isLoadedObject($orderStatus)) {
+        $orderState = new OrderState((int) $idOrderState, (int) $this->context->language->id);
+        if (!Validate::isLoadedObject($orderState)) {
             PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
             throw new PrestaShopException('Can\'t load Order status');
         }
@@ -4777,7 +4777,7 @@ class Mollie extends PaymentModule
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
-                    if ($orderStatus->logable && number_format($cartTotalPaid, self::PS_PRICE_COMPUTE_PRECISION) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)) {
+                    if ($orderState->logable && number_format($cartTotalPaid, self::PS_PRICE_COMPUTE_PRECISION) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
                     $orderList[] = $order;
@@ -4815,7 +4815,7 @@ class Mollie extends PaymentModule
                 PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
             }
             // Register Payment only if the order status validate the order
-            if ($orderStatus->logable) {
+            if ($orderState->logable) {
                 // $order is the last order loop in the foreach
                 // The method addOrderPayment of the class Order make a create a paymentOrder
                 // linked to the order reference and not to the order id
@@ -5143,7 +5143,7 @@ class Mollie extends PaymentModule
                         'order'       => $order,
                         'customer'    => $this->context->customer,
                         'currency'    => $this->context->currency,
-                        'orderStatus' => $orderStatus,
+                        'orderStatus' => $orderState,
                     ));
                     foreach ($this->context->cart->getProducts() as $product) {
                         if ($orderStatus->logable) {
@@ -5239,7 +5239,7 @@ class Mollie extends PaymentModule
                             $data = array_merge($data, $extraVars);
                         }
                         // Join PDF invoice
-                        if ((int) Configuration::get('PS_INVOICE') && $orderStatus->invoice && $order->invoice_number) {
+                        if ((int) Configuration::get('PS_INVOICE') && $orderState->invoice && $order->invoice_number) {
                             $orderInvoiceList = $order->getInvoicesCollection();
                             Hook::exec('actionPDFInvoiceRender', array('order_invoice_list' => $orderInvoiceList));
                             $pdf = new PDF($orderInvoiceList, PDF::TEMPLATE_INVOICE, $this->context->smarty);
