@@ -228,7 +228,7 @@ class Mollie extends PaymentModule
         'displayAdminOrder',
         'displayBackOfficeHeader',
         'displayOrderConfirmation',
-        'hookActionFrontControllerSetMedia'
+        'actionFrontControllerSetMedia'
     );
 
     public $extra_mail_vars = array();
@@ -268,7 +268,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.4';
+        $this->version = '3.5.5';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -5375,7 +5375,7 @@ class Mollie extends PaymentModule
     {
         foreach ($this->findOverrides() as $override) {
             if ($override['override'] === 'PaymentModule::validateOrder') {
-                return $override['module'];
+                return $override['module_name'];
             }
         }
 
