@@ -2045,17 +2045,6 @@ class Mollie extends PaymentModule
                 $shipment['tracking'] = $tracking;
             }
             $order->createShipment($shipment);
-
-            if (Mollie::isLocalEnvironment()) {
-                // Refresh payment on local environments
-                /** @var Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-                if (!Tools::isSubmit('module')) {
-                    $_GET['module'] = $this->name;
-                }
-                $webhookController = new MollieWebhookModuleFrontController();
-                $webhookController->processTransaction($apiPayment);
-            }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
                 'success'  => false,
@@ -2109,6 +2098,8 @@ class Mollie extends PaymentModule
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
+                $webhookController = new MollieWebhookModuleFrontController();
+                $webhookController->processTransaction($apiPayment);
             }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return array(
@@ -5146,7 +5137,7 @@ class Mollie extends PaymentModule
                         'orderStatus' => $orderState,
                     ));
                     foreach ($this->context->cart->getProducts() as $product) {
-                        if ($orderStatus->logable) {
+                        if ($orderState->logable) {
                             ProductSale::addProductSale((int) $product['id_product'], (int) $product['cart_quantity']);
                         }
                     }
