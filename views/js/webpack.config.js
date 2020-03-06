@@ -46,7 +46,7 @@ const plugins = [
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   new HtmlWebpackPlugin({
     filename: 'manifest.php',
-    template: 'manifest.php.tpl',
+    template: '../templates/admin/manifest.php.tpl',
     inject: false,
     production,
     version,
