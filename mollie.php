@@ -276,6 +276,8 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
+        $this->registerHook('displayCheckoutSubtotalDetails');
+        $this->registerHook('displayBeforeCarrier');
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -1069,8 +1071,9 @@ class Mollie extends PaymentModule
                         'type' => 'mollie-methods',
                         'name' => static::METHODS_CONFIG,
                         'label' => $this->l('Payment methods'),
+                        'paymentMethods' => $this->getMethodsForConfig(),
+                        'countries' => $this->getActiveCountriesList(),
                         'tab' => $generalSettings,
-                        'desc' => $this->l('Enable or disable the payment methods. You can drag and drop to rearrange the payment methods.'),
                     ),
                 )
             );
@@ -6503,5 +6506,15 @@ class Mollie extends PaymentModule
         }
 
         return false;
+    }
+
+    public function hookDisplayCheckoutSubtotalDetails($param)
+    {
+      return 10;
+    }
+
+    public function hookDisplayBeforeCarrier($param)
+    {
+      return 10;
     }
 }
