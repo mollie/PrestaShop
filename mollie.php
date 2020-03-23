@@ -38,13 +38,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 // Composer autoload, if failure, skip this module
-if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
 
 // PSR-7 standard autoload, if failure, skip this module
 if (!function_exists('\\Hough\\Psr7\\str')) {
-    if (!include_once(dirname(__FILE__).'/vendor/ehough/psr7/src/functions.php')) {
+    if (!include_once(dirname(__FILE__) . '/vendor/ehough/psr7/src/functions.php')) {
         return;
     }
 }
@@ -61,9 +61,9 @@ class Mollie extends PaymentModule
     /** @var \Mollie\Api\MollieApiClient|null */
     public $api = null;
     /** @var array $statuses */
-    public $statuses = array();
+    public $statuses = [];
     /** @var array $lang */
-    public $lang = array();
+    public $lang = [];
     /** @var string $currentOrderReference */
     public $currentOrderReference;
     /** @var string $selectedApi */
@@ -75,29 +75,29 @@ class Mollie extends PaymentModule
      *
      * @var array
      */
-    public static $methodCurrencies = array(
-        'banktransfer'    => array('eur'),
-        'belfius'         => array('eur'),
-        'bitcoin'         => array('eur'),
-        'cartesbancaires' => array('eur'),
-        'creditcard'      => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
-        'directdebit'     => array('eur'),
-        'eps'             => array('eur'),
-        'giftcard'        => array('eur'),
-        'giropay'         => array('eur'),
-        'ideal'           => array('eur'),
-        'applepay'        => array('aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'),
-        'inghomepay'      => array('eur'),
-        'kbc'             => array('eur'),
-        'bancontact'      => array('eur'),
-        'paypal'          => array('aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'),
-        'paysafecard'     => array('eur'),
-        'sofort'          => array('eur'),
-        'klarnapaylater'  => array('eur'),
-        'klarnasliceit'   => array('eur'),
-        'mybank'         => array('eur'),
+    public static $methodCurrencies = [
+        'banktransfer' => ['eur'],
+        'belfius' => ['eur'],
+        'bitcoin' => ['eur'],
+        'cartesbancaires' => ['eur'],
+        'creditcard' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'],
+        'directdebit' => ['eur'],
+        'eps' => ['eur'],
+        'giftcard' => ['eur'],
+        'giropay' => ['eur'],
+        'ideal' => ['eur'],
+        'applepay' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'],
+        'inghomepay' => ['eur'],
+        'kbc' => ['eur'],
+        'bancontact' => ['eur'],
+        'paypal' => ['aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'],
+        'paysafecard' => ['eur'],
+        'sofort' => ['eur'],
+        'klarnapaylater' => ['eur'],
+        'klarnasliceit' => ['eur'],
+        'mybank' => ['eur'],
 
-    );
+    ];
     /**
      * Default payment method availability
      *
@@ -107,31 +107,31 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.2
      */
-    public static $defaultMethodAvailability = array(
-        'creditcard'      => array(),
-        'klarnapaylater'  => array('nl', 'de', 'at', 'fi'),
-        'klarnasliceit'   => array('de', 'at', 'fi'),
-        'ideal'           => array('nl'),
-        'bancontact'      => array('be'),
-        'paypal'          => array(),
-        'giropay'         => array('de'),
-        'eps'             => array('at'),
-        'belfius'         => array('be'),
-        'inghomepay'      => array('be'),
-        'kbc'             => array('be'),
-        'sofort'          => array('de', 'at', 'ch', 'pl', 'it', 'es', 'be', 'nl'),
-        'giftcard'        => array('nl'),
-        'bitcoin'         => array(),
-        'paysafecard'     => array(),
-        'banktransfer'    => array(),
-        'cartesbancaires' => array('fr'),
-        'directdebit'     => array(
+    public static $defaultMethodAvailability = [
+        'creditcard' => [],
+        'klarnapaylater' => ['nl', 'de', 'at', 'fi'],
+        'klarnasliceit' => ['de', 'at', 'fi'],
+        'ideal' => ['nl'],
+        'bancontact' => ['be'],
+        'paypal' => [],
+        'giropay' => ['de'],
+        'eps' => ['at'],
+        'belfius' => ['be'],
+        'inghomepay' => ['be'],
+        'kbc' => ['be'],
+        'sofort' => ['de', 'at', 'ch', 'pl', 'it', 'es', 'be', 'nl'],
+        'giftcard' => ['nl'],
+        'bitcoin' => [],
+        'paysafecard' => [],
+        'banktransfer' => [],
+        'cartesbancaires' => ['fr'],
+        'directdebit' => [
             'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
             'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'pt', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 'pt', 're',
             'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'es', 'se', 'ch', 'gb', 'uk',
-        ),
-        'mybank'          => array(),
-    );
+        ],
+        'mybank' => [],
+    ];
 
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
@@ -188,6 +188,20 @@ class Mollie extends PaymentModule
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
 
+    const MOLLIE_METHOD_ENABLED = 'MOLLIE_METHOD_ENABLED_';
+    const MOLLIE_METHOD_TITLE = 'MOLLIE_METHOD_TITLE_';
+    const MOLLIE_METHOD_API = 'MOLLIE_METHOD_API_';
+    const MOLLIE_METHOD_DESCRIPTION = 'MOLLIE_METHOD_DESCRIPTION_';
+    const MOLLIE_METHOD_APPLICABLE_COUNTRIES = 'MOLLIE_METHOD_APPLICABLE_COUNTRIES_';
+    const MOLLIE_METHOD_CERTAIN_COUNTRIES = 'MOLLIE_METHOD_CERTAIN_COUNTRIES_';
+    const MOLLIE_METHOD_MINIMUM_ORDER_VALUE = 'MOLLIE_METHOD_MINIMUM_ORDER_VALUE_';
+    const MOLLIE_METHOD_MAX_ORDER_VALUE = 'MOLLIE_METHOD_MAX_ORDER_VALUE_';
+    const MOLLIE_METHOD_SURCHARGE_TYPE = 'MOLLIE_METHOD_SURCHARGE_TYPE_';
+    const MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT = 'MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_';
+    const MOLLIE_METHOD_SURCHARGE_PERCENTAGE = 'MOLLIE_METHOD_SURCHARGE_PERCENTAGE_';
+    const MOLLIE_METHOD_SURCHARGE_LIMIT = 'MOLLIE_METHOD_SURCHARGE_LIMIT_';
+    const MOLLIE_METHOD_SURCHARGE_TAX_CLASS = 'MOLLIE_METHOD_SURCHARGE_TAX_CLASS_';
+
     const MOLLIE_RESELLER_PARTNER_ID = 4602094;
     const MOLLIE_RESELLER_PROFILE_KEY = 'B69C2D66';
     const MOLLIE_RESELLER_APP_SECRET = '49726EB7650EC592F732E7B82A4C1EFD6EE8A10F';
@@ -221,7 +235,7 @@ class Mollie extends PaymentModule
      *
      * @var array $hooks
      */
-    public $hooks = array(
+    public $hooks = [
         'displayPayment',
         'displayPaymentEU',
         'paymentOptions',
@@ -229,33 +243,33 @@ class Mollie extends PaymentModule
         'displayBackOfficeHeader',
         'displayOrderConfirmation',
         'actionFrontControllerSetMedia'
-    );
+    ];
 
-    public $extra_mail_vars = array();
+    public $extra_mail_vars = [];
 
     /** @var array $methods */
-    public static $methods = array(
-        'banktransfer'    => 'Bank',
-        'belfius'         => 'Belfius',
-        'bitcoin'         => 'Bitcoin',
+    public static $methods = [
+        'banktransfer' => 'Bank',
+        'belfius' => 'Belfius',
+        'bitcoin' => 'Bitcoin',
         'cartesbancaires' => 'Cartes Bancaires',
-        'creditcard'      => 'Credit Card',
-        'directdebit'     => 'Direct Debit',
-        'eps'             => 'EPS',
-        'giftcard'        => 'Giftcard',
-        'giropay'         => 'Giropay',
-        'ideal'           => 'iDEAL',
-        'inghomepay '     => 'ING Homepay',
-        'kbc'             => 'KBC',
-        'bancontact'      => 'Bancontact',
-        'paypal'          => 'PayPal',
-        'paysafecard'     => 'Paysafecard',
-        'sofort'          => 'Sofort Banking',
-        'klarnapaylater'  => 'Pay later.',
-        'klarnaspliceit'  => 'Slice it.',
-        'applepay'        => 'Apple Pay',
-        'mybank'          => 'MyBank',
-    );
+        'creditcard' => 'Credit Card',
+        'directdebit' => 'Direct Debit',
+        'eps' => 'EPS',
+        'giftcard' => 'Giftcard',
+        'giropay' => 'Giropay',
+        'ideal' => 'iDEAL',
+        'inghomepay ' => 'ING Homepay',
+        'kbc' => 'KBC',
+        'bancontact' => 'Bancontact',
+        'paypal' => 'PayPal',
+        'paysafecard' => 'Paysafecard',
+        'sofort' => 'Sofort Banking',
+        'klarnapaylater' => 'Pay later.',
+        'klarnaspliceit' => 'Slice it.',
+        'applepay' => 'Apple Pay',
+        'mybank' => 'MyBank',
+    ];
 
     /**
      * Mollie constructor.
@@ -283,7 +297,7 @@ class Mollie extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the Mollie Payment Module?');
 
-        $this->controllers = array('payment', 'return', 'webhook', 'qrcode');
+        $this->controllers = ['payment', 'return', 'webhook', 'qrcode'];
 
         try {
             $this->api = new \Mollie\Api\MollieApiClient();
@@ -300,94 +314,94 @@ class Mollie extends PaymentModule
                 $this->api->setApiKey(Tools::getValue('Mollie_Api_Key'));
             }
             if (defined('_TB_VERSION_')) {
-                $this->api->addVersionString('ThirtyBees/'._TB_VERSION_);
+                $this->api->addVersionString('ThirtyBees/' . _TB_VERSION_);
                 $this->api->addVersionString("MollieThirtyBees/{$this->version}");
             } else {
-                $this->api->addVersionString('PrestaShop/'._PS_VERSION_);
+                $this->api->addVersionString('PrestaShop/' . _PS_VERSION_);
                 $this->api->addVersionString("MolliePrestaShop/{$this->version}");
             }
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
-            PrestaShopLogger::addLog(__METHOD__.' - System incompatible: '.$e->getMessage(), static::CRASH);
+            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), static::CRASH);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            $this->warning = $this->l('Payment error:').$e->getMessage();
-            PrestaShopLogger::addLog(__METHOD__.' said: '.$this->warning, static::CRASH);
+            $this->warning = $this->l('Payment error:') . $e->getMessage();
+            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, static::CRASH);
         }
 
-        $this->statuses = array(
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID       => Configuration::get(static::MOLLIE_STATUS_PAID),
+        $this->statuses = [
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID => Configuration::get(static::MOLLIE_STATUS_PAID),
             \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(static::MOLLIE_STATUS_PAID),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED   => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
 //            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED    => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN       => Configuration::get(static::MOLLIE_STATUS_OPEN),
-            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            static::PARTIAL_REFUND_CODE                                     => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
-            'created'                                                       => Configuration::get(static::MOLLIE_STATUS_OPEN),
-            $this::STATUS_PAID_ON_BACKORDER                                 => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
-            $this::STATUS_PENDING_ON_BACKORDER                              => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
-            $this::STATUS_ON_BACKORDER                                      => Configuration::get('PS_OS_OUTOFSTOCK'),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            static::PARTIAL_REFUND_CODE => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
+            'created' => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            $this::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
+            $this::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
+            $this::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
 
-        );
+        ];
 
         // Load all translatable text here so we have a single translation point
-        $this->lang = array(
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID                                                                         => $this->l('Paid'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED                                                                   => $this->l('Authorized'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED                                                                     => $this->l('Canceled'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED                                                                      => $this->l('Expired'),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED                                                                      => $this->l('Refunded'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN                                                                         => $this->l('Bankwire pending'),
-            static::PARTIAL_REFUND_CODE                                                                                                       => $this->l('Partially refunded'),
-            'created'                                                                                                                         => $this->l('Created'),
-            'This payment method is not available.'                                                                                           => $this->l('This payment method is not available.'),
-            'Click here to continue'                                                                                                          => $this->l('Click here to continue'),
-            'This payment method is only available for Euros.'                                                                                => $this->l('This payment method is only available for Euros.'),
-            'There was an error while processing your request: '                                                                              => $this->l('There was an error while processing your request: '),
-            'The order with this id does not exist.'                                                                                          => $this->l('The order with this id does not exist.'),
+        $this->lang = [
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID => $this->l('Paid'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => $this->l('Authorized'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => $this->l('Canceled'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED => $this->l('Expired'),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => $this->l('Refunded'),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => $this->l('Bankwire pending'),
+            static::PARTIAL_REFUND_CODE => $this->l('Partially refunded'),
+            'created' => $this->l('Created'),
+            'This payment method is not available.' => $this->l('This payment method is not available.'),
+            'Click here to continue' => $this->l('Click here to continue'),
+            'This payment method is only available for Euros.' => $this->l('This payment method is only available for Euros.'),
+            'There was an error while processing your request: ' => $this->l('There was an error while processing your request: '),
+            'The order with this id does not exist.' => $this->l('The order with this id does not exist.'),
             'We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.' => $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'),
-            'Unfortunately your payment was expired.'                                                                                         => $this->l('Unfortunately your payment was expired.'),
-            'Thank you. Your payment has been received.'                                                                                      => $this->l('Thank you. Your payment has been received.'),
-            'The transaction has an unexpected status.'                                                                                       => $this->l('The transaction has an unexpected status.'),
-            'You are not authorised to see this page.'                                                                                        => $this->l('You are not authorised to see this page.'),
-            'Continue shopping'                                                                                                               => $this->l('Continue shopping'),
-            'Welcome back'                                                                                                                    => $this->l('Welcome back'),
-            'Select your bank:'                                                                                                               => $this->l('Select your bank:'),
-            'OK'                                                                                                                              => $this->l('OK'),
-            'Different payment method'                                                                                                        => $this->l('Different payment method'),
-            'Pay with %s'                                                                                                                     => $this->l('Pay with %s'),
-            'Refund this order'                                                                                                               => $this->l('Refund this order'),
-            'Mollie refund'                                                                                                                   => $this->l('Mollie refund'),
-            'Refund order #%d through the Mollie API.'                                                                                        => $this->l('Refund order #%d through the Mollie API.'),
-            'The order has been refunded!'                                                                                                    => $this->l('The order has been refunded!'),
-            'Mollie B.V. will transfer the money back to the customer on the next business day.'                                              => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
-            'Awaiting Mollie payment'                                                                                                         => $this->l('Awaiting Mollie payment'),
-            'Mollie partially refunded'                                                                                                       => $this->l('Mollie partially refunded'),
-            'iDEAL'                                                                                                                           => $this->l('iDEAL'),
-            'Cartes Bancaires'                                                                                                                => $this->l('Cartes Bancaires'),
-            'Credit card'                                                                                                                     => $this->l('Credit card'),
-            'Bancontact'                                                                                                                      => $this->l('Bancontact'),
-            'SOFORT Banking'                                                                                                                  => $this->l('SOFORT Banking'),
-            'SEPA Direct Debit'                                                                                                               => $this->l('SEPA Direct Debit'),
-            'Belfius Pay Button'                                                                                                              => $this->l('Belfius Pay Button'),
-            'Bitcoin'                                                                                                                         => $this->l('Bitcoin'),
-            'PODIUM Cadeaukaart'                                                                                                              => $this->l('PODIUM Cadeaukaart'),
-            'Gift cards'                                                                                                                      => $this->l('Gift cards'),
-            'Bank transfer'                                                                                                                   => $this->l('Bank transfer'),
-            'PayPal'                                                                                                                          => $this->l('PayPal'),
-            'paysafecard'                                                                                                                     => $this->l('paysafecard'),
-            'KBC/CBC Payment Button'                                                                                                          => $this->l('KBC/CBC Payment Button'),
-            'ING Home\'Pay'                                                                                                                   => $this->l('ING Home\'Pay'),
-            'Giropay'                                                                                                                         => $this->l('Giropay'),
-            'eps'                                                                                                                             => $this->l('eps'),
-            'Pay later.'                                                                                                                      => $this->l('Pay later.'),
-            'Slice it.'                                                                                                                       => $this->l('Slice it.'),
-            'MyBank'                                                                                                                          => $this->l('MyBank'),
-        );
+            'Unfortunately your payment was expired.' => $this->l('Unfortunately your payment was expired.'),
+            'Thank you. Your payment has been received.' => $this->l('Thank you. Your payment has been received.'),
+            'The transaction has an unexpected status.' => $this->l('The transaction has an unexpected status.'),
+            'You are not authorised to see this page.' => $this->l('You are not authorised to see this page.'),
+            'Continue shopping' => $this->l('Continue shopping'),
+            'Welcome back' => $this->l('Welcome back'),
+            'Select your bank:' => $this->l('Select your bank:'),
+            'OK' => $this->l('OK'),
+            'Different payment method' => $this->l('Different payment method'),
+            'Pay with %s' => $this->l('Pay with %s'),
+            'Refund this order' => $this->l('Refund this order'),
+            'Mollie refund' => $this->l('Mollie refund'),
+            'Refund order #%d through the Mollie API.' => $this->l('Refund order #%d through the Mollie API.'),
+            'The order has been refunded!' => $this->l('The order has been refunded!'),
+            'Mollie B.V. will transfer the money back to the customer on the next business day.' => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
+            'Awaiting Mollie payment' => $this->l('Awaiting Mollie payment'),
+            'Mollie partially refunded' => $this->l('Mollie partially refunded'),
+            'iDEAL' => $this->l('iDEAL'),
+            'Cartes Bancaires' => $this->l('Cartes Bancaires'),
+            'Credit card' => $this->l('Credit card'),
+            'Bancontact' => $this->l('Bancontact'),
+            'SOFORT Banking' => $this->l('SOFORT Banking'),
+            'SEPA Direct Debit' => $this->l('SEPA Direct Debit'),
+            'Belfius Pay Button' => $this->l('Belfius Pay Button'),
+            'Bitcoin' => $this->l('Bitcoin'),
+            'PODIUM Cadeaukaart' => $this->l('PODIUM Cadeaukaart'),
+            'Gift cards' => $this->l('Gift cards'),
+            'Bank transfer' => $this->l('Bank transfer'),
+            'PayPal' => $this->l('PayPal'),
+            'paysafecard' => $this->l('paysafecard'),
+            'KBC/CBC Payment Button' => $this->l('KBC/CBC Payment Button'),
+            'ING Home\'Pay' => $this->l('ING Home\'Pay'),
+            'Giropay' => $this->l('Giropay'),
+            'eps' => $this->l('eps'),
+            'Pay later.' => $this->l('Pay later.'),
+            'Slice it.' => $this->l('Slice it.'),
+            'MyBank' => $this->l('MyBank'),
+        ];
 
         // Register json Smarty function when missing, happens on older 1.5; some 1.6 versions
         try {
-            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_encode', array('Tools', 'jsonEncode'));
-            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_decode', array('Tools', 'jsonDecode'));
+            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_encode', ['Tools', 'jsonEncode']);
+            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_decode', ['Tools', 'jsonDecode']);
         } catch (SmartyException $e) {
             // Already registered
         } catch (Exception $e) {
@@ -399,7 +413,7 @@ class Mollie extends PaymentModule
         ) {
             // Bugfix generating invoices on 1.7.0.x => Register Admin/PDF displayPrice Smarty function when missing
             try {
-                smartyRegisterFunction(Context::getContext()->smarty, 'function', 'displayPrice', array('Tools', 'displayPriceSmarty'));
+                smartyRegisterFunction(Context::getContext()->smarty, 'function', 'displayPrice', ['Tools', 'displayPriceSmarty']);
             } catch (SmartyException $e) {
                 // Already registered
             } catch (Exception $e) {
@@ -438,7 +452,7 @@ class Mollie extends PaymentModule
         $this->initConfig();
         $this->setDefaultCarrierStatuses();
 
-        include(dirname(__FILE__).'/sql/install.php');
+        include(dirname(__FILE__) . '/sql/install.php');
 
         return true;
     }
@@ -486,7 +500,7 @@ class Mollie extends PaymentModule
         Configuration::deleteByName(static::MOLLIE_METHODS_LAST_CHECK);
         Configuration::deleteByName(static::METHODS_CONFIG);
 
-        include(dirname(__FILE__).'/sql/uninstall.php');
+        include(dirname(__FILE__) . '/sql/uninstall.php');
 
         return parent::uninstall();
     }
@@ -573,12 +587,12 @@ class Mollie extends PaymentModule
         if (Tools::getValue('ajax')) {
             header('Content-Type: application/json;charset=UTF-8');
 
-            if (!method_exists($this, 'displayAjax'.Tools::ucfirst(Tools::getValue('action')))) {
-                die(json_encode(array(
+            if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
+                die(json_encode([
                     'success' => false,
-                )));
+                ]));
             }
-            die(json_encode($this->{'displayAjax'.Tools::ucfirst(Tools::getValue('action'))}()));
+            die(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
         if ($module = $this->checkPaymentModuleOverride()) {
@@ -589,49 +603,49 @@ class Mollie extends PaymentModule
             );
         }
         if ($this->checkTemplateCompilation()) {
-            $this->context->smarty->assign(array(
-                'settingKey'   => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Template compilation', array(), 'Admin.Advparameters.Feature')
+            $this->context->smarty->assign([
+                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Template compilation', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Template compilation', 'AdminPerformance'),
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Never recompile template files', array(), 'Admin.Advparameters.Feature')
+                    ? $this->trans('Never recompile template files', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Never recompile template files', 'AdminPerformance'),
                 'settingsPage' => static::getMenuLocation('AdminPerformance'),
-            ));
+            ]);
             $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
         }
         if ($this->checkStaleSmartyCache()) {
-            $this->context->smarty->assign(array(
-                'settingKey'   => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Clear cache', array(), 'Admin.Advparameters.Feature')
+            $this->context->smarty->assign([
+                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Clear cache', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Clear cache', 'AdminPerformance'),
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Never clear cache files', array(), 'Admin.Advparameters.Feature')
+                    ? $this->trans('Never clear cache files', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Never clear cache files', 'AdminPerformance'),
                 'settingsPage' => static::getMenuLocation('AdminPerformance'),
-            ));
+            ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
         }
         if ($this->checkRoundingMode()) {
-            $this->context->smarty->assign(array(
-                'settingKey'   => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Rounding mode', array(), 'Admin.Shopparameters.Feature')
+            $this->context->smarty->assign([
+                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
+                    ? $this->trans('Rounding mode', [], 'Admin.Shopparameters.Feature')
                     : Translate::getAdminTranslation('Rounding mode', 'AdminPreferences'),
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Round up away from zero, when it is half way there (recommended)', array(), 'Admin.Shopparameters.Feature')
+                    ? $this->trans('Round up away from zero, when it is half way there (recommended)', [], 'Admin.Shopparameters.Feature')
                     : Translate::getAdminTranslation('Round up away from zero, when it is half way there (recommended)', 'AdminPreferences'),
                 'settingsPage' => static::getMenuLocation('AdminPreferences'),
-            ));
+            ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
         }
 
         $this->checkOrderStatusHook();
 
-        $this->context->smarty->assign(array(
-            'link'       => Context::getContext()->link,
-            'module_dir' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/',
-            'publicPath' => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
-        ));
+        $this->context->smarty->assign([
+            'link' => Context::getContext()->link,
+            'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
+            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+        ]);
 
         $updateMessage = '';
         if (!static::ADDONS) {
@@ -645,7 +659,7 @@ class Mollie extends PaymentModule
         $resultMessage = '';
         $warningMessage = '';
 
-        $errors = array();
+        $errors = [];
         if (Tools::isSubmit('submitNewAccount')) {
             $this->processNewAccount();
         }
@@ -659,37 +673,37 @@ class Mollie extends PaymentModule
             }
         }
 
-        $data = array(
-            'update_message'         => $updateMessage,
-            'title_status'           => $this->l('%s statuses:'),
-            'title_visual'           => $this->l('Visual settings:'),
-            'title_debug'            => $this->l('Debug info:'),
-            'msg_result'             => $resultMessage,
-            'msg_warning'            => $warningMessage,
-            'path'                   => $this->_path,
-            'val_api_key'            => Configuration::get(static::MOLLIE_API_KEY),
-            'val_desc'               => Configuration::get(static::MOLLIE_DESCRIPTION),
+        $data = [
+            'update_message' => $updateMessage,
+            'title_status' => $this->l('%s statuses:'),
+            'title_visual' => $this->l('Visual settings:'),
+            'title_debug' => $this->l('Debug info:'),
+            'msg_result' => $resultMessage,
+            'msg_warning' => $warningMessage,
+            'path' => $this->_path,
+            'val_api_key' => Configuration::get(static::MOLLIE_API_KEY),
+            'val_desc' => Configuration::get(static::MOLLIE_DESCRIPTION),
             'payscreen_locale_value' => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
-            'val_images'             => Configuration::get(static::MOLLIE_IMAGES),
-            'val_issuers'            => Configuration::get(static::MOLLIE_ISSUERS),
-            'val_css'                => Configuration::get(static::MOLLIE_CSS),
-            'val_errors'             => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-            'val_qrenabled'          => Configuration::get(static::MOLLIE_QRENABLED),
-            'val_logger'             => Configuration::get(static::MOLLIE_DEBUG_LOG),
-            'val_save'               => $this->l('Save'),
-            'lang'                   => $this->lang,
-            'logo_url'               => $this->getPathUri() . 'views/img/mollie_logo.png',
-            'webpack_urls'            => static::getWebpackChunks('app'),
+            'val_images' => Configuration::get(static::MOLLIE_IMAGES),
+            'val_issuers' => Configuration::get(static::MOLLIE_ISSUERS),
+            'val_css' => Configuration::get(static::MOLLIE_CSS),
+            'val_errors' => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
+            'val_qrenabled' => Configuration::get(static::MOLLIE_QRENABLED),
+            'val_logger' => Configuration::get(static::MOLLIE_DEBUG_LOG),
+            'val_save' => $this->l('Save'),
+            'lang' => $this->lang,
+            'logo_url' => $this->getPathUri() . 'views/img/mollie_logo.png',
+            'webpack_urls' => static::getWebpackChunks('app'),
             'description_message' => $this->l('Description cannot be empty'),
             'Profile_id_message' => $this->l('Wrong profile ID')
-        );
+        ];
 
-       Media::addJsDef([
-           'description_message' => $this->l('Description cannot be empty'),
-           'profile_id_message' => $this->l('Wrong profile ID'),
-           'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
-           'payment_api' => static::MOLLIE_PAYMENTS_API,
-       ]);
+        Media::addJsDef([
+            'description_message' => $this->l('Description cannot be empty'),
+            'profile_id_message' => $this->l('Wrong profile ID'),
+            'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
+            'payment_api' => static::MOLLIE_PAYMENTS_API,
+        ]);
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
@@ -711,86 +725,86 @@ class Mollie extends PaymentModule
      */
     protected function generateAccountForm()
     {
-        $fields = array(
-            'form' => array(
-                'legend'      => array(
+        $fields = [
+            'form' => [
+                'legend' => [
                     'title' => $this->l('Create your account'),
-                    'icon'  => 'icon-user',
-                ),
+                    'icon' => 'icon-user',
+                ],
                 'description' => $this->l('Do you already have an API Key? Then you can skip this step and proceed to entering your API key.'),
-                'input'       => array(
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('First and last name'),
-                        'name'     => 'mollie_new_name',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('Email address'),
-                        'name'     => 'mollie_new_email',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('Shop name'),
-                        'name'     => 'mollie_new_company',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('Address'),
-                        'name'     => 'mollie_new_address',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('Postcode'),
-                        'name'     => 'mollie_new_zipcode',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'     => 'text',
-                        'label'    => $this->l('City'),
-                        'name'     => 'mollie_new_city',
-                        'required' => true,
-                        'class'    => 'fixed-width-xxl',
-                    ),
-                    array(
-                        'type'    => 'select',
-                        'label'   => $this->l('Country'),
-                        'name'    => 'mollie_new_country',
-                        'options' => array(
-                            'query' => @include(dirname(__FILE__).'/countries.php'),
-                            'id'    => 'id',
-                            'name'  => 'name',
-                        ),
+                'input' => [
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('First and last name'),
+                        'name' => 'mollie_new_name',
                         'required' => true,
                         'class' => 'fixed-width-xxl',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Email address'),
+                        'name' => 'mollie_new_email',
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Shop name'),
+                        'name' => 'mollie_new_company',
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Address'),
+                        'name' => 'mollie_new_address',
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Postcode'),
+                        'name' => 'mollie_new_zipcode',
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('City'),
+                        'name' => 'mollie_new_city',
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    [
+                        'type' => 'select',
+                        'label' => $this->l('Country'),
+                        'name' => 'mollie_new_country',
+                        'options' => [
+                            'query' => @include(dirname(__FILE__) . '/countries.php'),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ],
+                        'required' => true,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                ],
+            ],
+        ];
 
         if (version_compare(_PS_VERSION_, '1.6.0.0', '>=')) {
-            $fields['form']['buttons'] = array(
-                array(
+            $fields['form']['buttons'] = [
+                [
                     'title' => $this->l('Create'),
                     'class' => 'btn btn-default pull-right',
-                    'icon'  => 'process-icon-plus',
-                    'type'  => 'submit',
-                    'name'  => 'submitNewAccount',
-                ),
-            );
+                    'icon' => 'process-icon-plus',
+                    'type' => 'submit',
+                    'name' => 'submitNewAccount',
+                ],
+            ];
         } else {
-            $fields['form']['submit'] = array(
+            $fields['form']['submit'] = [
                 'title' => $this->l('Create'),
-            );
+            ];
         }
 
         $helper = new HelperForm();
@@ -804,25 +818,25 @@ class Mollie extends PaymentModule
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitNewAccount';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
+            . "&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $employee = $this->context->employee;
-        $helper->tpl_vars = array(
-            'fields_value' => array(
-                'mollie_new_name'    => Tools::isSubmit('mollie_new_name') ? Tools::getValue('mollie_new_name') : "{$employee->firstname} {$employee->lastname}",
-                'mollie_new_email'   => Tools::isSubmit('mollie_new_email') ? Tools::getValue('mollie_new_email') : Configuration::get('PS_SHOP_EMAIL'),
+        $helper->tpl_vars = [
+            'fields_value' => [
+                'mollie_new_name' => Tools::isSubmit('mollie_new_name') ? Tools::getValue('mollie_new_name') : "{$employee->firstname} {$employee->lastname}",
+                'mollie_new_email' => Tools::isSubmit('mollie_new_email') ? Tools::getValue('mollie_new_email') : Configuration::get('PS_SHOP_EMAIL'),
                 'mollie_new_company' => Tools::isSubmit('mollie_new_company') ? Tools::getValue('mollie_new_company') : Configuration::get('PS_SHOP_NAME'),
-                'mollie_new_address' => Tools::isSubmit('mollie_new_address') ? Tools::getValue('mollie_new_address') : trim(Configuration::get('PS_SHOP_ADDR1').' '.Configuration::get('PS_SHOP_ADDR2')),
+                'mollie_new_address' => Tools::isSubmit('mollie_new_address') ? Tools::getValue('mollie_new_address') : trim(Configuration::get('PS_SHOP_ADDR1') . ' ' . Configuration::get('PS_SHOP_ADDR2')),
                 'mollie_new_zipcode' => Tools::isSubmit('mollie_new_zipcode') ? Tools::getValue('mollie_new_zipcode') : trim(Configuration::get('PS_SHOP_CODE')),
-                'mollie_new_city'    => Tools::isSubmit('mollie_new_city') ? Tools::getValue('mollie_new_city') : trim(Configuration::get('PS_SHOP_CITY')),
+                'mollie_new_city' => Tools::isSubmit('mollie_new_city') ? Tools::getValue('mollie_new_city') : trim(Configuration::get('PS_SHOP_CITY')),
                 'mollie_new_country' => Tools::isSubmit('mollie_new_country') ? Tools::getValue('mollie_new_country') : Country::getIsoById(Configuration::get('PS_SHOP_COUNTRY_ID')),
-            ),
-            'languages'    => $this->context->controller->getLanguages(),
-            'id_language'  => $this->context->language->id,
-        );
+            ],
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id,
+        ];
 
-        return $helper->generateForm(array($fields));
+        return $helper->generateForm([$fields]);
     }
 
     protected function getSettingsForm()
@@ -835,16 +849,16 @@ class Mollie extends PaymentModule
             $inputs = array_merge($inputs, $this->getAdvancedSettingsSection());
         }
 
-        $fields = array(
-            'form' => array(
+        $fields = [
+            'form' => [
                 'tabs' => $this->getSettingTabs($isApiKeyProvided),
                 'input' => $inputs,
-                'submit' => array(
+                'submit' => [
                     'title' => $this->l('Save'),
                     'class' => 'btn btn-default pull-right',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $helper = new HelperForm();
 
@@ -857,23 +871,23 @@ class Mollie extends PaymentModule
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitmollie';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            ."&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
+            . "&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
-        $helper->tpl_vars = array(
+        $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
-            'languages'    => $this->context->controller->getLanguages(),
-            'id_language'  => $this->context->language->id,
-        );
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id,
+        ];
 
-        return $helper->generateForm(array($fields));
+        return $helper->generateForm([$fields]);
     }
 
     protected function getSettingTabs($isApiKeyProvided)
     {
-        $tabs = array(
+        $tabs = [
             'general_settings' => $this->l('General settings'),
-        );
+        ];
 
         if ($isApiKeyProvided) {
             $tabs['advanced_settings'] = $this->l('Advanced settings');
@@ -885,99 +899,99 @@ class Mollie extends PaymentModule
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
-        $orderStatuses = array();
+        $orderStatuses = [];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
         if ($isApiKeyProvided) {
-            $input = array(
-                array(
+            $input = [
+                [
                     'type' => 'text',
                     'label' => $this->l('API Key'),
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array($this->display(__FILE__, 'views/templates/admin/profile.tpl'))
+                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
                     'class' => 'fixed-width-xxl',
-                )
-            );
+                ]
+            ];
         } else {
-            $input = array(
-                array(
+            $input = [
+                [
                     'type' => 'mollie-switch',
                     'label' => $this->l('Do you already have a Mollie account?'),
                     'name' => static::MOLLIE_ACCOUNT_SWITCH,
                     'tab' => $generalSettings,
                     'is_bool' => true,
-                    'values' => array(
-                        array(
+                    'values' => [
+                        [
                             'id' => 'active_on',
                             'value' => true,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
+                        ],
+                        [
                             'id' => 'active_off',
                             'value' => false,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
+                        ],
+                    ],
                     'desc' => $this->context->smarty->fetch(
                         $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
                     ),
-                ),
-                array(
+                ],
+                [
                     'type' => 'text',
                     'label' => $this->l('API Key'),
                     'tab' => $generalSettings,
                     'desc' => static::ppTags(
                         $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        array($this->display(__FILE__, 'views/templates/admin/profile.tpl'))
+                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => static::MOLLIE_API_KEY,
                     'required' => true,
                     'class' => 'fixed-width-xxl',
-                )
-            );
+                ]
+            ];
         }
         if ($isApiKeyProvided) {
 
 
-            $input = array_merge($input, array(
-                    array(
+            $input = array_merge($input, [
+                    [
                         'type' => 'mollie-h2',
                         'tab' => $generalSettings,
                         'name' => '',
                         'title' => $this->l('Mollie API'),
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'select',
                         'label' => $this->l('Select which Mollie API to use'),
                         'tab' => $generalSettings,
                         'desc' => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
                         'name' => static::MOLLIE_API,
-                        'options' => array(
-                            'query' => array(
-                                array(
+                        'options' => [
+                            'query' => [
+                                [
                                     'id' => static::MOLLIE_PAYMENTS_API,
                                     'name' => $this->l('Payments API'),
-                                ),
-                                array(
+                                ],
+                                [
                                     'id' => static::MOLLIE_ORDERS_API,
                                     'name' => $this->l('Orders API'),
-                                ),
-                            ),
+                                ],
+                            ],
                             'id' => 'id',
                             'name' => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type' => 'mollie-h2',
                         'name' => '',
                         'tab' => $generalSettings,
                         'title' => $this->l('Mollie Settings'),
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'mollie-description',
                         'label' => $this->l('Description'),
                         'tab' => $generalSettings,
@@ -987,44 +1001,44 @@ class Mollie extends PaymentModule
                         'class' => 'fixed-width-xxl',
                         'depends' => static::MOLLIE_API,
                         'depends_value' => static::MOLLIE_PAYMENTS_API,
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'mollie-h3',
                         'tab' => $generalSettings,
                         'name' => '',
                         'title' => $this->l('Orders API'),
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'mollie-carriers',
                         'label' => $this->l('Shipment information'),
                         'tab' => $generalSettings,
                         'name' => static::MOLLIE_TRACKING_URLS,
                         'depends' => static::MOLLIE_API,
                         'depends_value' => static::MOLLIE_ORDERS_API,
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'mollie-carrier-switch',
                         'label' => $this->l('Automatically ship on marked statuses'),
                         'tab' => $generalSettings,
                         'name' => static::MOLLIE_AUTO_SHIP_MAIN,
                         'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
                         'is_bool' => true,
-                        'values' => array(
-                            array(
+                        'values' => [
+                            [
                                 'id' => 'active_on',
                                 'value' => true,
                                 'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                            ),
-                            array(
+                            ],
+                            [
                                 'id' => 'active_off',
                                 'value' => false,
                                 'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                            ),
-                        ),
+                            ],
+                        ],
                         'depends' => static::MOLLIE_API,
                         'depends_value' => static::MOLLIE_ORDERS_API,
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'checkbox',
                         'label' => $this->l('Automatically ship when one of these statuses is reached'),
                         'tab' => $generalSettings,
@@ -1032,144 +1046,145 @@ class Mollie extends PaymentModule
                             $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
                         'name' => static::MOLLIE_AUTO_SHIP_STATUSES,
                         'multiple' => true,
-                        'values' => array(
+                        'values' => [
                             'query' => $orderStatuses,
                             'id' => 'id_order_state',
                             'name' => 'name',
-                        ),
-                        'expand' => (count($orderStatuses) > 10) ? array(
+                        ],
+                        'expand' => (count($orderStatuses) > 10) ? [
                             'print_total' => count($orderStatuses),
                             'default' => 'show',
-                            'show' => array('text' => $this->l('Show'), 'icon' => 'plus-sign-alt'),
-                            'hide' => array('text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'),
-                        ) : null,
+                            'show' => ['text' => $this->l('Show'), 'icon' => 'plus-sign-alt'],
+                            'hide' => ['text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'],
+                        ] : null,
                         'depends' => static::MOLLIE_API,
                         'depends_value' => static::MOLLIE_ORDERS_API,
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'select',
                         'label' => $this->l('Issuer list'),
                         'tab' => $generalSettings,
                         'desc' => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
                         'name' => static::MOLLIE_ISSUERS,
-                        'options' => array(
-                            'query' => array(
-                                array(
+                        'options' => [
+                            'query' => [
+                                [
                                     'id' => static::ISSUERS_ON_CLICK,
                                     'name' => $this->l('On click'),
-                                ),
-                                array(
+                                ],
+                                [
                                     'id' => static::ISSUERS_PAYMENT_PAGE,
                                     'name' => $this->l('Payment page'),
-                                ),
-                            ),
+                                ],
+                            ],
                             'id' => 'id',
                             'name' => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type' => 'mollie-methods',
                         'name' => static::METHODS_CONFIG,
                         'label' => $this->l('Payment methods'),
                         'paymentMethods' => $this->getMethodsForConfig(),
+                        'paymentMethodsObject' => $this->getMethodsForConfig2(),
                         'countries' => $this->getActiveCountriesList(),
                         'tab' => $generalSettings,
-                    ),
-                )
+                    ],
+                ]
             );
 
             if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-                $input[] = array(
+                $input[] = [
                     'type' => 'mollie-h3',
                     'tab' => $generalSettings,
                     'name' => '',
                     'title' => $this->l('Method countries'),
-                );
+                ];
 
-                $input[] = array(
+                $input[] = [
                     'type' => 'switch',
                     'label' => $this->l('Enable country restrictions'),
                     'tab' => $generalSettings,
                     'name' => static::MOLLIE_METHOD_COUNTRIES,
                     'is_bool' => true,
-                    'values' => array(
-                        array(
+                    'values' => [
+                        [
                             'id' => 'active_on',
                             'value' => 1,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
+                        ],
+                        [
                             'id' => 'active_off',
                             'value' => 0,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                );
+                        ],
+                    ],
+                ];
 
-                $input[] = array(
+                $input[] = [
                     'type' => 'switch',
                     'label' => $this->l('Expand a list of payment methods'),
                     'tab' => $generalSettings,
                     'name' => static::MOLLIE_METHOD_COUNTRIES_DISPLAY,
                     'is_bool' => true,
-                    'values' => array(
-                        array(
+                    'values' => [
+                        [
                             'id' => 'active_on',
                             'value' => 1,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
+                        ],
+                        [
                             'id' => 'active_off',
                             'value' => 0,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                );
+                        ],
+                    ],
+                ];
 
                 foreach ($this->getMethodsForConfig() as $method) {
-                    $input[] = array(
+                    $input[] = [
                         'type' => 'select',
                         'tab' => $generalSettings,
                         'label' => $method['name'],
                         'name' => 'country_' . $method['id'] . '[]',
                         'class' => 'chosen col-md-6 js-country',
                         'multiple' => true,
-                        'options' => array(
+                        'options' => [
                             'query' => $this->getActiveCountriesList(),
                             'id' => 'id',
                             'name' => 'name',
-                        ),
-                    );
+                        ],
+                    ];
                 }
             }
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-                $input[] = array(
+                $input[] = [
                     'type' => 'switch',
                     'label' => $this->l('Enable iDEAL QR'),
                     'tab' => $generalSettings,
                     'name' => static::MOLLIE_QRENABLED,
                     'is_bool' => true,
-                    'values' => array(
-                        array(
+                    'values' => [
+                        [
                             'id' => 'active_on',
                             'value' => true,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
+                        ],
+                        [
                             'id' => 'active_off',
                             'value' => false,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                );
+                        ],
+                    ],
+                ];
             } else {
-                $input[] = array(
+                $input[] = [
                     'type' => 'mollie-warning',
                     'label' => $this->l('Enable iDEAL QR'),
                     'tab' => $generalSettings,
                     'name' => static::MOLLIE_QRENABLED,
                     'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
-                );
+                ];
             }
         }
 
@@ -1179,81 +1194,81 @@ class Mollie extends PaymentModule
     protected function getAdvancedSettingsSection()
     {
         $advancedSettings = 'advanced_settings';
-        $input = array();
+        $input = [];
 
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-            $input[] = array(
-                'type'    => 'select',
-                'label'   => $this->l('Send locale for payment screen'),
+            $input[] = [
+                'type' => 'select',
+                'label' => $this->l('Send locale for payment screen'),
                 'tab' => $advancedSettings,
-                'desc'    => static::ppTags(
+                'desc' => static::ppTags(
                     $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                    array($this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl'))
+                    [$this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl')]
                 ),
-                'name'    => static::MOLLIE_PAYMENTSCREEN_LOCALE,
-                'options' => array(
-                    'query' => array(
-                        array(
-                            'id'   => static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
+                'name' => static::MOLLIE_PAYMENTSCREEN_LOCALE,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
                             'name' => $this->l('Do not send locale using browser language'),
-                        ),
-                        array(
-                            'id'   => static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+                        ],
+                        [
+                            'id' => static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
                             'name' => $this->l('Send locale for payment screen'),
-                        ),
-                    ),
-                    'id'    => 'id',
-                    'name'  => 'name',
-                ),
-            );
+                        ],
+                    ],
+                    'id' => 'id',
+                    'name' => 'name',
+                ],
+            ];
         }
 
-        $input[] = array(
-            'type'    => 'switch',
-            'label'   => $this->l('Use IFrame for credit card'),
-            'tab'     => $advancedSettings,
-            'name'    => self::MOLLIE_IFRAME,
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->l('Use IFrame for credit card'),
+            'tab' => $advancedSettings,
+            'name' => self::MOLLIE_IFRAME,
             'is_bool' => true,
-            'values'  => array(
-                array(
-                    'id'    => 'active_on',
+            'values' => [
+                [
+                    'id' => 'active_on',
                     'value' => true,
                     'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                ),
-                array(
-                    'id'    => 'active_off',
+                ],
+                [
+                    'id' => 'active_off',
                     'value' => false,
                     'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $input[] = array(
+        $input[] = [
             'type' => 'text',
             'label' => $this->l('Profile ID'),
             'tab' => $advancedSettings,
             'desc' => static::ppTags(
                 $this->l('You can find your API key in your [1]Mollie Profile[/1];'),
-                array($this->display(__FILE__, 'views/templates/admin/profile.tpl'))
+                [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
             ),
             'name' => self::MOLLIE_PROFILE_ID,
             'required' => true,
             'class' => 'fixed-width-xxl',
-        );
+        ];
 
         $lang = Context::getContext()->language->id;
         $messageStatus = $this->l('Status for %s payments');
         $descriptionStatus = $this->l('`%s` payments get status `%s`');
         $messageMail = $this->l('Send mails when %s');
         $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
-        $allStatuses = array_merge(array(array('id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656')), OrderState::getOrderStates($lang));
-        $statuses = array();
+        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($lang));
+        $statuses = [];
         foreach ($this->statuses as $name => $val) {
             if ($name === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
                 continue;
             }
 
-            $val = (int) $val;
+            $val = (int)$val;
             if ($val) {
                 $desc = Tools::strtolower(
                     sprintf(
@@ -1261,36 +1276,36 @@ class Mollie extends PaymentModule
                         $this->lang($name),
                         Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
                             'SELECT `name`
-                            FROM `'._DB_PREFIX_.'order_state_lang`
-                            WHERE `id_order_state` = '.(int) $val.'
-                            AND `id_lang` = '.(int) $lang
+                            FROM `' . _DB_PREFIX_ . 'order_state_lang`
+                            WHERE `id_order_state` = ' . (int)$val . '
+                            AND `id_lang` = ' . (int)$lang
                         )
                     )
                 );
             } else {
                 $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang($name));
             }
-            $statuses[] = array(
-                'name'             => $name,
-                'key'              => @constant('static::MOLLIE_STATUS_'.Tools::strtoupper($name)),
-                'value'            => $val,
-                'description'      => $desc,
-                'message'          => sprintf($messageStatus, $this->lang($name)),
-                'key_mail'         => @constant('static::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
-                'value_mail'       => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+            $statuses[] = [
+                'name' => $name,
+                'key' => @constant('static::MOLLIE_STATUS_' . Tools::strtoupper($name)),
+                'value' => $val,
+                'description' => $desc,
+                'message' => sprintf($messageStatus, $this->lang($name)),
+                'key_mail' => @constant('static::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
+                'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
                 'description_mail' => sprintf($descriptionMail, $this->lang($name)),
-                'message_mail'     => sprintf($messageMail, $this->lang($name)),
-            );
+                'message_mail' => sprintf($messageMail, $this->lang($name)),
+            ];
         }
-        $input[] = array(
-            'type'  => 'mollie-h2',
-            'name'  => '',
+        $input[] = [
+            'type' => 'mollie-h2',
+            'name' => '',
             'tab' => $advancedSettings,
             'title' => $this->l('Order statuses'),
-        );
+        ];
 
         foreach (array_filter($statuses, function ($status) {
-            return in_array($status['name'], array(
+            return in_array($status['name'], [
                 \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
                 \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
                 \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
@@ -1298,165 +1313,165 @@ class Mollie extends PaymentModule
                 \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
                 \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                 'partial_refund',
-            ));
+            ]);
         }) as $status) {
-            if (!in_array($status['name'], array('paid', 'partial_refund'))) {
-                $input[] = array(
-                    'type'    => 'switch',
-                    'label'   => $status['message_mail'],
+            if (!in_array($status['name'], ['paid', 'partial_refund'])) {
+                $input[] = [
+                    'type' => 'switch',
+                    'label' => $status['message_mail'],
                     'tab' => $advancedSettings,
-                    'name'    => $status['key_mail'],
+                    'name' => $status['key_mail'],
                     'is_bool' => true,
-                    'values'  => array(
-                        array(
-                            'id'    => 'active_on',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
                             'value' => true,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
-                            'id'    => 'active_off',
+                        ],
+                        [
+                            'id' => 'active_off',
                             'value' => false,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                );
+                        ],
+                    ],
+                ];
             }
-            $input[] = array(
-                'type'    => 'select',
-                'label'   => $status['message'],
+            $input[] = [
+                'type' => 'select',
+                'label' => $status['message'],
                 'tab' => $advancedSettings,
-                'desc'    => $status['description'],
-                'name'    => $status['key'],
-                'options' => array(
+                'desc' => $status['description'],
+                'name' => $status['key'],
+                'options' => [
                     'query' => $allStatuses,
-                    'id'    => 'id_order_state',
-                    'name'  => 'name',
-                ),
-            );
+                    'id' => 'id_order_state',
+                    'name' => 'name',
+                ],
+            ];
         }
-        $input = array_merge($input, array(
-            array(
-                'type'  => 'mollie-h2',
-                'name'  => '',
+        $input = array_merge($input, [
+            [
+                'type' => 'mollie-h2',
+                'name' => '',
                 'tab' => $advancedSettings,
                 'title' => $this->l('Visual Settings'),
-            ),
-            array(
-                'type'    => 'select',
-                'label'   => $this->l('Images'),
+            ],
+            [
+                'type' => 'select',
+                'label' => $this->l('Images'),
                 'tab' => $advancedSettings,
-                'desc'    => $this->l('Show big, normal or no payment method logos on checkout.'),
-                'name'    => static::MOLLIE_IMAGES,
-                'options' => array(
-                    'query' => array(
-                        array(
-                            'id'   => static::LOGOS_HIDE,
+                'desc' => $this->l('Show big, normal or no payment method logos on checkout.'),
+                'name' => static::MOLLIE_IMAGES,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => static::LOGOS_HIDE,
                             'name' => $this->l('hide'),
-                        ),
-                        array(
-                            'id'   => static::LOGOS_NORMAL,
+                        ],
+                        [
+                            'id' => static::LOGOS_NORMAL,
                             'name' => $this->l('normal'),
-                        ),
-                        array(
-                            'id'   => static::LOGOS_BIG,
+                        ],
+                        [
+                            'id' => static::LOGOS_BIG,
                             'name' => $this->l('big'),
-                        ),
-                    ),
-                    'id'    => 'id',
-                    'name'  => 'name',
-                ),
-            ),
+                        ],
+                    ],
+                    'id' => 'id',
+                    'name' => 'name',
+                ],
+            ],
 
-            array(
-                'type'     => 'text',
-                'label'    => $this->l('CSS file'),
+            [
+                'type' => 'text',
+                'label' => $this->l('CSS file'),
                 'tab' => $advancedSettings,
-                'desc'     => static::ppTags(
+                'desc' => static::ppTags(
                     $this->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
-                    array($this->display(__FILE__, 'views/templates/front/kbd.tpl'))
+                    [$this->display(__FILE__, 'views/templates/front/kbd.tpl')]
                 ),
-                'name'     => static::MOLLIE_CSS,
-                'class'    => 'long-text',
-            ),
-        ));
-        $orderStatuses = array(
-            array(
-                'name'           => $this->l('Disable this status'),
+                'name' => static::MOLLIE_CSS,
+                'class' => 'long-text',
+            ],
+        ]);
+        $orderStatuses = [
+            [
+                'name' => $this->l('Disable this status'),
                 'id_order_state' => '0',
-            ),
-        );
+            ],
+        ];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
 
         for ($i = 0; $i < count($orderStatuses); $i++) {
-            $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'].' - '.$orderStatuses[$i]['name'];
+            $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
         $this->aasort($orderStatuses, 'id_order_state');
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'logs' => $this->context->link->getAdminLink('AdminLogs')
-        ));
+        ]);
         $input = array_merge(
             $input,
-            array(
+            [
 
-                array(
-                    'type'  => 'mollie-h2',
-                    'name'  => '',
+                [
+                    'type' => 'mollie-h2',
+                    'name' => '',
                     'title' => $this->l('Debug level'),
                     'tab' => $advancedSettings,
-                ),
-                array(
-                    'type'    => 'switch',
-                    'label'   => $this->l('Display errors'),
+                ],
+                [
+                    'type' => 'switch',
+                    'label' => $this->l('Display errors'),
                     'tab' => $advancedSettings,
-                    'name'    => static::MOLLIE_DISPLAY_ERRORS,
-                    'desc'    => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
+                    'name' => static::MOLLIE_DISPLAY_ERRORS,
+                    'desc' => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
                     'is_bool' => true,
-                    'values'  => array(
-                        array(
-                            'id'    => 'active_on',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
                             'value' => true,
                             'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ),
-                        array(
-                            'id'    => 'active_off',
+                        ],
+                        [
+                            'id' => 'active_off',
                             'value' => false,
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ),
-                    ),
-                ),
-                array(
-                    'type'    => 'select',
-                    'label'   => $this->l('Log level'),
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'label' => $this->l('Log level'),
                     'tab' => $advancedSettings,
                     'desc' => static::ppTags(
                         $this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
-                        array(
+                        [
                             $this->display(__FILE__, 'views/templates/admin/view_logs.tpl')
-                        )
+                        ]
                     ),
-                    'name'    => static::MOLLIE_DEBUG_LOG,
-                    'options' => array(
-                        'query' => array(
-                            array(
-                                'id'   => static::DEBUG_LOG_NONE,
+                    'name' => static::MOLLIE_DEBUG_LOG,
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => static::DEBUG_LOG_NONE,
                                 'name' => $this->l('Nothing'),
-                            ),
-                            array(
-                                'id'   => static::DEBUG_LOG_ERRORS,
+                            ],
+                            [
+                                'id' => static::DEBUG_LOG_ERRORS,
                                 'name' => $this->l('Errors'),
-                            ),
-                            array(
-                                'id'   => static::DEBUG_LOG_ALL,
+                            ],
+                            [
+                                'id' => static::DEBUG_LOG_ALL,
                                 'name' => $this->l('Everything'),
-                            ),
-                        ),
-                        'id'    => 'id',
-                        'name'  => 'name',
-                    ),
-                ),
-            )
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+            ]
         );
         return $input;
     }
@@ -1467,62 +1482,62 @@ class Mollie extends PaymentModule
      */
     protected function getConfigFieldsValues()
     {
-        $configFields = array(
-            static::MOLLIE_API_KEY              => Configuration::get(static::MOLLIE_API_KEY),
-            static::MOLLIE_PROFILE_ID              => Configuration::get(static::MOLLIE_PROFILE_ID),
-            static::MOLLIE_DESCRIPTION          => Configuration::get(static::MOLLIE_DESCRIPTION),
+        $configFields = [
+            static::MOLLIE_API_KEY => Configuration::get(static::MOLLIE_API_KEY),
+            static::MOLLIE_PROFILE_ID => Configuration::get(static::MOLLIE_PROFILE_ID),
+            static::MOLLIE_DESCRIPTION => Configuration::get(static::MOLLIE_DESCRIPTION),
             static::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
             static::MOLLIE_IFRAME => Configuration::get(static::MOLLIE_IFRAME),
 
-            static::MOLLIE_CSS     => Configuration::get(static::MOLLIE_CSS),
-            static::MOLLIE_IMAGES  => Configuration::get(static::MOLLIE_IMAGES),
+            static::MOLLIE_CSS => Configuration::get(static::MOLLIE_CSS),
+            static::MOLLIE_IMAGES => Configuration::get(static::MOLLIE_IMAGES),
             static::MOLLIE_ISSUERS => Configuration::get(static::MOLLIE_ISSUERS),
 
             static::MOLLIE_QRENABLED => Configuration::get(static::MOLLIE_QRENABLED),
             static::MOLLIE_METHOD_COUNTRIES => Configuration::get(static::MOLLIE_METHOD_COUNTRIES),
             static::MOLLIE_METHOD_COUNTRIES_DISPLAY => Configuration::get(static::MOLLIE_METHOD_COUNTRIES_DISPLAY),
 
-            static::MOLLIE_STATUS_OPEN           => Configuration::get(static::MOLLIE_STATUS_OPEN),
-            static::MOLLIE_STATUS_PAID           => Configuration::get(static::MOLLIE_STATUS_PAID),
-            static::MOLLIE_STATUS_CANCELED       => Configuration::get(static::MOLLIE_STATUS_CANCELED),
-            static::MOLLIE_STATUS_EXPIRED        => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
+            static::MOLLIE_STATUS_OPEN => Configuration::get(static::MOLLIE_STATUS_OPEN),
+            static::MOLLIE_STATUS_PAID => Configuration::get(static::MOLLIE_STATUS_PAID),
+            static::MOLLIE_STATUS_CANCELED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            static::MOLLIE_STATUS_EXPIRED => Configuration::get(static::MOLLIE_STATUS_EXPIRED),
             static::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
-            static::MOLLIE_STATUS_REFUNDED       => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
-            static::MOLLIE_MAIL_WHEN_OPEN        => Configuration::get(static::MOLLIE_MAIL_WHEN_OPEN),
-            static::MOLLIE_MAIL_WHEN_PAID        => Configuration::get(static::MOLLIE_MAIL_WHEN_PAID),
-            static::MOLLIE_MAIL_WHEN_CANCELED    => Configuration::get(static::MOLLIE_MAIL_WHEN_CANCELED),
-            static::MOLLIE_MAIL_WHEN_EXPIRED     => Configuration::get(static::MOLLIE_MAIL_WHEN_EXPIRED),
-            static::MOLLIE_MAIL_WHEN_REFUNDED    => Configuration::get(static::MOLLIE_MAIL_WHEN_REFUNDED),
-            static::MOLLIE_ACCOUNT_SWITCH        => Configuration::get(static::MOLLIE_ACCOUNT_SWITCH),
+            static::MOLLIE_STATUS_REFUNDED => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
+            static::MOLLIE_MAIL_WHEN_OPEN => Configuration::get(static::MOLLIE_MAIL_WHEN_OPEN),
+            static::MOLLIE_MAIL_WHEN_PAID => Configuration::get(static::MOLLIE_MAIL_WHEN_PAID),
+            static::MOLLIE_MAIL_WHEN_CANCELED => Configuration::get(static::MOLLIE_MAIL_WHEN_CANCELED),
+            static::MOLLIE_MAIL_WHEN_EXPIRED => Configuration::get(static::MOLLIE_MAIL_WHEN_EXPIRED),
+            static::MOLLIE_MAIL_WHEN_REFUNDED => Configuration::get(static::MOLLIE_MAIL_WHEN_REFUNDED),
+            static::MOLLIE_ACCOUNT_SWITCH => Configuration::get(static::MOLLIE_ACCOUNT_SWITCH),
 
             static::MOLLIE_DISPLAY_ERRORS => Configuration::get(static::MOLLIE_DISPLAY_ERRORS),
-            static::MOLLIE_DEBUG_LOG      => Configuration::get(static::MOLLIE_DEBUG_LOG),
-            static::MOLLIE_API            => Configuration::get(static::MOLLIE_API),
+            static::MOLLIE_DEBUG_LOG => Configuration::get(static::MOLLIE_DEBUG_LOG),
+            static::MOLLIE_API => Configuration::get(static::MOLLIE_API),
 
-            static::MOLLIE_AUTO_SHIP_MAIN  => Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN),
-        );
+            static::MOLLIE_AUTO_SHIP_MAIN => Configuration::get(static::MOLLIE_AUTO_SHIP_MAIN),
+        ];
 
         if (Configuration::get(static::MOLLIE_API_KEY)) {
             foreach ($this->getMethodsForConfig() as $method) {
                 $countryIds = $this->getMethodCountryIds($method['id']);
                 if ($countryIds) {
-                    $configFields = array_merge($configFields, array($this::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds));
+                    $configFields = array_merge($configFields, [$this::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds]);
                     continue;
                 }
-                $configFields = array_merge($configFields, array($this::MOLLIE_COUNTRIES . $method['id'] . '[]' => []));
+                $configFields = array_merge($configFields, [$this::MOLLIE_COUNTRIES . $method['id'] . '[]' => []]);
             }
         }
 
-        $checkStatuses = array();
+        $checkStatuses = [];
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
             $checkConfs = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES), true);
         }
         if (!isset($checkConfs) || !is_array($checkConfs)) {
-            $checkConfs = array();
+            $checkConfs = [];
         }
 
         foreach ($checkConfs as $conf) {
-            $checkStatuses[static::MOLLIE_AUTO_SHIP_STATUSES.'_'.(int) $conf] = true;
+            $checkStatuses[static::MOLLIE_AUTO_SHIP_STATUSES . '_' . (int)$conf] = true;
         }
 
         $configFields = array_merge($configFields, $checkStatuses);
@@ -1557,7 +1572,7 @@ class Mollie extends PaymentModule
     {
         $dbConfig = @json_decode(Configuration::get(static::MOLLIE_TRACKING_URLS), true);
         if (!is_array($dbConfig)) {
-            $dbConfig = array();
+            $dbConfig = [];
         }
 
         $carriers = Carrier::getCarriers(
@@ -1569,17 +1584,17 @@ class Mollie extends PaymentModule
             Carrier::ALL_CARRIERS
         );
 
-        $configCarriers = array();
+        $configCarriers = [];
         foreach ($carriers as $carrier) {
-            $idCarrier = (int) $carrier['id_carrier'];
-            $configCarriers[] = array(
-                'id_carrier'  => $idCarrier,
-                'name'        => $carrier['name'],
-                'source'      => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : ($carrier['external_module_name'] ? static::MOLLIE_CARRIER_MODULE : static::MOLLIE_CARRIER_CARRIER),
-                'module'      => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
+            $idCarrier = (int)$carrier['id_carrier'];
+            $configCarriers[] = [
+                'id_carrier' => $idCarrier,
+                'name' => $carrier['name'],
+                'source' => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : ($carrier['external_module_name'] ? static::MOLLIE_CARRIER_MODULE : static::MOLLIE_CARRIER_CARRIER),
+                'module' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
                 'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
-                'custom_url'  => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['custom_url'] : '',
-            );
+                'custom_url' => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['custom_url'] : '',
+            ];
         }
         if (count($dbConfig) !== count($configCarriers)) {
             Configuration::updateValue(static::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
@@ -1603,10 +1618,10 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int        $order
+     * @param int $order
      * @param string|int $statusId
-     * @param bool|null  $useExistngPayment
-     * @param array      $templateVars
+     * @param bool|null $useExistngPayment
+     * @param array $templateVars
      *
      * @return void
      *
@@ -1619,18 +1634,18 @@ class Mollie extends PaymentModule
      * @since 3.3.2 $useExistingPayment option
      * @since 3.3.4 Accepts template vars for the corresponding email template
      */
-    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = array())
+    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [])
     {
         if (is_string($statusId)) {
             $status = $statusId;
             if (empty($this->statuses[$statusId])) {
                 return;
             }
-            $statusId = (int) $this->statuses[$statusId];
+            $statusId = (int)$this->statuses[$statusId];
         } else {
             $status = '';
             foreach ($this->statuses as $mollieStatus => $prestaShopStatusId) {
-                if ((int) $prestaShopStatusId === $statusId) {
+                if ((int)$prestaShopStatusId === $statusId) {
                     $status = $mollieStatus;
                     break;
                 }
@@ -1638,7 +1653,7 @@ class Mollie extends PaymentModule
         }
 
         if (!$order instanceof Order) {
-            $order = new Order((int) $order);
+            $order = new Order((int)$order);
         }
 
         if (!Validate::isLoadedObject($order)) {
@@ -1646,7 +1661,7 @@ class Mollie extends PaymentModule
         }
 
         $history = array_map(function ($item) {
-            return (int) $item['id_order_state'];
+            return (int)$item['id_order_state'];
         }, $order->getHistory(Context::getContext()->language->id));
         if (!Validate::isLoadedObject($order)
             || !$status
@@ -1661,7 +1676,7 @@ class Mollie extends PaymentModule
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
-        if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
+        if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);
         } else {
             $history->add();
@@ -1670,7 +1685,7 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $column
-     * @param int    $id
+     * @param int $id
      *
      * @return array
      * @throws PrestaShopDatabaseException
@@ -1684,7 +1699,7 @@ class Mollie extends PaymentModule
             $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
-                    _DB_PREFIX_.'mollie_payments',
+                    _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
                     pSQL($id),
                     \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
@@ -1704,7 +1719,7 @@ class Mollie extends PaymentModule
             $nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
-                    _DB_PREFIX_.'mollie_payments',
+                    _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
                     pSQL($id)
                 )
@@ -1723,7 +1738,7 @@ class Mollie extends PaymentModule
      * @return string
      * @throws PrestaShopException
      */
-    protected function getSaveResult(&$errors = array())
+    protected function getSaveResult(&$errors = [])
     {
         $mollieApiKey = Tools::getValue(static::MOLLIE_API_KEY);
         $mollieProfileId = Tools::getValue(static::MOLLIE_PROFILE_ID);
@@ -1739,6 +1754,33 @@ class Mollie extends PaymentModule
                 json_encode(@json_decode(Tools::getValue(static::METHODS_CONFIG)))
             );
         }
+        if ($this->api->methods !== null) {
+            foreach ($this->getMethodsForConfig() as $method) {
+                $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($method['id']) . '"';
+                $paymentId = Db::getInstance()->getValue($sql);
+                $paymentMethod = new MolPaymentMethod();
+                if ($paymentId) {
+                    $paymentMethod = new MolPaymentMethod($paymentId);
+                }
+                $paymentMethod->id_method = $method['id'];
+                $paymentMethod->enabled = Tools::getValue(self::MOLLIE_METHOD_ENABLED . $method['id']);
+                $paymentMethod->title = Tools::getValue(self::MOLLIE_METHOD_TITLE . $method['id']);
+                $paymentMethod->method = Tools::getValue(self::MOLLIE_METHOD_API . $method['id']);
+                $paymentMethod->description = Tools::getValue(self::MOLLIE_METHOD_DESCRIPTION . $method['id']);
+                $paymentMethod->minimal_order_value = Tools::getValue(self::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
+                $paymentMethod->max_order_value = Tools::getValue(self::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
+                $paymentMethod->surcharge = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
+                $paymentMethod->surcharge_fixed_amount = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT . $method['id']);
+                $paymentMethod->surcharge_percentage = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
+                $paymentMethod->surcharge_limit = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
+                $paymentMethod->surcharge_tax_class = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_TAX_CLASS . $method['id']);
+
+                $paymentMethod->save();
+//                $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
+//                $this->updateMethodCountries($method['id'], $countries);
+            }
+        }
+
         $molliePaymentscreenLocale = Tools::getValue(static::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieIFrameEnabled = Tools::getValue(static::MOLLIE_IFRAME);
         $mollieImages = Tools::getValue(static::MOLLIE_IMAGES);
@@ -1749,9 +1791,9 @@ class Mollie extends PaymentModule
         }
         $mollieLogger = Tools::getValue(static::MOLLIE_DEBUG_LOG);
         $mollieApi = Tools::getValue(static::MOLLIE_API);
-        $mollieQrEnabled = (bool) Tools::getValue(static::MOLLIE_QRENABLED);
-        $mollieMethodCountriesEnabled = (bool) Tools::getValue(static::MOLLIE_METHOD_COUNTRIES);
-        $mollieMethodCountriesDisplayEnabled = (bool) Tools::getValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY);
+        $mollieQrEnabled = (bool)Tools::getValue(static::MOLLIE_QRENABLED);
+        $mollieMethodCountriesEnabled = (bool)Tools::getValue(static::MOLLIE_METHOD_COUNTRIES);
+        $mollieMethodCountriesDisplayEnabled = (bool)Tools::getValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY);
         $mollieErrors = Tools::getValue(static::MOLLIE_DISPLAY_ERRORS);
 
         $mollieShipMain = Tools::getValue(static::MOLLIE_AUTO_SHIP_MAIN);
@@ -1769,25 +1811,25 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::MOLLIE_IFRAME, $mollieIFrameEnabled);
             Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(static::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(static::MOLLIE_QRENABLED, (bool) $mollieQrEnabled);
-            Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
-            Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);
+            Configuration::updateValue(static::MOLLIE_QRENABLED, (bool)$mollieQrEnabled);
+            Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, (bool)$mollieMethodCountriesEnabled);
+            Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool)$mollieMethodCountriesDisplayEnabled);
             Configuration::updateValue(static::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
-            Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
+            Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, (int)$mollieErrors);
+            Configuration::updateValue(static::MOLLIE_DEBUG_LOG, (int)$mollieLogger);
             Configuration::updateValue(static::MOLLIE_API, $mollieApi);
             Configuration::updateValue(
                 static::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(static::MOLLIE_AUTO_SHIP_STATUSES))
             );
-            Configuration::updateValue(static::MOLLIE_AUTO_SHIP_MAIN, (bool) $mollieShipMain);
+            Configuration::updateValue(static::MOLLIE_AUTO_SHIP_MAIN, (bool)$mollieShipMain);
             Configuration::updateValue(
                 static::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(static::MOLLIE_TRACKING_URLS)))
             );
             foreach (array_keys($this->statuses) as $name) {
                 $name = Tools::strtoupper($name);
-                $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
+                $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
                 Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 $this->statuses[Tools::strtolower($name)] = $new;
 
@@ -1817,7 +1859,7 @@ class Mollie extends PaymentModule
 
             $resultMessage = $this->l('The configuration has been saved!');
         } else {
-            $resultMessage = array();
+            $resultMessage = [];
             foreach ($errors as $error) {
                 $resultMessage[] = $error;
             }
@@ -1879,10 +1921,10 @@ class Mollie extends PaymentModule
             throw new PrestaShopException($this->l('No download package found for the latest release.'));
         }
 
-        return array(
-            'version'  => $response->tag_name,
+        return [
+            'version' => $response->tag_name,
             'download' => $response->assets[0]->browser_download_url,
-        );
+        ];
     }
 
     /**
@@ -1907,10 +1949,10 @@ class Mollie extends PaymentModule
                     $title = $tags->entry[0]->id;
                     $latestVersion = preg_replace("/[^0-9,.]/", '', Tools::substr($title, strrpos($title, '/')));
                     if (!version_compare($this->version, $latestVersion, '>=')) {
-                        $this->context->smarty->assign(array(
-                            'this_version'    => $this->version,
+                        $this->context->smarty->assign([
+                            'this_version' => $this->version,
                             'release_version' => $latestVersion,
-                        ));
+                        ]);
                         $updateMessage = 'updateAvailable';
                     }
                 } else {
@@ -1935,7 +1977,7 @@ class Mollie extends PaymentModule
             return '';
         }
 
-        return @Tools::file_get_contents($url.'/releases.atom');
+        return @Tools::file_get_contents($url . '/releases.atom');
     }
 
     /**
@@ -1959,8 +2001,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param string     $transactionId Transaction/Mollie Order ID
-     * @param float|null $amount        Amount to refund, refund all if `null`
+     * @param string $transactionId Transaction/Mollie Order ID
+     * @param float|null $amount Amount to refund, refund all if `null`
      *
      * @return array
      *
@@ -1980,26 +2022,26 @@ class Mollie extends PaymentModule
             /** @var Payment $payment */
             $payment = $this->api->payments->get($transactionId);
             if ($amount) {
-                $payment->refund(array(
-                    'amount' => array(
-                        'currency' => (string) $payment->amount->currency,
-                        'value'    => (string) number_format($amount, 2, '.', ''),
-                    ),
-                ));
-            } elseif ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
-                $payment->refund(array(
-                    'amount' => array(
-                        'currency' => (string) $payment->amount->currency,
-                        'value'    => (string) number_format(((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value), 2, '.', ''),
-                    ),
-                ));
+                $payment->refund([
+                    'amount' => [
+                        'currency' => (string)$payment->amount->currency,
+                        'value' => (string)number_format($amount, 2, '.', ''),
+                    ],
+                ]);
+            } elseif ((float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value > 0) {
+                $payment->refund([
+                    'amount' => [
+                        'currency' => (string)$payment->amount->currency,
+                        'value' => (string)number_format(((float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value), 2, '.', ''),
+                    ],
+                ]);
             }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return array(
-                'status'      => 'fail',
-                'msg_fail'    => $this->lang('The order could not be refunded!'),
-                'msg_details' => $this->lang('Reason:').' '.$e->getMessage(),
-            );
+            return [
+                'status' => 'fail',
+                'msg_fail' => $this->lang('The order could not be refunded!'),
+                'msg_details' => $this->lang('Reason:') . ' ' . $e->getMessage(),
+            ];
         }
 
         if (Mollie::isLocalEnvironment()) {
@@ -2013,59 +2055,59 @@ class Mollie extends PaymentModule
             $webhookController->processTransaction($apiPayment);
         }
 
-        return array(
-            'status'      => 'success',
+        return [
+            'status' => 'success',
             'msg_success' => $this->lang('The order has been refunded!'),
             'msg_details' => $this->lang('Mollie B.V. will transfer the money back to the customer on the next business day.'),
-        );
+        ];
     }
 
     /**
-     * @param string     $transactionId
-     * @param array      $lines
+     * @param string $transactionId
+     * @param array $lines
      * @param array|null $tracking
      *
      * @return array
      *
      * @since 3.3.0
      */
-    protected function doShipOrderLines($transactionId, $lines = array(), $tracking = null)
+    protected function doShipOrderLines($transactionId, $lines = [], $tracking = null)
     {
         try {
             /** @var \Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-            $shipment = array(
+            $order = $this->api->orders->get($transactionId, ['embed' => 'payments']);
+            $shipment = [
                 'lines' => array_map(function ($line) {
                     return array_intersect_key(
-                        (array) $line,
-                        array_flip(array(
+                        (array)$line,
+                        array_flip([
                             'id',
                             'quantity',
-                        )));
+                        ]));
                 }, $lines),
-            );
+            ];
             if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
                 $shipment['tracking'] = $tracking;
             }
             $order->createShipment($shipment);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return array(
-                'success'  => false,
-                'message'  => $this->lang('The product(s) could not be shipped!'),
+            return [
+                'success' => false,
+                'message' => $this->lang('The product(s) could not be shipped!'),
                 'detailed' => $e->getMessage(),
-            );
+            ];
         }
 
-        return array(
-            'success'  => true,
-            'message'  => '',
+        return [
+            'success' => true,
+            'message' => '',
             'detailed' => '',
-        );
+        ];
     }
 
     /**
      * @param string $transactionId
-     * @param array  $lines
+     * @param array $lines
      *
      * @return array
      *
@@ -2077,27 +2119,27 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    protected function doRefundOrderLines($transactionId, $lines = array())
+    protected function doRefundOrderLines($transactionId, $lines = [])
     {
         try {
             /** @var \Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-            $refund = array(
+            $order = $this->api->orders->get($transactionId, ['embed' => 'payments']);
+            $refund = [
                 'lines' => array_map(function ($line) {
                     return array_intersect_key(
-                        (array) $line,
-                        array_flip(array(
+                        (array)$line,
+                        array_flip([
                             'id',
                             'quantity',
-                        )));
+                        ]));
                 }, $lines),
-            );
+            ];
             $order->refund($refund);
 
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
+                $apiPayment = $this->api->orders->get($transactionId, ['embed' => 'payments']);
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
@@ -2105,23 +2147,23 @@ class Mollie extends PaymentModule
                 $webhookController->processTransaction($apiPayment);
             }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return array(
-                'success'  => false,
-                'message'  => $this->lang('The product(s) could not be refunded!'),
+            return [
+                'success' => false,
+                'message' => $this->lang('The product(s) could not be refunded!'),
                 'detailed' => $e->getMessage(),
-            );
+            ];
         }
 
-        return array(
-            'success'  => true,
-            'message'  => '',
+        return [
+            'success' => true,
+            'message' => '',
             'detailed' => '',
-        );
+        ];
     }
 
     /**
      * @param string $transactionId
-     * @param array  $lines
+     * @param array $lines
      *
      * @return array
      *
@@ -2134,25 +2176,25 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    protected function doCancelOrderLines($transactionId, $lines = array())
+    protected function doCancelOrderLines($transactionId, $lines = [])
     {
         try {
             /** @var \Mollie\Api\Resources\Order $payment */
-            $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
-            if ($lines === array()) {
+            $order = $this->api->orders->get($transactionId, ['embed' => 'payments']);
+            if ($lines === []) {
                 $order->cancel();
             } else {
-                $cancelableLines = array();
+                $cancelableLines = [];
                 foreach ($lines as $line) {
-                    $cancelableLines[] = array('id' => $line['id'], 'quantity' => $line['quantity']);
+                    $cancelableLines[] = ['id' => $line['id'], 'quantity' => $line['quantity']];
                 }
-                $order->cancelLines(array('lines' => $cancelableLines));
+                $order->cancelLines(['lines' => $cancelableLines]);
             }
 
             if (Mollie::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var Payment $payment */
-                $apiPayment = $this->api->orders->get($transactionId, array('embed' => 'payments'));
+                $apiPayment = $this->api->orders->get($transactionId, ['embed' => 'payments']);
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->name;
                 }
@@ -2160,18 +2202,18 @@ class Mollie extends PaymentModule
                 $webhookController->processTransaction($apiPayment);
             }
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return array(
-                'success'  => false,
-                'message'  => $this->lang('The product(s) could not be canceled!'),
+            return [
+                'success' => false,
+                'message' => $this->lang('The product(s) could not be canceled!'),
                 'detailed' => $e->getMessage(),
-            );
+            ];
         }
 
-        return array(
-            'success'  => true,
-            'message'  => '',
+        return [
+            'success' => true,
+            'message' => '',
             'detailed' => '',
-        );
+        ];
     }
 
     /**
@@ -2182,10 +2224,10 @@ class Mollie extends PaymentModule
      */
     public function getIssuerList()
     {
-        $methods = array();
-        foreach ($this->api->methods->all(array('include' => 'issuers')) as $method) {
+        $methods = [];
+        foreach ($this->api->methods->all(['include' => 'issuers']) as $method) {
             /** @var \Mollie\Api\Resources\Method $method */
-            foreach ((array) $method->issuers as $issuer) {
+            foreach ((array)$method->issuers as $issuer) {
                 if (!$issuer) {
                     continue;
                 }
@@ -2193,12 +2235,12 @@ class Mollie extends PaymentModule
                 $issuer->href = $this->context->link->getModuleLink(
                     $this->name,
                     'payment',
-                    array('method' => $method->id, 'issuer' => $issuer->id, 'rand' => time()),
+                    ['method' => $method->id, 'issuer' => $issuer->id, 'rand' => time()],
                     true
                 );
 
                 if (!isset($methods[$method->id])) {
-                    $methods[$method->id] = array();
+                    $methods[$method->id] = [];
                 }
                 $methods[$method->id][$issuer->id] = $issuer;
             }
@@ -2219,7 +2261,7 @@ class Mollie extends PaymentModule
         }
         if (empty($file)) {
             // Use default css file
-            $file = $this->_path.'views/css/mollie.css';
+            $file = $this->_path . 'views/css/mollie.css';
         } else {
             // Use a custom css file
             if (defined('_PS_BASE_URL_')) {
@@ -2263,7 +2305,7 @@ class Mollie extends PaymentModule
                 $this->context->controller->registerJavascript(
                     'mollie_iframe_js',
                     'https://js.mollie.com/v1/mollie.js',
-                    array('server' => 'remote', 'position' => 'bottom', 'priority' => 150)
+                    ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
                 );
                 $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
             } else {
@@ -2279,9 +2321,9 @@ class Mollie extends PaymentModule
             if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
             }
-            $this->context->smarty->assign(array(
-                'custom_css'   => Configuration::get(static::MOLLIE_CSS),
-            ));
+            $this->context->smarty->assign([
+                'custom_css' => Configuration::get(static::MOLLIE_CSS),
+            ]);
             return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
         }
     }
@@ -2295,10 +2337,10 @@ class Mollie extends PaymentModule
         $html = '';
 
         if ($this->context->controller instanceof AdminOrdersController) {
-            $this->context->smarty->assign(array(
-                'mollieProcessUrl'   => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1',
-                'mollieCheckMethods' => time() > ((int) Configuration::get(static::MOLLIE_METHODS_LAST_CHECK) + static::MOLLIE_METHODS_CHECK_INTERVAL),
-            ));
+            $this->context->smarty->assign([
+                'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
+                'mollieCheckMethods' => time() > ((int)Configuration::get(static::MOLLIE_METHODS_LAST_CHECK) + static::MOLLIE_METHODS_CHECK_INTERVAL),
+            ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
         }
 
@@ -2318,31 +2360,31 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayAdminOrder($params)
     {
-        $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
-        $transaction = static::getPaymentBy('cart_id', (int) $cartId);
+        $cartId = Cart::getCartIdByOrderId((int)$params['id_order']);
+        $transaction = static::getPaymentBy('cart_id', (int)$cartId);
         if (empty($transaction)) {
             return false;
         }
-        $currencies = array();
+        $currencies = [];
         foreach (Currency::getCurrencies() as $currency) {
-            $currencies[Tools::strtoupper($currency['iso_code'])] = array(
-                'name'     => $currency['name'],
+            $currencies[Tools::strtoupper($currency['iso_code'])] = [
+                'name' => $currency['name'],
                 'iso_code' => Tools::strtoupper($currency['iso_code']),
-                'sign'     => $currency['sign'],
-                'blank'    => (bool) isset($currency['blank']) ? $currency['blank'] : true,
-                'format'   => (int) $currency['format'],
-                'decimals' => (bool) isset($currency['decimals']) ? $currency['decimals'] : true,
-            );
+                'sign' => $currency['sign'],
+                'blank' => (bool)isset($currency['blank']) ? $currency['blank'] : true,
+                'format' => (int)$currency['format'],
+                'decimals' => (bool)isset($currency['decimals']) ? $currency['decimals'] : true,
+            ];
         }
 
-        $this->context->smarty->assign(array(
-            'ajaxEndpoint'  => $this->context->link->getAdminLink('AdminModules', true).'&configure=mollie&ajax=1&action=MollieOrderInfo',
+        $this->context->smarty->assign([
+            'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
-            'currencies'    => $currencies,
-            'tracking'      => static::getShipmentInformation($params['id_order']),
-            'publicPath'    => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
+            'currencies' => $currencies,
+            'tracking' => static::getShipmentInformation($params['id_order']),
+            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
             'webPackChunks' => static::getWebpackChunks('app'),
-        ));
+        ]);
 
         return $this->display(__FILE__, 'order_info.tpl');
     }
@@ -2358,15 +2400,15 @@ class Mollie extends PaymentModule
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(static::MOLLIE_ISSUERS);
         $apiMethods = $this->getMethodsForCheckout();
-        $issuerList = array();
+        $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
                         true
                     );
                     $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
@@ -2376,32 +2418,32 @@ class Mollie extends PaymentModule
 
         $isIFrameEnabled = Configuration::get(self::MOLLIE_IFRAME);
         $cart = Context::getContext()->cart;
-        $smarty->assign(array(
+        $smarty->assign([
             'mollieIframe' => $isIFrameEnabled,
-            'link'                   => $this->context->link,
-            'cartAmount'             => (int) ($cart->getOrderTotal(true) * 100),
-            'methods'                => $apiMethods,
-            'issuers'                => $issuerList,
-            'issuer_setting'         => $issuerSetting,
-            'images'                 => Configuration::get(static::MOLLIE_IMAGES),
-            'warning'                => $this->warning,
-            'msg_pay_with'           => $this->lang('Pay with %s'),
-            'msg_bankselect'         => $this->lang('Select your bank:'),
-            'module'                 => $this,
-            'publicPath'             => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
-            'mollie_translations'    => array(
+            'link' => $this->context->link,
+            'cartAmount' => (int)($cart->getOrderTotal(true) * 100),
+            'methods' => $apiMethods,
+            'issuers' => $issuerList,
+            'issuer_setting' => $issuerSetting,
+            'images' => Configuration::get(static::MOLLIE_IMAGES),
+            'warning' => $this->warning,
+            'msg_pay_with' => $this->lang('Pay with %s'),
+            'msg_bankselect' => $this->lang('Select your bank:'),
+            'module' => $this,
+            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+            'mollie_translations' => [
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
-                'choose'         => $this->l('Choose'),
-                'cancel'         => $this->l('Cancel'),
-            ),
-        ));
+                'choose' => $this->l('Choose'),
+                'cancel' => $this->l('Cancel'),
+            ],
+        ]);
 
         $iframeDisplay = '';
         if (!$this->isVersion17() && $isIFrameEnabled) {
             $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
         }
-        return $this->display(__FILE__, 'addjsdef.tpl').$this->display(__FILE__, 'payment.tpl').$iframeDisplay;
+        return $this->display(__FILE__, 'addjsdef.tpl') . $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
     }
 
     /**
@@ -2418,19 +2460,19 @@ class Mollie extends PaymentModule
         // due to the problems caused by mixing the hooks `paymentOptions` and `displayPaymentEU`
         // Only uncomment the following three lines if you have no other choice:
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-            return array();
+            return [];
         }
 
         $methods = $this->getMethodsForCheckout();
-        $issuerList = array();
+        $issuerList = [];
         foreach ($methods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
                         true
                     );
                     $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
@@ -2440,7 +2482,7 @@ class Mollie extends PaymentModule
 
         $context = Context::getContext();
         $iso = Tools::strtolower($context->currency->iso_code);
-        $paymentOptions = array();
+        $paymentOptions = [];
 
         foreach ($methods as $method) {
             if (!isset(static::$methodCurrencies[$method['id']])) {
@@ -2450,18 +2492,18 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            $paymentOptions[] = array(
+            $paymentOptions[] = [
                 'cta_text' => $this->lang($method['name']),
-                'logo'     => Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_NORMAL
+                'logo' => Configuration::get(static::MOLLIE_IMAGES) === static::LOGOS_NORMAL
                     ? $method['image']['size1x']
                     : $method['image']['size2x'],
-                'action'   => $this->context->link->getModuleLink(
+                'action' => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    array('method' => $method['id'], 'rand' => time()),
+                    ['method' => $method['id'], 'rand' => time()],
                     true
                 ),
-            );
+            ];
         }
 
         return $paymentOptions;
@@ -2478,19 +2520,19 @@ class Mollie extends PaymentModule
     public function hookPaymentOptions()
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-            return array();
+            return [];
         }
 
         $methods = $this->getMethodsForCheckout();
-        $issuerList = array();
+        $issuerList = [];
         foreach ($methods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = array();
+                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
                 foreach ($apiMethod['issuers'] as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()),
+                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
                         true
                     );
                     $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
@@ -2501,19 +2543,19 @@ class Mollie extends PaymentModule
         $context = Context::getContext();
         $cart = $context->cart;
 
-        $context->smarty->assign(array(
-            'idealIssuers'  => isset($issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL])
+        $context->smarty->assign([
+            'idealIssuers' => isset($issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL])
                 ? $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL]
-                : array(),
-            'link'          => $this->context->link,
+                : [],
+            'link' => $this->context->link,
             'qrCodeEnabled' => Configuration::get(static::MOLLIE_QRENABLED),
-            'qrAlign'       => 'left',
-            'cartAmount'    => (int) ($cart->getOrderTotal(true) * 100),
-            'publicPath'    => __PS_BASE_URI__.'modules/'.basename(__FILE__, '.php').'/views/js/dist/',
-        ));
+            'qrAlign' => 'left',
+            'cartAmount' => (int)($cart->getOrderTotal(true) * 100),
+            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+        ]);
 
         $iso = Tools::strtolower($context->currency->iso_code);
-        $paymentOptions = array();
+        $paymentOptions = [];
         foreach ($methods as $method) {
             if (!isset(static::$methodCurrencies[$method['id']])) {
                 continue;
@@ -2532,16 +2574,16 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        array('method' => $method['id'], 'rand' => time()),
+                        ['method' => $method['id'], 'rand' => time()],
                         true
                     ))
-                    ->setInputs(array(
-                        'token' => array(
-                            'name'  => 'issuer',
-                            'type'  => 'hidden',
+                    ->setInputs([
+                        'token' => [
+                            'name' => 'issuer',
+                            'type' => 'hidden',
                             'value' => '',
-                        ),
-                    ))
+                        ],
+                    ])
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
@@ -2552,8 +2594,8 @@ class Mollie extends PaymentModule
                 }
 
                 $paymentOptions[] = $newOption;
-            } elseif(
-            ($method['id'] === Mollie\Api\Types\PaymentMethod::CREDITCARD || $method['id'] === 'cartesbancaires') &&
+            } elseif (
+                ($method['id'] === Mollie\Api\Types\PaymentMethod::CREDITCARD || $method['id'] === 'cartesbancaires') &&
                 Configuration::get(self::MOLLIE_IFRAME)
             ) {
 
@@ -2580,7 +2622,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payScreen',
-                        array('method' => $method['id'], 'rand' => time(), 'cardToken' => ''),
+                        ['method' => $method['id'], 'rand' => time(), 'cardToken' => ''],
                         true
                     ));
 
@@ -2599,7 +2641,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        array('method' => $method['id'], 'rand' => time()),
+                        ['method' => $method['id'], 'rand' => time()],
                         true
                     ));
 
@@ -2627,7 +2669,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayOrderConfirmation()
     {
-        $payment = $this->getPaymentBy('cart_id', (int) Tools::getValue('id_cart'));
+        $payment = $this->getPaymentBy('cart_id', (int)Tools::getValue('id_cart'));
         if ($payment && $payment['bank_status'] == \Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
             $this->context->smarty->assign('okMessage', $this->lang('Thank you. Your payment has been received.'));
 
@@ -2648,19 +2690,19 @@ class Mollie extends PaymentModule
 			ALTER TABLE `%1$s` ADD PRIMARY KEY (`transaction_id`),
 				ADD COLUMN `cart_id` INT(64),
 				ADD KEY (`cart_id`);',
-            _DB_PREFIX_.'mollie_payments'
+            _DB_PREFIX_ . 'mollie_payments'
         );
 
         try {
             if (!Db::getInstance()->execute($sql)) {
-                $this->_errors[] = 'Database error: '.Db::getInstance()->getMsgError();
+                $this->_errors[] = 'Database error: ' . Db::getInstance()->getMsgError();
 
                 return false;
             }
         } catch (PrestaShopException $e) {
             static::tryAddOrderReferenceColumn();
 
-            $this->_errors[] = 'Database error: '.Db::getInstance()->getMsgError();
+            $this->_errors[] = 'Database error: ' . Db::getInstance()->getMsgError();
 
             return false;
         }
@@ -2671,20 +2713,20 @@ class Mollie extends PaymentModule
     /**
      * Create new order state for partial refunds.
      *
-     * @since 2.0.0
-     *
      * @return boolean
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws Adapter_Exception
+     * @since 2.0.0
+     *
      */
     public function partialRefundOrderState()
     {
         $stateExists = false;
-        $states = OrderState::getOrderStates((int) $this->context->language->id);
+        $states = OrderState::getOrderStates((int)$this->context->language->id);
         foreach ($states as $state) {
             if ($this->lang('Mollie partially refunded') === $state['name']) {
-                Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $state[OrderState::$definition['primary']]);
+                Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int)$state[OrderState::$definition['primary']]);
                 $stateExists = true;
                 break;
             }
@@ -2698,24 +2740,24 @@ class Mollie extends PaymentModule
             $orderState->logable = false;
             $orderState->invoice = false;
             $orderState->module_name = $this->name;
-            $orderState->name = array();
+            $orderState->name = [];
             $languages = Language::getLanguages(false);
             foreach ($languages as $language) {
                 $orderState->name[$language['id_lang']] = $this->lang('Mollie partially refunded');
             }
             if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_.'/img/os/'.(int) $orderState->id.'.gif';
+                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
                 @copy($source, $destination);
             }
-            Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
+            Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int)$orderState->id);
         }
 
         return true;
     }
 
     /**
-     * @param string      $mediaUri
+     * @param string $mediaUri
      * @param string|null $cssMediaType
      *
      * @return array|bool|mixed|string
@@ -2735,9 +2777,9 @@ class Mollie extends PaymentModule
         }
 
         if (!array_key_exists('host', $urlData)) {
-            $mediaUri = '/'.ltrim(str_replace(str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
+            $mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
             // remove PS_BASE_URI on _PS_ROOT_DIR_ for the following
-            $fileUri = _PS_ROOT_DIR_.Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
+            $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
 
             if (!@filemtime($fileUri) || @filesize($fileUri) === 0) {
                 return false;
@@ -2747,7 +2789,7 @@ class Mollie extends PaymentModule
         }
 
         if ($cssMediaType) {
-            return array($mediaUri => $cssMediaType);
+            return [$mediaUri => $cssMediaType];
         }
 
         return $mediaUri;
@@ -2758,12 +2800,12 @@ class Mollie extends PaymentModule
      *
      * @param float|string $amount
      * @param              $currency
-     * @param string       $method
-     * @param string|null  $issuer
-     * @param int|Cart     $cartId
-     * @param string       $secureKey
-     * @param bool         $qrCode
-     * @param string       $orderReference
+     * @param string $method
+     * @param string|null $issuer
+     * @param int|Cart $cartId
+     * @param string $secureKey
+     * @param bool $qrCode
+     * @param string $orderReference
      *
      * @return array
      * @throws PrestaShopException
@@ -2792,41 +2834,41 @@ class Mollie extends PaymentModule
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentData = array(
-            'amount'      => array(
-                'currency' => (string) ($currency ? Tools::strtoupper($currency) : 'EUR'),
-                'value'    => (string) (number_format(str_replace(',', '.', $amount), 2, '.', '')),
-            ),
-            'method'      => $method,
+        $paymentData = [
+            'amount' => [
+                'currency' => (string)($currency ? Tools::strtoupper($currency) : 'EUR'),
+                'value' => (string)(number_format(str_replace(',', '.', $amount), 2, '.', '')),
+            ],
+            'method' => $method,
             'redirectUrl' => ($qrCode
                 ? $context->link->getModuleLink(
                     'mollie',
                     'qrcode',
-                    array('cart_id' => $cartId, 'done' => 1, 'rand' => time()),
+                    ['cart_id' => $cartId, 'done' => 1, 'rand' => time()],
                     true
                 )
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    array('cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time()),
+                    ['cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time()],
                     true
                 )
             ),
-        );
+        ];
         if (!static::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
                 'webhook',
-                array(),
+                [],
                 true
             );
         }
 
-        $paymentData['metadata'] = array(
-            'cart_id'         => $cartId,
+        $paymentData['metadata'] = [
+            'cart_id' => $cartId,
             'order_reference' => $orderReference,
-            'secure_key'      => Tools::encrypt($secureKey),
-        );
+            'secure_key' => Tools::encrypt($secureKey),
+        ];
 
         // Send webshop locale
         if ((static::selectedApi() === static::MOLLIE_PAYMENTS_API
@@ -2844,8 +2886,8 @@ class Mollie extends PaymentModule
 
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentData['description'] = str_ireplace(
-                array('%'),
-                array($cartId),
+                ['%'],
+                [$cartId],
                 $description
             );
             $paymentData['issuer'] = $issuer;
@@ -2853,27 +2895,27 @@ class Mollie extends PaymentModule
             if (isset($context->cart) && Tools::getValue('method') === 'paypal') {
                 if (isset($context->cart->id_customer)) {
                     $buyer = new Customer($context->cart->id_customer);
-                    $paymentData['billingEmail'] = (string) $buyer->email;
+                    $paymentData['billingEmail'] = (string)$buyer->email;
                 }
                 if (isset($context->cart->id_address_invoice)) {
-                    $billing = new Address((int) $context->cart->id_address_invoice);
-                    $paymentData['billingAddress'] = array(
-                        'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
-                        'city'            => (string) $billing->city,
-                        'region'          => (string) State::getNameById($billing->id_state),
-                        'country'         => (string) Country::getIsoById($billing->id_country),
-                    );
-                    $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
+                    $billing = new Address((int)$context->cart->id_address_invoice);
+                    $paymentData['billingAddress'] = [
+                        'streetAndNumber' => (string)$billing->address1 . ' ' . $billing->address2,
+                        'city' => (string)$billing->city,
+                        'region' => (string)State::getNameById($billing->id_state),
+                        'country' => (string)Country::getIsoById($billing->id_country),
+                    ];
+                    $paymentData['billingAddress']['postalCode'] = (string)$billing->postcode ?: '-';
                 }
                 if (isset($context->cart->id_address_delivery)) {
-                    $shipping = new Address((int) $context->cart->id_address_delivery);
-                    $paymentData['shippingAddress'] = array(
-                        'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
-                        'city'            => (string) $shipping->city,
-                        'region'          => (string) State::getNameById($shipping->id_state),
-                        'country'         => (string) Country::getIsoById($shipping->id_country),
-                    );
-                    $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
+                    $shipping = new Address((int)$context->cart->id_address_delivery);
+                    $paymentData['shippingAddress'] = [
+                        'streetAndNumber' => (string)$shipping->address1 . ' ' . $shipping->address2,
+                        'city' => (string)$shipping->city,
+                        'region' => (string)State::getNameById($shipping->id_state),
+                        'country' => (string)Country::getIsoById($shipping->id_country),
+                    ];
+                    $paymentData['shippingAddress']['postalCode'] = (string)$shipping->postcode ?: '-';
                 }
             }
 
@@ -2888,39 +2930,39 @@ class Mollie extends PaymentModule
             }
         } elseif (static::selectedApi() === static::MOLLIE_ORDERS_API) {
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int) $cart->id_address_invoice);
-                $paymentData['billingAddress'] = array(
-                    'givenName'       => (string) $customer->firstname,
-                    'familyName'      => (string) $customer->lastname,
-                    'email'           => (string) $customer->email,
-                    'streetAndNumber' => (string) $billing->address1.' '.$billing->address2,
-                    'city'            => (string) $billing->city,
-                    'region'          => (string) State::getNameById($billing->id_state),
-                    'country'         => (string) Country::getIsoById($billing->id_country),
-                );
-                $paymentData['billingAddress']['postalCode'] = (string) $billing->postcode ?: '-';
+                $billing = new Address((int)$cart->id_address_invoice);
+                $paymentData['billingAddress'] = [
+                    'givenName' => (string)$customer->firstname,
+                    'familyName' => (string)$customer->lastname,
+                    'email' => (string)$customer->email,
+                    'streetAndNumber' => (string)$billing->address1 . ' ' . $billing->address2,
+                    'city' => (string)$billing->city,
+                    'region' => (string)State::getNameById($billing->id_state),
+                    'country' => (string)Country::getIsoById($billing->id_country),
+                ];
+                $paymentData['billingAddress']['postalCode'] = (string)$billing->postcode ?: '-';
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int) $cart->id_address_delivery);
-                $paymentData['shippingAddress'] = array(
-                    'givenName'       => (string) $customer->firstname,
-                    'familyName'      => (string) $customer->lastname,
-                    'email'           => (string) $customer->email,
-                    'streetAndNumber' => (string) $shipping->address1.' '.$shipping->address2,
-                    'city'            => (string) $shipping->city,
-                    'region'          => (string) State::getNameById($shipping->id_state),
-                    'country'         => (string) Country::getIsoById($shipping->id_country),
-                );
-                $paymentData['shippingAddress']['postalCode'] = (string) $shipping->postcode ?: '-';
+                $shipping = new Address((int)$cart->id_address_delivery);
+                $paymentData['shippingAddress'] = [
+                    'givenName' => (string)$customer->firstname,
+                    'familyName' => (string)$customer->lastname,
+                    'email' => (string)$customer->email,
+                    'streetAndNumber' => (string)$shipping->address1 . ' ' . $shipping->address2,
+                    'city' => (string)$shipping->city,
+                    'region' => (string)State::getNameById($shipping->id_state),
+                    'country' => (string)Country::getIsoById($shipping->id_country),
+                ];
+                $paymentData['shippingAddress']['postalCode'] = (string)$shipping->postcode ?: '-';
             }
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines($amount);
-            $paymentData['payment'] = array();
+            $paymentData['payment'] = [];
             if (!static::isLocalEnvironment()) {
                 $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
                     'mollie',
                     'webhook',
-                    array(),
+                    [],
                     true
                 );
             }
@@ -2957,14 +2999,14 @@ class Mollie extends PaymentModule
         $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
         $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
 
-        $aItems = array();
+        $aItems = [];
         /* Item */
         foreach ($cartItems as $cartItem) {
             // Get the rounded total w/ tax
             $roundedTotalWithTax = round($cartItem['total_wt'], $apiRoundingPrecision);
 
             // Skip if no qty
-            $quantity = (int) $cartItem['cart_quantity'];
+            $quantity = (int)$cartItem['cart_quantity'];
             if ($quantity <= 0 || $cartItem['price_wt'] <= 0) {
                 continue;
             }
@@ -2975,19 +3017,19 @@ class Mollie extends PaymentModule
             $idCustomization = number_format($cartItem['id_customization']);
 
             $productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
-            $aItems[$productHash] = array();
+            $aItems[$productHash] = [];
 
             // Try to spread this product evenly and account for rounding differences on the order line
             foreach (static::spreadAmountEvenly($roundedTotalWithTax, $quantity) as $unitPrice => $qty) {
-                $aItems[$productHash][] = array(
-                    'name'        => $cartItem['name'],
-                    'sku'         => $productHash,
-                    'targetVat'   => (float) $cartItem['rate'],
-                    'quantity'    => $qty,
-                    'unitPrice'   => $unitPrice,
-                    'totalAmount' => (float) $unitPrice * $qty,
-                );
-                $remaining -= round((float) $unitPrice * $qty, $apiRoundingPrecision);
+                $aItems[$productHash][] = [
+                    'name' => $cartItem['name'],
+                    'sku' => $productHash,
+                    'targetVat' => (float)$cartItem['rate'],
+                    'quantity' => $qty,
+                    'unitPrice' => $unitPrice,
+                    'totalAmount' => (float)$unitPrice * $qty,
+                ];
+                $remaining -= round((float)$unitPrice * $qty, $apiRoundingPrecision);
             }
         }
 
@@ -2996,16 +3038,16 @@ class Mollie extends PaymentModule
             $totalDiscountsNoTax = round($cartSummary['total_discounts_tax_exc'], $apiRoundingPrecision);
             $vatRate = round((($totalDiscounts - $totalDiscountsNoTax) / $totalDiscountsNoTax) * 100, $apiRoundingPrecision);
 
-            $aItems['discount'] = array(
-                array(
-                    'name'        => 'Discount',
-                    'type'        => 'discount',
-                    'quantity'    => 1,
-                    'unitPrice'   => - round($totalDiscounts, $apiRoundingPrecision),
-                    'totalAmount' => - round($totalDiscounts, $apiRoundingPrecision),
-                    'targetVat'   => $vatRate,
-                ),
-            );
+            $aItems['discount'] = [
+                [
+                    'name' => 'Discount',
+                    'type' => 'discount',
+                    'quantity' => 1,
+                    'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
+                    'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
+                    'targetVat' => $vatRate,
+                ],
+            ];
             $remaining += $totalDiscounts;
         }
 
@@ -3041,7 +3083,7 @@ class Mollie extends PaymentModule
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         foreach ($aItems as $productHash => $aItem) {
             $aItems[$productHash] = array_map(function ($line) use ($apiRoundingPrecision, $oCurrency) {
-                $quantity = (int) $line['quantity'];
+                $quantity = (int)$line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
                 $unitPriceNoTax = round($line['unitPrice'] / (1 + ($targetVat / 100)), $apiRoundingPrecision);
@@ -3051,14 +3093,14 @@ class Mollie extends PaymentModule
                 $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
                 $vatAmount = $totalAmount * ($actualVatRate / ($actualVatRate + 100));
 
-                $newItem = array(
-                    'name'        => $line['name'],
-                    'quantity'    => (int) $quantity,
-                    'unitPrice'   => round($unitPrice, $apiRoundingPrecision),
+                $newItem = [
+                    'name' => $line['name'],
+                    'quantity' => (int)$quantity,
+                    'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
-                    'vatRate'     => round($actualVatRate, $apiRoundingPrecision),
-                    'vatAmount'   => round($vatAmount, $apiRoundingPrecision),
-                );
+                    'vatRate' => round($actualVatRate, $apiRoundingPrecision),
+                    'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
                 }
@@ -3071,36 +3113,36 @@ class Mollie extends PaymentModule
         if (round($shipping, 2) > 0) {
             $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
 
-            $aItems['shipping'] = array(
-                array(
-                    'name'        => $mollie->l('Shipping'),
-                    'quantity'    => 1,
-                    'unitPrice'   => round($shipping, $apiRoundingPrecision),
+            $aItems['shipping'] = [
+                [
+                    'name' => $mollie->l('Shipping'),
+                    'quantity' => 1,
+                    'unitPrice' => round($shipping, $apiRoundingPrecision),
                     'totalAmount' => round($shipping, $apiRoundingPrecision),
-                    'vatAmount'   => round($shipping * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
-                    'vatRate'     => $shippingVatRate,
-                ),
-            );
+                    'vatAmount' => round($shipping * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
+                    'vatRate' => $shippingVatRate,
+                ],
+            ];
         }
 
         // Add wrapping
         if (round($wrapping, 2) > 0) {
             $wrappingVatRate = round(($cartSummary['total_wrapping'] - $cartSummary['total_wrapping_tax_exc']) / $cartSummary['total_wrapping_tax_exc'] * 100, $apiRoundingPrecision);
 
-            $aItems['wrapping'] = array(
-                array(
-                    'name'        => $mollie->l('Gift wrapping'),
-                    'quantity'    => 1,
-                    'unitPrice'   => round($wrapping, $apiRoundingPrecision),
+            $aItems['wrapping'] = [
+                [
+                    'name' => $mollie->l('Gift wrapping'),
+                    'quantity' => 1,
+                    'unitPrice' => round($wrapping, $apiRoundingPrecision),
                     'totalAmount' => round($wrapping, $apiRoundingPrecision),
-                    'vatAmount'   => round($wrapping * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
-                    'vatRate'     => $wrappingVatRate,
-                ),
-            );
+                    'vatAmount' => round($wrapping * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
+                    'vatRate' => $wrappingVatRate,
+                ],
+            ];
         }
 
         // Ungroup all the cart lines, just one level
-        $newItems = array();
+        $newItems = [];
         foreach ($aItems as &$items) {
             foreach ($items as &$item) {
                 $newItems[] = $item;
@@ -3109,24 +3151,24 @@ class Mollie extends PaymentModule
 
         // Convert floats to strings for the Mollie API and add additional info
         foreach ($newItems as $index => $item) {
-            $newItems[$index] = array(
-                'name'        => (string) $item['name'],
-                'quantity'    => (int) $item['quantity'],
-                'sku'         => (string) (isset($item['sku']) ? $item['sku'] : ''),
-                'unitPrice'   => array(
+            $newItems[$index] = [
+                'name' => (string)$item['name'],
+                'quantity' => (int)$item['quantity'],
+                'sku' => (string)(isset($item['sku']) ? $item['sku'] : ''),
+                'unitPrice' => [
                     'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value'    => number_format($item['unitPrice'], $apiRoundingPrecision, '.', ''),
-                ),
-                'totalAmount' => array(
+                    'value' => number_format($item['unitPrice'], $apiRoundingPrecision, '.', ''),
+                ],
+                'totalAmount' => [
                     'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value'    => number_format($item['totalAmount'], $apiRoundingPrecision, '.', ''),
-                ),
-                'vatAmount'   => array(
+                    'value' => number_format($item['totalAmount'], $apiRoundingPrecision, '.', ''),
+                ],
+                'vatAmount' => [
                     'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value'    => number_format($item['vatAmount'], $apiRoundingPrecision, '.', ''),
-                ),
-                'vatRate'     => number_format($item['vatRate'], $apiRoundingPrecision, '.', ''),
-            );
+                    'value' => number_format($item['vatAmount'], $apiRoundingPrecision, '.', ''),
+                ],
+                'vatRate' => number_format($item['vatRate'], $apiRoundingPrecision, '.', ''),
+            ];
         }
 
         return $newItems;
@@ -3136,7 +3178,7 @@ class Mollie extends PaymentModule
      * Spread the amount evenly
      *
      * @param float $amount
-     * @param int   $qty
+     * @param int $qty
      *
      * @return array Spread amounts
      *
@@ -3145,7 +3187,7 @@ class Mollie extends PaymentModule
     public static function spreadAmountEvenly($amount, $qty)
     {
         // Start with a freshly rounded amount
-        $amount = (float) round($amount, static::API_ROUNDING_PRECISION);
+        $amount = (float)round($amount, static::API_ROUNDING_PRECISION);
         // Estimate a target spread amount to begin with
         $spreadTotals = array_fill(1, $qty, round($amount / $qty, static::API_ROUNDING_PRECISION));
         $newTotal = $spreadTotals[1] * $qty;
@@ -3177,7 +3219,7 @@ class Mollie extends PaymentModule
      * Optionally split into multiple lines in case of rounding inaccuracies
      *
      * @param array[] $cartLineGroup Cart Line Group WITHOUT VAT details (except target VAT rate)
-     * @param float   $newTotal
+     * @param float $newTotal
      *
      * @return array[]
      *
@@ -3189,17 +3231,17 @@ class Mollie extends PaymentModule
         $apiRoundingPrecision = static::API_ROUNDING_PRECISION;
         $newTotal = round($newTotal, $apiRoundingPrecision);
         $quantity = array_sum(array_column($cartLineGroup, 'quantity'));
-        $newCartLineGroup = array();
+        $newCartLineGroup = [];
         $spread = static::spreadAmountEvenly($newTotal, $quantity);
         foreach ($spread as $unitPrice => $qty) {
-            $newCartLineGroup[] = array(
-                'name'        => $cartLineGroup[0]['name'],
-                'quantity'    => $qty,
-                'unitPrice'   => (float) $unitPrice,
-                'totalAmount' => (float) $unitPrice * $qty,
-                'sku'         => $cartLineGroup[0]['sku'],
-                'targetVat'   => $cartLineGroup[0]['targetVat'],
-            );
+            $newCartLineGroup[] = [
+                'name' => $cartLineGroup[0]['name'],
+                'quantity' => $qty,
+                'unitPrice' => (float)$unitPrice,
+                'totalAmount' => (float)$unitPrice * $qty,
+                'sku' => $cartLineGroup[0]['sku'],
+                'targetVat' => $cartLineGroup[0]['targetVat'],
+            ];
         }
 
         return $newCartLineGroup;
@@ -3208,8 +3250,8 @@ class Mollie extends PaymentModule
     /**
      * Generate a description from the Cart
      *
-     * @param Cart|int $cartId         Cart or Cart ID
-     * @param string   $orderReference Order reference
+     * @param Cart|int $cartId Cart or Cart ID
+     * @param string $orderReference Order reference
      *
      * @return string Description
      *
@@ -3230,14 +3272,14 @@ class Mollie extends PaymentModule
             $buyer = new Customer($cart->id_customer);
         }
 
-        $filters = array(
-            '%'                    => $cartId,
-            '{cart.id}'            => $cartId,
-            '{order.reference}'    => $orderReference,
+        $filters = [
+            '%' => $cartId,
+            '{cart.id}' => $cartId,
+            '{order.reference}' => $orderReference,
             '{customer.firstname}' => $buyer == null ? '' : $buyer->firstname,
-            '{customer.lastname}'  => $buyer == null ? '' : $buyer->lastname,
-            '{customer.company}'   => $buyer == null ? '' : $buyer->company,
-        );
+            '{customer.lastname}' => $buyer == null ? '' : $buyer->lastname,
+            '{customer.company}' => $buyer == null ? '' : $buyer->company,
+        ];
 
         $content = str_ireplace(
             array_keys($filters),
@@ -3265,7 +3307,7 @@ class Mollie extends PaymentModule
         } else {
             $language = 'en';
         }
-        $supportedLanguages = array(
+        $supportedLanguages = [
             'de',
             'en',
             'es',
@@ -3283,9 +3325,9 @@ class Mollie extends PaymentModule
             'pl',
             'lv',
             'lt',
-        );
+        ];
 
-        $supportedLocales = array(
+        $supportedLocales = [
             'en_US',
             'de_AT',
             'de_CH',
@@ -3307,7 +3349,7 @@ class Mollie extends PaymentModule
             'pl_PL',
             'lv_LV',
             'lt_LT',
-        );
+        ];
 
         $langIso = Tools::strtolower($language);
         if (!in_array($langIso, $supportedLanguages)) {
@@ -3380,8 +3422,8 @@ class Mollie extends PaymentModule
     /**
      * Ajax process download module update
      *
-     * @since 3.0.0
      * @throws ErrorException
+     * @since 3.0.0
      */
     public function ajaxProcessDownloadUpdate()
     {
@@ -3389,15 +3431,15 @@ class Mollie extends PaymentModule
         try {
             $latestVersion = $this->getLatestVersion();
         } catch (PrestaShopException $e) {
-            die(json_encode(array(
+            die(json_encode([
                 'success' => false,
                 'message' => $this->l('Unable to retieve info about the latest version'),
-            )));
+            ]));
         } catch (SmartyException $e) {
-            die(json_encode(array(
+            die(json_encode([
                 'success' => false,
                 'message' => $this->l('Unable to retieve info about the latest version'),
-            )));
+            ]));
         }
         if (version_compare(
             Tools::substr($latestVersion['version'], 1, Tools::strlen($latestVersion['version']) - 1),
@@ -3405,14 +3447,14 @@ class Mollie extends PaymentModule
             '>'
         )) {
             // Then update
-            die(json_encode(array(
+            die(json_encode([
                 'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
-            )));
+            ]));
         } else {
-            die(json_encode(array(
+            die(json_encode([
                 'success' => false,
                 'message' => $this->l('You are already running the latest version!'),
-            )));
+            ]));
         }
     }
 
@@ -3434,10 +3476,10 @@ class Mollie extends PaymentModule
             $result = false;
         }
 
-        die(json_encode(array(
+        die(json_encode([
             'success' => $result,
             'message' => isset($this->context->controller->errors[0]) ? $this->context->controller->errors[0] : '',
-        )));
+        ]));
     }
 
     /**
@@ -3461,10 +3503,10 @@ class Mollie extends PaymentModule
             Module::upgradeModuleVersion($this->name, $this->version);
         }
 
-        die(json_encode(array(
+        die(json_encode([
             'success' => $result,
             'message' => isset($error) ? $error : '',
-        )));
+        ]));
     }
 
     /**
@@ -3478,12 +3520,12 @@ class Mollie extends PaymentModule
      */
     protected function downloadModuleFromLocation($moduleName, $location)
     {
-        $zipLocation = _PS_MODULE_DIR_.$moduleName.'.zip';
+        $zipLocation = _PS_MODULE_DIR_ . $moduleName . '.zip';
         if (@!file_exists($zipLocation)) {
             $curl = new Curl\Curl();
             $curl->setOpt(CURLOPT_ENCODING, '');
             $curl->setOpt(CURLOPT_FOLLOWLOCATION, 1);
-            if (!$curl->download($location, _PS_MODULE_DIR_.'mollie-update.zip')) {
+            if (!$curl->download($location, _PS_MODULE_DIR_ . 'mollie-update.zip')) {
                 return false;
             }
         }
@@ -3504,8 +3546,8 @@ class Mollie extends PaymentModule
      */
     protected function unzipModule()
     {
-        if (@file_exists(_PS_MODULE_DIR_.'mollie-update.zip')) {
-            return $this->extractModuleArchive($this->name, _PS_MODULE_DIR_.'mollie-update.zip');
+        if (@file_exists(_PS_MODULE_DIR_ . 'mollie-update.zip')) {
+            return $this->extractModuleArchive($this->name, _PS_MODULE_DIR_ . 'mollie-update.zip');
         }
 
         return false;
@@ -3515,7 +3557,7 @@ class Mollie extends PaymentModule
      * Extracts a module archive to the `modules` folder
      *
      * @param string $moduleName Module name
-     * @param string $file       File source location
+     * @param string $file File source location
      *
      * @return bool
      *
@@ -3527,8 +3569,8 @@ class Mollie extends PaymentModule
      */
     protected function extractModuleArchive($moduleName, $file)
     {
-        $zipFolders = array();
-        $tmpFolder = _PS_MODULE_DIR_.$moduleName.md5(time());
+        $zipFolders = [];
+        $tmpFolder = _PS_MODULE_DIR_ . $moduleName . md5(time());
 
         if (@!file_exists($file)) {
             $this->context->controller->errors[] = $this->l('Module archive could not be downloaded');
@@ -3538,18 +3580,18 @@ class Mollie extends PaymentModule
 
         $success = false;
         if (Tools::substr($file, -4) === '.zip') {
-            if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder.DIRECTORY_SEPARATOR.$moduleName)) {
-                if (file_exists(_PS_MODULE_DIR_.$moduleName)) {
+            if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder . DIRECTORY_SEPARATOR . $moduleName)) {
+                if (file_exists(_PS_MODULE_DIR_ . $moduleName)) {
                     $report = '';
-                    if (!static::testDir(_PS_MODULE_DIR_.$moduleName, true, $report, true)) {
+                    if (!static::testDir(_PS_MODULE_DIR_ . $moduleName, true, $report, true)) {
                         $this->recursiveDeleteOnDisk($tmpFolder);
-                        @unlink(_PS_MODULE_DIR_.$moduleName.'.zip');
+                        @unlink(_PS_MODULE_DIR_ . $moduleName . '.zip');
 
                         return false;
                     }
-                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_.$moduleName);
+                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_ . $moduleName);
                 }
-                if (@rename($tmpFolder.DIRECTORY_SEPARATOR.$moduleName, _PS_MODULE_DIR_.$moduleName)) {
+                if (@rename($tmpFolder . DIRECTORY_SEPARATOR . $moduleName, _PS_MODULE_DIR_ . $moduleName)) {
                     $success = true;
                 }
             }
@@ -3562,19 +3604,19 @@ class Mollie extends PaymentModule
         } else {
             //check if it's a real module
             foreach ($zipFolders as $folder) {
-                if (!in_array($folder, array('.', '..', '.svn', '.git', '__MACOSX')) && !Module::getInstanceByName($folder)) {
-                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_.$folder);
+                if (!in_array($folder, ['.', '..', '.svn', '.git', '__MACOSX']) && !Module::getInstanceByName($folder)) {
+                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_ . $folder);
                 }
             }
         }
 
         @unlink($file);
-        @unlink(_PS_MODULE_DIR_.$moduleName.'backup');
+        @unlink(_PS_MODULE_DIR_ . $moduleName . 'backup');
         $this->recursiveDeleteOnDisk($tmpFolder);
 
-        die(json_encode(array(
+        die(json_encode([
             'success' => $success,
-        )));
+        ]));
     }
 
     /**
@@ -3594,10 +3636,10 @@ class Mollie extends PaymentModule
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object !== '.' && $object !== '..') {
-                    if (filetype($dir.'/'.$object) === 'dir') {
-                        $this->recursiveDeleteOnDisk($dir.'/'.$object);
+                    if (filetype($dir . '/' . $object) === 'dir') {
+                        $this->recursiveDeleteOnDisk($dir . '/' . $object);
                     } else {
-                        @unlink($dir.'/'.$object);
+                        @unlink($dir . '/' . $object);
                     }
                 }
             }
@@ -3621,18 +3663,18 @@ class Mollie extends PaymentModule
     public function getMethodsForCheckout()
     {
         if (!Configuration::get(static::MOLLIE_API_KEY)) {
-            return array();
+            return [];
         }
 
         $iso = Tools::strtolower($this->context->currency->iso_code);
         $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
         if (empty($methods)) {
-            $methods = array();
+            $methods = [];
         }
         $countryCode = Tools::strtolower($this->context->country->iso_code);
-        $unavailableMethods = array();
+        $unavailableMethods = [];
         foreach (static::$defaultMethodAvailability as $methodName => $countries) {
-            if (!in_array($methodName, array('klarnapaylater', 'klarnasliceit'))
+            if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
                 || empty($countries)
             ) {
                 continue;
@@ -3679,7 +3721,7 @@ class Mollie extends PaymentModule
         $sql = new DbQuery();
         $sql->select('`id_mol_country`');
         $sql->from('mol_country');
-        $sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = ' . (int)$country . ' OR all_countries = 1)');
+        $sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int)$country . ' OR all_countries = 1)');
 
         return Db::getInstance()->getValue($sql);
     }
@@ -3702,31 +3744,31 @@ class Mollie extends PaymentModule
      */
     public function getMethodsForConfig($active = false)
     {
-        $notAvailable = array();
+        $notAvailable = [];
         try {
-            $apiMethods = $this->api->methods->all(array('resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'))->getArrayCopy();
+            $apiMethods = $this->api->methods->all(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
-            return array();
+            return [];
         }
         if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
             $paymentApiMethods = array_map(function ($item) {
                 return $item->id;
-            }, $this->api->methods->all(array('includeWallets' => 'applepay'))->getArrayCopy());
+            }, $this->api->methods->all(['includeWallets' => 'applepay'])->getArrayCopy());
             $orderApiMethods = array_map(function ($item) {
                 return $item->id;
             }, $apiMethods);
             $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
         }
         if (!count($apiMethods)) {
-            return array();
+            return [];
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
         if (!$dbMethods) {
             $dbMethods = [];
         }
-        $keys = array('id', 'name', 'enabled', 'image', 'issuers', 'position');
+        $keys = ['id', 'name', 'enabled', 'image', 'issuers', 'position'];
         foreach ($dbMethods as $index => $dbMethod) {
             if (count(array_intersect($keys, array_keys($dbMethod))) !== count($keys)) {
                 unset($dbMethods[$index]);
@@ -3734,18 +3776,18 @@ class Mollie extends PaymentModule
         }
 
         if (!is_array($dbMethods)) {
-            $dbMethods = array();
-            $configMethods = array();
+            $dbMethods = [];
+            $configMethods = [];
         } else {
-            $configMethods = array();
+            $configMethods = [];
             foreach ($dbMethods as $dbMethod) {
                 $configMethods[$dbMethod['id']] = $dbMethod;
             }
         }
 
         $methodsFromDb = array_keys($configMethods);
-        $methods = array();
-        $deferredMethods = array();
+        $methods = [];
+        $deferredMethods = [];
         $isSSLEnabled = Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
         foreach ($apiMethods as $apiMethod) {
             $tipEnableSSL = false;
@@ -3754,60 +3796,60 @@ class Mollie extends PaymentModule
                 $tipEnableSSL = true;
             }
             if (!in_array($apiMethod->id, $methodsFromDb) || !isset($configMethods[$apiMethod->id]['position'])) {
-                $deferredMethods[] = array(
-                    'id'        => $apiMethod->id,
-                    'name'      => $apiMethod->description,
-                    'enabled'   => true,
+                $deferredMethods[] = [
+                    'id' => $apiMethod->id,
+                    'name' => $apiMethod->description,
+                    'enabled' => true,
                     'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
+                    'image' => (array)$apiMethod->image,
+                    'issuers' => $apiMethod->issuers,
                     'tipEnableSSL' => $tipEnableSSL
-                );
+                ];
             } else {
-                $methods[$configMethods[$apiMethod->id]['position']] = array(
-                    'id'        => $apiMethod->id,
-                    'name'      => $apiMethod->description,
-                    'enabled'   => $configMethods[$apiMethod->id]['enabled'],
+                $methods[$configMethods[$apiMethod->id]['position']] = [
+                    'id' => $apiMethod->id,
+                    'name' => $apiMethod->description,
+                    'enabled' => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image'     => (array) $apiMethod->image,
-                    'issuers'   => $apiMethod->issuers,
+                    'image' => (array)$apiMethod->image,
+                    'issuers' => $apiMethod->issuers,
                     'tipEnableSSL' => $tipEnableSSL
-                );
+                ];
             }
         }
         $availableApiMethods = array_column(array_map(function ($apiMethod) {
-            return (array) $apiMethod;
+            return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach (array('cartesbancaires' => 'Cartes Bancaires') as $id => $name) {
+            foreach (['cartesbancaires' => 'Cartes Bancaires'] as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
-                    $deferredMethods[] = array(
-                        'id'        => $id,
-                        'name'      => $name,
-                        'enabled'   => true,
+                    $deferredMethods[] = [
+                        'id' => $id,
+                        'name' => $name,
+                        'enabled' => true,
                         'available' => !in_array($id, $notAvailable),
-                        'image'     => array(
+                        'image' => [
                             'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}_small.png"),
                             'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
-                            'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
-                        ),
-                        'issuers'   => null,
-                    );
+                            'svg' => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        ],
+                        'issuers' => null,
+                    ];
                 } else {
                     $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
                     $thisMethod = $dbMethods[array_search($id, array_column($dbMethods, 'id'))];
-                    $methods[$configMethods[$id]['position']] = array(
-                        'id'        => $id,
-                        'name'      => $name,
-                        'enabled'   => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
+                    $methods[$configMethods[$id]['position']] = [
+                        'id' => $id,
+                        'name' => $name,
+                        'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'available' => !in_array($id, $notAvailable),
-                        'image'     => array(
+                        'image' => [
                             'size1x' => static::getMediaPath("{$this->_path}views/img/{$id}_small.png"),
                             'size2x' => static::getMediaPath("{$this->_path}views/img/{$id}.png"),
-                            'svg'    => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
-                        ),
-                        'issuers'   => null,
-                    );
+                            'svg' => static::getMediaPath("{$this->_path}views/img/{$id}.svg"),
+                        ],
+                        'issuers' => null,
+                    ];
                 }
             }
         }
@@ -3827,13 +3869,82 @@ class Mollie extends PaymentModule
         return $methods;
     }
 
+    public function getMethodsForConfig2()
+    {
+        $notAvailable = [];
+        try {
+            $apiMethods = $this->api->methods->all(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+            return [];
+        }
+//        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+//            $paymentApiMethods = array_map(function ($item) {
+//                return $item->id;
+//            }, $this->api->methods->all(array('includeWallets' => 'applepay'))->getArrayCopy());
+//            $orderApiMethods = array_map(function ($item) {
+//                return $item->id;
+//            }, $apiMethods);
+//            $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
+//        }
+//        if (!count($apiMethods)) {
+//            return array();
+//        }
+        $methods = [];
+        $defaultPaymentMethod = new MolPaymentMethod();
+        $defaultPaymentMethod->enabled = 0;
+        $defaultPaymentMethod->title = '';
+        $defaultPaymentMethod->method = 'payments';
+        $defaultPaymentMethod->description = '';
+        $defaultPaymentMethod->minimal_order_value = '';
+        $defaultPaymentMethod->max_order_value = '';
+        $defaultPaymentMethod->surcharge = 0;
+        $defaultPaymentMethod->surcharge_fixed_amount = '';
+        $defaultPaymentMethod->surcharge_percentage = '';
+        $defaultPaymentMethod->surcharge_limit = '';
+        $defaultPaymentMethod->surcharge_tax_class = 0;
+
+        foreach ($apiMethods as $apiMethod) {
+            $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($apiMethod->id) . '"';
+            $paymentId = Db::getInstance()->getValue($sql);
+            if ($paymentId) {
+                $paymentMethod = new MolPaymentMethod($paymentId);
+                $methods[$apiMethod->id] = $paymentMethod;
+                continue;
+            }
+            $defaultPaymentMethod->id_method = $apiMethod->id;
+            $defaultPaymentMethod->method_name = $apiMethod->name;
+            $methods[$apiMethod->id] = $defaultPaymentMethod;
+        }
+
+        $availableApiMethods = array_column(array_map(function ($apiMethod) {
+            return (array)$apiMethod;
+        }, $apiMethods), 'id');
+        if (in_array('creditcard', $availableApiMethods)) {
+            foreach (['cartesbancaires' => 'Cartes Bancaires'] as $value => $apiMethod) {
+                $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($value) . '"';
+                $paymentId = Db::getInstance()->getValue($sql);
+                if ($paymentId) {
+                    $paymentMethod = new MolPaymentMethod($paymentId);
+                    $methods[$value] = $paymentMethod;
+                    continue;
+                }
+                $defaultPaymentMethod->id_method = $value;
+                $defaultPaymentMethod->method_name = $apiMethod;
+                $methods[$value] = $defaultPaymentMethod;
+            }
+        }
+
+        return $methods;
+    }
+
     /**
      * Test if directory is writable
      *
-     * @param string $dir      Directory path, absolute or relative
-     * @param bool   $recursive
-     * @param null   $fullReport
-     * @param bool   $absolute Is absolute path to directory
+     * @param string $dir Directory path, absolute or relative
+     * @param bool $recursive
+     * @param null $fullReport
+     * @param bool $absolute Is absolute path to directory
      *
      * @return bool
      *
@@ -3844,7 +3955,7 @@ class Mollie extends PaymentModule
         if ($absolute) {
             $absoluteDir = $dir;
         } else {
-            $absoluteDir = rtrim(_PS_ROOT_DIR_, '\\/').DIRECTORY_SEPARATOR.trim($dir, '\\/');
+            $absoluteDir = rtrim(_PS_ROOT_DIR_, '\\/') . DIRECTORY_SEPARATOR . trim($dir, '\\/');
         }
 
         if (!file_exists($absoluteDir)) {
@@ -3861,9 +3972,9 @@ class Mollie extends PaymentModule
 
         if ($recursive) {
             foreach (scandir($absoluteDir, SCANDIR_SORT_NONE) as $item) {
-                $path = $absoluteDir.DIRECTORY_SEPARATOR.$item;
+                $path = $absoluteDir . DIRECTORY_SEPARATOR . $item;
 
-                if (in_array($item, array('.', '..', '.git'))
+                if (in_array($item, ['.', '..', '.git'])
                     || is_link($path)) {
                     continue;
                 }
@@ -3889,13 +4000,13 @@ class Mollie extends PaymentModule
      * Post process tags in (translated) strings
      *
      * @param string $string
-     * @param array  $tags
+     * @param array $tags
      *
      * @return string
      *
      * @since 3.2.0
      */
-    public static function ppTags($string, $tags = array())
+    public static function ppTags($string, $tags = [])
     {
         // If tags were explicitly provided, we want to use them *after* the translation string is escaped.
         if (!empty($tags)) {
@@ -3903,14 +4014,14 @@ class Mollie extends PaymentModule
                 // Make positions start at 1 so that it behaves similar to the %1$d etc. sprintf positional params
                 $position = $index + 1;
                 // extract tag name
-                $match = array();
+                $match = [];
                 if (preg_match('/^\s*<\s*(\w+)/', $tag, $match)) {
                     $opener = $tag;
-                    $closer = '</'.$match[1].'>';
+                    $closer = '</' . $match[1] . '>';
 
-                    $string = str_replace('['.$position.']', $opener, $string);
-                    $string = str_replace('[/'.$position.']', $closer, $string);
-                    $string = str_replace('['.$position.'/]', $opener.$closer, $string);
+                    $string = str_replace('[' . $position . ']', $opener, $string);
+                    $string = str_replace('[/' . $position . ']', $closer, $string);
+                    $string = str_replace('[' . $position . '/]', $opener . $closer, $string);
                 }
             }
         }
@@ -3970,15 +4081,15 @@ class Mollie extends PaymentModule
         );
         $simplexml = $mollie->accountCreate(
             $email,
-            array(
-                'name'         => $name,
+            [
+                'name' => $name,
                 'company_name' => $company,
-                'address'      => $address,
-                'zipcode'      => $zipcode,
-                'city'         => $city,
-                'country'      => $country,
-                'email'        => $email,
-            )
+                'address' => $address,
+                'zipcode' => $zipcode,
+                'city' => $city,
+                'country' => $country,
+                'email' => $email,
+            ]
         );
 
         if (empty($simplexml->success) && isset($simplexml->resultmessage) && isset($simplexml->resultcode)) {
@@ -3992,20 +4103,18 @@ class Mollie extends PaymentModule
      * Validate an order in database
      * Function called from a payment module.
      *
-     * @param int    $idCart
-     * @param int    $idOrderState
-     * @param float  $amountPaid    Amount really paid by customer (in the default currency)
+     * @param int $idCart
+     * @param int $idOrderState
+     * @param float $amountPaid Amount really paid by customer (in the default currency)
      * @param string $paymentMethod Payment method (eg. 'Credit card')
-     * @param null   $message       Message to attach to order
-     * @param array  $extraVars
-     * @param null   $currencySpecial
-     * @param bool   $dontTouchAmount
-     * @param bool   $secureKey
-     * @param Shop   $shop
+     * @param null $message Message to attach to order
+     * @param array $extraVars
+     * @param null $currencySpecial
+     * @param bool $dontTouchAmount
+     * @param bool $secureKey
+     * @param Shop $shop
      *
      * @return bool
-     *
-     * @since 3.3.0
      *
      * @throws PrestaShopException
      * @throws Adapter_Exception
@@ -4016,6 +4125,8 @@ class Mollie extends PaymentModule
      * This flow is applicable only to the Orders API.
      *
      * PrestaShop 1.5 function
+     * @since 3.3.0
+     *
      */
     public function validateMollieOrderLegacy(
         $idCart,
@@ -4023,7 +4134,7 @@ class Mollie extends PaymentModule
         $amountPaid,
         $paymentMethod = 'Unknown',
         $message = null,
-        $extraVars = array(),
+        $extraVars = [],
         $currencySpecial = null,
         $dontTouchAmount = false,
         $secureKey = false,
@@ -4036,12 +4147,12 @@ class Mollie extends PaymentModule
         if (method_exists('ShopUrl', 'resetMainDomainCache')) {
             ShopUrl::resetMainDomainCache();
         }
-        $idCurrency = $currencySpecial ? (int) $currencySpecial : (int) $this->context->cart->id_currency;
+        $idCurrency = $currencySpecial ? (int)$currencySpecial : (int)$this->context->cart->id_currency;
         $this->context->currency = new Currency($idCurrency, null, $this->context->shop->id);
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
             $context_country = $this->context->country;
         }
-        $orderStatus = new OrderState((int) $idOrderState, (int) $this->context->language->id);
+        $orderStatus = new OrderState((int)$idOrderState, (int)$this->context->language->id);
         if (!Validate::isLoadedObject($orderStatus)) {
             throw new PrestaShopException('Can\'t load Order state status');
         }
@@ -4066,18 +4177,18 @@ class Mollie extends PaymentModule
                     }
                 }
             }
-            $orderList = array();
-            $orderDetailList = array();
+            $orderList = [];
+            $orderDetailList = [];
             $reference = Order::generateReference();
             $this->currentOrderReference = $reference;
             $orderCreationFailed = false;
-            $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), static::API_ROUNDING_PRECISION);
+            $cartTotalPaid = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH), static::API_ROUNDING_PRECISION);
             if (method_exists('Cart', 'getPackageIdWarehouse')) {
                 foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
                     foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
                         foreach ($data['package_list'] as $idPackage) {
                             // Rewrite the id_warehouse
-                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
+                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int)$this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int)$idCarrier);
                             $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
                         }
                     }
@@ -4101,52 +4212,52 @@ class Mollie extends PaymentModule
                     $carrier = null;
                     if (!$this->context->cart->isVirtualCart() && isset($package['id_carrier'])) {
                         $carrier = new Carrier($package['id_carrier'], $this->context->cart->id_lang);
-                        $order->id_carrier = (int) $carrier->id;
-                        $idCarrier = (int) $carrier->id;
+                        $order->id_carrier = (int)$carrier->id;
+                        $idCarrier = (int)$carrier->id;
                     } else {
                         $order->id_carrier = 0;
                         $idCarrier = 0;
                     }
 
-                    $order->id_customer = (int) $this->context->cart->id_customer;
-                    $order->id_address_invoice = (int) $this->context->cart->id_address_invoice;
-                    $order->id_address_delivery = (int) $idAddress;
+                    $order->id_customer = (int)$this->context->cart->id_customer;
+                    $order->id_address_invoice = (int)$this->context->cart->id_address_invoice;
+                    $order->id_address_delivery = (int)$idAddress;
                     $order->id_currency = $this->context->currency->id;
-                    $order->id_lang = (int) $this->context->cart->id_lang;
-                    $order->id_cart = (int) $this->context->cart->id;
+                    $order->id_lang = (int)$this->context->cart->id_lang;
+                    $order->id_cart = (int)$this->context->cart->id;
                     $order->reference = $reference;
-                    $order->id_shop = (int) $this->context->shop->id;
-                    $order->id_shop_group = (int) $this->context->shop->id_shop_group;
+                    $order->id_shop = (int)$this->context->shop->id;
+                    $order->id_shop_group = (int)$this->context->shop->id_shop_group;
                     $order->secure_key = ($secureKey ? pSQL($secureKey) : pSQL($this->context->customer->secure_key));
                     $order->payment = $paymentMethod;
                     if (isset($this->name)) {
                         $order->module = $this->name;
                     }
                     $order->recyclable = $this->context->cart->recyclable;
-                    $order->gift = (int) $this->context->cart->gift;
+                    $order->gift = (int)$this->context->cart->gift;
                     $order->gift_message = $this->context->cart->gift_message;
                     $order->mobile_theme = $this->context->cart->mobile_theme;
                     $order->conversion_rate = $this->context->currency->conversion_rate;
-                    $amountPaid = !$dontTouchAmount ? Tools::ps_round((float) $amountPaid, 2) : $amountPaid;
+                    $amountPaid = !$dontTouchAmount ? Tools::ps_round((float)$amountPaid, 2) : $amountPaid;
                     $order->total_paid_real = 0;
 
-                    $order->total_products = (float) $this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_discounts_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
-                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_products = (float)$this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_products_wt = (float)$this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
                     $order->total_discounts = $order->total_discounts_tax_incl;
-                    $order->total_shipping_tax_excl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, false, null, $order->product_list);
-                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, true, null, $order->product_list);
+                    $order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$idCarrier, false, null, $order->product_list);
+                    $order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$idCarrier, true, null, $order->product_list);
                     $order->total_shipping = $order->total_shipping_tax_incl;
 
                     if (!is_null($carrier) && Validate::isLoadedObject($carrier)) {
                         $order->carrier_tax_rate = $carrier->getTaxesRate(new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
                     }
-                    $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
-                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
@@ -4172,11 +4283,11 @@ class Mollie extends PaymentModule
                     // Adding an entry in order_carrier table
                     if (!is_null($carrier)) {
                         $orderCarrier = new OrderCarrier();
-                        $orderCarrier->id_order = (int) $order->id;
-                        $orderCarrier->id_carrier = (int) $idCarrier;
-                        $orderCarrier->weight = (float) $order->getTotalWeight();
-                        $orderCarrier->shipping_cost_tax_excl = (float) $order->total_shipping_tax_excl;
-                        $orderCarrier->shipping_cost_tax_incl = (float) $order->total_shipping_tax_incl;
+                        $orderCarrier->id_order = (int)$order->id;
+                        $orderCarrier->id_carrier = (int)$idCarrier;
+                        $orderCarrier->weight = (float)$order->getTotalWeight();
+                        $orderCarrier->shipping_cost_tax_excl = (float)$order->total_shipping_tax_excl;
+                        $orderCarrier->shipping_cost_tax_incl = (float)$order->total_shipping_tax_incl;
                         $orderCarrier->add();
                     }
                 }
@@ -4203,7 +4314,7 @@ class Mollie extends PaymentModule
             }
             // Next !
             $onlyOneGift = false;
-            $cartRuleUsed = array();
+            $cartRuleUsed = [];
             $products = $this->context->cart->getProducts();
             $cartRules = $this->context->cart->getCartRules();
 
@@ -4221,7 +4332,7 @@ class Mollie extends PaymentModule
                         $msg = new Message();
                         if (Validate::isCleanHtml($message)) {
                             $msg->message = $message;
-                            $msg->id_order = (int) $order->id;
+                            $msg->id_order = (int)$order->id;
                             $msg->private = 1;
                             $msg->add();
                         }
@@ -4233,16 +4344,16 @@ class Mollie extends PaymentModule
                     $productsList = '';
                     $virtualProduct = true;
                     foreach ($order->product_list as $key => $product) {
-                        $price = Product::getPriceStatic((int) $product['id_product'], false, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 6, null, false, true, $product['cart_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-                        $priceWt = Product::getPriceStatic((int) $product['id_product'], true, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 2, null, false, true, $product['cart_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+                        $price = Product::getPriceStatic((int)$product['id_product'], false, ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null), 6, null, false, true, $product['cart_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+                        $priceWt = Product::getPriceStatic((int)$product['id_product'], true, ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null), 2, null, false, true, $product['cart_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
                         $customizationQuantity = 0;
-                        $customizedDatas = Product::getAllCustomizedDatas((int) $order->id_cart);
+                        $customizedDatas = Product::getAllCustomizedDatas((int)$order->id_cart);
                         if (isset($customizedDatas[$product['id_product']][$product['id_product_attribute']])) {
                             $customizationText = '';
                             foreach ($customizedDatas[$product['id_product']][$product['id_product_attribute']][$order->id_address_delivery] as $customization) {
                                 if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
                                     foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
-                                        $customizationText .= $text['name'].': '.$text['value'] .
+                                        $customizationText .= $text['name'] . ': ' . $text['value'] .
                                             $this->display(__FILE__, 'views/templates/front/product.tpl');
                                     }
                                 }
@@ -4252,10 +4363,10 @@ class Mollie extends PaymentModule
                                 $customizationText .= '---' . $this->display(__FILE__, 'views/templates/front/product.tpl');
                             }
                             $customizationText = Tools::rtrimString($customizationText, '---' . $this->display(__FILE__, 'views/templates/front/product.tpl'));
-                            $customizationQuantity = (int) $product['customization_quantity'];
+                            $customizationQuantity = (int)$product['customization_quantity'];
                             $productsList .= $this->display(
                                 __FILE__, 'views/templates/front/product.tpl',
-                                array(
+                                [
                                     'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
                                     'product' => $product,
                                     'customizationText' => Tools::displayError('Customized') . (!empty($customizationText) ? ' - ' . $customizationText : ''),
@@ -4263,19 +4374,19 @@ class Mollie extends PaymentModule
                                     'customizationQuantity' => $customizationQuantity,
                                     'fullPrice' => Tools::displayPrice($customizationQuantity * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
 
-                                ));
+                                ]);
                         }
                         if (!$customizationQuantity || (int)$product['cart_quantity'] > $customizationQuantity) {
                             $productsList .= $this->display(
                                 __FILE__, 'views/templates/front/product.tpl',
-                                array(
+                                [
                                     'color' => ($key % 2) ? '#DDE2E6' : '#EBECEE',
                                     'product' => $product,
                                     'customizationText' => Tools::displayError('Customized') . (!empty($customizationText) ? ' - ' . $customizationText : ''),
                                     'price' => Tools::displayPrice(Product::getTaxCalculationMethod((int)$this->context->customer->id) == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt, $this->context->currency, false),
                                     'customizationQuantity' => ((int)$product['cart_quantity'] - $customizationQuantity),
                                     'fullPrice' => Tools::displayPrice(((int)$product['cart_quantity'] - $customizationQuantity) * (Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt), $this->context->currency, false)
-                                ));
+                                ]);
                         }
                         // Check if is not a virutal product for the displaying of shipping
                         if (!$product['is_virtual']) {
@@ -4286,11 +4397,11 @@ class Mollie extends PaymentModule
                     $totalReductionValueTi = 0;
                     $totalReductionValueTex = 0;
                     foreach ($cartRules as $cartRule) {
-                        $package = array('id_carrier' => $order->id_carrier, 'id_address' => $order->id_address_delivery, 'products' => $order->product_list);
-                        $values = array(
+                        $package = ['id_carrier' => $order->id_carrier, 'id_address' => $order->id_address_delivery, 'products' => $order->product_list];
+                        $values = [
                             'tax_incl' => $cartRule['obj']->getContextualValue(true, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
                             'tax_excl' => $cartRule['obj']->getContextualValue(false, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
-                        );
+                        ];
                         // If the reduction is not applicable to this order, then continue with the next one
                         if (!$values['tax_excl']) {
                             continue;
@@ -4312,9 +4423,9 @@ class Mollie extends PaymentModule
                             $voucher = new CartRule($cartRule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
                             unset($voucher->id);
                             // Set a new voucher code
-                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
+                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id . '-' . $order->id_customer . '-' . $cartRule['obj']->id), 0, 16) : $voucher->code . '-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.((int) ($matches[1]) + 1), $voucher->code);
+                                $voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . ((int)($matches[1]) + 1), $voucher->code);
                             }
                             // Set the new voucher value
                             if ($voucher->reduction_tax) {
@@ -4341,22 +4452,22 @@ class Mollie extends PaymentModule
                             if ($voucher->add()) {
                                 // If the voucher has conditions, they are now copied to the new voucher
                                 CartRule::copyConditions($cartRule['obj']->id, $voucher->id);
-                                $params = array(
+                                $params = [
                                     '{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
-                                    '{voucher_num}'    => $voucher->code,
-                                    '{firstname}'      => $this->context->customer->firstname,
-                                    '{lastname}'       => $this->context->customer->lastname,
-                                    '{id_order}'       => $order->reference,
-                                    '{order_name}'     => $order->getUniqReference(),
-                                );
+                                    '{voucher_num}' => $voucher->code,
+                                    '{firstname}' => $this->context->customer->firstname,
+                                    '{lastname}' => $this->context->customer->lastname,
+                                    '{id_order}' => $order->reference,
+                                    '{order_name}' => $order->getUniqReference(),
+                                ];
                                 Mail::Send(
-                                    (int) $order->id_lang,
+                                    (int)$order->id_lang,
                                     'voucher',
-                                    sprintf(Mail::l('New voucher regarding your order %s', (int) $order->id_lang), $order->reference),
+                                    sprintf(Mail::l('New voucher regarding your order %s', (int)$order->id_lang), $order->reference),
                                     $params,
                                     $this->context->customer->email,
-                                    $this->context->customer->firstname.' '.$this->context->customer->lastname,
-                                    null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+                                    $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
+                                    null, null, null, null, _PS_MAIL_DIR_, false, (int)$order->id_shop
                                 );
                             }
                             $values['tax_incl'] -= $values['tax_incl'] - $order->total_products_wt;
@@ -4377,7 +4488,7 @@ class Mollie extends PaymentModule
                         }
                         $cartRulesList .= $this->display(
                             __FILE__, 'views/templates/front/cart_rules_list.tpl',
-                            array(
+                            [
                                 'error' => Tools::displayError('Voucher name:'),
                                 'cartRuleName' => $cartRule['obj']->name,
                                 'price' => ($values['tax_incl'] != 0.00 ? '-' : '') . Tools::displayPrice(
@@ -4385,21 +4496,21 @@ class Mollie extends PaymentModule
                                         $this->context->currency,
                                         false
                                     ),
-                            ));
+                            ]);
                     }
                     // Specify order id for message
-                    $oldMessage = Message::getMessageByCartId((int) $this->context->cart->id);
+                    $oldMessage = Message::getMessageByCartId((int)$this->context->cart->id);
                     if ($oldMessage) {
-                        $updateMessage = new Message((int) $oldMessage['id_message']);
-                        $updateMessage->id_order = (int) $order->id;
+                        $updateMessage = new Message((int)$oldMessage['id_message']);
+                        $updateMessage->id_order = (int)$order->id;
                         $updateMessage->update();
                         // Add this message in the customer thread
                         $customerThread = new CustomerThread();
                         $customerThread->id_contact = 0;
-                        $customerThread->id_customer = (int) $order->id_customer;
-                        $customerThread->id_shop = (int) $this->context->shop->id;
-                        $customerThread->id_order = (int) $order->id;
-                        $customerThread->id_lang = (int) $this->context->language->id;
+                        $customerThread->id_customer = (int)$order->id_customer;
+                        $customerThread->id_shop = (int)$this->context->shop->id;
+                        $customerThread->id_order = (int)$order->id;
+                        $customerThread->id_lang = (int)$this->context->language->id;
                         $customerThread->email = $this->context->customer->email;
                         $customerThread->status = 'open';
                         $customerThread->token = Tools::passwdGen(12);
@@ -4414,16 +4525,16 @@ class Mollie extends PaymentModule
                         }
                     }
                     // Hook validate order
-                    Hook::exec('actionValidateOrder', array(
-                        'cart'        => $this->context->cart,
-                        'order'       => $order,
-                        'customer'    => $this->context->customer,
-                        'currency'    => $this->context->currency,
+                    Hook::exec('actionValidateOrder', [
+                        'cart' => $this->context->cart,
+                        'order' => $order,
+                        'customer' => $this->context->customer,
+                        'currency' => $this->context->currency,
                         'orderStatus' => $orderStatus,
-                    ));
+                    ]);
                     foreach ($this->context->cart->getProducts() as $product) {
                         if ($orderStatus->logable) {
-                            ProductSale::addProductSale((int) $product['id_product'], (int) $product['cart_quantity']);
+                            ProductSale::addProductSale((int)$product['id_product'], (int)$product['cart_quantity']);
                         }
                     }
                     // Set the order state
@@ -4441,87 +4552,87 @@ class Mollie extends PaymentModule
                         $delivery = new Address($order->id_address_delivery);
                         $delivery_state = $delivery->id_state ? new State($delivery->id_state) : false;
                         $invoice_state = $invoice->id_state ? new State($invoice->id_state) : false;
-                        $data = array(
-                            '{firstname}'            => $this->context->customer->firstname,
-                            '{lastname}'             => $this->context->customer->lastname,
-                            '{email}'                => $this->context->customer->email,
-                            '{delivery_block_txt}'   => $this->_getFormatedAddress($delivery, "\n"),
-                            '{invoice_block_txt}'    => $this->_getFormatedAddress($invoice, "\n"),
+                        $data = [
+                            '{firstname}' => $this->context->customer->firstname,
+                            '{lastname}' => $this->context->customer->lastname,
+                            '{email}' => $this->context->customer->email,
+                            '{delivery_block_txt}' => $this->_getFormatedAddress($delivery, "\n"),
+                            '{invoice_block_txt}' => $this->_getFormatedAddress($invoice, "\n"),
                             '{delivery_block_html}' => $this->_getFormatedAddress(
                                 $delivery,
                                 $this->display(__FILE__, 'views/templates/front/cart_rules_list.tpl'),
-                                array(
+                                [
                                     'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
                                     'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                                )),
+                                ]),
                             '{invoice_block_html}' => $this->_getFormatedAddress(
                                 $invoice,
                                 $this->display(__FILE__, 'views/templates/front/cart_rules_list.tpl'),
-                                array(
+                                [
                                     'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
                                     'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                                )),
-                            '{delivery_company}'     => $delivery->company,
-                            '{delivery_firstname}'   => $delivery->firstname,
-                            '{delivery_lastname}'    => $delivery->lastname,
-                            '{delivery_address1}'    => $delivery->address1,
-                            '{delivery_address2}'    => $delivery->address2,
-                            '{delivery_city}'        => $delivery->city,
+                                ]),
+                            '{delivery_company}' => $delivery->company,
+                            '{delivery_firstname}' => $delivery->firstname,
+                            '{delivery_lastname}' => $delivery->lastname,
+                            '{delivery_address1}' => $delivery->address1,
+                            '{delivery_address2}' => $delivery->address2,
+                            '{delivery_city}' => $delivery->city,
                             '{delivery_postal_code}' => $delivery->postcode,
-                            '{delivery_country}'     => $delivery->country,
-                            '{delivery_state}'       => $delivery->id_state ? $delivery_state->name : '',
-                            '{delivery_phone}'       => ($delivery->phone) ? $delivery->phone : $delivery->phone_mobile,
-                            '{delivery_other}'       => $delivery->other,
-                            '{invoice_company}'      => $invoice->company,
-                            '{invoice_vat_number}'   => $invoice->vat_number,
-                            '{invoice_firstname}'    => $invoice->firstname,
-                            '{invoice_lastname}'     => $invoice->lastname,
-                            '{invoice_address2}'     => $invoice->address2,
-                            '{invoice_address1}'     => $invoice->address1,
-                            '{invoice_city}'         => $invoice->city,
-                            '{invoice_postal_code}'  => $invoice->postcode,
-                            '{invoice_country}'      => $invoice->country,
-                            '{invoice_state}'        => $invoice->id_state ? $invoice_state->name : '',
-                            '{invoice_phone}'        => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
-                            '{invoice_other}'        => $invoice->other,
-                            '{order_name}'           => $order->getUniqReference(),
-                            '{date}'                 => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-                            '{carrier}'              => $virtualProduct ? Tools::displayError('No carrier') : $carrier->name,
-                            '{payment}'              => Tools::substr($order->payment, 0, 32),
-                            '{products}'             => $this->formatProductAndVoucherForEmail($productsList),
-                            '{discounts}'            => $this->formatProductAndVoucherForEmail($cartRulesList),
-                            '{total_paid}'           => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-                            '{total_products}'       => Tools::displayPrice($order->total_paid - $order->total_shipping - $order->total_wrapping + $order->total_discounts, $this->context->currency, false),
-                            '{total_discounts}'      => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
-                            '{total_shipping}'       => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
-                            '{total_wrapping}'       => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-                            '{total_tax_paid}'       => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
-                        );
+                            '{delivery_country}' => $delivery->country,
+                            '{delivery_state}' => $delivery->id_state ? $delivery_state->name : '',
+                            '{delivery_phone}' => ($delivery->phone) ? $delivery->phone : $delivery->phone_mobile,
+                            '{delivery_other}' => $delivery->other,
+                            '{invoice_company}' => $invoice->company,
+                            '{invoice_vat_number}' => $invoice->vat_number,
+                            '{invoice_firstname}' => $invoice->firstname,
+                            '{invoice_lastname}' => $invoice->lastname,
+                            '{invoice_address2}' => $invoice->address2,
+                            '{invoice_address1}' => $invoice->address1,
+                            '{invoice_city}' => $invoice->city,
+                            '{invoice_postal_code}' => $invoice->postcode,
+                            '{invoice_country}' => $invoice->country,
+                            '{invoice_state}' => $invoice->id_state ? $invoice_state->name : '',
+                            '{invoice_phone}' => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
+                            '{invoice_other}' => $invoice->other,
+                            '{order_name}' => $order->getUniqReference(),
+                            '{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
+                            '{carrier}' => $virtualProduct ? Tools::displayError('No carrier') : $carrier->name,
+                            '{payment}' => Tools::substr($order->payment, 0, 32),
+                            '{products}' => $this->formatProductAndVoucherForEmail($productsList),
+                            '{discounts}' => $this->formatProductAndVoucherForEmail($cartRulesList),
+                            '{total_paid}' => Tools::displayPrice($order->total_paid, $this->context->currency, false),
+                            '{total_products}' => Tools::displayPrice($order->total_paid - $order->total_shipping - $order->total_wrapping + $order->total_discounts, $this->context->currency, false),
+                            '{total_discounts}' => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
+                            '{total_shipping}' => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
+                            '{total_wrapping}' => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
+                            '{total_tax_paid}' => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
+                        ];
                         if (is_array($extraVars)) {
                             $data = array_merge($data, $extraVars);
                         }
                         // Join PDF invoice
-                        if ((int) Configuration::get('PS_INVOICE') && $orderStatus->invoice && $order->invoice_number) {
+                        if ((int)Configuration::get('PS_INVOICE') && $orderStatus->invoice && $order->invoice_number) {
                             $pdf = new PDF($order->getInvoicesCollection(), PDF::TEMPLATE_INVOICE, $this->context->smarty);
-                            $fileAttachement = array();
+                            $fileAttachement = [];
                             $fileAttachement['content'] = $pdf->render(false);
-                            $fileAttachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
+                            $fileAttachement['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
                             $fileAttachement['mime'] = 'application/pdf';
                         } else {
                             $fileAttachement = null;
                         }
                         if (Validate::isEmail($this->context->customer->email)) {
                             Mail::Send(
-                                (int) $order->id_lang,
+                                (int)$order->id_lang,
                                 'order_conf',
-                                Mail::l('Order confirmation', (int) $order->id_lang),
+                                Mail::l('Order confirmation', (int)$order->id_lang),
                                 $data,
                                 $this->context->customer->email,
-                                $this->context->customer->firstname.' '.$this->context->customer->lastname,
+                                $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
                                 null,
                                 null,
                                 $fileAttachement,
-                                null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+                                null, _PS_MAIL_DIR_, false, (int)$order->id_shop
                             );
                         }
                     }
@@ -4538,17 +4649,17 @@ class Mollie extends PaymentModule
                     }
                 } else {
                     $error = Tools::displayError('Order creation failed');
-                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
+                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int)$order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
             // Use the last order as currentOrder
-            $this->currentOrder = (int) $order->id;
+            $this->currentOrder = (int)$order->id;
 
             return true;
         } else {
             $error = Tools::displayError('Cart cannot be loaded or an order has already been placed using this cart');
-            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
+            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int)$this->context->cart->id);
             die($error);
         }
     }
@@ -4557,20 +4668,18 @@ class Mollie extends PaymentModule
      * Validate an order in database
      * Function called from a payment module.
      *
-     * @param int    $idCart
-     * @param int    $idOrderState
-     * @param float  $amountPaid    Amount really paid by customer (in the default currency)
+     * @param int $idCart
+     * @param int $idOrderState
+     * @param float $amountPaid Amount really paid by customer (in the default currency)
      * @param string $paymentMethod Payment method (eg. 'Credit card')
-     * @param null   $message       Message to attach to order
-     * @param array  $extraVars
-     * @param null   $currencySpecial
-     * @param bool   $dontTouchAmount
-     * @param bool   $secureKey
-     * @param Shop   $shop
+     * @param null $message Message to attach to order
+     * @param array $extraVars
+     * @param null $currencySpecial
+     * @param bool $dontTouchAmount
+     * @param bool $secureKey
+     * @param Shop $shop
      *
      * @return bool
-     *
-     * @since 3.3.0
      *
      * @throws PrestaShopException
      * @throws Adapter_Exception
@@ -4581,6 +4690,8 @@ class Mollie extends PaymentModule
      * This flow is applicable only to the Orders API.
      *
      * Hybrid PrestaShop 1.6/1.7 and thirty bees 1.0 function
+     * @since 3.3.0
+     *
      */
     public function validateMollieOrder(
         $idCart,
@@ -4588,7 +4699,7 @@ class Mollie extends PaymentModule
         $amountPaid,
         $paymentMethod = 'Unknown',
         $message = null,
-        $extraVars = array(),
+        $extraVars = [],
         $currencySpecial = null,
         $dontTouchAmount = false,
         $secureKey = false,
@@ -4599,40 +4710,40 @@ class Mollie extends PaymentModule
         }
 
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Function called', 1, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Function called', 1, null, 'Cart', (int)$idCart, true);
         }
         if (!isset($this->context)) {
             $this->context = Context::getContext();
         }
-        $this->context->cart = new Cart((int) $idCart);
-        $this->context->customer = new Customer((int) $this->context->cart->id_customer);
+        $this->context->cart = new Cart((int)$idCart);
+        $this->context->customer = new Customer((int)$this->context->cart->id_customer);
         // The tax cart is loaded before the customer so re-cache the tax calculation method
         if (method_exists($this->context->cart, 'setTaxCalculationMethod')) {
             $this->context->cart->setTaxCalculationMethod();
         }
-        $this->context->language = new Language((int) $this->context->cart->id_lang);
-        $this->context->shop = ($shop ? $shop : new Shop((int) $this->context->cart->id_shop));
+        $this->context->language = new Language((int)$this->context->cart->id_lang);
+        $this->context->shop = ($shop ? $shop : new Shop((int)$this->context->cart->id_shop));
         if (method_exists('ShopUrl', 'resetMainDomainCache')) {
             ShopUrl::resetMainDomainCache();
         }
-        $idCurrency = $currencySpecial ? (int) $currencySpecial : (int) $this->context->cart->id_currency;
-        $this->context->currency = new Currency((int) $idCurrency, null, (int) $this->context->shop->id);
+        $idCurrency = $currencySpecial ? (int)$currencySpecial : (int)$this->context->cart->id_currency;
+        $this->context->currency = new Currency((int)$idCurrency, null, (int)$this->context->shop->id);
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
             $context_country = $this->context->country;
         }
-        $orderState = new OrderState((int) $idOrderState, (int) $this->context->language->id);
+        $orderState = new OrderState((int)$idOrderState, (int)$this->context->language->id);
         if (!Validate::isLoadedObject($orderState)) {
-            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order Status cannot be loaded', 3, null, 'Cart', (int)$idCart, true);
             throw new PrestaShopException('Can\'t load Order status');
         }
         if (!$this->active) {
-            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Module is not active', 3, null, 'Cart', (int) $idCart, true);
+            PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Module is not active', 3, null, 'Cart', (int)$idCart, true);
             die(Tools::displayError());
         }
         // Does order already exists ?
         if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
             if ($secureKey !== false && $secureKey != $this->context->cart->secure_key) {
-                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Secure key does not match', 3, null, 'Cart', (int)$idCart, true);
                 die(Tools::displayError());
             }
             // For each package, generate an order
@@ -4648,20 +4759,20 @@ class Mollie extends PaymentModule
                     }
                 }
             }
-            $orderList = array();
-            $orderDetailList = array();
+            $orderList = [];
+            $orderDetailList = [];
 
             if (!$this->currentOrderReference || Order::getByReference($this->currentOrderReference)->count()) {
-                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
-                throw new PrestaShopException('Order reference not set before call to '.__CLASS__.'::validateMollieOrder');
+                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int)$idCart, true);
+                throw new PrestaShopException('Order reference not set before call to ' . __CLASS__ . '::validateMollieOrder');
             }
-            $cartTotalPaid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cartTotalPaid = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
             if (method_exists('Cart', 'getPackageIdWarehouse')) {
                 foreach ($cartDeliveryOption as $idAddress => $keyCarriers) {
                     foreach ($deliveryOptionList[$idAddress][$keyCarriers]['carrier_list'] as $idCarrier => $data) {
                         foreach ($data['package_list'] as $idPackage) {
                             // Rewrite the id_warehouse
-                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int) $this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int) $idCarrier);
+                            $packageList[$idAddress][$idPackage]['id_warehouse'] = (int)$this->context->cart->getPackageIdWarehouse($packageList[$idAddress][$idPackage], (int)$idCarrier);
                             $packageList[$idAddress][$idPackage]['id_carrier'] = $idCarrier;
                         }
                     }
@@ -4673,22 +4784,22 @@ class Mollie extends PaymentModule
             }
             $cartRules = $this->context->cart->getCartRules();
             foreach ($cartRules as $cartRule) {
-                if (($rule = new CartRule((int) $cartRule['obj']->id)) && Validate::isLoadedObject($rule)) {
+                if (($rule = new CartRule((int)$cartRule['obj']->id)) && Validate::isLoadedObject($rule)) {
                     if ($error = $rule->checkValidity($this->context, true, true)) {
-                        $this->context->cart->removeCartRule((int) $rule->id);
+                        $this->context->cart->removeCartRule((int)$rule->id);
                         if (isset($this->context->cookie) && isset($this->context->cookie->id_customer) && $this->context->cookie->id_customer && !empty($rule->code)) {
                             if (version_compare(_PS_VERSION_, '1.7.0.0', '<') && Configuration::get('PS_ORDER_PROCESS_TYPE') == 1) {
-                                Tools::redirect('index.php?controller=order-opc&submitAddDiscount=1&discount_name='.urlencode($rule->code));
+                                Tools::redirect('index.php?controller=order-opc&submitAddDiscount=1&discount_name=' . urlencode($rule->code));
                             }
-                            Tools::redirect('index.php?controller=order&submitAddDiscount=1&discount_name='.urlencode($rule->code));
+                            Tools::redirect('index.php?controller=order&submitAddDiscount=1&discount_name=' . urlencode($rule->code));
                         } else {
-                            $ruleName = isset($rule->name[(int) $this->context->cart->id_lang]) ? $rule->name[(int) $this->context->cart->id_lang] : $rule->code;
+                            $ruleName = isset($rule->name[(int)$this->context->cart->id_lang]) ? $rule->name[(int)$this->context->cart->id_lang] : $rule->code;
                             if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-                                $error = sprintf(Tools::displayError('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart'), (int) $rule->id, $ruleName);
+                                $error = sprintf(Tools::displayError('CartRule ID %1s (%2s) used in this cart is not valid and has been withdrawn from cart'), (int)$rule->id, $ruleName);
                             } else {
-                                $error = sprintf($this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart'), array($ruleName, (int) $rule->id));
+                                $error = sprintf($this->l('The cart rule named "%1s" (ID %2s) used in this cart is not valid and has been withdrawn from cart'), [$ruleName, (int)$rule->id]);
                             }
-                            PrestaShopLogger::addLog($error, 3, '0000002', 'Cart', (int) $this->context->cart->id);
+                            PrestaShopLogger::addLog($error, 3, '0000002', 'Cart', (int)$this->context->cart->id);
                         }
                     }
                 }
@@ -4699,72 +4810,72 @@ class Mollie extends PaymentModule
                     $order = new Order();
                     $order->product_list = $package['product_list'];
                     if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
-                        $address = new Address((int) $idAddress);
-                        $this->context->country = new Country((int) $address->id_country, (int) $this->context->cart->id_lang);
+                        $address = new Address((int)$idAddress);
+                        $this->context->country = new Country((int)$address->id_country, (int)$this->context->cart->id_lang);
                         if (!$this->context->country->active) {
                             throw new PrestaShopException('The delivery address country is not active.');
                         }
                     }
                     $carrier = null;
                     if (!$this->context->cart->isVirtualCart() && isset($package['id_carrier'])) {
-                        $carrier = new Carrier((int) $package['id_carrier'], (int) $this->context->cart->id_lang);
-                        $order->id_carrier = (int) $carrier->id;
-                        $idCarrier = (int) $carrier->id;
+                        $carrier = new Carrier((int)$package['id_carrier'], (int)$this->context->cart->id_lang);
+                        $order->id_carrier = (int)$carrier->id;
+                        $idCarrier = (int)$carrier->id;
                     } else {
                         $order->id_carrier = 0;
                         $idCarrier = 0;
                     }
 
-                    $order->id_customer = (int) $this->context->cart->id_customer;
-                    $order->id_address_invoice = (int) $this->context->cart->id_address_invoice;
-                    $order->id_address_delivery = (int) $idAddress;
-                    $order->current_state = (int) $idOrderState;
+                    $order->id_customer = (int)$this->context->cart->id_customer;
+                    $order->id_address_invoice = (int)$this->context->cart->id_address_invoice;
+                    $order->id_address_delivery = (int)$idAddress;
+                    $order->current_state = (int)$idOrderState;
                     $order->id_currency = $this->context->currency->id;
-                    $order->id_lang = (int) $this->context->cart->id_lang;
-                    $order->id_cart = (int) $this->context->cart->id;
+                    $order->id_lang = (int)$this->context->cart->id_lang;
+                    $order->id_cart = (int)$this->context->cart->id;
                     $order->reference = $this->currentOrderReference;
-                    $order->id_shop = (int) $this->context->shop->id;
-                    $order->id_shop_group = (int) $this->context->shop->id_shop_group;
+                    $order->id_shop = (int)$this->context->shop->id;
+                    $order->id_shop_group = (int)$this->context->shop->id_shop_group;
                     $order->secure_key = ($secureKey ? pSQL($secureKey) : pSQL($this->context->customer->secure_key));
                     $order->payment = $paymentMethod;
                     if (isset($this->name)) {
                         $order->module = $this->name;
                     }
                     $order->recyclable = $this->context->cart->recyclable;
-                    $order->gift = (int) $this->context->cart->gift;
+                    $order->gift = (int)$this->context->cart->gift;
                     $order->gift_message = $this->context->cart->gift_message;
                     $order->mobile_theme = $this->context->cart->mobile_theme;
                     $order->conversion_rate = $this->context->currency->conversion_rate;
-                    $amountPaid = !$dontTouchAmount ? Tools::ps_round((float) $amountPaid, 2) : $amountPaid;
+                    $amountPaid = !$dontTouchAmount ? Tools::ps_round((float)$amountPaid, 2) : $amountPaid;
                     $order->total_paid_real = 0;
-                    $order->total_products = (float) $this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_products_wt = (float) $this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
-                    $order->total_discounts_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
-                    $order->total_discounts_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_products = (float)$this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_products_wt = (float)$this->context->cart->getOrderTotal(true, Cart::ONLY_PRODUCTS, $order->product_list, $idCarrier);
+                    $order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
+                    $order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $idCarrier));
                     $order->total_discounts = $order->total_discounts_tax_incl;
-                    $order->total_shipping_tax_excl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, false, null, $order->product_list);
-                    $order->total_shipping_tax_incl = (float) $this->context->cart->getPackageShippingCost((int) $idCarrier, true, null, $order->product_list);
+                    $order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$idCarrier, false, null, $order->product_list);
+                    $order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$idCarrier, true, null, $order->product_list);
                     $order->total_shipping = $order->total_shipping_tax_incl;
                     if (!is_null($carrier) && Validate::isLoadedObject($carrier)) {
-                        $order->carrier_tax_rate = $carrier->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
+                        $order->carrier_tax_rate = $carrier->getTaxesRate(new Address((int)$this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
                     }
-                    $order->total_wrapping_tax_excl = (float) abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
-                    $order->total_wrapping_tax_incl = (float) abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
+                    $order->total_wrapping_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
-                    $order->total_paid_tax_incl = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+                    $order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
                     $order->invoice_date = '0000-00-00 00:00:00';
                     $order->delivery_date = '0000-00-00 00:00:00';
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order is about to be added', 1, null, 'Cart', (int)$idCart, true);
                     }
                     // Creating order
                     $result = $order->add();
                     if (!$result) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int)$idCart, true);
                         throw new PrestaShopException('Can\'t save Order');
                     }
                     // Amount paid by customer is not the right one -> Status = payment error
@@ -4776,23 +4887,23 @@ class Mollie extends PaymentModule
                     }
                     $orderList[] = $order;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - OrderDetail is about to be added', 1, null, 'Cart', (int)$idCart, true);
                     }
                     // Insert new Order detail list using cart for the current order
                     $orderDetail = new OrderDetail(null, null, $this->context);
                     $orderDetail->createList($order, $this->context->cart, $idOrderState, $order->product_list, 0, true, $packageList[$idAddress][$idPackage]['id_warehouse']);
                     $orderDetailList[] = $orderDetail;
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - OrderCarrier is about to be added', 1, null, 'Cart', (int)$idCart, true);
                     }
                     // Adding an entry in order_carrier table
                     if (!is_null($carrier)) {
                         $orderCarrier = new OrderCarrier();
-                        $orderCarrier->id_order = (int) $order->id;
-                        $orderCarrier->id_carrier = (int) $idCarrier;
-                        $orderCarrier->weight = (float) $order->getTotalWeight();
-                        $orderCarrier->shipping_cost_tax_excl = (float) $order->total_shipping_tax_excl;
-                        $orderCarrier->shipping_cost_tax_incl = (float) $order->total_shipping_tax_incl;
+                        $orderCarrier->id_order = (int)$order->id;
+                        $orderCarrier->id_carrier = (int)$idCarrier;
+                        $orderCarrier->weight = (float)$order->getTotalWeight();
+                        $orderCarrier->shipping_cost_tax_excl = (float)$order->total_shipping_tax_excl;
+                        $orderCarrier->shipping_cost_tax_incl = (float)$order->total_shipping_tax_incl;
                         $orderCarrier->add();
                     }
                 }
@@ -4802,11 +4913,11 @@ class Mollie extends PaymentModule
                 $this->context->country = $context_country;
             }
             if (!$this->context->country->active) {
-                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Country is not active', 3, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Country is not active', 3, null, 'Cart', (int)$idCart, true);
                 throw new PrestaShopException('The order address country is not active.');
             }
             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Payment is about to be added', 1, null, 'Cart', (int)$idCart, true);
             }
             // Register Payment only if the order status validate the order
             if ($orderState->logable) {
@@ -4819,12 +4930,12 @@ class Mollie extends PaymentModule
                     $transaction_id = null;
                 }
                 if (isset($order) && !$order->addOrderPayment($amountPaid, null, $transaction_id)) {
-                    PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int) $idCart, true);
+                    PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Cannot save Order Payment', 3, null, 'Cart', (int)$idCart, true);
                     throw new PrestaShopException('Can\'t save Order Payment');
                 }
             }
 
-            $cartRuleUsed = array();
+            $cartRuleUsed = [];
             // Make sure CartRule caches are empty
             CartRule::cleanCache();
             foreach ($orderDetailList as $key => $orderDetail) {
@@ -4832,7 +4943,7 @@ class Mollie extends PaymentModule
                 $order = $orderList[$key];
                 if (isset($order->id)) {
                     if (!$secureKey) {
-                        $message .= $this->display(__FILE__, 'views/templates/front/break.tpl').$this->l('Warning: the secure key is empty, check your payment account before validation');
+                        $message .= $this->display(__FILE__, 'views/templates/front/break.tpl') . $this->l('Warning: the secure key is empty, check your payment account before validation');
                     }
                     // Optional message to attach to this order
                     if (isset($message) & !empty($message)) {
@@ -4840,12 +4951,12 @@ class Mollie extends PaymentModule
                         $message = strip_tags($message, $this->display(__FILE__, 'views/templates/front/break.tpl'));
                         if (Validate::isCleanHtml($message)) {
                             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Message is about to be added', 1, null, 'Cart', (int)$idCart, true);
                             }
                             $msg->message = $message;
-                            $msg->id_cart = (int) $idCart;
-                            $msg->id_customer = (int) ($order->id_customer);
-                            $msg->id_order = (int) $order->id;
+                            $msg->id_cart = (int)$idCart;
+                            $msg->id_customer = (int)($order->id_customer);
+                            $msg->id_order = (int)$order->id;
                             $msg->private = 1;
                             $msg->add();
                         }
@@ -4855,23 +4966,23 @@ class Mollie extends PaymentModule
                     //$orderDetail->createList($order, $this->context->cart, $id_order_state);
                     // Construct order detail table for the email
                     $virtualProduct = true;
-                    $productVarTplList = array();
+                    $productVarTplList = [];
                     $specificPrice = null;
                     foreach ($order->product_list as $product) {
                         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
                             $price = Product::getPriceStatic(
-                                (int) $product['id_product'],
+                                (int)$product['id_product'],
                                 false,
-                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null),
                                 6,
                                 null,
                                 false,
                                 true,
                                 $product['cart_quantity'],
                                 false,
-                                (int) $order->id_customer,
-                                (int) $order->id_cart,
-                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                (int)$order->id_customer,
+                                (int)$order->id_cart,
+                                (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
                                 $specificPrice,
                                 true,
                                 true,
@@ -4879,18 +4990,18 @@ class Mollie extends PaymentModule
                                 true
                             );
                             $priceWt = Product::getPriceStatic(
-                                (int) $product['id_product'],
+                                (int)$product['id_product'],
                                 true,
-                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null),
                                 2,
                                 null,
                                 false,
                                 true,
                                 $product['cart_quantity'],
                                 false,
-                                (int) $order->id_customer,
-                                (int) $order->id_cart,
-                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                (int)$order->id_customer,
+                                (int)$order->id_cart,
+                                (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
                                 $specificPrice,
                                 true,
                                 true,
@@ -4899,18 +5010,18 @@ class Mollie extends PaymentModule
                             );
                         } else {
                             $price = Product::getPriceStatic(
-                                (int) $product['id_product'],
+                                (int)$product['id_product'],
                                 false,
-                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null),
                                 6,
                                 null,
                                 false,
                                 true,
                                 $product['cart_quantity'],
                                 false,
-                                (int) $order->id_customer,
-                                (int) $order->id_cart,
-                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                (int)$order->id_customer,
+                                (int)$order->id_cart,
+                                (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
                                 $specificPrice,
                                 true,
                                 true,
@@ -4919,18 +5030,18 @@ class Mollie extends PaymentModule
                                 $product['id_customization']
                             );
                             $priceWt = Product::getPriceStatic(
-                                (int) $product['id_product'],
+                                (int)$product['id_product'],
                                 true,
-                                ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null),
+                                ($product['id_product_attribute'] ? (int)$product['id_product_attribute'] : null),
                                 2,
                                 null,
                                 false,
                                 true,
                                 $product['cart_quantity'],
                                 false,
-                                (int) $order->id_customer,
-                                (int) $order->id_cart,
-                                (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+                                (int)$order->id_customer,
+                                (int)$order->id_cart,
+                                (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
                                 $specificPrice,
                                 true,
                                 true,
@@ -4941,41 +5052,41 @@ class Mollie extends PaymentModule
                         }
 
                         $productPrice = Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $priceWt;
-                        $productVarTpl = array(
-                            'id_product'    => $product['id_product'],
-                            'reference'     => $product['reference'],
-                            'name'          => $product['name'].(isset($product['attributes']) ? ' - '.$product['attributes'] : ''),
-                            'unit_price'    => Tools::displayPrice($productPrice, $this->context->currency, false),
-                            'price'         => Tools::displayPrice($productPrice * $product['quantity'], $this->context->currency, false),
-                            'quantity'      => $product['quantity'],
-                            'customization' => array(),
-                        );
+                        $productVarTpl = [
+                            'id_product' => $product['id_product'],
+                            'reference' => $product['reference'],
+                            'name' => $product['name'] . (isset($product['attributes']) ? ' - ' . $product['attributes'] : ''),
+                            'unit_price' => Tools::displayPrice($productPrice, $this->context->currency, false),
+                            'price' => Tools::displayPrice($productPrice * $product['quantity'], $this->context->currency, false),
+                            'quantity' => $product['quantity'],
+                            'customization' => [],
+                        ];
                         if (isset($product['price']) && $product['price']) {
                             $productVarTpl['unit_price'] = Tools::displayPrice($productPrice, $this->context->currency, false);
                             $productVarTpl['unit_price_full'] = Tools::displayPrice($productPrice, $this->context->currency, false)
-                                .' '.$product['unity'];
+                                . ' ' . $product['unity'];
                         } else {
                             $productVarTpl['unit_price'] = $productVarTpl['unit_price_full'] = '';
                         }
-                        $customizedDatas = Product::getAllCustomizedDatas((int) $order->id_cart, null, true, null, (int) $product['id_customization']);
+                        $customizedDatas = Product::getAllCustomizedDatas((int)$order->id_cart, null, true, null, (int)$product['id_customization']);
                         if (isset($customizedDatas[$product['id_product']][$product['id_product_attribute']])) {
-                            $productVarTpl['customization'] = array();
+                            $productVarTpl['customization'] = [];
                             foreach ($customizedDatas[$product['id_product']][$product['id_product_attribute']][$order->id_address_delivery] as $customization) {
                                 $customizationText = '';
                                 if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
                                     foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
-                                        $customizationText .= $this->display(__FILE__, 'views/templates/front/strong.tpl', array('text' => $text['name'])) . ': '.$text['value'].$this->display(__FILE__, 'views/templates/front/break.tpl');
+                                        $customizationText .= $this->display(__FILE__, 'views/templates/front/strong.tpl', ['text' => $text['name']]) . ': ' . $text['value'] . $this->display(__FILE__, 'views/templates/front/break.tpl');
                                     }
                                 }
                                 if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                                    $customizationText .= sprintf($this->l('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])).$this->display(__FILE__, 'views/templates/front/break.tpl');
+                                    $customizationText .= sprintf($this->l('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . $this->display(__FILE__, 'views/templates/front/break.tpl');
                                 }
-                                $customizationQuantity = (int) $customization['quantity'];
-                                $productVarTpl['customization'][] = array(
-                                    'customization_text'     => $customizationText,
+                                $customizationQuantity = (int)$customization['quantity'];
+                                $productVarTpl['customization'][] = [
+                                    'customization_text' => $customizationText,
                                     'customization_quantity' => $customizationQuantity,
-                                    'quantity'               => Tools::displayPrice($customizationQuantity * $productPrice, $this->context->currency, false),
-                                );
+                                    'quantity' => Tools::displayPrice($customizationQuantity * $productPrice, $this->context->currency, false),
+                                ];
                             }
                         }
                         $productVarTplList[] = $productVarTpl;
@@ -4990,15 +5101,15 @@ class Mollie extends PaymentModule
                         $productListTxt = $this->getEmailTemplateContent('order_conf_product_list.txt', Mail::TYPE_TEXT, $productVarTplList);
                         $productListHtml = $this->getEmailTemplateContent('order_conf_product_list.tpl', Mail::TYPE_HTML, $productVarTplList);
                     }
-                    $cartRulesList = array();
+                    $cartRulesList = [];
                     $totalReductionValueTi = 0;
                     $totalReductionValueTex = 0;
                     foreach ($cartRules as $cartRule) {
-                        $package = array('id_carrier' => $order->id_carrier, 'id_address' => $order->id_address_delivery, 'products' => $order->product_list);
-                        $values = array(
+                        $package = ['id_carrier' => $order->id_carrier, 'id_address' => $order->id_address_delivery, 'products' => $order->product_list];
+                        $values = [
                             'tax_incl' => $cartRule['obj']->getContextualValue(true, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
                             'tax_excl' => $cartRule['obj']->getContextualValue(false, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
-                        );
+                        ];
                         // If the reduction is not applicable to this order, then continue with the next one
                         if (!$values['tax_excl']) {
                             continue;
@@ -5012,12 +5123,12 @@ class Mollie extends PaymentModule
                         //  The voucher is cloned with a new value corresponding to the remainder
                         if (count($orderList) == 1 && $values['tax_incl'] > ($order->total_products_wt - $totalReductionValueTi) && $cartRule['obj']->partial_use == 1 && $cartRule['obj']->reduction_amount > 0) {
                             // Create a new voucher from the original
-                            $voucher = new CartRule((int) $cartRule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
+                            $voucher = new CartRule((int)$cartRule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
                             unset($voucher->id);
                             // Set a new voucher code
-                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id.'-'.$order->id_customer.'-'.$cartRule['obj']->id), 0, 16) : $voucher->code.'-2';
+                            $voucher->code = empty($voucher->code) ? Tools::substr(md5($order->id . '-' . $order->id_customer . '-' . $cartRule['obj']->id), 0, 16) : $voucher->code . '-2';
                             if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                                $voucher->code = preg_replace('/'.$matches[0].'$/', '-'.((int) ($matches[1]) + 1), $voucher->code);
+                                $voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . ((int)($matches[1]) + 1), $voucher->code);
                             }
                             // Set the new voucher value
                             if ($voucher->reduction_tax) {
@@ -5047,30 +5158,30 @@ class Mollie extends PaymentModule
                             if ($voucher->add()) {
                                 // If the voucher has conditions, they are now copied to the new voucher
                                 CartRule::copyConditions($cartRule['obj']->id, $voucher->id);
-                                $orderLanguage = new Language((int) $order->id_lang);
-                                $params = array(
+                                $orderLanguage = new Language((int)$order->id_lang);
+                                $params = [
                                     '{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
-                                    '{voucher_num}'    => $voucher->code,
-                                    '{firstname}'      => $this->context->customer->firstname,
-                                    '{lastname}'       => $this->context->customer->lastname,
-                                    '{id_order}'       => $order->reference,
-                                    '{order_name}'     => $order->getUniqReference(),
-                                );
+                                    '{voucher_num}' => $voucher->code,
+                                    '{firstname}' => $this->context->customer->firstname,
+                                    '{lastname}' => $this->context->customer->lastname,
+                                    '{id_order}' => $order->reference,
+                                    '{order_name}' => $order->getUniqReference(),
+                                ];
                                 Mail::Send(
-                                    (int) $order->id_lang,
+                                    (int)$order->id_lang,
                                     'voucher',
                                     version_compare(_PS_VERSION_, '1.7.0.0', '<')
                                         ? sprintf(Mail::l('New voucher for your order %s'), $order->reference)
                                         : $this->trans(
                                         'New voucher for your order %s',
-                                        array($order->reference),
+                                        [$order->reference],
                                         'Emails.Subject',
                                         isset($orderLanguage->locale) ? $orderLanguage->locale : null
                                     ),
                                     $params,
                                     $this->context->customer->email,
-                                    $this->context->customer->firstname.' '.$this->context->customer->lastname,
-                                    null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+                                    $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
+                                    null, null, null, null, _PS_MAIL_DIR_, false, (int)$order->id_shop
                                 );
                             }
                             $values['tax_incl'] = $order->total_products_wt - $totalReductionValueTi;
@@ -5086,14 +5197,14 @@ class Mollie extends PaymentModule
                         if ($idOrderState != Configuration::get('PS_OS_ERROR') && $idOrderState != Configuration::get('PS_OS_CANCELED') && !in_array($cartRule['obj']->id, $cartRuleUsed)) {
                             $cartRuleUsed[] = $cartRule['obj']->id;
                             // Create a new instance of Cart Rule without id_lang, in order to update its quantity
-                            $cartRuleToUpdate = new CartRule((int) $cartRule['obj']->id);
+                            $cartRuleToUpdate = new CartRule((int)$cartRule['obj']->id);
                             $cartRuleToUpdate->quantity = max(0, $cartRuleToUpdate->quantity - 1);
                             $cartRuleToUpdate->update();
                         }
-                        $cartRulesList[] = array(
-                            'voucher_name'      => $cartRule['obj']->name,
-                            'voucher_reduction' => ($values['tax_incl'] != 0.00 ? '-' : '').Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
-                        );
+                        $cartRulesList[] = [
+                            'voucher_name' => $cartRule['obj']->name,
+                            'voucher_reduction' => ($values['tax_incl'] != 0.00 ? '-' : '') . Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
+                        ];
                     }
                     $cartRulesListTxt = '';
                     $cartRulesListHtml = '';
@@ -5103,18 +5214,18 @@ class Mollie extends PaymentModule
                     }
 
                     // Specify order id for message
-                    $oldMessage = Message::getMessageByCartId((int) $this->context->cart->id);
+                    $oldMessage = Message::getMessageByCartId((int)$this->context->cart->id);
                     if ($oldMessage && !$oldMessage['private']) {
-                        $updateMessage = new Message((int) $oldMessage['id_message']);
-                        $updateMessage->id_order = (int) $order->id;
+                        $updateMessage = new Message((int)$oldMessage['id_message']);
+                        $updateMessage->id_order = (int)$order->id;
                         $updateMessage->update();
                         // Add this message in the customer thread
                         $customerThread = new CustomerThread();
                         $customerThread->id_contact = 0;
-                        $customerThread->id_customer = (int) $order->id_customer;
-                        $customerThread->id_shop = (int) $this->context->shop->id;
-                        $customerThread->id_order = (int) $order->id;
-                        $customerThread->id_lang = (int) $this->context->language->id;
+                        $customerThread->id_customer = (int)$order->id_customer;
+                        $customerThread->id_shop = (int)$this->context->shop->id;
+                        $customerThread->id_order = (int)$order->id;
+                        $customerThread->id_lang = (int)$this->context->language->id;
                         $customerThread->email = $this->context->customer->email;
                         $customerThread->status = 'open';
                         $customerThread->token = Tools::passwdGen(12);
@@ -5129,23 +5240,23 @@ class Mollie extends PaymentModule
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Hook validateOrder is about to be called', 1, null, 'Cart', (int)$idCart, true);
                     }
                     // Hook validate order
-                    Hook::exec('actionValidateOrder', array(
-                        'cart'        => $this->context->cart,
-                        'order'       => $order,
-                        'customer'    => $this->context->customer,
-                        'currency'    => $this->context->currency,
+                    Hook::exec('actionValidateOrder', [
+                        'cart' => $this->context->cart,
+                        'order' => $order,
+                        'customer' => $this->context->customer,
+                        'currency' => $this->context->currency,
                         'orderStatus' => $orderState,
-                    ));
+                    ]);
                     foreach ($this->context->cart->getProducts() as $product) {
                         if ($orderState->logable) {
-                            ProductSale::addProductSale((int) $product['id_product'], (int) $product['cart_quantity']);
+                            ProductSale::addProductSale((int)$product['id_product'], (int)$product['cart_quantity']);
                         }
                     }
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                        PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int) $idCart, true);
+                        PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int)$idCart, true);
                     }
                     // Switch to back order if needed
                     if (Configuration::get('PS_STOCK_MANAGEMENT') &&
@@ -5155,7 +5266,7 @@ class Mollie extends PaymentModule
                         if ($this->isPaid($idOrderState)) {
                             $outOfStock = 'PS_OS_OUTOFSTOCK_PAID';
                         }
-                        $orderStatus = (int) Configuration::get($outOfStock);
+                        $orderStatus = (int)Configuration::get($outOfStock);
 
                         if (!$orderStatus) {
                             $this->setOrderStatus($order->id, (int)$idOrderState, true, $extraVars);
@@ -5170,103 +5281,103 @@ class Mollie extends PaymentModule
                     }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
-                    $order = new Order((int) $order->id);
+                    $order = new Order((int)$order->id);
                     // Send an e-mail to customer (one order = one email)
                     if ($idOrderState != Configuration::get('PS_OS_ERROR') && $idOrderState != Configuration::get('PS_OS_CANCELED') && $this->context->customer->id) {
-                        $invoice = new Address((int) $order->id_address_invoice);
-                        $delivery = new Address((int) $order->id_address_delivery);
-                        $deliveryState = $delivery->id_state ? new State((int) $delivery->id_state) : false;
-                        $invoiceState = $invoice->id_state ? new State((int) $invoice->id_state) : false;
-                        $data = array(
-                            '{firstname}'            => $this->context->customer->firstname,
-                            '{lastname}'             => $this->context->customer->lastname,
-                            '{email}'                => $this->context->customer->email,
-                            '{delivery_block_txt}'   => $this->_getFormatedAddress($delivery, "\n"),
-                            '{invoice_block_txt}'    => $this->_getFormatedAddress($invoice, "\n"),
-                            '{delivery_block_html}'  => $this->_getFormatedAddress($delivery, $this->display(__FILE__, 'views/templates/front/break.tpl'), array(
+                        $invoice = new Address((int)$order->id_address_invoice);
+                        $delivery = new Address((int)$order->id_address_delivery);
+                        $deliveryState = $delivery->id_state ? new State((int)$delivery->id_state) : false;
+                        $invoiceState = $invoice->id_state ? new State((int)$invoice->id_state) : false;
+                        $data = [
+                            '{firstname}' => $this->context->customer->firstname,
+                            '{lastname}' => $this->context->customer->lastname,
+                            '{email}' => $this->context->customer->email,
+                            '{delivery_block_txt}' => $this->_getFormatedAddress($delivery, "\n"),
+                            '{invoice_block_txt}' => $this->_getFormatedAddress($invoice, "\n"),
+                            '{delivery_block_html}' => $this->_getFormatedAddress($delivery, $this->display(__FILE__, 'views/templates/front/break.tpl'), [
                                 'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                                'lastname'  => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                            )),
-                            '{invoice_block_html}'   => $this->_getFormatedAddress($invoice, $this->display(__FILE__, 'views/templates/front/break.tpl'), array(
+                                'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                            ]),
+                            '{invoice_block_html}' => $this->_getFormatedAddress($invoice, $this->display(__FILE__, 'views/templates/front/break.tpl'), [
                                 'firstname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                                'lastname'  => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
-                            )),
-                            '{delivery_company}'     => $delivery->company,
-                            '{delivery_firstname}'   => $delivery->firstname,
-                            '{delivery_lastname}'    => $delivery->lastname,
-                            '{delivery_address1}'    => $delivery->address1,
-                            '{delivery_address2}'    => $delivery->address2,
-                            '{delivery_city}'        => $delivery->city,
+                                'lastname' => $this->display(__FILE__, 'views/templates/front/name_block.tpl'),
+                            ]),
+                            '{delivery_company}' => $delivery->company,
+                            '{delivery_firstname}' => $delivery->firstname,
+                            '{delivery_lastname}' => $delivery->lastname,
+                            '{delivery_address1}' => $delivery->address1,
+                            '{delivery_address2}' => $delivery->address2,
+                            '{delivery_city}' => $delivery->city,
                             '{delivery_postal_code}' => $delivery->postcode,
-                            '{delivery_country}'     => $delivery->country,
-                            '{delivery_state}'       => $delivery->id_state ? $deliveryState->name : '',
-                            '{delivery_phone}'       => ($delivery->phone) ? $delivery->phone : $delivery->phone_mobile,
-                            '{delivery_other}'       => $delivery->other,
-                            '{invoice_company}'      => $invoice->company,
-                            '{invoice_vat_number}'   => $invoice->vat_number,
-                            '{invoice_firstname}'    => $invoice->firstname,
-                            '{invoice_lastname}'     => $invoice->lastname,
-                            '{invoice_address2}'     => $invoice->address2,
-                            '{invoice_address1}'     => $invoice->address1,
-                            '{invoice_city}'         => $invoice->city,
-                            '{invoice_postal_code}'  => $invoice->postcode,
-                            '{invoice_country}'      => $invoice->country,
-                            '{invoice_state}'        => $invoice->id_state ? $invoiceState->name : '',
-                            '{invoice_phone}'        => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
-                            '{invoice_other}'        => $invoice->other,
-                            '{order_name}'           => $order->getUniqReference(),
-                            '{date}'                 => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-                            '{carrier}'              => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier') : $carrier->name,
-                            '{payment}'              => Tools::substr($order->payment, 0, 255),
-                            '{products}'             => $productListHtml,
-                            '{products_txt}'         => $productListTxt,
-                            '{discounts}'            => $cartRulesListHtml,
-                            '{discounts_txt}'        => $cartRulesListTxt,
-                            '{total_paid}'           => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-                            '{total_products}'       => Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
-                            '{total_discounts}'      => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
-                            '{total_shipping}'       => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
-                            '{total_wrapping}'       => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-                            '{total_tax_paid}'       => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
-                        );
+                            '{delivery_country}' => $delivery->country,
+                            '{delivery_state}' => $delivery->id_state ? $deliveryState->name : '',
+                            '{delivery_phone}' => ($delivery->phone) ? $delivery->phone : $delivery->phone_mobile,
+                            '{delivery_other}' => $delivery->other,
+                            '{invoice_company}' => $invoice->company,
+                            '{invoice_vat_number}' => $invoice->vat_number,
+                            '{invoice_firstname}' => $invoice->firstname,
+                            '{invoice_lastname}' => $invoice->lastname,
+                            '{invoice_address2}' => $invoice->address2,
+                            '{invoice_address1}' => $invoice->address1,
+                            '{invoice_city}' => $invoice->city,
+                            '{invoice_postal_code}' => $invoice->postcode,
+                            '{invoice_country}' => $invoice->country,
+                            '{invoice_state}' => $invoice->id_state ? $invoiceState->name : '',
+                            '{invoice_phone}' => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
+                            '{invoice_other}' => $invoice->other,
+                            '{order_name}' => $order->getUniqReference(),
+                            '{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
+                            '{carrier}' => ($virtualProduct || !isset($carrier->name)) ? $this->l('No carrier') : $carrier->name,
+                            '{payment}' => Tools::substr($order->payment, 0, 255),
+                            '{products}' => $productListHtml,
+                            '{products_txt}' => $productListTxt,
+                            '{discounts}' => $cartRulesListHtml,
+                            '{discounts_txt}' => $cartRulesListTxt,
+                            '{total_paid}' => Tools::displayPrice($order->total_paid, $this->context->currency, false),
+                            '{total_products}' => Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
+                            '{total_discounts}' => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
+                            '{total_shipping}' => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
+                            '{total_wrapping}' => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
+                            '{total_tax_paid}' => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
+                        ];
                         if (is_array($extraVars)) {
                             $data = array_merge($data, $extraVars);
                         }
                         // Join PDF invoice
-                        if ((int) Configuration::get('PS_INVOICE') && $orderState->invoice && $order->invoice_number) {
+                        if ((int)Configuration::get('PS_INVOICE') && $orderState->invoice && $order->invoice_number) {
                             $orderInvoiceList = $order->getInvoicesCollection();
-                            Hook::exec('actionPDFInvoiceRender', array('order_invoice_list' => $orderInvoiceList));
+                            Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $orderInvoiceList]);
                             $pdf = new PDF($orderInvoiceList, PDF::TEMPLATE_INVOICE, $this->context->smarty);
-                            $fileAttachment = array();
+                            $fileAttachment = [];
                             $fileAttachment['content'] = $pdf->render(false);
-                            $fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
+                            $fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
                             $fileAttachment['mime'] = 'application/pdf';
                         } else {
                             $fileAttachment = null;
                         }
                         if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                            PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int) $idCart, true);
+                            PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Mail is about to be sent', 1, null, 'Cart', (int)$idCart, true);
                         }
-                        $orderLanguage = new Language((int) $order->id_lang);
+                        $orderLanguage = new Language((int)$order->id_lang);
                         if (Validate::isEmail($this->context->customer->email)) {
                             Mail::Send(
-                                (int) $order->id_lang,
+                                (int)$order->id_lang,
                                 'order_conf',
                                 version_compare(_PS_VERSION_, '1.7.0.0', '<')
-                                    ? Mail::l('Order confirmation', (int) $order->id_lang)
+                                    ? Mail::l('Order confirmation', (int)$order->id_lang)
                                     : $this->trans(
                                     'Order confirmation',
-                                    array(),
+                                    [],
                                     'Emails.Subject',
                                     isset($orderLanguage->locale) ? $orderLanguage->locale : null
                                 ),
                                 $data,
                                 $this->context->customer->email,
-                                $this->context->customer->firstname.' '.$this->context->customer->lastname,
+                                $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
                                 null,
                                 null,
                                 $fileAttachment,
-                                null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+                                null, _PS_MAIL_DIR_, false, (int)$order->id_shop
                             );
                         }
                     }
@@ -5289,31 +5400,31 @@ class Mollie extends PaymentModule
                     if (class_exists('StockManager') && method_exists('StockManager', 'updatePhysicalProductQuantity')) {
                         $stockManager = new StockManager();
                         $stockManager->updatePhysicalProductQuantity(
-                            (int) $order->id_shop,
-                            (int) Configuration::get('PS_OS_ERROR'),
-                            (int) Configuration::get('PS_OS_CANCELED'),
+                            (int)$order->id_shop,
+                            (int)Configuration::get('PS_OS_ERROR'),
+                            (int)Configuration::get('PS_OS_CANCELED'),
                             null,
-                            (int) $order->id
+                            (int)$order->id
                         );
                     }
                 } else {
                     $error = $this->l('Order creation failed');
-                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int) $order->id_cart);
+                    PrestaShopLogger::addLog($error, 4, '0000002', 'Cart', (int)$order->id_cart);
                     die($error);
                 }
             } // End foreach $order_detail_list
             // Use the last order as currentOrder
             if (isset($order) && $order->id) {
-                $this->currentOrder = (int) $order->id;
+                $this->currentOrder = (int)$order->id;
             }
             if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
-                PrestaShopLogger::addLog(__CLASS__.'::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int) $idCart, true);
+                PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - End of validateOrder', 1, null, 'Cart', (int)$idCart, true);
             }
 
             return true;
         } else {
             $error = $this->l('Cart cannot be loaded or an order has already been placed using this cart');
-            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int) $this->context->cart->id);
+            PrestaShopLogger::addLog($error, 4, '0000001', 'Cart', (int)$this->context->cart->id);
             die($error);
         }
     }
@@ -5324,8 +5435,9 @@ class Mollie extends PaymentModule
      * @param $statusId
      * @return bool
      */
-    private function isPaid($statusId) {
-        $status = array_search($statusId, $this->statuses,false);
+    private function isPaid($statusId)
+    {
+        $status = array_search($statusId, $this->statuses, false);
         if ($status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
             || $status === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
             return true;
@@ -5340,7 +5452,8 @@ class Mollie extends PaymentModule
      * @param $idCart
      * @return bool
      */
-    private function isCartWithTaxes($idCart) {
+    private function isCartWithTaxes($idCart)
+    {
         $cart = new Cart($idCart);
         $customer = new Customer($cart->id_customer);
         $group_price_display_method = Group::getPriceDisplayMethod($customer->id_default_group);
@@ -5411,7 +5524,7 @@ class Mollie extends PaymentModule
      */
     protected function checkRoundingMode()
     {
-        return (int) Configuration::get('PS_PRICE_ROUND_MODE') !== 2;
+        return (int)Configuration::get('PS_PRICE_ROUND_MODE') !== 2;
     }
 
     /**
@@ -5427,7 +5540,7 @@ class Mollie extends PaymentModule
      */
     protected function findOverrides()
     {
-        $overrides = array();
+        $overrides = [];
 
         $overriddenClasses = array_keys($this->findOverriddenClasses());
 
@@ -5442,23 +5555,23 @@ class Mollie extends PaymentModule
             }
             $overrideFile = file($reflectionClass->getFileName());
             if (is_array($overrideFile)) {
-                $overrideFile = array_diff($overrideFile, array("\n"));
+                $overrideFile = array_diff($overrideFile, ["\n"]);
             } else {
-                $overrideFile = array();
+                $overrideFile = [];
             }
             foreach ($reflectionMethods as $reflectionMethod) {
                 /** @var ReflectionMethod $reflectionMethod */
-                $idOverride = Tools::substr(sha1($reflectionMethod->class.'::'.$reflectionMethod->name), 0, 10);
-                $overriddenMethod = array(
+                $idOverride = Tools::substr(sha1($reflectionMethod->class . '::' . $reflectionMethod->name), 0, 10);
+                $overriddenMethod = [
                     'id_override' => $idOverride,
-                    'override'    => $reflectionMethod->class.'::'.$reflectionMethod->name,
+                    'override' => $reflectionMethod->class . '::' . $reflectionMethod->name,
                     'module_code' => $this->l('Unknown'),
                     'module_name' => $this->l('Unknown'),
-                    'date'        => $this->l('Unknown'),
-                    'version'     => $this->l('Unknown'),
-                    'deleted'     => (Tools::isSubmit('deletemodule') && Tools::getValue( 'id_override') === $idOverride)
+                    'date' => $this->l('Unknown'),
+                    'version' => $this->l('Unknown'),
+                    'deleted' => (Tools::isSubmit('deletemodule') && Tools::getValue('id_override') === $idOverride)
                         || (Tools::isSubmit('overrideBox') && in_array($idOverride, Tools::getValue('overrideBox'))),
-                );
+                ];
                 if (isset($overrideFile[$reflectionMethod->getStartLine() - 5])
                     && preg_match('/module: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 5], $module)
                     && preg_match('/date: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 4], $date)
@@ -5501,32 +5614,32 @@ class Mollie extends PaymentModule
      */
     protected function getClassesFromDir($path)
     {
-        $classes = array();
+        $classes = [];
         $rootDir = $this->normalizeDirectory(_PS_ROOT_DIR_);
 
-        foreach (scandir($rootDir.$path) as $file) {
+        foreach (scandir($rootDir . $path) as $file) {
             if ($file[0] != '.') {
-                if (is_dir($rootDir.$path.$file)) {
-                    $classes = array_merge($classes, $this->getClassesFromDir($path.$file.'/'));
+                if (is_dir($rootDir . $path . $file)) {
+                    $classes = array_merge($classes, $this->getClassesFromDir($path . $file . '/'));
                 } elseif (Tools::substr($file, -4) == '.php') {
-                    $content = Tools::file_get_contents($rootDir.$path.$file);
+                    $content = Tools::file_get_contents($rootDir . $path . $file);
 
                     $namespacePattern = '[\\a-z0-9_]*[\\]';
-                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P' . $this->display(__FILE__, 'views/templates/front/classname.tpl') . basename($file, '.php').'(?:Core)?)'.'(?:\s+extends\s+'.$namespacePattern.'[a-z][a-z0-9_]*)?(?:\s+implements\s+'.$namespacePattern.'[a-z][\\a-z0-9_]*(?:\s*,\s*'.$namespacePattern.'[a-z][\\a-z0-9_]*)*)?\s*\{#i';
+                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P' . $this->display(__FILE__, 'views/templates/front/classname.tpl') . basename($file, '.php') . '(?:Core)?)' . '(?:\s+extends\s+' . $namespacePattern . '[a-z][a-z0-9_]*)?(?:\s+implements\s+' . $namespacePattern . '[a-z][\\a-z0-9_]*(?:\s*,\s*' . $namespacePattern . '[a-z][\\a-z0-9_]*)*)?\s*\{#i';
 
                     if (preg_match($pattern, $content, $m)) {
-                        $classes[$m['classname']] = array(
-                            'path'     => $path.$file,
-                            'type'     => trim($m[1]),
+                        $classes[$m['classname']] = [
+                            'path' => $path . $file,
+                            'type' => trim($m[1]),
                             'override' => true,
-                        );
+                        ];
 
                         if (Tools::substr($m['classname'], -4) == 'Core') {
-                            $classes[Tools::substr($m['classname'], 0, -4)] = array(
-                                'path'     => '',
-                                'type'     => $classes[$m['classname']]['type'],
+                            $classes[Tools::substr($m['classname'], 0, -4)] = [
+                                'path' => '',
+                                'type' => $classes[$m['classname']]['type'],
                                 'override' => true,
-                            );
+                            ];
                         }
                     }
                 }
@@ -5547,7 +5660,7 @@ class Mollie extends PaymentModule
      */
     protected function normalizeDirectory($directory)
     {
-        return rtrim($directory, '/\\').DIRECTORY_SEPARATOR;
+        return rtrim($directory, '/\\') . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -5563,10 +5676,10 @@ class Mollie extends PaymentModule
     {
         /** @var static $mollie */
         $mollie = Module::getInstanceByName('mollie');
-        if (!in_array(static::$selectedApi, array(static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API))) {
+        if (!in_array(static::$selectedApi, [static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API])) {
             static::$selectedApi = Configuration::get(static::MOLLIE_API);
             if (!static::$selectedApi
-                || !in_array(static::$selectedApi, array(static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API))
+                || !in_array(static::$selectedApi, [static::MOLLIE_ORDERS_API, static::MOLLIE_PAYMENTS_API])
                 || $mollie->checkRoundingMode()
             ) {
                 static::$selectedApi = static::MOLLIE_PAYMENTS_API;
@@ -5578,7 +5691,7 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $transactionId
-     * @param bool   $process Process the new payment/order status
+     * @param bool $process Process the new payment/order status
      *
      * @return array|null
      *
@@ -5607,21 +5720,21 @@ class Mollie extends PaymentModule
         if ($payment && method_exists($payment, 'refunds')) {
             $refunds = $payment->refunds();
             if (empty($refunds)) {
-                $refunds = array();
+                $refunds = [];
             }
             $refunds = array_map(function ($refund) {
                 return array_intersect_key(
-                    (array) $refund,
-                    array_flip(array(
+                    (array)$refund,
+                    array_flip([
                         'resource',
                         'id',
                         'amount',
                         'createdAt',
-                    )));
-            }, (array) $refunds);
+                    ]));
+            }, (array)$refunds);
             $payment = array_intersect_key(
-                (array) $payment,
-                array_flip(array(
+                (array)$payment,
+                array_flip([
                     'resource',
                     'id',
                     'mode',
@@ -5639,9 +5752,9 @@ class Mollie extends PaymentModule
                     'failedAt',
                     'metadata',
                     'isCancelable',
-                ))
+                ])
             );
-            $payment['refunds'] = (array) $refunds;
+            $payment['refunds'] = (array)$refunds;
         } else {
             $payment = null;
         }
@@ -5651,7 +5764,7 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $transactionId
-     * @param bool   $process       Process the new payment/order status
+     * @param bool $process Process the new payment/order status
      *
      * @return array|null
      *
@@ -5669,26 +5782,26 @@ class Mollie extends PaymentModule
     public function getFilteredApiOrder($transactionId, $process = false)
     {
         /** @var \Mollie\Api\Resources\Order $order */
-        $order = $this->api->orders->get($transactionId, array('embed' => 'payments'));
+        $order = $this->api->orders->get($transactionId, ['embed' => 'payments']);
 
         if ($order && method_exists($order, 'refunds')) {
             $refunds = $order->refunds();
             if (empty($refunds)) {
-                $refunds = array();
+                $refunds = [];
             }
             $refunds = array_map(function ($refund) {
                 return array_intersect_key(
-                    (array) $refund,
-                    array_flip(array(
+                    (array)$refund,
+                    array_flip([
                         'resource',
                         'id',
                         'amount',
                         'createdAt',
-                    )));
-            }, (array) $refunds);
+                    ]));
+            }, (array)$refunds);
             $order = array_intersect_key(
-                (array) $order,
-                array_flip(array(
+                (array)$order,
+                array_flip([
                     'resource',
                     'id',
                     'mode',
@@ -5701,9 +5814,9 @@ class Mollie extends PaymentModule
                     'isCancelable',
                     'createdAt',
                     'lines',
-                ))
+                ])
             );
-            $order['refunds'] = (array) $refunds;
+            $order['refunds'] = (array)$refunds;
         } else {
             $order = null;
         }
@@ -5723,25 +5836,25 @@ class Mollie extends PaymentModule
         try {
             $methodsForConfig = $this->getMethodsForConfig();
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return array(
+            return [
                 'success' => false,
                 'methods' => null,
                 'message' => $e->getMessage(),
-            );
+            ];
         } catch (PrestaShopException $e) {
-            return array(
+            return [
                 'success' => false,
                 'methods' => null,
                 'message' => $e->getMessage(),
-            );
+            ];
         }
         Configuration::updateValue(static::MOLLIE_METHODS_LAST_CHECK, time());
         if (!is_array($methodsForConfig)) {
-            return array(
+            return [
                 'success' => false,
                 'methods' => null,
                 'message' => $this->l('No payment methods found'),
-            );
+            ];
         }
 
         $dbMethods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
@@ -5754,7 +5867,7 @@ class Mollie extends PaymentModule
                 foreach ($methodsForConfig as $methodForConfig) {
                     if ($dbMethod['id'] === $methodForConfig['id']) {
                         $found = true;
-                        foreach (array('issuers', 'image', 'name', 'available') as $prop) {
+                        foreach (['issuers', 'image', 'name', 'available'] as $prop) {
                             if (isset($methodForConfig[$prop])) {
                                 $dbMethod[$prop] = $methodForConfig[$prop];
                                 $shouldSave = true;
@@ -5770,13 +5883,13 @@ class Mollie extends PaymentModule
             }
         } else {
             $shouldSave = true;
-            $dbMethods = array();
+            $dbMethods = [];
             foreach ($methodsForConfig as $index => $method) {
                 $dbMethods[] = array_merge(
                     $method,
-                    array(
+                    [
                         'position' => $index,
-                    )
+                    ]
                 );
             }
         }
@@ -5785,11 +5898,11 @@ class Mollie extends PaymentModule
             Configuration::updateValue(static::METHODS_CONFIG, json_encode($dbMethods));
         }
 
-        return array(
+        return [
             'success' => true,
             'methods' => $methodsForConfig,
             'countries' => $this->getActiveCountriesList(),
-        );
+        ];
     }
 
     /**
@@ -5802,7 +5915,7 @@ class Mollie extends PaymentModule
     {
         header('Content-Type: application/json;charset=UTF-8');
 
-        return array('success' => true, 'carriers' => static::carrierConfig());
+        return ['success' => true, 'carriers' => static::carrierConfig()];
     }
 
     /**
@@ -5830,10 +5943,10 @@ class Mollie extends PaymentModule
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => $this->l('You do not have permission to refund payments'),
-                            );
+                            ];
                         }
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
@@ -5842,86 +5955,86 @@ class Mollie extends PaymentModule
                             $status = $this->doPaymentRefund($mollieData['transaction_id'], $input['amount']);
                         }
 
-                        return array(
+                        return [
                             'success' => isset($status['status']) && $status['status'] === 'success',
                             'payment' => static::getFilteredApiPayment($input['transactionId'], false),
-                        );
+                        ];
                     case 'retrieve':
                         // Check order view permissions
                         if (!$access || empty($access['view'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('view')),
-                            );
+                            ];
                         }
-                        return array(
+                        return [
                             'success' => true,
                             'payment' => static::getFilteredApiPayment($input['transactionId'], false)
-                        );
+                        ];
                     default:
-                        return array('success' => false);
+                        return ['success' => false];
                 }
             } elseif ($input['resource'] === 'orders') {
                 switch ($input['action']) {
                     case 'retrieve':
                         // Check order edit permissions
                         if (!$access || empty($access['view'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('edit')),
-                            );
+                            ];
                         }
                         $info = static::getPaymentBy('transaction_id', $input['transactionId']);
                         if (!$info) {
-                            return array('success' => false);
+                            return ['success' => false];
                         }
                         $tracking = static::getShipmentInformation($info['order_id']);
 
-                        return array(
-                            'success'  => true,
-                            'order'    => static::getFilteredApiOrder($input['transactionId'], false),
+                        return [
+                            'success' => true,
+                            'order' => static::getFilteredApiOrder($input['transactionId'], false),
                             'tracking' => $tracking,
-                        );
+                        ];
                     case 'ship':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('ship')),
-                            );
+                            ];
                         }
-                        $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array(), isset($input['tracking']) ? $input['tracking'] : null);
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
+                        $status = $this->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
+                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())]);
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('refund')),
-                            );
+                            ];
                         }
-                        $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], false)));
+                        $status = $this->doRefundOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : []);
+                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], false)]);
                     case 'cancel':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
-                            return array(
+                            return [
                                 'success' => false,
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('cancel')),
-                            );
+                            ];
                         }
-                        $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : array());
-                        return array_merge($status, array('order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())));
+                        $status = $this->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : []);
+                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())]);
                     default:
-                        return array('success' => false);
+                        return ['success' => false];
                 }
             }
         } catch (Exception $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-            return array('success' => false);
+            return ['success' => false];
         }
 
-        return array('success' => false);
+        return ['success' => false];
     }
 
     /**
@@ -5939,9 +6052,9 @@ class Mollie extends PaymentModule
         $sql = new DbQuery();
         $sql->select('`version`');
         $sql->from('module');
-        $sql->where('`name` = \''.pSQL($module).'\'');
+        $sql->where('`name` = \'' . pSQL($module) . '\'');
 
-        return (string) Db::getInstance()->getValue($sql);
+        return (string)Db::getInstance()->getValue($sql);
     }
 
     /**
@@ -5957,11 +6070,11 @@ class Mollie extends PaymentModule
             if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
                 SELECT COUNT(*)
                 FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
-                AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
+                WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
+                AND TABLE_NAME = \'' . _DB_PREFIX_ . 'mollie_payments\'
                 AND COLUMN_NAME = \'order_reference\'')
             ) {
-                return Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+                return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD `order_reference` varchar(191)');
             }
         } catch (PrestaShopException $e) {
             return false;
@@ -5980,8 +6093,8 @@ class Mollie extends PaymentModule
      */
     protected function aasort(&$array, $key)
     {
-        $sorter = array();
-        $ret = array();
+        $sorter = [];
+        $ret = [];
         reset($array);
         foreach ($array as $ii => $va) {
             $sorter[$ii] = $va[$key];
@@ -5996,10 +6109,10 @@ class Mollie extends PaymentModule
     /**
      * Check the order status hook
      *
-     * @since 3.3.0
-     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @since 3.3.0
+     *
      */
     protected function checkOrderStatusHook()
     {
@@ -6009,10 +6122,10 @@ class Mollie extends PaymentModule
         }
         $modules = Hook::getModulesFromHook($idHook);
         if (!is_array($modules)) {
-            $modules = array();
+            $modules = [];
         }
         $modules = array_map('intval', array_keys($modules));
-        if (!in_array((int) $this->id, $modules)) {
+        if (!in_array((int)$this->id, $modules)) {
             $shouldHook = true;
         }
 
@@ -6032,7 +6145,7 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    public function hookActionOrderStatusUpdate($params = array())
+    public function hookActionOrderStatusUpdate($params = [])
     {
         if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
             return;
@@ -6053,12 +6166,12 @@ class Mollie extends PaymentModule
         }
 
         $idOrder = $params['id_order'];
-        $checkStatuses = array();
+        $checkStatuses = [];
         if (Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES)) {
             $checkStatuses = @json_decode(Configuration::get(static::MOLLIE_AUTO_SHIP_STATUSES));
         }
         if (!is_array($checkStatuses)) {
-            $checkStatuses = array();
+            $checkStatuses = [];
         }
         $shipmentInfo = static::getShipmentInformation($idOrder);
 
@@ -6069,7 +6182,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $dbPayment = static::getPaymentBy('order_id', (int) $idOrder);
+            $dbPayment = static::getPaymentBy('order_id', (int)$idOrder);
         } catch (PrestaShopDatabaseException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
@@ -6116,9 +6229,9 @@ class Mollie extends PaymentModule
      *
      * @return array|null
      *
-     * @since 3.3.0
      * @throws PrestaShopException
      * @throws Adapter_Exception
+     * @since 3.3.0
      */
     public static function getShipmentInformation($idOrder)
     {
@@ -6133,22 +6246,22 @@ class Mollie extends PaymentModule
             || !Validate::isLoadedObject($deliveryAddress)
             || !$carrierConfig
         ) {
-            return array();
+            return [];
         }
 
         if ($carrierConfig['source'] === static::MOLLIE_CARRIER_NO_TRACKING_INFO) {
-            return array();
+            return [];
         }
 
         if ($carrierConfig['source'] === static::MOLLIE_CARRIER_MODULE) {
             $carrier = new Carrier($order->id_carrier);
-            if (in_array($carrier->external_module_name, array('postnl', 'myparcel'))) {
+            if (in_array($carrier->external_module_name, ['postnl', 'myparcel'])) {
                 if (version_compare(static::getDatabaseVersion($carrier->external_module_name), '2.1.0', '>=')) {
                     $table = $carrier->external_module_name === 'postnl' ? 'postnlmod_order' : 'myparcel_order';
                     $sql = new DbQuery();
                     $sql->select('`tracktrace`, `postcode`');
                     $sql->from(bqSQL($table));
-                    $sql->where('`id_order` = \''.pSQL($idOrder).'\'');
+                    $sql->where('`id_order` = \'' . pSQL($idOrder) . '\'');
 
                     try {
                         $info = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
@@ -6158,20 +6271,20 @@ class Mollie extends PaymentModule
                             $countryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
                             $tracktrace = $info['tracktrace'];
 
-                            return array(
-                                'tracking' => array(
+                            return [
+                                'tracking' => [
                                     'carrier' => 'PostNL',
-                                    'code'    => $info['tracktrace'],
-                                    'url'     => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
-                                ),
-                            );
+                                    'code' => $info['tracktrace'],
+                                    'url' => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
+                                ],
+                            ];
                         }
                     } catch (PrestaShopDatabaseException $e) {
-                        return array();
+                        return [];
                     }
                 }
             }
-            return array();
+            return [];
         }
 
         if ($carrierConfig['source'] === static::MOLLIE_CARRIER_CARRIER) {
@@ -6183,16 +6296,16 @@ class Mollie extends PaymentModule
             }
 
             if (!$shippingNumber || !$carrier->name) {
-                return array();
+                return [];
             }
 
-            return array(
-                'tracking' => array(
+            return [
+                'tracking' => [
                     'carrier' => $carrier->name,
-                    'code'    => $shippingNumber,
-                    'url'     => str_replace('@', $shippingNumber, $carrier->url),
-                ),
-            );
+                    'code' => $shippingNumber,
+                    'url' => str_replace('@', $shippingNumber, $carrier->url),
+                ],
+            ];
         }
 
         if ($carrierConfig['source'] === static::MOLLIE_CARRIER_CUSTOM) {
@@ -6214,30 +6327,30 @@ class Mollie extends PaymentModule
 
             $langIso = Tools::strtoupper(Language::getIsoById($order->id_lang));
 
-            $info = array(
-                '@'                        => $shippingNumber,
-                '%%shipping_number%%'      => $shippingNumber,
-                '%%invoice.country_iso%%'  => $invoiceCountryIso,
-                '%%invoice.postcode%%'     => $invoicePostcode,
+            $info = [
+                '@' => $shippingNumber,
+                '%%shipping_number%%' => $shippingNumber,
+                '%%invoice.country_iso%%' => $invoiceCountryIso,
+                '%%invoice.postcode%%' => $invoicePostcode,
                 '%%delivery.country_iso%%' => $deliveryCountryIso,
-                '%%delivery.postcode%%'    => $deliveryPostcode,
-                '%%lang_iso%%'             => $langIso,
-            );
+                '%%delivery.postcode%%' => $deliveryPostcode,
+                '%%lang_iso%%' => $langIso,
+            ];
 
-            return array(
-                'tracking' => array(
+            return [
+                'tracking' => [
                     'carrier' => $carrier->name,
-                    'code'    => $shippingNumber,
-                    'url'     => str_ireplace(
+                    'code' => $shippingNumber,
+                    'url' => str_ireplace(
                         array_keys($info),
                         array_values($info),
                         $carrierConfig['custom_url']
                     ),
-                ),
-            );
+                ],
+            ];
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -6281,7 +6394,7 @@ class Mollie extends PaymentModule
     public function setDefaultCarrierStatuses()
     {
         $sql = new DbQuery();
-        $sql->select('`'.bqSQL(OrderState::$definition['primary']).'`');
+        $sql->select('`' . bqSQL(OrderState::$definition['primary']) . '`');
         $sql->from(bqSQL(OrderState::$definition['table']));
         $sql->where('`shipped` = 1');
 
@@ -6306,15 +6419,15 @@ class Mollie extends PaymentModule
     {
         static $manifest = null;
         if (!$manifest) {
-            $manifest = array();
-            foreach (include(_PS_MODULE_DIR_.'mollie/views/js/dist/manifest.php') as $chunk) {
+            $manifest = [];
+            foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
                 $manifest[$chunk['name']] = array_map(function ($chunk) {
                     return Mollie::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
                 }, $chunk['files']);
             }
         }
 
-        return isset($manifest[$entry]) ? $manifest[$entry] : array();
+        return isset($manifest[$entry]) ? $manifest[$entry] : [];
     }
 
     /**
@@ -6351,9 +6464,9 @@ class Mollie extends PaymentModule
      */
     protected function getStatusesValue($key)
     {
-        $statesEnabled = array();
+        $statesEnabled = [];
         foreach (OrderState::getOrderStates($this->context->language->id) as $state) {
-            if (Tools::isSubmit($key.'_'.$state['id_order_state'])) {
+            if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
                 $statesEnabled[] = $state['id_order_state'];
             }
         }
@@ -6378,7 +6491,7 @@ class Mollie extends PaymentModule
     /**
      * Get page location
      *
-     * @param string   $class
+     * @param string $class
      * @param int|null $idLang
      *
      * @return string
@@ -6413,7 +6526,7 @@ class Mollie extends PaymentModule
      */
     public static function getTabTreeByClass($class)
     {
-        $tabs = array();
+        $tabs = [];
         $depth = 10;
         $tab = Tab::getInstanceFromClassName($class);
         while (Validate::isLoadedObject($tab) && $depth > 0) {
@@ -6428,7 +6541,7 @@ class Mollie extends PaymentModule
     /**
      * Get tab name by tab class
      *
-     * @param string   $class
+     * @param string $class
      * @param int|null $idLang
      *
      * @return string
@@ -6469,7 +6582,7 @@ class Mollie extends PaymentModule
         $hostParts = explode('.', $host);
         $tld = end($hostParts);
 
-        return in_array($tld, array('localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'))
+        return in_array($tld, ['localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'])
             || (filter_var($host, FILTER_VALIDATE_IP)
                 && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
     }
@@ -6478,16 +6591,16 @@ class Mollie extends PaymentModule
     {
         $langId = $this->context->language->id;
         $countries = Country::getCountries($langId, $onlyActive);
-        $countriesWithNames = array();
-        $countriesWithNames[] = array(
+        $countriesWithNames = [];
+        $countriesWithNames[] = [
             'id' => 0,
             'name' => $this->l('All')
-        );
+        ];
         foreach ($countries as $key => $country) {
-            $countriesWithNames[] = array(
+            $countriesWithNames[] = [
                 'id' => $key,
                 'name' => $country['name'],
-            );
+            ];
         }
 
         return $countriesWithNames;
@@ -6495,7 +6608,7 @@ class Mollie extends PaymentModule
 
     public function isVersion17()
     {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
+        return (bool)version_compare(_PS_VERSION_, '1.7', '>=');
     }
 
     public static function isTestMode()
@@ -6510,11 +6623,11 @@ class Mollie extends PaymentModule
 
     public function hookDisplayCheckoutSubtotalDetails($param)
     {
-      return 10;
+        return 10;
     }
 
     public function hookDisplayBeforeCarrier($param)
     {
-      return 10;
+        return 10;
     }
 }

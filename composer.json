@@ -15,7 +15,8 @@
   "autoload": {
     "classmap": [
       "vendor/",
-      "controllers/"
+      "controllers/",
+      "src/Entity"
     ]
   },
   "config": {

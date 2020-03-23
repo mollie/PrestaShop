@@ -42,16 +42,21 @@
             <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
         {/if}
     {elseif $input.type === 'mollie-methods'}
+
         {foreach $input.paymentMethods as $paymentMethod}
+            {assign var = 'methodObj' value=$input.paymentMethodsObject.{$paymentMethod.id}}
             <div data-tab-id="general_settings" class="payment-method border border-bottom">
-                    <a class="text collapsed" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
-                       role="button"
-                       aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id}">
-                        <svg class="bi bi-chevron-compact-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M7.776 5.553a.5.5 0 01.448 0l6 3a.5.5 0 11-.448.894L8 6.56 2.224 9.447a.5.5 0 11-.448-.894l6-3z" clip-rule="evenodd"/>
-                        </svg>
-                        {l s=$paymentMethod.name mod='mollie'}
-                    </a>
+                <a class="text collapsed" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
+                   role="button"
+                   aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id}">
+                    <svg class="bi bi-chevron-compact-up" width="1em" height="1em" viewBox="0 0 16 16"
+                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M7.776 5.553a.5.5 0 01.448 0l6 3a.5.5 0 11-.448.894L8 6.56 2.224 9.447a.5.5 0 11-.448-.894l6-3z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    {l s=$paymentMethod.name mod='mollie'}
+                </a>
                 <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id}">
                     <div class="form-group">
                         <label class="control-label col-lg-3">
@@ -59,8 +64,8 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id}" class="fixed-width-xl">
-                                <option value="0">{l s='No' mod='mollie'}</option>
-                                <option value="1">{l s='Yes' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->enabled === '0'} selected {/if}>{l s='No' mod='mollie'}</option>
+                                <option value="1" {if $methodObj->enabled === '1'} selected {/if}>{l s='Yes' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -78,8 +83,8 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
-                                <option value="payments">{l s='Payments API' mod='mollie'}</option>
-                                <option value="orders">{l s='Orders API' mod='mollie'}</option>
+                                <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
+                                <option value="orders" {if $methodObj->method === 'payments'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -119,19 +124,20 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Minimum fee' mod='mollie'}
+                            {l s='Minimum order value' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
-                            <input type="text" name="MOLLIE_METHOD_MINIMUM_FEE_{$paymentMethod.id}"
+                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"
                                    class="fixed-width-xl">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Maximum fee' mod='mollie'}
+                            {l s='Maximum order value' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
-                            <input type="text" name="MOLLIE_METHOD_MAX_FEE_{$paymentMethod.id}" class="fixed-width-xl">
+                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"
+                                   class="fixed-width-xl">
                         </div>
                     </div>
                     <div class="form-group">
@@ -141,7 +147,7 @@
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
                                     class="fixed-width-xl">
-                                <option value="0">{l s='Fixed Fee and Percentage' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>{l s='Fixed Fee and Percentage' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -177,9 +183,9 @@
                             {l s='Payment Surcharge Tax Class' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
-                            <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
+                            <select name="MOLLIE_METHOD_SURCHARGE_TAX_CLASS_{$paymentMethod.id}"
                                     class="fixed-width-xl">
-                                <option value="0">{l s='None' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->surcharge_tax_class === '0'} selected {/if}>{l s='None' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -336,6 +342,8 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
 
 
 
