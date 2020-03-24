@@ -33,6 +33,11 @@ class MolPaymentMethod extends ObjectModel
     public $description;
 
     /**
+     * @var bool
+     */
+    public $is_countries_applicable;
+
+    /**
      * @var string
      */
     public $minimal_order_value;
@@ -80,13 +85,13 @@ class MolPaymentMethod extends ObjectModel
             'title' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'method' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'description' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
+            'is_countries_applicable' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
             'minimal_order_value' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'max_order_value' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
             'surcharge_fixed_amount' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_percentage' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_limit' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
-            'surcharge_tax_class' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
         ),
     );
 }

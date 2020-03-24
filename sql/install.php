@@ -53,13 +53,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
 				`title`      VARCHAR(64),
 				`method` VARCHAR(64),
 				`description` VARCHAR(255),
+				`is_countries_applicable` TINYINT(1),
 				`minimal_order_value` decimal(20,6),
 				`max_order_value` decimal(20,6),
 				`surcharge` INT(1),
 				`surcharge_fixed_amount` decimal(20,6),
 				`surcharge_percentage` decimal(20,6),
-				`surcharge_limit` decimal(20,6),
-				`surcharge_tax_class` int(1)
+				`surcharge_limit` decimal(20,6)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 foreach ($sql as $query) {

@@ -42,9 +42,8 @@
             <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
         {/if}
     {elseif $input.type === 'mollie-methods'}
-
         {foreach $input.paymentMethods as $paymentMethod}
-            {assign var = 'methodObj' value=$input.paymentMethodsObject.{$paymentMethod.id}}
+            {assign var = 'methodObj' value=$paymentMethod.obj}
             <div data-tab-id="general_settings" class="payment-method border border-bottom">
                 <a class="text collapsed" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
                    role="button"
@@ -74,7 +73,8 @@
                             {l s='Title' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
-                            <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id}" class="fixed-width-xl">
+                            <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id}" class="fixed-width-xl"
+                                   value="{$methodObj->title}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -84,7 +84,7 @@
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
                                 <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
-                                <option value="orders" {if $methodObj->method === 'payments'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
+                                <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
+                                   class="fixed-width-xl" value="{$methodObj->description}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -104,8 +104,8 @@
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id}"
                                     class="fixed-width-xl">
-                                <option value="0">{l s='Selected countries' mod='mollie'}</option>
-                                <option value="1">{l s='All Allowed Countries' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->method === '0'} selected {/if}>{l s='Selected countries' mod='mollie'}</option>
+                                <option value="1" {if $methodObj->method === '1'} selected {/if}>{l s='All Allowed Countries' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -117,7 +117,8 @@
                             <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
                                     class="fixed-width-xl chosen" multiple="multiple">
                                 {foreach $input.countries as $country}
-                                    <option value="{$country.id}">{$country.name}</option>
+                                    <option value="{$country.id}"
+                                            {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
                                 {/foreach}
                             </select>
                         </div>
@@ -128,7 +129,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
+                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -137,7 +138,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
+                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -147,7 +148,9 @@
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
                                     class="fixed-width-xl">
-                                <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>{l s='Fixed Fee and Percentage' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>
+                                    {l s='Fixed Fee and Percentage' mod='mollie'}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -157,7 +160,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
+                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_fixed_amount}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -166,7 +169,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
+                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_percentage}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -175,18 +178,7 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id}"
-                                   class="fixed-width-xl">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-lg-3">
-                            {l s='Payment Surcharge Tax Class' mod='mollie'}
-                        </label>
-                        <div class="col-lg-9">
-                            <select name="MOLLIE_METHOD_SURCHARGE_TAX_CLASS_{$paymentMethod.id}"
-                                    class="fixed-width-xl">
-                                <option value="0" {if $methodObj->surcharge_tax_class === '0'} selected {/if}>{l s='None' mod='mollie'}</option>
-                            </select>
+                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit}">
                         </div>
                     </div>
                 </div>
@@ -215,11 +207,6 @@
             }());
             (function () {
                 function initMollieCarriers() {
-                    var source = document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}');
-                    if (source == null) {
-                        return setTimeout(initMollieCarriers, 100);
-                    }
-
                     function initMollieCarrierConfig() {
                         if (typeof window.MollieModule === 'undefined'
                             || typeof window.MollieModule.app === 'undefined'
@@ -260,37 +247,22 @@
                         });
                     }
 
-                    function checkInput(e) {
+                    function checkInput() {
+                        debugger;
                         var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-                        if (e && e.target && e.target.value && e.target.value === '{$input.depends_value|escape:'javascript':'UTF-8'}') {
-                            var input = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}');
-                            if (input == null) {
-                                var newInput = document.createElement('DIV');
-                                newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
-                                container.closest('.form-group').style.display = 'block';
-                                container.appendChild(newInput);
-                                initMollieCarrierConfig();
-                            }
-                        } else {
-                            if (window.MollieModule && typeof window.MollieModule.unmountComponentAtNode === 'function') {
-                                window.MollieModule.unmountComponentAtNode(container);
-                                window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-                            }
-                            {*              {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}*}
-                            {*              container.closest('.form-group').style.display = 'none';*}
-                            {*              {else}*}
-                            {*              container.closest('.form-group').style.display = 'none';*}
-                            {*              {/if}*}
+                        var input = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}');
+                        if (input == null) {
+                            var newInput = document.createElement('DIV');
+                            newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
+                            container.closest('.form-group').style.display = 'block';
+                            container.appendChild(newInput);
+                            initMollieCarrierConfig();
                         }
                     }
-
-                    source.addEventListener('change', checkInput);
-                    checkInput({
-                        target: {
-                            value: document.getElementById('{$input.depends|escape:'javascript':'UTF-8'}').value
-                        }
-                    });
+                    debugger;
+                    checkInput();
                 }
+                debugger;
 
                 initMollieCarriers();
             }());
@@ -342,6 +314,11 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
+
+
 
 
 

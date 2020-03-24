@@ -200,7 +200,6 @@ class Mollie extends PaymentModule
     const MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT = 'MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_';
     const MOLLIE_METHOD_SURCHARGE_PERCENTAGE = 'MOLLIE_METHOD_SURCHARGE_PERCENTAGE_';
     const MOLLIE_METHOD_SURCHARGE_LIMIT = 'MOLLIE_METHOD_SURCHARGE_LIMIT_';
-    const MOLLIE_METHOD_SURCHARGE_TAX_CLASS = 'MOLLIE_METHOD_SURCHARGE_TAX_CLASS_';
 
     const MOLLIE_RESELLER_PARTNER_ID = 4602094;
     const MOLLIE_RESELLER_PROFILE_KEY = 'B69C2D66';
@@ -471,7 +470,6 @@ class Mollie extends PaymentModule
 
         Configuration::deleteByName(static::MOLLIE_API_KEY);
         Configuration::deleteByName(static::MOLLIE_PROFILE_ID);
-        Configuration::deleteByName(static::MOLLIE_DESCRIPTION);
         Configuration::deleteByName(static::MOLLIE_PAYMENTSCREEN_LOCALE);
         Configuration::deleteByName(static::MOLLIE_IFRAME);
         Configuration::deleteByName(static::MOLLIE_IMAGES);
@@ -530,7 +528,6 @@ class Mollie extends PaymentModule
     {
         Configuration::updateValue(static::MOLLIE_API_KEY, '');
         Configuration::updateValue(static::MOLLIE_PROFILE_ID, '');
-        Configuration::updateValue(static::MOLLIE_DESCRIPTION, 'Cart %');
         Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         Configuration::updateValue(static::MOLLIE_IFRAME, false);
         Configuration::updateValue(static::MOLLIE_IMAGES, static::LOGOS_NORMAL);
@@ -682,7 +679,6 @@ class Mollie extends PaymentModule
             'msg_warning' => $warningMessage,
             'path' => $this->_path,
             'val_api_key' => Configuration::get(static::MOLLIE_API_KEY),
-            'val_desc' => Configuration::get(static::MOLLIE_DESCRIPTION),
             'payscreen_locale_value' => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
             'val_images' => Configuration::get(static::MOLLIE_IMAGES),
             'val_issuers' => Configuration::get(static::MOLLIE_ISSUERS),
@@ -706,6 +702,7 @@ class Mollie extends PaymentModule
         ]);
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
@@ -959,50 +956,6 @@ class Mollie extends PaymentModule
 
             $input = array_merge($input, [
                     [
-                        'type' => 'mollie-h2',
-                        'tab' => $generalSettings,
-                        'name' => '',
-                        'title' => $this->l('Mollie API'),
-                    ],
-                    [
-                        'type' => 'select',
-                        'label' => $this->l('Select which Mollie API to use'),
-                        'tab' => $generalSettings,
-                        'desc' => $this->l('Should the plugin use the new Mollie Orders API? This enables payment methods such as Klarna Pay Later.'),
-                        'name' => static::MOLLIE_API,
-                        'options' => [
-                            'query' => [
-                                [
-                                    'id' => static::MOLLIE_PAYMENTS_API,
-                                    'name' => $this->l('Payments API'),
-                                ],
-                                [
-                                    'id' => static::MOLLIE_ORDERS_API,
-                                    'name' => $this->l('Orders API'),
-                                ],
-                            ],
-                            'id' => 'id',
-                            'name' => 'name',
-                        ],
-                    ],
-                    [
-                        'type' => 'mollie-h2',
-                        'name' => '',
-                        'tab' => $generalSettings,
-                        'title' => $this->l('Mollie Settings'),
-                    ],
-                    [
-                        'type' => 'mollie-description',
-                        'label' => $this->l('Description'),
-                        'tab' => $generalSettings,
-                        'desc' => sprintf($this->l('Enter a description here. Note: Payment methods may have a character limit, best keep the description under 29 characters. You can use the following variables: %s'), '{cart.id} {order.reference} {customer.firstname} {customer.lastname} {customer.company}'),
-                        'name' => static::MOLLIE_DESCRIPTION,
-                        'required' => true,
-                        'class' => 'fixed-width-xxl',
-                        'depends' => static::MOLLIE_API,
-                        'depends_value' => static::MOLLIE_PAYMENTS_API,
-                    ],
-                    [
                         'type' => 'mollie-h3',
                         'tab' => $generalSettings,
                         'name' => '',
@@ -1081,82 +1034,8 @@ class Mollie extends PaymentModule
                             'name' => 'name',
                         ],
                     ],
-                    [
-                        'type' => 'mollie-methods',
-                        'name' => static::METHODS_CONFIG,
-                        'label' => $this->l('Payment methods'),
-                        'paymentMethods' => $this->getMethodsForConfig(),
-                        'paymentMethodsObject' => $this->getMethodsForConfig2(),
-                        'countries' => $this->getActiveCountriesList(),
-                        'tab' => $generalSettings,
-                    ],
                 ]
             );
-
-            if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-                $input[] = [
-                    'type' => 'mollie-h3',
-                    'tab' => $generalSettings,
-                    'name' => '',
-                    'title' => $this->l('Method countries'),
-                ];
-
-                $input[] = [
-                    'type' => 'switch',
-                    'label' => $this->l('Enable country restrictions'),
-                    'tab' => $generalSettings,
-                    'name' => static::MOLLIE_METHOD_COUNTRIES,
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                ];
-
-                $input[] = [
-                    'type' => 'switch',
-                    'label' => $this->l('Expand a list of payment methods'),
-                    'tab' => $generalSettings,
-                    'name' => static::MOLLIE_METHOD_COUNTRIES_DISPLAY,
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                ];
-
-                foreach ($this->getMethodsForConfig() as $method) {
-                    $input[] = [
-                        'type' => 'select',
-                        'tab' => $generalSettings,
-                        'label' => $method['name'],
-                        'name' => 'country_' . $method['id'] . '[]',
-                        'class' => 'chosen col-md-6 js-country',
-                        'multiple' => true,
-                        'options' => [
-                            'query' => $this->getActiveCountriesList(),
-                            'id' => 'id',
-                            'name' => 'name',
-                        ],
-                    ];
-                }
-            }
             if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
                 $input[] = [
                     'type' => 'switch',
@@ -1186,6 +1065,20 @@ class Mollie extends PaymentModule
                     'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
                 ];
             }
+            $input[] = [
+                'type' => 'mollie-h2',
+                'tab' => $generalSettings,
+                'name' => '',
+                'title' => $this->l('Payment methods'),
+            ];
+
+            $input[] = [
+                'type' => 'mollie-methods',
+                'name' => static::METHODS_CONFIG,
+                'paymentMethods' => $this->getMethodsForConfig(),
+                'countries' => $this->getActiveCountriesList(),
+                'tab' => $generalSettings,
+            ];
         }
 
         return $input;
@@ -1485,7 +1378,6 @@ class Mollie extends PaymentModule
         $configFields = [
             static::MOLLIE_API_KEY => Configuration::get(static::MOLLIE_API_KEY),
             static::MOLLIE_PROFILE_ID => Configuration::get(static::MOLLIE_PROFILE_ID),
-            static::MOLLIE_DESCRIPTION => Configuration::get(static::MOLLIE_DESCRIPTION),
             static::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE),
             static::MOLLIE_IFRAME => Configuration::get(static::MOLLIE_IFRAME),
 
@@ -1747,14 +1639,13 @@ class Mollie extends PaymentModule
             $errors[] = $this->l('The API key needs to start with test or live.');
         }
 
-        $mollieDescription = Tools::getValue(static::MOLLIE_DESCRIPTION);
         if (Tools::getValue(static::METHODS_CONFIG) && json_decode(Tools::getValue(static::METHODS_CONFIG))) {
             Configuration::updateValue(
                 static::METHODS_CONFIG,
                 json_encode(@json_decode(Tools::getValue(static::METHODS_CONFIG)))
             );
         }
-        if ($this->api->methods !== null) {
+        if ($this->api->methods !== null && Configuration::get(static::MOLLIE_API_KEY)) {
             foreach ($this->getMethodsForConfig() as $method) {
                 $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($method['id']) . '"';
                 $paymentId = Db::getInstance()->getValue($sql);
@@ -1767,17 +1658,21 @@ class Mollie extends PaymentModule
                 $paymentMethod->title = Tools::getValue(self::MOLLIE_METHOD_TITLE . $method['id']);
                 $paymentMethod->method = Tools::getValue(self::MOLLIE_METHOD_API . $method['id']);
                 $paymentMethod->description = Tools::getValue(self::MOLLIE_METHOD_DESCRIPTION . $method['id']);
+                $paymentMethod->is_countries_applicable = Tools::getValue(self::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
                 $paymentMethod->minimal_order_value = Tools::getValue(self::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
                 $paymentMethod->max_order_value = Tools::getValue(self::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
                 $paymentMethod->surcharge = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
                 $paymentMethod->surcharge_fixed_amount = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT . $method['id']);
                 $paymentMethod->surcharge_percentage = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
                 $paymentMethod->surcharge_limit = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
-                $paymentMethod->surcharge_tax_class = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_TAX_CLASS . $method['id']);
+                try {
+                    $paymentMethod->save();
+                } catch (Exception $e) {
+                    $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods');
+                }
 
-                $paymentMethod->save();
-//                $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
-//                $this->updateMethodCountries($method['id'], $countries);
+                $countries = Tools::getValue(self::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
+                $this->updateMethodCountries($method['id'], $countries);
             }
         }
 
@@ -1806,7 +1701,6 @@ class Mollie extends PaymentModule
         if (empty($errors)) {
             Configuration::updateValue(static::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(static::MOLLIE_PROFILE_ID, $mollieProfileId);
-            Configuration::updateValue(static::MOLLIE_DESCRIPTION, $mollieDescription);
             Configuration::updateValue(static::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(static::MOLLIE_IFRAME, $mollieIFrameEnabled);
             Configuration::updateValue(static::MOLLIE_IMAGES, $mollieImages);
@@ -1848,12 +1742,6 @@ class Mollie extends PaymentModule
                     $errors[] = $e->getMessage();
                     Configuration::updateValue(static::MOLLIE_API_KEY, null);
                     return $this->l('Wrong API Key!');
-                }
-                if ($this->api->methods !== null) {
-                    foreach ($this->getMethodsForConfig() as $method) {
-                        $countries = Tools::getValue($this::MOLLIE_COUNTRIES . $method['id']);
-                        $this->updateMethodCountries($method['id'], $countries);
-                    }
                 }
             }
 
@@ -3866,55 +3754,41 @@ class Mollie extends PaymentModule
             }
         }
 
+        $methods = $this->getMethodsObjForConfig($methods);
+        $methods = $this->getMethodsCountriesForConfig($methods);
+
         return $methods;
     }
 
-    public function getMethodsForConfig2()
+    public function getMethodsObjForConfig($apiMethods)
     {
-        $notAvailable = [];
-        try {
-            $apiMethods = $this->api->methods->all(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
-        } catch (Exception $e) {
-            $this->context->controller->errors[] = $e->getMessage();
-            return [];
-        }
-//        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-//            $paymentApiMethods = array_map(function ($item) {
-//                return $item->id;
-//            }, $this->api->methods->all(array('includeWallets' => 'applepay'))->getArrayCopy());
-//            $orderApiMethods = array_map(function ($item) {
-//                return $item->id;
-//            }, $apiMethods);
-//            $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
-//        }
-//        if (!count($apiMethods)) {
-//            return array();
-//        }
         $methods = [];
         $defaultPaymentMethod = new MolPaymentMethod();
         $defaultPaymentMethod->enabled = 0;
         $defaultPaymentMethod->title = '';
         $defaultPaymentMethod->method = 'payments';
         $defaultPaymentMethod->description = '';
+        $defaultPaymentMethod->is_countries_applicable = false;
         $defaultPaymentMethod->minimal_order_value = '';
         $defaultPaymentMethod->max_order_value = '';
         $defaultPaymentMethod->surcharge = 0;
         $defaultPaymentMethod->surcharge_fixed_amount = '';
         $defaultPaymentMethod->surcharge_percentage = '';
         $defaultPaymentMethod->surcharge_limit = '';
-        $defaultPaymentMethod->surcharge_tax_class = 0;
 
         foreach ($apiMethods as $apiMethod) {
-            $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($apiMethod->id) . '"';
+            $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($apiMethod['id']) . '"';
             $paymentId = Db::getInstance()->getValue($sql);
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
-                $methods[$apiMethod->id] = $paymentMethod;
+                $methods[$apiMethod['id']] = $apiMethod;
+                $methods[$apiMethod['id']]['obj']  = $paymentMethod;
                 continue;
             }
-            $defaultPaymentMethod->id_method = $apiMethod->id;
-            $defaultPaymentMethod->method_name = $apiMethod->name;
-            $methods[$apiMethod->id] = $defaultPaymentMethod;
+            $defaultPaymentMethod->id_method = $apiMethod['id'];
+            $defaultPaymentMethod->method_name = $apiMethod['name'];
+            $methods[$apiMethod['id']] = $apiMethod;
+            $methods[$apiMethod['id']]['obj'] = $defaultPaymentMethod;
         }
 
         $availableApiMethods = array_column(array_map(function ($apiMethod) {
@@ -3926,13 +3800,22 @@ class Mollie extends PaymentModule
                 $paymentId = Db::getInstance()->getValue($sql);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
-                    $methods[$value] = $paymentMethod;
+                    $methods[$value]['obj'] = $paymentMethod;
                     continue;
                 }
                 $defaultPaymentMethod->id_method = $value;
                 $defaultPaymentMethod->method_name = $apiMethod;
-                $methods[$value] = $defaultPaymentMethod;
+                $methods[$value]['obj'] = $defaultPaymentMethod;
             }
+        }
+
+        return $methods;
+    }
+
+    public function getMethodsCountriesForConfig(&$methods)
+    {
+        foreach ($methods as $key => $method) {
+            $methods[$key]['countries'] = $this->getMethodCountryIds($key);
         }
 
         return $methods;
