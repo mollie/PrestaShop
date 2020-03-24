@@ -97,6 +97,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
+        $paymentMethodId = $this->module->getPaymentMethodIdByMethodId($method);
+        $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
         $paymentData = Mollie::getPaymentData(
             $amount,
@@ -105,11 +107,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $issuer,
             (int) $cart->id,
             $customer->secure_key,
+            $paymentMethodObj,
             false,
             Order::generateReference()
         );
         try {
-            $apiPayment = $this->createPayment($paymentData);
+            $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
@@ -270,10 +273,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    protected function createPayment($data)
+    protected function createPayment($data, $selectedApi)
     {
         try {
-            if (Mollie::selectedApi() === Mollie::MOLLIE_ORDERS_API) {
+            if ($selectedApi === Mollie::MOLLIE_ORDERS_API) {
                 /** @var \Mollie\Api\Resources\Order $payment */
                 $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
             } else {

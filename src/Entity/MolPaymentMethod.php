@@ -70,7 +70,7 @@ class MolPaymentMethod extends ObjectModel
     /**
      * @var string
      */
-    public $surcharge_tax_class;
+    public $images_json;
 
     /**
      * @var array
@@ -92,6 +92,7 @@ class MolPaymentMethod extends ObjectModel
             'surcharge_fixed_amount' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_percentage' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_limit' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
+            'images_json' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
         ),
     );
 }

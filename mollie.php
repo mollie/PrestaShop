@@ -1036,35 +1036,6 @@ class Mollie extends PaymentModule
                     ],
                 ]
             );
-            if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-                $input[] = [
-                    'type' => 'switch',
-                    'label' => $this->l('Enable iDEAL QR'),
-                    'tab' => $generalSettings,
-                    'name' => static::MOLLIE_QRENABLED,
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                ];
-            } else {
-                $input[] = [
-                    'type' => 'mollie-warning',
-                    'label' => $this->l('Enable iDEAL QR'),
-                    'tab' => $generalSettings,
-                    'name' => static::MOLLIE_QRENABLED,
-                    'message' => $this->l('QR Codes are currently not supported by the Orders API. Our apologies for the inconvenience!'),
-                ];
-            }
             $input[] = [
                 'type' => 'mollie-h2',
                 'tab' => $generalSettings,
@@ -1449,6 +1420,26 @@ class Mollie extends PaymentModule
 
         return $countryIdsArray;
     }
+    public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
+    {
+        $sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
+
+        return Db::getInstance()->getValue($sql);
+    }
+
+    public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
+    {
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    public function getPaymentMethodIdByMethodId($paymentMethodId)
+    {
+        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($paymentMethodId) . '"';
+
+        return Db::getInstance()->getValue($sql);
+    }
 
     /**
      * Get carrier configuration
@@ -1647,13 +1638,13 @@ class Mollie extends PaymentModule
         }
         if ($this->api->methods !== null && Configuration::get(static::MOLLIE_API_KEY)) {
             foreach ($this->getMethodsForConfig() as $method) {
-                $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($method['id']) . '"';
-                $paymentId = Db::getInstance()->getValue($sql);
+                $paymentId = $this->getPaymentMethodIdByMethodId($method['id']);
                 $paymentMethod = new MolPaymentMethod();
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
                 }
                 $paymentMethod->id_method = $method['id'];
+                $paymentMethod->method_name = $method['name'];
                 $paymentMethod->enabled = Tools::getValue(self::MOLLIE_METHOD_ENABLED . $method['id']);
                 $paymentMethod->title = Tools::getValue(self::MOLLIE_METHOD_TITLE . $method['id']);
                 $paymentMethod->method = Tools::getValue(self::MOLLIE_METHOD_API . $method['id']);
@@ -1665,10 +1656,26 @@ class Mollie extends PaymentModule
                 $paymentMethod->surcharge_fixed_amount = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT . $method['id']);
                 $paymentMethod->surcharge_percentage = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
                 $paymentMethod->surcharge_limit = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
+                $paymentMethod->images_json = json_encode($method['image']);
                 try {
                     $paymentMethod->save();
                 } catch (Exception $e) {
                     $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods');
+                }
+
+                if (!$this->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
+                    $errors[] = $this->l('Something went wrong. Couldn\'t delete old payment methods issuers');
+                }
+
+                if ($method['issuers']) {
+                    $paymentMethodIssuer = new MolPaymentMethodIssuer();
+                    $paymentMethodIssuer->issuers_json = json_encode($method['issuers']);
+                    $paymentMethodIssuer->id_payment_method = $paymentMethod->id;
+                    try {
+                        $paymentMethodIssuer->add();
+                    } catch (Exception $e) {
+                        $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods issuer');
+                    }
                 }
 
                 $countries = Tools::getValue(self::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
@@ -2411,16 +2418,19 @@ class Mollie extends PaymentModule
             return [];
         }
 
-        $methods = $this->getMethodsForCheckout();
+        $methodIds = $this->getMethodsForCheckout();
         $issuerList = [];
-        foreach ($methods as $apiMethod) {
-            if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
+        foreach ($methodIds as $methodId) {
+            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            if ($methodObj->id_method === \Mollie\Api\Types\PaymentMethod::IDEAL) {
+                $issuersJson = $this->getPaymentMethodIssuersByPaymentMethodId($methodObj->id);
+                $issuers = json_decode($issuersJson, true);
                 $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
-                foreach ($apiMethod['issuers'] as $issuer) {
+                foreach ($issuers as $issuer) {
                     $issuer['href'] = $this->context->link->getModuleLink(
                         $this->name,
                         'payment',
-                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
+                        ['method' => $methodObj->id_method , 'issuer' => $issuer['id'], 'rand' => time()],
                         true
                     );
                     $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
@@ -2444,25 +2454,29 @@ class Mollie extends PaymentModule
 
         $iso = Tools::strtolower($context->currency->iso_code);
         $paymentOptions = [];
-        foreach ($methods as $method) {
-            if (!isset(static::$methodCurrencies[$method['id']])) {
+        foreach ($methodIds as $methodId) {
+            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            if (!isset(static::$methodCurrencies[$methodObj->id_method])) {
                 continue;
             }
-            if (!in_array($iso, static::$methodCurrencies[$method['id']])) {
+            if (!in_array($iso, static::$methodCurrencies[$methodObj->id_method])) {
                 continue;
             }
 
-            if ($method['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL
+            $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
+            $image = json_decode($methodObj->images_json, true);
+
+            if ($methodObj->id_method === \Mollie\Api\Types\PaymentMethod::IDEAL
                 && Configuration::get(static::MOLLIE_ISSUERS) === static::ISSUERS_ON_CLICK
             ) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
-                    ->setCallToActionText($this->lang($method['name']))
+                    ->setCallToActionText($this->lang($methodObj->method_name))
                     ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        ['method' => $method['id'], 'rand' => time()],
+                        ['method' => $methodObj->id_method, 'rand' => time()],
                         true
                     ))
                     ->setInputs([
@@ -2475,15 +2489,16 @@ class Mollie extends PaymentModule
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
+                $image = json_decode($methodObj->images_json, true);
                 if ($imageConfig === static::LOGOS_NORMAL) {
-                    $newOption->setLogo($method['image']['svg']);
+                    $newOption->setLogo($image['svg']);
                 } elseif ($imageConfig === static::LOGOS_BIG) {
-                    $newOption->setLogo($method['image']['size2x']);
+                    $newOption->setLogo($image['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
             } elseif (
-                ($method['id'] === Mollie\Api\Types\PaymentMethod::CREDITCARD || $method['id'] === 'cartesbancaires') &&
+                ($methodObj->id_method === Mollie\Api\Types\PaymentMethod::CREDITCARD || $methodObj->id_method === 'cartesbancaires') &&
                 Configuration::get(self::MOLLIE_IFRAME)
             ) {
 
@@ -2491,18 +2506,18 @@ class Mollie extends PaymentModule
                     'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
                     'price' => $this->context->cart->getOrderTotal(),
                     'priceSign' => $this->context->currency->getSign(),
-                    'methodId' => $method['id']
+                    'methodId' => $methodObj->id_method
                 ]);
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
-                    ->setCallToActionText($this->lang($method['name']))
+                    ->setCallToActionText($this->lang($methodObj->method_name))
                     ->setModuleName($this->name)
                     ->setAdditionalInformation($this->display(__FILE__, 'mollie_iframe.tpl'))
                     ->setInputs(
                         [
                             [
                                 'type' => 'hidden',
-                                'name' => "mollieCardToken{$method['id']}",
+                                'name' => "mollieCardToken{$methodObj->id_method}",
                                 'value' => ''
                             ]
                         ]
@@ -2510,34 +2525,34 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payScreen',
-                        ['method' => $method['id'], 'rand' => time(), 'cardToken' => ''],
+                        ['method' => $methodObj->id_method, 'rand' => time(), 'cardToken' => ''],
                         true
                     ));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig === static::LOGOS_NORMAL) {
-                    $newOption->setLogo($method['image']['svg']);
+                    $newOption->setLogo($image['svg']);
                 } elseif ($imageConfig === static::LOGOS_BIG) {
-                    $newOption->setLogo($method['image']['size2x']);
+                    $newOption->setLogo($image['size2x']);
                 }
                 $paymentOptions[] = $newOption;
             } else {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $newOption
-                    ->setCallToActionText($this->lang($method['name']))
+                    ->setCallToActionText($this->lang($methodObj->method_name))
                     ->setModuleName($this->name)
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        ['method' => $method['id'], 'rand' => time()],
+                        ['method' => $methodObj->id_method, 'rand' => time()],
                         true
                     ));
 
                 $imageConfig = Configuration::get(static::MOLLIE_IMAGES);
                 if ($imageConfig === static::LOGOS_NORMAL) {
-                    $newOption->setLogo($method['image']['svg']);
+                    $newOption->setLogo($image['svg']);
                 } elseif ($imageConfig === static::LOGOS_BIG) {
-                    $newOption->setLogo($method['image']['size2x']);
+                    $newOption->setLogo($image['size2x']);
                 }
 
                 $paymentOptions[] = $newOption;
@@ -2709,6 +2724,7 @@ class Mollie extends PaymentModule
         $issuer,
         $cartId,
         $secureKey,
+        MolPaymentMethod $molPaymentMethod,
         $qrCode = false,
         $orderReference = ''
     ) {
@@ -2717,7 +2733,7 @@ class Mollie extends PaymentModule
             $module = Module::getInstanceByName('mollie');
             $module->currentOrderReference = $orderReference = Order::generateReference();
         }
-        $description = static::generateDescriptionFromCart($cartId, $orderReference);
+        $description = static::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
         $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
@@ -2759,9 +2775,9 @@ class Mollie extends PaymentModule
         ];
 
         // Send webshop locale
-        if ((static::selectedApi() === static::MOLLIE_PAYMENTS_API
+        if (($molPaymentMethod->method === static::MOLLIE_PAYMENTS_API
                 && Configuration::get(static::MOLLIE_PAYMENTSCREEN_LOCALE) === static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
-            || static::selectedApi() === static::MOLLIE_ORDERS_API
+            || $molPaymentMethod->method === static::MOLLIE_ORDERS_API
         ) {
             $locale = static::getWebshopLocale();
             if (preg_match(
@@ -3147,7 +3163,7 @@ class Mollie extends PaymentModule
      * @throws CoreException
      * @since 3.0.0
      */
-    public static function generateDescriptionFromCart($cartId, $orderReference = '')
+    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference = '')
     {
         if ($cartId instanceof Cart) {
             $cart = $cartId;
@@ -3172,7 +3188,7 @@ class Mollie extends PaymentModule
         $content = str_ireplace(
             array_keys($filters),
             array_values($filters),
-            Configuration::get(static::MOLLIE_DESCRIPTION)
+            $methodDescription
         );
 
         return $content;
@@ -3555,9 +3571,9 @@ class Mollie extends PaymentModule
         }
 
         $iso = Tools::strtolower($this->context->currency->iso_code);
-        $methods = @json_decode(Configuration::get(static::METHODS_CONFIG), true);
-        if (empty($methods)) {
-            $methods = [];
+        $methodIds = $this->getMethodIdsForCheckout();
+        if (empty($methodIds)) {
+            $methodIds = [];
         }
         $countryCode = Tools::strtolower($this->context->country->iso_code);
         $unavailableMethods = [];
@@ -3572,35 +3588,45 @@ class Mollie extends PaymentModule
             }
         }
 
-        foreach ($methods as $index => $method) {
-            if (!isset(static::$methodCurrencies[$method['id']])
-                || !in_array($iso, static::$methodCurrencies[$method['id']])
-                || empty($method['enabled'])
-                || (isset($method['available']) && !$method['available'])
-                || in_array($method['id'], $unavailableMethods)
+        foreach ($methodIds as $index => $methodId) {
+            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            if (!isset(static::$methodCurrencies[$methodObj->id_method])
+                || !in_array($iso, static::$methodCurrencies[$methodObj->id_method])
+                || !$methodObj->enabled
+                || in_array($methodObj->id_method, $unavailableMethods)
             ) {
-                unset($methods[$index]);
+                unset($methodIds[$index]);
             }
-            if ($method['id'] === self::APPLEPAY) {
+            if ($methodObj->id_method === self::APPLEPAY) {
                 if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-                    unset($methods[$index]);
+                    unset($methodIds[$index]);
                 } elseif ($_COOKIE['isApplePayMethod'] === '0') {
-                    unset($methods[$index]);
+                    unset($methodIds[$index]);
                 }
             }
         }
 
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
             if (Configuration::get('MOLLIE_METHOD_COUNTRIES')) {
-                foreach ($methods as $index => $method) {
-                    if (!$this->checkIfMethodIsAvailableInCountry($method['id'], $countryCode)) {
-                        unset($methods[$index]);
+                foreach ($methodIds as $index => $methodId) {
+                    $methodObj = new MolPaymentMethod($methodId);
+                    if (!$this->checkIfMethodIsAvailableInCountry($methodObj->id_method, $countryCode)) {
+                        unset($methodIds[$index]);
                     }
                 }
             }
         }
 
-        return $methods;
+        return $methodIds;
+    }
+
+    public function getMethodIdsForCheckout()
+    {
+        $sql = new DbQuery();
+        $sql->select('`id_payment_method`');
+        $sql->from('mol_payment_method');
+
+        return Db::getInstance()->executeS($sql);
     }
 
     public function checkIfMethodIsAvailableInCountry($methodId, $countryISO)
@@ -3777,8 +3803,7 @@ class Mollie extends PaymentModule
         $defaultPaymentMethod->surcharge_limit = '';
 
         foreach ($apiMethods as $apiMethod) {
-            $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($apiMethod['id']) . '"';
-            $paymentId = Db::getInstance()->getValue($sql);
+            $paymentId = $this->getPaymentMethodIdByMethodId($apiMethod['id']);
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
                 $methods[$apiMethod['id']] = $apiMethod;
@@ -3796,8 +3821,7 @@ class Mollie extends PaymentModule
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach (['cartesbancaires' => 'Cartes Bancaires'] as $value => $apiMethod) {
-                $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($value) . '"';
-                $paymentId = Db::getInstance()->getValue($sql);
+                $paymentId = $this->getPaymentMethodIdByMethodId($value);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
                     $methods[$value]['obj'] = $paymentMethod;

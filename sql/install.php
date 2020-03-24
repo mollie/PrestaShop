@@ -59,7 +59,14 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
 				`surcharge` INT(1),
 				`surcharge_fixed_amount` decimal(20,6),
 				`surcharge_percentage` decimal(20,6),
-				`surcharge_limit` decimal(20,6)
+				`surcharge_limit` decimal(20,6),
+				`images_json` TEXT
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_issuer` (
+				`id_payment_method_issuer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_payment_method` INT(64) NOT NULL,
+				`issuers_json` TEXT NOT NULL
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 foreach ($sql as $query) {
