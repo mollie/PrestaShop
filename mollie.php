@@ -896,8 +896,6 @@ class Mollie extends PaymentModule
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
-        $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
         if ($isApiKeyProvided) {
             $input = [
                 [
@@ -952,7 +950,38 @@ class Mollie extends PaymentModule
             ];
         }
         if ($isApiKeyProvided) {
+            $input[] = [
+                'type' => 'switch',
+                'label' => $this->l('Use IFrame for credit card'),
+                'tab' => $generalSettings,
+                'name' => self::MOLLIE_IFRAME,
+                'is_bool' => true,
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => true,
+                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => false,
+                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    ],
+                ],
+            ];
 
+            $input[] = [
+                'type' => 'text',
+                'label' => $this->l('Profile ID'),
+                'tab' => $generalSettings,
+                'desc' => static::ppTags(
+                    $this->l('You can find your API key in your [1]Mollie Profile[/1];'),
+                    [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => self::MOLLIE_PROFILE_ID,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+            ];
 
             $input = array_merge($input, [
                     [
@@ -960,58 +989,6 @@ class Mollie extends PaymentModule
                         'tab' => $generalSettings,
                         'name' => '',
                         'title' => $this->l('Orders API'),
-                    ],
-                    [
-                        'type' => 'mollie-carriers',
-                        'label' => $this->l('Shipment information'),
-                        'tab' => $generalSettings,
-                        'name' => static::MOLLIE_TRACKING_URLS,
-                        'depends' => static::MOLLIE_API,
-                        'depends_value' => static::MOLLIE_ORDERS_API,
-                    ],
-                    [
-                        'type' => 'mollie-carrier-switch',
-                        'label' => $this->l('Automatically ship on marked statuses'),
-                        'tab' => $generalSettings,
-                        'name' => static::MOLLIE_AUTO_SHIP_MAIN,
-                        'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
-                        'is_bool' => true,
-                        'values' => [
-                            [
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                            ],
-                            [
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                            ],
-                        ],
-                        'depends' => static::MOLLIE_API,
-                        'depends_value' => static::MOLLIE_ORDERS_API,
-                    ],
-                    [
-                        'type' => 'checkbox',
-                        'label' => $this->l('Automatically ship when one of these statuses is reached'),
-                        'tab' => $generalSettings,
-                        'desc' =>
-                            $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
-                        'name' => static::MOLLIE_AUTO_SHIP_STATUSES,
-                        'multiple' => true,
-                        'values' => [
-                            'query' => $orderStatuses,
-                            'id' => 'id_order_state',
-                            'name' => 'name',
-                        ],
-                        'expand' => (count($orderStatuses) > 10) ? [
-                            'print_total' => count($orderStatuses),
-                            'default' => 'show',
-                            'show' => ['text' => $this->l('Show'), 'icon' => 'plus-sign-alt'],
-                            'hide' => ['text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'],
-                        ] : null,
-                        'depends' => static::MOLLIE_API,
-                        'depends_value' => static::MOLLIE_ORDERS_API,
                     ],
                     [
                         'type' => 'select',
@@ -1059,65 +1036,31 @@ class Mollie extends PaymentModule
     {
         $advancedSettings = 'advanced_settings';
         $input = [];
-
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->l('Send locale for payment screen'),
-                'tab' => $advancedSettings,
-                'desc' => static::ppTags(
-                    $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                    [$this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl')]
-                ),
-                'name' => static::MOLLIE_PAYMENTSCREEN_LOCALE,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                            'name' => $this->l('Do not send locale using browser language'),
-                        ],
-                        [
-                            'id' => static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                            'name' => $this->l('Send locale for payment screen'),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-        }
-
+        $orderStatuses = [];
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
         $input[] = [
-            'type' => 'switch',
-            'label' => $this->l('Use IFrame for credit card'),
-            'tab' => $advancedSettings,
-            'name' => self::MOLLIE_IFRAME,
-            'is_bool' => true,
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                ],
-                [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                ],
-            ],
-        ];
-
-        $input[] = [
-            'type' => 'text',
-            'label' => $this->l('Profile ID'),
+            'type' => 'select',
+            'label' => $this->l('Send locale for payment screen'),
             'tab' => $advancedSettings,
             'desc' => static::ppTags(
-                $this->l('You can find your API key in your [1]Mollie Profile[/1];'),
-                [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
+                $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
+                [$this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl')]
             ),
-            'name' => self::MOLLIE_PROFILE_ID,
-            'required' => true,
-            'class' => 'fixed-width-xxl',
+            'name' => static::MOLLIE_PAYMENTSCREEN_LOCALE,
+            'options' => [
+                'query' => [
+                    [
+                        'id' => static::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
+                        'name' => $this->l('Do not send locale using browser language'),
+                    ],
+                    [
+                        'id' => static::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+                        'name' => $this->l('Send locale for payment screen'),
+                    ],
+                ],
+                'id' => 'id',
+                'name' => 'name',
+            ],
         ];
 
         $lang = Context::getContext()->language->id;
@@ -1258,6 +1201,58 @@ class Mollie extends PaymentModule
                 'class' => 'long-text',
             ],
         ]);
+        $input[] = [
+            'type' => 'mollie-carriers',
+            'label' => $this->l('Shipment information'),
+            'tab' => $advancedSettings,
+            'name' => static::MOLLIE_TRACKING_URLS,
+            'depends' => static::MOLLIE_API,
+            'depends_value' => static::MOLLIE_ORDERS_API,
+        ];
+        $input[] = [
+            'type' => 'mollie-carrier-switch',
+            'label' => $this->l('Automatically ship on marked statuses'),
+            'tab' => $advancedSettings,
+            'name' => static::MOLLIE_AUTO_SHIP_MAIN,
+            'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
+            'is_bool' => true,
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                ],
+            ],
+            'depends' => static::MOLLIE_API,
+            'depends_value' => static::MOLLIE_ORDERS_API,
+        ];
+        $input[] = [
+            'type' => 'checkbox',
+            'label' => $this->l('Automatically ship when one of these statuses is reached'),
+            'tab' => $advancedSettings,
+            'desc' =>
+                $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
+            'name' => static::MOLLIE_AUTO_SHIP_STATUSES,
+            'multiple' => true,
+            'values' => [
+                'query' => $orderStatuses,
+                'id' => 'id_order_state',
+                'name' => 'name',
+            ],
+            'expand' => (count($orderStatuses) > 10) ? [
+                'print_total' => count($orderStatuses),
+                'default' => 'show',
+                'show' => ['text' => $this->l('Show'), 'icon' => 'plus-sign-alt'],
+                'hide' => ['text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'],
+            ] : null,
+            'depends' => static::MOLLIE_API,
+            'depends_value' => static::MOLLIE_ORDERS_API,
+        ];
         $orderStatuses = [
             [
                 'name' => $this->l('Disable this status'),
@@ -1278,7 +1273,6 @@ class Mollie extends PaymentModule
         $input = array_merge(
             $input,
             [
-
                 [
                     'type' => 'mollie-h2',
                     'name' => '',
@@ -2788,7 +2782,7 @@ class Mollie extends PaymentModule
             }
         }
 
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+        if ($molPaymentMethod->method === static::MOLLIE_PAYMENTS_API) {
             $paymentData['description'] = str_ireplace(
                 ['%'],
                 [$cartId],
@@ -2832,7 +2826,7 @@ class Mollie extends PaymentModule
                     $paymentData['billingEmail'] = $customer->email;
                     break;
             }
-        } elseif (static::selectedApi() === static::MOLLIE_ORDERS_API) {
+        } elseif ($molPaymentMethod->method === static::MOLLIE_ORDERS_API) {
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int)$cart->id_address_invoice);
                 $paymentData['billingAddress'] = [
@@ -3607,9 +3601,9 @@ class Mollie extends PaymentModule
         }
 
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-            if (Configuration::get('MOLLIE_METHOD_COUNTRIES')) {
-                foreach ($methodIds as $index => $methodId) {
-                    $methodObj = new MolPaymentMethod($methodId);
+            foreach ($methodIds as $index => $methodId) {
+                $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+                if (!$methodObj->is_countries_applicable) {
                     if (!$this->checkIfMethodIsAvailableInCountry($methodObj->id_method, $countryCode)) {
                         unset($methodIds[$index]);
                     }
@@ -3665,15 +3659,15 @@ class Mollie extends PaymentModule
             $this->context->controller->errors[] = $e->getMessage();
             return [];
         }
-        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
-            $paymentApiMethods = array_map(function ($item) {
-                return $item->id;
-            }, $this->api->methods->all(['includeWallets' => 'applepay'])->getArrayCopy());
-            $orderApiMethods = array_map(function ($item) {
-                return $item->id;
-            }, $apiMethods);
-            $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
-        }
+//        if (static::selectedApi() === static::MOLLIE_PAYMENTS_API) {
+//            $paymentApiMethods = array_map(function ($item) {
+//                return $item->id;
+//            }, $this->api->methods->all(['includeWallets' => 'applepay'])->getArrayCopy());
+//            $orderApiMethods = array_map(function ($item) {
+//                return $item->id;
+//            }, $apiMethods);
+//            $notAvailable = array_diff($orderApiMethods, $paymentApiMethods);
+//        }
         if (!count($apiMethods)) {
             return [];
         }

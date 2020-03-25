@@ -42,6 +42,14 @@
             <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
         {/if}
     {elseif $input.type === 'mollie-methods'}
+        <script type="text/javascript">
+            (function () {
+                window.MollieModule = window.MollieModule || {ldelim}{rdelim};
+                window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
+                window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
+                window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
+            }());
+        </script>
         {foreach $input.paymentMethods as $paymentMethod}
             {assign var = 'methodObj' value=$paymentMethod.obj}
             <div data-tab-id="general_settings" class="payment-method border border-bottom">

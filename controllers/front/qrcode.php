@@ -101,8 +101,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     protected function processAjax()
     {
         switch (Tools::getValue('action')) {
-            case 'qrCodeNew':
-                return $this->processNewQrCode();
+//            case 'qrCodeNew':
+//                return $this->processNewQrCode();
             case 'qrCodeStatus':
                 return $this->processGetStatus();
             case 'cartAmount':

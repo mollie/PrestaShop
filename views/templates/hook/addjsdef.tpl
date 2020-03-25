@@ -31,5 +31,5 @@
 * @link       https://www.mollie.nl
 *}
 <script type="text/javascript">
-  window.mollieQrEnabled = {if Configuration::get(Mollie::MOLLIE_QRENABLED) && Mollie::selectedApi() === Mollie::MOLLIE_PAYMENTS_API}true{else}false{/if};
+  window.mollieQrEnabled = {if Configuration::get(Mollie::MOLLIE_QRENABLED)}true{else}false{/if};
 </script>
