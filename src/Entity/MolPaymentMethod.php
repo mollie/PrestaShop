@@ -48,7 +48,7 @@ class MolPaymentMethod extends ObjectModel
     public $max_order_value;
 
     /**
-     * @var string
+     * @var int
      */
     public $surcharge;
 
@@ -88,7 +88,7 @@ class MolPaymentMethod extends ObjectModel
             'is_countries_applicable' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
             'minimal_order_value' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'max_order_value' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
-            'surcharge' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
+            'surcharge' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
             'surcharge_fixed_amount' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_percentage' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_limit' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),

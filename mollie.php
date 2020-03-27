@@ -229,6 +229,10 @@ class Mollie extends PaymentModule
 
     const PS_PRICE_COMPUTE_PRECISION = 2;
 
+    const FEE_FIXED_FEE = 0;
+    const FEE_PERCENTAGE= 1;
+    const FEE_FIXED_FEE_AND_PERCENTAGE = 2;
+
     /**
      * Hooks for this module
      *
@@ -2213,6 +2217,9 @@ class Mollie extends PaymentModule
             $this->context->smarty->assign([
                 'custom_css' => Configuration::get(static::MOLLIE_CSS),
             ]);
+
+            $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
+
             return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
         }
     }
@@ -2490,6 +2497,16 @@ class Mollie extends PaymentModule
                     $newOption->setLogo($image['size2x']);
                 }
 
+                $newOption->setInputs(
+                    [
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price",
+                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
+                        ]
+                    ]
+                );
+
                 $paymentOptions[] = $newOption;
             } elseif (
                 ($methodObj->id_method === Mollie\Api\Types\PaymentMethod::CREDITCARD || $methodObj->id_method === 'cartesbancaires') &&
@@ -2529,6 +2546,17 @@ class Mollie extends PaymentModule
                 } elseif ($imageConfig === static::LOGOS_BIG) {
                     $newOption->setLogo($image['size2x']);
                 }
+
+                $newOption->setInputs(
+                    [
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price",
+                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
+                        ]
+                    ]
+                );
+
                 $paymentOptions[] = $newOption;
             } else {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -2548,6 +2576,17 @@ class Mollie extends PaymentModule
                 } elseif ($imageConfig === static::LOGOS_BIG) {
                     $newOption->setLogo($image['size2x']);
                 }
+
+
+                $newOption->setInputs(
+                    [
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price",
+                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
+                        ]
+                    ]
+                );
 
                 $paymentOptions[] = $newOption;
             }
@@ -4763,8 +4802,11 @@ class Mollie extends PaymentModule
                     $order->total_wrapping_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $idCarrier));
                     $order->total_wrapping = $order->total_wrapping_tax_incl;
-                    $order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
-                    $order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+
+                    $order->total_paid_tax_excl = $amountPaid;
+                    $order->total_paid_tax_incl = $amountPaid;
+//                    $order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
+//                    $order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $idCarrier), self::PS_PRICE_COMPUTE_PRECISION);
                     $order->total_paid = $order->total_paid_tax_incl;
                     $order->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
                     $order->round_type = Configuration::get('PS_ROUND_TYPE');
@@ -6522,13 +6564,44 @@ class Mollie extends PaymentModule
         return false;
     }
 
-    public function hookDisplayCheckoutSubtotalDetails($param)
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, $totalCartPrice)
     {
-        return 10;
-    }
+        switch ($paymentMethod->surcharge) {
+            case self::FEE_FIXED_FEE:
+                $totalFeePrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
+                break;
+            case self::FEE_PERCENTAGE:
+                $totalCartPrice = new PrestaShop\Decimal\Number((string) $totalCartPrice);
+                $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
+                $maxPercentage = new PrestaShop\Decimal\Number(100);
+                $totalFeePrice = $totalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                );
+                break;
+            case self::FEE_FIXED_FEE_AND_PERCENTAGE:
+                $totalCartPrice = new PrestaShop\Decimal\Number((string) $totalCartPrice);
+                $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
+                $maxPercentage = new PrestaShop\Decimal\Number('100');
+                $surchargeFixedPrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
+                $surchargeFixedPrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
+                $totalFeePrice = $totalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                )->plus($surchargeFixedPrice);
+                break;
+            default:
+                return 0;
+        }
 
-    public function hookDisplayBeforeCarrier($param)
-    {
-        return 10;
+        $surchargeMaxValue = new PrestaShop\Decimal\Number($paymentMethod->surcharge_limit);
+        $zero = new PrestaShop\Decimal\Number('0');
+        if ($surchargeMaxValue->isGreaterThan($zero) && $totalFeePrice->isGreaterOrEqualThan($surchargeMaxValue)) {
+            $totalFeePrice = $surchargeMaxValue;
+        }
+
+        return $totalFeePrice->toPrecision(2);
     }
 }

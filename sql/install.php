@@ -56,7 +56,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
 				`is_countries_applicable` TINYINT(1),
 				`minimal_order_value` decimal(20,6),
 				`max_order_value` decimal(20,6),
-				`surcharge` INT(1),
+				`surcharge` INT(10),
 				`surcharge_fixed_amount` decimal(20,6),
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),

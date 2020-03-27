@@ -157,6 +157,12 @@
                             <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
                                     class="fixed-width-xl">
                                 <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>
+                                    {l s='Fixed Fee' mod='mollie'}
+                                </option>
+                                <option value="1" {if $methodObj->surcharge === '1'} selected {/if}>
+                                    {l s='Percentage' mod='mollie'}
+                                </option>
+                                <option value="2" {if $methodObj->surcharge === '2'} selected {/if}>
                                     {l s='Fixed Fee and Percentage' mod='mollie'}
                                 </option>
                             </select>
