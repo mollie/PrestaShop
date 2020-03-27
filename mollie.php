@@ -6573,7 +6573,7 @@ class Mollie extends PaymentModule
             case self::FEE_PERCENTAGE:
                 $totalCartPrice = new PrestaShop\Decimal\Number((string) $totalCartPrice);
                 $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
-                $maxPercentage = new PrestaShop\Decimal\Number(100);
+                $maxPercentage = new PrestaShop\Decimal\Number('100');
                 $totalFeePrice = $totalCartPrice->times(
                     $surchargePercentage->dividedBy(
                         $maxPercentage
