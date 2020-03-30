@@ -294,6 +294,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
+        $this->registerHook('actionPDFInvoiceRender');
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -4240,8 +4241,11 @@ class Mollie extends PaymentModule
                     }
 
                     $orderFee = new MolOrderFee();
-                    $orderFee->id_order = $order->id;
-                    $orderFee->order_fee = Mollie::getPaymentFee(new MolPaymentMethod($paymentMethod), $this->context->cart->getOrderTotal());
+                    $orderFee->id_order = (int) $order->id;
+                    $orderFee->order_fee = Mollie::getPaymentFee(
+                        new MolPaymentMethod($this->getPaymentMethodIdByMethodId($paymentMethod)),
+                        $this->context->cart->getOrderTotal()
+                    );
                     if (!$orderFee->add()) {
                         throw new PrestaShopException('Can\'t save Order fee');
                     }
@@ -4862,16 +4866,22 @@ class Mollie extends PaymentModule
                     }
 
                     $orderFee = new MolOrderFee();
-                    $orderFee->id_order = $order->id;
-                    $orderFee->order_fee = Mollie::getPaymentFee(new MolPaymentMethod($paymentMethod), $this->context->cart->getOrderTotal());
-                    if (!$orderFee->add()) {
+                    $orderFee->id_order = (int) $order->id;
+                    $orderFee->order_fee = Mollie::getPaymentFee(
+                        new MolPaymentMethod($this->getPaymentMethodIdByMethodId($paymentMethod)),
+                        $this->context->cart->getOrderTotal()
+                    );
+                    try {
+                        $orderFee->add();
+                    } catch (Exception $e) {
                         throw new PrestaShopException('Can\'t save Order fee');
                     }
+
                     // Amount paid by customer is not the right one -> Status = payment error
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
                     // if ($order->total_paid != $order->total_paid_real)
                     // We use number_format in order to compare two string
-                    if ($orderState->logable && number_format($cartTotalPaid, self::PS_PRICE_COMPUTE_PRECISION) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)) {
+                    if ($orderState->logable && number_format($cartTotalPaid + $orderFee->order_fee, self::PS_PRICE_COMPUTE_PRECISION) != number_format($amountPaid, self::PS_PRICE_COMPUTE_PRECISION)) {
                         $idOrderState = Configuration::get('PS_OS_ERROR');
                     }
                     $orderList[] = $order;
@@ -6674,4 +6684,10 @@ class Mollie extends PaymentModule
             $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
         }
     }
+
+//    public function hookActionPDFInvoiceRender($params)
+//    {
+//        return true;
+//    }
+
 }
