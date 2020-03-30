@@ -1,4 +1,7 @@
 <?php
+
+use PrestaShop\Decimal\Number;
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -32,24 +35,45 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
 
     public function postProcess()
     {
-        $errorMessages = explode('#', Tools::getValue('hashTag'));
-        foreach ($errorMessages as $errorMessage) {
-            if (strpos($errorMessage, 'mollieMessage=') === 0) {
-                $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
-                $errorMessage = str_replace('_', ' ', $errorMessage);
-                $this->context->smarty->assign(array(
-                    'errorMessage'   => $errorMessage
+        $action = Tools::getValue('action');
+        switch ($action) {
+            case 'getTotalCartPrice':
+                $cart = Context::getContext()->cart;
+                $paymentFee = new Number(Tools::getValue('paymentFee'));
+                $orderTotal = new Number((string)$cart->getOrderTotal());
+                $orderTotalWithFee = $orderTotal->plus($paymentFee);
 
-                ));
-                $this->ajaxDie($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
-            }
+                $orderTotalNoTax = new Number((string)$cart->getOrderTotal(false));
+                $orderTotalNoTaxWithFee = $orderTotalNoTax->plus($paymentFee);
+
+                $this->ajaxDie(
+                    json_encode(
+                        [
+                            'orderTotalWithFee' => Tools::displayPrice($orderTotalWithFee->toPrecision(2)),
+                            'orderTotalNoTaxWithFee' => Tools::displayPrice($orderTotalNoTaxWithFee->toPrecision(2))
+                        ]
+                    )
+                );
+                break;
+            case 'displayCheckoutError':
+                $errorMessages = explode('#', Tools::getValue('hashTag'));
+                foreach ($errorMessages as $errorMessage) {
+                    if (strpos($errorMessage, 'mollieMessage=') === 0) {
+                        $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
+                        $errorMessage = str_replace('_', ' ', $errorMessage);
+                        $this->context->smarty->assign([
+                            'errorMessage' => $errorMessage
+                        ]);
+                        $this->ajaxDie($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
+                    }
+                }
+                $this->ajaxDie();
         }
-        $this->ajaxDie();
+
     }
 }

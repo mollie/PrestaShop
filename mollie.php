@@ -245,7 +245,8 @@ class Mollie extends PaymentModule
         'displayAdminOrder',
         'displayBackOfficeHeader',
         'displayOrderConfirmation',
-        'actionFrontControllerSetMedia'
+        'actionFrontControllerSetMedia',
+        'actionEmailSendBefore'
     ];
 
     public $extra_mail_vars = [];
@@ -293,8 +294,6 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->registerHook('displayCheckoutSubtotalDetails');
-        $this->registerHook('displayBeforeCarrier');
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -2457,6 +2456,7 @@ class Mollie extends PaymentModule
         $paymentOptions = [];
         foreach ($methodIds as $methodId) {
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            $paymentFee = $this->getPaymentFee($methodObj, $cart->getOrderTotal());
             if (!isset(static::$methodCurrencies[$methodObj->id_method])) {
                 continue;
             }
@@ -2502,8 +2502,13 @@ class Mollie extends PaymentModule
                         [
                             'type' => 'hidden',
                             'name' => "payment-fee-price",
-                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
-                        ]
+                            'value' => $paymentFee
+                        ],
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price-display",
+                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                        ],
                     ]
                 );
 
@@ -2552,8 +2557,13 @@ class Mollie extends PaymentModule
                         [
                             'type' => 'hidden',
                             'name' => "payment-fee-price",
-                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
-                        ]
+                            'value' => $paymentFee
+                        ],
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price-display",
+                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                        ],
                     ]
                 );
 
@@ -2577,14 +2587,18 @@ class Mollie extends PaymentModule
                     $newOption->setLogo($image['size2x']);
                 }
 
-
                 $newOption->setInputs(
                     [
                         [
                             'type' => 'hidden',
                             'name' => "payment-fee-price",
-                            'value' => $this->getPaymentFee($methodObj, $cart->getOrderTotal())
-                        ]
+                            'value' => $paymentFee
+                        ],
+                        [
+                            'type' => 'hidden',
+                            'name' => "payment-fee-price-display",
+                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                        ],
                     ]
                 );
 
@@ -2771,10 +2785,14 @@ class Mollie extends PaymentModule
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
+        $paymentFee = Mollie::getPaymentFee($molPaymentMethod, $amount);
+        $totalAmount = (number_format(str_replace(',', '.', $amount), 2, '.', ''));
+        $totalAmount += $paymentFee;
+
         $paymentData = [
             'amount' => [
                 'currency' => (string)($currency ? Tools::strtoupper($currency) : 'EUR'),
-                'value' => (string)(number_format(str_replace(',', '.', $amount), 2, '.', '')),
+                'value' => (string) $totalAmount,
             ],
             'method' => $method,
             'redirectUrl' => ($qrCode
@@ -2893,7 +2911,7 @@ class Mollie extends PaymentModule
                 $paymentData['shippingAddress']['postalCode'] = (string)$shipping->postcode ?: '-';
             }
             $paymentData['orderNumber'] = $orderReference;
-            $paymentData['lines'] = static::getCartLines($amount);
+            $paymentData['lines'] = static::getCartLines($amount, $paymentFee);
             $paymentData['payment'] = [];
             if (!static::isLocalEnvironment()) {
                 $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
@@ -2919,7 +2937,7 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public static function getCartLines($amount)
+    public static function getCartLines($amount, $paymentFee)
     {
         /** @var Cart $cart */
         $cart = Context::getContext()->cart;
@@ -3074,6 +3092,20 @@ class Mollie extends PaymentModule
                     'totalAmount' => round($wrapping, $apiRoundingPrecision),
                     'vatAmount' => round($wrapping * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
                     'vatRate' => $wrappingVatRate,
+                ],
+            ];
+        }
+
+        // Add fee
+        if ($paymentFee) {
+            $aItems['surcharge'] = [
+                [
+                    'name' => $mollie->l('Payment Fee'),
+                    'quantity' => 1,
+                    'unitPrice' => round($paymentFee, $apiRoundingPrecision),
+                    'totalAmount' => round($paymentFee, $apiRoundingPrecision),
+                    'vatAmount' => 0,
+                    'vatRate' => 0,
                 ],
             ];
         }
@@ -4206,6 +4238,13 @@ class Mollie extends PaymentModule
                     if (!$result) {
                         throw new PrestaShopException('Can\'t save Order');
                     }
+
+                    $orderFee = new MolOrderFee();
+                    $orderFee->id_order = $order->id;
+                    $orderFee->order_fee = Mollie::getPaymentFee(new MolPaymentMethod($paymentMethod), $this->context->cart->getOrderTotal());
+                    if (!$orderFee->add()) {
+                        throw new PrestaShopException('Can\'t save Order fee');
+                    }
                     // Amount paid by customer is not the right one -> Status = payment error
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
                     // if ($order->total_paid != $order->total_paid_real)
@@ -4820,6 +4859,13 @@ class Mollie extends PaymentModule
                     if (!$result) {
                         PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int)$idCart, true);
                         throw new PrestaShopException('Can\'t save Order');
+                    }
+
+                    $orderFee = new MolOrderFee();
+                    $orderFee->id_order = $order->id;
+                    $orderFee->order_fee = Mollie::getPaymentFee(new MolPaymentMethod($paymentMethod), $this->context->cart->getOrderTotal());
+                    if (!$orderFee->add()) {
+                        throw new PrestaShopException('Can\'t save Order fee');
                     }
                     // Amount paid by customer is not the right one -> Status = payment error
                     // We don't use the following condition to avoid the float precision issues : http://www.php.net/manual/en/language.types.float.php
@@ -6564,7 +6610,7 @@ class Mollie extends PaymentModule
         return false;
     }
 
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, $totalCartPrice)
+    public static function getPaymentFee(MolPaymentMethod $paymentMethod, $totalCartPrice)
     {
         switch ($paymentMethod->surcharge) {
             case self::FEE_FIXED_FEE:
@@ -6585,7 +6631,6 @@ class Mollie extends PaymentModule
                 $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
                 $maxPercentage = new PrestaShop\Decimal\Number('100');
                 $surchargeFixedPrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
-                $surchargeFixedPrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
                 $totalFeePrice = $totalCartPrice->times(
                     $surchargePercentage->dividedBy(
                         $maxPercentage
@@ -6603,5 +6648,30 @@ class Mollie extends PaymentModule
         }
 
         return $totalFeePrice->toPrecision(2);
+    }
+
+    public function hookActionEmailSendBefore($params)
+    {
+        if ($params['template'] === 'order_conf' ||
+            $params['template'] === 'account' ||
+            $params['template'] === 'backoffice_order' ||
+            $params['template'] === 'contact_form' ||
+            $params['template'] === 'credit_slip' ||
+            $params['template'] === 'in_transit' ||
+            $params['template'] === 'order_changed' ||
+            $params['template'] === 'order_merchant_comment' ||
+            $params['template'] === 'order_return_state' ||
+            $params['template'] === 'cheque' ||
+            $params['template'] === 'payment' ||
+            $params['template'] === 'preparation' ||
+            $params['template'] === 'shipped' ||
+            $params['template'] === 'order_canceled' ||
+            $params['template'] === 'payment_error' ||
+            $params['template'] === 'outofstock' ||
+            $params['template'] === 'bankwire' ||
+            $params['template'] === 'refund') {
+            $orderFee = new MolOrderFee($params['order']->id);
+            $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
+        }
     }
 }

@@ -131,24 +131,24 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-lg-3">
-                            {l s='Minimum order value' mod='mollie'}
-                        </label>
-                        <div class="col-lg-9">
-                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"
-                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-lg-3">
-                            {l s='Maximum order value' mod='mollie'}
-                        </label>
-                        <div class="col-lg-9">
-                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"
-                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">
-                        </div>
-                    </div>
+{*                    <div class="form-group">*}
+{*                        <label class="control-label col-lg-3">*}
+{*                            {l s='Minimum order value' mod='mollie'}*}
+{*                        </label>*}
+{*                        <div class="col-lg-9">*}
+{*                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"*}
+{*                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">*}
+{*                        </div>*}
+{*                    </div>*}
+{*                    <div class="form-group">*}
+{*                        <label class="control-label col-lg-3">*}
+{*                            {l s='Maximum order value' mod='mollie'}*}
+{*                        </label>*}
+{*                        <div class="col-lg-9">*}
+{*                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"*}
+{*                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">*}
+{*                        </div>*}
+{*                    </div>*}
                     <div class="form-group">
                         <label class="control-label col-lg-3">
                             {l s='Payment Surcharge' mod='mollie'}

@@ -97,11 +97,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
-        $paymentFee = Tools::getValue('payment-fee-price');
-        if ($paymentFee) {
-            $amount += (float) $paymentFee;
-        }
-
         $paymentMethodId = $this->module->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
