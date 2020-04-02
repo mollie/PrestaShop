@@ -31,9 +31,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 response = jQuery.parseJSON(response);
-                var $cartTotal = $('.cart-summary-totals');
-                $cartTotal.find('div.cart-total').find('.value').first().empty().append(response.orderTotalWithFee);
-                $cartTotal.find('div:not(.cart-total)').find('.value').first().empty().append(response.orderTotalNoTaxWithFee);
+                $('.card-block.cart-summary-totals').empty().append(response.cart_summary_totals);
             }
         })
     })

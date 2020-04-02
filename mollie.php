@@ -6684,10 +6684,4 @@ class Mollie extends PaymentModule
             $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
         }
     }
-
-//    public function hookActionPDFInvoiceRender($params)
-//    {
-//        return true;
-//    }
-
 }
