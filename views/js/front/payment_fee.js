@@ -31,7 +31,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 response = jQuery.parseJSON(response);
-                $('.card-block.cart-summary-totals').empty().append(response.cart_summary_totals);
+                $('.card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
             }
         })
     })
