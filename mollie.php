@@ -2557,6 +2557,11 @@ class Mollie extends PaymentModule
                     [
                         [
                             'type' => 'hidden',
+                            'name' => "mollieCardToken{$methodObj->id_method}",
+                            'value' => ''
+                        ],
+                        [
+                            'type' => 'hidden',
                             'name' => "payment-fee-price",
                             'value' => $paymentFee
                         ],
