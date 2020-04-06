@@ -100,6 +100,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentMethodId = $this->module->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
+        $orderReference = Order::generateReference();
         $paymentData = Mollie::getPaymentData(
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
@@ -109,7 +110,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer->secure_key,
             $paymentMethodObj,
             false,
-            Order::generateReference()
+            $orderReference
         );
         try {
             $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
@@ -126,6 +127,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
             return;
         }
+        $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
         // Store payment linked to cart
@@ -156,7 +158,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentStatus = (int) $this->module->statuses[$status];
 
         if ($paymentStatus < 1) {
-            $paymentStatus = Configuration::get('PS_OS_BANKWIRE');
+            $paymentStatus = Configuration::get(Mollie::MOLLIE_STATUS_AWAITING);
         }
 
         if ($apiPayment->method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
@@ -307,5 +309,39 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         parent::setTemplate($template, $params, $locale);
+    }
+
+    private function createOrder($method, $apiPayment, $cartId, $originalAmount, $secureKey, $orderReference)
+    {
+        $extraVars = [];
+        if ($method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+            // Set the `banktransfer` details
+            if ($apiPayment instanceof \Mollie\Api\Resources\Order) {
+                // If this is an order, take the first payment
+                $apiPayment = $apiPayment->payments();
+                $apiPayment = $apiPayment[0];
+            }
+
+            $details = $apiPayment->details->transferReference;
+            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
+
+            $extraVars = [
+                '{bankwire_owner}' => 'Stichting Mollie Payments',
+                '{bankwire_details}' => $details,
+                '{bankwire_address}' => $address,
+            ];
+        }
+        $this->module->currentOrderReference = $orderReference;
+        $this->module->validateMollieOrder(
+            (int)$cartId,
+            Configuration::get(Mollie::MOLLIE_STATUS_AWAITING),
+            $originalAmount,
+            isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
+            null,
+            $extraVars,
+            null,
+            false,
+            $secureKey
+        );
     }
 }

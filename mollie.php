@@ -181,6 +181,7 @@ class Mollie extends PaymentModule
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
     const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_STATUS_PARTIAL_REFUND';
     const MOLLIE_STATUS_REFUNDED = 'MOLLIE_STATUS_REFUNDED';
+    const MOLLIE_STATUS_AWAITING = 'MOLLIE_STATUS_AWAITING';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
     const MOLLIE_MAIL_WHEN_CANCELED = 'MOLLIE_MAIL_WHEN_CANCELED';
@@ -453,6 +454,12 @@ class Mollie extends PaymentModule
             return false;
         }
 
+        if (!$this->awaitingMollieOrderState()) {
+            $this->_errors[] = 'Unable to install Mollie awaiting state';
+
+            return false;
+        }
+
         $this->initConfig();
         $this->setDefaultCarrierStatuses();
 
@@ -544,7 +551,7 @@ class Mollie extends PaymentModule
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get('PS_OS_BANKWIRE'));
+        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get(self::MOLLIE_STATUS_AWAITING));
         Configuration::updateValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
@@ -2724,6 +2731,42 @@ class Mollie extends PaymentModule
                 @copy($source, $destination);
             }
             Configuration::updateValue(static::MOLLIE_STATUS_PARTIAL_REFUND, (int)$orderState->id);
+        }
+
+        return true;
+    }
+
+    public function awaitingMollieOrderState()
+    {
+        $stateExists = false;
+        $states = OrderState::getOrderStates((int)$this->context->language->id);
+        foreach ($states as $state) {
+            if ($this->lang('Awaiting Mollie payment') === $state['name']) {
+                Configuration::updateValue(static::MOLLIE_STATUS_AWAITING, (int)$state[OrderState::$definition['primary']]);
+                $stateExists = true;
+                break;
+            }
+        }
+        if (!$stateExists) {
+            $orderState = new OrderState();
+            $orderState->send_email = false;
+            $orderState->color = '#4169E1';
+            $orderState->hidden = false;
+            $orderState->delivery = false;
+            $orderState->logable = false;
+            $orderState->invoice = false;
+            $orderState->module_name = $this->name;
+            $orderState->name = [];
+            $languages = Language::getLanguages(false);
+            foreach ($languages as $language) {
+                $orderState->name[$language['id_lang']] = $this->lang('Awaiting Mollie payment');
+            }
+            if ($orderState->add()) {
+                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+                @copy($source, $destination);
+            }
+            Configuration::updateValue(static::MOLLIE_STATUS_AWAITING, (int)$orderState->id);
         }
 
         return true;
@@ -6703,7 +6746,8 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
-            $orderFee = new MolOrderFee($params['order']->id);
+            $order = Order::getByCartId($params['cart']->id);
+            $orderFee = new MolOrderFee($order->id);
             $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
         }
     }
