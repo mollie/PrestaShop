@@ -229,9 +229,10 @@ class Mollie extends PaymentModule
 
     const PS_PRICE_COMPUTE_PRECISION = 2;
 
-    const FEE_FIXED_FEE = 0;
-    const FEE_PERCENTAGE= 1;
-    const FEE_FIXED_FEE_AND_PERCENTAGE = 2;
+    const FEE_NO_FEE = 0;
+    const FEE_FIXED_FEE = 1;
+    const FEE_PERCENTAGE= 2;
+    const FEE_FIXED_FEE_AND_PERCENTAGE = 3;
 
     /**
      * Hooks for this module
@@ -2498,20 +2499,22 @@ class Mollie extends PaymentModule
                     $newOption->setLogo($image['size2x']);
                 }
 
-                $newOption->setInputs(
-                    [
+                if ($paymentFee) {
+                    $newOption->setInputs(
                         [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price",
-                            'value' => $paymentFee
-                        ],
-                        [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price-display",
-                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
-                        ],
-                    ]
-                );
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price",
+                                'value' => $paymentFee
+                            ],
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price-display",
+                                'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                            ],
+                        ]
+                    );
+                }
 
                 $paymentOptions[] = $newOption;
             } elseif (
@@ -2553,25 +2556,37 @@ class Mollie extends PaymentModule
                     $newOption->setLogo($image['size2x']);
                 }
 
-                $newOption->setInputs(
-                    [
+                if ($paymentFee) {
+                    $newOption->setInputs(
                         [
-                            'type' => 'hidden',
-                            'name' => "mollieCardToken{$methodObj->id_method}",
-                            'value' => ''
-                        ],
+                            [
+                                'type' => 'hidden',
+                                'name' => "mollieCardToken{$methodObj->id_method}",
+                                'value' => ''
+                            ],
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price",
+                                'value' => $paymentFee
+                            ],
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price-display",
+                                'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                            ],
+                        ]
+                    );
+                } else {
+                    $newOption->setInputs(
                         [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price",
-                            'value' => $paymentFee
-                        ],
-                        [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price-display",
-                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
-                        ],
-                    ]
-                );
+                            [
+                                'type' => 'hidden',
+                                'name' => "mollieCardToken{$methodObj->id_method}",
+                                'value' => ''
+                            ],
+                        ]
+                    );
+                }
 
                 $paymentOptions[] = $newOption;
             } else {
@@ -2593,20 +2608,22 @@ class Mollie extends PaymentModule
                     $newOption->setLogo($image['size2x']);
                 }
 
-                $newOption->setInputs(
-                    [
+                if ($paymentFee) {
+                    $newOption->setInputs(
                         [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price",
-                            'value' => $paymentFee
-                        ],
-                        [
-                            'type' => 'hidden',
-                            'name' => "payment-fee-price-display",
-                            'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
-                        ],
-                    ]
-                );
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price",
+                                'value' => $paymentFee
+                            ],
+                            [
+                                'type' => 'hidden',
+                                'name' => "payment-fee-price-display",
+                                'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee))
+                            ],
+                        ]
+                    );
+                }
 
                 $paymentOptions[] = $newOption;
             }
@@ -6652,8 +6669,9 @@ class Mollie extends PaymentModule
                     )
                 )->plus($surchargeFixedPrice);
                 break;
+            case self::FEE_NO_FEE:
             default:
-                return 0;
+                return false;
         }
 
         $surchargeMaxValue = new PrestaShop\Decimal\Number($paymentMethod->surcharge_limit);

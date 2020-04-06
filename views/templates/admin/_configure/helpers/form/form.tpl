@@ -97,12 +97,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-lg-3">
+                        <label class="control-label col-lg-3 required">
                             {l s='Description' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id}"
-                                   class="fixed-width-xl" value="{$methodObj->description}">
+                                   class="fixed-width-xl" value="{$methodObj->description}"
+                                   required="required">
                         </div>
                     </div>
                     <div class="form-group">
@@ -131,24 +132,24 @@
                             </select>
                         </div>
                     </div>
-{*                    <div class="form-group">*}
-{*                        <label class="control-label col-lg-3">*}
-{*                            {l s='Minimum order value' mod='mollie'}*}
-{*                        </label>*}
-{*                        <div class="col-lg-9">*}
-{*                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"*}
-{*                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">*}
-{*                        </div>*}
-{*                    </div>*}
-{*                    <div class="form-group">*}
-{*                        <label class="control-label col-lg-3">*}
-{*                            {l s='Maximum order value' mod='mollie'}*}
-{*                        </label>*}
-{*                        <div class="col-lg-9">*}
-{*                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"*}
-{*                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">*}
-{*                        </div>*}
-{*                    </div>*}
+                    {*                    <div class="form-group">*}
+                    {*                        <label class="control-label col-lg-3">*}
+                    {*                            {l s='Minimum order value' mod='mollie'}*}
+                    {*                        </label>*}
+                    {*                        <div class="col-lg-9">*}
+                    {*                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"*}
+                    {*                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">*}
+                    {*                        </div>*}
+                    {*                    </div>*}
+                    {*                    <div class="form-group">*}
+                    {*                        <label class="control-label col-lg-3">*}
+                    {*                            {l s='Maximum order value' mod='mollie'}*}
+                    {*                        </label>*}
+                    {*                        <div class="col-lg-9">*}
+                    {*                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"*}
+                    {*                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">*}
+                    {*                        </div>*}
+                    {*                    </div>*}
                     <div class="form-group">
                         <label class="control-label col-lg-3">
                             {l s='Payment Surcharge' mod='mollie'}
@@ -157,12 +158,15 @@
                             <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
                                     class="fixed-width-xl">
                                 <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>
-                                    {l s='Fixed Fee' mod='mollie'}
+                                    {l s='No fee' mod='mollie'}
                                 </option>
                                 <option value="1" {if $methodObj->surcharge === '1'} selected {/if}>
-                                    {l s='Percentage' mod='mollie'}
+                                    {l s='Fixed Fee' mod='mollie'}
                                 </option>
                                 <option value="2" {if $methodObj->surcharge === '2'} selected {/if}>
+                                    {l s='Percentage' mod='mollie'}
+                                </option>
+                                <option value="3" {if $methodObj->surcharge === '3'} selected {/if}>
                                     {l s='Fixed Fee and Percentage' mod='mollie'}
                                 </option>
                             </select>
@@ -262,7 +266,6 @@
                     }
 
                     function checkInput() {
-                        debugger;
                         var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
                         var input = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}');
                         if (input == null) {
@@ -273,10 +276,9 @@
                             initMollieCarrierConfig();
                         }
                     }
-                    debugger;
+
                     checkInput();
                 }
-                debugger;
 
                 initMollieCarriers();
             }());
@@ -328,6 +330,8 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
 
 
 
