@@ -1,0 +1,20 @@
+imports:
+
+services:
+  mollie:
+    class: 'Mollie'
+    factory: ['Module', 'getInstanceByName']
+    arguments:
+      - 'mollie'
+
+  Mollie\Service\OrderFeeService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      -
+  Mollie\Service\PaymentMethodService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+
+  Mollie\Repository\PaymentMethodRepository:

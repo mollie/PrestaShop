@@ -9,3 +9,4 @@ build/
 prestashop/
 .codecept.phar
 /translations/
+var/

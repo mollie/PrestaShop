@@ -71,7 +71,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_issuer` 
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_order_fee` (
 				`id_mol_order_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_order` INT(64) NOT NULL,
+				`id_cart` INT(64) NOT NULL,
 				`order_fee` decimal(20,6) NOT NULL
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 

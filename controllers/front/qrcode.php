@@ -133,9 +133,11 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'message' => 'No active cart',
             )));
         }
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
 
         $orderTotal = $cart->getOrderTotal(true);
-        $paymentMethodId = $this->getPaymentMethodIdByMethodId(\Mollie\Api\Types\PaymentMethod::IDEAL);
+        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId(\Mollie\Api\Types\PaymentMethod::IDEAL);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         $payment = $mollie->api->{Mollie::selectedApi()}->create(Mollie::getPaymentData(
             $orderTotal,

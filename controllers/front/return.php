@@ -69,7 +69,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $context = Context::getContext();
         /** @var Cart $cart */
         $cart = new Cart((int) $this->context->cookie->id_cart);
-        if (Validate::isLoadedObject($cart) && $cart->orderExists()) {
+        if (Validate::isLoadedObject($cart) && !$cart->orderExists()) {
             unset($context->cart);
             unset($context->cookie->id_cart);
             unset($context->cookie->checkedTOS);
@@ -229,24 +229,24 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             ? Order::getIdByCartId((int) $cart->id)
             : Order::getOrderByCartId((int) $cart->id);
         $order = new Order((int) $orderId);
-        if (Validate::isLoadedObject($order)) {
-            die(json_encode(array(
-                'success'  => true,
-                'status'   => static::DONE,
-                'response' => null,
-                'href'     => $this->context->link->getPageLink(
-                    'order-confirmation',
-                    true,
-                    null,
-                    array(
-                        'id_cart'   => (int) $cart->id,
-                        'id_module' => (int) $this->module->id,
-                        'id_order'  => (int) $order->id,
-                        'key'       => $cart->secure_key,
-                    )
-                )
-            )));
-        }
+//        if (Validate::isLoadedObject($order)) {
+//            die(json_encode(array(
+//                'success'  => true,
+//                'status'   => static::DONE,
+//                'response' => null,
+//                'href'     => $this->context->link->getPageLink(
+//                    'order-confirmation',
+//                    true,
+//                    null,
+//                    array(
+//                        'id_cart'   => (int) $cart->id,
+//                        'id_module' => (int) $this->module->id,
+//                        'id_order'  => (int) $order->id,
+//                        'key'       => $cart->secure_key,
+//                    )
+//                )
+//            )));
+//        }
         if (!Validate::isLoadedObject($cart)) {
             die(json_encode(array(
                 'success' => false,
@@ -266,33 +266,36 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $webhookController = new MollieWebhookModuleFrontController();
 
         if (Tools::substr($transactionId, 0, 3) === 'ord') {
-            $apiPayment = $webhookController->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
+            $transaction = $this->module->api->orders->get($transactionId, array('embed' => 'payments'));
+//            $apiPayment = $webhookController->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
         } else {
-            $apiPayment = $webhookController->processTransaction($this->module->api->payments->get($transactionId));
+            $transaction = $this->module->api->payments->get($transactionId);
+//            $apiPayment = $webhookController->processTransaction($this->module->api->payments->get($transactionId));
         }
 
-        if (!isset($apiPayment->status)) {
-            $status = static::DONE;
-            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
-            $tagMessage = str_replace(' ', '_', $apiPayment);
-            $href .= "#mollieMessage={$tagMessage}";
+//        if (!isset($transaction->status)) {
+//            $status = static::DONE;
+//            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
+//            $tagMessage = str_replace(' ', '_', $apiPayment);
+//            $href .= "#mollieMessage={$tagMessage}";
+//
+//            die(json_encode(array(
+//                'success'  => true,
+//                'status'   => $status,
+//                'response' => json_encode($apiPayment),
+//                'href'     => $href
+//            )));
+//        }
 
-            die(json_encode(array(
-                'success'  => true,
-                'status'   => $status,
-                'response' => json_encode($apiPayment),
-                'href'     => $href
-            )));
-        }
-
-        switch ($apiPayment->status) {
+        $order->setCurrentState((int) $this->module->statuses[$transaction->status]);
+        switch ($transaction->status) {
             case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                 $status = static::DONE;
             $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
             if (isset($apiPayment->details->failureMessage)) {
-                $tagMessage = str_replace(' ', '_', $apiPayment->details->failureMessage);
+                $tagMessage = str_replace(' ', '_', $transaction->details->failureMessage);
                 $href .= "#mollieMessage={$tagMessage}";
             } else {
                 $message = $this->module->l('Payment was canceled', 'return');
@@ -302,7 +305,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             die(json_encode(array(
                 'success'  => true,
                 'status'   => $status,
-                'response' => json_encode($apiPayment),
+                'response' => json_encode($transaction),
                 'href'     => $href
             )));
             case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
@@ -317,7 +320,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         die(json_encode(array(
             'success'  => true,
             'status'   => $status,
-            'response' => json_encode($apiPayment),
+            'response' => json_encode($transaction),
             'href'     => $this->context->link->getPageLink(
                 'order-confirmation',
                 true,

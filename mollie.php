@@ -58,6 +58,12 @@ if (!function_exists('\\Hough\\Psr7\\str')) {
  */
 class Mollie extends PaymentModule
 {
+    /**
+     * Symfony DI Container
+     **/
+    private $moduleContainer;
+
+    const DISABLE_CACHE = true;
     /** @var \Mollie\Api\MollieApiClient|null */
     public $api = null;
     /** @var array $statuses */
@@ -181,7 +187,6 @@ class Mollie extends PaymentModule
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
     const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_STATUS_PARTIAL_REFUND';
     const MOLLIE_STATUS_REFUNDED = 'MOLLIE_STATUS_REFUNDED';
-    const MOLLIE_STATUS_AWAITING = 'MOLLIE_STATUS_AWAITING';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
     const MOLLIE_MAIL_WHEN_CANCELED = 'MOLLIE_MAIL_WHEN_CANCELED';
@@ -223,7 +228,9 @@ class Mollie extends PaymentModule
 
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
+    const STATUS_MOLLIE_AWAITING = 'mollie_awaiting';
     const STATUS_ON_BACKORDER = "on_backorder";
+    const MOLLIE_AWAITING_PAYMENT = "awaiting";
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
     const APPLEPAY = 'applepay';
     const MOLLIE_COUNTRIES = 'country_';
@@ -296,7 +303,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->registerHook('actionPDFInvoiceRender');
+        $this->compile();
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -340,6 +347,7 @@ class Mollie extends PaymentModule
             \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => Configuration::get(static::MOLLIE_STATUS_REFUNDED),
             \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => Configuration::get(static::MOLLIE_STATUS_OPEN),
             \Mollie\Api\Types\PaymentStatus::STATUS_FAILED => Configuration::get(static::MOLLIE_STATUS_CANCELED),
+            $this::MOLLIE_AWAITING_PAYMENT => Configuration::get(static::STATUS_MOLLIE_AWAITING),
             static::PARTIAL_REFUND_CODE => Configuration::get(static::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(static::MOLLIE_STATUS_OPEN),
             $this::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
@@ -531,6 +539,39 @@ class Mollie extends PaymentModule
         $this->initConfig();
     }
 
+    private function compile()
+    {
+        $containerCache = $this->getLocalPath() . 'var/cache/container.php';
+        $containerConfigCache = new \Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        $containerClass = get_class($this) . 'Container';
+        if (!$containerConfigCache->isFresh()) {
+            $containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+            $locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
+            $loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+            $loader->load('config.yml');
+            $containerBuilder->compile();
+            $dumper = new Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
+            $containerConfigCache->write(
+                $dumper->dump(['class' => $containerClass]),
+                $containerBuilder->getResources()
+            );
+        }
+        require_once $containerCache;
+        $this->moduleContainer = new $containerClass();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContainer($id = false)
+    {
+        if ($id) {
+            return $this->moduleContainer->get($id);
+        }
+
+        return $this->moduleContainer;
+    }
+
     /**
      * @return void
      *
@@ -551,7 +592,7 @@ class Mollie extends PaymentModule
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES, 0);
         Configuration::updateValue(static::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         Configuration::updateValue(static::MOLLIE_DISPLAY_ERRORS, false);
-        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get(self::MOLLIE_STATUS_AWAITING));
+        Configuration::updateValue(static::MOLLIE_STATUS_OPEN, Configuration::get(self::STATUS_MOLLIE_AWAITING));
         Configuration::updateValue(static::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateValue(static::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(static::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
@@ -1426,26 +1467,6 @@ class Mollie extends PaymentModule
 
         return $countryIdsArray;
     }
-    public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
-    {
-        $sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
-
-        return Db::getInstance()->getValue($sql);
-    }
-
-    public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
-    {
-        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
-
-        return Db::getInstance()->execute($sql);
-    }
-
-    public function getPaymentMethodIdByMethodId($paymentMethodId)
-    {
-        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($paymentMethodId) . '"';
-
-        return Db::getInstance()->getValue($sql);
-    }
 
     /**
      * Get carrier configuration
@@ -1642,34 +1663,20 @@ class Mollie extends PaymentModule
                 json_encode(@json_decode(Tools::getValue(static::METHODS_CONFIG)))
             );
         }
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         if ($this->api->methods !== null && Configuration::get(static::MOLLIE_API_KEY)) {
             foreach ($this->getMethodsForConfig() as $method) {
-                $paymentId = $this->getPaymentMethodIdByMethodId($method['id']);
-                $paymentMethod = new MolPaymentMethod();
-                if ($paymentId) {
-                    $paymentMethod = new MolPaymentMethod($paymentId);
-                }
-                $paymentMethod->id_method = $method['id'];
-                $paymentMethod->method_name = $method['name'];
-                $paymentMethod->enabled = Tools::getValue(self::MOLLIE_METHOD_ENABLED . $method['id']);
-                $paymentMethod->title = Tools::getValue(self::MOLLIE_METHOD_TITLE . $method['id']);
-                $paymentMethod->method = Tools::getValue(self::MOLLIE_METHOD_API . $method['id']);
-                $paymentMethod->description = Tools::getValue(self::MOLLIE_METHOD_DESCRIPTION . $method['id']);
-                $paymentMethod->is_countries_applicable = Tools::getValue(self::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
-                $paymentMethod->minimal_order_value = Tools::getValue(self::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
-                $paymentMethod->max_order_value = Tools::getValue(self::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
-                $paymentMethod->surcharge = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
-                $paymentMethod->surcharge_fixed_amount = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT . $method['id']);
-                $paymentMethod->surcharge_percentage = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
-                $paymentMethod->surcharge_limit = Tools::getValue(self::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
-                $paymentMethod->images_json = json_encode($method['image']);
                 try {
-                    $paymentMethod->save();
+                    $paymentMethod = $paymentMethodService->savePaymentMethod($method);
                 } catch (Exception $e) {
                     $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods');
                 }
 
-                if (!$this->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
+                /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+                $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
+                if (!$paymentMethodRepo->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
                     $errors[] = $this->l('Something went wrong. Couldn\'t delete old payment methods issuers');
                 }
 
@@ -2432,7 +2439,9 @@ class Mollie extends PaymentModule
         foreach ($methodIds as $methodId) {
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
             if ($methodObj->id_method === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuersJson = $this->getPaymentMethodIssuersByPaymentMethodId($methodObj->id);
+                /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+                $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+                $issuersJson = $paymentMethodRepo->getPaymentMethodIssuersByPaymentMethodId($methodObj->id);
                 $issuers = json_decode($issuersJson, true);
                 $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
                 foreach ($issuers as $issuer) {
@@ -2742,7 +2751,7 @@ class Mollie extends PaymentModule
         $states = OrderState::getOrderStates((int)$this->context->language->id);
         foreach ($states as $state) {
             if ($this->lang('Awaiting Mollie payment') === $state['name']) {
-                Configuration::updateValue(static::MOLLIE_STATUS_AWAITING, (int)$state[OrderState::$definition['primary']]);
+                Configuration::updateValue(static::STATUS_MOLLIE_AWAITING, (int)$state[OrderState::$definition['primary']]);
                 $stateExists = true;
                 break;
             }
@@ -2766,7 +2775,7 @@ class Mollie extends PaymentModule
                 $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
                 @copy($source, $destination);
             }
-            Configuration::updateValue(static::MOLLIE_STATUS_AWAITING, (int)$orderState->id);
+            Configuration::updateValue(static::STATUS_MOLLIE_AWAITING, (int)$orderState->id);
         }
 
         return true;
@@ -3933,8 +3942,11 @@ class Mollie extends PaymentModule
         $defaultPaymentMethod->surcharge_percentage = '';
         $defaultPaymentMethod->surcharge_limit = '';
 
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
         foreach ($apiMethods as $apiMethod) {
-            $paymentId = $this->getPaymentMethodIdByMethodId($apiMethod['id']);
+            $paymentId = $paymentMethodRepo->getPaymentMethodIdByMethodId($apiMethod['id']);
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
                 $methods[$apiMethod['id']] = $apiMethod;
@@ -3952,7 +3964,7 @@ class Mollie extends PaymentModule
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach (['cartesbancaires' => 'Cartes Bancaires'] as $value => $apiMethod) {
-                $paymentId = $this->getPaymentMethodIdByMethodId($value);
+                $paymentId = $paymentMethodRepo->getPaymentMethodIdByMethodId($value);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
                     $methods[$value]['obj'] = $paymentMethod;
@@ -4305,10 +4317,13 @@ class Mollie extends PaymentModule
                         throw new PrestaShopException('Can\'t save Order');
                     }
 
+                    /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+                    $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
                     $orderFee = new MolOrderFee();
                     $orderFee->id_order = (int) $order->id;
                     $orderFee->order_fee = Mollie::getPaymentFee(
-                        new MolPaymentMethod($this->getPaymentMethodIdByMethodId($paymentMethod)),
+                        new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod)),
                         $this->context->cart->getOrderTotal()
                     );
                     if (!$orderFee->add()) {
@@ -4929,11 +4944,13 @@ class Mollie extends PaymentModule
                         PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order cannot be created', 3, null, 'Cart', (int)$idCart, true);
                         throw new PrestaShopException('Can\'t save Order');
                     }
+                    /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+                    $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
 
                     $orderFee = new MolOrderFee();
                     $orderFee->id_order = (int) $order->id;
                     $orderFee->order_fee = Mollie::getPaymentFee(
-                        new MolPaymentMethod($this->getPaymentMethodIdByMethodId($paymentMethod)),
+                        new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod)),
                         $this->context->cart->getOrderTotal()
                     );
                     try {
@@ -6746,6 +6763,9 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
+            if (!isset($params['cart']->id)) {
+                return;
+            }
             $order = Order::getByCartId($params['cart']->id);
             $orderFee = new MolOrderFee($order->id);
             $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);

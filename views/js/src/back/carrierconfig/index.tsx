@@ -52,7 +52,6 @@ export default (
       import(/* webpackChunkName: "carrierconfig" */ '@carrierconfig/components/CarrierConfig'),
     ]);
 
-    debugger;
     store.dispatch(updateConfig(config));
     store.dispatch(updateTranslations(translations));
 

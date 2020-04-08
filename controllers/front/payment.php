@@ -97,7 +97,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
-        $paymentMethodId = $this->module->getPaymentMethodIdByMethodId($method);
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
+        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
         $orderReference = Order::generateReference();
@@ -158,7 +161,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentStatus = (int) $this->module->statuses[$status];
 
         if ($paymentStatus < 1) {
-            $paymentStatus = Configuration::get(Mollie::MOLLIE_STATUS_AWAITING);
+            $paymentStatus = Configuration::get(Mollie::STATUS_MOLLIE_AWAITING);
         }
 
         if ($apiPayment->method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
@@ -331,10 +334,24 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 '{bankwire_address}' => $address,
             ];
         }
-        $this->module->currentOrderReference = $orderReference;
-        $this->module->validateMollieOrder(
-            (int)$cartId,
-            Configuration::get(Mollie::MOLLIE_STATUS_AWAITING),
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
+        $orderFee = new MolOrderFee();
+        $orderFee->id_cart = (int) $cartId;
+        $orderFee->order_fee = Mollie::getPaymentFee(
+            new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
+            $this->context->cart->getOrderTotal()
+        );
+        try {
+            $orderFee->add();
+        } catch (Exception $e) {
+            throw new PrestaShopException('Can\'t save Order fee');
+        }
+
+        $this->module->validateOrder(
+            (int) $cartId,
+            (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
             $originalAmount,
             isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
             null,
@@ -343,5 +360,18 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             false,
             $secureKey
         );
+
+//        $this->module->currentOrderReference = $orderReference;
+//        $this->module->validateMollieOrder(
+//            (int) $cartId,
+//            (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
+//            $originalAmount,
+//            isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
+//            null,
+//            $extraVars,
+//            null,
+//            false,
+//            $secureKey
+//        );
     }
 }
