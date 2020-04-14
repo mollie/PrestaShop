@@ -247,7 +247,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $orderReference = isset($apiPayment->metadata->order_reference) ? $apiPayment->metadata->order_reference : '';
 
                 $this->module->currentOrderReference = $orderReference;
-                $this->module->validateMollieOrder(
+                $this->module->validateOrder(
                     (int) $apiPayment->metadata->cart_id,
                     $paymentStatus,
                     $apiPayment->amount->value,
@@ -258,6 +258,17 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     false,
                     $cart->secure_key
                 );
+//                $this->module->validateMollieOrder(
+//                    (int) $apiPayment->metadata->cart_id,
+//                    $paymentStatus,
+//                    $apiPayment->amount->value,
+//                    isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
+//                    null,
+//                    array(),
+//                    null,
+//                    false,
+//                    $cart->secure_key
+//                );
 
                 $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                     ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)

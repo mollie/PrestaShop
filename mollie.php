@@ -2867,7 +2867,7 @@ class Mollie extends PaymentModule
         $paymentData = [
             'amount' => [
                 'currency' => (string)($currency ? Tools::strtoupper($currency) : 'EUR'),
-                'value' => (string) $totalAmount,
+                'value' => (string)number_format($totalAmount, 2, '.', ''),
             ],
             'method' => $method,
             'redirectUrl' => ($qrCode

@@ -182,7 +182,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             );
 
             $this->module->currentOrderReference = $orderReference;
-            $this->module->validateMollieOrder(
+            $this->module->validateOrder(
                 (int) $cart->id,
                 $paymentStatus,
                 $originalAmount,
@@ -193,6 +193,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 false,
                 $customer->secure_key
             );
+//            $this->module->validateMollieOrder(
+//                (int) $cart->id,
+//                $paymentStatus,
+//                $originalAmount,
+//                isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : $this->module->name,
+//                null,
+//                $extraVars,
+//                null,
+//                false,
+//                $customer->secure_key
+//            );
 
             $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                 ? Order::getIdByCartId((int) $cart->id)
@@ -349,10 +360,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             throw new PrestaShopException('Can\'t save Order fee');
         }
 
+        $orderFeeNumber = new \PrestaShop\Decimal\Number((string) $orderFee->order_fee);
+        $originalAmount = new \PrestaShop\Decimal\Number((string) $originalAmount);
+        $totalPrice = $orderFeeNumber->plus($originalAmount);
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
-            $originalAmount,
+            $totalPrice->toPrecision(2),
             isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
             null,
             $extraVars,
@@ -360,6 +374,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             false,
             $secureKey
         );
+
+        $order = Order::getByCartId($cartId);
+        $order->total_paid_tax_excl = $totalPrice->toPrecision(2);
+        $order->total_paid_tax_incl = $totalPrice->toPrecision(2);
+        $order->update();
 
 //        $this->module->currentOrderReference = $orderReference;
 //        $this->module->validateMollieOrder(

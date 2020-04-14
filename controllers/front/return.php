@@ -258,6 +258,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
+                $orderStatus = \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED;
+                $order->setCurrentState((int)$this->module->statuses[$orderStatus]);
+
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
                     'fail',
@@ -280,39 +283,55 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
                 $status = static::DONE;
-                $orderDetail = new OrderDetail($order->getOrderDetailList());
-                if (!$orderDetail->getStockState()) {
-                    $orderStatus = Mollie::STATUS_PAID_ON_BACKORDER;
+                $orderDetails = $order->getOrderDetailList();
+                /** @var OrderDetail $detail */
+                foreach ($orderDetails as $detail) {
+                    $orderDetail = new OrderDetail($detail['id_order_detail']);
+                    if (
+                        Configuration::get('PS_STOCK_MANAGEMENT') &&
+                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                    ) {
+                        $orderStatus = Mollie::STATUS_PAID_ON_BACKORDER;
+                        break;
+                    }
                 }
                 break;
             default:
                 $status = static::PENDING;
-                $orderDetail = new OrderDetail($order->getOrderDetailList());
-                if (!$orderDetail->getStockState()) {
-                    $orderStatus = Mollie::STATUS_PENDING_ON_BACKORDER;
+                $orderDetails = $order->getOrderDetailList();
+                /** @var OrderDetail $detail */
+                foreach ($orderDetails as $detail) {
+                    $orderDetail = new OrderDetail($detail['id_order_detail']);
+                    if (
+                        Configuration::get('PS_STOCK_MANAGEMENT') &&
+                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                    ) {
+                        $orderStatus = Mollie::STATUS_PENDING_ON_BACKORDER;
+                        break;
+                    }
                 }
                 break;
         }
 
-        $order->setCurrentState((int) $this->module->statuses[$orderStatus]);
+        $order->setCurrentState((int)$this->module->statuses[$orderStatus]);
 
-        die(json_encode(array(
-            'success'  => true,
-            'status'   => $status,
+        die(json_encode([
+            'success' => true,
+            'status' => $status,
             'response' => json_encode($transaction),
-            'href'     => $this->context->link->getPageLink(
+            'href' => $this->context->link->getPageLink(
                 'order-confirmation',
                 true,
                 null,
-                array(
-                    'id_cart'   => (int) $cart->id,
-                    'id_module' => (int) $this->module->id,
-                    'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                        ? Order::getIdByCartId((int) $cart->id)
-                        : Order::getOrderByCartId((int) $cart->id),
-                    'key'       => $cart->secure_key,
-                )
+                [
+                    'id_cart' => (int)$cart->id,
+                    'id_module' => (int)$this->module->id,
+                    'id_order' => (int)version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+                        ? Order::getIdByCartId((int)$cart->id)
+                        : Order::getOrderByCartId((int)$cart->id),
+                    'key' => $cart->secure_key,
+                ]
             )
-        )));
+        ]));
     }
 }
