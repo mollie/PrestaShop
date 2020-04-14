@@ -3240,11 +3240,14 @@ class Mollie extends PaymentModule
         // Start at the last index
         $index = $qty;
         // Keep going until there's no longer a difference
-        while ($difference > 0) {
+        $difference = new \PrestaShop\Decimal\Number((string) $difference);
+        $decreaseNumber = new \PrestaShop\Decimal\Number('0.01');
+        // Keep going until there's no longer a difference
+        while ($difference->getPrecision() > 0) {
             // Go for a new pass if there's still a difference after the current one
             $index = $index > 0 ? $index : $qty;
             // Difference is going to be decreased by 0.01
-            $difference -= 0.01;
+            $difference = $difference->minus($decreaseNumber);
             // Apply the rounding difference at the current index
             $spreadTotals[$index--] += $newTotal < $amount ? 0.01 : -0.01;
         }
