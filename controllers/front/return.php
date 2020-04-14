@@ -229,24 +229,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             ? Order::getIdByCartId((int) $cart->id)
             : Order::getOrderByCartId((int) $cart->id);
         $order = new Order((int) $orderId);
-//        if (Validate::isLoadedObject($order)) {
-//            die(json_encode(array(
-//                'success'  => true,
-//                'status'   => static::DONE,
-//                'response' => null,
-//                'href'     => $this->context->link->getPageLink(
-//                    'order-confirmation',
-//                    true,
-//                    null,
-//                    array(
-//                        'id_cart'   => (int) $cart->id,
-//                        'id_module' => (int) $this->module->id,
-//                        'id_order'  => (int) $order->id,
-//                        'key'       => $cart->secure_key,
-//                    )
-//                )
-//            )));
-//        }
+
         if (!Validate::isLoadedObject($cart)) {
             die(json_encode(array(
                 'success' => false,
@@ -263,59 +246,55 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         if (!Tools::isSubmit('module')) {
             $_GET['module'] = $this->module->name;
         }
-        $webhookController = new MollieWebhookModuleFrontController();
 
         if (Tools::substr($transactionId, 0, 3) === 'ord') {
             $transaction = $this->module->api->orders->get($transactionId, array('embed' => 'payments'));
-//            $apiPayment = $webhookController->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
         } else {
             $transaction = $this->module->api->payments->get($transactionId);
-//            $apiPayment = $webhookController->processTransaction($this->module->api->payments->get($transactionId));
         }
 
-//        if (!isset($transaction->status)) {
-//            $status = static::DONE;
-//            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
-//            $tagMessage = str_replace(' ', '_', $apiPayment);
-//            $href .= "#mollieMessage={$tagMessage}";
-//
-//            die(json_encode(array(
-//                'success'  => true,
-//                'status'   => $status,
-//                'response' => json_encode($apiPayment),
-//                'href'     => $href
-//            )));
-//        }
-
-        $order->setCurrentState((int) $this->module->statuses[$transaction->status]);
+        $orderStatus = $transaction->status;
         switch ($transaction->status) {
             case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
-                $status = static::DONE;
-            $href = $this->context->link->getPagelink('order', true, null, array('step' => 3));
-            if (isset($apiPayment->details->failureMessage)) {
-                $tagMessage = str_replace(' ', '_', $transaction->details->failureMessage);
-                $href .= "#mollieMessage={$tagMessage}";
-            } else {
-                $message = $this->module->l('Payment was canceled', 'return');
-                $tagMessage = str_replace(' ', '_', $message);
-                $href .= "#mollieMessage={$tagMessage}";
-            }
-            die(json_encode(array(
-                'success'  => true,
-                'status'   => $status,
-                'response' => json_encode($transaction),
-                'href'     => $href
-            )));
+                $failUrl = $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'fail',
+                    [
+                        'cartId' => $cart->id,
+                        'secureKey' => $cart->secure_key,
+                        'orderId' => $orderId,
+                        'moduleId' => $this->module->name,
+                    ],
+                    true
+                );
+
+                die(json_encode([
+                    'success' => true,
+                    'status' => static::DONE,
+                    'response' => json_encode($transaction),
+                    'href' => $failUrl
+
+                ]));
             case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
                 $status = static::DONE;
+                $orderDetail = new OrderDetail($order->getOrderDetailList());
+                if (!$orderDetail->getStockState()) {
+                    $orderStatus = Mollie::STATUS_PAID_ON_BACKORDER;
+                }
                 break;
             default:
                 $status = static::PENDING;
+                $orderDetail = new OrderDetail($order->getOrderDetailList());
+                if (!$orderDetail->getStockState()) {
+                    $orderStatus = Mollie::STATUS_PENDING_ON_BACKORDER;
+                }
                 break;
         }
+
+        $order->setCurrentState((int) $this->module->statuses[$orderStatus]);
 
         die(json_encode(array(
             'success'  => true,

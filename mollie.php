@@ -2209,7 +2209,7 @@ class Mollie extends PaymentModule
                 'isoCode' => $this->context->language->language_code,
                 'isTestMode' => self::isTestMode()
             ]);
-            if ($this->isVersion17()) {
+            if (self::isVersion17()) {
                 $this->context->controller->registerJavascript(
                     'mollie_iframe_js',
                     'https://js.mollie.com/v1/mollie.js',
@@ -2222,7 +2222,7 @@ class Mollie extends PaymentModule
             }
             Media::addJsDef([
                 'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isPS17' => $this->isVersion17(),
+                'isPS17' => self::isVersion17(),
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
@@ -2351,7 +2351,7 @@ class Mollie extends PaymentModule
         ]);
 
         $iframeDisplay = '';
-        if (!$this->isVersion17() && $isIFrameEnabled) {
+        if (!self::isVersion17() && $isIFrameEnabled) {
             $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
         }
         return $this->display(__FILE__, 'addjsdef.tpl') . $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
@@ -5342,27 +5342,7 @@ class Mollie extends PaymentModule
                     if (version_compare(_PS_VERSION_, '1.6.0.9', '>=') && static::DEBUG_MODE) {
                         PrestaShopLogger::addLog(__CLASS__ . '::validateMollieOrder - Order Status is about to be added', 1, null, 'Cart', (int)$idCart, true);
                     }
-                    // Switch to back order if needed
-                    if (Configuration::get('PS_STOCK_MANAGEMENT') &&
-                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-                    ) {
-                        $outOfStock = 'PS_OS_OUTOFSTOCK_UNPAID';
-                        if ($this->isPaid($idOrderState)) {
-                            $outOfStock = 'PS_OS_OUTOFSTOCK_PAID';
-                        }
-                        $orderStatus = (int)Configuration::get($outOfStock);
 
-                        if (!$orderStatus) {
-                            $this->setOrderStatus($order->id, (int)$idOrderState, true, $extraVars);
-                            $outOfStockId = _PS_OS_OUTOFSTOCK_;
-                            $this->setOrderStatus($order->id, (int)$outOfStockId, true, $extraVars);
-                        } else {
-                            $this->setOrderStatus($order, $orderStatus, true, $extraVars);
-                        }
-                    } else {
-                        // Set the order status
-                        $this->setOrderStatus($order->id, $idOrderState, true, $extraVars);
-                    }
                     unset($orderDetail);
                     // Order is reloaded because the status just changed
                     $order = new Order((int)$order->id);
@@ -6690,7 +6670,7 @@ class Mollie extends PaymentModule
         return $countriesWithNames;
     }
 
-    public function isVersion17()
+    public static function isVersion17()
     {
         return (bool)version_compare(_PS_VERSION_, '1.7', '>=');
     }
