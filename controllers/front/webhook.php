@@ -258,17 +258,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     false,
                     $cart->secure_key
                 );
-//                $this->module->validateMollieOrder(
-//                    (int) $apiPayment->metadata->cart_id,
-//                    $paymentStatus,
-//                    $apiPayment->amount->value,
-//                    isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : 'Mollie',
-//                    null,
-//                    array(),
-//                    null,
-//                    false,
-//                    $cart->secure_key
-//                );
 
                 $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                     ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)

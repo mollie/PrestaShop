@@ -103,7 +103,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
-        $orderReference = Order::generateReference();
+        do {
+            $orderReference = Order::generateReference();
+        } while (Order::getByReference($orderReference)->count());
         $paymentData = Mollie::getPaymentData(
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
@@ -193,17 +195,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 false,
                 $customer->secure_key
             );
-//            $this->module->validateMollieOrder(
-//                (int) $cart->id,
-//                $paymentStatus,
-//                $originalAmount,
-//                isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : $this->module->name,
-//                null,
-//                $extraVars,
-//                null,
-//                false,
-//                $customer->secure_key
-//            );
 
             $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                 ? Order::getIdByCartId((int) $cart->id)
@@ -348,21 +339,29 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
 
-        $orderFee = new MolOrderFee();
-        $orderFee->id_cart = (int) $cartId;
-        $orderFee->order_fee = Mollie::getPaymentFee(
+        $orderFee = Mollie::getPaymentFee(
             new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
             $this->context->cart->getOrderTotal()
         );
-        try {
-            $orderFee->add();
-        } catch (Exception $e) {
-            throw new PrestaShopException('Can\'t save Order fee');
+
+        $totalPrice = new \PrestaShop\Decimal\Number((string) $originalAmount);
+
+        if ($orderFee) {
+            $orderFeeObj = new MolOrderFee();
+            $orderFeeObj->id_cart = (int) $cartId;
+            $orderFeeObj->order_fee = Mollie::getPaymentFee(
+                new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
+                $this->context->cart->getOrderTotal()
+            );
+            try {
+                $orderFeeObj->add();
+            } catch (Exception $e) {
+                throw new PrestaShopException('Can\'t save Order fee');
+            }
+            $orderFeeNumber = new \PrestaShop\Decimal\Number((string) $orderFeeObj->order_fee);
+            $totalPrice = $orderFeeNumber->plus($totalPrice);
         }
 
-        $orderFeeNumber = new \PrestaShop\Decimal\Number((string) $orderFee->order_fee);
-        $originalAmount = new \PrestaShop\Decimal\Number((string) $originalAmount);
-        $totalPrice = $orderFeeNumber->plus($originalAmount);
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
@@ -378,19 +377,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $order = Order::getByCartId($cartId);
         $order->total_paid_tax_excl = $totalPrice->toPrecision(2);
         $order->total_paid_tax_incl = $totalPrice->toPrecision(2);
+        $order->total_paid = $totalPrice->toPrecision(2);
+        $order->reference = $orderReference;
         $order->update();
-
-//        $this->module->currentOrderReference = $orderReference;
-//        $this->module->validateMollieOrder(
-//            (int) $cartId,
-//            (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
-//            $originalAmount,
-//            isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
-//            null,
-//            $extraVars,
-//            null,
-//            false,
-//            $secureKey
-//        );
     }
 }
