@@ -18,3 +18,5 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Repository\PaymentMethodRepository:
+
+  Mollie\Repository\OrderFeeRepository:
