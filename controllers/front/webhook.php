@@ -36,6 +36,8 @@
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\ResourceFactory;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\OrderStatusService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -208,20 +210,24 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return $this->module->l('Transaction failed', 'webhook');
         }
 
-        $psPayment = Mollie::getPaymentBy('transaction_id', $transaction->id);
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $psPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
         $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
             ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
             : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+        /** @var OrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
         $cart = new Cart($apiPayment->metadata->cart_id);
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
                 ) {
-                    $this->module->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                    $orderStatusService->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
                 } else {
-                    $this->module->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
+                    $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
                 }
             } elseif ($psPayment['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
@@ -233,7 +239,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     : $this->module->displayName;
                 $order->update();
 
-                $this->module->setOrderStatus($orderId, $apiPayment->status);
+                $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
                 && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
@@ -337,7 +343,9 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 '`transaction_id` = \''.pSQL($transactionId).'\''
             );
         } catch (PrestaShopDatabaseException $e) {
-            Mollie::tryAddOrderReferenceColumn();
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }
     }

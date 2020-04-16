@@ -1015,121 +1015,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param int $order
-     * @param string|int $statusId
-     * @param bool|null $useExistngPayment
-     * @param array $templateVars
-     *
-     * @return void
-     *
-     * @throws Adapter_Exception
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.2 Accept both Order ID and Order object
-     * @since 3.3.2 Accept both Mollie status string and PrestaShop status ID
-     * @since 3.3.2 $useExistingPayment option
-     * @since 3.3.4 Accepts template vars for the corresponding email template
-     */
-    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [])
-    {
-        if (is_string($statusId)) {
-            $status = $statusId;
-            if (empty(Mollie\Config\Config::getStatuses()[$statusId])) {
-                return;
-            }
-            $statusId = (int)Mollie\Config\Config::getStatuses()[$statusId];
-        } else {
-            $status = '';
-            foreach (Mollie\Config\Config::getStatuses() as $mollieStatus => $prestaShopStatusId) {
-                if ((int)$prestaShopStatusId === $statusId) {
-                    $status = $mollieStatus;
-                    break;
-                }
-            }
-        }
-
-        if (!$order instanceof Order) {
-            $order = new Order((int)$order);
-        }
-
-        if (!Validate::isLoadedObject($order)) {
-            return;
-        }
-
-        $history = array_map(function ($item) {
-            return (int)$item['id_order_state'];
-        }, $order->getHistory(Context::getContext()->language->id));
-        if (!Validate::isLoadedObject($order)
-            || !$status
-        ) {
-            return;
-        }
-        if ($useExistingPayment === null) {
-            $useExistingPayment = !$order->hasInvoice();
-        }
-
-        $history = new OrderHistory();
-        $history->id_order = $order->id;
-        $history->changeIdOrderState($statusId, $order, $useExistingPayment);
-
-        if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
-            $history->addWithemail(true, $templateVars);
-        } else {
-            $history->add();
-        }
-    }
-
-    /**
-     * @param string $column
-     * @param int $id
-     *
-     * @return array
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0 static function
-     */
-    public static function getPaymentBy($column, $id)
-    {
-        try {
-            $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-                sprintf(
-                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
-                    _DB_PREFIX_ . 'mollie_payments',
-                    bqSQL($column),
-                    pSQL($id),
-                    \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                    \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED
-                )
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            static::tryAddOrderReferenceColumn();
-            throw $e;
-        }
-
-        if ($paidPayment) {
-            return $paidPayment;
-        }
-
-        try {
-            $nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
-                sprintf(
-                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
-                    _DB_PREFIX_ . 'mollie_payments',
-                    bqSQL($column),
-                    pSQL($id)
-                )
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            static::tryAddOrderReferenceColumn();
-            throw $e;
-        }
-
-        return $nonPaidPayment;
-    }
-
-    /**
      * @param array $errors
      *
      * @return string
@@ -1436,8 +1321,8 @@ class Mollie extends PaymentModule
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return [
                 'status' => 'fail',
-                'msg_fail' => $this->lang('The order could not be refunded!'),
-                'msg_details' => $this->lang('Reason:') . ' ' . $e->getMessage(),
+                'msg_fail' => $this->l('The order could not be refunded!'),
+                'msg_details' => $this->l('Reason:') . ' ' . $e->getMessage(),
             ];
         }
 
@@ -1454,8 +1339,8 @@ class Mollie extends PaymentModule
 
         return [
             'status' => 'success',
-            'msg_success' => $this->lang('The order has been refunded!'),
-            'msg_details' => $this->lang('Mollie B.V. will transfer the money back to the customer on the next business day.'),
+            'msg_success' => $this->l('The order has been refunded!'),
+            'msg_details' => $this->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
         ];
     }
 
@@ -1490,7 +1375,7 @@ class Mollie extends PaymentModule
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->lang('The product(s) could not be shipped!'),
+                'message' => $this->l('The product(s) could not be shipped!'),
                 'detailed' => $e->getMessage(),
             ];
         }
@@ -1546,7 +1431,7 @@ class Mollie extends PaymentModule
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->lang('The product(s) could not be refunded!'),
+                'message' => $this->l('The product(s) could not be refunded!'),
                 'detailed' => $e->getMessage(),
             ];
         }
@@ -1601,7 +1486,7 @@ class Mollie extends PaymentModule
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->lang('The product(s) could not be canceled!'),
+                'message' => $this->l('The product(s) could not be canceled!'),
                 'detailed' => $e->getMessage(),
             ];
         }
@@ -1760,8 +1645,10 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayAdminOrder($params)
     {
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $cartId = Cart::getCartIdByOrderId((int)$params['id_order']);
-        $transaction = static::getPaymentBy('cart_id', (int)$cartId);
+        $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (int)$cartId);
         if (empty($transaction)) {
             return false;
         }
@@ -1827,8 +1714,8 @@ class Mollie extends PaymentModule
             'issuer_setting' => $issuerSetting,
             'images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
             'warning' => $this->warning,
-            'msg_pay_with' => $this->lang('Pay with %s'),
-            'msg_bankselect' => $this->lang('Select your bank:'),
+            'msg_pay_with' => $this->l('Pay with %s'),
+            'msg_bankselect' => $this->l('Select your bank:'),
             'module' => $this,
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
             'mollie_translations' => [
@@ -2147,9 +2034,11 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayOrderConfirmation()
     {
-        $payment = $this->getPaymentBy('cart_id', (int)Tools::getValue('id_cart'));
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $payment = $paymentMethodRepo->getPaymentBy('cart_id', (int)Tools::getValue('id_cart'));
         if ($payment && $payment['bank_status'] == \Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
-            $this->context->smarty->assign('okMessage', $this->lang('Thank you. Your payment has been received.'));
+            $this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
             return $this->display(__FILE__, 'ok.tpl');
         }
@@ -2178,8 +2067,9 @@ class Mollie extends PaymentModule
                 return false;
             }
         } catch (PrestaShopException $e) {
-            static::tryAddOrderReferenceColumn();
-
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
             $this->_errors[] = 'Database error: ' . Db::getInstance()->getMsgError();
 
             return false;
@@ -3747,8 +3637,11 @@ class Mollie extends PaymentModule
     public function displayAjaxMollieCarrierConfig()
     {
         header('Content-Type: application/json;charset=UTF-8');
+        /** @var \Mollie\Service\CarrierService $carrierService */
+        $carrierService = $this->getContainer(\Mollie\Service\CarrierService::class);
+        $dbConfig = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_TRACKING_URLS), true);
 
-        return ['success' => true, 'carriers' => static::carrierConfig()];
+        return ['success' => true, 'carriers' => $carrierService->carrierConfig($dbConfig)];
     }
 
     /**
@@ -3765,7 +3658,10 @@ class Mollie extends PaymentModule
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
 
-        $mollieData = static::getPaymentBy('transaction_id', $input['transactionId']);
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+
+        $mollieData = $paymentMethodRepo::getPaymentBy('transaction_id', $input['transactionId']);
 
         try {
             $adminOrdersController = new AdminOrdersController();
@@ -3817,7 +3713,9 @@ class Mollie extends PaymentModule
                                 'message' => sprintf($this->l('You do not have permission to %s payments'), $this->l('edit')),
                             ];
                         }
-                        $info = static::getPaymentBy('transaction_id', $input['transactionId']);
+                        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+                        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+                        $info = $paymentMethodRepo->getPaymentBy('transaction_id', $input['transactionId']);
                         if (!$info) {
                             return ['success' => false];
                         }
@@ -3891,32 +3789,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Add the order reference column in case the module upgrade script hasn't run
-     *
-     * @return bool
-     *
-     * @since 3.3.0
-     */
-    public static function tryAddOrderReferenceColumn()
-    {
-        try {
-            if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
-                SELECT COUNT(*)
-                FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
-                AND TABLE_NAME = \'' . _DB_PREFIX_ . 'mollie_payments\'
-                AND COLUMN_NAME = \'order_reference\'')
-            ) {
-                return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD `order_reference` varchar(191)');
-            }
-        } catch (PrestaShopException $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * 2D array sort by key
      *
      * @param mixed $array
@@ -3987,7 +3859,9 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $dbPayment = static::getPaymentBy('order_id', (int)$idOrder);
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
         } catch (PrestaShopDatabaseException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;

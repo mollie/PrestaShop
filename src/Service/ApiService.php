@@ -5,7 +5,6 @@ namespace Mollie\Service;
 use Configuration;
 use Context;
 use Exception;
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;

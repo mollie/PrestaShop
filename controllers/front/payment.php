@@ -152,7 +152,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     )
                 );
             } catch (PrestaShopDatabaseException $e) {
-                Mollie::tryAddOrderReferenceColumn();
+                $paymentMethodRepo->tryAddOrderReferenceColumn();
                 throw $e;
             }
         }
@@ -216,7 +216,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     )
                 );
             } catch (PrestaShopDatabaseException $e) {
-                Mollie::tryAddOrderReferenceColumn();
+                $paymentMethodRepo->tryAddOrderReferenceColumn();
                 $redirectLink = $this->context->link->getPageLink(
                     'order',
                     true,

@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Repository\PaymentMethodRepository;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -73,7 +75,9 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
         if (Tools::getValue('done')) {
             $canceled = true;
-            $dbPayment = Mollie::getPaymentBy('cart_id', Tools::getValue('cart_id'));
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $dbPayment = $paymentMethodRepo->getPaymentBy('cart_id', Tools::getValue('cart_id'));
             if (is_array($dbPayment)) {
                 try {
                     $apiPayment = $this->module->api->payments->get($dbPayment['transaction_id']);
@@ -133,8 +137,8 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'message' => 'No active cart',
             )));
         }
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 
         $orderTotal = $cart->getOrderTotal(true);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId(\Mollie\Api\Types\PaymentMethod::IDEAL);
@@ -164,7 +168,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
-            Mollie::tryAddOrderReferenceColumn();
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }
 
@@ -208,7 +212,9 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $payment = Mollie::getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $payment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
         } catch (PrestaShopDatabaseException $e) {
             die(json_encode(array(
                 'success' => false,

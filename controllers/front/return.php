@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Repository\PaymentMethodRepository;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -98,6 +100,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $data = array();
         $cart = null;
 
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
         /**
          * Set ref is indicative of a payment that is tied to an order instead of a cart, which
          * we still support for transitional reasons.
@@ -105,9 +109,9 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         if (Tools::getIsset('ref')) {
             $idOrder = (int) Tools::getValue('id');
             // Check if user is allowed to be on the return page
-            $data['auth'] = Order::getUniqReferenceOf($idOrder) === Tools::getValue('ref');
+            $data['auth'] = $paymentMethodRepo->getUniqReferenceOf($idOrder) === Tools::getValue('ref');
             if ($data['auth']) {
-                $data['mollie_info'] = Mollie::getPaymentBy('order_id', (int) $idOrder);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) $idOrder);
             }
         } elseif (Tools::getIsset('cart_id')) {
             $idCart = (int) Tools::getValue('cart_id');
@@ -116,7 +120,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             $cart = new Cart($idCart);
             $data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = Mollie::getPaymentBy('cart_id', (int) $idCart);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (int) $idCart);
             }
         }
 
@@ -125,18 +129,18 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
             if ($data['mollie_info'] === false) {
                 $data['mollie_info'] = array();
-                $data['msg_details'] = $this->module->lang('The order with this id does not exist.');
+                $data['msg_details'] = $this->l('The order with this id does not exist.');
             } elseif ($data['mollie_info']['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
                 && $data['mollie_info']['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
             ) {
-                $data['msg_details'] = $this->module->lang('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
+                $data['msg_details'] = $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
                 $data['wait'] = true;
             }
         } else {
             // Not allowed? Don't make query but redirect.
             $data['mollie_info'] = array();
-            $data['msg_details'] = $this->module->lang('You are not authorised to see this page.');
+            $data['msg_details'] = $this->l('You are not authorised to see this page.');
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
 
@@ -216,9 +220,11 @@ class MollieReturnModuleFrontController extends ModuleFrontController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 
         $transactionId = Tools::getValue('transaction_id');
-        $dbPayment = Mollie::getPaymentBy('transaction_id', $transactionId);
+        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
         $cart = new Cart($dbPayment['cart_id']);
         if (!Validate::isLoadedObject($cart)) {
             die(json_encode(array(
