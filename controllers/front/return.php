@@ -291,7 +291,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         Configuration::get('PS_STOCK_MANAGEMENT') &&
                         ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
                     ) {
-                        $orderStatus = Mollie::STATUS_PAID_ON_BACKORDER;
+                        $orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
                         break;
                     }
                 }
@@ -306,7 +306,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                         Configuration::get('PS_STOCK_MANAGEMENT') &&
                         ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
                     ) {
-                        $orderStatus = Mollie::STATUS_PENDING_ON_BACKORDER;
+                        $orderStatus = Mollie\Config\Config::STATUS_PENDING_ON_BACKORDER;
                         break;
                     }
                 }

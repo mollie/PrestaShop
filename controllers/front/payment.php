@@ -121,13 +121,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage().'. Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
                 : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
             return;
         } catch (PrestaShopException $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)
+            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage().' Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
                 : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
             return;
@@ -163,7 +163,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentStatus = (int) $this->module->statuses[$status];
 
         if ($paymentStatus < 1) {
-            $paymentStatus = Configuration::get(Mollie::STATUS_MOLLIE_AWAITING);
+            $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
         }
 
         if ($apiPayment->method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
@@ -188,7 +188,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 (int) $cart->id,
                 $paymentStatus,
                 $originalAmount,
-                isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$apiPayment->method] : $this->module->name,
+                isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$apiPayment->method] : $this->module->name,
                 null,
                 $extraVars,
                 null,
@@ -283,7 +283,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     protected function createPayment($data, $selectedApi)
     {
         try {
-            if ($selectedApi === Mollie::MOLLIE_ORDERS_API) {
+            if ($selectedApi === Mollie\Config\Config::MOLLIE_ORDERS_API) {
                 /** @var \Mollie\Api\Resources\Order $payment */
                 $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
             } else {
@@ -364,9 +364,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $this->module->validateOrder(
             (int) $cartId,
-            (int) Configuration::get(Mollie::STATUS_MOLLIE_AWAITING),
+            (int) Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
             $totalPrice->toPrecision(2),
-            isset(Mollie::$methods[$apiPayment->method]) ? Mollie::$methods[$method] : $this->module->name,
+            isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
             null,
             $extraVars,
             null,

@@ -54,7 +54,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 
         $orderId = Order::getOrderByCartId($this->context->cart->id);
         $mollie = new \Mollie\Api\MollieApiClient();
-        $mollie->setApiKey(Configuration::get(mollie::MOLLIE_API_KEY));
+        $mollie->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY));
 
 
         $orderLink = $this->context->link->getPageLink(
@@ -99,7 +99,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
     public function setMedia()
     {
         Media::addJsDef([
-            'profileId' => Configuration::get(Mollie::MOLLIE_PROFILE_ID),
+            'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
         ]);
         $this->addJS("{$this->module->getPathUri()}views/js/front/mollie_iframe.js");
         $this->addCSS("{$this->module->getPathUri()}views/css/mollie_iframe.css");

@@ -72,7 +72,7 @@
 
 {include file="./init_urls.tpl"}
 
-{if !empty($issuers['ideal']) && $issuer_setting === Mollie::ISSUERS_ON_CLICK}
+{if !empty($issuers['ideal']) && $issuer_setting === Mollie\Config\Config::ISSUERS_ON_CLICK}
     <script type="text/javascript">
         (function initMollieBanks() {
             if (typeof window.MollieModule === 'undefined'
