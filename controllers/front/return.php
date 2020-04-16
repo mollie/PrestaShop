@@ -321,7 +321,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             [
                 'id_cart' => (int)$cart->id,
                 'id_module' => (int)$this->module->id,
-                'module_name' => (int)$this->module->name,
+                'module_name' => $this->module->name,
                 'id_order' => (int)version_compare(_PS_VERSION_, '1.7.1.0', '>=')
                     ? Order::getIdByCartId((int)$cart->id)
                     : Order::getOrderByCartId((int)$cart->id),
