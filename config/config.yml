@@ -22,6 +22,24 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
 
+  Mollie\Service\ConfigFieldService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\ApiService'
+      - '@Mollie\Repository\CountryRepository'
+
+  Mollie\Service\RefundService:
+    arguments:
+      - '@mollie'
+
+  Mollie\Service\ShipService:
+    arguments:
+      - '@mollie'
+
+  Mollie\Service\CancelService:
+    arguments:
+      - '@mollie'
+
   Mollie\Service\CarrierService:
 
   Mollie\Service\OrderStatusService:
