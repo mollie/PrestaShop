@@ -18,11 +18,24 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\ApiService:
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\CountryRepository'
 
   Mollie\Repository\PaymentMethodRepository:
 
   Mollie\Repository\OrderFeeRepository:
 
+  Mollie\Repository\CountryRepository:
+
   Mollie\Utility\LanguageUtility:
+    arguments:
+      - '@mollie'
+
+  Mollie\Install\Installer:
+    arguments:
+      - '@mollie'
+
+  Mollie\Install\Uninstall:
     arguments:
       - '@mollie'
