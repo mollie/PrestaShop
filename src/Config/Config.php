@@ -2,6 +2,8 @@
 
 namespace Mollie\Config;
 
+use Configuration;
+
 class Config
 {
     /**
@@ -188,5 +190,23 @@ class Config
         'applepay' => 'Apple Pay',
         'mybank' => 'MyBank',
     ];
-
+    
+    public static function getStatuses()
+    {
+        return [
+            \Mollie\Api\Types\PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
+            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
+            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
+            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
+            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
+            self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
+            self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
+            'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),
+            self::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
+            self::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
+            self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
+        ];
+    }
 }

@@ -11,12 +11,18 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
-      -
+
   Mollie\Service\PaymentMethodService:
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
 
+  Mollie\Service\ApiService:
+
   Mollie\Repository\PaymentMethodRepository:
 
   Mollie\Repository\OrderFeeRepository:
+
+  Mollie\Utility\LanguageUtility:
+    arguments:
+      - '@mollie'

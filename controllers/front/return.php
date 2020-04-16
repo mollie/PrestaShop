@@ -259,7 +259,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
             case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
                 $orderStatus = \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED;
-                $order->setCurrentState((int)$this->module->statuses[$orderStatus]);
+                $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
 
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
@@ -313,7 +313,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 break;
         }
 
-        $order->setCurrentState((int)$this->module->statuses[$orderStatus]);
+        $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
 
         $successUrl = $this->context->link->getModuleLink(
             $this->module->name,

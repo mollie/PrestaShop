@@ -76,7 +76,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $cart,
             $customer
         )) {
-            $this->errors[] = $this->module->lang['This payment method is not available.'];
+            /** @var \Mollie\Utility\LanguageUtility $langUtility */
+            $langUtility = $this->module->getContainer(\Mollie\Utility\LanguageUtility::class);
+            $this->errors[] = $langUtility->getLang()['This payment method is not available.'];
             $this->setTemplate('error.tpl');
 
             return;
@@ -156,11 +158,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $status = $apiPayment->status;
-        if (!isset($this->module->statuses[$apiPayment->status])) {
+        if (!isset(Mollie\Config\Config::getStatuses()[$apiPayment->status])) {
             $status = 'open';
         }
 
-        $paymentStatus = (int) $this->module->statuses[$status];
+        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$status];
 
         if ($paymentStatus < 1) {
             $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);

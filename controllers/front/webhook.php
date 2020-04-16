@@ -239,7 +239,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
-                $paymentStatus = (int) $this->module->statuses[$apiPayment->status];
+                $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
                 if ($paymentStatus < 1) {
                     $paymentStatus = Configuration::get('PS_OS_PAYMENT');
@@ -279,7 +279,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) == Mollie\Config\Config::DEBUG_LOG_ALL) {
             PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie\Config\Config::NOTICE);
         }
-        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) $this->module->statuses[$apiPayment->status], 'id_order' => (int) $orderId));
+        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) Mollie\Config\Config::getStatuses()[$apiPayment->status], 'id_order' => (int) $orderId));
 
         return $apiPayment;
     }
