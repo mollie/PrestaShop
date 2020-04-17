@@ -6,6 +6,8 @@ use Carrier;
 use Configuration;
 use Context;
 use Mollie\Config\Config;
+use Order;
+use Validate;
 
 class CarrierService
 {
@@ -50,4 +52,34 @@ class CarrierService
         return $configCarriers;
     }
 
+    /**
+     * Get carrier config for order
+     *
+     * @param Order|int $order
+     *
+     * @return array|null Configuration or `null` if not tracking
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function getOrderCarrierConfig($order)
+    {
+        if (is_int($order)) {
+            $order = new Order($order);
+        }
+
+        if (!$carrierConfig = @json_decode(Configuration::get(Config::MOLLIE_TRACKING_URLS), true)) {
+            return null;
+        }
+
+        if (!Validate::isLoadedObject($order) || !$order->id_carrier) {
+            return null;
+        }
+
+        if (!isset($carrierConfig[$order->id_carrier]) || !isset($carrierConfig[$order->id_carrier]['source'])) {
+            return null;
+        }
+
+        return $carrierConfig[$order->id_carrier];
+    }
 }

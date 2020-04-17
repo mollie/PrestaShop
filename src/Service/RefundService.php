@@ -4,6 +4,7 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Api\Resources\Payment;
+use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
 use Tools;
 
@@ -60,7 +61,7 @@ class RefundService
             ];
         }
 
-        if (Mollie::isLocalEnvironment()) {
+        if (EnvironmentUtility::isLocalEnvironment()) {
             // Refresh payment on local environments
             /** @var Payment $payment */
             $apiPayment = $this->module->api->payments->get($transactionId);
@@ -107,7 +108,7 @@ class RefundService
             ];
             $order->refund($refund);
 
-            if (Mollie::isLocalEnvironment()) {
+            if (EnvironmentUtility::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var Payment $payment */
                 $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);

@@ -1,5 +1,6 @@
 <?php
 
+use Mollie\Config\Config;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 /**
@@ -69,7 +70,7 @@ class MollieFailModuleFrontController extends ModuleFrontController
 
     public function init()
     {
-        if (!Mollie::isVersion17()) {
+        if (!Config::isVersion17()) {
             return parent::init();
         }
         parent::init();
@@ -120,7 +121,7 @@ class MollieFailModuleFrontController extends ModuleFrontController
                 'cancel' => 1,
             ]
         );
-        if (!Mollie::isVersion17()) {
+        if (!Config::isVersion17()) {
             Tools::redirect($orderLink);
         }
 

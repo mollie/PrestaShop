@@ -80,7 +80,7 @@
                 || typeof window.MollieModule.app.default === 'undefined'
                 || typeof window.MollieModule.app.default.bankList === 'undefined'
             ) {
-                {Mollie::getWebpackChunks('app')|json_encode}.
+                {Mollie\Utility\UrlPathUtility::getWebpackChunks('app')|json_encode}.
                 forEach(function (chunk) {
                     var elem = document.createElement('script');
                     elem.type = 'text/javascript';

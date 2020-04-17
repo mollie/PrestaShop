@@ -103,4 +103,27 @@ class UrlPathUtility
         return true;
     }
 
+    /**
+     * Get the webpack chunks for a given entry name
+     *
+     * @param string $entry Entry name
+     *
+     * @return array Array with chunk files, should be loaded in the given order
+     *
+     * @since 3.4.0
+     */
+    public static function getWebpackChunks($entry)
+    {
+        static $manifest = null;
+        if (!$manifest) {
+            $manifest = [];
+            foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
+                $manifest[$chunk['name']] = array_map(function ($chunk) {
+                    return \Mollie\Utility\UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
+                }, $chunk['files']);
+            }
+        }
+
+        return isset($manifest[$entry]) ? $manifest[$entry] : [];
+    }
 }

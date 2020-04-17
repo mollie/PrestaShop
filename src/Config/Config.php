@@ -3,6 +3,7 @@
 namespace Mollie\Config;
 
 use Configuration;
+use phpDocumentor\Reflection\Types\Self_;
 
 class Config
 {
@@ -208,5 +209,20 @@ class Config
             self::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
             self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
         ];
+    }
+
+    public static function isVersion17()
+    {
+        return (bool)version_compare(_PS_VERSION_, '1.7', '>=');
+    }
+
+    public static function isTestMode()
+    {
+        $apiKey = Configuration::get(self::MOLLIE_API_KEY);
+        if (strpos($apiKey, 'test') === 0) {
+            return true;
+        }
+
+        return false;
     }
 }

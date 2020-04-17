@@ -34,6 +34,7 @@
  */
 
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\EnvironmentUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -201,7 +202,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             )));
         }
 
-        if (Mollie::isLocalEnvironment()) {
+        if (EnvironmentUtility::isLocalEnvironment()) {
             /** @var \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $payment */
             $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
             if (!Tools::isSubmit('module')) {

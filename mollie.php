@@ -292,7 +292,7 @@ class Mollie extends PaymentModule
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
                     ? $this->trans('Never recompile template files', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Never recompile template files', 'AdminPerformance'),
-                'settingsPage' => static::getMenuLocation('AdminPerformance'),
+                'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
             ]);
             $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
         }
@@ -304,7 +304,7 @@ class Mollie extends PaymentModule
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
                     ? $this->trans('Never clear cache files', [], 'Admin.Advparameters.Feature')
                     : Translate::getAdminTranslation('Never clear cache files', 'AdminPerformance'),
-                'settingsPage' => static::getMenuLocation('AdminPerformance'),
+                'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
             ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
         }
@@ -316,7 +316,7 @@ class Mollie extends PaymentModule
                 'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
                     ? $this->trans('Round up away from zero, when it is half way there (recommended)', [], 'Admin.Shopparameters.Feature')
                     : Translate::getAdminTranslation('Round up away from zero, when it is half way there (recommended)', 'AdminPreferences'),
-                'settingsPage' => static::getMenuLocation('AdminPreferences'),
+                'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPreferences'),
             ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
         }
@@ -345,7 +345,9 @@ class Mollie extends PaymentModule
         }
 
         if (Tools::isSubmit("submit{$this->name}")) {
-            $resultMessage = $this->saveSettings($errors);
+            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
+            $saveSettingsService = $this->getContainer(\Mollie\Service\SettingsSaveService::class);
+            $resultMessage = $saveSettingsService->saveSettings($errors);
             if (!empty($errors)) {
                 $this->context->controller->errors = $resultMessage;
             } else {
@@ -373,7 +375,7 @@ class Mollie extends PaymentModule
             'val_save' => $this->l('Save'),
             'lang' => $langUtility->getLang(),
             'logo_url' => $this->getPathUri() . 'views/img/mollie_logo.png',
-            'webpack_urls' => static::getWebpackChunks('app'),
+            'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
             'description_message' => $this->l('Description cannot be empty'),
             'Profile_id_message' => $this->l('Wrong profile ID')
         ];
@@ -459,6 +461,8 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
+        /** @var \Mollie\Service\CountryService $countryService */
+        $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
         
         $generalSettings = 'general_settings';
         if ($isApiKeyProvided) {
@@ -589,7 +593,7 @@ class Mollie extends PaymentModule
                 'type' => 'mollie-methods',
                 'name' => Mollie\Config\Config::METHODS_CONFIG,
                 'paymentMethods' => $apiService->getMethodsForConfig($this->api, $this->getPathUri()),
-                'countries' => $this->getActiveCountriesList(),
+                'countries' => $countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
             ];
         }
@@ -830,7 +834,7 @@ class Mollie extends PaymentModule
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-        $this->aasort($orderStatuses, 'id_order_state');
+        \Mollie\Utility\AssortUtility::aasort($orderStatuses, 'id_order_state');
 
         $this->context->smarty->assign([
             'logs' => $this->context->link->getAdminLink('AdminLogs')
@@ -972,48 +976,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Get carrier configuration
-     *
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    public static function carrierConfig()
-    {
-        $dbConfig = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_TRACKING_URLS), true);
-        if (!is_array($dbConfig)) {
-            $dbConfig = [];
-        }
-
-        $carriers = Carrier::getCarriers(
-            Context::getContext()->language->id,
-            false,
-            false,
-            false,
-            null,
-            Carrier::ALL_CARRIERS
-        );
-
-        $configCarriers = [];
-        foreach ($carriers as $carrier) {
-            $idCarrier = (int)$carrier['id_carrier'];
-            $configCarriers[] = [
-                'id_carrier' => $idCarrier,
-                'name' => $carrier['name'],
-                'source' => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['source'] : ($carrier['external_module_name'] ? Mollie\Config\Config::MOLLIE_CARRIER_MODULE : Mollie\Config\Config::MOLLIE_CARRIER_CARRIER),
-                'module' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
-                'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
-                'custom_url' => isset($dbConfig[$idCarrier]) ? $dbConfig[$idCarrier]['custom_url'] : '',
-            ];
-        }
-        if (count($dbConfig) !== count($configCarriers)) {
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
-        }
-
-        return $configCarriers;
-    }
-
-    /**
      * @param string $str
      *
      * @return string
@@ -1028,144 +990,6 @@ class Mollie extends PaymentModule
         }
 
         return $str;
-    }
-
-    /**
-     * @param array $errors
-     *
-     * @return string
-     * @throws PrestaShopException
-     */
-    protected function saveSettings(&$errors = [])
-    {
-        $mollieApiKey = Tools::getValue(Mollie\Config\Config::MOLLIE_API_KEY);
-        $mollieProfileId = Tools::getValue(Mollie\Config\Config::MOLLIE_PROFILE_ID);
-
-        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
-            $errors[] = $this->l('The API key needs to start with test or live.');
-        }
-
-        if (Tools::getValue(Mollie\Config\Config::METHODS_CONFIG) && json_decode(Tools::getValue(Mollie\Config\Config::METHODS_CONFIG))) {
-            Configuration::updateValue(
-                Mollie\Config\Config::METHODS_CONFIG,
-                json_encode(@json_decode(Tools::getValue(Mollie\Config\Config::METHODS_CONFIG)))
-            );
-        }
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-        if ($this->api->methods !== null && Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY)) {
-            foreach ($apiService->getMethodsForConfig($this->api, $this->getPathUri()) as $method) {
-                try {
-                    $paymentMethod = $paymentMethodService->savePaymentMethod($method);
-                } catch (Exception $e) {
-                    $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods');
-                }
-
-                /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-                $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-
-                if (!$paymentMethodRepo->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-                    $errors[] = $this->l('Something went wrong. Couldn\'t delete old payment methods issuers');
-                }
-
-                if ($method['issuers']) {
-                    $paymentMethodIssuer = new MolPaymentMethodIssuer();
-                    $paymentMethodIssuer->issuers_json = json_encode($method['issuers']);
-                    $paymentMethodIssuer->id_payment_method = $paymentMethod->id;
-                    try {
-                        $paymentMethodIssuer->add();
-                    } catch (Exception $e) {
-                        $errors[] = $this->l('Something went wrong. Couldn\'t save your payment methods issuer');
-                    }
-                }
-
-                $countries = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
-                /** @var \Mollie\Repository\CountryRepository $countryRepo */
-                $countryRepo = $this->getContainer(\Mollie\Repository\CountryRepository::class);
-                $countryRepo->updatePaymentMethodCountries($method['id'], $countries);
-            }
-        }
-
-        $molliePaymentscreenLocale = Tools::getValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE);
-        $mollieIFrameEnabled = Tools::getValue(Mollie\Config\Config::MOLLIE_IFRAME);
-        $mollieImages = Tools::getValue(Mollie\Config\Config::MOLLIE_IMAGES);
-        $mollieIssuers = Tools::getValue(Mollie\Config\Config::MOLLIE_ISSUERS);
-        $mollieCss = Tools::getValue(Mollie\Config\Config::MOLLIE_CSS);
-        if (!isset($mollieCss)) {
-            $mollieCss = '';
-        }
-        $mollieLogger = Tools::getValue(Mollie\Config\Config::MOLLIE_DEBUG_LOG);
-        $mollieApi = Tools::getValue(Mollie\Config\Config::MOLLIE_API);
-        $mollieQrEnabled = (bool)Tools::getValue(Mollie\Config\Config::MOLLIE_QRENABLED);
-        $mollieMethodCountriesEnabled = (bool)Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES);
-        $mollieMethodCountriesDisplayEnabled = (bool)Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
-        $mollieErrors = Tools::getValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS);
-
-        $mollieShipMain = Tools::getValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN);
-        if (!isset($mollieErrors)) {
-            $mollieErrors = false;
-        } else {
-            $mollieErrors = ($mollieErrors == 1);
-        }
-
-        if (empty($errors)) {
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, $mollieApiKey);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_PROFILE_ID, $mollieProfileId);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_IMAGES, $mollieImages);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_QRENABLED, (bool)$mollieQrEnabled);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES, (bool)$mollieMethodCountriesEnabled);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool)$mollieMethodCountriesDisplayEnabled);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, (int)$mollieErrors);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_DEBUG_LOG, (int)$mollieLogger);
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_API, $mollieApi);
-            Configuration::updateValue(
-                Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES,
-                json_encode($this->getStatusesValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES))
-            );
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN, (bool)$mollieShipMain);
-            Configuration::updateValue(
-                Mollie\Config\Config::MOLLIE_TRACKING_URLS,
-                json_encode(@json_decode(Tools::getValue(Mollie\Config\Config::MOLLIE_TRACKING_URLS)))
-            );
-            foreach (array_keys(Mollie\Config\Config::getStatuses()) as $name) {
-                $name = Tools::strtoupper($name);
-                $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
-                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
-                Mollie\Config\Config::getStatuses()[Tools::strtolower($name)] = $new;
-
-                if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
-                    Configuration::updateValue(
-                        "MOLLIE_MAIL_WHEN_{$name}",
-                        Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
-                    );
-                }
-            }
-
-            if ($mollieApiKey) {
-                try {
-                    $this->api->setApiKey($mollieApiKey);
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                    Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, null);
-                    return $this->l('Wrong API Key!');
-                }
-            }
-
-            $resultMessage = $this->l('The configuration has been saved!');
-        } else {
-            $resultMessage = [];
-            foreach ($errors as $error) {
-                $resultMessage[] = $error;
-            }
-        }
-
-        return $resultMessage;
     }
 
     /**
@@ -1231,9 +1055,9 @@ class Mollie extends PaymentModule
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
                 'isoCode' => $this->context->language->language_code,
-                'isTestMode' => self::isTestMode()
+                'isTestMode' => \Mollie\Config\Config::isTestMode()
             ]);
-            if (self::isVersion17()) {
+            if (\Mollie\Config\Config::isVersion17()) {
                 $this->context->controller->registerJavascript(
                     'mollie_iframe_js',
                     'https://js.mollie.com/v1/mollie.js',
@@ -1246,7 +1070,7 @@ class Mollie extends PaymentModule
             }
             Media::addJsDef([
                 'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isPS17' => self::isVersion17(),
+                'isPS17' => \Mollie\Config\Config::isVersion17(),
             ]);
             $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
             $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
@@ -1297,6 +1121,8 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        /** @var \Mollie\Service\ShipmentService $shipmentService */
+        $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
         $cartId = Cart::getCartIdByOrderId((int)$params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (int)$cartId);
         if (empty($transaction)) {
@@ -1318,9 +1144,9 @@ class Mollie extends PaymentModule
             'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
             'currencies' => $currencies,
-            'tracking' => static::getShipmentInformation($params['id_order']),
+            'tracking' => $shipmentService->getShipmentInformation($params['id_order']),
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-            'webPackChunks' => static::getWebpackChunks('app'),
+            'webPackChunks' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
         ]);
 
         return $this->display(__FILE__, 'order_info.tpl');
@@ -1377,7 +1203,7 @@ class Mollie extends PaymentModule
         ]);
 
         $iframeDisplay = '';
-        if (!self::isVersion17() && $isIFrameEnabled) {
+        if (!\Mollie\Config\Config::isVersion17() && $isIFrameEnabled) {
             $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
         }
         return $this->display(__FILE__, 'addjsdef.tpl') . $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
@@ -1500,7 +1326,7 @@ class Mollie extends PaymentModule
         $paymentOptions = [];
         foreach ($methodIds as $methodId) {
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-            $paymentFee = $this->getPaymentFee($methodObj, $cart->getOrderTotal());
+            $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
             if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])) {
                 continue;
             }
@@ -1807,7 +1633,7 @@ class Mollie extends PaymentModule
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentFee = Mollie::getPaymentFee($molPaymentMethod, $amount);
+        $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($molPaymentMethod, $amount);
         $totalAmount = (number_format(str_replace(',', '.', $amount), 2, '.', ''));
         $totalAmount += $paymentFee;
 
@@ -1832,7 +1658,7 @@ class Mollie extends PaymentModule
                 )
             ),
         ];
-        if (!static::isLocalEnvironment()) {
+        if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
                 'webhook',
@@ -1935,7 +1761,7 @@ class Mollie extends PaymentModule
             $paymentData['orderNumber'] = $orderReference;
             $paymentData['lines'] = static::getCartLines($amount, $paymentFee);
             $paymentData['payment'] = [];
-            if (!static::isLocalEnvironment()) {
+            if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
                 $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
                     'mollie',
                     'webhook',
@@ -3153,9 +2979,12 @@ class Mollie extends PaymentModule
     public function displayAjaxMollieMethodConfig()
     {
         header('Content-Type: application/json;charset=UTF-8');
+        /** @var \Mollie\Service\ApiService $apiService */
+        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
+        /** @var \Mollie\Service\CountryService $countryService */
+        $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
         try {
-            /** @var \Mollie\Service\ApiService $apiService */
-            $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
+
             $methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             return [
@@ -3223,7 +3052,7 @@ class Mollie extends PaymentModule
         return [
             'success' => true,
             'methods' => $methodsForConfig,
-            'countries' => $this->getActiveCountriesList(),
+            'countries' => $countryService->getActiveCountriesList(),
         ];
     }
 
@@ -3261,10 +3090,12 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\RefundService $refundService */
         /** @var \Mollie\Service\ShipService $shipService */
         /** @var \Mollie\Service\CancelService $cancelService */
+        /** @var \Mollie\Service\ShipmentService $shipmentService */
         $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $refundService = $this->getContainer(\Mollie\Service\RefundService::class);
         $shipService = $this->getContainer(\Mollie\Service\ShipService::class);
         $cancelService = $this->getContainer(\Mollie\Service\CancelService::class);
+        $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
 
         $mollieData = $paymentMethodRepo::getPaymentBy('transaction_id', $input['transactionId']);
 
@@ -3323,7 +3154,7 @@ class Mollie extends PaymentModule
                         if (!$info) {
                             return ['success' => false];
                         }
-                        $tracking = static::getShipmentInformation($info['order_id']);
+                        $tracking = $shipmentService->getShipmentInformation($info['order_id']);
 
                         return [
                             'success' => true,
@@ -3339,7 +3170,7 @@ class Mollie extends PaymentModule
                             ];
                         }
                         $status = $shipService->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
-                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())]);
+                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], \Mollie\Utility\EnvironmentUtility::isLocalEnvironment())]);
                     case 'refund':
                         // Check order edit permissions
                         if (!$access || empty($access['edit'])) {
@@ -3359,7 +3190,7 @@ class Mollie extends PaymentModule
                             ];
                         }
                         $status = $cancelService->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : []);
-                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], static::isLocalEnvironment())]);
+                        return array_merge($status, ['order' => static::getFilteredApiOrder($input['transactionId'], \Mollie\Utility\EnvironmentUtility::isLocalEnvironment())]);
                     default:
                         return ['success' => false];
                 }
@@ -3370,49 +3201,6 @@ class Mollie extends PaymentModule
         }
 
         return ['success' => false];
-    }
-
-    /**
-     * Get module version from database
-     *
-     * @param string $module
-     *
-     * @return string
-     *
-     * @throws PrestaShopException
-     * @since 3.3.0
-     */
-    public static function getDatabaseVersion($module = 'mollie')
-    {
-        $sql = new DbQuery();
-        $sql->select('`version`');
-        $sql->from('module');
-        $sql->where('`name` = \'' . pSQL($module) . '\'');
-
-        return (string)Db::getInstance()->getValue($sql);
-    }
-
-    /**
-     * 2D array sort by key
-     *
-     * @param mixed $array
-     * @param mixed $key
-     *
-     * @since 3.3.0
-     */
-    protected function aasort(&$array, $key)
-    {
-        $sorter = [];
-        $ret = [];
-        reset($array);
-        foreach ($array as $ii => $va) {
-            $sorter[$ii] = $va[$key];
-        }
-        asort($sorter);
-        foreach ($sorter as $ii => $va) {
-            $ret[$ii] = $array[$ii];
-        }
-        $array = $ret;
     }
 
     /**
@@ -3454,7 +3242,10 @@ class Mollie extends PaymentModule
         if (!is_array($checkStatuses)) {
             $checkStatuses = [];
         }
-        $shipmentInfo = static::getShipmentInformation($idOrder);
+
+        /** @var \Mollie\Service\ShipmentService $shipmentService */
+        $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
+        $shipmentInfo = $shipmentService->getShipmentInformation($idOrder);
 
         if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
             ) || $shipmentInfo === null
@@ -3503,423 +3294,6 @@ class Mollie extends PaymentModule
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         }
-    }
-
-    /**
-     * Get shipment information
-     *
-     * @param int $idOrder
-     *
-     * @return array|null
-     *
-     * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @since 3.3.0
-     */
-    public static function getShipmentInformation($idOrder)
-    {
-        $order = new Order($idOrder);
-        if (!Validate::isLoadedObject($order)) {
-            return null;
-        }
-        $invoiceAddress = new Address($order->id_address_invoice);
-        $deliveryAddress = new Address($order->id_address_delivery);
-        $carrierConfig = static::getOrderCarrierConfig($idOrder);
-        if (!Validate::isLoadedObject($invoiceAddress)
-            || !Validate::isLoadedObject($deliveryAddress)
-            || !$carrierConfig
-        ) {
-            return [];
-        }
-
-        if ($carrierConfig['source'] === Mollie\Config\Config::MOLLIE_CARRIER_NO_TRACKING_INFO) {
-            return [];
-        }
-
-        if ($carrierConfig['source'] === Mollie\Config\Config::MOLLIE_CARRIER_MODULE) {
-            $carrier = new Carrier($order->id_carrier);
-            if (in_array($carrier->external_module_name, ['postnl', 'myparcel'])) {
-                if (version_compare(static::getDatabaseVersion($carrier->external_module_name), '2.1.0', '>=')) {
-                    $table = $carrier->external_module_name === 'postnl' ? 'postnlmod_order' : 'myparcel_order';
-                    $sql = new DbQuery();
-                    $sql->select('`tracktrace`, `postcode`');
-                    $sql->from(bqSQL($table));
-                    $sql->where('`id_order` = \'' . pSQL($idOrder) . '\'');
-
-                    try {
-                        $info = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
-                        if ($info['tracktrace'] && $info['postcode']) {
-                            $postcode = Tools::strtoupper(str_replace(' ', '', $info['postcode']));
-                            $langIso = Tools::strtoupper(Language::getIsoById($order->id_lang));
-                            $countryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
-                            $tracktrace = $info['tracktrace'];
-
-                            return [
-                                'tracking' => [
-                                    'carrier' => 'PostNL',
-                                    'code' => $info['tracktrace'],
-                                    'url' => "http://postnl.nl/tracktrace/?L={$langIso}&B={$tracktrace}&P={$postcode}&D={$countryIso}&T=C",
-                                ],
-                            ];
-                        }
-                    } catch (PrestaShopDatabaseException $e) {
-                        return [];
-                    }
-                }
-            }
-            return [];
-        }
-
-        if ($carrierConfig['source'] === Mollie\Config\Config::MOLLIE_CARRIER_CARRIER) {
-            $carrier = new Carrier($order->id_carrier);
-            $shippingNumber = $order->shipping_number;
-            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
-                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
-                $shippingNumber = $orderCarrier->tracking_number;
-            }
-
-            if (!$shippingNumber || !$carrier->name) {
-                return [];
-            }
-
-            return [
-                'tracking' => [
-                    'carrier' => $carrier->name,
-                    'code' => $shippingNumber,
-                    'url' => str_replace('@', $shippingNumber, $carrier->url),
-                ],
-            ];
-        }
-
-        if ($carrierConfig['source'] === Mollie\Config\Config::MOLLIE_CARRIER_CUSTOM) {
-            $carrier = new Carrier($order->id_carrier);
-            $shippingNumber = $order->shipping_number;
-            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
-                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
-                $shippingNumber = $orderCarrier->tracking_number;
-            }
-//
-//            if (!$shippingNumber || !$carrier->name) {
-//                return array();
-//            }
-
-            $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
-            $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));
-            $deliveryPostcode = Tools::strtoupper(str_replace(' ', '', $deliveryAddress->postcode));
-            $deliveryCountryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
-
-            $langIso = Tools::strtoupper(Language::getIsoById($order->id_lang));
-
-            $info = [
-                '@' => $shippingNumber,
-                '%%shipping_number%%' => $shippingNumber,
-                '%%invoice.country_iso%%' => $invoiceCountryIso,
-                '%%invoice.postcode%%' => $invoicePostcode,
-                '%%delivery.country_iso%%' => $deliveryCountryIso,
-                '%%delivery.postcode%%' => $deliveryPostcode,
-                '%%lang_iso%%' => $langIso,
-            ];
-
-            return [
-                'tracking' => [
-                    'carrier' => $carrier->name,
-                    'code' => $shippingNumber,
-                    'url' => str_ireplace(
-                        array_keys($info),
-                        array_values($info),
-                        $carrierConfig['custom_url']
-                    ),
-                ],
-            ];
-        }
-
-        return [];
-    }
-
-    /**
-     * Get carrier config for order
-     *
-     * @param Order|int $order
-     *
-     * @return array|null Configuration or `null` if not tracking
-     *
-     * @throws PrestaShopException
-     */
-    public static function getOrderCarrierConfig($order)
-    {
-        if (is_int($order)) {
-            $order = new Order($order);
-        }
-
-        if (!$carrierConfig = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_TRACKING_URLS), true)) {
-            return null;
-        }
-
-        if (!Validate::isLoadedObject($order) || !$order->id_carrier) {
-            return null;
-        }
-
-        if (!isset($carrierConfig[$order->id_carrier]) || !isset($carrierConfig[$order->id_carrier]['source'])) {
-            return null;
-        }
-
-        return $carrierConfig[$order->id_carrier];
-    }
-
-    /**
-     * Get the webpack chunks for a given entry name
-     *
-     * @param string $entry Entry name
-     *
-     * @return array Array with chunk files, should be loaded in the given order
-     *
-     * @since 3.4.0
-     */
-    public static function getWebpackChunks($entry)
-    {
-        static $manifest = null;
-        if (!$manifest) {
-            $manifest = [];
-            foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
-                $manifest[$chunk['name']] = array_map(function ($chunk) {
-                    return \Mollie\Utility\UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
-                }, $chunk['files']);
-            }
-        }
-
-        return isset($manifest[$entry]) ? $manifest[$entry] : [];
-    }
-
-    /**
-     * Checks if strings ends with the given needle
-     *
-     * @param string $haystack
-     * @param string $needle
-     *
-     * @return bool
-     *
-     * @since 3.4.0
-     */
-    protected static function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-    }
-
-    /**
-     * Get all status values from the form.
-     *
-     * @param $key string The key that is used in the HelperForm
-     *
-     * @return array Array with statuses
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0
-     */
-    protected function getStatusesValue($key)
-    {
-        $statesEnabled = [];
-        foreach (OrderState::getOrderStates($this->context->language->id) as $state) {
-            if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
-                $statesEnabled[] = $state['id_order_state'];
-            }
-        }
-
-        return $statesEnabled;
-    }
-
-    /**
-     * Removed, PS 1.7 translation system does not work for hybrid modules, yet.
-     *
-     * @param $text
-     *
-     * @return string
-     *
-     * @deprecated 3.4.0
-     */
-    public function translate($text)
-    {
-        return $this->l($text);
-    }
-
-    /**
-     * Get page location
-     *
-     * @param string $class
-     * @param int|null $idLang
-     *
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.2
-     */
-    public static function getMenuLocation($class, $idLang = null)
-    {
-        if (!$idLang) {
-            $idLang = Context::getContext()->language->id;
-        }
-
-        return implode(' > ', array_reverse(array_unique(array_map(function ($tab) use ($idLang) {
-            return $tab->name[$idLang];
-        }, static::getTabTreeByClass($class)))));
-    }
-
-    /**
-     * Get the entire tab tree by tab class name
-     *
-     * @param string $class
-     *
-     * @return Tab[]|null
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.2
-     */
-    public static function getTabTreeByClass($class)
-    {
-        $tabs = [];
-        $depth = 10;
-        $tab = Tab::getInstanceFromClassName($class);
-        while (Validate::isLoadedObject($tab) && $depth > 0) {
-            $depth--;
-            $tabs[] = $tab;
-            $tab = new Tab($tab->id_parent);
-        }
-
-        return $tabs;
-    }
-
-    /**
-     * Get tab name by tab class
-     *
-     * @param string $class
-     * @param int|null $idLang
-     *
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.2
-     */
-    public static function getTabNameByClass($class, $idLang = null)
-    {
-        $tab = Tab::getInstanceFromClassName($class);
-        if (!$tab instanceof Tab) {
-            throw new InvalidArgumentException('Tab not found');
-        }
-
-        if (!$idLang) {
-            $idLang = Context::getContext()->language->id;
-        }
-
-        return $tab->name[$idLang];
-    }
-
-    /**
-     * Check if local domain
-     *
-     * @param string|null $host
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    public static function isLocalEnvironment($host = null)
-    {
-        if (!$host) {
-            $host = Tools::getHttpHost(false, false, true);
-        }
-        $hostParts = explode('.', $host);
-        $tld = end($hostParts);
-
-        return in_array($tld, ['localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'])
-            || (filter_var($host, FILTER_VALIDATE_IP)
-                && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
-    }
-
-    public function getActiveCountriesList($onlyActive = true)
-    {
-        $langId = $this->context->language->id;
-        $countries = Country::getCountries($langId, $onlyActive);
-        $countriesWithNames = [];
-        $countriesWithNames[] = [
-            'id' => 0,
-            'name' => $this->l('All')
-        ];
-        foreach ($countries as $key => $country) {
-            $countriesWithNames[] = [
-                'id' => $key,
-                'name' => $country['name'],
-            ];
-        }
-
-        return $countriesWithNames;
-    }
-
-    public static function isVersion17()
-    {
-        return (bool)version_compare(_PS_VERSION_, '1.7', '>=');
-    }
-
-    public static function isTestMode()
-    {
-        $apiKey = Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY);
-        if (strpos($apiKey, 'test') === 0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function getPaymentFee(MolPaymentMethod $paymentMethod, $totalCartPrice)
-    {
-        switch ($paymentMethod->surcharge) {
-            case Mollie\Config\Config::FEE_FIXED_FEE:
-                $totalFeePrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
-                break;
-            case Mollie\Config\Config::FEE_PERCENTAGE:
-                $totalCartPrice = new PrestaShop\Decimal\Number((string) $totalCartPrice);
-                $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
-                $maxPercentage = new PrestaShop\Decimal\Number('100');
-                $totalFeePrice = $totalCartPrice->times(
-                    $surchargePercentage->dividedBy(
-                        $maxPercentage
-                    )
-                );
-                break;
-            case Mollie\Config\Config::FEE_FIXED_FEE_AND_PERCENTAGE:
-                $totalCartPrice = new PrestaShop\Decimal\Number((string) $totalCartPrice);
-                $surchargePercentage = new PrestaShop\Decimal\Number($paymentMethod->surcharge_percentage);
-                $maxPercentage = new PrestaShop\Decimal\Number('100');
-                $surchargeFixedPrice = new PrestaShop\Decimal\Number($paymentMethod->surcharge_fixed_amount);
-                $totalFeePrice = $totalCartPrice->times(
-                    $surchargePercentage->dividedBy(
-                        $maxPercentage
-                    )
-                )->plus($surchargeFixedPrice);
-                break;
-            case Mollie\Config\Config::FEE_NO_FEE:
-            default:
-                return false;
-        }
-
-        $surchargeMaxValue = new PrestaShop\Decimal\Number($paymentMethod->surcharge_limit);
-        $zero = new PrestaShop\Decimal\Number('0');
-        if ($surchargeMaxValue->isGreaterThan($zero) && $totalFeePrice->isGreaterOrEqualThan($surchargeMaxValue)) {
-            $totalFeePrice = $surchargeMaxValue;
-        }
-
-        return $totalFeePrice->toPrecision(2);
     }
 
     public function hookActionEmailSendBefore($params)

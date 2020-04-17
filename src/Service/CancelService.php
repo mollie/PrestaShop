@@ -4,6 +4,7 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Api\Resources\Payment;
+use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
 use Tools;
 
@@ -46,7 +47,7 @@ class CancelService
                 $order->cancelLines(['lines' => $cancelableLines]);
             }
 
-            if (Mollie::isLocalEnvironment()) {
+            if (EnvironmentUtility::isLocalEnvironment()) {
                 // Refresh payment on local environments
                 /** @var Payment $payment */
                 $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);

@@ -34,6 +34,7 @@
  */
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Utility\PaymentFeeUtility;
 
 if (!defined('_PS_VERSION_')) {
     return;
@@ -341,7 +342,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
 
-        $orderFee = Mollie::getPaymentFee(
+        $orderFee = PaymentFeeUtility::getPaymentFee(
             new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
             $this->context->cart->getOrderTotal()
         );
@@ -351,7 +352,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if ($orderFee) {
             $orderFeeObj = new MolOrderFee();
             $orderFeeObj->id_cart = (int) $cartId;
-            $orderFeeObj->order_fee = Mollie::getPaymentFee(
+            $orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
                 new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
                 $this->context->cart->getOrderTotal()
             );
