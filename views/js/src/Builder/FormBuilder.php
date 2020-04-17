@@ -198,7 +198,7 @@ class FormBuilder
             $input[] = [
                 'type' => 'mollie-methods',
                 'name' => Config::METHODS_CONFIG,
-                'paymentMethods' => $apiService->getMethodsForConfig($this->api, $this->getPathUri()),
+                'paymentMethods' => $apiService->getMethodsForConfig($this->module->api, $this->getPathUri()),
                 'countries' => $this->getActiveCountriesList(),
                 'tab' => $generalSettings,
             ];

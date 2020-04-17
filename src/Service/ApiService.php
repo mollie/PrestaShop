@@ -5,9 +5,13 @@ namespace Mollie\Service;
 use Configuration;
 use Context;
 use Exception;
+use Module;
+use Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\CartPriceUtility;
+use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
 use Tools;
 
@@ -257,4 +261,158 @@ class ApiService
 
         return $methods;
     }
+
+    /**
+     * @param string $transactionId
+     * @param bool $process Process the new payment/order status
+     *
+     * @return array|null
+     *
+     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws \SmartyException
+     * @since 3.3.0
+     * @since 3.3.2 $process option
+     */
+    public function getFilteredApiPayment($api, $transactionId, $process = false)
+    {
+        /** @var Payment $payment */
+        $payment = $api->payments->get($transactionId);
+        if ($process) {
+//            if (!Tools::isSubmit('module')) {
+//                $_GET['module'] = $this->module->name;
+//            }
+            $webhookController = new MollieWebhookModuleFrontController();
+            $webhookController->processTransaction($payment);
+        }
+
+        if ($payment && method_exists($payment, 'refunds')) {
+            $refunds = $payment->refunds();
+            if (empty($refunds)) {
+                $refunds = [];
+            }
+            $refunds = array_map(function ($refund) {
+                return array_intersect_key(
+                    (array)$refund,
+                    array_flip([
+                        'resource',
+                        'id',
+                        'amount',
+                        'createdAt',
+                    ]));
+            }, (array)$refunds);
+            $payment = array_intersect_key(
+                (array)$payment,
+                array_flip([
+                    'resource',
+                    'id',
+                    'mode',
+                    'amount',
+                    'settlementAmount',
+                    'amountRefunded',
+                    'amountRemaining',
+                    'description',
+                    'method',
+                    'status',
+                    'createdAt',
+                    'paidAt',
+                    'canceledAt',
+                    'expiresAt',
+                    'failedAt',
+                    'metadata',
+                    'isCancelable',
+                ])
+            );
+            $payment['refunds'] = (array)$refunds;
+        } else {
+            $payment = null;
+        }
+
+        return $payment;
+    }
+
+    /**
+     * @param $api
+     * @param string $transactionId
+     * @return array|null
+     *
+     * @throws \ErrorException
+     * @throws \Mollie\Api\Exceptions\ApiException
+     * @since 3.3.0
+     * @since 3.3.2 $process option
+     */
+    public function getFilteredApiOrder($api, $transactionId)
+    {
+        /** @var \Mollie\Api\Resources\Order $order */
+        $order = $api->orders->get($transactionId, ['embed' => 'payments']);
+
+        if ($order && method_exists($order, 'refunds')) {
+            $refunds = $order->refunds();
+            if (empty($refunds)) {
+                $refunds = [];
+            }
+            $refunds = array_map(function ($refund) {
+                return array_intersect_key(
+                    (array)$refund,
+                    array_flip([
+                        'resource',
+                        'id',
+                        'amount',
+                        'createdAt',
+                    ]));
+            }, (array)$refunds);
+            $order = array_intersect_key(
+                (array)$order,
+                array_flip([
+                    'resource',
+                    'id',
+                    'mode',
+                    'amount',
+                    'settlementAmount',
+                    'amountCaptured',
+                    'status',
+                    'method',
+                    'metadata',
+                    'isCancelable',
+                    'createdAt',
+                    'lines',
+                ])
+            );
+            $order['refunds'] = (array)$refunds;
+        } else {
+            $order = null;
+        }
+
+        return $order;
+    }
+
+
+    /**
+     * Get the selected API
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.3.0
+     *
+     * @public ✓ This method is part of the public API
+     */
+    public static function selectedApi($selectedApi)
+    {
+        /** @var static $mollie */
+        $mollie = Module::getInstanceByName('mollie');
+        if (!in_array($selectedApi, [Config::MOLLIE_ORDERS_API, Config::MOLLIE_PAYMENTS_API])) {
+            $selectedApi = Configuration::get(Config::MOLLIE_API);
+            if (!$selectedApi
+                || !in_array($selectedApi, [Config::MOLLIE_ORDERS_API, Config::MOLLIE_PAYMENTS_API])
+                || CartPriceUtility::checkRoundingMode()
+            ) {
+                $selectedApi = Config::MOLLIE_PAYMENTS_API;
+            }
+        }
+
+        return $selectedApi;
+    }
+
 }

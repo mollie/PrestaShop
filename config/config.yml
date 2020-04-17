@@ -56,6 +56,21 @@ services:
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\ApiService'
 
+  Mollie\Service\ShipmentService:
+    arguments:
+      - '@Mollie\Repository\OrderShipmentRepository'
+      - '@Mollie\Service\CarrierService'
+
+  Mollie\Service\MollieOrderInfoService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\RefundService'
+      - '@Mollie\Service\ShipService'
+      - '@Mollie\Service\CancelService'
+      - '@Mollie\Service\ShipmentService'
+      - '@Mollie\Service\ApiService'
+
   Mollie\Repository\PaymentMethodRepository:
 
   Mollie\Repository\OrderFeeRepository:
