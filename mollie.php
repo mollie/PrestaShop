@@ -277,14 +277,16 @@ class Mollie extends PaymentModule
             die(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
-        if ($module = $this->checkPaymentModuleOverride()) {
+        /** @var \Mollie\Service\OverrideService $overrideService */
+        $overrideService = $this->getContainer(\Mollie\Service\OverrideService::class);
+        if ($module = $overrideService->checkPaymentModuleOverride()) {
             $this->context->controller->warnings[] = sprintf(
                 $this->l('The method %s is overridden by module %s. This can cause interference with payments.'),
                 'PaymentModule::validateOrder',
                 $module
             );
         }
-        if ($this->checkTemplateCompilation()) {
+        if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
             $this->context->smarty->assign([
                 'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
                     ? $this->trans('Template compilation', [], 'Admin.Advparameters.Feature')
@@ -296,7 +298,7 @@ class Mollie extends PaymentModule
             ]);
             $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
         }
-        if ($this->checkStaleSmartyCache()) {
+        if (Configuration::get('PS_SMARTY_CACHE') && Configuration::get('PS_SMARTY_CLEAR_CACHE') === 'never') {
             $this->context->smarty->assign([
                 'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
                     ? $this->trans('Clear cache', [], 'Admin.Advparameters.Feature')
@@ -340,9 +342,6 @@ class Mollie extends PaymentModule
         $warningMessage = '';
 
         $errors = [];
-        if (Tools::isSubmit('submitNewAccount')) {
-            $this->processNewAccount();
-        }
 
         if (Tools::isSubmit("submit{$this->name}")) {
             /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
@@ -1162,7 +1161,9 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS);
-        $apiMethods = $this->getMethodsForCheckout();
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
@@ -1225,8 +1226,9 @@ class Mollie extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             return [];
         }
-
-        $methods = $this->getMethodsForCheckout();
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($methods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
@@ -1285,8 +1287,9 @@ class Mollie extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
             return [];
         }
-
-        $methodIds = $this->getMethodsForCheckout();
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $methodIds = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($methodIds as $methodId) {
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
@@ -1678,7 +1681,7 @@ class Mollie extends PaymentModule
                 && Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE) === Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
             || $molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API
         ) {
-            $locale = static::getWebshopLocale();
+            $locale = \Mollie\Utility\LocaleUtility::getWebshopLocale();
             if (preg_match(
                 '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
                 $locale
@@ -1725,7 +1728,7 @@ class Mollie extends PaymentModule
             switch ($method) {
                 case \Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
-                    $paymentData['locale'] = static::getWebshopLocale();
+                    $paymentData['locale'] = \Mollie\Utility\LocaleUtility::getWebshopLocale();
                     break;
                 case \Mollie\Api\Types\PaymentMethod::BITCOIN:
                     $paymentData['billingEmail'] = $customer->email;
@@ -2067,649 +2070,6 @@ class Mollie extends PaymentModule
         );
 
         return $content;
-    }
-
-    /**
-     * Get webshop locale
-     *
-     * @return string
-     *
-     * @throws PrestaShopException
-     *
-     * @since 3.0.0
-     */
-    public static function getWebshopLocale()
-    {
-        // Current language
-        if (Context::getContext()->language instanceof Language) {
-            $language = Context::getContext()->language->iso_code;
-        } else {
-            $language = 'en';
-        }
-        $supportedLanguages = [
-            'de',
-            'en',
-            'es',
-            'fr',
-            'nl',
-            'ca',
-            'pt',
-            'it',
-            'no',
-            'sv',
-            'fi',
-            'da',
-            'is',
-            'hu',
-            'pl',
-            'lv',
-            'lt',
-        ];
-
-        $supportedLocales = [
-            'en_US',
-            'de_AT',
-            'de_CH',
-            'de_DE',
-            'es_ES',
-            'fr_BE',
-            'fr_FR',
-            'nl_BE',
-            'nl_NL',
-            'ca_ES',
-            'pt_PT',
-            'it_IT',
-            'nb_NO',
-            'sv_SE',
-            'fi_FI',
-            'da_DK',
-            'is_IS',
-            'hu_HU',
-            'pl_PL',
-            'lv_LV',
-            'lt_LT',
-        ];
-
-        $langIso = Tools::strtolower($language);
-        if (!in_array($langIso, $supportedLanguages)) {
-            $langIso = 'en';
-        }
-        $countryIso = Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
-        if (!in_array("{$langIso}_{$countryIso}", $supportedLocales)) {
-            switch ($langIso) {
-                case 'de':
-                    $countryIso = 'DE';
-                    break;
-                case 'es':
-                    $countryIso = 'ES';
-                    break;
-                case 'fr':
-                    $countryIso = 'FR';
-                    break;
-                case 'nl':
-                    $countryIso = 'NL';
-                    break;
-                case 'ca':
-                    $countryIso = 'ES';
-                    break;
-                case 'pt':
-                    $countryIso = 'PT';
-                    break;
-                case 'it':
-                    $countryIso = 'IT';
-                    break;
-                case 'nn':
-                    $langIso = 'nb';
-                    $countryIso = 'NO';
-                    break;
-                case 'no':
-                    $langIso = 'nb';
-                    $countryIso = 'NO';
-                    break;
-                case 'sv':
-                    $countryIso = 'SE';
-                    break;
-                case 'fi':
-                    $countryIso = 'FI';
-                    break;
-                case 'da':
-                    $countryIso = 'DK';
-                    break;
-                case 'is':
-                    $countryIso = 'IS';
-                    break;
-                case 'hu':
-                    $countryIso = 'hu';
-                    break;
-                case 'pl':
-                    $countryIso = 'PL';
-                    break;
-                case 'lv':
-                    $countryIso = 'LV';
-                    break;
-                case 'lt':
-                    $countryIso = 'LT';
-                    break;
-                default:
-                    $countryIso = 'US';
-            }
-        }
-
-        return "{$langIso}_{$countryIso}";
-    }
-
-    /**
-     * Ajax process download module update
-     *
-     * @throws ErrorException
-     * @since 3.0.0
-     */
-    public function ajaxProcessDownloadUpdate()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
-        try {
-            $latestVersion = $this->getLatestVersion();
-        } catch (PrestaShopException $e) {
-            die(json_encode([
-                'success' => false,
-                'message' => $this->l('Unable to retieve info about the latest version'),
-            ]));
-        } catch (SmartyException $e) {
-            die(json_encode([
-                'success' => false,
-                'message' => $this->l('Unable to retieve info about the latest version'),
-            ]));
-        }
-        if (version_compare(
-            Tools::substr($latestVersion['version'], 1, Tools::strlen($latestVersion['version']) - 1),
-            $this->version,
-            '>'
-        )) {
-            // Then update
-            die(json_encode([
-                'success' => $this->downloadModuleFromLocation($this->name, $latestVersion['download']),
-            ]));
-        } else {
-            die(json_encode([
-                'success' => false,
-                'message' => $this->l('You are already running the latest version!'),
-            ]));
-        }
-    }
-
-    /**
-     * Download the latest module from the given location
-     *
-     * @param string $moduleName
-     * @param string $location
-     *
-     * @return bool
-     * @throws ErrorException
-     */
-    protected function downloadModuleFromLocation($moduleName, $location)
-    {
-        $zipLocation = _PS_MODULE_DIR_ . $moduleName . '.zip';
-        if (@!file_exists($zipLocation)) {
-            $curl = new Curl\Curl();
-            $curl->setOpt(CURLOPT_ENCODING, '');
-            $curl->setOpt(CURLOPT_FOLLOWLOCATION, 1);
-            if (!$curl->download($location, _PS_MODULE_DIR_ . 'mollie-update.zip')) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Extracts a module archive to the `modules` folder
-     *
-     * @param string $moduleName Module name
-     * @param string $file File source location
-     *
-     * @return bool
-     *
-     * @throws Adapter_Exception
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.0.0
-     */
-    protected function extractModuleArchive($moduleName, $file)
-    {
-        $zipFolders = [];
-        $tmpFolder = _PS_MODULE_DIR_ . $moduleName . md5(time());
-
-        if (@!file_exists($file)) {
-            $this->context->controller->errors[] = $this->l('Module archive could not be downloaded');
-
-            return false;
-        }
-
-        $success = false;
-        if (Tools::substr($file, -4) === '.zip') {
-            if (Tools::ZipExtract($file, $tmpFolder) && file_exists($tmpFolder . DIRECTORY_SEPARATOR . $moduleName)) {
-                if (file_exists(_PS_MODULE_DIR_ . $moduleName)) {
-                    $report = '';
-                    if (!\Mollie\Utility\UrlPathUtility::testDir(_PS_MODULE_DIR_ . $moduleName, true, $report, true)) {
-                        $this->recursiveDeleteOnDisk($tmpFolder);
-                        @unlink(_PS_MODULE_DIR_ . $moduleName . '.zip');
-
-                        return false;
-                    }
-                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_ . $moduleName);
-                }
-                if (@rename($tmpFolder . DIRECTORY_SEPARATOR . $moduleName, _PS_MODULE_DIR_ . $moduleName)) {
-                    $success = true;
-                }
-            }
-        }
-
-        if (!$success) {
-            $this->context->controller->errors[] =
-                $this->l('There was an error while extracting the module file (file may be corrupted).');
-            // Force a new check
-        } else {
-            //check if it's a real module
-            foreach ($zipFolders as $folder) {
-                if (!in_array($folder, ['.', '..', '.svn', '.git', '__MACOSX']) && !Module::getInstanceByName($folder)) {
-                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_ . $folder);
-                }
-            }
-        }
-
-        @unlink($file);
-        @unlink(_PS_MODULE_DIR_ . $moduleName . 'backup');
-        $this->recursiveDeleteOnDisk($tmpFolder);
-
-        die(json_encode([
-            'success' => $success,
-        ]));
-    }
-
-    /**
-     * Delete folder recursively
-     *
-     * @param string $dir Directory
-     *
-     * @since 3.0.0
-     */
-    protected function recursiveDeleteOnDisk($dir)
-    {
-        if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false) {
-            return;
-        }
-
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object !== '.' && $object !== '..') {
-                    if (filetype($dir . '/' . $object) === 'dir') {
-                        $this->recursiveDeleteOnDisk($dir . '/' . $object);
-                    } else {
-                        @unlink($dir . '/' . $object);
-                    }
-                }
-            }
-            reset($objects);
-            rmdir($dir);
-        }
-    }
-
-    /**
-     * Get payment methods to show on the checkout
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     *
-     * @since 3.0.0
-     * @since 3.4.0 public
-     *
-     * @public ✓ This method is part of the public API
-     */
-    public function getMethodsForCheckout()
-    {
-        if (!Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY)) {
-            return [];
-        }
-
-        $iso = Tools::strtolower($this->context->currency->iso_code);
-        $methodIds = $this->getMethodIdsForCheckout();
-        if (empty($methodIds)) {
-            $methodIds = [];
-        }
-        $countryCode = Tools::strtolower($this->context->country->iso_code);
-        $unavailableMethods = [];
-        foreach (Mollie\Config\Config::$defaultMethodAvailability as $methodName => $countries) {
-            if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
-                || empty($countries)
-            ) {
-                continue;
-            }
-            if (!in_array($countryCode, $countries)) {
-                $unavailableMethods[] = $methodName;
-            }
-        }
-
-        foreach ($methodIds as $index => $methodId) {
-            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-            if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
-                || !in_array($iso, Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
-                || !$methodObj->enabled
-                || in_array($methodObj->id_method, $unavailableMethods)
-            ) {
-                unset($methodIds[$index]);
-            }
-            if ($methodObj->id_method === Mollie\Config\Config::APPLEPAY) {
-                if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-                    unset($methodIds[$index]);
-                } elseif ($_COOKIE['isApplePayMethod'] === '0') {
-                    unset($methodIds[$index]);
-                }
-            }
-        }
-
-        if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-            foreach ($methodIds as $index => $methodId) {
-                $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-                if (!$methodObj->is_countries_applicable) {
-                    if (!$this->checkIfMethodIsAvailableInCountry($methodObj->id_method, $countryCode)) {
-                        unset($methodIds[$index]);
-                    }
-                }
-            }
-        }
-
-        return $methodIds;
-    }
-
-    public function getMethodIdsForCheckout()
-    {
-        $sql = new DbQuery();
-        $sql->select('`id_payment_method`');
-        $sql->from('mol_payment_method');
-
-        return Db::getInstance()->executeS($sql);
-    }
-
-    public function checkIfMethodIsAvailableInCountry($methodId, $countryISO)
-    {
-        $country = Country::getByIso($countryISO);
-        $sql = new DbQuery();
-        $sql->select('`id_mol_country`');
-        $sql->from('mol_country');
-        $sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int)$country . ' OR all_countries = 1)');
-
-        return Db::getInstance()->getValue($sql);
-    }
-
-    /**
-     * Process a submitted account
-     *
-     * @since 3.2.0
-     */
-    protected function processNewAccount()
-    {
-        try {
-            if ($this->createMollieAccount(
-                Tools::getValue('mollie_new_email'),
-                Tools::getValue('mollie_new_name'),
-                Tools::getValue('mollie_new_company'),
-                Tools::getValue('mollie_new_address'),
-                Tools::getValue('mollie_new_zipcode'),
-                Tools::getValue('mollie_new_city'),
-                Tools::getValue('mollie_new_country')
-            )) {
-                $this->context->controller->confirmations[] = $this->l('Successfully created your new Mollie account. Please check your inbox for more information.');
-            } else {
-                $this->context->controller->errors[] = $this->l('An unknown error occurred while trying to create your Mollie account');
-            }
-        } catch (Mollie_Exception $e) {
-            $this->context->controller->errors[] = $e->getMessage();
-        }
-    }
-
-    /**
-     * Create a Mollie account using the legacy Reseller API
-     *
-     * @param string $name
-     * @param string $company
-     * @param string $address
-     * @param string $zipcode
-     * @param string $city
-     * @param string $country
-     * @param string $email
-     *
-     * @return bool
-     *
-     * @throws Mollie_Exception
-     *
-     * @since 3.2.0
-     */
-    protected function createMollieAccount($email, $name, $company, $address, $zipcode, $city, $country)
-    {
-        $mollie = new Mollie_Reseller(
-            Mollie\Config\Config::MOLLIE_RESELLER_PARTNER_ID,
-            Mollie\Config\Config::MOLLIE_RESELLER_PROFILE_KEY,
-            Mollie\Config\Config::MOLLIE_RESELLER_APP_SECRET
-        );
-        $simplexml = $mollie->accountCreate(
-            $email,
-            [
-                'name' => $name,
-                'company_name' => $company,
-                'address' => $address,
-                'zipcode' => $zipcode,
-                'city' => $city,
-                'country' => $country,
-                'email' => $email,
-            ]
-        );
-
-        if (empty($simplexml->success) && isset($simplexml->resultmessage) && isset($simplexml->resultcode)) {
-            throw new Mollie_Exception($simplexml->resultmessage, $simplexml->resultcode);
-        }
-
-        return !empty($simplexml->success);
-    }
-
-    /**
-     * Check if the method PaymentModule::validateOrder is overridden
-     * This can cause interference with this module
-     *
-     * @return false|string Returns the module name if overridden, otherwise false
-     *
-     * @throws Adapter_Exception
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws ReflectionException
-     *
-     * @since 3.3.0
-     */
-    protected function checkPaymentModuleOverride()
-    {
-        foreach ($this->findOverrides() as $override) {
-            if ($override['override'] === 'PaymentModule::validateOrder') {
-                return $override['module_name'];
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if template compilation has been set to "never recompile".
-     * This is known to cause issues.
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    protected function checkTemplateCompilation()
-    {
-        return !Configuration::get('PS_SMARTY_FORCE_COMPILE');
-    }
-
-    /**
-     * Check if the Smarty cache has been enabled and revalidates.
-     * If it does not, there's a chance it will serve a stale payment method list.
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    protected function checkStaleSmartyCache()
-    {
-        return Configuration::get('PS_SMARTY_CACHE') && Configuration::get('PS_SMARTY_CLEAR_CACHE') === 'never';
-    }
-
-    /**
-     * Check if the rounding mode is supported by the Orders API
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    protected function checkRoundingMode()
-    {
-        return (int)Configuration::get('PS_PRICE_ROUND_MODE') !== 2;
-    }
-
-    /**
-     * Find overrides
-     *
-     * @return array Overrides
-     * @throws Adapter_Exception
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws ReflectionException
-     *
-     * @since 3.3.0
-     */
-    protected function findOverrides()
-    {
-        $overrides = [];
-
-        $overriddenClasses = array_keys($this->findOverriddenClasses());
-
-        foreach ($overriddenClasses as $overriddenClass) {
-            $reflectionClass = new ReflectionClass($overriddenClass);
-            $reflectionMethods = array_filter($reflectionClass->getMethods(), function ($reflectionMethod) use ($overriddenClass) {
-                return $reflectionMethod->class == $overriddenClass;
-            });
-
-            if (!file_exists($reflectionClass->getFileName())) {
-                continue;
-            }
-            $overrideFile = file($reflectionClass->getFileName());
-            if (is_array($overrideFile)) {
-                $overrideFile = array_diff($overrideFile, ["\n"]);
-            } else {
-                $overrideFile = [];
-            }
-            foreach ($reflectionMethods as $reflectionMethod) {
-                /** @var ReflectionMethod $reflectionMethod */
-                $idOverride = Tools::substr(sha1($reflectionMethod->class . '::' . $reflectionMethod->name), 0, 10);
-                $overriddenMethod = [
-                    'id_override' => $idOverride,
-                    'override' => $reflectionMethod->class . '::' . $reflectionMethod->name,
-                    'module_code' => $this->l('Unknown'),
-                    'module_name' => $this->l('Unknown'),
-                    'date' => $this->l('Unknown'),
-                    'version' => $this->l('Unknown'),
-                    'deleted' => (Tools::isSubmit('deletemodule') && Tools::getValue('id_override') === $idOverride)
-                        || (Tools::isSubmit('overrideBox') && in_array($idOverride, Tools::getValue('overrideBox'))),
-                ];
-                if (isset($overrideFile[$reflectionMethod->getStartLine() - 5])
-                    && preg_match('/module: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 5], $module)
-                    && preg_match('/date: (.*)/ism', $overrideFile[$reflectionMethod->getStartLine() - 4], $date)
-                    && preg_match('/version: ([0-9.]+)/ism', $overrideFile[$reflectionMethod->getStartLine() - 3], $version)) {
-                    $overriddenMethod['module_code'] = trim($module[1]);
-                    $module = Module::getInstanceByName(trim($module[1]));
-                    if (Validate::isLoadedObject($module)) {
-                        $overriddenMethod['module_name'] = $module->displayName;
-                    }
-                    $overriddenMethod['date'] = trim($date[1]);
-                    $overriddenMethod['version'] = trim($version[1]);
-                }
-                $overrides[$idOverride] = $overriddenMethod;
-            }
-        }
-
-        return $overrides;
-    }
-
-    /**
-     * Find all override classes
-     *
-     * @return array Overridden classes
-     *
-     * @since 3.3.0
-     */
-    protected function findOverriddenClasses()
-    {
-        return $this->getClassesFromDir('override/classes/') + $this->getClassesFromDir('override/controllers/');
-    }
-
-    /**
-     * Retrieve recursively all classes in a directory and its subdirectories
-     *
-     * @param string $path Relative path from root to the directory
-     *
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    protected function getClassesFromDir($path)
-    {
-        $classes = [];
-        $rootDir = $this->normalizeDirectory(_PS_ROOT_DIR_);
-
-        foreach (scandir($rootDir . $path) as $file) {
-            if ($file[0] != '.') {
-                if (is_dir($rootDir . $path . $file)) {
-                    $classes = array_merge($classes, $this->getClassesFromDir($path . $file . '/'));
-                } elseif (Tools::substr($file, -4) == '.php') {
-                    $content = Tools::file_get_contents($rootDir . $path . $file);
-
-                    $namespacePattern = '[\\a-z0-9_]*[\\]';
-                    $pattern = '#\W((abstract\s+)?class|interface)\s+(?P' . $this->display(__FILE__, 'views/templates/front/classname.tpl') . basename($file, '.php') . '(?:Core)?)' . '(?:\s+extends\s+' . $namespacePattern . '[a-z][a-z0-9_]*)?(?:\s+implements\s+' . $namespacePattern . '[a-z][\\a-z0-9_]*(?:\s*,\s*' . $namespacePattern . '[a-z][\\a-z0-9_]*)*)?\s*\{#i';
-
-                    if (preg_match($pattern, $content, $m)) {
-                        $classes[$m['classname']] = [
-                            'path' => $path . $file,
-                            'type' => trim($m[1]),
-                            'override' => true,
-                        ];
-
-                        if (Tools::substr($m['classname'], -4) == 'Core') {
-                            $classes[Tools::substr($m['classname'], 0, -4)] = [
-                                'path' => '',
-                                'type' => $classes[$m['classname']]['type'],
-                                'override' => true,
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
-        return $classes;
-    }
-
-    /**
-     * Normalize directory
-     *
-     * @param string $directory
-     *
-     * @return string
-     *
-     * @since 3.3.0
-     */
-    protected function normalizeDirectory($directory)
-    {
-        return rtrim($directory, '/\\') . DIRECTORY_SEPARATOR;
     }
 
     /**

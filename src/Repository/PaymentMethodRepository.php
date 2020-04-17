@@ -3,6 +3,7 @@
 namespace Mollie\Repository;
 
 use Db;
+use DbQuery;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -103,5 +104,14 @@ class PaymentMethodRepository
         }
 
         return true;
+    }
+
+    public function getMethodIdsForCheckout()
+    {
+        $sql = new DbQuery();
+        $sql->select('`id_payment_method`');
+        $sql->from('mol_payment_method');
+
+        return Db::getInstance()->executeS($sql);
     }
 }

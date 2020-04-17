@@ -28,6 +28,15 @@ services:
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
 
+  Mollie\Service\UrlPathService:
+    arguments:
+      - '@mollie'
+
+  Mollie\Service\OverrideService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\UrlPathService'
+
   Mollie\Service\RefundService:
     arguments:
       - '@mollie'
@@ -78,6 +87,8 @@ services:
   Mollie\Repository\CountryRepository:
 
   Mollie\Repository\OrderShipmentRepository:
+
+  Mollie\Repository\MethodCountryRepository:
 
   Mollie\Utility\LanguageUtility:
     arguments:

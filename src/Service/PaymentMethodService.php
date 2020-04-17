@@ -2,7 +2,12 @@
 
 namespace Mollie\Service;
 
+use Configuration;
+use Context;
+use Country;
 use Mollie;
+use Mollie\Config\Config;
+use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethod;
 use Tools;
@@ -17,11 +22,20 @@ class PaymentMethodService
      * @var PaymentMethodRepository
      */
     private $methodRepository;
+    /**
+     * @var MethodCountryRepository
+     */
+    private $countryRepository;
 
-    public function __construct(Mollie $module, PaymentMethodRepository $methodRepository)
+    public function __construct(
+        Mollie $module,
+        PaymentMethodRepository $methodRepository,
+        MethodCountryRepository  $countryRepository
+    )
     {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
+        $this->countryRepository = $countryRepository;
     }
 
     public function savePaymentMethod($method)
@@ -51,5 +65,71 @@ class PaymentMethodService
         return $paymentMethod;
     }
 
+    /**
+     * Get payment methods to show on the checkout
+     *
+     * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @since 3.0.0
+     * @since 3.4.0 public
+     *
+     * @public ✓ This method is part of the public API
+     */
+    public function getMethodsForCheckout()
+    {
+        if (!Configuration::get(Config::MOLLIE_API_KEY)) {
+            return [];
+        }
+        $context = Context::getContext();
+        $iso = Tools::strtolower($context->currency->iso_code);
+        $methodIds = $this->methodRepository->getMethodIdsForCheckout();
+        if (empty($methodIds)) {
+            $methodIds = [];
+        }
+        $countryCode = Tools::strtolower($context->country->iso_code);
+        $unavailableMethods = [];
+        foreach (Mollie\Config\Config::$defaultMethodAvailability as $methodName => $countries) {
+            if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
+                || empty($countries)
+            ) {
+                continue;
+            }
+            if (!in_array($countryCode, $countries)) {
+                $unavailableMethods[] = $methodName;
+            }
+        }
 
+        foreach ($methodIds as $index => $methodId) {
+            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
+                || !in_array($iso, Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
+                || !$methodObj->enabled
+                || in_array($methodObj->id_method, $unavailableMethods)
+            ) {
+                unset($methodIds[$index]);
+            }
+            if ($methodObj->id_method === Mollie\Config\Config::APPLEPAY) {
+                if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+                    unset($methodIds[$index]);
+                } elseif ($_COOKIE['isApplePayMethod'] === '0') {
+                    unset($methodIds[$index]);
+                }
+            }
+        }
+
+        if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
+            foreach ($methodIds as $index => $methodId) {
+                $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+                if (!$methodObj->is_countries_applicable) {
+                    if (!$this->countryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                        unset($methodIds[$index]);
+                    }
+                }
+            }
+        }
+
+        return $methodIds;
+    }
 }
