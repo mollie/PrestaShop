@@ -150,7 +150,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach (['cartesbancaires' => 'Cartes Bancaires'] as $id => $name) {
+            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = [
                         'id' => $id,
@@ -237,7 +237,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach (['cartesbancaires' => 'Cartes Bancaires'] as $value => $apiMethod) {
+            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
                 $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);

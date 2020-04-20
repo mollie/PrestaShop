@@ -26,7 +26,7 @@ class IssuerService
 
     public function getIdealIssuers()
     {
-        $methodId = PaymentMethod::IDEAL;
+        $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL);
         $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
         $issuers = json_decode($issuersJson, true);
         $issuerList[PaymentMethod::IDEAL] = [];

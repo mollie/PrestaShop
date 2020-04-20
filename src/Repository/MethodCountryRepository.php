@@ -2,6 +2,7 @@
 
 namespace Mollie\Repository;
 
+use Db;
 use DbQuery;
 
 class MethodCountryRepository

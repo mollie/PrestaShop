@@ -106,7 +106,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.3.4';
+        $this->version = '3.6.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1119,9 +1119,10 @@ class Mollie extends PaymentModule
     public function hookDisplayAdminOrder($params)
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         /** @var \Mollie\Service\ShipmentService $shipmentService */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
+
         $cartId = Cart::getCartIdByOrderId((int)$params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (int)$cartId);
         if (empty($transaction)) {
@@ -1161,22 +1162,17 @@ class Mollie extends PaymentModule
     {
         $smarty = $this->context->smarty;
         $issuerSetting = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS);
+
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        /** @var \Mollie\Service\IssuerService $issuerService */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+
         $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
-                foreach ($apiMethod['issuers'] as $issuer) {
-                    $issuer['href'] = $this->context->link->getModuleLink(
-                        $this->name,
-                        'payment',
-                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
-                        true
-                    );
-                    $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
-                }
+                $issuerList = $issuerService->getIdealIssuers();
             }
         }
 
@@ -1227,21 +1223,15 @@ class Mollie extends PaymentModule
             return [];
         }
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        /** @var \Mollie\Service\IssuerService $issuerService */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+
         $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($methods as $apiMethod) {
             if ($apiMethod['id'] === \Mollie\Api\Types\PaymentMethod::IDEAL) {
-                $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL] = [];
-                foreach ($apiMethod['issuers'] as $issuer) {
-                    $issuer['href'] = $this->context->link->getModuleLink(
-                        $this->name,
-                        'payment',
-                        ['method' => $apiMethod['id'], 'issuer' => $issuer['id'], 'rand' => time()],
-                        true
-                    );
-                    $issuerList[\Mollie\Api\Types\PaymentMethod::IDEAL][$issuer['id']] = $issuer;
-                }
+                $issuerList = $issuerService->getIdealIssuers();
             }
         }
 
@@ -1376,10 +1366,9 @@ class Mollie extends PaymentModule
 
                 $paymentOptions[] = $newOption;
             } elseif (
-                ($isCreditCardMethod || $methodObj->id_method === 'cartesbancaires') &&
+                ($isCreditCardMethod || $methodObj->id_method === \Mollie\Config\Config::CARTES_BANCAIRES) &&
                 Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME)
             ) {
-
                 $this->context->smarty->assign([
                     'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
                     'price' => $this->context->cart->getOrderTotal(),

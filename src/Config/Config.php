@@ -168,6 +168,8 @@ class Config
     const FEE_PERCENTAGE= 2;
     const FEE_FIXED_FEE_AND_PERCENTAGE = 3;
 
+    const CARTES_BANCAIRES = 'cartesbancaires';
+
     /** @var array $methods */
     public static $methods = [
         'banktransfer' => 'Bank',

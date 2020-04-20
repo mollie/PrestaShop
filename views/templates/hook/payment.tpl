@@ -37,7 +37,7 @@
 <div class="mollie_methods">
     {foreach $methods as $method}
         <p class="payment_module">
-            {if $mollieIframe === '1' && ($method['id'] === 'creditcard' || $method['id'] === 'cartesbancaires')}
+            {if $mollieIframe === '1' && ($method['id'] === 'creditcard' || $method['id'] === {Mollie\Config\Config::CARTES_BANCAIRES})}
             <a href="#"
                title="{$msg_pay_with|sprintf:$method['name']|escape:'htmlall':'UTF-8'}"
                id="mollie_link_{$method['id']|escape:'htmlall':'UTF-8'}"
