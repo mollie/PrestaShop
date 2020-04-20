@@ -114,6 +114,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
+        $this->registerHook('displayInvoiceLegalFreeText');
         $this->compile();
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
@@ -1744,4 +1745,32 @@ class Mollie extends PaymentModule
             }
         }
     }
+
+    public function hookDisplayPDFInvoice($params)
+    {
+        if ($params['object'] instanceof OrderInvoice) {
+            $order = $params['object']->getOrder();
+            /** @var \Mollie\Repository\OrderFeeRepository $orderFeeRepo */
+            $orderFeeRepo = $this->getContainer(\Mollie\Repository\OrderFeeRepository::class);
+            $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId(Cart::getCartIdByOrderId($order->id));
+
+            $orderFee = new MolOrderFee($orderFeeId);
+
+            if (!$orderFee->order_fee) {
+                return;
+            }
+
+            $this->context->smarty->assign(
+                [
+                    'order_fee' => Tools::displayPrice($orderFee->order_fee)
+                ]
+            );
+
+            return $this->context->smarty->fetch(
+                $this->getLocalPath() . 'views/templates/admin/invoice_fee.tpl'
+            );
+        }
+
+    }
+
 }
