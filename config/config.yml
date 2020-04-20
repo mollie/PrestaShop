@@ -16,6 +16,8 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\MethodCountryRepository'
+      - '@Mollie\Service\CartLinesService'
 
   Mollie\Service\ApiService:
     arguments:
@@ -69,6 +71,10 @@ services:
     arguments:
       - '@Mollie\Repository\OrderShipmentRepository'
       - '@Mollie\Service\CarrierService'
+
+  Mollie\Service\CartLinesService:
+    arguments:
+      - '@mollie'
 
   Mollie\Service\MollieOrderInfoService:
     arguments:

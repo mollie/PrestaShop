@@ -102,6 +102,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->module->getContainer(\Mollie\Service\PaymentMethodService::class);
 
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
@@ -109,7 +111,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         do {
             $orderReference = Order::generateReference();
         } while (Order::getByReference($orderReference)->count());
-        $paymentData = Mollie::getPaymentData(
+        $paymentData = $paymentMethodService->getPaymentData(
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
             $method,

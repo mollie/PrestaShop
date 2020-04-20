@@ -2,14 +2,19 @@
 
 namespace Mollie\Service;
 
+use Address;
+use Cart;
 use Configuration;
 use Context;
 use Country;
+use Customer;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethod;
+use Order;
+use State;
 use Tools;
 
 class PaymentMethodService
@@ -26,16 +31,22 @@ class PaymentMethodService
      * @var MethodCountryRepository
      */
     private $countryRepository;
+    /**
+     * @var CartLinesService
+     */
+    private $cartLinesService;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
-        MethodCountryRepository  $countryRepository
+        MethodCountryRepository  $countryRepository,
+        CartLinesService $cartLinesService
     )
     {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
+        $this->cartLinesService = $cartLinesService;
     }
 
     public function savePaymentMethod($method)
@@ -132,4 +143,188 @@ class PaymentMethodService
 
         return $methodIds;
     }
+
+    /**
+     * Get payment data
+     *
+     * @param float|string $amount
+     * @param              $currency
+     * @param string $method
+     * @param string|null $issuer
+     * @param int|Cart $cartId
+     * @param string $secureKey
+     * @param bool $qrCode
+     * @param string $orderReference
+     *
+     * @return array
+     * @throws PrestaShopException
+     * @throws Adapter_Exception
+     * @throws CoreException
+     *
+     * @since 3.3.0 Order reference
+     */
+    public function getPaymentData(
+        $amount,
+        $currency,
+        $method,
+        $issuer,
+        $cartId,
+        $secureKey,
+        MolPaymentMethod $molPaymentMethod,
+        $qrCode = false,
+        $orderReference = ''
+    ) {
+        if (!$orderReference) {
+            $this->module->currentOrderReference = $orderReference = Order::generateReference();
+        }
+        $description = \Mollie\Utility\TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
+        $context = Context::getContext();
+        $cart = new Cart($cartId);
+        $customer = new Customer($cart->id_customer);
+
+        $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($molPaymentMethod, $amount);
+        $totalAmount = (number_format(str_replace(',', '.', $amount), 2, '.', ''));
+        $totalAmount += $paymentFee;
+
+        $paymentData = [
+            'amount' => [
+                'currency' => (string)($currency ? Tools::strtoupper($currency) : 'EUR'),
+                'value' => (string)number_format($totalAmount, 2, '.', ''),
+            ],
+            'method' => $method,
+            'redirectUrl' => ($qrCode
+                ? $context->link->getModuleLink(
+                    'mollie',
+                    'qrcode',
+                    ['cart_id' => $cartId, 'done' => 1, 'rand' => time()],
+                    true
+                )
+                : $context->link->getModuleLink(
+                    'mollie',
+                    'return',
+                    ['cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time()],
+                    true
+                )
+            ),
+        ];
+        if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
+            $paymentData['webhookUrl'] = $context->link->getModuleLink(
+                'mollie',
+                'webhook',
+                [],
+                true
+            );
+        }
+
+        $paymentData['metadata'] = [
+            'cart_id' => $cartId,
+            'order_reference' => $orderReference,
+            'secure_key' => Tools::encrypt($secureKey),
+        ];
+
+        // Send webshop locale
+        if (($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_PAYMENTS_API
+                && Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE) === Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
+            || $molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API
+        ) {
+            $locale = \Mollie\Utility\LocaleUtility::getWebshopLocale();
+            if (preg_match(
+                '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
+                $locale
+            )) {
+                $paymentData['locale'] = $locale;
+            }
+        }
+
+        if ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_PAYMENTS_API) {
+            $paymentData['description'] = str_ireplace(
+                ['%'],
+                [$cartId],
+                $description
+            );
+            $paymentData['issuer'] = $issuer;
+
+            if (isset($context->cart) && Tools::getValue('method') === 'paypal') {
+                if (isset($context->cart->id_customer)) {
+                    $buyer = new Customer($context->cart->id_customer);
+                    $paymentData['billingEmail'] = (string)$buyer->email;
+                }
+                if (isset($context->cart->id_address_invoice)) {
+                    $billing = new Address((int)$context->cart->id_address_invoice);
+                    $paymentData['billingAddress'] = [
+                        'streetAndNumber' => (string)$billing->address1 . ' ' . $billing->address2,
+                        'city' => (string)$billing->city,
+                        'region' => (string)State::getNameById($billing->id_state),
+                        'country' => (string)Country::getIsoById($billing->id_country),
+                    ];
+                    $paymentData['billingAddress']['postalCode'] = (string)$billing->postcode ?: '-';
+                }
+                if (isset($context->cart->id_address_delivery)) {
+                    $shipping = new Address((int)$context->cart->id_address_delivery);
+                    $paymentData['shippingAddress'] = [
+                        'streetAndNumber' => (string)$shipping->address1 . ' ' . $shipping->address2,
+                        'city' => (string)$shipping->city,
+                        'region' => (string)State::getNameById($shipping->id_state),
+                        'country' => (string)Country::getIsoById($shipping->id_country),
+                    ];
+                    $paymentData['shippingAddress']['postalCode'] = (string)$shipping->postcode ?: '-';
+                }
+            }
+
+            switch ($method) {
+                case \Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
+                    $paymentData['billingEmail'] = $customer->email;
+                    $paymentData['locale'] = \Mollie\Utility\LocaleUtility::getWebshopLocale();
+                    break;
+                case \Mollie\Api\Types\PaymentMethod::BITCOIN:
+                    $paymentData['billingEmail'] = $customer->email;
+                    break;
+            }
+        } elseif ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API) {
+            if (isset($cart->id_address_invoice)) {
+                $billing = new Address((int)$cart->id_address_invoice);
+                $paymentData['billingAddress'] = [
+                    'givenName' => (string)$customer->firstname,
+                    'familyName' => (string)$customer->lastname,
+                    'email' => (string)$customer->email,
+                    'streetAndNumber' => (string)$billing->address1 . ' ' . $billing->address2,
+                    'city' => (string)$billing->city,
+                    'region' => (string)State::getNameById($billing->id_state),
+                    'country' => (string)Country::getIsoById($billing->id_country),
+                ];
+                $paymentData['billingAddress']['postalCode'] = (string)$billing->postcode ?: '-';
+            }
+            if (isset($cart->id_address_delivery)) {
+                $shipping = new Address((int)$cart->id_address_delivery);
+                $paymentData['shippingAddress'] = [
+                    'givenName' => (string)$customer->firstname,
+                    'familyName' => (string)$customer->lastname,
+                    'email' => (string)$customer->email,
+                    'streetAndNumber' => (string)$shipping->address1 . ' ' . $shipping->address2,
+                    'city' => (string)$shipping->city,
+                    'region' => (string)State::getNameById($shipping->id_state),
+                    'country' => (string)Country::getIsoById($shipping->id_country),
+                ];
+                $paymentData['shippingAddress']['postalCode'] = (string)$shipping->postcode ?: '-';
+            }
+            $paymentData['orderNumber'] = $orderReference;
+
+            $paymentData['lines'] = $this->cartLinesService->getCartLines($amount, $paymentFee, $cart);
+            $paymentData['payment'] = [];
+            if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
+                $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
+                    'mollie',
+                    'webhook',
+                    [],
+                    true
+                );
+            }
+            if ($issuer) {
+                $paymentData['payment']['issuer'] = $issuer;
+            }
+        }
+
+        return $paymentData;
+    }
+
 }
