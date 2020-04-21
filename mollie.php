@@ -607,6 +607,10 @@ class Mollie extends PaymentModule
         $input = [];
         $orderStatuses = [];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
+
+        /** @var \Mollie\Service\MolCarrierInformationService $carriersInfoService */
+        $carriersInfoService = $this->getContainer(\Mollie\Service\MolCarrierInformationService::class);
+
         $input[] = [
             'type' => 'select',
             'label' => $this->l('Send locale for payment screen'),
@@ -777,6 +781,15 @@ class Mollie extends PaymentModule
             'name' => Mollie\Config\Config::MOLLIE_TRACKING_URLS,
             'depends' => Mollie\Config\Config::MOLLIE_API,
             'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
+        ];
+        $input[] = [
+            'type' => 'mollie-carriers2',
+            'label' => $this->l('Shipment information'),
+            'tab' => $advancedSettings,
+            'name' => Mollie\Config\Config::MOLLIE_TRACKING_URLS,
+            'depends' => Mollie\Config\Config::MOLLIE_API,
+            'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
+            'carriers' => $carriersInfoService->getAllCarriersInformation($lang)
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
@@ -1141,11 +1154,12 @@ class Mollie extends PaymentModule
             ];
         }
 
+        $order = new Order($params['id_order']);
         $this->context->smarty->assign([
             'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1&action=MollieOrderInfo',
             'transactionId' => $transaction['transaction_id'],
             'currencies' => $currencies,
-            'tracking' => $shipmentService->getShipmentInformation($params['id_order']),
+            'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
             'webPackChunks' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
         ]);
@@ -1652,6 +1666,7 @@ class Mollie extends PaymentModule
         }
 
         $idOrder = $params['id_order'];
+        $order = new Order($idOrder);
         $checkStatuses = [];
         if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
             $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
@@ -1662,7 +1677,7 @@ class Mollie extends PaymentModule
 
         /** @var \Mollie\Service\ShipmentService $shipmentService */
         $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
-        $shipmentInfo = $shipmentService->getShipmentInformation($idOrder);
+        $shipmentInfo = $shipmentService->getShipmentInformation($order->reference);
 
         if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
             ) || $shipmentInfo === null

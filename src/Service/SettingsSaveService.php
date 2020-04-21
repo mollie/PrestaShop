@@ -2,6 +2,7 @@
 
 namespace Mollie\Service;
 
+use Carrier;
 use Configuration;
 use Context;
 use Exception;
@@ -36,13 +37,18 @@ class SettingsSaveService
      * @var ApiService
      */
     private $apiService;
+    /**
+     * @var MolCarrierInformationService
+     */
+    private $carrierInformationService;
 
     public function __construct(
         Mollie $module,
         CountryRepository $countryRepository,
         PaymentMethodRepository $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
-        ApiService $apiService
+        ApiService $apiService,
+        MolCarrierInformationService $carrierInformationService
     )
     {
         $this->module = $module;
@@ -50,6 +56,7 @@ class SettingsSaveService
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->apiService = $apiService;
+        $this->carrierInformationService = $carrierInformationService;
     }
 
     /**
@@ -150,6 +157,20 @@ class SettingsSaveService
                 Config::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
             );
+            $carriers = \Carrier::getCarriers(
+                Context::getContext()->language->id,
+                false,
+                false,
+                false,
+                null,
+                Carrier::ALL_CARRIERS
+            );
+            foreach ($carriers as $carrier) {
+                $urlSource = Tools::getValue(Config::MOLLIE_CARRIER_URL_SOURCE . $carrier['id_carrier']);
+                $customUrl = Tools::getValue(Config::MOLLIE_CARRIER_CUSTOM_URL . $carrier['id_carrier']);
+                $this->carrierInformationService->saveMolCarrierInfo($carrier['id_carrier'], $urlSource, $customUrl);
+            }
+
             foreach (array_keys(Config::getStatuses()) as $name) {
                 $name = Tools::strtoupper($name);
                 $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");

@@ -92,7 +92,7 @@ class MollieOrderInfoService
 
                         return [
                             'success' => isset($status['status']) && $status['status'] === 'success',
-                            'payment' => $this->apiService->getFilteredApiPayment($input['transactionId'], false),
+                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false),
                         ];
                     case 'retrieve':
                         // Check order view permissions
@@ -104,7 +104,7 @@ class MollieOrderInfoService
                         }
                         return [
                             'success' => true,
-                            'payment' => $this->apiService->getFilteredApiPayment($input['transactionId'], false)
+                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false)
                         ];
                     default:
                         return ['success' => false];
@@ -123,7 +123,7 @@ class MollieOrderInfoService
                         if (!$info) {
                             return ['success' => false];
                         }
-                        $tracking = $this->shipmentService->getShipmentInformation($info['order_id']);
+                        $tracking = $this->shipmentService->getShipmentInformation($info['order_reference']);
 
                         return [
                             'success' => true,

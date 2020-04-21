@@ -71,11 +71,12 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\ApiService'
+      - '@Mollie\Service\MolCarrierInformationService'
 
   Mollie\Service\ShipmentService:
     arguments:
       - '@Mollie\Repository\OrderShipmentRepository'
-      - '@Mollie\Service\CarrierService'
+      - '@Mollie\Repository\MolCarrierInformationRepository'
 
   Mollie\Service\CartLinesService:
     arguments:
@@ -91,6 +92,10 @@ services:
       - '@Mollie\Service\ShipmentService'
       - '@Mollie\Service\ApiService'
 
+  Mollie\Service\MolCarrierInformationService:
+    arguments:
+      - '@Mollie\Repository\MolCarrierInformationRepository'
+
   Mollie\Repository\PaymentMethodRepository:
 
   Mollie\Repository\OrderFeeRepository:
@@ -100,6 +105,8 @@ services:
   Mollie\Repository\OrderShipmentRepository:
 
   Mollie\Repository\MethodCountryRepository:
+
+  Mollie\Repository\MolCarrierInformationRepository:
 
   Mollie\Utility\LanguageUtility:
     arguments:

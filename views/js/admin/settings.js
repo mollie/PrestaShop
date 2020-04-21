@@ -37,4 +37,11 @@ $(document).ready(function() {
             event.preventDefault();
         }
     });
+    $('select[name^="MOLLIE_CARRIER_URL_SOURCE"]').on('change', function () {
+        var customUrlDisabled = true;
+        if($(this).val() === 'custom_url') {
+            customUrlDisabled = false;
+        }
+        $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
+    })
 });
