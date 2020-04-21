@@ -113,8 +113,8 @@
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id}"
                                     class="fixed-width-xl">
-                                <option value="0" {if $methodObj->method === '0'} selected {/if}>{l s='Selected countries' mod='mollie'}</option>
-                                <option value="1" {if $methodObj->method === '1'} selected {/if}>{l s='All Allowed Countries' mod='mollie'}</option>
+                                <option value="0" {if $methodObj->is_countries_applicable === '0'} selected {/if}>{l s='Selected countries' mod='mollie'}</option>
+                                <option value="1" {if $methodObj->is_countries_applicable === '1'} selected {/if}>{l s='All Allowed Countries' mod='mollie'}</option>
                             </select>
                         </div>
                     </div>
@@ -130,11 +130,6 @@
                                             {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
                                 {/foreach}
                             </select>
-                            <p class="help-block">
-                                {l s='You can display payment fee in your email template by adding "{payment_fee}" in email translations. For more information visit: ' mod='mollie'}
-                                <a href='http://doc.prestashop.com/display/PS17/Translations#Translations-Emailtemplates'
-                                   target="_blank">{l s='Translations' mod='mollie'}</a>
-                            </p>
                         </div>
                     </div>
                     {*                    <div class="form-group">*}
@@ -175,6 +170,11 @@
                                     {l s='Fixed Fee and Percentage' mod='mollie'}
                                 </option>
                             </select>
+                            <p class="help-block">
+                                {l s='You can display payment fee in your email template by adding "{payment_fee}" in email translations. For more information visit: ' mod='mollie'}
+                                <a href='http://doc.prestashop.com/display/PS17/Translations#Translations-Emailtemplates'
+                                   target="_blank">{l s='Translations' mod='mollie'}</a>
+                            </p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -219,7 +219,7 @@
     {elseif $input.type === 'mollie-h3'}
         <br>
         <h3>{$input.title|escape:'html':'UTF-8'}</h3>
-    {elseif $input.type == 'mollie-carriers2'}
+    {elseif $input.type == 'mollie-carriers'}
         <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
             <div class="alert alert-info">
                 {l s='Here you can configure what information about the shipment is sent to
@@ -269,75 +269,6 @@
                 </tbody>
             </table>
         </div>
-    {elseif $input.type == 'mollie-carriers'}
-        <div id="{$input.name|escape:'htmlall':'UTF-8'}_container"></div>
-        <script type="text/javascript">
-            (function () {
-                window.MollieModule = window.MollieModule || {ldelim}{rdelim};
-                window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-                window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-                window.MollieModule.debug = {if Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-            }());
-            (function () {
-                function initMollieCarriers() {
-                    function initMollieCarrierConfig() {
-                        if (typeof window.MollieModule === 'undefined'
-                            || typeof window.MollieModule.app === 'undefined'
-                            || typeof window.MollieModule.app.default === 'undefined'
-                            || typeof window.MollieModule.app.default.carrierConfig === 'undefined'
-                        ) {
-                            return setTimeout(initMollieCarrierConfig, 100);
-                        }
-
-                        window.MollieModule.app.default.carrierConfig().then(function (fn) {
-                            fn.default(
-                                '{$input.name|escape:'javascript':'UTF-8'}',
-                                {
-                                    legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
-                                    ajaxEndpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&ajax=1&action=MollieCarrierConfig'
-                                },
-                                {
-                                    name: '{l s='Name' mod='mollie' js=1}',
-                                    urlSource: '{l s='URL Source' mod='mollie' js=1}',
-                                    carrierUrl: '{l s='Carrier URL' mod='mollie' js=1}',
-                                    customUrl: '{l s='Custom URL' mod='mollie' js=1}',
-                                    module: '{l s='Module' mod='mollie' js=1}',
-                                    doNotAutoShip: '{l s='Do not automatically ship' mod='mollie' js=1}',
-                                    noTrackingInformation: '{l s='No tracking information' mod='mollie' js=1}',
-                                    hereYouCanConfigureCarriers: '{l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie' js=1}',
-                                    youCanUseTheFollowingVariables: '{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}',
-                                    shippingNumber: '{l s='Shipping number' mod='mollie' js=1}',
-                                    invoiceCountryCode: '{l s='Billing country code' mod='mollie' js=1}',
-                                    invoicePostcode: '{l s='Billing postcode' mod='mollie' js=1}',
-                                    deliveryCountryCode: '{l s='Shipping country code' mod='mollie' js=1}',
-                                    deliveryPostcode: '{l s='Shipping postcode' mod='mollie' js=1}',
-                                    languageCode: '{l s='2-letter language code' mod='mollie' js=1}',
-                                    unableToLoadCarriers: '{l s='Unable to load carrier list' mod='mollie' js=1}',
-                                    retry: '{l s='Retry' mod='mollie' js=1}',
-                                    error: '{l s='Error' mod='mollie' js=1}'
-                                }
-                            );
-                        });
-                    }
-
-                    function checkInput() {
-                        var container = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}_container');
-                        var input = document.getElementById('{$input.name|escape:'javascript':'UTF-8'}');
-                        if (input == null) {
-                            var newInput = document.createElement('DIV');
-                            newInput.id = '{$input.name|escape:'javascript':'UTF-8'}';
-                            container.closest('.form-group').style.display = 'block';
-                            container.appendChild(newInput);
-                            initMollieCarrierConfig();
-                        }
-                    }
-
-                    checkInput();
-                }
-
-                initMollieCarriers();
-            }());
-        </script>
     {elseif $input.type == 'mollie-carrier-switch'}
         <div id="{$input.name|escape:'htmlall':'UTF-8'}_info" style="display: none"
              class="{if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}info{else}alert alert-info{/if}">{l s='This option is not required for the currently selected API' mod='mollie'}</div>

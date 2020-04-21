@@ -781,14 +781,6 @@ class Mollie extends PaymentModule
             'name' => Mollie\Config\Config::MOLLIE_TRACKING_URLS,
             'depends' => Mollie\Config\Config::MOLLIE_API,
             'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
-        ];
-        $input[] = [
-            'type' => 'mollie-carriers2',
-            'label' => $this->l('Shipment information'),
-            'tab' => $advancedSettings,
-            'name' => Mollie\Config\Config::MOLLIE_TRACKING_URLS,
-            'depends' => Mollie\Config\Config::MOLLIE_API,
-            'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
             'carriers' => $carriersInfoService->getAllCarriersInformation($lang)
         ];
         $input[] = [
