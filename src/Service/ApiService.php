@@ -2,11 +2,14 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
 use Exception;
 use Module;
-use Mollie\Api\Resources\Payment;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -38,12 +41,12 @@ class ApiService
 
     public function setApiKey($apiKey, $moduleVersion)
     {
-        $api = new \Mollie\Api\MollieApiClient();
+        $api = new MollieApiClient();
         $context = Context::getContext();
         if ($apiKey) {
             try {
                 $api->setApiKey($apiKey);
-            } catch (\Mollie\Api\Exceptions\ApiException $e) {
+            } catch (ApiException $e) {
                 return;
             }
         } elseif (!empty($context->employee)
@@ -66,13 +69,11 @@ class ApiService
     /**
      * Get payment methods to show on the configuration page
      *
+     * @param $api
+     * @param $path
      * @param bool $active Active methods only
      *
      * @return array
-     *
-     * @throws PrestaShopException
-     *
-     * @throws \Mollie\Api\Exceptions\ApiException
      *
      * @since 3.0.0
      * @since 3.4.0 public
@@ -268,7 +269,7 @@ class ApiService
      *
      * @return array|null
      *
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
@@ -339,13 +340,13 @@ class ApiService
      * @return array|null
      *
      * @throws \ErrorException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 $process option
      */
     public function getFilteredApiOrder($api, $transactionId)
     {
-        /** @var \Mollie\Api\Resources\Order $order */
+        /** @var MollieOrderAlias $order */
         $order = $api->orders->get($transactionId, ['embed' => 'payments']);
 
         if ($order && method_exists($order, 'refunds')) {

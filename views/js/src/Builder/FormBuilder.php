@@ -2,6 +2,8 @@
 
 NameSpace Mollie\Builder;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Configuration;
 use HelperForm;
 use Mollie;
@@ -246,7 +248,7 @@ class FormBuilder
         $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($lang));
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
-            if ($name === \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+            if ($name === PaymentStatus::STATUS_AUTHORIZED) {
                 continue;
             }
 
@@ -288,12 +290,12 @@ class FormBuilder
 
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], [
-                \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
-                \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
-                \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
-                \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-                \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                PaymentStatus::STATUS_PAID,
+                PaymentStatus::STATUS_AUTHORIZED,
+                PaymentStatus::STATUS_CANCELED,
+                PaymentStatus::STATUS_EXPIRED,
+                RefundStatus::STATUS_REFUNDED,
+                PaymentStatus::STATUS_OPEN,
                 'partial_refund',
             ]);
         }) as $status) {

@@ -2,6 +2,8 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Carrier;
 use Configuration;
 use Context;
@@ -63,7 +65,7 @@ class SettingsSaveService
      * @param array $errors
      *
      * @return string
-     * @throws Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -177,7 +179,7 @@ class SettingsSaveService
                 Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 Config::getStatuses()[Tools::strtolower($name)] = $new;
 
-                if ($name != \Mollie\Api\Types\PaymentStatus::STATUS_OPEN) {
+                if ($name != PaymentStatus::STATUS_OPEN) {
                     Configuration::updateValue(
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false

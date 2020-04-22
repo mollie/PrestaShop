@@ -1,5 +1,4 @@
 *mollie*.zip
-vendor/
 composer.lock
 yarn.lock
 yarn-error.log

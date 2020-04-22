@@ -1,9 +1,12 @@
 <?php
 
+
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use Mollie;
-use Mollie\Api\Resources\Payment;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
 use Tools;
@@ -29,14 +32,14 @@ class RefundService
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \SmartyException
+     * @throws ApiException
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
      * @since 3.3.2 Omit $orderId
      */
     public function doPaymentRefund($transactionId, $amount = null)
     {
         try {
-            /** @var \Mollie\Api\Resources\Payment $payment */
+            /** @var MollieOrderAlias $payment */
             $payment = $this->module->api->payments->get($transactionId);
             if ($amount) {
                 $payment->refund([
@@ -53,7 +56,7 @@ class RefundService
                     ],
                 ]);
             }
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (ApiException $e) {
             return [
                 'status' => 'fail',
                 'msg_fail' => $this->module->l('The order could not be refunded!'),
@@ -94,7 +97,7 @@ class RefundService
     public function doRefundOrderLines($transactionId, $lines = [])
     {
         try {
-            /** @var \Mollie\Api\Resources\Order $payment */
+            /** @var MollieOrderAlias $payment */
             $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
             $refund = [
                 'lines' => array_map(function ($line) {
@@ -118,7 +121,7 @@ class RefundService
                 $webhookController = new MollieWebhookModuleFrontController();
                 $webhookController->processTransaction($apiPayment);
             }
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (ApiException $e) {
             return [
                 'success' => false,
                 'message' => $this->module->l('The product(s) could not be refunded!'),

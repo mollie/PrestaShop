@@ -2,8 +2,9 @@
 
 namespace Mollie\Config;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Configuration;
-use phpDocumentor\Reflection\Types\Self_;
 
 class Config
 {
@@ -200,13 +201,13 @@ class Config
     public static function getStatuses()
     {
         return [
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
-            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED    => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
-            \Mollie\Api\Types\PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
+            PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
+            PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
+            PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
+            PaymentStatus::STATUS_EXPIRED    => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
+            RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
+            PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
+            PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),

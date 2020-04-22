@@ -2,6 +2,7 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use Configuration;
 use Mollie;
 use Mollie\Config\Config;
@@ -35,7 +36,7 @@ class ConfigFieldService
 
     /**
      * @return array
-     * @throws Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     public function getConfigFieldsValues()
     {

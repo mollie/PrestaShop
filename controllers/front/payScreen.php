@@ -33,7 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
@@ -53,7 +54,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
         $cardToken = Tools::getValue('mollieCardToken' . $method);
 
         $orderId = Order::getOrderByCartId($this->context->cart->id);
-        $mollie = new \Mollie\Api\MollieApiClient();
+        $mollie = new MollieApiClient();
         $mollie->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY));
 
 

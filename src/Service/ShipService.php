@@ -2,7 +2,9 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use Mollie;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 
 class ShipService
 {
@@ -28,7 +30,7 @@ class ShipService
     public function doShipOrderLines($transactionId, $lines = [], $tracking = null)
     {
         try {
-            /** @var \Mollie\Api\Resources\Order $payment */
+            /** @var MollieOrderAlias $payment */
             $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
             $shipment = [
                 'lines' => array_map(function ($line) {
@@ -44,7 +46,7 @@ class ShipService
                 $shipment['tracking'] = $tracking;
             }
             $order->createShipment($shipment);
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (ApiException $e) {
             return [
                 'success' => false,
                 'message' => $this->module->l('The product(s) could not be shipped!'),

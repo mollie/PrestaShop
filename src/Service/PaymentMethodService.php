@@ -2,6 +2,7 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use Address;
 use Cart;
 use Configuration;
@@ -272,11 +273,11 @@ class PaymentMethodService
             }
 
             switch ($method) {
-                case \Mollie\Api\Types\PaymentMethod::BANKTRANSFER:
+                case PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
                     $paymentData['locale'] = \Mollie\Utility\LocaleUtility::getWebshopLocale();
                     break;
-                case \Mollie\Api\Types\PaymentMethod::BITCOIN:
+                case PaymentMethod::BITCOIN:
                     $paymentData['billingEmail'] = $customer->email;
                     break;
             }

@@ -2,6 +2,7 @@
 
 namespace Mollie\Repository;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Db;
 use DbQuery;
 use PrestaShopDatabaseException;
@@ -50,8 +51,8 @@ class PaymentMethodRepository
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
                     pSQL($id),
-                    \Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                    \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED
+                    PaymentStatus::STATUS_PAID,
+                    PaymentStatus::STATUS_AUTHORIZED
                 )
             );
         } catch (PrestaShopDatabaseException $e) {

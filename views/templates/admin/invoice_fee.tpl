@@ -39,15 +39,7 @@
             <table id="payment-tab" width="100%" class="right">
                 <tr class="bold">
                     <td class="grey" width="50%">
-                        {l s='Payment Fee type' mod='mollie'}
-                    </td>
-                    <td class="white" width="50%">
                         {l s='Payment Fee' mod='mollie'}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="grey" width="50%">
-                        {l s='Fee' mod='mollie'}
                     </td>
                     <td class="white" width="50%">
                         {$order_fee}

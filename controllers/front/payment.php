@@ -33,7 +33,11 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Utility\PaymentFeeUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -141,7 +145,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
         // Store payment linked to cart
-        if ($apiPayment->method !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(
                     'mollie_payments',
@@ -150,7 +154,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                         'method'          => pSQL($apiPayment->method),
                         'transaction_id'  => pSQL($apiPayment->id),
                         'order_reference' => pSQL($orderReference),
-                        'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                        'bank_status'     => PaymentStatus::STATUS_OPEN,
                         'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                     )
                 );
@@ -171,9 +175,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
         }
 
-        if ($apiPayment->method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($apiPayment->method === PaymentMethod::BANKTRANSFER) {
             // Set the `banktransfer` details
-            if ($apiPayment instanceof \Mollie\Api\Resources\Order) {
+            if ($apiPayment instanceof MollieOrderAlias) {
                 // If this is an order, take the first payment
                 $apiPayment = $apiPayment->payments();
                 $apiPayment = $apiPayment[0];
@@ -214,7 +218,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                         'order_reference' => pSQL($orderReference),
                         'method'          => pSQL($apiPayment->method),
                         'transaction_id'  => pSQL($apiPayment->id),
-                        'bank_status'     => \Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                        'bank_status'     => PaymentStatus::STATUS_OPEN,
                         'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
                     )
                 );
@@ -280,19 +284,19 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @param array $data
      *
-     * @return \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order|null
+     * @return MolliePaymentAlias|MollieOrderAlias|null
      *
      * @throws PrestaShopException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     protected function createPayment($data, $selectedApi)
     {
         try {
             if ($selectedApi === Mollie\Config\Config::MOLLIE_ORDERS_API) {
-                /** @var \Mollie\Api\Resources\Order $payment */
+                /** @var MollieOrderAlias $payment */
                 $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
             } else {
-                /** @var \Mollie\Api\Resources\Payment $payment */
+                /** @var MolliePaymentAlias $payment */
                 $payment = $this->module->api->payments->create($data);
             }
         } catch (Exception $e) {
@@ -324,9 +328,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     private function createOrder($method, $apiPayment, $cartId, $originalAmount, $secureKey, $orderReference)
     {
         $extraVars = [];
-        if ($method === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER) {
+        if ($method === PaymentMethod::BANKTRANSFER) {
             // Set the `banktransfer` details
-            if ($apiPayment instanceof \Mollie\Api\Resources\Order) {
+            if ($apiPayment instanceof MollieOrderAlias) {
                 // If this is an order, take the first payment
                 $apiPayment = $apiPayment->payments();
                 $apiPayment = $apiPayment[0];

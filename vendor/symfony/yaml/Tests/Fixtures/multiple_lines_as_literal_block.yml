@@ -1,0 +1,14 @@
+data:
+    single_line: 'foo bar baz'
+    multi_line: |
+        foo
+        line with trailing spaces:
+          
+        bar
+        integer like line:
+        123456789
+        empty line:
+        
+        baz
+    multi_line_with_carriage_return: "_PhpScoper5ea00cc67502b\foo\nbar\r\nbaz"
+    nested_inlined_multi_line_string: { inlined_multi_line: "_PhpScoper5ea00cc67502b\foo\nbar\r\nempty line:\_PhpScoper5ea00cc67502b\n\nbaz" }

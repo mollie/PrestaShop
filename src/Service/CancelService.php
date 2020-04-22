@@ -2,8 +2,10 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order;
 use Mollie;
-use Mollie\Api\Resources\Payment;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
 use Tools;
@@ -35,7 +37,7 @@ class CancelService
     public function doCancelOrderLines($transactionId, $lines = [])
     {
         try {
-            /** @var \Mollie\Api\Resources\Order $payment */
+            /** @var Order $payment */
             $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
             if ($lines === []) {
                 $order->cancel();
@@ -57,7 +59,7 @@ class CancelService
                 $webhookController = new MollieWebhookModuleFrontController();
                 $webhookController->processTransaction($apiPayment);
             }
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (ApiException $e) {
             return [
                 'success' => false,
                 'message' => $this->l('The product(s) could not be canceled!'),

@@ -1,0 +1,10 @@
+services:
+    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy: { 0: ~, $apiKey: ABCD }
+
+    another_one:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy
+        arguments:
+            $apiKey: ABCD
+            _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass: ~
+        calls:
+            - ['setApiKey', { $apiKey: '123' }]

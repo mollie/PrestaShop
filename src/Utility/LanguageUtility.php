@@ -2,6 +2,8 @@
 
 namespace Mollie\Utility;
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Mollie;
 
 class LanguageUtility
@@ -18,12 +20,12 @@ class LanguageUtility
 
     public function getLang() {
         return [
-            \Mollie\Api\Types\PaymentStatus::STATUS_PAID => $this->module->l('Paid'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED => $this->module->l('Authorized'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED => $this->module->l('Canceled'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED => $this->module->l('Expired'),
-            \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED => $this->module->l('Refunded'),
-            \Mollie\Api\Types\PaymentStatus::STATUS_OPEN => $this->module->l('Bankwire pending'),
+            PaymentStatus::STATUS_PAID => $this->module->l('Paid'),
+            PaymentStatus::STATUS_AUTHORIZED => $this->module->l('Authorized'),
+            PaymentStatus::STATUS_CANCELED => $this->module->l('Canceled'),
+            PaymentStatus::STATUS_EXPIRED => $this->module->l('Expired'),
+            RefundStatus::STATUS_REFUNDED => $this->module->l('Refunded'),
+            PaymentStatus::STATUS_OPEN => $this->module->l('Bankwire pending'),
             Mollie\Config\Config::PARTIAL_REFUND_CODE => $this->module->l('Partially refunded'),
             'created' => $this->module->l('Created'),
             'This payment method is not available.' => $this->module->l('This payment method is not available.'),

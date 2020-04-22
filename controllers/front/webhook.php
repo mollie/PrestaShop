@@ -33,9 +33,14 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Resources\Payment;
-use Mollie\Api\Resources\ResourceFactory;
-use Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
 
@@ -76,7 +81,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws SmartyException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     public function initContent()
     {
@@ -95,7 +100,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws SmartyException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     protected function executeWebhook()
     {
@@ -121,16 +126,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param \Mollie\Api\Resources\Payment|\Mollie\Api\Resources\Order $transaction
+     * @param MolliePaymentAlias|MollieOrderAlias $transaction
      *
-     * @return string|\Mollie\Api\Resources\Payment Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
+     * @return string|MolliePaymentAlias Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
      *
-     * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws SmartyException
      * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     *
+     * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
      * @since 3.3.2 Returns the ApiPayment instead of ApiPayment / ApiOrder
@@ -146,7 +149,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
-        if ($transaction instanceof \Mollie\Api\Resources\Payment) {
+        if ($transaction instanceof MolliePaymentAlias) {
             if (!empty($transaction->orderId) && Tools::substr($transaction->orderId, 0, 3) === 'ord') {
                 // Part of order
                 $transaction = $this->module->api->orders->get($transaction->orderId, array('embed' => 'payments'));
@@ -158,7 +161,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         if (!isset($apiPayment)) {
             $apiPayments = array();
-            /** @var \Mollie\Api\Resources\Order $transaction */
+            /** @var MollieOrderAlias $transaction */
             foreach ($transaction->_embedded->payments as $embeddedPayment) {
                 $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
                 $apiPayments[] = $apiPayment;
@@ -225,13 +228,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
                 ) {
-                    $orderStatusService->setOrderStatus($orderId, \Mollie\Api\Types\RefundStatus::STATUS_REFUNDED);
+                    $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
                 } else {
                     $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
                 }
-            } elseif ($psPayment['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
-                && $psPayment['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
-                && $apiPayment->status === \Mollie\Api\Types\PaymentStatus::STATUS_PAID
+            } elseif ($psPayment['method'] === PaymentMethod::BANKTRANSFER
+                && $psPayment['bank_status'] === PaymentStatus::STATUS_OPEN
+                && $apiPayment->status === PaymentStatus::STATUS_PAID
             ) {
                 $order = new Order($orderId);
                 $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
@@ -240,7 +243,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 $order->update();
 
                 $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
-            } elseif ($psPayment['method'] !== \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
+            } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
                 && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
                 && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
@@ -356,7 +359,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * Prestashop always has default context to fall back on, so context->country
      * is allways Set before executing any controller methods
      *
-     * @param \Mollie\Api\Resources\Payment $payment
+     * @param MolliePaymentAlias $payment
      *
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException

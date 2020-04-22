@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -130,8 +132,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             if ($data['mollie_info'] === false) {
                 $data['mollie_info'] = array();
                 $data['msg_details'] = $this->l('The order with this id does not exist.');
-            } elseif ($data['mollie_info']['method'] === \Mollie\Api\Types\PaymentMethod::BANKTRANSFER
-                && $data['mollie_info']['bank_status'] === \Mollie\Api\Types\PaymentStatus::STATUS_OPEN
+            } elseif ($data['mollie_info']['method'] === PaymentMethod::BANKTRANSFER
+                && $data['mollie_info']['bank_status'] === PaymentStatus::STATUS_OPEN
             ) {
                 $data['msg_details'] = $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
             } else {
@@ -261,10 +263,10 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $orderStatus = $transaction->status;
         switch ($transaction->status) {
-            case \Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED:
-            case \Mollie\Api\Types\PaymentStatus::STATUS_FAILED:
-            case \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED:
-                $orderStatus = \Mollie\Api\Types\PaymentStatus::STATUS_CANCELED;
+            case PaymentStatus::STATUS_EXPIRED:
+            case PaymentStatus::STATUS_FAILED:
+            case PaymentStatus::STATUS_CANCELED:
+                $orderStatus = PaymentStatus::STATUS_CANCELED;
                 $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
 
                 $failUrl = $this->context->link->getModuleLink(
@@ -286,8 +288,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                     'href' => $failUrl
 
                 ]));
-            case \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED:
-            case \Mollie\Api\Types\PaymentStatus::STATUS_PAID:
+            case PaymentStatus::STATUS_AUTHORIZED:
+            case PaymentStatus::STATUS_PAID:
                 $status = static::DONE;
                 $orderDetails = $order->getOrderDetailList();
                 /** @var OrderDetail $detail */
