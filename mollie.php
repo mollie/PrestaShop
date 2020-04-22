@@ -203,15 +203,15 @@ class Mollie extends PaymentModule
     private function compile()
     {
         $containerCache = $this->getLocalPath() . 'var/cache/container.php';
-        $containerConfigCache = new \Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
         $containerClass = get_class($this) . 'Container';
         if (!$containerConfigCache->isFresh()) {
-            $containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-            $locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-            $loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+            $containerBuilder = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+            $locator = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
+            $loader = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
             $loader->load('config.yml');
             $containerBuilder->compile();
-            $dumper = new Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
+            $dumper = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
             $containerConfigCache->write(
                 $dumper->dump(['class' => $containerClass]),
                 $containerBuilder->getResources()
@@ -464,7 +464,7 @@ class Mollie extends PaymentModule
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         /** @var \Mollie\Service\CountryService $countryService */
         $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
-        
+
         $generalSettings = 'general_settings';
         if ($isApiKeyProvided) {
             $input = [
@@ -596,6 +596,7 @@ class Mollie extends PaymentModule
                 'paymentMethods' => $apiService->getMethodsForConfig($this->api, $this->getPathUri()),
                 'countries' => $countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
+                'displayErrors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
             ];
         }
 
@@ -1179,7 +1180,7 @@ class Mollie extends PaymentModule
         $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod['id'] === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL) {
+            if ($apiMethod['id_payment_method'] === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
@@ -1199,6 +1200,11 @@ class Mollie extends PaymentModule
             'msg_bankselect' => $this->l('Select your bank:'),
             'module' => $this,
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+            'IsQREnabled' => Mollie\Config\Config::MOLLIE_QRENABLED,
+            'CARTES_BANCAIRES' => Mollie\Config\Config::CARTES_BANCAIRES,
+            'ISSUERS_ON_CLICK' => Mollie\Config\Config::ISSUERS_ON_CLICK,
+            'web_pack_chunks' => Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
+            'display_errors' => Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS,
             'mollie_translations' => [
                 'chooseYourBank' => $this->l('Choose your bank'),
                 'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),

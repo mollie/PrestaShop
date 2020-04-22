@@ -2,9 +2,9 @@
 
 namespace Mollie\Utility;
 
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use MolPaymentMethod;
-use PrestaShop\Decimal\Number;
 
 class PaymentFeeUtility
 {

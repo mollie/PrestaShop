@@ -99,3 +99,9 @@
     border-color: #999798;
     border-bottom: 1px solid;
 }
+
+svg.mollie-svg {
+    width: 1em;
+    height: 1em;
+    display: inline;
+}

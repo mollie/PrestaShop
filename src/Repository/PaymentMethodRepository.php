@@ -107,10 +107,10 @@ class PaymentMethodRepository
         return true;
     }
 
-    public function getMethodIdsForCheckout()
+    public function getMethodsForCheckout()
     {
         $sql = new DbQuery();
-        $sql->select('`id_payment_method`');
+        $sql->select('*');
         $sql->from('mol_payment_method');
 
         return Db::getInstance()->executeS($sql);

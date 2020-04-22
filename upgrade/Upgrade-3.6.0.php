@@ -72,6 +72,13 @@ function upgrade_module_3_6_0()
 				`order_fee` decimal(20,6) NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
+    $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_carrier_information` (
+				`id_mol_carrier_information`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_carrier` INT(64) NOT NULL,
+				`url_source` VARCHAR(64) NOT NULL,
+				`custom_url` VARCHAR(255)
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
     foreach ($sql as $query) {
         if (Db::getInstance()->execute($query) == false) {
             return false;

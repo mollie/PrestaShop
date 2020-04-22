@@ -38,6 +38,7 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use Mollie\Utility\PaymentFeeUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -353,7 +354,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->context->cart->getOrderTotal()
         );
 
-        $totalPrice = new \PrestaShop\Decimal\Number((string) $originalAmount);
+        $totalPrice = new Number((string) $originalAmount);
 
         if ($orderFee) {
             $orderFeeObj = new MolOrderFee();

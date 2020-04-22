@@ -96,7 +96,7 @@ class PaymentMethodService
         }
         $context = Context::getContext();
         $iso = Tools::strtolower($context->currency->iso_code);
-        $methodIds = $this->methodRepository->getMethodIdsForCheckout();
+        $methodIds = $this->methodRepository->getMethodsForCheckout();
         if (empty($methodIds)) {
             $methodIds = [];
         }

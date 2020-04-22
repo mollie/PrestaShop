@@ -31,5 +31,5 @@
 * @link       https://www.mollie.nl
 *}
 <script type="text/javascript">
-  window.mollieQrEnabled = {if Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED)}true{else}false{/if};
+  window.mollieQrEnabled = {if $IsQREnabled}true{else}false{/if};
 </script>

@@ -37,16 +37,16 @@
 <div class="mollie_methods">
     {foreach $methods as $method}
         <p class="payment_module">
-            {if $mollieIframe === '1' && ($method['id'] === 'creditcard' || $method['id'] === {Mollie\Config\Config::CARTES_BANCAIRES})}
+            {if $mollieIframe === '1' && ($method['id_payment_method'] === 'creditcard' || $method['id_payment_method'] === $CARTES_BANCAIRES)}
             <a href="#"
-               title="{$msg_pay_with|sprintf:$method['name']|escape:'htmlall':'UTF-8'}"
-               id="mollie_link_{$method['id']|escape:'htmlall':'UTF-8'}"
+               title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
+               id="mollie_link_{$method['id_payment_method']|escape:'htmlall':'UTF-8'}"
                class="mollie_method js_call_iframe"
             >
                 {else}
-                <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method['id'], 'rand' => time()], true)|escape:'htmlall':'UTF-8'}"
-                   title="{$msg_pay_with|sprintf:$method['name']|escape:'htmlall':'UTF-8'}"
-                   id="mollie_link_{$method['id']|escape:'htmlall':'UTF-8'}"
+                <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method['id_payment_method'], 'rand' => time()], true)|escape:'htmlall':'UTF-8'}"
+                   title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
+                   id="mollie_link_{$method['id_payment_method']|escape:'htmlall':'UTF-8'}"
                    class="mollie_method"
                 >
                     {/if}
@@ -55,16 +55,16 @@
                         {if $images === 'big'}
                             <img class="mollie_image_big"
                                  src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size2x'])} onerror="this.src = '{$method['image']['size2x']|escape:'javascript':'UTF-8'}"{/if}
-                                 alt="{$method['name']|escape:'htmlall':'UTF-8'}'">
+                                 alt="{$method['method_name']|escape:'htmlall':'UTF-8'}'">
                         {else}
                             <img class="mollie_image"
                                  src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size1x'])} onerror="this.src = '{$method['image']['size2x']|escape:'javascript':'UTF-8'}'"{/if}
-                                 alt="{$method['name']|escape:'htmlall':'UTF-8'}">
+                                 alt="{$method['method_name']|escape:'htmlall':'UTF-8'}">
                         {/if}
                     {else}
                         <span class="mollie_margin"> &nbsp;</span>
                     {/if}
-                    {$module->lang($method['name'])|escape:'htmlall':'UTF-8'}
+                    {$module->lang($method['method_name'])|escape:'htmlall':'UTF-8'}
                 </a>
         </p>
     {/foreach}
@@ -72,7 +72,7 @@
 
 {include file="./init_urls.tpl"}
 
-{if !empty($issuers['ideal']) && $issuer_setting === Mollie\Config\Config::ISSUERS_ON_CLICK}
+{if !empty($issuers['ideal']) && $issuer_setting === $ISSUERS_ON_CLICK}
     <script type="text/javascript">
         (function initMollieBanks() {
             if (typeof window.MollieModule === 'undefined'
@@ -80,7 +80,7 @@
                 || typeof window.MollieModule.app.default === 'undefined'
                 || typeof window.MollieModule.app.default.bankList === 'undefined'
             ) {
-                {Mollie\Utility\UrlPathUtility::getWebpackChunks('app')|json_encode}.
+                {$web_pack_chunks|json_encode}.
                 forEach(function (chunk) {
                     var elem = document.createElement('script');
                     elem.type = 'text/javascript';
