@@ -44,7 +44,7 @@
                class="mollie_method js_call_iframe"
             >
                 {else}
-                <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method['id_payment_method'], 'rand' => time()], true)|escape:'htmlall':'UTF-8'}"
+                <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method['id_method'], 'rand' => time()], true)|escape:'htmlall':'UTF-8'}"
                    title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
                    id="mollie_link_{$method['id_payment_method']|escape:'htmlall':'UTF-8'}"
                    class="mollie_method"
@@ -56,7 +56,7 @@
                             <img class="mollie_image_big"
                                  src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size2x'])} onerror="this.src = '{$method['image']['size2x']|escape:'javascript':'UTF-8'}"{/if}
                                  alt="{$method['method_name']|escape:'htmlall':'UTF-8'}'">
-                        {else}
+                        {else}t
                             <img class="mollie_image"
                                  src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size1x'])} onerror="this.src = '{$method['image']['size2x']|escape:'javascript':'UTF-8'}'"{/if}
                                  alt="{$method['method_name']|escape:'htmlall':'UTF-8'}">
@@ -65,6 +65,9 @@
                         <span class="mollie_margin"> &nbsp;</span>
                     {/if}
                     {$module->lang($method['method_name'])|escape:'htmlall':'UTF-8'}
+                    {if $method.fee}
+                        <span>{l s='Payment Fee:' mod='mollie'}{$method.fee_display}</span>
+                    {/if}
                 </a>
         </p>
     {/foreach}

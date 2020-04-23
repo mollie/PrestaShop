@@ -25,7 +25,6 @@
  */
 
 use Mollie\Repository\OrderFeeRepository;
-use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter;
 
 class MollieSuccessModuleFrontController extends ModuleFrontController
 {
@@ -56,7 +55,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
         $redirectLink = 'index.php?controller=history';
 
         $this->id_module = (int) (Tools::getValue('id_module', 0));
-        $this->id_order = Order::getIdByCartId((int) ($this->id_cart));
+        $this->id_order = Order::getOrderByCartId((int) ($this->id_cart));
         $this->secure_key = Tools::getValue('key', false);
         $order = new Order((int) ($this->id_order));
 
@@ -71,6 +70,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
         if ($order->module != $module->name) {
             Tools::redirect($redirectLink);
         }
+
         $this->order_presenter = new OrderPresenter();
     }
 

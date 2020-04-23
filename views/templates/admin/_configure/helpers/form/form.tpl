@@ -47,7 +47,7 @@
                 window.MollieModule = window.MollieModule || {ldelim}{rdelim};
                 window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
                 window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-                window.MollieModule.debug = {if Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
+                window.MollieModule.debug = {if $input.displayErrors}true{else}false{/if};
             }());
         </script>
         {foreach $input.paymentMethods as $paymentMethod}

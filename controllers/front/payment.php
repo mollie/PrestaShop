@@ -206,9 +206,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $customer->secure_key
             );
 
-            $orderId = version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                ? Order::getIdByCartId((int) $cart->id)
-                : Order::getOrderByCartId((int) $cart->id);
+            $orderId = Order::getOrderByCartId((int) $cart->id);
 
             try {
                 Db::getInstance()->insert(
@@ -368,7 +366,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             } catch (Exception $e) {
                 throw new PrestaShopException('Can\'t save Order fee');
             }
-            $orderFeeNumber = new \PrestaShop\Decimal\Number((string) $orderFeeObj->order_fee);
+            $orderFeeNumber = new Number((string) $orderFeeObj->order_fee);
             $totalPrice = $orderFeeNumber->plus($totalPrice);
         }
 
@@ -384,7 +382,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $secureKey
         );
 
-        $order = Order::getByCartId($cartId);
+        $orderid = Order::getOrderByCartId($cartId);
+        $order = new Order($orderid);
         $order->total_paid_tax_excl = $totalPrice->toPrecision(2);
         $order->total_paid_tax_incl = $totalPrice->toPrecision(2);
         $order->total_paid = $totalPrice->toPrecision(2);

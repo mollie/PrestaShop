@@ -8,9 +8,6 @@ services:
       - 'mollie'
 
   Mollie\Service\OrderFeeService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\PaymentMethodService:
     arguments:

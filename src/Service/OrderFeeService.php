@@ -2,29 +2,26 @@
 
 namespace Mollie\Service;
 
-use Exception;
-use Mollie;
-use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethod;
 use Tools;
 
 class OrderFeeService
 {
 
-    /**
-     * @var Mollie
-     */
-    private $module;
-    /**
-     * @var PaymentMethodRepository
-     */
-    private $methodRepository;
-
-    public function __construct(Mollie $module, PaymentMethodRepository $methodRepository)
+    public function getPaymentFees($methods, $totalPrice)
     {
-        $this->module = $module;
-        $this->methodRepository = $methodRepository;
+        foreach ($methods as $index => $method) {
+            if ((int)$method['surcharge'] === 0) {
+                $methods[$index]['fee'] = false;
+                $methods[$index]['fee_display'] = false;
+                continue;
+            }
+            $paymentMethod = new MolPaymentMethod($method['id_payment_method']);
+            $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($paymentMethod, $totalPrice);
+            $methods[$index]['fee'] = $paymentFee;
+            $methods[$index]['fee_display'] = Tools::displayPrice($paymentFee);
+        }
+
+        return $methods;
     }
-
-
 }

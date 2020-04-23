@@ -233,9 +233,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 'success' => false,
             )));
         }
-        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-            ? Order::getIdByCartId((int) $cart->id)
-            : Order::getOrderByCartId((int) $cart->id);
+        $orderId = Order::getOrderByCartId((int) $cart->id);
         $order = new Order((int) $orderId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -323,19 +321,18 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
 
-        $successUrl = $this->context->link->getModuleLink(
-            $this->module->name,
-            'success',
-            [
-                'id_cart' => (int)$cart->id,
-                'id_module' => (int)$this->module->id,
-                'module_name' => $this->module->name,
-                'id_order' => (int)version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                    ? Order::getIdByCartId((int)$cart->id)
-                    : Order::getOrderByCartId((int)$cart->id),
-                'key' => $cart->secure_key,
-            ],
-            true
+        $successUrl = $this->context->link->getPageLink(
+            'order-confirmation',
+            true,
+            null,
+            array(
+                'id_cart'   => (int) $cart->id,
+                'id_module' => (int) $this->module->id,
+                'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+                    ? Order::getIdByCartId((int) $cart->id)
+                    : Order::getOrderByCartId((int) $cart->id),
+                'key'       => $cart->secure_key,
+            )
         );
 
         die(json_encode([
@@ -343,7 +340,6 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             'status' => $status,
             'response' => json_encode($transaction),
             'href' => $successUrl
-
         ]));
     }
 }

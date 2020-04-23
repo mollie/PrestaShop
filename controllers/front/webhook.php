@@ -217,9 +217,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
         $psPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
-        $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-            ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
-            : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         /** @var OrderStatusService $orderStatusService */
         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
         $cart = new Cart($apiPayment->metadata->cart_id);
@@ -268,9 +266,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     $cart->secure_key
                 );
 
-                $orderId = (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                    ? Order::getIdByCartId((int) $apiPayment->metadata->cart_id)
-                    : Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
             }
         }
 

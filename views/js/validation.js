@@ -143,7 +143,7 @@ $(document).ready(function () {
     function paymentMethodFeeToggle(method) {
         var $paymentMethodForm = $(method).closest('.payment-method');
         var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
-        var $feeFixed = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_ideal"]');
+        var $feeFixed = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT"]');
         var $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
         var $feeLimit = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_LIMIT"]');
         switch ($paymentFeeType.val()) {

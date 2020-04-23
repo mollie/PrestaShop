@@ -96,9 +96,9 @@ class PaymentMethodService
         }
         $context = Context::getContext();
         $iso = Tools::strtolower($context->currency->iso_code);
-        $methodIds = $this->methodRepository->getMethodsForCheckout();
-        if (empty($methodIds)) {
-            $methodIds = [];
+        $methods = $this->methodRepository->getMethodsForCheckout();
+        if (empty($methods)) {
+            $methods = [];
         }
         $countryCode = Tools::strtolower($context->country->iso_code);
         $unavailableMethods = [];
@@ -113,36 +113,36 @@ class PaymentMethodService
             }
         }
 
-        foreach ($methodIds as $index => $methodId) {
-            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+        foreach ($methods as $index => $method) {
+            $methodObj = new MolPaymentMethod($method['id_payment_method']);
             if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
                 || !in_array($iso, Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
                 || !$methodObj->enabled
                 || in_array($methodObj->id_method, $unavailableMethods)
             ) {
-                unset($methodIds[$index]);
+                unset($methods[$index]);
             }
             if ($methodObj->id_method === Mollie\Config\Config::APPLEPAY) {
                 if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-                    unset($methodIds[$index]);
+                    unset($methods[$index]);
                 } elseif ($_COOKIE['isApplePayMethod'] === '0') {
-                    unset($methodIds[$index]);
+                    unset($methods[$index]);
                 }
             }
         }
 
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-            foreach ($methodIds as $index => $methodId) {
+            foreach ($methods as $index => $methodId) {
                 $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
                 if (!$methodObj->is_countries_applicable) {
                     if (!$this->countryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
-                        unset($methodIds[$index]);
+                        unset($methods[$index]);
                     }
                 }
             }
         }
 
-        return $methodIds;
+        return $methods;
     }
 
     /**

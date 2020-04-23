@@ -1174,8 +1174,10 @@ class Mollie extends PaymentModule
 
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
+        /** @var \Mollie\Service\OrderFeeService $orderFeeService */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+        $orderFeeService = $this->getContainer(\Mollie\Service\OrderFeeService::class);
 
         $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
@@ -1184,8 +1186,10 @@ class Mollie extends PaymentModule
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
+        $apiMethods = $orderFeeService->getPaymentFees($apiMethods, $this->context->cart->getOrderTotal());
 
         $isIFrameEnabled = Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME);
+        /** @var Cart $cart */
         $cart = Context::getContext()->cart;
         $smarty->assign([
             'mollieIframe' => $isIFrameEnabled,
