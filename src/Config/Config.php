@@ -73,6 +73,7 @@ class Config
         'mybank' => [],
     ];
 
+    const SUPPORTED_PHP_VERSION = '5.6';
     const NOTICE = 1;
     const WARNING = 2;
     const ERROR = 3;

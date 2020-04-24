@@ -31,7 +31,6 @@ class Installer
 
     public function install()
     {
-        
         foreach (self::getHooks() as $hook) {
             $this->module->registerHook($hook);
         }
@@ -41,26 +40,26 @@ class Installer
         try {
             $this->partialRefundOrderState($context->language->id);
         } catch (\Exception $e) {
-            $this->errors[] = 'Unable to install Mollie partially refunded order state';
+            $this->errors[] = $this->module->l('Unable to install Mollie partially refunded order state');
             return false;
         }
         try {
             $this->awaitingMollieOrderState($context->language->id);
         } catch (\Exception $e) {
-            $this->errors[] = 'Unable to install Mollie awaiting state';
+            $this->errors[] = $this->module->l('Unable to install Mollie awaiting state');
             return false;
         }
 
         try {
             $this->initConfig();
         } catch (\Exception $e) {
-            $this->errors[] = 'Unable to install config';
+            $this->errors[] = $this->module->l('Unable to install config');
             return false;
         }
         try {
             $this->setDefaultCarrierStatuses();
         } catch (\Exception $e) {
-            $this->errors[] = 'Unable to install default carrier statuses';
+            $this->errors[] = $this->module->l('Unable to install default carrier statuses');
             return false;
         }
 

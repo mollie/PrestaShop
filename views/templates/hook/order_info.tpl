@@ -38,7 +38,7 @@
     window.MollieModule = window.MollieModule || {ldelim}{rdelim};
     window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
     window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-    window.MollieModule.debug = {if Configuration::get(_PhpScoper5ea00cc67502b\Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
+    window.MollieModule.debug = {if $errorDisplay}true{else}false{/if};
   }());
   (function initTransactionInfo() {
     if (typeof window.MollieModule === 'undefined'

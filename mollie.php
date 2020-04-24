@@ -114,8 +114,8 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
+//        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
 
-        $this->registerHook('DisplayPDFInvoice');
         $this->compile();
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
@@ -166,8 +166,13 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
+        if (version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION) === -1) {
+            $this->_errors[] = $this->l('Your php version is too old. This mode supports php5.6 and newer');
+            return false;
+        }
+
         if (!parent::install()) {
-            $this->_errors[] = 'Unable to install module';
+            $this->_errors[] = $this->l('Unable to install module');
 
             return false;
         }
@@ -175,9 +180,10 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Install\Installer $installer */
         $installer = $this->getContainer(\Mollie\Install\Installer::class);
         if (!$installer->install()) {
-            $this->_errors[] = $installer->getErrors();
+            $this->_errors = array_merge($this->_errors, $installer->getErrors());
             return false;
         }
+
 
         return true;
     }
@@ -1156,6 +1162,7 @@ class Mollie extends PaymentModule
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
             'webPackChunks' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
+            'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
         ]);
 
         return $this->display(__FILE__, 'order_info.tpl');
