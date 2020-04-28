@@ -8,7 +8,6 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
 use Exception;
-use Module;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;

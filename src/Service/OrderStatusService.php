@@ -45,6 +45,10 @@ class OrderStatusService
             }
         }
 
+        if ((int) $statusId === 0) {
+            return;
+        }
+
         if (!$order instanceof Order) {
             $order = new Order((int)$order);
         }
