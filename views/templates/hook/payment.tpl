@@ -37,16 +37,16 @@
 <div class="mollie_methods">
     {foreach $methods as $method}
         <p class="payment_module">
-            {if $mollieIframe === '1' && ($method['id_payment_method'] === 'creditcard' || $method['id_payment_method'] === $CARTES_BANCAIRES)}
+            {if $mollieIframe === '1' && ($method['id_method'] === 'creditcard' || $method['id_method'] === $CARTES_BANCAIRES)}
             <a href="#"
                title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
-               id="mollie_link_{$method['id_payment_method']|escape:'htmlall':'UTF-8'}"
+               id="mollie_link_{$method['id_method']|escape:'htmlall':'UTF-8'}"
                class="mollie_method js_call_iframe"
             >
                 {else}
                 <a href="{$link->getModuleLink('mollie', 'payment', ['method' => $method['id_method'], 'rand' => time()], true)|escape:'htmlall':'UTF-8'}"
                    title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
-                   id="mollie_link_{$method['id_payment_method']|escape:'htmlall':'UTF-8'}"
+                   id="mollie_link_{$method['id_method']|escape:'htmlall':'UTF-8'}"
                    class="mollie_method"
                 >
                     {/if}

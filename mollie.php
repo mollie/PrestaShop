@@ -440,7 +440,9 @@ class Mollie extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
-        if ($this->context->controller instanceof OrderControllerCore) {
+        $isOrderController = $this->context->controller instanceof OrderControllerCore;
+        $isOPCController = $this->context->controller instanceof OrderOpcControllerCore;
+        if ($isOrderController || $isOPCController) {
 
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),

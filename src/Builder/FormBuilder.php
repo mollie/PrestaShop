@@ -157,8 +157,8 @@ class FormBuilder
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ],
                     ],
-                    'desc' => $this->smarty->fetch(
-                        $this->module->getPathUri() . 'views/templates/admin/create_new_account_link.tpl'
+                    'desc' => $this->module->display(
+                        $this->module->getPathUri() , 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
