@@ -2,7 +2,6 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use Configuration;
 use Mollie;
 use Mollie\Config\Config;
@@ -27,8 +26,7 @@ class ConfigFieldService
         Mollie $module,
         ApiService $apiService,
         CountryRepository $countryRepository
-)
-    {
+    ) {
         $this->module = $module;
         $this->apiService = $apiService;
         $this->countryRepository = $countryRepository;
@@ -36,7 +34,6 @@ class ConfigFieldService
 
     /**
      * @return array
-     * @throws ApiException
      */
     public function getConfigFieldsValues()
     {

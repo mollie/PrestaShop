@@ -42,13 +42,6 @@ if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
 
-//// PSR-7 standard autoload, if failure, skip this module
-//if (!function_exists('\\Hough\\Psr7\\str')) {
-//    if (!include_once(dirname(__FILE__) . '/vendor/ehough/psr7/src/functions.php')) {
-//        return;
-//    }
-//}
-
 /**
  * Class Mollie
  *
@@ -114,11 +107,15 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-//        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
 
         $this->compile();
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
+
+        if (version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION) === -1) {
+            return;
+        }
 
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
@@ -130,39 +127,12 @@ class Mollie extends PaymentModule
             $this->warning = $this->l('Payment error:') . $e->getMessage();
             PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
         }
-
-        // Register json Smarty function when missing, happens on older 1.5; some 1.6 versions
-        try {
-            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_encode', ['Tools', 'jsonEncode']);
-            smartyRegisterFunction(Context::getContext()->smarty, 'modifier', 'json_decode', ['Tools', 'jsonDecode']);
-        } catch (SmartyException $e) {
-            // Already registered
-        } catch (Exception $e) {
-            // Already registered
-        }
-
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')
-            && version_compare(_PS_VERSION_, '1.7.0.5', '<')
-        ) {
-            // Bugfix generating invoices on 1.7.0.x => Register Admin/PDF displayPrice Smarty function when missing
-            try {
-                smartyRegisterFunction(Context::getContext()->smarty, 'function', 'displayPrice', ['Tools', 'displayPriceSmarty']);
-            } catch (SmartyException $e) {
-                // Already registered
-            } catch (Exception $e) {
-                // Already registered
-            }
-        }
     }
 
     /**
      * Installs the Mollie Payments Module
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws Adapter_Exception
      */
     public function install()
     {
@@ -191,8 +161,6 @@ class Mollie extends PaymentModule
     /**
      * @return bool
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      */
     public function uninstall()
     {
@@ -228,6 +196,7 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * @param bool $id
      * @return mixed
      */
     public function getContainer($id = false)
@@ -241,8 +210,6 @@ class Mollie extends PaymentModule
 
     /**
      * @return mixed
-     *
-     * @deprecated 3.4.0
      */
     public function getErrors()
     {
@@ -270,7 +237,6 @@ class Mollie extends PaymentModule
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws Adapter_Exception
      */
     public function getContent()
     {
@@ -286,7 +252,9 @@ class Mollie extends PaymentModule
         }
 
         /** @var \Mollie\Service\OverrideService $overrideService */
+        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
         $overrideService = $this->getContainer(\Mollie\Service\OverrideService::class);
+        $settingsFormBuilder = $this->getContainer(\Mollie\Builder\FormBuilder::class);
         if ($module = $overrideService->checkPaymentModuleOverride()) {
             $this->context->controller->warnings[] = sprintf(
                 $this->l('The method %s is overridden by module %s. This can cause interference with payments.'),
@@ -296,36 +264,24 @@ class Mollie extends PaymentModule
         }
         if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
             $this->context->smarty->assign([
-                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Template compilation', [], 'Admin.Advparameters.Feature')
-                    : Translate::getAdminTranslation('Template compilation', 'AdminPerformance'),
-                'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Never recompile template files', [], 'Admin.Advparameters.Feature')
-                    : Translate::getAdminTranslation('Never recompile template files', 'AdminPerformance'),
+                'settingKey' => $this->l('Template compilation'),
+                'settingValue' => $this->l('Never recompile template files'),
                 'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
             ]);
             $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
         }
         if (Configuration::get('PS_SMARTY_CACHE') && Configuration::get('PS_SMARTY_CLEAR_CACHE') === 'never') {
             $this->context->smarty->assign([
-                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Clear cache', [], 'Admin.Advparameters.Feature')
-                    : Translate::getAdminTranslation('Clear cache', 'AdminPerformance'),
-                'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Never clear cache files', [], 'Admin.Advparameters.Feature')
-                    : Translate::getAdminTranslation('Never clear cache files', 'AdminPerformance'),
+                'settingKey' => $this->l('Clear cache'),
+                'settingValue' => $this->l('Never clear cache files'),
                 'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
             ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
         }
         if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
             $this->context->smarty->assign([
-                'settingKey' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Rounding mode', [], 'Admin.Shopparameters.Feature')
-                    : Translate::getAdminTranslation('Rounding mode', 'AdminPreferences'),
-                'settingValue' => version_compare(_PS_VERSION_, '1.7.3.0', '>=')
-                    ? $this->trans('Round up away from zero, when it is half way there (recommended)', [], 'Admin.Shopparameters.Feature')
-                    : Translate::getAdminTranslation('Round up away from zero, when it is half way there (recommended)', 'AdminPreferences'),
+                'settingKey' => $this->l('Rounding mode'),
+                'settingValue' => $this->l('Round up away from zero, when it is half way there (recommended)'),
                 'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPreferences'),
             ]);
             $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
@@ -361,8 +317,8 @@ class Mollie extends PaymentModule
                 $this->context->controller->confirmations[] = $resultMessage;
             }
         }
-        /** @var \Mollie\Utility\LanguageUtility $langUtility */
-        $langUtility = $this->getContainer(\Mollie\Utility\LanguageUtility::class);
+        /** @var Mollie\Service\LanguageService $langService */
+        $langService = $this->getContainer(Mollie\Service\LanguageService::class);
         $data = [
             'update_message' => $updateMessage,
             'title_status' => $this->l('%s statuses:'),
@@ -380,7 +336,7 @@ class Mollie extends PaymentModule
             'val_qrenabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
             'val_logger' => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),
             'val_save' => $this->l('Save'),
-            'lang' => $langUtility->getLang(),
+            'lang' => $langService->getLang(),
             'logo_url' => $this->getPathUri() . 'views/img/mollie_logo.png',
             'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
             'description_message' => $this->l('Description cannot be empty'),
@@ -399,593 +355,14 @@ class Mollie extends PaymentModule
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
-        $html = $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-        $html .= $this->getSettingsForm();
+        $html = '';
+//        $html .= $updateMessage;
+        $html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
+
+
+        $html .= $settingsFormBuilder->buildSettingsForm();
 
         return $html;
-    }
-
-    protected function getSettingsForm()
-    {
-        $isApiKeyProvided = Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY);
-
-        $inputs = $this->getAccountSettingsSection($isApiKeyProvided);
-
-        if ($isApiKeyProvided) {
-            $inputs = array_merge($inputs, $this->getAdvancedSettingsSection());
-        }
-
-        $fields = [
-            'form' => [
-                'tabs' => $this->getSettingTabs($isApiKeyProvided),
-                'input' => $inputs,
-                'submit' => [
-                    'title' => $this->l('Save'),
-                    'class' => 'btn btn-default pull-right',
-                ],
-            ],
-        ];
-
-        $helper = new HelperForm();
-
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $helper->module = $this;
-        $helper->default_form_language = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
-
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitmollie';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            . "&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}";
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-
-        /** @var \Mollie\Service\ConfigFieldService $configFieldService */
-        $configFieldService = $this->getContainer(\Mollie\Service\ConfigFieldService::class);
-        $helper->tpl_vars = [
-            'fields_value' => $configFieldService->getConfigFieldsValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        ];
-
-        return $helper->generateForm([$fields]);
-    }
-
-    protected function getSettingTabs($isApiKeyProvided)
-    {
-        $tabs = [
-            'general_settings' => $this->l('General settings'),
-        ];
-
-        if ($isApiKeyProvided) {
-            $tabs['advanced_settings'] = $this->l('Advanced settings');
-        }
-
-        return $tabs;
-    }
-
-    protected function getAccountSettingsSection($isApiKeyProvided)
-    {
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-        /** @var \Mollie\Service\CountryService $countryService */
-        $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
-
-        $generalSettings = 'general_settings';
-        if ($isApiKeyProvided) {
-            $input = [
-                [
-                    'type' => 'text',
-                    'label' => $this->l('API Key'),
-                    'tab' => $generalSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                        $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Mollie\Config\Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                ]
-            ];
-        } else {
-            $input = [
-                [
-                    'type' => 'mollie-switch',
-                    'label' => $this->l('Do you already have a Mollie account?'),
-                    'name' => Mollie\Config\Config::MOLLIE_ACCOUNT_SWITCH,
-                    'tab' => $generalSettings,
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                    'desc' => $this->context->smarty->fetch(
-                        $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
-                    ),
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('API Key'),
-                    'tab' => $generalSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                        $this->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Mollie\Config\Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                ]
-            ];
-        }
-        if ($isApiKeyProvided) {
-            $input[] = [
-                'type' => 'switch',
-                'label' => $this->l('Use IFrame for credit card'),
-                'tab' => $generalSettings,
-                'name' => Mollie\Config\Config::MOLLIE_IFRAME,
-                'is_bool' => true,
-                'values' => [
-                    [
-                        'id' => 'active_on',
-                        'value' => true,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                    ],
-                    [
-                        'id' => 'active_off',
-                        'value' => false,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                    ],
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'text',
-                'label' => $this->l('Profile ID'),
-                'tab' => $generalSettings,
-                'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                    $this->l('You can find your API key in your [1]Mollie Profile[/1];'),
-                    [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Mollie\Config\Config::MOLLIE_PROFILE_ID,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-            ];
-
-            $input = array_merge($input, [
-                    [
-                        'type' => 'mollie-h3',
-                        'tab' => $generalSettings,
-                        'name' => '',
-                        'title' => $this->l('Orders API'),
-                    ],
-                    [
-                        'type' => 'select',
-                        'label' => $this->l('Issuer list'),
-                        'tab' => $generalSettings,
-                        'desc' => $this->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
-                        'name' => Mollie\Config\Config::MOLLIE_ISSUERS,
-                        'options' => [
-                            'query' => [
-                                [
-                                    'id' => Mollie\Config\Config::ISSUERS_ON_CLICK,
-                                    'name' => $this->l('On click'),
-                                ],
-                                [
-                                    'id' => Mollie\Config\Config::ISSUERS_PAYMENT_PAGE,
-                                    'name' => $this->l('Payment page'),
-                                ],
-                            ],
-                            'id' => 'id',
-                            'name' => 'name',
-                        ],
-                    ],
-                ]
-            );
-            $input[] = [
-                'type' => 'mollie-h2',
-                'tab' => $generalSettings,
-                'name' => '',
-                'title' => $this->l('Payment methods'),
-            ];
-
-            $input[] = [
-                'type' => 'mollie-methods',
-                'name' => Mollie\Config\Config::METHODS_CONFIG,
-                'paymentMethods' => $apiService->getMethodsForConfig($this->api, $this->getPathUri()),
-                'countries' => $countryService->getActiveCountriesList(),
-                'tab' => $generalSettings,
-                'displayErrors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-            ];
-        }
-
-        return $input;
-    }
-
-    protected function getAdvancedSettingsSection()
-    {
-        $advancedSettings = 'advanced_settings';
-        $input = [];
-        $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
-
-        /** @var \Mollie\Service\MolCarrierInformationService $carriersInfoService */
-        $carriersInfoService = $this->getContainer(\Mollie\Service\MolCarrierInformationService::class);
-
-        $input[] = [
-            'type' => 'select',
-            'label' => $this->l('Send locale for payment screen'),
-            'tab' => $advancedSettings,
-            'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                $this->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                [$this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl')]
-            ),
-            'name' => Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE,
-            'options' => [
-                'query' => [
-                    [
-                        'id' => Mollie\Config\Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                        'name' => $this->l('Do not send locale using browser language'),
-                    ],
-                    [
-                        'id' => Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                        'name' => $this->l('Send locale for payment screen'),
-                    ],
-                ],
-                'id' => 'id',
-                'name' => 'name',
-            ],
-        ];
-
-        $lang = Context::getContext()->language->id;
-        $messageStatus = $this->l('Status for %s payments');
-        $descriptionStatus = $this->l('`%s` payments get status `%s`');
-        $messageMail = $this->l('Send mails when %s');
-        $descriptionMail = $this->l('Send mails when transaction status becomes %s?');
-        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($lang));
-        $statuses = [];
-        foreach (Mollie\Config\Config::getStatuses() as $name => $val) {
-            if ($name === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
-                continue;
-            }
-
-            $val = (int)$val;
-            if ($val) {
-                $desc = Tools::strtolower(
-                    sprintf(
-                        $descriptionStatus,
-                        $this->lang($name),
-                        Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
-                            'SELECT `name`
-                            FROM `' . _DB_PREFIX_ . 'order_state_lang`
-                            WHERE `id_order_state` = ' . (int)$val . '
-                            AND `id_lang` = ' . (int)$lang
-                        )
-                    )
-                );
-            } else {
-                $desc = sprintf($this->l('`%s` payments do not get a status'), $this->lang($name));
-            }
-            $statuses[] = [
-                'name' => $name,
-                'key' => @constant('Mollie\Config\Config::MOLLIE_STATUS_' . Tools::strtoupper($name)),
-                'value' => $val,
-                'description' => $desc,
-                'message' => sprintf($messageStatus, $this->lang($name)),
-                'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
-                'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
-                'description_mail' => sprintf($descriptionMail, $this->lang($name)),
-                'message_mail' => sprintf($messageMail, $this->lang($name)),
-            ];
-        }
-        $input[] = [
-            'type' => 'mollie-h2',
-            'name' => '',
-            'tab' => $advancedSettings,
-            'title' => $this->l('Order statuses'),
-        ];
-
-        foreach (array_filter($statuses, function ($status) {
-            return in_array($status['name'], [
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_PAID,
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED,
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED,
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED,
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED,
-                _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                'partial_refund',
-            ]);
-        }) as $status) {
-            if (!in_array($status['name'], ['paid', 'partial_refund'])) {
-                $input[] = [
-                    'type' => 'switch',
-                    'label' => $status['message_mail'],
-                    'tab' => $advancedSettings,
-                    'name' => $status['key_mail'],
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                ];
-            }
-            $input[] = [
-                'type' => 'select',
-                'label' => $status['message'],
-                'tab' => $advancedSettings,
-                'desc' => $status['description'],
-                'name' => $status['key'],
-                'options' => [
-                    'query' => $allStatuses,
-                    'id' => 'id_order_state',
-                    'name' => 'name',
-                ],
-            ];
-        }
-        $input = array_merge($input, [
-            [
-                'type' => 'mollie-h2',
-                'name' => '',
-                'tab' => $advancedSettings,
-                'title' => $this->l('Visual Settings'),
-            ],
-            [
-                'type' => 'select',
-                'label' => $this->l('Images'),
-                'tab' => $advancedSettings,
-                'desc' => $this->l('Show big, normal or no payment method logos on checkout.'),
-                'name' => Mollie\Config\Config::MOLLIE_IMAGES,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Mollie\Config\Config::LOGOS_HIDE,
-                            'name' => $this->l('hide'),
-                        ],
-                        [
-                            'id' => Mollie\Config\Config::LOGOS_NORMAL,
-                            'name' => $this->l('normal'),
-                        ],
-                        [
-                            'id' => Mollie\Config\Config::LOGOS_BIG,
-                            'name' => $this->l('big'),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ],
-
-            [
-                'type' => 'text',
-                'label' => $this->l('CSS file'),
-                'tab' => $advancedSettings,
-                'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                    $this->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
-                    [$this->display(__FILE__, 'views/templates/front/kbd.tpl')]
-                ),
-                'name' => Mollie\Config\Config::MOLLIE_CSS,
-                'class' => 'long-text',
-            ],
-        ]);
-        $input[] = [
-            'type' => 'mollie-carriers',
-            'label' => $this->l('Shipment information'),
-            'tab' => $advancedSettings,
-            'name' => Mollie\Config\Config::MOLLIE_TRACKING_URLS,
-            'depends' => Mollie\Config\Config::MOLLIE_API,
-            'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
-            'carriers' => $carriersInfoService->getAllCarriersInformation($lang)
-        ];
-        $input[] = [
-            'type' => 'mollie-carrier-switch',
-            'label' => $this->l('Automatically ship on marked statuses'),
-            'tab' => $advancedSettings,
-            'name' => Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN,
-            'desc' => $this->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
-            'is_bool' => true,
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                ],
-                [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                ],
-            ],
-            'depends' => Mollie\Config\Config::MOLLIE_API,
-            'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
-        ];
-        $input[] = [
-            'type' => 'checkbox',
-            'label' => $this->l('Automatically ship when one of these statuses is reached'),
-            'tab' => $advancedSettings,
-            'desc' =>
-                $this->l('If an order reaches one of these statuses the module will automatically send shipment information'),
-            'name' => Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES,
-            'multiple' => true,
-            'values' => [
-                'query' => $orderStatuses,
-                'id' => 'id_order_state',
-                'name' => 'name',
-            ],
-            'expand' => (count($orderStatuses) > 10) ? [
-                'print_total' => count($orderStatuses),
-                'default' => 'show',
-                'show' => ['text' => $this->l('Show'), 'icon' => 'plus-sign-alt'],
-                'hide' => ['text' => $this->l('Hide'), 'icon' => 'minus-sign-alt'],
-            ] : null,
-            'depends' => Mollie\Config\Config::MOLLIE_API,
-            'depends_value' => Mollie\Config\Config::MOLLIE_ORDERS_API,
-        ];
-        $orderStatuses = [
-            [
-                'name' => $this->l('Disable this status'),
-                'id_order_state' => '0',
-            ],
-        ];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
-
-        for ($i = 0; $i < count($orderStatuses); $i++) {
-            $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
-        }
-
-        \Mollie\Utility\AssortUtility::aasort($orderStatuses, 'id_order_state');
-
-        $this->context->smarty->assign([
-            'logs' => $this->context->link->getAdminLink('AdminLogs')
-        ]);
-        $input = array_merge(
-            $input,
-            [
-                [
-                    'type' => 'mollie-h2',
-                    'name' => '',
-                    'title' => $this->l('Debug level'),
-                    'tab' => $advancedSettings,
-                ],
-                [
-                    'type' => 'switch',
-                    'label' => $this->l('Display errors'),
-                    'tab' => $advancedSettings,
-                    'name' => Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS,
-                    'desc' => $this->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'select',
-                    'label' => $this->l('Log level'),
-                    'tab' => $advancedSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
-                        $this->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
-                        [
-                            $this->display(__FILE__, 'views/templates/admin/view_logs.tpl')
-                        ]
-                    ),
-                    'name' => Mollie\Config\Config::MOLLIE_DEBUG_LOG,
-                    'options' => [
-                        'query' => [
-                            [
-                                'id' => Mollie\Config\Config::DEBUG_LOG_NONE,
-                                'name' => $this->l('Nothing'),
-                            ],
-                            [
-                                'id' => Mollie\Config\Config::DEBUG_LOG_ERRORS,
-                                'name' => $this->l('Errors'),
-                            ],
-                            [
-                                'id' => Mollie\Config\Config::DEBUG_LOG_ALL,
-                                'name' => $this->l('Everything'),
-                            ],
-                        ],
-                        'id' => 'id',
-                        'name' => 'name',
-                    ],
-                ],
-            ]
-        );
-        return $input;
-    }
-
-    /**
-     * @return array
-     * @throws PrestaShopException
-     */
-    protected function getConfigFieldsValues()
-    {
-        $configFields = [
-            Mollie\Config\Config::MOLLIE_API_KEY => Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY),
-            Mollie\Config\Config::MOLLIE_PROFILE_ID => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
-            Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE),
-            Mollie\Config\Config::MOLLIE_IFRAME => Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME),
-
-            Mollie\Config\Config::MOLLIE_CSS => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
-            Mollie\Config\Config::MOLLIE_IMAGES => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
-            Mollie\Config\Config::MOLLIE_ISSUERS => Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS),
-
-            Mollie\Config\Config::MOLLIE_QRENABLED => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
-            Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES => Configuration::get(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES),
-            Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY => Configuration::get(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY),
-
-            Mollie\Config\Config::MOLLIE_STATUS_OPEN => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN),
-            Mollie\Config\Config::MOLLIE_STATUS_PAID => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PAID),
-            Mollie\Config\Config::MOLLIE_STATUS_CANCELED => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_CANCELED),
-            Mollie\Config\Config::MOLLIE_STATUS_EXPIRED => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_EXPIRED),
-            Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND),
-            Mollie\Config\Config::MOLLIE_STATUS_REFUNDED => Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_REFUNDED),
-            Mollie\Config\Config::MOLLIE_MAIL_WHEN_OPEN => Configuration::get(Mollie\Config\Config::MOLLIE_MAIL_WHEN_OPEN),
-            Mollie\Config\Config::MOLLIE_MAIL_WHEN_PAID => Configuration::get(Mollie\Config\Config::MOLLIE_MAIL_WHEN_PAID),
-            Mollie\Config\Config::MOLLIE_MAIL_WHEN_CANCELED => Configuration::get(Mollie\Config\Config::MOLLIE_MAIL_WHEN_CANCELED),
-            Mollie\Config\Config::MOLLIE_MAIL_WHEN_EXPIRED => Configuration::get(Mollie\Config\Config::MOLLIE_MAIL_WHEN_EXPIRED),
-            Mollie\Config\Config::MOLLIE_MAIL_WHEN_REFUNDED => Configuration::get(Mollie\Config\Config::MOLLIE_MAIL_WHEN_REFUNDED),
-            Mollie\Config\Config::MOLLIE_ACCOUNT_SWITCH => Configuration::get(Mollie\Config\Config::MOLLIE_ACCOUNT_SWITCH),
-
-            Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
-            Mollie\Config\Config::MOLLIE_DEBUG_LOG => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),
-            Mollie\Config\Config::MOLLIE_API => Configuration::get(Mollie\Config\Config::MOLLIE_API),
-
-            Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN => Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN),
-        ];
-
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-        /** @var \Mollie\Repository\CountryRepository $countryRepo */
-        $countryRepo = $this->getContainer(\Mollie\Repository\CountryRepository::class);
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY)) {
-            foreach ($apiService->getMethodsForConfig($this->api, $this->getPathUri()) as $method) {
-                $countryIds = $countryRepo->getMethodCountryIds($method['id']);
-                if ($countryIds) {
-                    $configFields = array_merge($configFields, [Mollie\Config\Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds]);
-                    continue;
-                }
-                $configFields = array_merge($configFields, [Mollie\Config\Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => []]);
-            }
-        }
-
-        $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkConfs = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES), true);
-        }
-        if (!isset($checkConfs) || !is_array($checkConfs)) {
-            $checkConfs = [];
-        }
-
-        foreach ($checkConfs as $conf) {
-            $checkStatuses[Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES . '_' . (int)$conf] = true;
-        }
-
-        $configFields = array_merge($configFields, $checkStatuses);
-
-        return $configFields;
     }
 
     /**
@@ -995,9 +372,9 @@ class Mollie extends PaymentModule
      */
     public function lang($str)
     {
-        /** @var \Mollie\Utility\LanguageUtility $langUtility */
-        $langUtility = $this->getContainer(\Mollie\Utility\LanguageUtility::class);
-        $lang = $langUtility->getLang();
+        /** @var Mollie\Service\LanguageService $langService */
+        $langService = $this->getContainer(Mollie\Service\LanguageService::class);
+        $lang = $langService->getLang();
         if (array_key_exists($str, $lang)) {
             return $lang[$str];
         }

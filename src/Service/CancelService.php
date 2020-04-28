@@ -62,7 +62,7 @@ class CancelService
         } catch (ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->l('The product(s) could not be canceled!'),
+                'message' => $this->module->l('The product(s) could not be canceled!'),
                 'detailed' => $e->getMessage(),
             ];
         }

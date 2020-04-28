@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mollie\Service;
-
 
 use Context;
 use Exception;
@@ -138,7 +136,7 @@ class MollieOrderInfoService
                                 'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('ship')),
                             ];
                         }
-                        $status = $this->shipmentService->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
+                        $status = $this->shipService->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId'])]);
                     case 'refund':
                         // Check order edit permissions

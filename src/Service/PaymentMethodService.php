@@ -154,14 +154,11 @@ class PaymentMethodService
      * @param string|null $issuer
      * @param int|Cart $cartId
      * @param string $secureKey
+     * @param MolPaymentMethod $molPaymentMethod
      * @param bool $qrCode
      * @param string $orderReference
      *
      * @return array
-     * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @throws CoreException
-     *
      * @since 3.3.0 Order reference
      */
     public function getPaymentData(

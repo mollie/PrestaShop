@@ -1,12 +1,12 @@
 <?php
 
-namespace Mollie\Utility;
+namespace Mollie\Service;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Mollie;
 
-class LanguageUtility
+class LanguageService
 {
     /**
      * @var Mollie

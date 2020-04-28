@@ -8,6 +8,13 @@ use Configuration;
 use HelperForm;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Repository\CountryRepository;
+use Mollie\Service\ApiService;
+use Mollie\Service\ConfigFieldService;
+use Mollie\Service\CountryService;
+use Mollie\Service\MolCarrierInformationService;
+use OrderState;
+use Smarty;
 use Tools;
 
 class FormBuilder
@@ -17,13 +24,58 @@ class FormBuilder
      * @var Mollie
      */
     private $module;
+    /**
+     * @var ApiService
+     */
+    private $apiService;
+    /**
+     * @var CountryService
+     */
+    private $countryService;
 
-    public function __construct(Mollie $module)
-    {
+    private $lang;
+    /**
+     * @var Smarty
+     */
+    private $smarty;
+
+    private $link;
+    /**
+     * @var CountryRepository
+     */
+    private $countryRepository;
+    /**
+     * @var ConfigFieldService
+     */
+    private $configFieldService;
+    /**
+     * @var MolCarrierInformationService
+     */
+    private $carrierInformationService;
+
+    public function __construct(
+        Mollie $module,
+        ApiService $apiService,
+        CountryService $countryService,
+        CountryRepository $countryRepository,
+        ConfigFieldService $configFieldService,
+        MolCarrierInformationService $carrierInformationService,
+        $lang,
+        Smarty $smarty,
+        $link
+    ) {
         $this->module = $module;
+        $this->apiService = $apiService;
+        $this->countryService = $countryService;
+        $this->lang = $lang;
+        $this->smarty = $smarty;
+        $this->link = $link;
+        $this->countryRepository = $countryRepository;
+        $this->configFieldService = $configFieldService;
+        $this->carrierInformationService = $carrierInformationService;
     }
 
-    protected function buildSettingsForm()
+    public function buildSettingsForm()
     {
         $isApiKeyProvided = Configuration::get(Config::MOLLIE_API_KEY);
 
@@ -48,7 +100,7 @@ class FormBuilder
 
         $helper->show_toolbar = false;
         $helper->table = $this->module->getTable();
-        $helper->module = $this;
+        $helper->module = $this->module;
         $helper->default_form_language = $this->module->getContext()->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
@@ -59,7 +111,7 @@ class FormBuilder
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = [
-            'fields_value' => $this->getConfigFieldsValues(),
+            'fields_value' => $this->configFieldService->getConfigFieldsValues(),
             'languages' => $this->module->getContext()->controller->getLanguages(),
             'id_language' => $this->module->getContext()->language->id,
         ];
@@ -69,9 +121,6 @@ class FormBuilder
 
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-
         $generalSettings = 'general_settings';
         if ($isApiKeyProvided) {
             $input = [
@@ -81,7 +130,7 @@ class FormBuilder
                     'tab' => $generalSettings,
                     'desc' => \Mollie\Utility\TagsUtility::ppTags(
                         $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
+                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
                     'required' => true,
@@ -108,8 +157,8 @@ class FormBuilder
                             'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ],
                     ],
-                    'desc' => $this->context->smarty->fetch(
-                        $this->getLocalPath() . 'views/templates/admin/create_new_account_link.tpl'
+                    'desc' => $this->smarty->fetch(
+                        $this->module->getPathUri() . 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
@@ -118,7 +167,7 @@ class FormBuilder
                     'tab' => $generalSettings,
                     'desc' => \Mollie\Utility\TagsUtility::ppTags(
                         $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
-                        [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
+                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
                     'required' => true,
@@ -153,7 +202,7 @@ class FormBuilder
                 'tab' => $generalSettings,
                 'desc' => \Mollie\Utility\TagsUtility::ppTags(
                     $this->module->l('You can find your API key in your [1]Mollie Profile[/1];'),
-                    [$this->display(__FILE__, 'views/templates/admin/profile.tpl')]
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
                 'required' => true,
@@ -200,9 +249,10 @@ class FormBuilder
             $input[] = [
                 'type' => 'mollie-methods',
                 'name' => Config::METHODS_CONFIG,
-                'paymentMethods' => $apiService->getMethodsForConfig($this->module->api, $this->getPathUri()),
-                'countries' => $this->getActiveCountriesList(),
+                'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
+                'countries' => $this->countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
+                'displayErrors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }
 
@@ -214,14 +264,14 @@ class FormBuilder
         $advancedSettings = 'advanced_settings';
         $input = [];
         $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('Send locale for payment screen'),
             'tab' => $advancedSettings,
             'desc' => \Mollie\Utility\TagsUtility::ppTags(
                 $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                [$this->display(__FILE__, 'views/templates/admin/locale_wiki.tpl')]
+                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
             'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
             'options' => [
@@ -240,12 +290,11 @@ class FormBuilder
             ],
         ];
 
-        $lang = Context::getContext()->language->id;
         $messageStatus = $this->module->l('Status for %s payments');
         $descriptionStatus = $this->module->l('`%s` payments get status `%s`');
         $messageMail = $this->module->l('Send mails when %s');
         $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?');
-        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($lang));
+        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($this->lang->id));
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
             if ($name === PaymentStatus::STATUS_AUTHORIZED) {
@@ -254,16 +303,13 @@ class FormBuilder
 
             $val = (int)$val;
             if ($val) {
+                $orderStatus = new OrderState($val);
+                $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
                 $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
                         $this->module->lang($name),
-                        Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
-                            'SELECT `name`
-                            FROM `' . _DB_PREFIX_ . 'order_state_lang`
-                            WHERE `id_order_state` = ' . (int)$val . '
-                            AND `id_lang` = ' . (int)$lang
-                        )
+                        $statusName
                     )
                 );
             } else {
@@ -271,11 +317,11 @@ class FormBuilder
             }
             $statuses[] = [
                 'name' => $name,
-                'key' => @constant('Config::MOLLIE_STATUS_' . Tools::strtoupper($name)),
+                'key' => @constant('Mollie\Config\Config::MOLLIE_STATUS_' . Tools::strtoupper($name)),
                 'value' => $val,
                 'description' => $desc,
                 'message' => sprintf($messageStatus, $this->module->lang($name)),
-                'key_mail' => @constant('Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
+                'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
                 'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
                 'description_mail' => sprintf($descriptionMail, $this->module->lang($name)),
                 'message_mail' => sprintf($messageMail, $this->module->lang($name)),
@@ -296,10 +342,10 @@ class FormBuilder
                 PaymentStatus::STATUS_EXPIRED,
                 RefundStatus::STATUS_REFUNDED,
                 PaymentStatus::STATUS_OPEN,
-                'partial_refund',
+                \Mollie\Config\Config::PARTIAL_REFUND_CODE,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], ['paid', 'partial_refund'])) {
+            if (!in_array($status['name'], ['paid', \Mollie\Config\Config::PARTIAL_REFUND_CODE])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],
@@ -372,7 +418,7 @@ class FormBuilder
                 'tab' => $advancedSettings,
                 'desc' => \Mollie\Utility\TagsUtility::ppTags(
                     $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
-                    [$this->display(__FILE__, 'views/templates/front/kbd.tpl')]
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/front/kbd.tpl')]
                 ),
                 'name' => Config::MOLLIE_CSS,
                 'class' => 'long-text',
@@ -385,6 +431,7 @@ class FormBuilder
             'name' => Config::MOLLIE_TRACKING_URLS,
             'depends' => Config::MOLLIE_API,
             'depends_value' => Config::MOLLIE_ORDERS_API,
+            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->id)
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
@@ -436,16 +483,16 @@ class FormBuilder
                 'id_order_state' => '0',
             ],
         ];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->language->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
 
         for ($i = 0; $i < count($orderStatuses); $i++) {
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-        $this->aasort($orderStatuses, 'id_order_state');
+        \Mollie\Utility\AssortUtility::aasort($orderStatuses, 'id_order_state');
 
-        $this->context->smarty->assign([
-            'logs' => $this->context->link->getAdminLink('AdminLogs')
+        $this->smarty->assign([
+            'logs' => $this->link->getAdminLink('AdminLogs')
         ]);
         $input = array_merge(
             $input,
@@ -483,7 +530,7 @@ class FormBuilder
                     'desc' => \Mollie\Utility\TagsUtility::ppTags(
                         $this->module->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
                         [
-                            $this->display(__FILE__, 'views/templates/admin/view_logs.tpl')
+                            $this->module->display($this->module->getPathUri(), 'views/templates/admin/view_logs.tpl')
                         ]
                     ),
                     'name' => Config::MOLLIE_DEBUG_LOG,
@@ -511,7 +558,7 @@ class FormBuilder
         return $input;
     }
 
-    protected function getSettingTabs($isApiKeyProvided)
+    private function getSettingTabs($isApiKeyProvided)
     {
         $tabs = [
             'general_settings' => $this->module->l('General settings'),

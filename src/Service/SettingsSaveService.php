@@ -51,8 +51,7 @@ class SettingsSaveService
         PaymentMethodService $paymentMethodService,
         ApiService $apiService,
         MolCarrierInformationService $carrierInformationService
-    )
-    {
+    ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
         $this->paymentMethodRepository = $paymentMethodRepository;

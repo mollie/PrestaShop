@@ -1,0 +1,32 @@
+services:
+  context:
+    class: 'Context'
+    factory: ['Mollie\Factory\ContextFactory', 'getContext']
+
+  controller:
+    class: 'Controller'
+    factory: ['Mollie\Factory\ContextFactory', 'getController']
+
+  cookie:
+    class: 'Cookie'
+    factory: ['Mollie\Factory\ContextFactory', 'getCookie']
+
+  language:
+    class: 'Language'
+    factory: ['Mollie\Factory\ContextFactory', 'getLanguage']
+
+  currency:
+    class: 'Currency'
+    factory: ['Mollie\Factory\ContextFactory', 'getCurrency']
+
+  smarty:
+    class: 'Smarty'
+    factory: ['Mollie\Factory\ContextFactory', 'getSmarty']
+
+  shop:
+    class: 'Shop'
+    factory: ['Mollie\Factory\ContextFactory', 'getShop']
+
+  link:
+    class: 'Shop'
+    factory: ['Mollie\Factory\ContextFactory', 'getLink']

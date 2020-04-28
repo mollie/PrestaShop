@@ -7,7 +7,6 @@ use Tools;
 
 class OrderFeeService
 {
-
     public function getPaymentFees($methods, $totalPrice)
     {
         foreach ($methods as $index => $method) {

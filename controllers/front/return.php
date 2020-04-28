@@ -36,18 +36,19 @@
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\OrderStatusService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 /**
  * Class MollieReturnModuleFrontController
  *
  * @property Context? $context
- * @property Mollie   $module
+ * @property Mollie $module
  */
 class MollieReturnModuleFrontController extends ModuleFrontController
 {
@@ -72,7 +73,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         /** @var Context $context */
         $context = Context::getContext();
         /** @var Cart $cart */
-        $cart = new Cart((int) $this->context->cookie->id_cart);
+        $cart = new Cart((int)$this->context->cookie->id_cart);
         if (Validate::isLoadedObject($cart) && !$cart->orderExists()) {
             unset($context->cart);
             unset($context->cookie->id_cart);
@@ -99,7 +100,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         parent::initContent();
 
-        $data = array();
+        $data = [];
         $cart = null;
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
@@ -109,20 +110,20 @@ class MollieReturnModuleFrontController extends ModuleFrontController
          * we still support for transitional reasons.
          */
         if (Tools::getIsset('ref')) {
-            $idOrder = (int) Tools::getValue('id');
+            $idOrder = (int)Tools::getValue('id');
             // Check if user is allowed to be on the return page
             $data['auth'] = $paymentMethodRepo->getUniqReferenceOf($idOrder) === Tools::getValue('ref');
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) $idOrder);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
             }
         } elseif (Tools::getIsset('cart_id')) {
-            $idCart = (int) Tools::getValue('cart_id');
+            $idCart = (int)Tools::getValue('cart_id');
 
             // Check if user that's seeing this is the cart-owner
             $cart = new Cart($idCart);
-            $data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
+            $data['auth'] = (int)$cart->id_customer === $this->context->customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (int) $idCart);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (int)$idCart);
             }
         }
 
@@ -130,7 +131,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             // any paid payments for this cart?
 
             if ($data['mollie_info'] === false) {
-                $data['mollie_info'] = array();
+                $data['mollie_info'] = [];
                 $data['msg_details'] = $this->l('The order with this id does not exist.');
             } elseif ($data['mollie_info']['method'] === PaymentMethod::BANKTRANSFER
                 && $data['mollie_info']['bank_status'] === PaymentStatus::STATUS_OPEN
@@ -141,7 +142,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             }
         } else {
             // Not allowed? Don't make query but redirect.
-            $data['mollie_info'] = array();
+            $data['mollie_info'] = [];
             $data['msg_details'] = $this->l('You are not authorised to see this page.');
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
@@ -155,7 +156,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 $this->context->link->getModuleLink(
                     $this->module->name,
                     'return',
-                    array('ajax' => 1, 'action' => 'getStatus', 'transaction_id' => $data['mollie_info']['transaction_id']),
+                    ['ajax' => 1, 'action' => 'getStatus', 'transaction_id' => $data['mollie_info']['transaction_id']],
                     true
                 )
             );
@@ -168,15 +169,15 @@ class MollieReturnModuleFrontController extends ModuleFrontController
     /**
      * Prepend module path if PS version >= 1.7
      *
-     * @param string      $template
-     * @param array       $params
+     * @param string $template
+     * @param array $params
      * @param string|null $locale
      *
      * @throws PrestaShopException
      *
      * @since 3.3.2
      */
-    public function setTemplate($template, $params = array(), $locale = null)
+    public function setTemplate($template, $params = [], $locale = null)
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $template = "module:mollie/views/templates/front/17_{$template}";
@@ -229,23 +230,23 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
         $cart = new Cart($dbPayment['cart_id']);
         if (!Validate::isLoadedObject($cart)) {
-            die(json_encode(array(
+            die(json_encode([
                 'success' => false,
-            )));
+            ]));
         }
-        $orderId = Order::getOrderByCartId((int) $cart->id);
-        $order = new Order((int) $orderId);
+        $orderId = Order::getOrderByCartId((int)$cart->id);
+        $order = new Order((int)$orderId);
 
         if (!Validate::isLoadedObject($cart)) {
-            die(json_encode(array(
+            die(json_encode([
                 'success' => false,
-            )));
+            ]));
         }
 
-        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
-            die(json_encode(array(
+        if ((int)$cart->id_customer !== (int)$this->context->customer->id) {
+            die(json_encode([
                 'success' => false,
-            )));
+            ]));
         }
 
 
@@ -254,18 +255,22 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         if (Tools::substr($transactionId, 0, 3) === 'ord') {
-            $transaction = $this->module->api->orders->get($transactionId, array('embed' => 'payments'));
+            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
         } else {
             $transaction = $this->module->api->payments->get($transactionId);
         }
+        /** @var OrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
 
         $orderStatus = $transaction->status;
         switch ($transaction->status) {
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
-                $orderStatus = PaymentStatus::STATUS_CANCELED;
-                $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
+                $orderStatus = $transaction->status;
+                $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
+
+                $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
@@ -319,20 +324,21 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 break;
         }
 
-        $order->setCurrentState((int)Mollie\Config\Config::getStatuses()[$orderStatus]);
+        $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
             true,
             null,
-            array(
-                'id_cart'   => (int) $cart->id,
-                'id_module' => (int) $this->module->id,
-                'id_order'  => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                    ? Order::getIdByCartId((int) $cart->id)
-                    : Order::getOrderByCartId((int) $cart->id),
-                'key'       => $cart->secure_key,
-            )
+            [
+                'id_cart' => (int)$cart->id,
+                'id_module' => (int)$this->module->id,
+                'id_order' => (int)version_compare(_PS_VERSION_, '1.7.1.0', '>=')
+                    ? Order::getIdByCartId((int)$cart->id)
+                    : Order::getOrderByCartId((int)$cart->id),
+                'key' => $cart->secure_key,
+            ]
         );
 
         die(json_encode([

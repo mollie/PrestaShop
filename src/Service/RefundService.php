@@ -39,7 +39,7 @@ class RefundService
     public function doPaymentRefund($transactionId, $amount = null)
     {
         try {
-            /** @var MollieOrderAlias $payment */
+            /** @var Payment $payment */
             $payment = $this->module->api->payments->get($transactionId);
             if ($amount) {
                 $payment->refund([

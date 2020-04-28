@@ -58,7 +58,6 @@ class ShipmentService
         $deliveryAddress = new Address($order->id_address_delivery);
         $carrierInformationId = $this->informationRepository->getMollieCarrierInformationIdByCarrierId($order->id_carrier);
         $carrierInformation = new \MolCarrierInformation($carrierInformationId);
-//        $carrierConfig = $this->carrierService->getOrderCarrierConfig($order->id);
         if (!Validate::isLoadedObject($invoiceAddress)
             || !Validate::isLoadedObject($deliveryAddress)
             || !$carrierInformation

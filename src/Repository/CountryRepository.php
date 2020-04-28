@@ -31,6 +31,7 @@ class CountryRepository
             return true;
         }
 
+        $response = true;
         foreach ($idCountries as $idCountry) {
             $allCountries = 0;
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_country` (id_method, id_country, all_countries) VALUES (';
@@ -45,6 +46,6 @@ class CountryRepository
             }
         }
 
-        return true;
+        return $response;
     }
 }

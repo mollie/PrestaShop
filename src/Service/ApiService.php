@@ -219,7 +219,6 @@ class ApiService
         $defaultPaymentMethod->surcharge_percentage = '';
         $defaultPaymentMethod->surcharge_limit = '';
 
-
         foreach ($apiMethods as $apiMethod) {
             $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id']);
             if ($paymentId) {
@@ -282,9 +281,6 @@ class ApiService
         /** @var Payment $payment */
         $payment = $api->payments->get($transactionId);
         if ($process) {
-//            if (!Tools::isSubmit('module')) {
-//                $_GET['module'] = $this->module->name;
-//            }
             $webhookController = new MollieWebhookModuleFrontController();
             $webhookController->processTransaction($payment);
         }
@@ -401,8 +397,6 @@ class ApiService
      */
     public static function selectedApi($selectedApi)
     {
-        /** @var static $mollie */
-        $mollie = Module::getInstanceByName('mollie');
         if (!in_array($selectedApi, [Config::MOLLIE_ORDERS_API, Config::MOLLIE_PAYMENTS_API])) {
             $selectedApi = Configuration::get(Config::MOLLIE_API);
             if (!$selectedApi

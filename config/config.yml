@@ -1,4 +1,8 @@
 imports:
+  - { resource: builder.yml }
+  - { resource: service.yml }
+  - { resource: repository.yml }
+  - { resource: context.yml }
 
 services:
   mollie:
@@ -6,108 +10,6 @@ services:
     factory: ['Module', 'getInstanceByName']
     arguments:
       - 'mollie'
-
-  Mollie\Service\OrderFeeService:
-
-  Mollie\Service\PaymentMethodService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Repository\MethodCountryRepository'
-      - '@Mollie\Service\CartLinesService'
-
-  Mollie\Service\ApiService:
-    arguments:
-      - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Repository\CountryRepository'
-
-  Mollie\Service\ConfigFieldService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Service\ApiService'
-      - '@Mollie\Repository\CountryRepository'
-
-  Mollie\Service\UrlPathService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\IssuerService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
-
-  Mollie\Service\OverrideService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Service\UrlPathService'
-
-  Mollie\Service\RefundService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\ShipService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\CancelService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\CarrierService:
-
-  Mollie\Service\OrderStatusService:
-
-  Mollie\Service\CountryService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\SettingsSaveService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Repository\CountryRepository'
-      - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Service\PaymentMethodService'
-      - '@Mollie\Service\ApiService'
-      - '@Mollie\Service\MolCarrierInformationService'
-
-  Mollie\Service\ShipmentService:
-    arguments:
-      - '@Mollie\Repository\OrderShipmentRepository'
-      - '@Mollie\Repository\MolCarrierInformationRepository'
-
-  Mollie\Service\CartLinesService:
-    arguments:
-      - '@mollie'
-
-  Mollie\Service\MollieOrderInfoService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Service\RefundService'
-      - '@Mollie\Service\ShipService'
-      - '@Mollie\Service\CancelService'
-      - '@Mollie\Service\ShipmentService'
-      - '@Mollie\Service\ApiService'
-
-  Mollie\Service\MolCarrierInformationService:
-    arguments:
-      - '@Mollie\Repository\MolCarrierInformationRepository'
-
-  Mollie\Repository\PaymentMethodRepository:
-
-  Mollie\Repository\OrderFeeRepository:
-
-  Mollie\Repository\CountryRepository:
-
-  Mollie\Repository\OrderShipmentRepository:
-
-  Mollie\Repository\MethodCountryRepository:
-
-  Mollie\Repository\MolCarrierInformationRepository:
-
-  Mollie\Utility\LanguageUtility:
-    arguments:
-      - '@mollie'
 
   Mollie\Install\Installer:
     arguments:

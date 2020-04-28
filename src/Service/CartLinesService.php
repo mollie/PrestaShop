@@ -25,13 +25,13 @@ class CartLinesService
      * @param float $amount
      *
      * @param $paymentFee
+     * @param Cart $cart
      * @return array
-     *
      */
     public function getCartLines($amount, $paymentFee, Cart $cart)
     {
         $oCurrency = new Currency($cart->id_currency);
-        $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION; // PHP 5.3, closures and static access, not a good combo :(
+        $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
 
         $remaining = round($amount, $apiRoundingPrecision);
         $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
