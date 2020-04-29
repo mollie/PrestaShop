@@ -170,7 +170,8 @@ class PaymentMethodService
         $secureKey,
         MolPaymentMethod $molPaymentMethod,
         $qrCode = false,
-        $orderReference = ''
+        $orderReference = '',
+        $cardToken = false
     ) {
         if (!$orderReference) {
             $this->module->currentOrderReference = $orderReference = Order::generateReference();
@@ -205,6 +206,9 @@ class PaymentMethodService
                 )
             ),
         ];
+        if ($cardToken) {
+            $paymentData['cardToken'] = $cardToken;
+        }
         if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',

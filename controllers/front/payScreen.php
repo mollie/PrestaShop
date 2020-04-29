@@ -41,48 +41,17 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        $validateUrl = Context::getContext()->link->getModuleLink(
-            'mollie',
-            'payment',
-            array('method' => PaymentMethod::CREDITCARD, 'rand' => time()),
-            true
-        );
-
-        $cartId = $this->context->cart->id;
-        $secureKey = $this->context->customer->secure_key;
         $method = Tools::getValue('method');
         $cardToken = Tools::getValue('mollieCardToken' . $method);
 
-        $orderId = Order::getOrderByCartId($this->context->cart->id);
-        $mollie = new MollieApiClient();
-        $mollie->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY));
-
-
-        $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
-            true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $this->module->name,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-            ]
+        $validateUrl = Context::getContext()->link->getModuleLink(
+            'mollie',
+            'payment',
+            array('method' => PaymentMethod::CREDITCARD, 'rand' => time(), 'cardToken' => $cardToken),
+            true
         );
 
-        $payment = $mollie->payments->create([
-            "method" => "creditcard",
-            "amount" => [
-                "currency" => $this->context->currency->iso_code,
-                "value" => number_format($this->context->cart->getOrderTotal(),2)
-            ],
-            "description" => "Order #1",
-            "redirectUrl" => $validateUrl,
-            "webhookUrl" => "https://webshop.example.org/payments/webhook/",
-            "cardToken" => $cardToken,
-        ]);
-
-        Tools::redirect($payment->redirectUrl);
+        Tools::redirect($validateUrl);
     }
 
     public function initContent()

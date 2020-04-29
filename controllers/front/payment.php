@@ -125,7 +125,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer->secure_key,
             $paymentMethodObj,
             false,
-            $orderReference
+            $orderReference,
+            Tools::getValue('cardToken')
         );
         try {
             $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
