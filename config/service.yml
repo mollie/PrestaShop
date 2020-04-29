@@ -28,11 +28,6 @@ services:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
 
-  Mollie\Service\OverrideService:
-    arguments:
-      - '@mollie'
-      - '@Mollie\Service\UrlPathService'
-
   Mollie\Service\RefundService:
     arguments:
       - '@mollie'

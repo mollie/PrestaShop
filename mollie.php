@@ -251,17 +251,8 @@ class Mollie extends PaymentModule
             die(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
-        /** @var \Mollie\Service\OverrideService $overrideService */
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $overrideService = $this->getContainer(\Mollie\Service\OverrideService::class);
         $settingsFormBuilder = $this->getContainer(\Mollie\Builder\FormBuilder::class);
-        if ($module = $overrideService->checkPaymentModuleOverride()) {
-            $this->context->controller->warnings[] = sprintf(
-                $this->l('The method %s is overridden by module %s. This can cause interference with payments.'),
-                'PaymentModule::validateOrder',
-                $module
-            );
-        }
         if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
             $this->context->smarty->assign([
                 'settingKey' => $this->l('Template compilation'),
