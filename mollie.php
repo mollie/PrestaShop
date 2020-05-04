@@ -33,15 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-if (!defined('_PS_VERSION_')) {
-    return;
-}
-
-// Composer autoload, if failure, skip this module
-if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
-    return;
-}
-
 /**
  * Class Mollie
  *
@@ -68,26 +59,6 @@ class Mollie extends PaymentModule
 
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
-
-    /**
-     * Hooks for this module
-     *
-     * @var array $hooks
-     */
-    public $hooks = [
-        'displayPayment',
-        'displayPaymentEU',
-        'paymentOptions',
-        'displayAdminOrder',
-        'displayBackOfficeHeader',
-        'displayOrderConfirmation',
-        'actionFrontControllerSetMedia',
-        'actionEmailSendBefore',
-        'displayPDFInvoice'
-    ];
-
-    public $extra_mail_vars = [];
-
 
     /**
      * Mollie constructor.

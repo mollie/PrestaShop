@@ -84,7 +84,8 @@ class Installer
             'displayOrderConfirmation',
             'actionFrontControllerSetMedia',
             'actionEmailSendBefore',
-            'actionOrderStatusUpdate'
+            'actionOrderStatusUpdate',
+            'displayPDFInvoice'
         ];
     }
 
