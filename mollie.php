@@ -79,8 +79,6 @@ class Mollie extends PaymentModule
 
         parent::__construct();
         $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
-
-        $this->compile();
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -88,6 +86,12 @@ class Mollie extends PaymentModule
             return;
         }
 
+        //todo: finish
+        try {
+            $this->compile();
+        } catch (Symfony\Component\Debug\Exception\ClassNotFoundException $e) {
+            return;
+        }
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         try {
