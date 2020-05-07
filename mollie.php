@@ -32,7 +32,9 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
+if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
+    return;
+}
 /**
  * Class Mollie
  *
@@ -60,6 +62,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
+    const SUPPORTED_PHP_VERSION = '5.6';
     /**
      * Mollie constructor.
      *
@@ -71,7 +74,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '3.6.0';
+        $this->version = '4.0.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -82,16 +85,12 @@ class Mollie extends PaymentModule
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
-        if (version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION) === -1) {
+        if (version_compare(phpversion(), $this::SUPPORTED_PHP_VERSION) === -1) {
             return;
         }
 
-        //todo: finish
-        try {
-            $this->compile();
-        } catch (Symfony\Component\Debug\Exception\ClassNotFoundException $e) {
-            return;
-        }
+        $this->compile();
+
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         try {
@@ -152,7 +151,13 @@ class Mollie extends PaymentModule
     private function compile()
     {
         $containerCache = $this->getLocalPath() . 'var/cache/container.php';
-        $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+
+        try {
+            $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        } catch (\Symfony\Component\Debug\Exception\ClassNotFoundException $e) {
+            $this->getContainer()->get('prestashop.core.cache.clearer.cache_clearer_chain')->clear();
+            $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        }
         $containerClass = get_class($this) . 'Container';
         if (!$containerConfigCache->isFresh()) {
             $containerBuilder = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();

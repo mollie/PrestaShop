@@ -30,7 +30,7 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-{if Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED)}
+{if qrCodeEnabled}
   <div id="mollie-qr-code"></div>
   <script type="text/javascript">
     (function () {
