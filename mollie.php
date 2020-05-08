@@ -154,7 +154,7 @@ class Mollie extends PaymentModule
 
         try {
             $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
-        } catch (\Symfony\Component\Debug\Exception\ClassNotFoundException $e) {
+        } catch (Exception $e) {
             $this->getContainer()->get('prestashop.core.cache.clearer.cache_clearer_chain')->clear();
             $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
         }
