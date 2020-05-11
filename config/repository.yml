@@ -10,3 +10,5 @@ services:
   Mollie\Repository\MethodCountryRepository:
 
   Mollie\Repository\MolCarrierInformationRepository:
+
+  Mollie\Repository\ModuleRepository:
