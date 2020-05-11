@@ -90,17 +90,7 @@ class Mollie extends PaymentModule
         }
 
         $this->compile();
-
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-        try {
-            $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
-        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
-        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-            $this->warning = $this->l('Payment error:') . $e->getMessage();
-            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
-        }
+        $this->setApiKey();
     }
 
     /**
@@ -1158,4 +1148,17 @@ class Mollie extends PaymentModule
 
     }
 
+    private function setApiKey()
+    {
+        /** @var \Mollie\Service\ApiService $apiService */
+        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
+        try {
+            $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
+        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+            $this->warning = $this->l('Payment error:') . $e->getMessage();
+            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
+        }
+    }
 }
