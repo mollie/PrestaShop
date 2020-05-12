@@ -326,6 +326,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
         $orderStatusService->setOrderStatus($orderId, $orderStatusId);
+        $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
@@ -347,5 +348,25 @@ class MollieReturnModuleFrontController extends ModuleFrontController
             'response' => json_encode($transaction),
             'href' => $successUrl
         ]));
+    }
+
+    protected function savePaymentStatus($transactionId, $status, $orderId)
+    {
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                array(
+                    'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                    'bank_status' => pSQL($status),
+                    'order_id'    => (int) $orderId,
+                ),
+                '`transaction_id` = \''.pSQL($transactionId).'\''
+            );
+        } catch (Exception $e) {
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
+            throw $e;
+        }
     }
 }
