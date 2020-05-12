@@ -1,6 +1,6 @@
 <?php
 
-NameSpace Mollie\Builder;
+namespace Mollie\Builder;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
@@ -158,7 +158,7 @@ class FormBuilder
                         ],
                     ],
                     'desc' => $this->module->display(
-                        $this->module->getPathUri() , 'views/templates/admin/create_new_account_link.tpl'
+                        $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
@@ -209,7 +209,8 @@ class FormBuilder
                 'class' => 'fixed-width-xxl',
             ];
 
-            $input = array_merge($input, [
+            $input = array_merge($input,
+                [
                     [
                         'type' => 'mollie-h3',
                         'tab' => $generalSettings,

@@ -125,7 +125,7 @@ class PaymentMethodService
             if ($methodObj->id_method === Mollie\Config\Config::APPLEPAY) {
                 if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                     unset($methods[$index]);
-                } elseif ($_COOKIE['isApplePayMethod'] === '0') {
+                } elseif (Context::getContext()->cookie->isApplePayMethod === '0') {
                     unset($methods[$index]);
                 }
             }

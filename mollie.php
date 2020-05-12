@@ -960,22 +960,6 @@ class Mollie extends PaymentModule
 
     /**
      * @return array
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0
-     */
-    public function displayAjaxMollieCarrierConfig()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
-        /** @var \Mollie\Service\CarrierService $carrierService */
-        $carrierService = $this->getContainer(\Mollie\Service\CarrierService::class);
-        $dbConfig = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_TRACKING_URLS), true);
-
-        return ['success' => true, 'carriers' => $carrierService->carrierConfig($dbConfig)];
-    }
-
-    /**
-     * @return array
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException

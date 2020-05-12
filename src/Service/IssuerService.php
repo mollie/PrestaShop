@@ -29,6 +29,7 @@ class IssuerService
         $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL);
         $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
         $issuers = json_decode($issuersJson, true);
+        $issuerList = [];
         $issuerList[PaymentMethod::IDEAL] = [];
         $context = Context::getContext();
         foreach ($issuers as $issuer) {
