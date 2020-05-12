@@ -44,7 +44,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_3_5_2()
 {
-    $trackingConfigId = Configuration::getIdByName(Mollie::MOLLIE_TRACKING_URLS);
+    $trackingConfigId = Configuration::getIdByName(Mollie\Config\Config::MOLLIE_TRACKING_URLS);
 
     $query = 'DELETE FROM`'._DB_PREFIX_.'configuration_lang` 
             WHERE id_configuration = "' . pSQL($trackingConfigId) . '"';

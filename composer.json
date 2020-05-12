@@ -3,24 +3,30 @@
   "license": "BSD-2.0",
   "description": "Mollie module for PrestaShop",
   "require": {
-    "firstred/mollie-api-php": "^2.7.0",
-    "firstred/mollie-reseller-api": "~1.10.2",
     "ext-curl": "*",
     "ext-json": "*",
     "ext-simplexml": "*",
-    "symfony/polyfill-php55": "^1.9",
     "symfony/polyfill-mbstring": "^1.9",
-    "symfony/polyfill-php54": "^1.9"
+    "symfony/dependency-injection": "^3.4",
+    "symfony/config": "^3.4",
+    "symfony/expression-language": "^3.4",
+    "symfony/yaml": "^3.4",
+    "prestashop/decimal": "^1.3",
+    "mollie/mollie-api-php": "^2.17"
   },
   "autoload": {
+    "psr-4": {
+      "Mollie\\": "src/"
+    },
     "classmap": [
       "vendor/",
-      "controllers/"
+      "controllers/",
+      "src/Entity"
     ]
   },
   "config": {
     "platform": {
-      "php": "5.3.29"
+      "php": "5.6"
     }
   },
   "type": "prestashop-module"

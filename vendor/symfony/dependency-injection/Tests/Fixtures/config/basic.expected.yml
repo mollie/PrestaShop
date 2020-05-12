@@ -1,0 +1,10 @@
+
+services:
+    service_container:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
+        public: true
+        synthetic: true
+    _PhpScoper5ea00cc67502b\App\BarService:
+        class: _PhpScoper5ea00cc67502b\App\BarService
+        public: true
+        arguments: [!service { class: FooClass }]

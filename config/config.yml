@@ -1,0 +1,20 @@
+imports:
+  - { resource: builder.yml }
+  - { resource: service.yml }
+  - { resource: repository.yml }
+  - { resource: context.yml }
+
+services:
+  mollie:
+    class: 'Mollie'
+    factory: ['Module', 'getInstanceByName']
+    arguments:
+      - 'mollie'
+
+  Mollie\Install\Installer:
+    arguments:
+      - '@mollie'
+
+  Mollie\Install\Uninstall:
+    arguments:
+      - '@mollie'

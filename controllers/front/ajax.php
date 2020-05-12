@@ -1,4 +1,7 @@
 <?php
+
+use PrestaShop\Decimal\Number;
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -32,24 +35,97 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
 
     public function postProcess()
     {
-        $errorMessages = explode('#', Tools::getValue('hashTag'));
-        foreach ($errorMessages as $errorMessage) {
-            if (strpos($errorMessage, 'mollieMessage=') === 0) {
-                $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
-                $errorMessage = str_replace('_', ' ', $errorMessage);
-                $this->context->smarty->assign(array(
-                    'errorMessage'   => $errorMessage
+        $action = Tools::getValue('action');
+        switch ($action) {
+            case 'getTotalCartPrice':
+                $cart = Context::getContext()->cart;
+                $paymentFee = Tools::getValue('paymentFee');
+                if (!$paymentFee) {
+                    $presentedCart = $this->cart_presenter->present($this->context->cart);
+                    $this->context->smarty->assign([
+                        'configuration' => $this->getTemplateVarConfiguration(),
+                        'cart' => $presentedCart,
+                        'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
+                    ]);
 
-                ));
-                $this->ajaxDie($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
-            }
+                    $this->ajaxDie(
+                        json_encode(
+                            [
+                                'cart_summary_totals' => $this->render('checkout/_partials/cart-summary-totals'),
+                            ]
+                        )
+                    );
+                }
+
+                $paymentFee = new Number(Tools::getValue('paymentFee'));
+                $orderTotal = new Number((string)$cart->getOrderTotal());
+                $orderTotalWithFee = $orderTotal->plus($paymentFee);
+
+                $orderTotalNoTax = new Number((string)$cart->getOrderTotal(false));
+                $orderTotalNoTaxWithFee = $orderTotalNoTax->plus($paymentFee);
+
+                $total_including_tax = $orderTotalWithFee->toPrecision(2);
+                $total_excluding_tax = $orderTotalNoTaxWithFee->toPrecision(2);
+
+                $taxConfiguration = new TaxConfiguration();
+                $presentedCart = $this->cart_presenter->present($this->context->cart);
+
+                $presentedCart['totals'] = array(
+                    'total' => array(
+                        'type' => 'total',
+                        'label' => $this->translator->trans('Total', array(), 'Shop.Theme.Checkout'),
+                        'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
+                        'value' => Tools::displayPrice(
+                            $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax
+                        ),
+                    ),
+                    'total_including_tax' => array(
+                        'type' => 'total',
+                        'label' => $this->translator->trans('Total (tax incl.)', array(), 'Shop.Theme.Checkout'),
+                        'amount' => $total_including_tax,
+                        'value' => Tools::displayPrice($total_including_tax),
+                    ),
+                    'total_excluding_tax' => array(
+                        'type' => 'total',
+                        'label' => $this->translator->trans('Total (tax excl.)', array(), 'Shop.Theme.Checkout'),
+                        'amount' => $total_excluding_tax,
+                        'value' => Tools::displayPrice($total_excluding_tax),
+                    ),
+                );
+
+                $this->context->smarty->assign([
+                    'configuration' => $this->getTemplateVarConfiguration(),
+                    'cart' => $presentedCart,
+                    'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
+                ]);
+
+                $this->ajaxDie(
+                    json_encode(
+                        [
+                            'cart_summary_totals' => $this->render('checkout/_partials/cart-summary-totals'),
+                        ]
+                    )
+                );
+                break;
+            case 'displayCheckoutError':
+                $errorMessages = explode('#', Tools::getValue('hashTag'));
+                foreach ($errorMessages as $errorMessage) {
+                    if (strpos($errorMessage, 'mollieMessage=') === 0) {
+                        $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
+                        $errorMessage = str_replace('_', ' ', $errorMessage);
+                        $this->context->smarty->assign([
+                            'errorMessage' => $errorMessage
+                        ]);
+                        $this->ajaxDie($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
+                    }
+                }
+                $this->ajaxDie();
         }
-        $this->ajaxDie();
+
     }
 }

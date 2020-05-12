@@ -1,0 +1,14 @@
+services:
+  Mollie\Repository\PaymentMethodRepository:
+
+  Mollie\Repository\OrderFeeRepository:
+
+  Mollie\Repository\CountryRepository:
+
+  Mollie\Repository\OrderShipmentRepository:
+
+  Mollie\Repository\MethodCountryRepository:
+
+  Mollie\Repository\MolCarrierInformationRepository:
+
+  Mollie\Repository\ModuleRepository:

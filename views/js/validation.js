@@ -32,7 +32,15 @@
  * @codingStandardsIgnoreStart
  */
 
-$(document).ready(function() {
+$(document).ready(function () {
+    var $paymentMethodsEnable = $('select[name^="MOLLIE_METHOD_ENABLED"]');
+    $paymentMethodsEnable.each(function () {
+            paymentMethodInputsToggle(this);
+            paymentMethodOnChangeToggle(this);
+            paymentMethodFeeToggle(this);
+        }
+    );
+
     $('#module_form').on('submit', function () {
         var description = $('#MOLLIE_DESCRIPTION');
         var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
@@ -58,6 +66,8 @@ $(document).ready(function() {
             $('.alert.alert-success').hide();
             showErrorMessage(profile_id_message);
         }
+
+        $paymentMethodsEnable.each(validatePaymentMethod);
     });
 
     var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
@@ -89,4 +99,74 @@ $(document).ready(function() {
         }
     }
 
+    function validatePaymentMethod() {
+        var $paymentMethodForm = $(this).closest('.payment-method');
+
+        var $isPaymentEnabled = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_ENABLED"]');
+        if ($isPaymentEnabled.val() === "0") {
+            return;
+        }
+        var $description = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_DESCRIPTION"]');
+        if ($description.val() === '') {
+            event.preventDefault();
+            $description.addClass('mollie-input-error');
+            $('.alert.alert-success').hide();
+            showErrorMessage(description_message);
+        }
+    }
+
+    function paymentMethodOnChangeToggle(method) {
+        var $paymentMethodForm = $(method).closest('.payment-method');
+        var $countrySelectType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_APPLICABLE_COUNTRIES"]');
+        $countrySelectType.on('change', function () {
+                paymentMethodInputsToggle(method);
+            }
+        );
+        var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
+        $paymentFeeType.on('change', function () {
+                paymentMethodFeeToggle(method);
+            }
+        );
+    }
+
+    function paymentMethodInputsToggle(method) {
+        var $paymentMethodForm = $(method).closest('.payment-method');
+        var $countrySelectType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_APPLICABLE_COUNTRIES"]');
+        var $countrySelect = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_CERTAIN_COUNTRIES"]');
+        if ($countrySelectType.val() === "0") {
+            $countrySelect.closest('.form-group').show();
+        } else {
+            $countrySelect.closest('.form-group').hide();
+        }
+    }
+
+    function paymentMethodFeeToggle(method) {
+        var $paymentMethodForm = $(method).closest('.payment-method');
+        var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
+        var $feeFixed = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT"]');
+        var $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
+        var $feeLimit = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_LIMIT"]');
+        switch ($paymentFeeType.val()) {
+            case '0':
+                $feeFixed.closest('.form-group').hide();
+                $feePercentage.closest('.form-group').hide();
+                $feeLimit.closest('.form-group').hide();
+                break;
+            case '1':
+                $feeFixed.closest('.form-group').show();
+                $feePercentage.closest('.form-group').hide();
+                $feeLimit.closest('.form-group').show();
+                break;
+            case '2':
+                $feeFixed.closest('.form-group').hide();
+                $feePercentage.closest('.form-group').show();
+                $feeLimit.closest('.form-group').show();
+                break;
+            case '3':
+                $feeFixed.closest('.form-group').show();
+                $feePercentage.closest('.form-group').show();
+                $feeLimit.closest('.form-group').show();
+                break;
+        }
+    }
 });

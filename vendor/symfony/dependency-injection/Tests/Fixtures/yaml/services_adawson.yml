@@ -1,0 +1,28 @@
+services:
+    _PhpScoper5ea00cc67502b\App\Db:
+        public: true
+        properties:
+            schema: '@_PhpScoper5ea00cc67502b\App\Schema'
+
+    _PhpScoper5ea00cc67502b\App\Bus:
+        public: true
+        arguments: ['@_PhpScoper5ea00cc67502b\App\Db']
+        properties:
+            handler1: '@_PhpScoper5ea00cc67502b\App\Handler1'
+            handler2: '@_PhpScoper5ea00cc67502b\App\Handler2'
+
+    _PhpScoper5ea00cc67502b\App\Handler1:
+        ['@_PhpScoper5ea00cc67502b\App\Db', '@_PhpScoper5ea00cc67502b\App\Schema', '@_PhpScoper5ea00cc67502b\App\Processor']
+
+    _PhpScoper5ea00cc67502b\App\Handler2:
+        ['@_PhpScoper5ea00cc67502b\App\Db', '@_PhpScoper5ea00cc67502b\App\Schema', '@_PhpScoper5ea00cc67502b\App\Processor']
+
+    _PhpScoper5ea00cc67502b\App\Processor:
+        ['@_PhpScoper5ea00cc67502b\App\Registry', '@_PhpScoper5ea00cc67502b\App\Db']
+
+    _PhpScoper5ea00cc67502b\App\Registry:
+        properties:
+            processor: ['@_PhpScoper5ea00cc67502b\App\Db', '@_PhpScoper5ea00cc67502b\App\Bus']
+
+    _PhpScoper5ea00cc67502b\App\Schema:
+        arguments: ['@_PhpScoper5ea00cc67502b\App\Db']

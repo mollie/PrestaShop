@@ -1,5 +1,5 @@
 {**
- * Copyright (c) 2012-2020, Mollie B.V.
+ * Copyright (c) 2012-2019, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +32,19 @@
 *}
 <button id="mollie-update" type="button" class="btn btn-primary pull-right"><i class="icon icon-cloud-download"></i> {l s='Update this module' mod='mollie'}</button>
 <script type="text/javascript">
-  (function () {
-    window.MollieModule = window.MollieModule || {ldelim}{rdelim};
-    window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-    window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-    window.MollieModule.debug = {if Configuration::get(Mollie::MOLLIE_DISPLAY_ERRORS)}true{else}false{/if};
-  }());
   (function initMollieUpdater() {
-    if (typeof window.MollieModule === 'undefined'
-      || typeof window.MollieModule.app === 'undefined'
-      || typeof window.MollieModule.app.default === 'undefined'
-      || typeof window.MollieModule.app.default.updater === 'undefined'
-    ) {
-      setTimeout(initMollieUpdater, 100);
-    }
 
-    window.MollieModule.app.default.updater().then(function (fn) {
-      fn.default(
-        document.getElementById('mollie-update'),
-        {
-          endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8'}&configure=mollie&module_name=mollie&ajax=1',
-        },
-        {
-          error: '{l s='Error' mod='mollie' js=1}',
-          unableToConnect: '{l s='Unable to connect' mod='mollie' js=1}',
-          unableToUnzip: '{l s='Unable to unzip new module' mod='mollie' js=1}',
-          updated: '{l s='The module has been updated!' mod='mollie' js=1}',
-        }
-      );
-    });
+    window.MollieModule.updater.default(
+      document.getElementById('mollie-update'),
+      {
+        endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie&ajax=1',
+      },
+      {
+        error: '{l s='Error' mod='mollie' js=1}',
+        unableToConnect: '{l s='Unable to connect' mod='mollie' js=1}',
+        unableToUnzip: '{l s='Unable to unzip new module' mod='mollie' js=1}',
+        updated: '{l s='The module has been updated!' mod='mollie' js=1}',
+      }
+    );
   }());
 </script>
