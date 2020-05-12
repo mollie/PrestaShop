@@ -111,7 +111,7 @@ class Mollie extends PaymentModule
     public function install()
     {
         if (version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION) === -1) {
-            $this->_errors[] = $this->l('Your php version is too old. This mode supports php5.6 and newer');
+            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 5.6 and higher versions.');
             return false;
         }
 
