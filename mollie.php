@@ -260,15 +260,6 @@ class Mollie extends PaymentModule
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
         ]);
 
-        $updateMessage = '';
-        if (!static::ADDONS) {
-            $updateMessage = defined('_TB_VERSION_')
-                ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
-                : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
-            if ($updateMessage === 'updateAvailable') {
-                $updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
-            }
-        }
         $resultMessage = '';
         $warningMessage = '';
 
@@ -287,7 +278,6 @@ class Mollie extends PaymentModule
         /** @var Mollie\Service\LanguageService $langService */
         $langService = $this->getContainer(Mollie\Service\LanguageService::class);
         $data = [
-            'update_message' => $updateMessage,
             'title_status' => $this->l('%s statuses:'),
             'title_visual' => $this->l('Visual settings:'),
             'title_debug' => $this->l('Debug info:'),
@@ -323,7 +313,6 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign($data);
 
         $html = '';
-//        $html .= $updateMessage;
         $html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
 
 

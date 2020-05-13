@@ -1,4 +1,37 @@
 <?php
+/**
+ * Copyright (c) 2012-2020, Mollie B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Builder;
 
@@ -13,9 +46,12 @@ use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
 use Mollie\Service\MolCarrierInformationService;
+use Mollie\Utility\AssortUtility;
+use Mollie\Utility\TagsUtility;
 use OrderState;
 use Smarty;
 use Tools;
+use Translate;
 
 class FormBuilder
 {
@@ -128,7 +164,7 @@ class FormBuilder
                     'type' => 'text',
                     'label' => $this->module->l('API Key'),
                     'tab' => $generalSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
+                    'desc' => TagsUtility::ppTags(
                         $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
@@ -149,12 +185,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ],
                     ],
                     'desc' => $this->module->display(
@@ -165,7 +201,7 @@ class FormBuilder
                     'type' => 'text',
                     'label' => $this->module->l('API Key'),
                     'tab' => $generalSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
+                    'desc' => TagsUtility::ppTags(
                         $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
@@ -186,12 +222,12 @@ class FormBuilder
                     [
                         'id' => 'active_on',
                         'value' => true,
-                        'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
                     ],
                     [
                         'id' => 'active_off',
                         'value' => false,
-                        'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                     ],
                 ],
             ];
@@ -200,7 +236,7 @@ class FormBuilder
                 'type' => 'text',
                 'label' => $this->module->l('Profile ID'),
                 'tab' => $generalSettings,
-                'desc' => \Mollie\Utility\TagsUtility::ppTags(
+                'desc' => TagsUtility::ppTags(
                     $this->module->l('You can find your API key in your [1]Mollie Profile[/1];'),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
@@ -253,7 +289,7 @@ class FormBuilder
                 'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
                 'countries' => $this->countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
-                'displayErrors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
+                'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }
 
@@ -270,7 +306,7 @@ class FormBuilder
             'type' => 'select',
             'label' => $this->module->l('Send locale for payment screen'),
             'tab' => $advancedSettings,
-            'desc' => \Mollie\Utility\TagsUtility::ppTags(
+            'desc' => TagsUtility::ppTags(
                 $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
@@ -343,10 +379,10 @@ class FormBuilder
                 PaymentStatus::STATUS_EXPIRED,
                 RefundStatus::STATUS_REFUNDED,
                 PaymentStatus::STATUS_OPEN,
-                \Mollie\Config\Config::PARTIAL_REFUND_CODE,
+                Config::PARTIAL_REFUND_CODE,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], ['paid', \Mollie\Config\Config::PARTIAL_REFUND_CODE])) {
+            if (!in_array($status['name'], ['paid', Config::PARTIAL_REFUND_CODE])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],
@@ -357,12 +393,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ],
                     ],
                 ];
@@ -417,7 +453,7 @@ class FormBuilder
                 'type' => 'text',
                 'label' => $this->module->l('CSS file'),
                 'tab' => $advancedSettings,
-                'desc' => \Mollie\Utility\TagsUtility::ppTags(
+                'desc' => TagsUtility::ppTags(
                     $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/front/kbd.tpl')]
                 ),
@@ -445,12 +481,12 @@ class FormBuilder
                 [
                     'id' => 'active_on',
                     'value' => true,
-                    'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
                 ],
                 [
                     'id' => 'active_off',
                     'value' => false,
-                    'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                 ],
             ],
             'depends' => Config::MOLLIE_API,
@@ -490,7 +526,7 @@ class FormBuilder
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-        \Mollie\Utility\AssortUtility::aasort($orderStatuses, 'id_order_state');
+        AssortUtility::aasort($orderStatuses, 'id_order_state');
 
         $this->smarty->assign([
             'logs' => $this->link->getAdminLink('AdminLogs')
@@ -515,12 +551,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => \Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => \Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
                         ],
                     ],
                 ],
@@ -528,7 +564,7 @@ class FormBuilder
                     'type' => 'select',
                     'label' => $this->module->l('Log level'),
                     'tab' => $advancedSettings,
-                    'desc' => \Mollie\Utility\TagsUtility::ppTags(
+                    'desc' => TagsUtility::ppTags(
                         $this->module->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
                         [
                             $this->module->display($this->module->getPathUri(), 'views/templates/admin/view_logs.tpl')

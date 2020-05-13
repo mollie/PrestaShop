@@ -1,4 +1,37 @@
 <?php
+/**
+ * Copyright (c) 2012-2020, Mollie B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Service;
 
@@ -7,14 +40,20 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
+use ErrorException;
 use Exception;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\CartPriceUtility;
+use Mollie\Utility\UrlPathUtility;
 use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
+use PrestaShop\PrestaShop\Adapter\CoreException;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use SmartyException;
 use Tools;
 
 class ApiService
@@ -150,7 +189,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
+            foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = [
                         'id' => $id,
@@ -158,9 +197,9 @@ class ApiService
                         'enabled' => true,
                         'available' => !in_array($id, $notAvailable),
                         'image' => [
-                            'size1x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
+                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
+                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
+                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
                         ],
                         'issuers' => null,
                     ];
@@ -173,9 +212,9 @@ class ApiService
                         'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'available' => !in_array($id, $notAvailable),
                         'image' => [
-                            'size1x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
+                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
+                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
+                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
                         ],
                         'issuers' => null,
                     ];
@@ -236,7 +275,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
+            foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
                 $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
@@ -268,10 +307,10 @@ class ApiService
      * @return array|null
      *
      * @throws ApiException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \SmartyException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws CoreException
+     * @throws SmartyException
      * @since 3.3.0
      * @since 3.3.2 $process option
      */
@@ -334,7 +373,7 @@ class ApiService
      * @param string $transactionId
      * @return array|null
      *
-     * @throws \ErrorException
+     * @throws ErrorException
      * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 $process option
