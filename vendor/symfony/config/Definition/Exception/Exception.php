@@ -10,11 +10,13 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
 
+use RuntimeException;
+
 /**
  * Base exception for all configuration exceptions.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Exception extends \RuntimeException
+class Exception extends RuntimeException
 {
 }

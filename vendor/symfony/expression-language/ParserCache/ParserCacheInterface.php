@@ -10,8 +10,11 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache;
 
-@\trigger_error('The ' . __NAMESPACE__ . '\\ParserCacheInterface interface is deprecated since Symfony 3.2 and will be removed in 4.0. Use Psr\\Cache\\CacheItemPoolInterface instead.', \E_USER_DEPRECATED);
+@trigger_error('The ' . __NAMESPACE__ . '\\ParserCacheInterface interface is deprecated since Symfony 3.2 and will be removed in 4.0. Use Psr\\Cache\\CacheItemPoolInterface instead.', E_USER_DEPRECATED);
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
 /**
  * @author Adrien Brault <adrien.brault@gmail.com>
  *
@@ -25,7 +28,7 @@ interface ParserCacheInterface
      * @param string           $key        The cache key
      * @param ParsedExpression $expression A ParsedExpression instance to store in the cache
      */
-    public function save($key, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression $expression);
+    public function save($key, ParsedExpression $expression);
     /**
      * Fetches an expression from the cache.
      *

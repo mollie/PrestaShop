@@ -15,10 +15,10 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter;
 /**
  * @group time-sensitive
  */
-class NamespacedProxyAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\ProxyAdapterTest
+class NamespacedProxyAdapterTest extends ProxyAdapterTest
 {
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter($defaultLifetime), 'foo', $defaultLifetime);
+        return new ProxyAdapter(new ArrayAdapter($defaultLifetime), 'foo', $defaultLifetime);
     }
 }

@@ -9,6 +9,15 @@
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation;
 
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number as DecimalNumber;
+use function function_exists;
+use function max;
+use function str_pad;
+use function strlen;
+use function strrev;
+use const PHP_INT_MAX;
+use const STR_PAD_LEFT;
+use const STR_PAD_RIGHT;
+
 /**
  * Computes the addition of two decimal numbers
  */
@@ -25,7 +34,7 @@ class Addition
      */
     public function __construct()
     {
-        $this->maxSafeIntStringSize = \strlen((string) \PHP_INT_MAX) - 1;
+        $this->maxSafeIntStringSize = strlen((string) PHP_INT_MAX) - 1;
     }
     /**
      * Performs the addition
@@ -35,9 +44,9 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function compute(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function compute(DecimalNumber $a, DecimalNumber $b)
     {
-        if (\function_exists('_PhpScoper5ea00cc67502b\\bcadd')) {
+        if (function_exists('_PhpScoper5ea00cc67502b\\bcadd')) {
             return $this->computeUsingBcMath($a, $b);
         }
         return $this->computeWithoutBcMath($a, $b);
@@ -50,11 +59,11 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function computeUsingBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function computeUsingBcMath(DecimalNumber $a, DecimalNumber $b)
     {
         $precision1 = $a->getPrecision();
         $precision2 = $b->getPrecision();
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number((string) bcadd($a, $b, \max($precision1, $precision2)));
+        return new DecimalNumber((string) bcadd($a, $b, max($precision1, $precision2)));
     }
     /**
      * Performs the addition without BC Math
@@ -64,7 +73,7 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function computeWithoutBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function computeWithoutBcMath(DecimalNumber $a, DecimalNumber $b)
     {
         if ($a->isNegative()) {
             if ($b->isNegative()) {
@@ -101,14 +110,14 @@ class Addition
             return $a;
         }
         // pad coefficients with leading/trailing zeroes
-        list($coeff1, $coeff2) = $this->normalizeCoefficients($a, $b);
+        [$coeff1, $coeff2] = $this->normalizeCoefficients($a, $b);
         // compute the coefficient sum
         $sum = $this->addStrings($coeff1, $coeff2);
         // both signs are equal, so we can use either
         $sign = $a->getSign();
         // keep the bigger exponent
-        $exponent = \max($a->getExponent(), $b->getExponent());
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($sign . $sum, $exponent);
+        $exponent = max($a->getExponent(), $b->getExponent());
+        return new DecimalNumber($sign . $sum, $exponent);
     }
     /**
      * Normalizes coefficients by adding leading or trailing zeroes as needed so that both are the same length
@@ -118,7 +127,7 @@ class Addition
      *
      * @return array An array containing the normalized coefficients
      */
-    private function normalizeCoefficients(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    private function normalizeCoefficients(DecimalNumber $a, DecimalNumber $b)
     {
         $exp1 = $a->getExponent();
         $exp2 = $b->getExponent();
@@ -126,17 +135,17 @@ class Addition
         $coeff2 = $b->getCoefficient();
         // add trailing zeroes if needed
         if ($exp1 > $exp2) {
-            $coeff2 = \str_pad($coeff2, \strlen($coeff2) + $exp1 - $exp2, '0', \STR_PAD_RIGHT);
+            $coeff2 = str_pad($coeff2, strlen($coeff2) + $exp1 - $exp2, '0', STR_PAD_RIGHT);
         } elseif ($exp1 < $exp2) {
-            $coeff1 = \str_pad($coeff1, \strlen($coeff1) + $exp2 - $exp1, '0', \STR_PAD_RIGHT);
+            $coeff1 = str_pad($coeff1, strlen($coeff1) + $exp2 - $exp1, '0', STR_PAD_RIGHT);
         }
-        $len1 = \strlen($coeff1);
-        $len2 = \strlen($coeff2);
+        $len1 = strlen($coeff1);
+        $len2 = strlen($coeff2);
         // add leading zeroes if needed
         if ($len1 > $len2) {
-            $coeff2 = \str_pad($coeff2, $len1, '0', \STR_PAD_LEFT);
+            $coeff2 = str_pad($coeff2, $len1, '0', STR_PAD_LEFT);
         } elseif ($len1 < $len2) {
-            $coeff1 = \str_pad($coeff1, $len2, '0', \STR_PAD_LEFT);
+            $coeff1 = str_pad($coeff1, $len2, '0', STR_PAD_LEFT);
         }
         return [$coeff1, $coeff2];
     }
@@ -151,17 +160,17 @@ class Addition
      *
      * @return string
      */
-    private function addStrings($number1, $number2, $fractional = \false)
+    private function addStrings($number1, $number2, $fractional = false)
     {
         // optimization - numbers can be treated as integers as long as they don't overflow the max int size
-        if ('0' !== $number1[0] && '0' !== $number2[0] && \strlen($number1) <= $this->maxSafeIntStringSize && \strlen($number2) <= $this->maxSafeIntStringSize) {
+        if ('0' !== $number1[0] && '0' !== $number2[0] && strlen($number1) <= $this->maxSafeIntStringSize && strlen($number2) <= $this->maxSafeIntStringSize) {
             return (string) ((int) $number1 + (int) $number2);
         }
         // find out which of the strings is longest
-        $maxLength = \max(\strlen($number1), \strlen($number2));
+        $maxLength = max(strlen($number1), strlen($number2));
         // add leading or trailing zeroes as needed
-        $number1 = \str_pad($number1, $maxLength, '0', $fractional ? \STR_PAD_RIGHT : \STR_PAD_LEFT);
-        $number2 = \str_pad($number2, $maxLength, '0', $fractional ? \STR_PAD_RIGHT : \STR_PAD_LEFT);
+        $number1 = str_pad($number1, $maxLength, '0', $fractional ? STR_PAD_RIGHT : STR_PAD_LEFT);
+        $number2 = str_pad($number2, $maxLength, '0', $fractional ? STR_PAD_RIGHT : STR_PAD_LEFT);
         $result = '';
         $carryOver = 0;
         for ($i = $maxLength - 1; 0 <= $i; $i--) {
@@ -172,6 +181,6 @@ class Addition
         if ($carryOver > 0) {
             $result .= '1';
         }
-        return \strrev($result);
+        return strrev($result);
     }
 }

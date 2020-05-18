@@ -12,10 +12,22 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Paramete
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use function gettype;
+use function is_numeric;
+use function is_scalar;
+use function md5;
+use function mt_rand;
+use function preg_match;
+use function sprintf;
+use function str_replace;
+use function strpos;
+use function substr;
+use function uniqid;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvPlaceholderParameterBag extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag
+class EnvPlaceholderParameterBag extends ParameterBag
 {
     private $envPlaceholders = [];
     private $providedTypes = [];
@@ -24,25 +36,25 @@ class EnvPlaceholderParameterBag extends \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function get($name)
     {
-        if (0 === \strpos($name, 'env(') && ')' === \substr($name, -1) && 'env()' !== $name) {
-            $env = \substr($name, 4, -1);
+        if (0 === strpos($name, 'env(') && ')' === substr($name, -1) && 'env()' !== $name) {
+            $env = substr($name, 4, -1);
             if (isset($this->envPlaceholders[$env])) {
                 foreach ($this->envPlaceholders[$env] as $placeholder) {
                     return $placeholder;
                     // return first result
                 }
             }
-            if (!\preg_match('/^(?:\\w++:)*+\\w++$/', $env)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid "%s" name: only "word" characters are allowed.', $name));
+            if (!preg_match('/^(?:\\w++:)*+\\w++$/', $env)) {
+                throw new InvalidArgumentException(sprintf('Invalid "%s" name: only "word" characters are allowed.', $name));
             }
             if ($this->has($name)) {
                 $defaultValue = parent::get($name);
-                if (null !== $defaultValue && !\is_scalar($defaultValue)) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of an env() parameter must be scalar or null, but "%s" given to "%s".', \gettype($defaultValue), $name));
+                if (null !== $defaultValue && !is_scalar($defaultValue)) {
+                    throw new RuntimeException(sprintf('The default value of an env() parameter must be scalar or null, but "%s" given to "%s".', gettype($defaultValue), $name));
                 }
             }
-            $uniqueName = \md5($name . \uniqid(\mt_rand(), \true));
-            $placeholder = \sprintf('env_%s_%s', \str_replace(':', '_', $env), $uniqueName);
+            $uniqueName = md5($name . uniqid(mt_rand(), true));
+            $placeholder = sprintf('env_%s_%s', str_replace(':', '_', $env), $uniqueName);
             $this->envPlaceholders[$env][$placeholder] = $placeholder;
             return $placeholder;
         }
@@ -98,10 +110,10 @@ class EnvPlaceholderParameterBag extends \_PhpScoper5ea00cc67502b\Symfony\Compon
             if (!$this->has($name = "env({$env})")) {
                 continue;
             }
-            if (\is_numeric($default = $this->parameters[$name])) {
+            if (is_numeric($default = $this->parameters[$name])) {
                 $this->parameters[$name] = (string) $default;
-            } elseif (null !== $default && !\is_scalar($default)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of env parameter "%s" must be scalar or null, "%s" given.', $env, \gettype($default)));
+            } elseif (null !== $default && !is_scalar($default)) {
+                throw new RuntimeException(sprintf('The default value of env parameter "%s" must be scalar or null, "%s" given.', $env, gettype($default)));
             }
         }
     }

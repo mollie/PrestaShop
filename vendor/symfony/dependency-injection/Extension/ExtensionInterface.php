@@ -11,6 +11,8 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use InvalidArgumentException;
+
 /**
  * ExtensionInterface is the interface implemented by container extension classes.
  *
@@ -21,9 +23,9 @@ interface ExtensionInterface
     /**
      * Loads a specific configuration.
      *
-     * @throws \InvalidArgumentException When provided tag is not defined in this extension
+     * @throws InvalidArgumentException When provided tag is not defined in this extension
      */
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container);
+    public function load(array $configs, ContainerBuilder $container);
     /**
      * Returns the namespace to be used for this extension (XML namespace).
      *

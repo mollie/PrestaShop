@@ -11,6 +11,8 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceChecker;
+use function is_file;
+
 /**
  * ConfigCache caches arbitrary content in files on disk.
  *
@@ -21,7 +23,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResour
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ConfigCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ResourceCheckerConfigCache
+class ConfigCache extends ResourceCheckerConfigCache
 {
     private $debug;
     /**
@@ -32,8 +34,8 @@ class ConfigCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Reso
     {
         $this->debug = (bool) $debug;
         $checkers = [];
-        if (\true === $this->debug) {
-            $checkers = [new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceChecker()];
+        if (true === $this->debug) {
+            $checkers = [new SelfCheckingResourceChecker()];
         }
         parent::__construct($file, $checkers);
     }
@@ -47,8 +49,8 @@ class ConfigCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Reso
      */
     public function isFresh()
     {
-        if (!$this->debug && \is_file($this->getPath())) {
-            return \true;
+        if (!$this->debug && is_file($this->getPath())) {
+            return true;
         }
         return parent::isFresh();
     }

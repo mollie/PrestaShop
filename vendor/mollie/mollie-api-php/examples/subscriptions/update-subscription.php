@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * Updating an existing subscription via the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -27,6 +31,6 @@ try {
     $subscription->description = 'Monthly subscription';
     $subscription->update();
     echo "<p>Subscription updated: " . $subscription->id . "</p>";
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

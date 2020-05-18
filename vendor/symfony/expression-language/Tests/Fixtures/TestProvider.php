@@ -13,18 +13,18 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Fix
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionPhpFunction;
-class TestProvider implements \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface
+class TestProvider implements ExpressionFunctionProviderInterface
 {
     public function getFunctions()
     {
-        return [new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction('identity', function ($input) {
+        return [new ExpressionFunction('identity', function ($input) {
             return $input;
         }, function (array $values, $input) {
             return $input;
-        }), \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp('strtoupper'), \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp('\\strtolower'), \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\Tests\\Fixtures\\fn_namespaced', 'fn_namespaced')];
+        }), ExpressionFunction::fromPhp('strtoupper'), ExpressionFunction::fromPhp('\\strtolower'), ExpressionFunction::fromPhp('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\Tests\\Fixtures\\fn_namespaced', 'fn_namespaced')];
     }
 }
 function fn_namespaced()
 {
-    return \true;
+    return true;
 }

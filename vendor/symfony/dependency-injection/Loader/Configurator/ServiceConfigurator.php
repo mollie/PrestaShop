@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
+class ServiceConfigurator extends AbstractServiceConfigurator
 {
     const FACTORY = 'services';
     use Traits\AbstractTrait;
@@ -41,7 +41,7 @@ class ServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
     private $container;
     private $instanceof;
     private $allowParent;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $instanceof, $allowParent, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator $parent, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id, array $defaultTags)
+    public function __construct(ContainerBuilder $container, array $instanceof, $allowParent, ServicesConfigurator $parent, Definition $definition, $id, array $defaultTags)
     {
         $this->container = $container;
         $this->instanceof = $instanceof;
@@ -52,7 +52,7 @@ class ServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
     {
         parent::__destruct();
         $this->container->removeBindings($this->id);
-        if (!$this->definition instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition) {
+        if (!$this->definition instanceof ChildDefinition) {
             $this->container->setDefinition($this->id, $this->definition->setInstanceofConditionals($this->instanceof));
         } else {
             $this->container->setDefinition($this->id, $this->definition);

@@ -13,28 +13,33 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 use _PhpScoper5ea00cc67502b\Doctrine\DBAL\DriverManager;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\PdoCache;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
+use function extension_loaded;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 /**
  * @group time-sensitive
  */
-class PdoDbalCacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class PdoDbalCacheTest extends CacheTestCase
 {
     use PdoPruneableTrait;
     protected static $dbFile;
     public static function setUpBeforeClass()
     {
-        if (!\extension_loaded('pdo_sqlite')) {
+        if (!extension_loaded('pdo_sqlite')) {
             self::markTestSkipped('Extension pdo_sqlite required.');
         }
-        self::$dbFile = \tempnam(\sys_get_temp_dir(), 'sf_sqlite_cache');
-        $pool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\PdoCache(\_PhpScoper5ea00cc67502b\Doctrine\DBAL\DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]));
+        self::$dbFile = tempnam(sys_get_temp_dir(), 'sf_sqlite_cache');
+        $pool = new PdoCache(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]));
         $pool->createTable();
     }
     public static function tearDownAfterClass()
     {
-        @\unlink(self::$dbFile);
+        @unlink(self::$dbFile);
     }
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\PdoCache(\_PhpScoper5ea00cc67502b\Doctrine\DBAL\DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]), '', $defaultLifetime);
+        return new PdoCache(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]), '', $defaultLifetime);
     }
 }

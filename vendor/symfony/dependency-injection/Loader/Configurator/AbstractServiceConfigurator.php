@@ -12,12 +12,12 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\C
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-abstract class AbstractServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
+abstract class AbstractServiceConfigurator extends AbstractConfigurator
 {
     protected $parent;
     protected $id;
     private $defaultTags = [];
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator $parent, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id = null, array $defaultTags = [])
+    public function __construct(ServicesConfigurator $parent, Definition $definition, $id = null, array $defaultTags = [])
     {
         $this->parent = $parent;
         $this->definition = $definition;

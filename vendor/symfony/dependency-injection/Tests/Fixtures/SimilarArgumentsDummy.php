@@ -14,7 +14,7 @@ class SimilarArgumentsDummy
 {
     public $class1;
     public $class2;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass $class1, $token, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass $class2)
+    public function __construct(CaseSensitiveClass $class1, $token, CaseSensitiveClass $class2)
     {
         $this->class1 = $class1;
         $this->class2 = $class2;

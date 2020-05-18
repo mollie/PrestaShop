@@ -12,7 +12,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Nod
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
-abstract class AbstractNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+abstract class AbstractNodeTest extends TestCase
 {
     /**
      * @dataProvider getEvaluateData
@@ -27,7 +27,7 @@ abstract class AbstractNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
      */
     public function testCompile($expected, $node, $functions = [])
     {
-        $compiler = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler($functions);
+        $compiler = new Compiler($functions);
         $node->compile($compiler);
         $this->assertSame($expected, $compiler->getSource());
     }

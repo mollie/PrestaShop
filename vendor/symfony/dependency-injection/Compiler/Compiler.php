@@ -12,6 +12,19 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvParameterException;
+use Exception;
+use ReflectionMethod;
+use ReflectionProperty;
+use function func_get_arg;
+use function func_num_args;
+use function get_class;
+use function sprintf;
+use function str_replace;
+use function strpos;
+use function trigger_error;
+use function trim;
+use const E_USER_DEPRECATED;
+
 /**
  * This class is used to remove circular dependencies between individual passes.
  *
@@ -25,8 +38,8 @@ class Compiler
     private $serviceReferenceGraph;
     public function __construct()
     {
-        $this->passConfig = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PassConfig();
-        $this->serviceReferenceGraph = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraph();
+        $this->passConfig = new PassConfig();
+        $this->serviceReferenceGraph = new ServiceReferenceGraph();
     }
     /**
      * Returns the PassConfig.
@@ -56,8 +69,8 @@ class Compiler
     public function getLoggingFormatter()
     {
         if (null === $this->loggingFormatter) {
-            @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', __METHOD__), \E_USER_DEPRECATED);
-            $this->loggingFormatter = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\LoggingFormatter();
+            @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', __METHOD__), E_USER_DEPRECATED);
+            $this->loggingFormatter = new LoggingFormatter();
         }
         return $this->loggingFormatter;
     }
@@ -67,15 +80,15 @@ class Compiler
      * @param CompilerPassInterface $pass A compiler pass
      * @param string                $type The type of the pass
      */
-    public function addPass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $type = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION)
+    public function addPass(CompilerPassInterface $pass, $type = PassConfig::TYPE_BEFORE_OPTIMIZATION)
     {
-        if (\func_num_args() >= 3) {
-            $priority = \func_get_arg(2);
+        if (func_num_args() >= 3) {
+            $priority = func_get_arg(2);
         } else {
             if (__CLASS__ !== static::class) {
-                $r = new \ReflectionMethod($this, __FUNCTION__);
+                $r = new ReflectionMethod($this, __FUNCTION__);
                 if (__CLASS__ !== $r->getDeclaringClass()->getName()) {
-                    @\trigger_error(\sprintf('Method %s() will have a third `int $priority = 0` argument in version 4.0. Not defining it is deprecated since Symfony 3.2.', __METHOD__), \E_USER_DEPRECATED);
+                    @trigger_error(sprintf('Method %s() will have a third `int $priority = 0` argument in version 4.0. Not defining it is deprecated since Symfony 3.2.', __METHOD__), E_USER_DEPRECATED);
                 }
             }
             $priority = 0;
@@ -91,18 +104,18 @@ class Compiler
      */
     public function addLogMessage($string)
     {
-        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', __METHOD__), \E_USER_DEPRECATED);
+        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', __METHOD__), E_USER_DEPRECATED);
         $this->log[] = $string;
     }
     /**
      * @final
      */
-    public function log(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $message)
+    public function log(CompilerPassInterface $pass, $message)
     {
-        if (\false !== \strpos($message, "\n")) {
-            $message = \str_replace("\n", "\n" . \get_class($pass) . ': ', \trim($message));
+        if (false !== strpos($message, "\n")) {
+            $message = str_replace("\n", "\n" . get_class($pass) . ': ', trim($message));
         }
-        $this->log[] = \get_class($pass) . ': ' . $message;
+        $this->log[] = get_class($pass) . ': ' . $message;
     }
     /**
      * Returns the log.
@@ -116,25 +129,25 @@ class Compiler
     /**
      * Run the Compiler and process all Passes.
      */
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function compile(ContainerBuilder $container)
     {
         try {
             foreach ($this->passConfig->getPasses() as $pass) {
                 $pass->process($container);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $usedEnvs = [];
             $prev = $e;
             do {
                 $msg = $prev->getMessage();
                 if ($msg !== ($resolvedMsg = $container->resolveEnvPlaceholders($msg, null, $usedEnvs))) {
-                    $r = new \ReflectionProperty($prev, 'message');
-                    $r->setAccessible(\true);
+                    $r = new ReflectionProperty($prev, 'message');
+                    $r->setAccessible(true);
                     $r->setValue($prev, $resolvedMsg);
                 }
             } while ($prev = $prev->getPrevious());
             if ($usedEnvs) {
-                $e = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvParameterException($usedEnvs, $e);
+                $e = new EnvParameterException($usedEnvs, $e);
             }
             throw $e;
         } finally {

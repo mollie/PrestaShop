@@ -18,19 +18,19 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 /**
  * @author Roland Franssen <franssen.roland@gmail.com>
  */
-class ResolveTaggedIteratorArgumentPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ResolveTaggedIteratorArgumentPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('a', 'stdClass')->addTag('foo');
         $container->register('b', 'stdClass')->addTag('foo', ['priority' => 20]);
         $container->register('c', 'stdClass')->addTag('foo', ['priority' => 10]);
-        $container->register('d', 'stdClass')->setProperty('foos', new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument('foo'));
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveTaggedIteratorArgumentPass())->process($container);
+        $container->register('d', 'stdClass')->setProperty('foos', new TaggedIteratorArgument('foo'));
+        (new ResolveTaggedIteratorArgumentPass())->process($container);
         $properties = $container->getDefinition('d')->getProperties();
-        $expected = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument('foo');
-        $expected->setValues([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('c'), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('a')]);
+        $expected = new TaggedIteratorArgument('foo');
+        $expected->setValues([new Reference('b'), new Reference('c'), new Reference('a')]);
         $this->assertEquals($expected, $properties['foos']);
     }
 }

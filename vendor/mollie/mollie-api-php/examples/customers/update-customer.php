@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * Updating an existing customer via the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -22,9 +26,9 @@ try {
     $customer->name = "Luke Sky";
     $customer->email = "luke@example.org";
     $customer->locale = "en_US";
-    $customer->metadata->isJedi = \TRUE;
+    $customer->metadata->isJedi = TRUE;
     $customer->update();
-    echo "<p>Customer updated: " . \htmlspecialchars($customer->name) . "</p>";
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+    echo "<p>Customer updated: " . htmlspecialchars($customer->name) . "</p>";
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

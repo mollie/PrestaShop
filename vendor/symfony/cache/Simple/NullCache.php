@@ -14,7 +14,7 @@ use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class NullCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface
+class NullCache implements CacheInterface
 {
     /**
      * {@inheritdoc}
@@ -37,41 +37,41 @@ class NullCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
      */
     public function has($key)
     {
-        return \false;
+        return false;
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        return \true;
+        return true;
     }
     /**
      * {@inheritdoc}
      */
     public function delete($key)
     {
-        return \true;
+        return true;
     }
     /**
      * {@inheritdoc}
      */
     public function deleteMultiple($keys)
     {
-        return \true;
+        return true;
     }
     /**
      * {@inheritdoc}
      */
     public function set($key, $value, $ttl = null)
     {
-        return \false;
+        return false;
     }
     /**
      * {@inheritdoc}
      */
     public function setMultiple($values, $ttl = null)
     {
-        return \false;
+        return false;
     }
 }

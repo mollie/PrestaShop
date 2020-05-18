@@ -11,11 +11,16 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\RedisTrait;
-class RedisCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache
+use Predis\Client;
+use Redis;
+use RedisArray;
+use RedisCluster;
+
+class RedisCache extends AbstractCache
 {
     use RedisTrait;
     /**
-     * @param \Redis|\RedisArray|\RedisCluster|\Predis\Client $redisClient
+     * @param Redis|RedisArray|RedisCluster|Client $redisClient
      * @param string                                          $namespace
      * @param int                                             $defaultLifetime
      */

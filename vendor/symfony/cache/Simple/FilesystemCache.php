@@ -12,7 +12,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\FilesystemTrait;
-class FilesystemCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface
+class FilesystemCache extends AbstractCache implements PruneableInterface
 {
     use FilesystemTrait;
     /**

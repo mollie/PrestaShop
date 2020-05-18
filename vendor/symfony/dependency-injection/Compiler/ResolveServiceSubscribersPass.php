@@ -18,15 +18,15 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveServiceSubscribersPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+class ResolveServiceSubscribersPass extends AbstractRecursivePass
 {
     private $serviceLocator;
-    protected function processValue($value, $isRoot = \false)
+    protected function processValue($value, $isRoot = false)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference && $this->serviceLocator && \_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface::class === $this->container->normalizeId($value)) {
-            return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference($this->serviceLocator);
+        if ($value instanceof Reference && $this->serviceLocator && ContainerInterface::class === $this->container->normalizeId($value)) {
+            return new Reference($this->serviceLocator);
         }
-        if (!$value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition) {
+        if (!$value instanceof Definition) {
             return parent::processValue($value, $isRoot);
         }
         $serviceLocator = $this->serviceLocator;

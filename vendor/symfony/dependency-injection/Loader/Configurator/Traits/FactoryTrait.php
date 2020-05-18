@@ -11,6 +11,11 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function explode;
+use function is_string;
+use function sprintf;
+use function substr_count;
+
 trait FactoryTrait
 {
     /**
@@ -22,11 +27,11 @@ trait FactoryTrait
      */
     public final function factory($factory)
     {
-        if (\is_string($factory) && 1 === \substr_count($factory, ':')) {
-            $factoryParts = \explode(':', $factory);
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid factory "%s": the `service:method` notation is not available when using PHP-based DI configuration. Use "[ref(\'%s\'), \'%s\']" instead.', $factory, $factoryParts[0], $factoryParts[1]));
+        if (is_string($factory) && 1 === substr_count($factory, ':')) {
+            $factoryParts = explode(':', $factory);
+            throw new InvalidArgumentException(sprintf('Invalid factory "%s": the `service:method` notation is not available when using PHP-based DI configuration. Use "[ref(\'%s\'), \'%s\']" instead.', $factory, $factoryParts[0], $factoryParts[1]));
         }
-        $this->definition->setFactory(static::processValue($factory, \true));
+        $this->definition->setFactory(static::processValue($factory, true));
         return $this;
     }
 }

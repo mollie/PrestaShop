@@ -9,6 +9,10 @@
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation;
 
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number as DecimalNumber;
+use function abs;
+use function str_pad;
+use function strlen;
+
 /**
  * Computes relative magnitude changes on a decimal number
  */
@@ -32,7 +36,7 @@ class MagnitudeChange
      *
      * @return DecimalNumber
      */
-    public function compute(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $exponent)
+    public function compute(DecimalNumber $number, $exponent)
     {
         $exponent = (int) $exponent;
         if ($exponent === 0) {
@@ -40,10 +44,10 @@ class MagnitudeChange
         }
         $resultingExponent = $exponent - $number->getExponent();
         if ($resultingExponent <= 0) {
-            return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number->getSign() . $number->getCoefficient(), \abs($resultingExponent));
+            return new DecimalNumber($number->getSign() . $number->getCoefficient(), abs($resultingExponent));
         }
         // add zeroes
-        $targetLength = \strlen($number->getCoefficient()) + $resultingExponent;
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number->getSign() . \str_pad($number->getCoefficient(), $targetLength, '0'));
+        $targetLength = strlen($number->getCoefficient()) + $resultingExponent;
+        return new DecimalNumber($number->getSign() . str_pad($number->getCoefficient(), $targetLength, '0'));
     }
 }

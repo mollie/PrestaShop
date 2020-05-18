@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadExc
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class Loader implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderInterface
+abstract class Loader implements LoaderInterface
 {
     protected $resolver;
     /**
@@ -29,7 +29,7 @@ abstract class Loader implements \_PhpScoper5ea00cc67502b\Symfony\Component\Conf
     /**
      * {@inheritdoc}
      */
-    public function setResolver(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolverInterface $resolver)
+    public function setResolver(LoaderResolverInterface $resolver)
     {
         $this->resolver = $resolver;
     }
@@ -60,9 +60,9 @@ abstract class Loader implements \_PhpScoper5ea00cc67502b\Symfony\Component\Conf
         if ($this->supports($resource, $type)) {
             return $this;
         }
-        $loader = null === $this->resolver ? \false : $this->resolver->resolve($resource, $type);
-        if (\false === $loader) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadException($resource, null, null, null, $type);
+        $loader = null === $this->resolver ? false : $this->resolver->resolve($resource, $type);
+        if (false === $loader) {
+            throw new FileLoaderLoadException($resource, null, null, null, $type);
         }
         return $loader;
     }

@@ -11,6 +11,6 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Builder;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\VariableNodeDefinition as BaseVariableNodeDefinition;
-class VariableNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\VariableNodeDefinition
+class VariableNodeDefinition extends BaseVariableNodeDefinition
 {
 }

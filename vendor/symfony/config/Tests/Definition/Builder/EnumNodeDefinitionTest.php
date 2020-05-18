@@ -12,18 +12,18 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Buil
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
-class EnumNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class EnumNodeDefinitionTest extends TestCase
 {
     public function testWithOneValue()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->values(['foo']);
         $node = $def->getNode();
         $this->assertEquals(['foo'], $node->getValues());
     }
     public function testWithOneDistinctValue()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->values(['foo', 'foo']);
         $node = $def->getNode();
         $this->assertEquals(['foo'], $node->getValues());
@@ -32,26 +32,26 @@ class EnumNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('You must call ->values() on enum nodes.');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->getNode();
     }
     public function testWithNoValues()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('->values() must be called with at least one value.');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->values([]);
     }
     public function testGetNode()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->values(['foo', 'bar']);
         $node = $def->getNode();
         $this->assertEquals(['foo', 'bar'], $node->getValues());
     }
     public function testSetDeprecated()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\EnumNodeDefinition('foo');
+        $def = new EnumNodeDefinition('foo');
         $def->values(['foo', 'bar']);
         $def->setDeprecated('The "%path%" node is deprecated.');
         $node = $def->getNode();

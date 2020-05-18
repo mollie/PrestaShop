@@ -13,13 +13,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression;
-class ParsedExpressionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function serialize;
+use function unserialize;
+
+class ParsedExpressionTest extends TestCase
 {
     public function testSerialization()
     {
-        $expression = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression('25', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('25'));
-        $serializedExpression = \serialize($expression);
-        $unserializedExpression = \unserialize($serializedExpression);
+        $expression = new ParsedExpression('25', new ConstantNode('25'));
+        $serializedExpression = serialize($expression);
+        $unserializedExpression = unserialize($serializedExpression);
         $this->assertEquals($expression, $unserializedExpression);
     }
 }

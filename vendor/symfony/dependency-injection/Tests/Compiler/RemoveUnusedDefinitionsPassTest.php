@@ -18,14 +18,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Resol
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-class RemoveUnusedDefinitionsPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class RemoveUnusedDefinitionsPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo')->setPublic(\false);
-        $container->register('bar')->setPublic(\false);
-        $container->register('moo')->setArguments([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('bar')]);
+        $container = new ContainerBuilder();
+        $container->register('foo')->setPublic(false);
+        $container->register('bar')->setPublic(false);
+        $container->register('moo')->setArguments([new Reference('bar')]);
         $this->process($container);
         $this->assertFalse($container->hasDefinition('foo'));
         $this->assertTrue($container->hasDefinition('bar'));
@@ -33,28 +33,28 @@ class RemoveUnusedDefinitionsPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\F
     }
     public function testProcessRemovesUnusedDefinitionsRecursively()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo')->setPublic(\false);
-        $container->register('bar')->setArguments([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('foo')])->setPublic(\false);
+        $container = new ContainerBuilder();
+        $container->register('foo')->setPublic(false);
+        $container->register('bar')->setArguments([new Reference('foo')])->setPublic(false);
         $this->process($container);
         $this->assertFalse($container->hasDefinition('foo'));
         $this->assertFalse($container->hasDefinition('bar'));
     }
     public function testProcessWorksWithInlinedDefinitions()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo')->setPublic(\false);
-        $container->register('bar')->setArguments([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(null, [new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('foo')])]);
+        $container = new ContainerBuilder();
+        $container->register('foo')->setPublic(false);
+        $container->register('bar')->setArguments([new Definition(null, [new Reference('foo')])]);
         $this->process($container);
         $this->assertTrue($container->hasDefinition('foo'));
         $this->assertTrue($container->hasDefinition('bar'));
     }
     public function testProcessWontRemovePrivateFactory()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo', 'stdClass')->setFactory(['stdClass', 'getInstance'])->setPublic(\false);
-        $container->register('bar', 'stdClass')->setFactory([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('foo'), 'getInstance'])->setPublic(\false);
-        $container->register('foobar')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('bar'));
+        $container = new ContainerBuilder();
+        $container->register('foo', 'stdClass')->setFactory(['stdClass', 'getInstance'])->setPublic(false);
+        $container->register('bar', 'stdClass')->setFactory([new Reference('foo'), 'getInstance'])->setPublic(false);
+        $container->register('foobar')->addArgument(new Reference('bar'));
         $this->process($container);
         $this->assertTrue($container->hasDefinition('foo'));
         $this->assertTrue($container->hasDefinition('bar'));
@@ -62,10 +62,10 @@ class RemoveUnusedDefinitionsPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\F
     }
     public function testProcessConsiderEnvVariablesAsUsedEvenInPrivateServices()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setParameter('env(FOOBAR)', 'test');
-        $container->register('foo')->setArguments(['%env(FOOBAR)%'])->setPublic(\false);
-        $resolvePass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
+        $container->register('foo')->setArguments(['%env(FOOBAR)%'])->setPublic(false);
+        $resolvePass = new ResolveParameterPlaceHoldersPass();
         $resolvePass->process($container);
         $this->process($container);
         $this->assertFalse($container->hasDefinition('foo'));
@@ -73,9 +73,9 @@ class RemoveUnusedDefinitionsPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\F
         $this->assertArrayHasKey('FOOBAR', $envCounters);
         $this->assertSame(1, $envCounters['FOOBAR']);
     }
-    protected function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function process(ContainerBuilder $container)
     {
-        $repeatedPass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatedPass([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass(), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RemoveUnusedDefinitionsPass()]);
+        $repeatedPass = new RepeatedPass([new AnalyzeServiceReferencesPass(), new RemoveUnusedDefinitionsPass()]);
         $repeatedPass->process($container);
     }
 }

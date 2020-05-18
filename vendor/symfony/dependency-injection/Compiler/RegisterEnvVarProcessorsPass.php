@@ -18,48 +18,53 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Inva
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator;
+use function explode;
+use function implode;
+use function in_array;
+use function sprintf;
+
 /**
  * Creates the container.env_var_processors_locator service.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class RegisterEnvVarProcessorsPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class RegisterEnvVarProcessorsPass implements CompilerPassInterface
 {
     private static $allowedTypes = ['array', 'bool', 'float', 'int', 'string'];
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         $bag = $container->getParameterBag();
         $types = [];
         $processors = [];
         foreach ($container->findTaggedServiceIds('container.env_var_processor') as $id => $tags) {
             if (!($r = $container->getReflectionClass($class = $container->getDefinition($id)->getClass()))) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
-            } elseif (!$r->isSubclassOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessorInterface::class)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Service "%s" must implement interface "%s".', $id, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessorInterface::class));
+                throw new InvalidArgumentException(sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
+            } elseif (!$r->isSubclassOf(EnvVarProcessorInterface::class)) {
+                throw new InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, EnvVarProcessorInterface::class));
             }
             foreach ($class::getProvidedTypes() as $prefix => $type) {
-                $processors[$prefix] = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference($id));
+                $processors[$prefix] = new ServiceClosureArgument(new Reference($id));
                 $types[$prefix] = self::validateProvidedTypes($type, $class);
             }
         }
-        if ($bag instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag) {
-            foreach (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor::getProvidedTypes() as $prefix => $type) {
+        if ($bag instanceof EnvPlaceholderParameterBag) {
+            foreach (EnvVarProcessor::getProvidedTypes() as $prefix => $type) {
                 if (!isset($types[$prefix])) {
-                    $types[$prefix] = self::validateProvidedTypes($type, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor::class);
+                    $types[$prefix] = self::validateProvidedTypes($type, EnvVarProcessor::class);
                 }
             }
             $bag->setProvidedTypes($types);
         }
         if ($processors) {
-            $container->register('container.env_var_processors_locator', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator::class)->setPublic(\true)->setArguments([$processors]);
+            $container->register('container.env_var_processors_locator', ServiceLocator::class)->setPublic(true)->setArguments([$processors]);
         }
     }
     private static function validateProvidedTypes($types, $class)
     {
-        $types = \explode('|', $types);
+        $types = explode('|', $types);
         foreach ($types as $type) {
-            if (!\in_array($type, self::$allowedTypes)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid type "%s" returned by "%s::getProvidedTypes()", expected one of "%s".', $type, $class, \implode('", "', self::$allowedTypes)));
+            if (!in_array($type, self::$allowedTypes)) {
+                throw new InvalidArgumentException(sprintf('Invalid type "%s" returned by "%s::getProvidedTypes()", expected one of "%s".', $type, $class, implode('", "', self::$allowedTypes)));
             }
         }
         return $types;

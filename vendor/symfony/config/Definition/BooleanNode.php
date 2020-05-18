@@ -11,20 +11,24 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
+use function gettype;
+use function is_bool;
+use function sprintf;
+
 /**
  * This node represents a Boolean value in the config tree.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class BooleanNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode
+class BooleanNode extends ScalarNode
 {
     /**
      * {@inheritdoc}
      */
     protected function validateType($value)
     {
-        if (!\is_bool($value)) {
-            $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException(\sprintf('Invalid type for path "%s". Expected boolean, but got %s.', $this->getPath(), \gettype($value)));
+        if (!is_bool($value)) {
+            $ex = new InvalidTypeException(sprintf('Invalid type for path "%s". Expected boolean, but got %s.', $this->getPath(), gettype($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }
@@ -38,6 +42,6 @@ class BooleanNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Defi
     protected function isValueEmpty($value)
     {
         // a boolean value cannot be empty
-        return \false;
+        return false;
     }
 }

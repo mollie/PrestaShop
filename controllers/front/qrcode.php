@@ -39,7 +39,10 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\ApiService;
+use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\EnvironmentUtility;
+use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -142,10 +145,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->module->getContainer(\Mollie\Service\ApiService::class);
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getContainer(\Mollie\Service\PaymentMethodService::class);
+        /** @var ApiService $apiService */
+        $apiService = $this->module->getContainer(ApiService::class);
+        /** @var PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
         $orderTotal = $cart->getOrderTotal(true);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL);
@@ -194,7 +197,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
      *
      * @throws PrestaShopException
      * @throws Adapter_Exception
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws SmartyException
      */
     protected function processGetStatus()

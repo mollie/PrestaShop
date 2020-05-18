@@ -16,6 +16,16 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Inva
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression;
+use BadMethodCallException;
+use function call_user_func_array;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function is_scalar;
+use function method_exists;
+use function sprintf;
+
 abstract class AbstractConfigurator
 {
     const FACTORY = 'unknown';
@@ -23,10 +33,10 @@ abstract class AbstractConfigurator
     protected $definition;
     public function __call($method, $args)
     {
-        if (\method_exists($this, 'set' . $method)) {
-            return \call_user_func_array([$this, 'set' . $method], $args);
+        if (method_exists($this, 'set' . $method)) {
+            return call_user_func_array([$this, 'set' . $method], $args);
         }
-        throw new \BadMethodCallException(\sprintf('Call to undefined method "%s::%s()".', static::class, $method));
+        throw new BadMethodCallException(sprintf('Call to undefined method "%s::%s()".', static::class, $method));
     }
     /**
      * Checks that a value is valid, optionally replacing Definition and Reference configurators by their configure value.
@@ -36,38 +46,38 @@ abstract class AbstractConfigurator
      *
      * @return mixed the value, optionally cast to a Definition/Reference
      */
-    public static function processValue($value, $allowServices = \false)
+    public static function processValue($value, $allowServices = false)
     {
-        if (\is_array($value)) {
+        if (is_array($value)) {
             foreach ($value as $k => $v) {
                 $value[$k] = static::processValue($v, $allowServices);
             }
             return $value;
         }
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator) {
-            return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference($value->id, $value->invalidBehavior);
+        if ($value instanceof ReferenceConfigurator) {
+            return new Reference($value->id, $value->invalidBehavior);
         }
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\InlineServiceConfigurator) {
+        if ($value instanceof InlineServiceConfigurator) {
             $def = $value->definition;
             $value->definition = null;
             return $def;
         }
         if ($value instanceof self) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('"%s()" can be used only at the root of service configuration files.', $value::FACTORY));
+            throw new InvalidArgumentException(sprintf('"%s()" can be used only at the root of service configuration files.', $value::FACTORY));
         }
-        switch (\true) {
+        switch (true) {
             case null === $value:
-            case \is_scalar($value):
+            case is_scalar($value):
                 return $value;
-            case $value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface:
-            case $value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition:
-            case $value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression:
-            case $value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter:
-            case $value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference:
+            case $value instanceof ArgumentInterface:
+            case $value instanceof Definition:
+            case $value instanceof Expression:
+            case $value instanceof Parameter:
+            case $value instanceof Reference:
                 if ($allowServices) {
                     return $value;
                 }
         }
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Cannot use values of type "%s" in service configuration files.', \is_object($value) ? \get_class($value) : \gettype($value)));
+        throw new InvalidArgumentException(sprintf('Cannot use values of type "%s" in service configuration files.', is_object($value) ? get_class($value) : gettype($value)));
     }
 }

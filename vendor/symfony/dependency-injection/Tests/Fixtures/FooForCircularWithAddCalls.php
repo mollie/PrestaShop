@@ -10,9 +10,11 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures;
 
+use stdClass;
+
 class FooForCircularWithAddCalls
 {
-    public function call(\stdClass $argument)
+    public function call(stdClass $argument)
     {
     }
 }

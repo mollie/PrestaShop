@@ -16,11 +16,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\HttpFoundation\Request;
 use _PhpScoper5ea00cc67502b\Symfony\Component\HttpFoundation\Response;
 use _PhpScoper5ea00cc67502b\Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use _PhpScoper5ea00cc67502b\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
+use Exception;
+use function round;
+
 /**
  * @author Aaron Scherer <aequasi@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class CacheDataCollector extends \_PhpScoper5ea00cc67502b\Symfony\Component\HttpKernel\DataCollector\DataCollector implements \_PhpScoper5ea00cc67502b\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface
+class CacheDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     /**
      * @var TraceableAdapter[]
@@ -29,14 +32,14 @@ class CacheDataCollector extends \_PhpScoper5ea00cc67502b\Symfony\Component\Http
     /**
      * @param string $name
      */
-    public function addInstance($name, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapter $instance)
+    public function addInstance($name, TraceableAdapter $instance)
     {
         $this->instances[$name] = $instance;
     }
     /**
      * {@inheritdoc}
      */
-    public function collect(\_PhpScoper5ea00cc67502b\Symfony\Component\HttpFoundation\Request $request, \_PhpScoper5ea00cc67502b\Symfony\Component\HttpFoundation\Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, Exception $exception = null)
     {
         $empty = ['calls' => [], 'config' => [], 'options' => [], 'statistics' => []];
         $this->data = ['instances' => $empty, 'total' => $empty];
@@ -116,7 +119,7 @@ class CacheDataCollector extends \_PhpScoper5ea00cc67502b\Symfony\Component\Http
                     $statistics[$name]['misses'] += $call->misses;
                 } elseif ('hasItem' === $call->name) {
                     ++$statistics[$name]['reads'];
-                    if (\false === $call->result) {
+                    if (false === $call->result) {
                         ++$statistics[$name]['misses'];
                     } else {
                         ++$statistics[$name]['hits'];
@@ -128,7 +131,7 @@ class CacheDataCollector extends \_PhpScoper5ea00cc67502b\Symfony\Component\Http
                 }
             }
             if ($statistics[$name]['reads']) {
-                $statistics[$name]['hit_read_ratio'] = \round(100 * $statistics[$name]['hits'] / $statistics[$name]['reads'], 2);
+                $statistics[$name]['hit_read_ratio'] = round(100 * $statistics[$name]['hits'] / $statistics[$name]['reads'], 2);
             } else {
                 $statistics[$name]['hit_read_ratio'] = null;
             }
@@ -148,7 +151,7 @@ class CacheDataCollector extends \_PhpScoper5ea00cc67502b\Symfony\Component\Http
             }
         }
         if ($totals['reads']) {
-            $totals['hit_read_ratio'] = \round(100 * $totals['hits'] / $totals['reads'], 2);
+            $totals['hit_read_ratio'] = round(100 * $totals['hits'] / $totals['reads'], 2);
         } else {
             $totals['hit_read_ratio'] = null;
         }

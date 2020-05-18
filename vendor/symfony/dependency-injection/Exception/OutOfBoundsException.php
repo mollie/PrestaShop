@@ -13,6 +13,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exceptio
 /**
  * Base OutOfBoundsException for Dependency Injection component.
  */
-class OutOfBoundsException extends \OutOfBoundsException implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ExceptionInterface
+class OutOfBoundsException extends \OutOfBoundsException implements ExceptionInterface
 {
 }

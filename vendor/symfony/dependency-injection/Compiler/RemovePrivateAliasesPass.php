@@ -11,6 +11,8 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use function sprintf;
+
 /**
  * Remove private aliases from the container. They were only used to establish
  * dependencies between services, and these dependencies have been resolved in
@@ -18,19 +20,19 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class RemovePrivateAliasesPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class RemovePrivateAliasesPass implements CompilerPassInterface
 {
     /**
      * Removes private aliases from the ContainerBuilder.
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         foreach ($container->getAliases() as $id => $alias) {
             if ($alias->isPublic() || $alias->isPrivate()) {
                 continue;
             }
             $container->removeAlias($id);
-            $container->log($this, \sprintf('Removed service "%s"; reason: private alias.', $id));
+            $container->log($this, sprintf('Removed service "%s"; reason: private alias.', $id));
         }
     }
 }

@@ -11,6 +11,24 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use function fclose;
+use function fgets;
+use function file_exists;
+use function filemtime;
+use function fopen;
+use function is_writable;
+use function rawurldecode;
+use function rawurlencode;
+use function rtrim;
+use function serialize;
+use function sprintf;
+use function stream_get_contents;
+use function time;
+use function unlink;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Rob Frawley 2nd <rmf@src.run>
@@ -25,17 +43,17 @@ trait FilesystemTrait
      */
     public function prune()
     {
-        $time = \time();
-        $pruned = \true;
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            if (!($h = @\fopen($file, 'rb'))) {
+        $time = time();
+        $pruned = true;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            if (!($h = @fopen($file, 'rb'))) {
                 continue;
             }
-            if (($expiresAt = (int) \fgets($h)) && $time >= $expiresAt) {
-                \fclose($h);
-                $pruned = @\unlink($file) && !\file_exists($file) && $pruned;
+            if (($expiresAt = (int) fgets($h)) && $time >= $expiresAt) {
+                fclose($h);
+                $pruned = @unlink($file) && !file_exists($file) && $pruned;
             } else {
-                \fclose($h);
+                fclose($h);
             }
         }
         return $pruned;
@@ -46,19 +64,19 @@ trait FilesystemTrait
     protected function doFetch(array $ids)
     {
         $values = [];
-        $now = \time();
+        $now = time();
         foreach ($ids as $id) {
             $file = $this->getFile($id);
-            if (!\file_exists($file) || !($h = @\fopen($file, 'rb'))) {
+            if (!file_exists($file) || !($h = @fopen($file, 'rb'))) {
                 continue;
             }
-            if (($expiresAt = (int) \fgets($h)) && $now >= $expiresAt) {
-                \fclose($h);
-                @\unlink($file);
+            if (($expiresAt = (int) fgets($h)) && $now >= $expiresAt) {
+                fclose($h);
+                @unlink($file);
             } else {
-                $i = \rawurldecode(\rtrim(\fgets($h)));
-                $value = \stream_get_contents($h);
-                \fclose($h);
+                $i = rawurldecode(rtrim(fgets($h)));
+                $value = stream_get_contents($h);
+                fclose($h);
                 if ($i === $id) {
                     $values[$id] = parent::unserialize($value);
                 }
@@ -72,20 +90,20 @@ trait FilesystemTrait
     protected function doHave($id)
     {
         $file = $this->getFile($id);
-        return \file_exists($file) && (@\filemtime($file) > \time() || $this->doFetch([$id]));
+        return file_exists($file) && (@filemtime($file) > time() || $this->doFetch([$id]));
     }
     /**
      * {@inheritdoc}
      */
     protected function doSave(array $values, $lifetime)
     {
-        $ok = \true;
-        $expiresAt = $lifetime ? \time() + $lifetime : 0;
+        $ok = true;
+        $expiresAt = $lifetime ? time() + $lifetime : 0;
         foreach ($values as $id => $value) {
-            $ok = $this->write($this->getFile($id, \true), $expiresAt . "\n" . \rawurlencode($id) . "\n" . \serialize($value), $expiresAt) && $ok;
+            $ok = $this->write($this->getFile($id, true), $expiresAt . "\n" . rawurlencode($id) . "\n" . serialize($value), $expiresAt) && $ok;
         }
-        if (!$ok && !\is_writable($this->directory)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException(\sprintf('Cache directory is not writable (%s).', $this->directory));
+        if (!$ok && !is_writable($this->directory)) {
+            throw new CacheException(sprintf('Cache directory is not writable (%s).', $this->directory));
         }
         return $ok;
     }

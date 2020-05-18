@@ -14,7 +14,9 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Lexer;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\TokenStream;
-class LexerTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function strlen;
+
+class LexerTest extends TestCase
 {
     /**
      * @var Lexer
@@ -22,15 +24,15 @@ class LexerTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     private $lexer;
     protected function setUp()
     {
-        $this->lexer = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Lexer();
+        $this->lexer = new Lexer();
     }
     /**
      * @dataProvider getTokenizeData
      */
     public function testTokenize($tokens, $expression)
     {
-        $tokens[] = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('end of expression', null, \strlen($expression) + 1);
-        $this->assertEquals(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\TokenStream($tokens, $expression), $this->lexer->tokenize($expression));
+        $tokens[] = new Token('end of expression', null, strlen($expression) + 1);
+        $this->assertEquals(new TokenStream($tokens, $expression), $this->lexer->tokenize($expression));
     }
     public function testTokenizeThrowsErrorWithMessage()
     {
@@ -48,6 +50,6 @@ class LexerTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function getTokenizeData()
     {
-        return [[[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'a', 3)], '  a  '], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'a', 1)], 'a'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('string', 'foo', 1)], '"foo"'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('number', '3', 1)], '3'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('operator', '+', 1)], '+'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '.', 1)], '.'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '(', 1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('number', '3', 2), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('operator', '+', 4), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('number', '5', 6), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', ')', 7), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('operator', '~', 9), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'foo', 11), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '(', 14), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('string', 'bar', 15), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', ')', 20), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '.', 21), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'baz', 22), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '[', 25), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('number', '4', 26), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', ']', 27)], '(3 + 5) ~ foo("bar").baz[4]'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('operator', '..', 1)], '..'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('string', '#foo', 1)], "'#foo'"], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('string', '#foo', 1)], '"#foo"'], [[new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'foo', 1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '.', 4), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'not', 5), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('operator', 'in', 9), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', '[', 12), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('name', 'bar', 13), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token('punctuation', ']', 16)], 'foo.not in [bar]']];
+        return [[[new Token('name', 'a', 3)], '  a  '], [[new Token('name', 'a', 1)], 'a'], [[new Token('string', 'foo', 1)], '"foo"'], [[new Token('number', '3', 1)], '3'], [[new Token('operator', '+', 1)], '+'], [[new Token('punctuation', '.', 1)], '.'], [[new Token('punctuation', '(', 1), new Token('number', '3', 2), new Token('operator', '+', 4), new Token('number', '5', 6), new Token('punctuation', ')', 7), new Token('operator', '~', 9), new Token('name', 'foo', 11), new Token('punctuation', '(', 14), new Token('string', 'bar', 15), new Token('punctuation', ')', 20), new Token('punctuation', '.', 21), new Token('name', 'baz', 22), new Token('punctuation', '[', 25), new Token('number', '4', 26), new Token('punctuation', ']', 27)], '(3 + 5) ~ foo("bar").baz[4]'], [[new Token('operator', '..', 1)], '..'], [[new Token('string', '#foo', 1)], "'#foo'"], [[new Token('string', '#foo', 1)], '"#foo"'], [[new Token('name', 'foo', 1), new Token('punctuation', '.', 4), new Token('name', 'not', 5), new Token('operator', 'in', 9), new Token('punctuation', '[', 12), new Token('name', 'bar', 13), new Token('punctuation', ']', 16)], 'foo.not in [bar]']];
     }
 }

@@ -11,7 +11,7 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\ApcuTrait;
-class ApcuCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache
+class ApcuCache extends AbstractCache
 {
     use ApcuTrait;
     /**

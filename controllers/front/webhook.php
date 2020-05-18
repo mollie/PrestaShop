@@ -43,6 +43,7 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
+use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -80,7 +81,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws ApiException
      */
     public function initContent()
@@ -99,7 +100,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws ApiException
      */
     protected function executeWebhook()
@@ -132,7 +133,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
@@ -342,8 +343,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 '`transaction_id` = \''.pSQL($transactionId).'\''
             );
         } catch (PrestaShopDatabaseException $e) {
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }
@@ -360,7 +361,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      * @throws Adapter_Exception
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      */
     protected function setCountryContextIfNotSet($payment)
     {

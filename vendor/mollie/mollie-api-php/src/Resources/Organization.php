@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class Organization extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class Organization extends BaseResource
 {
     /**
      * Id of the payment method.
@@ -31,7 +33,7 @@ class Organization extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
     /**
      * The address of the organization.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $address;
     /**
@@ -49,7 +51,7 @@ class Organization extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public $vatNumber;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
 }

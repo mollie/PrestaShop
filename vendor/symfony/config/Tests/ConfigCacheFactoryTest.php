@@ -12,13 +12,15 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCacheFactory;
-class ConfigCacheFactoryTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use stdClass;
+
+class ConfigCacheFactoryTest extends TestCase
 {
     public function testCacheWithInvalidCallback()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type for callback argument. Expected callable, but got "object".');
-        $cacheFactory = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCacheFactory(\true);
-        $cacheFactory->cache('file', new \stdClass());
+        $cacheFactory = new ConfigCacheFactory(true);
+        $cacheFactory->cache('file', new stdClass());
     }
 }

@@ -14,16 +14,30 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Duplic
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\UnsetKeyException;
+use InvalidArgumentException;
+use RuntimeException;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_values;
+use function count;
+use function current;
+use function is_array;
+use function is_int;
+use function json_encode;
+use function range;
+use function sprintf;
+
 /**
  * Represents a prototyped Array node in the config tree.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode
+class PrototypedArrayNode extends ArrayNode
 {
     protected $prototype;
     protected $keyAttribute;
-    protected $removeKeyAttribute = \false;
+    protected $removeKeyAttribute = false;
     protected $minNumberOfElements = 0;
     protected $defaultValue = [];
     protected $defaultChildren;
@@ -65,7 +79,7 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      * @param string $attribute The name of the attribute which value is to be used as a key
      * @param bool   $remove    Whether or not to remove the key
      */
-    public function setKeyAttribute($attribute, $remove = \true)
+    public function setKeyAttribute($attribute, $remove = true)
     {
         $this->keyAttribute = $attribute;
         $this->removeKeyAttribute = $remove;
@@ -84,12 +98,12 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @param string $value
      *
-     * @throws \InvalidArgumentException if the default value is not an array
+     * @throws InvalidArgumentException if the default value is not an array
      */
     public function setDefaultValue($value)
     {
-        if (!\is_array($value)) {
-            throw new \InvalidArgumentException($this->getPath() . ': the default value of an array node has to be an array.');
+        if (!is_array($value)) {
+            throw new InvalidArgumentException($this->getPath() . ': the default value of an array node has to be an array.');
         }
         $this->defaultValue = $value;
     }
@@ -98,7 +112,7 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function hasDefaultValue()
     {
-        return \true;
+        return true;
     }
     /**
      * Adds default children when none are set.
@@ -110,7 +124,7 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
         if (null === $children) {
             $this->defaultChildren = ['defaults'];
         } else {
-            $this->defaultChildren = \is_int($children) && $children > 0 ? \range(1, $children) : (array) $children;
+            $this->defaultChildren = is_int($children) && $children > 0 ? range(1, $children) : (array) $children;
         }
     }
     /**
@@ -124,7 +138,7 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
         if (null !== $this->defaultChildren) {
             $default = $this->prototype->hasDefaultValue() ? $this->prototype->getDefaultValue() : [];
             $defaults = [];
-            foreach (\array_values($this->defaultChildren) as $i => $name) {
+            foreach (array_values($this->defaultChildren) as $i => $name) {
                 $defaults[null === $this->keyAttribute ? $i : $name] = $default;
             }
             return $defaults;
@@ -134,7 +148,7 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
     /**
      * Sets the node prototype.
      */
-    public function setPrototype(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypeNodeInterface $node)
+    public function setPrototype(PrototypeNodeInterface $node)
     {
         $this->prototype = $node;
     }
@@ -152,9 +166,9 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @throws Exception
      */
-    public function addChild(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $node)
+    public function addChild(NodeInterface $node)
     {
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception('A prototyped array node can not have concrete children.');
+        throw new Exception('A prototyped array node can not have concrete children.');
     }
     /**
      * Finalizes the value of this node.
@@ -168,19 +182,19 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     protected function finalizeValue($value)
     {
-        if (\false === $value) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\UnsetKeyException(\sprintf('Unsetting key for path "%s", value: "%s".', $this->getPath(), \json_encode($value)));
+        if (false === $value) {
+            throw new UnsetKeyException(sprintf('Unsetting key for path "%s", value: "%s".', $this->getPath(), json_encode($value)));
         }
         foreach ($value as $k => $v) {
             $prototype = $this->getPrototypeForChild($k);
             try {
                 $value[$k] = $prototype->finalize($v);
-            } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\UnsetKeyException $e) {
+            } catch (UnsetKeyException $e) {
                 unset($value[$k]);
             }
         }
-        if (\count($value) < $this->minNumberOfElements) {
-            $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The path "%s" should have at least %d element(s) defined.', $this->getPath(), $this->minNumberOfElements));
+        if (count($value) < $this->minNumberOfElements) {
+            $ex = new InvalidConfigurationException(sprintf('The path "%s" should have at least %d element(s) defined.', $this->getPath(), $this->minNumberOfElements));
             $ex->setPath($this->getPath());
             throw $ex;
         }
@@ -198,16 +212,16 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     protected function normalizeValue($value)
     {
-        if (\false === $value) {
+        if (false === $value) {
             return $value;
         }
         $value = $this->remapXml($value);
-        $isAssoc = \array_keys($value) !== \range(0, \count($value) - 1);
+        $isAssoc = array_keys($value) !== range(0, count($value) - 1);
         $normalized = [];
         foreach ($value as $k => $v) {
-            if (null !== $this->keyAttribute && \is_array($v)) {
-                if (!isset($v[$this->keyAttribute]) && \is_int($k) && !$isAssoc) {
-                    $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The attribute "%s" must be set for path "%s".', $this->keyAttribute, $this->getPath()));
+            if (null !== $this->keyAttribute && is_array($v)) {
+                if (!isset($v[$this->keyAttribute]) && is_int($k) && !$isAssoc) {
+                    $ex = new InvalidConfigurationException(sprintf('The attribute "%s" must be set for path "%s".', $this->keyAttribute, $this->getPath()));
                     $ex->setPath($this->getPath());
                     throw $ex;
                 } elseif (isset($v[$this->keyAttribute])) {
@@ -217,22 +231,22 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
                         unset($v[$this->keyAttribute]);
                     }
                     // if only "value" is left
-                    if (\array_keys($v) === ['value']) {
+                    if (array_keys($v) === ['value']) {
                         $v = $v['value'];
-                        if ($this->prototype instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode && ($children = $this->prototype->getChildren()) && \array_key_exists('value', $children)) {
-                            $valuePrototype = \current($this->valuePrototypes) ?: clone $children['value'];
+                        if ($this->prototype instanceof ArrayNode && ($children = $this->prototype->getChildren()) && array_key_exists('value', $children)) {
+                            $valuePrototype = current($this->valuePrototypes) ?: clone $children['value'];
                             $valuePrototype->parent = $this;
                             $originalClosures = $this->prototype->normalizationClosures;
-                            if (\is_array($originalClosures)) {
+                            if (is_array($originalClosures)) {
                                 $valuePrototypeClosures = $valuePrototype->normalizationClosures;
-                                $valuePrototype->normalizationClosures = \is_array($valuePrototypeClosures) ? \array_merge($originalClosures, $valuePrototypeClosures) : $originalClosures;
+                                $valuePrototype->normalizationClosures = is_array($valuePrototypeClosures) ? array_merge($originalClosures, $valuePrototypeClosures) : $originalClosures;
                             }
                             $this->valuePrototypes[$k] = $valuePrototype;
                         }
                     }
                 }
-                if (\array_key_exists($k, $normalized)) {
-                    $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\DuplicateKeyException(\sprintf('Duplicate key "%s" for path "%s".', $k, $this->getPath()));
+                if (array_key_exists($k, $normalized)) {
+                    $ex = new DuplicateKeyException(sprintf('Duplicate key "%s" for path "%s".', $k, $this->getPath()));
                     $ex->setPath($this->getPath());
                     throw $ex;
                 }
@@ -255,16 +269,16 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      * @return mixed The merged values
      *
      * @throws InvalidConfigurationException
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function mergeValues($leftSide, $rightSide)
     {
-        if (\false === $rightSide) {
+        if (false === $rightSide) {
             // if this is still false after the last config has been merged the
             // finalization pass will take care of removing this key entirely
-            return \false;
+            return false;
         }
-        if (\false === $leftSide || !$this->performDeepMerging) {
+        if (false === $leftSide || !$this->performDeepMerging) {
             return $rightSide;
         }
         foreach ($rightSide as $k => $v) {
@@ -274,9 +288,9 @@ class PrototypedArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
                 continue;
             }
             // no conflict
-            if (!\array_key_exists($k, $leftSide)) {
+            if (!array_key_exists($k, $leftSide)) {
                 if (!$this->allowNewKeys) {
-                    $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('You are not allowed to define new elements for path "%s". Please define all elements for this path in one config file.', $this->getPath()));
+                    $ex = new InvalidConfigurationException(sprintf('You are not allowed to define new elements for path "%s". Please define all elements for this path in one config file.', $this->getPath()));
                     $ex->setPath($this->getPath());
                     throw $ex;
                 }

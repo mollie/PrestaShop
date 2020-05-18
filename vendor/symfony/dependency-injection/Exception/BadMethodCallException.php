@@ -13,6 +13,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exceptio
 /**
  * Base BadMethodCallException for Dependency Injection component.
  */
-class BadMethodCallException extends \BadMethodCallException implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ExceptionInterface
+class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
 {
 }

@@ -11,12 +11,17 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
+use Serializable;
+use function md5;
+use function serialize;
+use function unserialize;
+
 /**
  * Tracks container parameters.
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class ContainerParametersResource implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface, \Serializable
+class ContainerParametersResource implements ResourceInterface, Serializable
 {
     private $parameters;
     /**
@@ -31,21 +36,21 @@ class ContainerParametersResource implements \_PhpScoper5ea00cc67502b\Symfony\Co
      */
     public function __toString()
     {
-        return 'container_parameters_' . \md5(\serialize($this->parameters));
+        return 'container_parameters_' . md5(serialize($this->parameters));
     }
     /**
      * @internal
      */
     public function serialize()
     {
-        return \serialize($this->parameters);
+        return serialize($this->parameters);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        $this->parameters = \unserialize($serialized);
+        $this->parameters = unserialize($serialized);
     }
     /**
      * @return array Tracked parameters

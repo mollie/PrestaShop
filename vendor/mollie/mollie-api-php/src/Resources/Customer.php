@@ -3,7 +3,11 @@
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+use function array_merge;
+use function json_encode;
+
+class Customer extends BaseResource
 {
     /**
      * @var string
@@ -34,7 +38,7 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
      */
     public $locale;
     /**
-     * @var \stdClass|mixed|null
+     * @var stdClass|mixed|null
      */
     public $metadata;
     /**
@@ -46,7 +50,7 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
      */
     public $createdAt;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
@@ -57,9 +61,9 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = \json_encode(array("name" => $this->name, "email" => $this->email, "locale" => $this->locale, "metadata" => $this->metadata));
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer($this->client));
+        $body = json_encode(array("name" => $this->name, "email" => $this->email, "locale" => $this->locale, "metadata" => $this->metadata));
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return ResourceFactory::createFromApiResult($result, new Customer($this->client));
     }
     /**
      * @param array $options
@@ -166,10 +170,10 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
         $mandates = $this->mandates();
         foreach ($mandates as $mandate) {
             if ($mandate->isValid()) {
-                return \true;
+                return true;
             }
         }
-        return \false;
+        return false;
     }
     /**
      * Helper function to check for specific payment method mandate with status valid
@@ -181,10 +185,10 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
         $mandates = $this->mandates();
         foreach ($mandates as $mandate) {
             if ($mandate->method === $method && $mandate->isValid()) {
-                return \true;
+                return true;
             }
         }
-        return \false;
+        return false;
     }
     /**
      * When accessed by oAuth we want to pass the testmode by default
@@ -195,7 +199,7 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
     {
         $options = [];
         if ($this->client->usesOAuth()) {
-            $options["testmode"] = $this->mode === "test" ? \true : \false;
+            $options["testmode"] = $this->mode === "test" ? true : false;
         }
         return $options;
     }
@@ -207,6 +211,6 @@ class Customer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
      */
     private function withPresetOptions(array $options)
     {
-        return \array_merge($this->getPresetOptions(), $options);
+        return array_merge($this->getPresetOptions(), $options);
     }
 }

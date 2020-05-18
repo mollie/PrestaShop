@@ -3,8 +3,17 @@
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions;
 
 use _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Response;
+use Exception;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
-class ApiException extends \Exception
+use function array_key_exists;
+use function json_decode;
+use function json_last_error;
+use function method_exists;
+use const JSON_ERROR_NONE;
+
+class ApiException extends Exception
 {
     /**
      * @var string
@@ -23,10 +32,10 @@ class ApiException extends \Exception
      * @param int $code
      * @param string|null $field
      * @param \GuzzleHttp\Psr7\Response|null $response
-     * @param \Throwable|null $previous
+     * @param Throwable|null $previous
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function __construct($message = "", $code = 0, $field = null, \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Response $response = null, \Throwable $previous = null)
+    public function __construct($message = "", $code = 0, $field = null, Response $response = null, Throwable $previous = null)
     {
         if (!empty($field)) {
             $this->field = (string) $field;
@@ -47,15 +56,15 @@ class ApiException extends \Exception
         parent::__construct($message, $code, $previous);
     }
     /**
-     * @param \GuzzleHttp\Exception\RequestException $guzzleException
-     * @param \Throwable $previous
+     * @param RequestException $guzzleException
+     * @param Throwable $previous
      * @return \Mollie\Api\Exceptions\ApiException
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public static function createFromGuzzleException($guzzleException, \Throwable $previous = null)
+    public static function createFromGuzzleException($guzzleException, Throwable $previous = null)
     {
         // Not all Guzzle Exceptions implement hasResponse() / getResponse()
-        if (\method_exists($guzzleException, 'hasResponse') && \method_exists($guzzleException, 'getResponse')) {
+        if (method_exists($guzzleException, 'hasResponse') && method_exists($guzzleException, 'getResponse')) {
             if ($guzzleException->hasResponse()) {
                 return static::createFromResponse($guzzleException->getResponse());
             }
@@ -63,12 +72,12 @@ class ApiException extends \Exception
         return new static($guzzleException->getMessage(), $guzzleException->getCode(), null, $previous);
     }
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param \Throwable|null $previous
+     * @param ResponseInterface $response
+     * @param Throwable|null $previous
      * @return \Mollie\Api\Exceptions\ApiException
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public static function createFromResponse($response, \Throwable $previous = null)
+    public static function createFromResponse($response, Throwable $previous = null)
     {
         $object = static::parseResponseBody($response);
         $field = null;
@@ -118,7 +127,7 @@ class ApiException extends \Exception
      */
     public function hasLink($key)
     {
-        return \array_key_exists($key, $this->links);
+        return array_key_exists($key, $this->links);
     }
     /**
      * @param $key
@@ -150,8 +159,8 @@ class ApiException extends \Exception
     protected static function parseResponseBody($response)
     {
         $body = (string) $response->getBody();
-        $object = @\json_decode($body);
-        if (\json_last_error() !== \JSON_ERROR_NONE) {
+        $object = @json_decode($body);
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new static("Unable to decode Mollie response: '{$body}'.");
         }
         return $object;

@@ -10,6 +10,8 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader;
 
+use Exception;
+
 /**
  * LoaderInterface is the interface implemented by all loader classes.
  *
@@ -23,7 +25,7 @@ interface LoaderInterface
      * @param mixed       $resource The resource
      * @param string|null $type     The resource type or null if unknown
      *
-     * @throws \Exception If something went wrong
+     * @throws Exception If something went wrong
      */
     public function load($resource, $type = null);
     /**
@@ -44,5 +46,5 @@ interface LoaderInterface
     /**
      * Sets the loader resolver.
      */
-    public function setResolver(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolverInterface $resolver);
+    public function setResolver(LoaderResolverInterface $resolver);
 }

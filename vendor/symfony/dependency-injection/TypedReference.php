@@ -10,12 +10,15 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
 
+use function strncasecmp;
+use function strpos;
+
 /**
  * Represents a PHP type-hinted service reference.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TypedReference extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference
+class TypedReference extends Reference
 {
     private $type;
     private $requiringClass;
@@ -25,7 +28,7 @@ class TypedReference extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
      * @param string $requiringClass  The class of the service that requires the referenced type
      * @param int    $invalidBehavior The behavior when the service does not exist
      */
-    public function __construct($id, $type, $requiringClass = '', $invalidBehavior = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE)
+    public function __construct($id, $type, $requiringClass = '', $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE)
     {
         parent::__construct($id, $invalidBehavior);
         $this->type = $type;
@@ -41,6 +44,6 @@ class TypedReference extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     }
     public function canBeAutoregistered()
     {
-        return $this->requiringClass && \false !== ($i = \strpos($this->type, '\\')) && 0 === \strncasecmp($this->type, $this->requiringClass, 1 + $i);
+        return $this->requiringClass && false !== ($i = strpos($this->type, '\\')) && 0 === strncasecmp($this->type, $this->requiringClass, 1 + $i);
     }
 }

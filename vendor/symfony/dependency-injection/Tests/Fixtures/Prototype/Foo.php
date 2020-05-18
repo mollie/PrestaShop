@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype;
 
-class Foo implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\FooInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface;
+
+class Foo implements FooInterface, BarInterface
 {
     public function __construct($bar = null)
     {

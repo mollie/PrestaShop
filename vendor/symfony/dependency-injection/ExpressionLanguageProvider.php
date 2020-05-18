@@ -12,6 +12,8 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use function sprintf;
+
 /**
  * Define some ExpressionLanguage functions.
  *
@@ -20,7 +22,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunct
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ExpressionLanguageProvider implements \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface
+class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     private $serviceCompiler;
     public function __construct(callable $serviceCompiler = null)
@@ -29,12 +31,12 @@ class ExpressionLanguageProvider implements \_PhpScoper5ea00cc67502b\Symfony\Com
     }
     public function getFunctions()
     {
-        return [new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction('service', $this->serviceCompiler ?: function ($arg) {
-            return \sprintf('$this->get(%s)', $arg);
+        return [new ExpressionFunction('service', $this->serviceCompiler ?: function ($arg) {
+            return sprintf('$this->get(%s)', $arg);
         }, function (array $variables, $value) {
             return $variables['container']->get($value);
-        }), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction('parameter', function ($arg) {
-            return \sprintf('$this->getParameter(%s)', $arg);
+        }), new ExpressionFunction('parameter', function ($arg) {
+            return sprintf('$this->getParameter(%s)', $arg);
         }, function (array $variables, $value) {
             return $variables['container']->getParameter($value);
         })];

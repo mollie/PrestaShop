@@ -15,11 +15,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ArrayCache;
 /**
  * @group time-sensitive
  */
-class DoctrineCacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class DoctrineCacheTest extends CacheTestCase
 {
     protected $skippedTests = ['testObjectDoesNotChangeInCache' => 'ArrayCache does not use serialize/unserialize', 'testNotUnserializable' => 'ArrayCache does not use serialize/unserialize'];
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\DoctrineCache(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ArrayCache($defaultLifetime), '', $defaultLifetime);
+        return new DoctrineCache(new ArrayCache($defaultLifetime), '', $defaultLifetime);
     }
 }

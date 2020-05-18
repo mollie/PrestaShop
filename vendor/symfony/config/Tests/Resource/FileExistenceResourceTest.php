@@ -12,21 +12,30 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource;
-class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function file_exists;
+use function realpath;
+use function serialize;
+use function sys_get_temp_dir;
+use function time;
+use function touch;
+use function unlink;
+use function unserialize;
+
+class FileExistenceResourceTest extends TestCase
 {
     protected $resource;
     protected $file;
     protected $time;
     protected function setUp()
     {
-        $this->file = \realpath(\sys_get_temp_dir()) . '/tmp.xml';
-        $this->time = \time();
-        $this->resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file);
+        $this->file = realpath(sys_get_temp_dir()) . '/tmp.xml';
+        $this->time = time();
+        $this->resource = new FileExistenceResource($this->file);
     }
     protected function tearDown()
     {
-        if (\file_exists($this->file)) {
-            \unlink($this->file);
+        if (file_exists($this->file)) {
+            unlink($this->file);
         }
     }
     public function testToString()
@@ -39,21 +48,21 @@ class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
     }
     public function testIsFreshWithExistingResource()
     {
-        \touch($this->file, $this->time);
-        $serialized = \serialize(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
-        $resource = \unserialize($serialized);
+        touch($this->file, $this->time);
+        $serialized = serialize(new FileExistenceResource($this->file));
+        $resource = unserialize($serialized);
         $this->assertTrue($resource->isFresh($this->time), '->isFresh() returns true if the resource is still present');
-        \unlink($this->file);
-        $resource = \unserialize($serialized);
+        unlink($this->file);
+        $resource = unserialize($serialized);
         $this->assertFalse($resource->isFresh($this->time), '->isFresh() returns false if the resource has been deleted');
     }
     public function testIsFreshWithAbsentResource()
     {
-        $serialized = \serialize(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
-        $resource = \unserialize($serialized);
+        $serialized = serialize(new FileExistenceResource($this->file));
+        $resource = unserialize($serialized);
         $this->assertTrue($resource->isFresh($this->time), '->isFresh() returns true if the resource is still absent');
-        \touch($this->file, $this->time);
-        $resource = \unserialize($serialized);
+        touch($this->file, $this->time);
+        $resource = unserialize($serialized);
         $this->assertFalse($resource->isFresh($this->time), '->isFresh() returns false if the resource has been created');
     }
 }

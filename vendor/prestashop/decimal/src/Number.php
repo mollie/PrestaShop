@@ -8,8 +8,25 @@
  */
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal;
 
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Addition;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Division;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\MagnitudeChange;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Multiplication;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Subtraction;
 use InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding;
+use function gettype;
+use function is_string;
+use function ltrim;
+use function preg_match;
+use function print_r;
+use function sprintf;
+use function str_pad;
+use function strlen;
+use function substr;
+use const STR_PAD_LEFT;
+
 /**
  * Decimal number.
  *
@@ -21,7 +38,7 @@ class Number
      * Indicates if the number is negative
      * @var bool
      */
-    private $isNegative = \false;
+    private $isNegative = false;
     /**
      * Integer representation of this number
      * @var string
@@ -58,18 +75,18 @@ class Number
      */
     public function __construct($number, $exponent = null)
     {
-        if (!\is_string($number)) {
-            throw new \InvalidArgumentException(\sprintf('Invalid type - expected string, but got (%s) "%s"', \gettype($number), \print_r($number, \true)));
+        if (!is_string($number)) {
+            throw new InvalidArgumentException(sprintf('Invalid type - expected string, but got (%s) "%s"', gettype($number), print_r($number, true)));
         }
         if (null === $exponent) {
-            $decimalNumber = \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Builder::parseNumber($number);
+            $decimalNumber = Builder::parseNumber($number);
             $number = $decimalNumber->getSign() . $decimalNumber->getCoefficient();
             $exponent = $decimalNumber->getExponent();
         }
         $this->initFromScientificNotation($number, $exponent);
         if ('0' === $this->coefficient) {
             // make sure the sign is always positive for zero
-            $this->isNegative = \false;
+            $this->isNegative = false;
         }
     }
     /**
@@ -86,10 +103,10 @@ class Number
         if (0 === $this->exponent) {
             return $this->coefficient;
         }
-        if ($this->exponent >= \strlen($this->coefficient)) {
+        if ($this->exponent >= strlen($this->coefficient)) {
             return '0';
         }
-        return \substr($this->coefficient, 0, -$this->exponent);
+        return substr($this->coefficient, 0, -$this->exponent);
     }
     /**
      * Returns the fractional part of the number.
@@ -102,10 +119,10 @@ class Number
         if (0 === $this->exponent || '0' === $this->coefficient) {
             return '0';
         }
-        if ($this->exponent > \strlen($this->coefficient)) {
-            return \str_pad($this->coefficient, $this->exponent, '0', \STR_PAD_LEFT);
+        if ($this->exponent > strlen($this->coefficient)) {
+            return str_pad($this->coefficient, $this->exponent, '0', STR_PAD_LEFT);
         }
-        return \substr($this->coefficient, -$this->exponent);
+        return substr($this->coefficient, -$this->exponent);
     }
     /**
      * Returns the number of digits in the fractional part.
@@ -185,7 +202,7 @@ class Number
      *
      * @return string
      */
-    public function toPrecision($precision, $roundingMode = \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE)
+    public function toPrecision($precision, $roundingMode = Rounding::ROUND_TRUNCATE)
     {
         $currentPrecision = $this->getPrecision();
         if ($precision === $currentPrecision) {
@@ -193,10 +210,10 @@ class Number
         }
         $return = $this;
         if ($precision < $currentPrecision) {
-            $return = (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding())->compute($this, $precision, $roundingMode);
+            $return = (new Rounding())->compute($this, $precision, $roundingMode);
         }
         if ($precision > $return->getPrecision()) {
-            return $return->getSign() . $return->getIntegerPart() . '.' . \str_pad($return->getFractionalPart(), $precision, '0');
+            return $return->getSign() . $return->getIntegerPart() . '.' . str_pad($return->getFractionalPart(), $precision, '0');
         }
         return (string) $return;
     }
@@ -218,11 +235,11 @@ class Number
      *
      * @return string
      */
-    public function round($maxDecimals, $roundingMode = \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE)
+    public function round($maxDecimals, $roundingMode = Rounding::ROUND_TRUNCATE)
     {
         $currentPrecision = $this->getPrecision();
         if ($maxDecimals < $currentPrecision) {
-            return (string) (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding())->compute($this, $maxDecimals, $roundingMode);
+            return (string) (new Rounding())->compute($this, $maxDecimals, $roundingMode);
         }
         return (string) $this;
     }
@@ -259,7 +276,7 @@ class Number
      */
     public function plus(self $addend)
     {
-        return (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Addition())->compute($this, $addend);
+        return (new Addition())->compute($this, $addend);
     }
     /**
      * Returns the computed result of subtracting another number to this one
@@ -270,7 +287,7 @@ class Number
      */
     public function minus(self $subtrahend)
     {
-        return (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Subtraction())->compute($this, $subtrahend);
+        return (new Subtraction())->compute($this, $subtrahend);
     }
     /**
      * Returns the computed result of multiplying this number with another one
@@ -281,7 +298,7 @@ class Number
      */
     public function times(self $factor)
     {
-        return (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Multiplication())->compute($this, $factor);
+        return (new Multiplication())->compute($this, $factor);
     }
     /**
      * Returns the computed result of dividing this number by another one, with up to $precision number of decimals.
@@ -299,9 +316,9 @@ class Number
      *
      * @throws Exception\DivisionByZeroException
      */
-    public function dividedBy(self $divisor, $precision = \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Division::DEFAULT_PRECISION)
+    public function dividedBy(self $divisor, $precision = Division::DEFAULT_PRECISION)
     {
-        return (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Division())->compute($this, $divisor, $precision);
+        return (new Division())->compute($this, $divisor, $precision);
     }
     /**
      * Indicates if this number equals zero
@@ -321,7 +338,7 @@ class Number
      */
     public function isGreaterThan(self $number)
     {
-        return 1 === (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison())->compare($this, $number);
+        return 1 === (new Comparison())->compare($this, $number);
     }
     /**
      * Indicates if this number is greater than zero
@@ -350,7 +367,7 @@ class Number
      */
     public function isGreaterOrEqualThan(self $number)
     {
-        return 0 <= (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison())->compare($this, $number);
+        return 0 <= (new Comparison())->compare($this, $number);
     }
     /**
      * Indicates if this number is lower than zero
@@ -379,7 +396,7 @@ class Number
      */
     public function isLowerThan(self $number)
     {
-        return -1 === (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison())->compare($this, $number);
+        return -1 === (new Comparison())->compare($this, $number);
     }
     /**
      * Indicates if this number is lower or equal compared to the provided one
@@ -390,7 +407,7 @@ class Number
      */
     public function isLowerOrEqualThan(self $number)
     {
-        return 0 >= (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison())->compare($this, $number);
+        return 0 >= (new Comparison())->compare($this, $number);
     }
     /**
      * Indicates if this number is positive
@@ -441,7 +458,7 @@ class Number
      */
     public function toMagnitude($exponent)
     {
-        return (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\MagnitudeChange())->compute($this, $exponent);
+        return (new MagnitudeChange())->compute($this, $exponent);
     }
     /**
      * Initializes the number using a coefficient and exponent
@@ -452,15 +469,15 @@ class Number
     private function initFromScientificNotation($coefficient, $exponent)
     {
         if ($exponent < 0) {
-            throw new \InvalidArgumentException(\sprintf('Invalid value for exponent. Expected a positive integer or 0, but got "%s"', $coefficient));
+            throw new InvalidArgumentException(sprintf('Invalid value for exponent. Expected a positive integer or 0, but got "%s"', $coefficient));
         }
-        if (!\preg_match("/^(?<sign>[-+])?(?<integerPart>\\d+)\$/", $coefficient, $parts)) {
-            throw new \InvalidArgumentException(\sprintf('"%s" cannot be interpreted as a number', $coefficient));
+        if (!preg_match("/^(?<sign>[-+])?(?<integerPart>\\d+)\$/", $coefficient, $parts)) {
+            throw new InvalidArgumentException(sprintf('"%s" cannot be interpreted as a number', $coefficient));
         }
         $this->isNegative = '-' === $parts['sign'];
         $this->exponent = (int) $exponent;
         // trim leading zeroes
-        $this->coefficient = \ltrim($parts['integerPart'], '0');
+        $this->coefficient = ltrim($parts['integerPart'], '0');
         // when coefficient is '0' or a sequence of '0'
         if ('' === $this->coefficient) {
             $this->exponent = 0;
@@ -478,7 +495,7 @@ class Number
         $coefficient = $this->getCoefficient();
         // trim trailing zeroes from the fractional part
         // for example 1000e-1 => 100.0
-        if (0 < $exponent && '0' === \substr($coefficient, -1)) {
+        if (0 < $exponent && '0' === substr($coefficient, -1)) {
             $fractionalPart = $this->getFractionalPart();
             $trailingZeroesToRemove = 0;
             for ($i = $exponent - 1; $i >= 0; $i--) {
@@ -488,7 +505,7 @@ class Number
                 $trailingZeroesToRemove++;
             }
             if ($trailingZeroesToRemove > 0) {
-                $this->coefficient = \substr($coefficient, 0, -$trailingZeroesToRemove);
+                $this->coefficient = substr($coefficient, 0, -$trailingZeroesToRemove);
                 $this->exponent = $exponent - $trailingZeroesToRemove;
             }
         }

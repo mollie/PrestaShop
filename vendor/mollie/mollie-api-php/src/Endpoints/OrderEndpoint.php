@@ -5,7 +5,10 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderCollection;
-class OrderEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use stdClass;
+use function strpos;
+
+class OrderEndpoint extends CollectionEndpointAbstract
 {
     protected $resourcePath = "orders";
     /**
@@ -20,20 +23,20 @@ class OrderEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Collec
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order($this->client);
+        return new Order($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API
      * endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param \stdClass $_links
+     * @param stdClass $_links
      *
      * @return OrderCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderCollection($this->client, $count, $_links);
+        return new OrderCollection($this->client, $count, $_links);
     }
     /**
      * Creates a order in Mollie.
@@ -61,8 +64,8 @@ class OrderEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Collec
      */
     public function get($orderId, array $parameters = [])
     {
-        if (empty($orderId) || \strpos($orderId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException("Invalid order ID: '{$orderId}'. An order ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
+        if (empty($orderId) || strpos($orderId, self::RESOURCE_ID_PREFIX) !== 0) {
+            throw new ApiException("Invalid order ID: '{$orderId}'. An order ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
         return parent::rest_read($orderId, $parameters);
     }

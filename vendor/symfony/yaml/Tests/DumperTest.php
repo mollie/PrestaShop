@@ -15,7 +15,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Dumper;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml;
-class DumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use ArrayObject;
+use stdClass;
+use function base64_encode;
+use function file_get_contents;
+use function preg_split;
+use function trim;
+
+class DumperTest extends TestCase
 {
     protected $parser;
     protected $dumper;
@@ -23,8 +30,8 @@ class DumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     protected $array = ['' => 'bar', 'foo' => '#bar', 'foo\'bar' => [], 'bar' => [1, 'foo'], 'foobar' => ['foo' => 'bar', 'bar' => [1, 'foo'], 'foobar' => ['foo' => 'bar', 'bar' => [1, 'foo']]]];
     protected function setUp()
     {
-        $this->parser = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser();
-        $this->dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Dumper();
+        $this->parser = new Parser();
+        $this->dumper = new Dumper();
         $this->path = __DIR__ . '/Fixtures';
     }
     protected function tearDown()
@@ -36,7 +43,7 @@ class DumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testIndentationInConstructor()
     {
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Dumper(7);
+        $dumper = new Dumper(7);
         $expected = <<<'EOF'
 '': bar
 foo: '#bar'
@@ -87,11 +94,11 @@ EOF;
     }
     public function testSpecifications()
     {
-        $files = $this->parser->parse(\file_get_contents($this->path . '/index.yml'));
+        $files = $this->parser->parse(file_get_contents($this->path . '/index.yml'));
         foreach ($files as $file) {
-            $yamls = \file_get_contents($this->path . '/' . $file . '.yml');
+            $yamls = file_get_contents($this->path . '/' . $file . '.yml');
             // split YAMLs documents
-            foreach (\preg_split('/^---( %YAML\\:1\\.0)?/m', $yamls) as $yaml) {
+            foreach (preg_split('/^---( %YAML\\:1\\.0)?/m', $yamls) as $yaml) {
                 if (!$yaml) {
                     continue;
                 }
@@ -101,7 +108,7 @@ EOF;
                 } elseif (isset($test['todo']) && $test['todo']) {
                     // TODO
                 } else {
-                    eval('$expected = ' . \trim($test['php']) . ';');
+                    eval('$expected = ' . trim($test['php']) . ';');
                     $this->assertSame($expected, $this->parser->parse($this->dumper->dump($expected, 10)), $test['test']);
                 }
             }
@@ -179,7 +186,7 @@ EOF;
     }
     public function testObjectSupportEnabled()
     {
-        $dump = $this->dumper->dump(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A(), 'bar' => 1], 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT);
+        $dump = $this->dumper->dump(['foo' => new A(), 'bar' => 1], 0, 0, Yaml::DUMP_OBJECT);
         $this->assertEquals('{ foo: !php/object \'O:30:"Symfony\\Component\\Yaml\\Tests\\A":1:{s:1:"a";s:3:"foo";}\', bar: 1 }', $dump, '->dump() is able to dump objects');
     }
     /**
@@ -187,18 +194,18 @@ EOF;
      */
     public function testObjectSupportEnabledPassingTrue()
     {
-        $dump = $this->dumper->dump(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A(), 'bar' => 1], 0, 0, \false, \true);
+        $dump = $this->dumper->dump(['foo' => new A(), 'bar' => 1], 0, 0, false, true);
         $this->assertEquals('{ foo: !php/object \'O:30:"Symfony\\Component\\Yaml\\Tests\\A":1:{s:1:"a";s:3:"foo";}\', bar: 1 }', $dump, '->dump() is able to dump objects');
     }
     public function testObjectSupportDisabledButNoExceptions()
     {
-        $dump = $this->dumper->dump(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A(), 'bar' => 1]);
+        $dump = $this->dumper->dump(['foo' => new A(), 'bar' => 1]);
         $this->assertEquals('{ foo: null, bar: 1 }', $dump, '->dump() does not dump objects when disabled');
     }
     public function testObjectSupportDisabledWithExceptions()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\DumpException');
-        $this->dumper->dump(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A(), 'bar' => 1], 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE);
+        $this->dumper->dump(['foo' => new A(), 'bar' => 1], 0, 0, Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE);
     }
     /**
      * @group legacy
@@ -206,19 +213,19 @@ EOF;
     public function testObjectSupportDisabledWithExceptionsPassingTrue()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\DumpException');
-        $this->dumper->dump(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A(), 'bar' => 1], 0, 0, \true);
+        $this->dumper->dump(['foo' => new A(), 'bar' => 1], 0, 0, true);
     }
     public function testEmptyArray()
     {
         $dump = $this->dumper->dump([]);
         $this->assertEquals('{  }', $dump);
-        $dump = $this->dumper->dump([], 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+        $dump = $this->dumper->dump([], 0, 0, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
         $this->assertEquals('[]', $dump);
-        $dump = $this->dumper->dump([], 9, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+        $dump = $this->dumper->dump([], 9, 0, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
         $this->assertEquals('[]', $dump);
-        $dump = $this->dumper->dump(new \ArrayObject(), 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $dump = $this->dumper->dump(new ArrayObject(), 0, 0, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_OBJECT_AS_MAP);
         $this->assertEquals('{  }', $dump);
-        $dump = $this->dumper->dump(new \stdClass(), 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $dump = $this->dumper->dump(new stdClass(), 0, 0, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_OBJECT_AS_MAP);
         $this->assertEquals('{  }', $dump);
     }
     /**
@@ -234,53 +241,53 @@ EOF;
     }
     public function testBinaryDataIsDumpedBase64Encoded()
     {
-        $binaryData = \file_get_contents(__DIR__ . '/Fixtures/arrow.gif');
-        $expected = '{ data: !!binary ' . \base64_encode($binaryData) . ' }';
+        $binaryData = file_get_contents(__DIR__ . '/Fixtures/arrow.gif');
+        $expected = '{ data: !!binary ' . base64_encode($binaryData) . ' }';
         $this->assertSame($expected, $this->dumper->dump(['data' => $binaryData]));
     }
     public function testNonUtf8DataIsDumpedBase64Encoded()
     {
         // "fÃ¼r" (ISO-8859-1 encoded)
-        $this->assertSame('!!binary ZsM/cg==', $this->dumper->dump("fÃ?r"));
+        $this->assertSame('!!binary ZsM/cg==', $this->dumper->dump("fï¿½?r"));
     }
     /**
      * @dataProvider objectAsMapProvider
      */
     public function testDumpObjectAsMap($object, $expected)
     {
-        $yaml = $this->dumper->dump($object, 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
-        $this->assertEquals($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP));
+        $yaml = $this->dumper->dump($object, 0, 0, Yaml::DUMP_OBJECT_AS_MAP);
+        $this->assertEquals($expected, Yaml::parse($yaml, Yaml::PARSE_OBJECT_FOR_MAP));
     }
     public function objectAsMapProvider()
     {
         $tests = [];
-        $bar = new \stdClass();
+        $bar = new stdClass();
         $bar->class = 'classBar';
         $bar->args = ['bar'];
-        $zar = new \stdClass();
-        $foo = new \stdClass();
+        $zar = new stdClass();
+        $foo = new stdClass();
         $foo->bar = $bar;
         $foo->zar = $zar;
-        $object = new \stdClass();
+        $object = new stdClass();
         $object->foo = $foo;
         $tests['stdClass'] = [$object, $object];
-        $arrayObject = new \ArrayObject();
+        $arrayObject = new ArrayObject();
         $arrayObject['foo'] = 'bar';
         $arrayObject['baz'] = 'foobar';
-        $parsedArrayObject = new \stdClass();
+        $parsedArrayObject = new stdClass();
         $parsedArrayObject->foo = 'bar';
         $parsedArrayObject->baz = 'foobar';
         $tests['ArrayObject'] = [$arrayObject, $parsedArrayObject];
-        $a = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\A();
+        $a = new A();
         $tests['arbitrary-object'] = [$a, null];
         return $tests;
     }
     public function testDumpingArrayObjectInstancesRespectsInlineLevel()
     {
-        $deep = new \ArrayObject(['deep1' => 'd', 'deep2' => 'e']);
-        $inner = new \ArrayObject(['inner1' => 'b', 'inner2' => 'c', 'inner3' => $deep]);
-        $outer = new \ArrayObject(['outer1' => 'a', 'outer2' => $inner]);
-        $yaml = $this->dumper->dump($outer, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $deep = new ArrayObject(['deep1' => 'd', 'deep2' => 'e']);
+        $inner = new ArrayObject(['inner1' => 'b', 'inner2' => 'c', 'inner3' => $deep]);
+        $outer = new ArrayObject(['outer1' => 'a', 'outer2' => $inner]);
+        $yaml = $this->dumper->dump($outer, 2, 0, Yaml::DUMP_OBJECT_AS_MAP);
         $expected = <<<YAML
 outer1: a
 outer2:
@@ -293,10 +300,10 @@ YAML;
     }
     public function testDumpingArrayObjectInstancesWithNumericKeysInlined()
     {
-        $deep = new \ArrayObject(['d', 'e']);
-        $inner = new \ArrayObject(['b', 'c', $deep]);
-        $outer = new \ArrayObject(['a', $inner]);
-        $yaml = $this->dumper->dump($outer, 0, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $deep = new ArrayObject(['d', 'e']);
+        $inner = new ArrayObject(['b', 'c', $deep]);
+        $outer = new ArrayObject(['a', $inner]);
+        $yaml = $this->dumper->dump($outer, 0, 0, Yaml::DUMP_OBJECT_AS_MAP);
         $expected = <<<YAML
 { 0: a, 1: { 0: b, 1: c, 2: { 0: d, 1: e } } }
 YAML;
@@ -304,10 +311,10 @@ YAML;
     }
     public function testDumpingArrayObjectInstancesWithNumericKeysRespectsInlineLevel()
     {
-        $deep = new \ArrayObject(['d', 'e']);
-        $inner = new \ArrayObject(['b', 'c', $deep]);
-        $outer = new \ArrayObject(['a', $inner]);
-        $yaml = $this->dumper->dump($outer, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $deep = new ArrayObject(['d', 'e']);
+        $inner = new ArrayObject(['b', 'c', $deep]);
+        $outer = new ArrayObject(['a', $inner]);
+        $yaml = $this->dumper->dump($outer, 2, 0, Yaml::DUMP_OBJECT_AS_MAP);
         $expected = <<<YAML
 0: a
 1:
@@ -320,25 +327,25 @@ YAML;
     }
     public function testDumpEmptyArrayObjectInstanceAsMap()
     {
-        $this->assertSame('{  }', $this->dumper->dump(new \ArrayObject(), 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP));
+        $this->assertSame('{  }', $this->dumper->dump(new ArrayObject(), 2, 0, Yaml::DUMP_OBJECT_AS_MAP));
     }
     public function testDumpEmptyStdClassInstanceAsMap()
     {
-        $this->assertSame('{  }', $this->dumper->dump(new \stdClass(), 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP));
+        $this->assertSame('{  }', $this->dumper->dump(new stdClass(), 2, 0, Yaml::DUMP_OBJECT_AS_MAP));
     }
     public function testDumpingStdClassInstancesRespectsInlineLevel()
     {
-        $deep = new \stdClass();
+        $deep = new stdClass();
         $deep->deep1 = 'd';
         $deep->deep2 = 'e';
-        $inner = new \stdClass();
+        $inner = new stdClass();
         $inner->inner1 = 'b';
         $inner->inner2 = 'c';
         $inner->inner3 = $deep;
-        $outer = new \stdClass();
+        $outer = new stdClass();
         $outer->outer1 = 'a';
         $outer->outer2 = $inner;
-        $yaml = $this->dumper->dump($outer, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP);
+        $yaml = $this->dumper->dump($outer, 2, 0, Yaml::DUMP_OBJECT_AS_MAP);
         $expected = <<<YAML
 outer1: a
 outer2:
@@ -351,7 +358,7 @@ YAML;
     }
     public function testDumpingTaggedValueSequenceRespectsInlineLevel()
     {
-        $data = [new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'jane']), new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'john'])];
+        $data = [new TaggedValue('user', ['username' => 'jane']), new TaggedValue('user', ['username' => 'john'])];
         $yaml = $this->dumper->dump($data, 2);
         $expected = <<<YAML
 - !user
@@ -364,7 +371,7 @@ YAML;
     }
     public function testDumpingTaggedValueSequenceWithInlinedTagValues()
     {
-        $data = [new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'jane']), new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'john'])];
+        $data = [new TaggedValue('user', ['username' => 'jane']), new TaggedValue('user', ['username' => 'john'])];
         $yaml = $this->dumper->dump($data, 1);
         $expected = <<<YAML
 - !user { username: jane }
@@ -375,7 +382,7 @@ YAML;
     }
     public function testDumpingTaggedValueMapRespectsInlineLevel()
     {
-        $data = ['user1' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'jane']), 'user2' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'john'])];
+        $data = ['user1' => new TaggedValue('user', ['username' => 'jane']), 'user2' => new TaggedValue('user', ['username' => 'john'])];
         $yaml = $this->dumper->dump($data, 2);
         $expected = <<<YAML
 user1: !user
@@ -388,7 +395,7 @@ YAML;
     }
     public function testDumpingTaggedValueMapWithInlinedTagValues()
     {
-        $data = ['user1' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'jane']), 'user2' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', ['username' => 'john'])];
+        $data = ['user1' => new TaggedValue('user', ['username' => 'jane']), 'user2' => new TaggedValue('user', ['username' => 'john'])];
         $yaml = $this->dumper->dump($data, 1);
         $expected = <<<YAML
 user1: !user { username: jane }
@@ -399,7 +406,7 @@ YAML;
     }
     public function testDumpingNotInlinedScalarTaggedValue()
     {
-        $data = ['user1' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', 'jane'), 'user2' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('user', 'john')];
+        $data = ['user1' => new TaggedValue('user', 'jane'), 'user2' => new TaggedValue('user', 'john')];
         $expected = <<<YAML
 user1: !user jane
 user2: !user john
@@ -409,7 +416,7 @@ YAML;
     }
     public function testDumpingNotInlinedNullTaggedValue()
     {
-        $data = ['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('bar', null)];
+        $data = ['foo' => new TaggedValue('bar', null)];
         $expected = <<<YAML
 foo: !bar null
 
@@ -418,7 +425,7 @@ YAML;
     }
     public function testDumpingMultiLineStringAsScalarBlockTaggedValue()
     {
-        $data = ['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('bar', "foo\nline with trailing spaces:\n  \nbar\ninteger like line:\n123456789\nempty line:\n\nbaz")];
+        $data = ['foo' => new TaggedValue('bar', "foo\nline with trailing spaces:\n  \nbar\ninteger like line:\n123456789\nempty line:\n\nbaz")];
         $expected = <<<YAML
 foo: !bar |
     foo
@@ -432,26 +439,26 @@ foo: !bar |
     baz
 
 YAML;
-        $this->assertSame($expected, $this->dumper->dump($data, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->assertSame($expected, $this->dumper->dump($data, 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testDumpingInlinedMultiLineIfRnBreakLineInTaggedValue()
     {
-        $data = ['data' => ['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('bar', "foo\r\nline with trailing spaces:\n  \nbar\ninteger like line:\n123456789\nempty line:\n\nbaz")]];
-        $this->assertSame(\file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block_for_tagged_values.yml'), $this->dumper->dump($data, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $data = ['data' => ['foo' => new TaggedValue('bar', "foo\r\nline with trailing spaces:\n  \nbar\ninteger like line:\n123456789\nempty line:\n\nbaz")]];
+        $this->assertSame(file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block_for_tagged_values.yml'), $this->dumper->dump($data, 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testDumpMultiLineStringAsScalarBlock()
     {
         $data = ['data' => ['single_line' => 'foo bar baz', 'multi_line' => "foo\nline with trailing spaces:\n  \nbar\ninteger like line:\n123456789\nempty line:\n\nbaz", 'multi_line_with_carriage_return' => "foo\nbar\r\nbaz", 'nested_inlined_multi_line_string' => ['inlined_multi_line' => "foo\nbar\r\nempty line:\n\nbaz"]]];
-        $this->assertSame(\file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block.yml'), $this->dumper->dump($data, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->assertSame(file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block.yml'), $this->dumper->dump($data, 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testDumpMultiLineStringAsScalarBlockWhenFirstLineHasLeadingSpace()
     {
         $data = ['data' => ['multi_line' => "    the first line has leading spaces\nThe second line does not."]];
-        $this->assertSame(\file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block_leading_space_in_first_line.yml'), $this->dumper->dump($data, 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->assertSame(file_get_contents(__DIR__ . '/Fixtures/multiple_lines_as_literal_block_leading_space_in_first_line.yml'), $this->dumper->dump($data, 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testCarriageReturnFollowedByNewlineIsMaintainedWhenDumpingAsMultiLineLiteralBlock()
     {
-        $this->assertSame("- \"a\\r\\nb\\nc\"\n", $this->dumper->dump(["a\r\nb\nc"], 2, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->assertSame("- \"a\\r\\nb\\nc\"\n", $this->dumper->dump(["a\r\nb\nc"], 2, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testCarriageReturnNotFollowedByNewlineIsPreservedWhenDumpingAsMultiLineLiteralBlock()
     {
@@ -460,19 +467,19 @@ parent:
     foo: "bar\n\rbaz: qux"
 
 YAML;
-        $this->assertSame($expected, $this->dumper->dump(['parent' => ['foo' => "bar\n\rbaz: qux"]], 4, 0, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->assertSame($expected, $this->dumper->dump(['parent' => ['foo' => "bar\n\rbaz: qux"]], 4, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
     public function testZeroIndentationThrowsException()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('The indentation must be greater than zero');
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Dumper(0);
+        new Dumper(0);
     }
     public function testNegativeIndentationThrowsException()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('The indentation must be greater than zero');
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Dumper(-4);
+        new Dumper(-4);
     }
 }
 class A

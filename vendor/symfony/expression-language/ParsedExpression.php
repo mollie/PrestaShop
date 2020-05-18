@@ -16,14 +16,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParsedExpression extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression
+class ParsedExpression extends Expression
 {
     private $nodes;
     /**
      * @param string $expression An expression
      * @param Node   $nodes      A Node representing the expression
      */
-    public function __construct($expression, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $nodes)
+    public function __construct($expression, Node $nodes)
     {
         parent::__construct($expression);
         $this->nodes = $nodes;

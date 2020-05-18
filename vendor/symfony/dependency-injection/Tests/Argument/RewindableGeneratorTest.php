@@ -12,17 +12,20 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Ar
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-class RewindableGeneratorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Countable;
+use function count;
+
+class RewindableGeneratorTest extends TestCase
 {
     public function testImplementsCountable()
     {
-        $this->assertInstanceOf(\Countable::class, new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $this->assertInstanceOf(Countable::class, new RewindableGenerator(function () {
             (yield 1);
         }, 1));
     }
     public function testCountUsesProvidedValue()
     {
-        $generator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $generator = new RewindableGenerator(function () {
             (yield 1);
         }, 3);
         $this->assertCount(3, $generator);
@@ -30,7 +33,7 @@ class RewindableGeneratorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     public function testCountUsesProvidedValueAsCallback()
     {
         $called = 0;
-        $generator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $generator = new RewindableGenerator(function () {
             (yield 1);
         }, function () use(&$called) {
             ++$called;
@@ -38,7 +41,7 @@ class RewindableGeneratorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
         });
         $this->assertSame(0, $called, 'Count callback is called lazily');
         $this->assertCount(3, $generator);
-        \count($generator);
+        count($generator);
         $this->assertSame(1, $called, 'Count callback is called only once');
     }
 }

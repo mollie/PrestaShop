@@ -12,6 +12,22 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
 use _PhpScoper5ea00cc67502b\Psr\Log\LoggerAwareTrait;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
+use DomainException;
+use Error;
+use ErrorException;
+use Exception;
+use Traversable;
+use function base64_encode;
+use function hash;
+use function ini_set;
+use function mt_rand;
+use function pack;
+use function strlen;
+use function substr_replace;
+use function time;
+use function unserialize;
+use const E_ERROR;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -22,7 +38,7 @@ trait AbstractTrait
     use LoggerAwareTrait;
     private $namespace;
     private $namespaceVersion = '';
-    private $versioningIsEnabled = \false;
+    private $versioningIsEnabled = false;
     private $deferred = [];
     /**
      * @var int|null The maximum length to enforce for identifiers or null when no limit applies
@@ -33,7 +49,7 @@ trait AbstractTrait
      *
      * @param array $ids The cache identifiers to fetch
      *
-     * @return array|\Traversable The corresponding values found in the cache
+     * @return array|Traversable The corresponding values found in the cache
      */
     protected abstract function doFetch(array $ids);
     /**
@@ -80,9 +96,9 @@ trait AbstractTrait
         }
         try {
             return $this->doHave($id);
-        } catch (\Exception $e) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to check if key "{key}" is cached', ['key' => $key, 'exception' => $e]);
-            return \false;
+        } catch (Exception $e) {
+            CacheItem::log($this->logger, 'Failed to check if key "{key}" is cached', ['key' => $key, 'exception' => $e]);
+            return false;
         }
     }
     /**
@@ -92,21 +108,21 @@ trait AbstractTrait
     {
         $this->deferred = [];
         if ($cleared = $this->versioningIsEnabled) {
-            $namespaceVersion = \substr_replace(\base64_encode(\pack('V', \mt_rand())), static::NS_SEPARATOR, 5);
+            $namespaceVersion = substr_replace(base64_encode(pack('V', mt_rand())), static::NS_SEPARATOR, 5);
             try {
                 $cleared = $this->doSave([static::NS_SEPARATOR . $this->namespace => $namespaceVersion], 0);
-            } catch (\Exception $e) {
-                $cleared = \false;
+            } catch (Exception $e) {
+                $cleared = false;
             }
-            if ($cleared = \true === $cleared || [] === $cleared) {
+            if ($cleared = true === $cleared || [] === $cleared) {
                 $this->namespaceVersion = $namespaceVersion;
             }
         }
         try {
             return $this->doClear($this->namespace) || $cleared;
-        } catch (\Exception $e) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
-            return \false;
+        } catch (Exception $e) {
+            CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
+            return false;
         }
     }
     /**
@@ -128,11 +144,11 @@ trait AbstractTrait
         }
         try {
             if ($this->doDelete($ids)) {
-                return \true;
+                return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
-        $ok = \true;
+        $ok = true;
         // When bulk-delete failed, retry each item individually
         foreach ($ids as $key => $id) {
             try {
@@ -140,10 +156,10 @@ trait AbstractTrait
                 if ($this->doDelete([$id])) {
                     continue;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to delete key "{key}"', ['key' => $key, 'exception' => $e]);
-            $ok = \false;
+            CacheItem::log($this->logger, 'Failed to delete key "{key}"', ['key' => $key, 'exception' => $e]);
+            $ok = false;
         }
         return $ok;
     }
@@ -159,7 +175,7 @@ trait AbstractTrait
      *
      * @return bool the previous state of versioning
      */
-    public function enableVersioning($enable = \true)
+    public function enableVersioning($enable = true)
     {
         $wasEnabled = $this->versioningIsEnabled;
         $this->versioningIsEnabled = (bool) $enable;
@@ -183,28 +199,28 @@ trait AbstractTrait
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function unserialize($value)
     {
         if ('b:0;' === $value) {
-            return \false;
+            return false;
         }
-        $unserializeCallbackHandler = \ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
+        $unserializeCallbackHandler = ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
         try {
-            if (\false !== ($value = \unserialize($value))) {
+            if (false !== ($value = unserialize($value))) {
                 return $value;
             }
-            throw new \DomainException('Failed to unserialize cached value.');
-        } catch (\Error $e) {
-            throw new \ErrorException($e->getMessage(), $e->getCode(), \E_ERROR, $e->getFile(), $e->getLine());
+            throw new DomainException('Failed to unserialize cached value.');
+        } catch (Error $e) {
+            throw new ErrorException($e->getMessage(), $e->getCode(), E_ERROR, $e->getFile(), $e->getLine());
         } finally {
-            \ini_set('unserialize_callback_func', $unserializeCallbackHandler);
+            ini_set('unserialize_callback_func', $unserializeCallbackHandler);
         }
     }
     private function getId($key)
     {
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+        CacheItem::validateKey($key);
         if ($this->versioningIsEnabled && '' === $this->namespaceVersion) {
             $this->namespaceVersion = '1' . static::NS_SEPARATOR;
             try {
@@ -212,17 +228,17 @@ trait AbstractTrait
                     $this->namespaceVersion = $v;
                 }
                 if ('1' . static::NS_SEPARATOR === $this->namespaceVersion) {
-                    $this->namespaceVersion = \substr_replace(\base64_encode(\pack('V', \time())), static::NS_SEPARATOR, 5);
+                    $this->namespaceVersion = substr_replace(base64_encode(pack('V', time())), static::NS_SEPARATOR, 5);
                     $this->doSave([static::NS_SEPARATOR . $this->namespace => $this->namespaceVersion], 0);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
         }
         if (null === $this->maxIdLength) {
             return $this->namespace . $this->namespaceVersion . $key;
         }
-        if (\strlen($id = $this->namespace . $this->namespaceVersion . $key) > $this->maxIdLength) {
-            $id = $this->namespace . $this->namespaceVersion . \substr_replace(\base64_encode(\hash('sha256', $key, \true)), static::NS_SEPARATOR, -(\strlen($this->namespaceVersion) + 22));
+        if (strlen($id = $this->namespace . $this->namespaceVersion . $key) > $this->maxIdLength) {
+            $id = $this->namespace . $this->namespaceVersion . substr_replace(base64_encode(hash('sha256', $key, true)), static::NS_SEPARATOR, -(strlen($this->namespaceVersion) + 22));
         }
         return $id;
     }
@@ -231,6 +247,6 @@ trait AbstractTrait
      */
     public static function handleUnserializeCallback($class)
     {
-        throw new \DomainException('Class not found: ' . $class);
+        throw new DomainException('Class not found: ' . $class);
     }
 }

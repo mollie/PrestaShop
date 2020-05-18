@@ -10,12 +10,14 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures;
 
-class FactoryDummy extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent
+use stdClass;
+
+class FactoryDummy extends FactoryParent
 {
-    public static function createFactory() : \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
+    public static function createFactory() : FactoryDummy
     {
     }
-    public function create() : \stdClass
+    public function create() : stdClass
     {
     }
     // Not supported by hhvm
@@ -32,6 +34,6 @@ class FactoryDummy extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
 class FactoryParent
 {
 }
-function factoryFunction() : \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
+function factoryFunction() : FactoryDummy
 {
 }

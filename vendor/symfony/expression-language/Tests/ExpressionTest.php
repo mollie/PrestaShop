@@ -12,13 +12,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression;
-class ExpressionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function serialize;
+use function unserialize;
+
+class ExpressionTest extends TestCase
 {
     public function testSerialization()
     {
-        $expression = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression('kernel.boot()');
-        $serializedExpression = \serialize($expression);
-        $unserializedExpression = \unserialize($serializedExpression);
+        $expression = new Expression('kernel.boot()');
+        $serializedExpression = serialize($expression);
+        $unserializedExpression = unserialize($serializedExpression);
         $this->assertEquals($expression, $unserializedExpression);
     }
 }

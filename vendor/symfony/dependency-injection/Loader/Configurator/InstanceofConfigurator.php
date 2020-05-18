@@ -15,7 +15,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\C
  *
  * @method InstanceofConfigurator instanceof(string $fqcn)
  */
-class InstanceofConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
+class InstanceofConfigurator extends AbstractServiceConfigurator
 {
     const FACTORY = 'instanceof';
     use Traits\AutowireTrait;

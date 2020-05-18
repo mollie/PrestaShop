@@ -12,14 +12,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\FloatNode;
-class FloatNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use stdClass;
+
+class FloatNodeTest extends TestCase
 {
     /**
      * @dataProvider getValidValues
      */
     public function testNormalize($value)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\FloatNode('test');
+        $node = new FloatNode('test');
         $this->assertSame($value, $node->normalize($value));
     }
     /**
@@ -29,8 +31,8 @@ class FloatNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testValidNonEmptyValues($value)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\FloatNode('test');
-        $node->setAllowEmptyValue(\false);
+        $node = new FloatNode('test');
+        $node->setAllowEmptyValue(false);
         $this->assertSame($value, $node->finalize($value));
     }
     public function getValidValues()
@@ -52,11 +54,11 @@ class FloatNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     public function testNormalizeThrowsExceptionOnInvalidValues($value)
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\FloatNode('test');
+        $node = new FloatNode('test');
         $node->normalize($value);
     }
     public function getInvalidValues()
     {
-        return [[null], [''], ['foo'], [\true], [\false], [[]], [['foo' => 'bar']], [new \stdClass()]];
+        return [[null], [''], ['foo'], [true], [false], [[]], [['foo' => 'bar']], [new stdClass()]];
     }
 }

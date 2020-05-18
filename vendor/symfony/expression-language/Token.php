@@ -10,6 +10,9 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
 
+use function sprintf;
+use function strtoupper;
+
 /**
  * Represents a Token.
  *
@@ -44,7 +47,7 @@ class Token
      */
     public function __toString()
     {
-        return \sprintf('%3d %-11s %s', $this->cursor, \strtoupper($this->type), $this->value);
+        return sprintf('%3d %-11s %s', $this->cursor, strtoupper($this->type), $this->value);
     }
     /**
      * Tests the current token for a type and/or a value.

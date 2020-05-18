@@ -10,36 +10,39 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
+use _PhpScoper5ea00cc67502b\Redis;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\RedisProxy;
-class RedisAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AbstractRedisAdapterTest
+use function getenv;
+
+class RedisAdapterTest extends AbstractRedisAdapterTest
 {
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        self::$redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('redis://' . \getenv('REDIS_HOST'), ['lazy' => \true]);
+        self::$redis = AbstractAdapter::createConnection('redis://' . getenv('REDIS_HOST'), ['lazy' => true]);
     }
     public function createCachePool($defaultLifetime = 0)
     {
         $adapter = parent::createCachePool($defaultLifetime);
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\RedisProxy::class, self::$redis);
+        $this->assertInstanceOf(RedisProxy::class, self::$redis);
         return $adapter;
     }
     public function testCreateConnection()
     {
-        $redisHost = \getenv('REDIS_HOST');
-        $redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection('redis://' . $redisHost);
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Redis::class, $redis);
+        $redisHost = getenv('REDIS_HOST');
+        $redis = RedisAdapter::createConnection('redis://' . $redisHost);
+        $this->assertInstanceOf(Redis::class, $redis);
         $this->assertTrue($redis->isConnected());
         $this->assertSame(0, $redis->getDbNum());
-        $redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection('redis://' . $redisHost . '/2');
+        $redis = RedisAdapter::createConnection('redis://' . $redisHost . '/2');
         $this->assertSame(2, $redis->getDbNum());
-        $redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection('redis://' . $redisHost, ['timeout' => 3]);
+        $redis = RedisAdapter::createConnection('redis://' . $redisHost, ['timeout' => 3]);
         $this->assertEquals(3, $redis->getTimeout());
-        $redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection('redis://' . $redisHost . '?timeout=4');
+        $redis = RedisAdapter::createConnection('redis://' . $redisHost . '?timeout=4');
         $this->assertEquals(4, $redis->getTimeout());
-        $redis = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection('redis://' . $redisHost, ['read_timeout' => 5]);
+        $redis = RedisAdapter::createConnection('redis://' . $redisHost, ['read_timeout' => 5]);
         $this->assertEquals(5, $redis->getReadTimeout());
     }
     /**
@@ -49,7 +52,7 @@ class RedisAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Redis connection failed');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection($dsn);
+        RedisAdapter::createConnection($dsn);
     }
     public function provideFailedCreateConnection()
     {
@@ -62,7 +65,7 @@ class RedisAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Invalid Redis DSN');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter::createConnection($dsn);
+        RedisAdapter::createConnection($dsn);
     }
     public function provideInvalidCreateConnection()
     {

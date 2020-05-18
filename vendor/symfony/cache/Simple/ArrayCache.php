@@ -16,10 +16,26 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\ArrayTrait;
+use DateInterval;
+use DateTime;
+use Exception;
+use Traversable;
+use function array_keys;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_int;
+use function is_object;
+use function iterator_to_array;
+use function serialize;
+use function sprintf;
+use function time;
+use const PHP_INT_MAX;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ArrayCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface, \_PhpScoper5ea00cc67502b\Psr\Log\LoggerAwareInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class ArrayCache implements CacheInterface, LoggerAwareInterface, ResettableInterface
 {
     use ArrayTrait {
         ArrayTrait::deleteItem as delete;
@@ -30,7 +46,7 @@ class ArrayCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      * @param int  $defaultLifetime
      * @param bool $storeSerialized Disabling serialization can lead to cache corruptions when storing mutable values but increases performance otherwise
      */
-    public function __construct($defaultLifetime = 0, $storeSerialized = \true)
+    public function __construct($defaultLifetime = 0, $storeSerialized = true)
     {
         $this->defaultLifetime = (int) $defaultLifetime;
         $this->storeSerialized = $storeSerialized;
@@ -49,15 +65,15 @@ class ArrayCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function getMultiple($keys, $default = null)
     {
-        if ($keys instanceof \Traversable) {
-            $keys = \iterator_to_array($keys, \false);
-        } elseif (!\is_array($keys)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+        if ($keys instanceof Traversable) {
+            $keys = iterator_to_array($keys, false);
+        } elseif (!is_array($keys)) {
+            throw new InvalidArgumentException(sprintf('Cache keys must be array or Traversable, "%s" given.', is_object($keys) ? get_class($keys) : gettype($keys)));
         }
         foreach ($keys as $key) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+            CacheItem::validateKey($key);
         }
-        return $this->generateItems($keys, \time(), function ($k, $v, $hit) use($default) {
+        return $this->generateItems($keys, time(), function ($k, $v, $hit) use($default) {
             return $hit ? $v : $default;
         });
     }
@@ -66,20 +82,20 @@ class ArrayCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function deleteMultiple($keys)
     {
-        if (!\is_array($keys) && !$keys instanceof \Traversable) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+        if (!is_array($keys) && !$keys instanceof Traversable) {
+            throw new InvalidArgumentException(sprintf('Cache keys must be array or Traversable, "%s" given.', is_object($keys) ? get_class($keys) : gettype($keys)));
         }
         foreach ($keys as $key) {
             $this->delete($key);
         }
-        return \true;
+        return true;
     }
     /**
      * {@inheritdoc}
      */
     public function set($key, $value, $ttl = null)
     {
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+        CacheItem::validateKey($key);
         return $this->setMultiple([$key => $value], $ttl);
     }
     /**
@@ -87,46 +103,46 @@ class ArrayCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function setMultiple($values, $ttl = null)
     {
-        if (!\is_array($values) && !$values instanceof \Traversable) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache values must be array or Traversable, "%s" given.', \is_object($values) ? \get_class($values) : \gettype($values)));
+        if (!is_array($values) && !$values instanceof Traversable) {
+            throw new InvalidArgumentException(sprintf('Cache values must be array or Traversable, "%s" given.', is_object($values) ? get_class($values) : gettype($values)));
         }
         $valuesArray = [];
         foreach ($values as $key => $value) {
-            \is_int($key) || \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+            is_int($key) || CacheItem::validateKey($key);
             $valuesArray[$key] = $value;
         }
-        if (\false === ($ttl = $this->normalizeTtl($ttl))) {
-            return $this->deleteMultiple(\array_keys($valuesArray));
+        if (false === ($ttl = $this->normalizeTtl($ttl))) {
+            return $this->deleteMultiple(array_keys($valuesArray));
         }
         if ($this->storeSerialized) {
             foreach ($valuesArray as $key => $value) {
                 try {
-                    $valuesArray[$key] = \serialize($value);
-                } catch (\Exception $e) {
-                    $type = \is_object($value) ? \get_class($value) : \gettype($value);
-                    \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to save key "{key}" ({type})', ['key' => $key, 'type' => $type, 'exception' => $e]);
-                    return \false;
+                    $valuesArray[$key] = serialize($value);
+                } catch (Exception $e) {
+                    $type = is_object($value) ? get_class($value) : gettype($value);
+                    CacheItem::log($this->logger, 'Failed to save key "{key}" ({type})', ['key' => $key, 'type' => $type, 'exception' => $e]);
+                    return false;
                 }
             }
         }
-        $expiry = 0 < $ttl ? \time() + $ttl : \PHP_INT_MAX;
+        $expiry = 0 < $ttl ? time() + $ttl : PHP_INT_MAX;
         foreach ($valuesArray as $key => $value) {
             $this->values[$key] = $value;
             $this->expiries[$key] = $expiry;
         }
-        return \true;
+        return true;
     }
     private function normalizeTtl($ttl)
     {
         if (null === $ttl) {
             return $this->defaultLifetime;
         }
-        if ($ttl instanceof \DateInterval) {
-            $ttl = (int) \DateTime::createFromFormat('U', 0)->add($ttl)->format('U');
+        if ($ttl instanceof DateInterval) {
+            $ttl = (int) DateTime::createFromFormat('U', 0)->add($ttl)->format('U');
         }
-        if (\is_int($ttl)) {
-            return 0 < $ttl ? $ttl : \false;
+        if (is_int($ttl)) {
+            return 0 < $ttl ? $ttl : false;
         }
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', \is_object($ttl) ? \get_class($ttl) : \gettype($ttl)));
+        throw new InvalidArgumentException(sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', is_object($ttl) ? get_class($ttl) : gettype($ttl)));
     }
 }

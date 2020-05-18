@@ -11,12 +11,14 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
+use RuntimeException;
+
 /**
  * This is the entry class for building a config tree.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TreeBuilder implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeParentInterface
+class TreeBuilder implements NodeParentInterface
 {
     protected $tree;
     protected $root;
@@ -33,11 +35,11 @@ class TreeBuilder implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\D
      *
      * @return ArrayNodeDefinition|NodeDefinition The root node (as an ArrayNodeDefinition when the type is 'array')
      *
-     * @throws \RuntimeException When the node type is not supported
+     * @throws RuntimeException When the node type is not supported
      */
-    public function root($name, $type = 'array', \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder = null)
+    public function root($name, $type = 'array', NodeBuilder $builder = null)
     {
-        $builder = $builder ?: new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder();
+        $builder = $builder ?: new NodeBuilder();
         return $this->root = $builder->node($name, $type)->setParent($this);
     }
     /**
@@ -45,16 +47,16 @@ class TreeBuilder implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\D
      *
      * @return NodeInterface
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function buildTree()
     {
         if (null === $this->root) {
-            throw new \RuntimeException('The configuration tree has no root node.');
+            throw new RuntimeException('The configuration tree has no root node.');
         }
         if (null !== $this->tree) {
             return $this->tree;
         }
-        return $this->tree = $this->root->getNode(\true);
+        return $this->tree = $this->root->getNode(true);
     }
 }

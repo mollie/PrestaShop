@@ -14,10 +14,10 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\ArrayCache;
 /**
  * @group time-sensitive
  */
-class ArrayCacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class ArrayCacheTest extends CacheTestCase
 {
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\ArrayCache($defaultLifetime);
+        return new ArrayCache($defaultLifetime);
     }
 }

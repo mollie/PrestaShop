@@ -13,30 +13,37 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode;
+use function is_array;
+use function is_int;
+use function is_string;
+use function sprintf;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
 /**
  * This class provides a fluent interface for defining an array node.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ParentNodeDefinitionInterface
+class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinitionInterface
 {
-    protected $performDeepMerging = \true;
-    protected $ignoreExtraKeys = \false;
-    protected $removeExtraKeys = \true;
+    protected $performDeepMerging = true;
+    protected $ignoreExtraKeys = false;
+    protected $removeExtraKeys = true;
     protected $children = [];
     protected $prototype;
-    protected $atLeastOne = \false;
-    protected $allowNewKeys = \true;
+    protected $atLeastOne = false;
+    protected $allowNewKeys = true;
     protected $key;
     protected $removeKeyItem;
-    protected $addDefaults = \false;
-    protected $addDefaultChildren = \false;
+    protected $addDefaults = false;
+    protected $addDefaultChildren = false;
     protected $nodeBuilder;
-    protected $normalizeKeys = \true;
+    protected $normalizeKeys = true;
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeParentInterface $parent = null)
+    public function __construct($name, NodeParentInterface $parent = null)
     {
         parent::__construct($name, $parent);
         $this->nullEquivalent = [];
@@ -45,7 +52,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
     /**
      * {@inheritdoc}
      */
-    public function setBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder)
+    public function setBuilder(NodeBuilder $builder)
     {
         $this->nodeBuilder = $builder;
     }
@@ -127,7 +134,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function addDefaultsIfNotSet()
     {
-        $this->addDefaults = \true;
+        $this->addDefaults = true;
         return $this;
     }
     /**
@@ -153,7 +160,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function requiresAtLeastOneElement()
     {
-        $this->atLeastOne = \true;
+        $this->atLeastOne = true;
         return $this;
     }
     /**
@@ -165,7 +172,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function disallowNewKeysInSubsequentConfigs()
     {
-        $this->allowNewKeys = \false;
+        $this->allowNewKeys = false;
         return $this;
     }
     /**
@@ -209,7 +216,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @return $this
      */
-    public function useAttributeAsKey($name, $removeKeyItem = \true)
+    public function useAttributeAsKey($name, $removeKeyItem = true)
     {
         $this->key = $name;
         $this->removeKeyItem = $removeKeyItem;
@@ -222,7 +229,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @return $this
      */
-    public function canBeUnset($allow = \true)
+    public function canBeUnset($allow = true)
     {
         $this->merge()->allowUnset($allow);
         return $this;
@@ -244,8 +251,8 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function canBeEnabled()
     {
-        $this->addDefaultsIfNotSet()->treatFalseLike(['enabled' => \false])->treatTrueLike(['enabled' => \true])->treatNullLike(['enabled' => \true])->beforeNormalization()->ifArray()->then(function ($v) {
-            $v['enabled'] = isset($v['enabled']) ? $v['enabled'] : \true;
+        $this->addDefaultsIfNotSet()->treatFalseLike(['enabled' => false])->treatTrueLike(['enabled' => true])->treatNullLike(['enabled' => true])->beforeNormalization()->ifArray()->then(function ($v) {
+            $v['enabled'] = isset($v['enabled']) ? $v['enabled'] : true;
             return $v;
         })->end()->children()->booleanNode('enabled')->defaultFalse();
         return $this;
@@ -259,7 +266,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function canBeDisabled()
     {
-        $this->addDefaultsIfNotSet()->treatFalseLike(['enabled' => \false])->treatTrueLike(['enabled' => \true])->treatNullLike(['enabled' => \true])->children()->booleanNode('enabled')->defaultTrue();
+        $this->addDefaultsIfNotSet()->treatFalseLike(['enabled' => false])->treatTrueLike(['enabled' => true])->treatNullLike(['enabled' => true])->children()->booleanNode('enabled')->defaultTrue();
         return $this;
     }
     /**
@@ -269,7 +276,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      */
     public function performNoDeepMerging()
     {
-        $this->performDeepMerging = \false;
+        $this->performDeepMerging = false;
         return $this;
     }
     /**
@@ -285,9 +292,9 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @return $this
      */
-    public function ignoreExtraKeys($remove = \true)
+    public function ignoreExtraKeys($remove = true)
     {
-        $this->ignoreExtraKeys = \true;
+        $this->ignoreExtraKeys = true;
         $this->removeExtraKeys = $remove;
         return $this;
     }
@@ -306,7 +313,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
     /**
      * {@inheritdoc}
      */
-    public function append(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition $node)
+    public function append(NodeDefinition $node)
     {
         $this->children[$node->name] = $node->setParent($this);
         return $this;
@@ -319,7 +326,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
     protected function getNodeBuilder()
     {
         if (null === $this->nodeBuilder) {
-            $this->nodeBuilder = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder();
+            $this->nodeBuilder = new NodeBuilder();
         }
         return $this->nodeBuilder->setParent($this);
     }
@@ -329,7 +336,7 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
     protected function createNode()
     {
         if (null === $this->prototype) {
-            $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode($this->name, $this->parent);
+            $node = new ArrayNode($this->name, $this->parent);
             $this->validateConcreteNode($node);
             $node->setAddIfNotSet($this->addDefaults);
             foreach ($this->children as $child) {
@@ -337,21 +344,21 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
                 $node->addChild($child->getNode());
             }
         } else {
-            $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode($this->name, $this->parent);
+            $node = new PrototypedArrayNode($this->name, $this->parent);
             $this->validatePrototypeNode($node);
             if (null !== $this->key) {
                 $node->setKeyAttribute($this->key, $this->removeKeyItem);
             }
-            if (\false === $this->allowEmptyValue) {
-                @\trigger_error(\sprintf('Using %s::cannotBeEmpty() at path "%s" has no effect, consider requiresAtLeastOneElement() instead. In 4.0 both methods will behave the same.', __CLASS__, $node->getPath()), \E_USER_DEPRECATED);
+            if (false === $this->allowEmptyValue) {
+                @trigger_error(sprintf('Using %s::cannotBeEmpty() at path "%s" has no effect, consider requiresAtLeastOneElement() instead. In 4.0 both methods will behave the same.', __CLASS__, $node->getPath()), E_USER_DEPRECATED);
             }
-            if (\true === $this->atLeastOne) {
+            if (true === $this->atLeastOne) {
                 $node->setMinNumberOfElements(1);
             }
             if ($this->default) {
                 $node->setDefaultValue($this->defaultValue);
             }
-            if (\false !== $this->addDefaultChildren) {
+            if (false !== $this->addDefaultChildren) {
                 $node->setAddChildrenIfNoneSet($this->addDefaultChildren);
                 if ($this->prototype instanceof static && null === $this->prototype->prototype) {
                     $this->prototype->addDefaultsIfNotSet();
@@ -362,8 +369,8 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
         }
         $node->setAllowNewKeys($this->allowNewKeys);
         $node->addEquivalentValue(null, $this->nullEquivalent);
-        $node->addEquivalentValue(\true, $this->trueEquivalent);
-        $node->addEquivalentValue(\false, $this->falseEquivalent);
+        $node->addEquivalentValue(true, $this->trueEquivalent);
+        $node->addEquivalentValue(false, $this->falseEquivalent);
         $node->setPerformDeepMerging($this->performDeepMerging);
         $node->setRequired($this->required);
         $node->setDeprecated($this->deprecationMessage);
@@ -387,23 +394,23 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @throws InvalidDefinitionException
      */
-    protected function validateConcreteNode(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode $node)
+    protected function validateConcreteNode(ArrayNode $node)
     {
         $path = $node->getPath();
         if (null !== $this->key) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->useAttributeAsKey() is not applicable to concrete nodes at path "%s".', $path));
+            throw new InvalidDefinitionException(sprintf('->useAttributeAsKey() is not applicable to concrete nodes at path "%s".', $path));
         }
-        if (\false === $this->allowEmptyValue) {
-            @\trigger_error(\sprintf('->cannotBeEmpty() is not applicable to concrete nodes at path "%s". In 4.0 it will throw an exception.', $path), \E_USER_DEPRECATED);
+        if (false === $this->allowEmptyValue) {
+            @trigger_error(sprintf('->cannotBeEmpty() is not applicable to concrete nodes at path "%s". In 4.0 it will throw an exception.', $path), E_USER_DEPRECATED);
         }
-        if (\true === $this->atLeastOne) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->requiresAtLeastOneElement() is not applicable to concrete nodes at path "%s".', $path));
+        if (true === $this->atLeastOne) {
+            throw new InvalidDefinitionException(sprintf('->requiresAtLeastOneElement() is not applicable to concrete nodes at path "%s".', $path));
         }
         if ($this->default) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->defaultValue() is not applicable to concrete nodes at path "%s".', $path));
+            throw new InvalidDefinitionException(sprintf('->defaultValue() is not applicable to concrete nodes at path "%s".', $path));
         }
-        if (\false !== $this->addDefaultChildren) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->addDefaultChildrenIfNoneSet() is not applicable to concrete nodes at path "%s".', $path));
+        if (false !== $this->addDefaultChildren) {
+            throw new InvalidDefinitionException(sprintf('->addDefaultChildrenIfNoneSet() is not applicable to concrete nodes at path "%s".', $path));
         }
     }
     /**
@@ -411,21 +418,21 @@ class ArrayNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
      *
      * @throws InvalidDefinitionException
      */
-    protected function validatePrototypeNode(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode $node)
+    protected function validatePrototypeNode(PrototypedArrayNode $node)
     {
         $path = $node->getPath();
         if ($this->addDefaults) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->addDefaultsIfNotSet() is not applicable to prototype nodes at path "%s".', $path));
+            throw new InvalidDefinitionException(sprintf('->addDefaultsIfNotSet() is not applicable to prototype nodes at path "%s".', $path));
         }
-        if (\false !== $this->addDefaultChildren) {
+        if (false !== $this->addDefaultChildren) {
             if ($this->default) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('A default value and default children might not be used together at path "%s".', $path));
+                throw new InvalidDefinitionException(sprintf('A default value and default children might not be used together at path "%s".', $path));
             }
-            if (null !== $this->key && (null === $this->addDefaultChildren || \is_int($this->addDefaultChildren) && $this->addDefaultChildren > 0)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->addDefaultChildrenIfNoneSet() should set default children names as ->useAttributeAsKey() is used at path "%s".', $path));
+            if (null !== $this->key && (null === $this->addDefaultChildren || is_int($this->addDefaultChildren) && $this->addDefaultChildren > 0)) {
+                throw new InvalidDefinitionException(sprintf('->addDefaultChildrenIfNoneSet() should set default children names as ->useAttributeAsKey() is used at path "%s".', $path));
             }
-            if (null === $this->key && (\is_string($this->addDefaultChildren) || \is_array($this->addDefaultChildren))) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException(\sprintf('->addDefaultChildrenIfNoneSet() might not set default children names as ->useAttributeAsKey() is not used at path "%s".', $path));
+            if (null === $this->key && (is_string($this->addDefaultChildren) || is_array($this->addDefaultChildren))) {
+                throw new InvalidDefinitionException(sprintf('->addDefaultChildrenIfNoneSet() might not set default children names as ->useAttributeAsKey() is not used at path "%s".', $path));
             }
         }
     }

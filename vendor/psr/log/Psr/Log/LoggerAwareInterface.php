@@ -47,5 +47,5 @@ interface LoggerAwareInterface
      *
      * @return void
      */
-    public function setLogger(\_PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface $logger);
+    public function setLogger(LoggerInterface $logger);
 }

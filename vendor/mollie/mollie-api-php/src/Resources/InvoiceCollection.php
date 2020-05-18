@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class InvoiceCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class InvoiceCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class InvoiceCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Cu
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Invoice($this->client);
+        return new Invoice($this->client);
     }
 }

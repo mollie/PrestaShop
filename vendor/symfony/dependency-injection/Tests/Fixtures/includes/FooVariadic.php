@@ -5,7 +5,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fi
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\Foo;
 class FooVariadic
 {
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\Foo $foo)
+    public function __construct(Foo $foo)
     {
     }
     public function bar(...$arguments)

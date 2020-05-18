@@ -8,14 +8,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter;
-class TagAwareAndProxyAdapterIntegrationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class TagAwareAndProxyAdapterIntegrationTest extends TestCase
 {
     /**
      * @dataProvider dataProvider
      */
-    public function testIntegrationUsingProxiedAdapter(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface $proxiedAdapter)
+    public function testIntegrationUsingProxiedAdapter(CacheItemPoolInterface $proxiedAdapter)
     {
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter($proxiedAdapter));
+        $cache = new TagAwareAdapter(new ProxyAdapter($proxiedAdapter));
         $item = $cache->getItem('foo');
         $item->tag(['tag1', 'tag2']);
         $item->set('bar');
@@ -25,10 +25,10 @@ class TagAwareAndProxyAdapterIntegrationTest extends \_PhpScoper5ea00cc67502b\PH
     public function dataProvider()
     {
         return [
-            [new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter()],
+            [new ArrayAdapter()],
             // also testing with a non-AdapterInterface implementation
             // because the ProxyAdapter behaves slightly different for those
-            [new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter()],
+            [new ExternalAdapter()],
         ];
     }
 }

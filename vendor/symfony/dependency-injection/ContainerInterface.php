@@ -20,7 +20,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Serv
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-interface ContainerInterface extends \_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface
+interface ContainerInterface extends PsrContainerInterface
 {
     const EXCEPTION_ON_INVALID_REFERENCE = 1;
     const NULL_ON_INVALID_REFERENCE = 2;

@@ -10,12 +10,15 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
-class PredisClusterAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AbstractRedisAdapterTest
+use _PhpScoper5ea00cc67502b\Predis\Client;
+use function getenv;
+
+class PredisClusterAdapterTest extends AbstractRedisAdapterTest
 {
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        self::$redis = new \_PhpScoper5ea00cc67502b\Predis\Client([['host' => \getenv('REDIS_HOST')]]);
+        self::$redis = new Client([['host' => getenv('REDIS_HOST')]]);
     }
     public static function tearDownAfterClass()
     {

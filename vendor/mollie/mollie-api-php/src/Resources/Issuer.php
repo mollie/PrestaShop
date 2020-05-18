@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class Issuer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class Issuer extends BaseResource
 {
     /**
      * Id of the issuer.
@@ -26,7 +28,7 @@ class Issuer extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     /**
      * Object containing a size1x or size2x image
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $image;
 }

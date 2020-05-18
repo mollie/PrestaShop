@@ -5,6 +5,14 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * How to prepare a new payment with the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function dirname;
+use function header;
+use function htmlspecialchars;
+use function strcasecmp;
+use function time;
+
 try {
     /*
      * Initialize the Mollie API library with your API key.
@@ -16,13 +24,13 @@ try {
      * Generate a unique order id for this example. It is important to include this unique attribute
      * in the redirectUrl (below) so a proper return page can be shown to the customer.
      */
-    $orderId = \time();
+    $orderId = time();
     /*
      * Determine the url parts to these example files.
      */
-    $protocol = isset($_SERVER['HTTPS']) && \strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
+    $protocol = isset($_SERVER['HTTPS']) && strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'];
-    $path = \dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
     /*
      * Payment parameters:
      *   amount        Amount in EUROs. This example creates a € 10,- payment.
@@ -35,12 +43,12 @@ try {
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper5ea00cc67502b\database_write($orderId, $payment->status);
+    database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code
      */
-    \header("Location: " . $payment->getCheckoutUrl(), \true, 303);
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+    header("Location: " . $payment->getCheckoutUrl(), true, 303);
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

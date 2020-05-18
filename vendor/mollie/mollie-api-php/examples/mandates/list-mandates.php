@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * List all customer mandates
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -19,9 +23,9 @@ try {
      */
     echo "<ul>";
     foreach ($customer->mandates() as $mandate) {
-        echo "<li>" . \htmlspecialchars($mandate->id) . " - " . \htmlspecialchars($mandate->method) . ": " . \htmlspecialchars($mandate->status) . "</li>";
+        echo "<li>" . htmlspecialchars($mandate->id) . " - " . htmlspecialchars($mandate->method) . ": " . htmlspecialchars($mandate->status) . "</li>";
     }
     echo "</ul>";
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

@@ -3,6 +3,16 @@
 namespace _PhpScoper5ea00cc67502b\Psr\Log\Test;
 
 use _PhpScoper5ea00cc67502b\Psr\Log\AbstractLogger;
+use BadMethodCallException;
+use function call_user_func;
+use function call_user_func_array;
+use function get_class;
+use function is_string;
+use function method_exists;
+use function preg_match;
+use function strpos;
+use function strtolower;
+
 /**
  * Used for testing purposes.
  *
@@ -53,7 +63,7 @@ use _PhpScoper5ea00cc67502b\Psr\Log\AbstractLogger;
  * @method bool hasInfoThatPasses($message)
  * @method bool hasDebugThatPasses($message)
  */
-class TestLogger extends \_PhpScoper5ea00cc67502b\Psr\Log\AbstractLogger
+class TestLogger extends AbstractLogger
 {
     /**
      * @var array
@@ -75,54 +85,54 @@ class TestLogger extends \_PhpScoper5ea00cc67502b\Psr\Log\AbstractLogger
     }
     public function hasRecord($record, $level)
     {
-        if (\is_string($record)) {
+        if (is_string($record)) {
             $record = ['message' => $record];
         }
         return $this->hasRecordThatPasses(function ($rec) use($record) {
             if ($rec['message'] !== $record['message']) {
-                return \false;
+                return false;
             }
             if (isset($record['context']) && $rec['context'] !== $record['context']) {
-                return \false;
+                return false;
             }
-            return \true;
+            return true;
         }, $level);
     }
     public function hasRecordThatContains($message, $level)
     {
         return $this->hasRecordThatPasses(function ($rec) use($message) {
-            return \strpos($rec['message'], $message) !== \false;
+            return strpos($rec['message'], $message) !== false;
         }, $level);
     }
     public function hasRecordThatMatches($regex, $level)
     {
         return $this->hasRecordThatPasses(function ($rec) use($regex) {
-            return \preg_match($regex, $rec['message']) > 0;
+            return preg_match($regex, $rec['message']) > 0;
         }, $level);
     }
     public function hasRecordThatPasses(callable $predicate, $level)
     {
         if (!isset($this->recordsByLevel[$level])) {
-            return \false;
+            return false;
         }
         foreach ($this->recordsByLevel[$level] as $i => $rec) {
-            if (\call_user_func($predicate, $rec, $i)) {
-                return \true;
+            if (call_user_func($predicate, $rec, $i)) {
+                return true;
             }
         }
-        return \false;
+        return false;
     }
     public function __call($method, $args)
     {
-        if (\preg_match('/(.*)(Debug|Info|Notice|Warning|Error|Critical|Alert|Emergency)(.*)/', $method, $matches) > 0) {
+        if (preg_match('/(.*)(Debug|Info|Notice|Warning|Error|Critical|Alert|Emergency)(.*)/', $method, $matches) > 0) {
             $genericMethod = $matches[1] . ('Records' !== $matches[3] ? 'Record' : '') . $matches[3];
-            $level = \strtolower($matches[2]);
-            if (\method_exists($this, $genericMethod)) {
+            $level = strtolower($matches[2]);
+            if (method_exists($this, $genericMethod)) {
                 $args[] = $level;
-                return \call_user_func_array([$this, $genericMethod], $args);
+                return call_user_func_array([$this, $genericMethod], $args);
             }
         }
-        throw new \BadMethodCallException('Call to undefined method ' . \get_class($this) . '::' . $method . '()');
+        throw new BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
     }
     public function reset()
     {

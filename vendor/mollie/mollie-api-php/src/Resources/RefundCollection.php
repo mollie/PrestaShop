@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class RefundCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class RefundCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class RefundCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Cur
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund($this->client);
+        return new Refund($this->client);
     }
 }

@@ -15,11 +15,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\Psr6Cache;
 /**
  * @group time-sensitive
  */
-class Psr6CacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class Psr6CacheTest extends CacheTestCase
 {
     protected $skippedTests = ['testPrune' => 'Psr6Cache just proxies'];
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\Psr6Cache(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime));
+        return new Psr6Cache(new FilesystemAdapter('', $defaultLifetime));
     }
 }

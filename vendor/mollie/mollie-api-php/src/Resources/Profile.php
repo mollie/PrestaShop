@@ -5,7 +5,10 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\ProfileStatus;
-class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+use function json_encode;
+
+class Profile extends BaseResource
 {
     /**
      * @var string
@@ -48,7 +51,7 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $status;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $review;
     /**
@@ -59,7 +62,7 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $createdAt;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
@@ -67,21 +70,21 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isUnverified()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\ProfileStatus::STATUS_UNVERIFIED;
+        return $this->status == ProfileStatus::STATUS_UNVERIFIED;
     }
     /**
      * @return bool
      */
     public function isVerified()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\ProfileStatus::STATUS_VERIFIED;
+        return $this->status == ProfileStatus::STATUS_VERIFIED;
     }
     /**
      * @return bool
      */
     public function isBlocked()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\ProfileStatus::STATUS_BLOCKED;
+        return $this->status == ProfileStatus::STATUS_BLOCKED;
     }
     /**
      * @return Profile
@@ -92,9 +95,9 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = \json_encode(array("name" => $this->name, "website" => $this->website, "email" => $this->email, "phone" => $this->phone, "categoryCode" => $this->categoryCode, "mode" => $this->mode));
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile($this->client));
+        $body = json_encode(array("name" => $this->name, "website" => $this->website, "email" => $this->email, "phone" => $this->phone, "categoryCode" => $this->categoryCode, "mode" => $this->mode));
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return ResourceFactory::createFromApiResult($result, new Profile($this->client));
     }
     /**
      * Retrieves all chargebacks associated with this profile
@@ -105,10 +108,10 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     public function chargebacks()
     {
         if (!isset($this->_links->chargebacks->href)) {
-            return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ChargebackCollection($this->client, 0, null);
+            return new ChargebackCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Chargeback::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
+        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, Chargeback::class, $result->_links);
     }
     /**
      * Retrieves all methods activated on this profile
@@ -119,10 +122,10 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     public function methods()
     {
         if (!isset($this->_links->methods->href)) {
-            return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\MethodCollection(0, null);
+            return new MethodCollection(0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->methods->href);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->methods, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->methods->href);
+        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->methods, Method::class, $result->_links);
     }
     /**
      * Enable a payment method for this profile.
@@ -157,10 +160,10 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     public function payments()
     {
         if (!isset($this->_links->payments->href)) {
-            return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\PaymentCollection($this->client, 0, null);
+            return new PaymentCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->payments->href);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->methods, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->payments->href);
+        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->methods, Method::class, $result->_links);
     }
     /**
      * Retrieves all refunds associated with this profile
@@ -171,9 +174,9 @@ class Profile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     public function refunds()
     {
         if (!isset($this->_links->refunds->href)) {
-            return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\RefundCollection($this->client, 0, null);
+            return new RefundCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->refunds->href);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->refunds->href);
+        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, Refund::class, $result->_links);
     }
 }

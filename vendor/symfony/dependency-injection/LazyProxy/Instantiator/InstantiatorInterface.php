@@ -30,5 +30,5 @@ interface InstantiatorInterface
      *
      * @return object
      */
-    public function instantiateProxy(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface $container, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id, $realInstantiator);
+    public function instantiateProxy(ContainerInterface $container, Definition $definition, $id, $realInstantiator);
 }

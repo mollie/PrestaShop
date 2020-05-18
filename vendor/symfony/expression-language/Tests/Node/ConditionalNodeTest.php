@@ -12,18 +12,18 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Nod
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
-class ConditionalNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node\AbstractNodeTest
+class ConditionalNodeTest extends AbstractNodeTest
 {
     public function getEvaluateData()
     {
-        return [[1, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))], [2, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))]];
+        return [[1, new ConditionalNode(new ConstantNode(true), new ConstantNode(1), new ConstantNode(2))], [2, new ConditionalNode(new ConstantNode(false), new ConstantNode(1), new ConstantNode(2))]];
     }
     public function getCompileData()
     {
-        return [['((true) ? (1) : (2))', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))], ['((false) ? (1) : (2))', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))]];
+        return [['((true) ? (1) : (2))', new ConditionalNode(new ConstantNode(true), new ConstantNode(1), new ConstantNode(2))], ['((false) ? (1) : (2))', new ConditionalNode(new ConstantNode(false), new ConstantNode(1), new ConstantNode(2))]];
     }
     public function getDumpData()
     {
-        return [['(true ? 1 : 2)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))], ['(false ? 1 : 2)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConditionalNode(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1), new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(2))]];
+        return [['(true ? 1 : 2)', new ConditionalNode(new ConstantNode(true), new ConstantNode(1), new ConstantNode(2))], ['(false ? 1 : 2)', new ConditionalNode(new ConstantNode(false), new ConstantNode(1), new ConstantNode(2))]];
     }
 }

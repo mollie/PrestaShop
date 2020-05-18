@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class Permission extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class Permission extends BaseResource
 {
     /**
      * @var string
@@ -22,7 +24,7 @@ class Permission extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResou
      */
     public $granted;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
 }

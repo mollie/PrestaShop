@@ -16,7 +16,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-interface RepeatablePassInterface extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+interface RepeatablePassInterface extends CompilerPassInterface
 {
-    public function setRepeatedPass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass);
+    public function setRepeatedPass(RepeatedPass $repeatedPass);
 }

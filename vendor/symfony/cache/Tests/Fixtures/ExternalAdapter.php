@@ -18,12 +18,12 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class ExternalAdapter implements \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface
+class ExternalAdapter implements CacheItemPoolInterface
 {
     private $cache;
     public function __construct()
     {
-        $this->cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $this->cache = new ArrayAdapter();
     }
     public function getItem($key)
     {
@@ -49,11 +49,11 @@ class ExternalAdapter implements \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoo
     {
         return $this->cache->deleteItems($keys);
     }
-    public function save(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function save(CacheItemInterface $item)
     {
         return $this->cache->save($item);
     }
-    public function saveDeferred(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(CacheItemInterface $item)
     {
         return $this->cache->saveDeferred($item);
     }

@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class CustomerCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class CustomerCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class CustomerCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\C
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer($this->client);
+        return new Customer($this->client);
     }
 }

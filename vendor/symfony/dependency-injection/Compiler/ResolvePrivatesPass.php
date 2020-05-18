@@ -14,23 +14,23 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolvePrivatesPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class ResolvePrivatesPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition->isPrivate()) {
-                $definition->setPublic(\false);
-                $definition->setPrivate(\true);
+                $definition->setPublic(false);
+                $definition->setPrivate(true);
             }
         }
         foreach ($container->getAliases() as $id => $alias) {
             if ($alias->isPrivate()) {
-                $alias->setPublic(\false);
-                $alias->setPrivate(\true);
+                $alias->setPublic(false);
+                $alias->setPrivate(true);
             }
         }
     }

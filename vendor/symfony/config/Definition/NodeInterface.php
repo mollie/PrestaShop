@@ -13,6 +13,8 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
+use RuntimeException;
+
 /**
  * Common Interface among all nodes.
  *
@@ -52,7 +54,7 @@ interface NodeInterface
      *
      * @return mixed The default value
      *
-     * @throws \RuntimeException if the node has no default value
+     * @throws RuntimeException if the node has no default value
      */
     public function getDefaultValue();
     /**

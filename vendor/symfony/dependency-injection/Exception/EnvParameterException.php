@@ -10,15 +10,19 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception;
 
+use Exception;
+use function implode;
+use function sprintf;
+
 /**
  * This exception wraps exceptions whose messages contain a reference to an env parameter.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvParameterException extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+class EnvParameterException extends InvalidArgumentException
 {
-    public function __construct(array $envs, \Exception $previous = null, $message = 'Incompatible use of dynamic environment variables "%s" found in parameters.')
+    public function __construct(array $envs, Exception $previous = null, $message = 'Incompatible use of dynamic environment variables "%s" found in parameters.')
     {
-        parent::__construct(\sprintf($message, \implode('", "', $envs)), 0, $previous);
+        parent::__construct(sprintf($message, implode('", "', $envs)), 0, $previous);
     }
 }

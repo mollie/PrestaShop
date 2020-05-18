@@ -13,18 +13,18 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Lo
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\ClosureLoader;
-class ClosureLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ClosureLoaderTest extends TestCase
 {
     public function testSupports()
     {
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\ClosureLoader(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder());
+        $loader = new ClosureLoader(new ContainerBuilder());
         $this->assertTrue($loader->supports(function ($container) {
         }), '->supports() returns true if the resource is loadable');
         $this->assertFalse($loader->supports('foo.foo'), '->supports() returns true if the resource is loadable');
     }
     public function testLoad()
     {
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\ClosureLoader($container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder());
+        $loader = new ClosureLoader($container = new ContainerBuilder());
         $loader->load(function ($container) {
             $container->setParameter('foo', 'foo');
         });

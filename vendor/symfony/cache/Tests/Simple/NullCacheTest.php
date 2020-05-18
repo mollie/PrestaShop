@@ -12,14 +12,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\NullCache;
+use stdClass;
+
 /**
  * @group time-sensitive
  */
-class NullCacheTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class NullCacheTest extends TestCase
 {
     public function createCachePool()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\NullCache();
+        return new NullCache();
     }
     public function testGetItem()
     {
@@ -34,7 +36,7 @@ class NullCacheTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $cache = $this->createCachePool();
         $keys = ['foo', 'bar', 'baz', 'biz'];
-        $default = new \stdClass();
+        $default = new stdClass();
         $items = $cache->getMultiple($keys, $default);
         $count = 0;
         foreach ($items as $key => $item) {

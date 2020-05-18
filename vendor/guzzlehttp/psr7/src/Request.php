@@ -6,10 +6,14 @@ use InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
+use function is_string;
+use function preg_match;
+use function strtoupper;
+
 /**
  * PSR-7 request implementation.
  */
-class Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface
+class Request implements RequestInterface
 {
     use MessageTrait;
     /** @var string */
@@ -28,10 +32,10 @@ class Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterf
     public function __construct($method, $uri, array $headers = [], $body = null, $version = '1.1')
     {
         $this->assertMethod($method);
-        if (!$uri instanceof \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface) {
-            $uri = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Uri($uri);
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
         }
-        $this->method = \strtoupper($method);
+        $this->method = strtoupper($method);
         $this->uri = $uri;
         $this->setHeaders($headers);
         $this->protocol = $version;
@@ -58,8 +62,8 @@ class Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterf
     }
     public function withRequestTarget($requestTarget)
     {
-        if (\preg_match('#\\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+        if (preg_match('#\\s#', $requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
         $new = clone $this;
         $new->requestTarget = $requestTarget;
@@ -73,14 +77,14 @@ class Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterf
     {
         $this->assertMethod($method);
         $new = clone $this;
-        $new->method = \strtoupper($method);
+        $new->method = strtoupper($method);
         return $new;
     }
     public function getUri()
     {
         return $this->uri;
     }
-    public function withUri(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, $preserveHost = \false)
+    public function withUri(UriInterface $uri, $preserveHost = false)
     {
         if ($uri === $this->uri) {
             return $this;
@@ -113,8 +117,8 @@ class Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterf
     }
     private function assertMethod($method)
     {
-        if (!\is_string($method) || $method === '') {
-            throw new \InvalidArgumentException('Method must be a non-empty string.');
+        if (!is_string($method) || $method === '') {
+            throw new InvalidArgumentException('Method must be a non-empty string.');
         }
     }
 }

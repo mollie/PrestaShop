@@ -29,7 +29,7 @@ class MockStream
      */
     public function stream_open($path, $mode, $options, &$opened_path)
     {
-        return \true;
+        return true;
     }
     /**
      * @param string $path  The file path or URL to stat

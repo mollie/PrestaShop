@@ -5,7 +5,11 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Capture;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CaptureCollection;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-class PaymentCaptureEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Resources\BaseResource;
+use stdClass;
+
+class PaymentCaptureEndpoint extends CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_captures";
     /**
@@ -15,19 +19,19 @@ class PaymentCaptureEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoin
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Capture($this->client);
+        return new Capture($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param \stdClass $_links
+     * @param stdClass $_links
      *
      * @return \Mollie\Api\Resources\CaptureCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CaptureCollection($this->client, $count, $_links);
+        return new CaptureCollection($this->client, $count, $_links);
     }
     /**
      * @param Payment $payment
@@ -35,9 +39,9 @@ class PaymentCaptureEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoin
      * @param array $parameters
      *
      * @return Capture
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
-    public function getFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment $payment, $captureId, array $parameters = [])
+    public function getFor(Payment $payment, $captureId, array $parameters = [])
     {
         return $this->getForId($payment->id, $captureId, $parameters);
     }
@@ -46,8 +50,8 @@ class PaymentCaptureEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoin
      * @param string $captureId
      * @param array $parameters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Capture
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @return BaseResource|\Mollie\Api\Resources\Capture
+     * @throws ApiException
      */
     public function getForId($paymentId, $captureId, array $parameters = [])
     {

@@ -16,19 +16,19 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Resol
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-class ResolveHotPathPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ResolveHotPathPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo')->addTag('container.hot_path')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\IteratorArgument([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('lazy')]))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('service_container'))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('', [new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('bar')]))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('baz', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('missing'));
+        $container = new ContainerBuilder();
+        $container->register('foo')->addTag('container.hot_path')->addArgument(new IteratorArgument([new Reference('lazy')]))->addArgument(new Reference('service_container'))->addArgument(new Definition('', [new Reference('bar')]))->addArgument(new Reference('baz', ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE))->addArgument(new Reference('missing'));
         $container->register('lazy');
-        $container->register('bar')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('buz'))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('deprec_ref_notag'));
-        $container->register('baz')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('lazy'))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('lazy'));
+        $container->register('bar')->addArgument(new Reference('buz'))->addArgument(new Reference('deprec_ref_notag'));
+        $container->register('baz')->addArgument(new Reference('lazy'))->addArgument(new Reference('lazy'));
         $container->register('buz');
         $container->register('deprec_with_tag')->setDeprecated()->addTag('container.hot_path');
         $container->register('deprec_ref_notag')->setDeprecated();
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveHotPathPass())->process($container);
+        (new ResolveHotPathPass())->process($container);
         $this->assertFalse($container->getDefinition('lazy')->hasTag('container.hot_path'));
         $this->assertTrue($container->getDefinition('bar')->hasTag('container.hot_path'));
         $this->assertTrue($container->getDefinition('buz')->hasTag('container.hot_path'));

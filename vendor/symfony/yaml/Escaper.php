@@ -10,6 +10,12 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
 
+use function in_array;
+use function preg_match;
+use function sprintf;
+use function str_replace;
+use function strtolower;
+
 /**
  * Escaper encapsulates escaping rules for single and double-quoted
  * YAML strings.
@@ -37,7 +43,7 @@ class Escaper
      */
     public static function requiresDoubleQuoting($value)
     {
-        return 0 < \preg_match('/' . self::REGEX_CHARACTER_TO_ESCAPE . '/u', $value);
+        return 0 < preg_match('/' . self::REGEX_CHARACTER_TO_ESCAPE . '/u', $value);
     }
     /**
      * Escapes and surrounds a PHP value with double quotes.
@@ -48,7 +54,7 @@ class Escaper
      */
     public static function escapeWithDoubleQuotes($value)
     {
-        return \sprintf('"%s"', \str_replace(self::$escapees, self::$escaped, $value));
+        return sprintf('"%s"', str_replace(self::$escapees, self::$escaped, $value));
     }
     /**
      * Determines if a PHP value would require single quoting in YAML.
@@ -61,12 +67,12 @@ class Escaper
     {
         // Determines if a PHP value is entirely composed of a value that would
         // require single quoting in YAML.
-        if (\in_array(\strtolower($value), ['null', '~', 'true', 'false', 'y', 'n', 'yes', 'no', 'on', 'off'])) {
-            return \true;
+        if (in_array(strtolower($value), ['null', '~', 'true', 'false', 'y', 'n', 'yes', 'no', 'on', 'off'])) {
+            return true;
         }
         // Determines if the PHP value contains any single characters that would
         // cause it to require single quoting in YAML.
-        return 0 < \preg_match('/[ \\s \' " \\: \\{ \\} \\[ \\] , & \\* \\# \\?] | \\A[ \\- ? | < > = ! % @ ` ]/x', $value);
+        return 0 < preg_match('/[ \\s \' " \\: \\{ \\} \\[ \\] , & \\* \\# \\?] | \\A[ \\- ? | < > = ! % @ ` ]/x', $value);
     }
     /**
      * Escapes and surrounds a PHP value with single quotes.
@@ -77,6 +83,6 @@ class Escaper
      */
     public static function escapeWithSingleQuotes($value)
     {
-        return \sprintf("'%s'", \str_replace('\'', '\'\'', $value));
+        return sprintf("'%s'", str_replace('\'', '\'\'', $value));
     }
 }

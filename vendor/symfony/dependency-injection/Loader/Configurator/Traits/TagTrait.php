@@ -11,6 +11,10 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function is_scalar;
+use function is_string;
+use function sprintf;
+
 trait TagTrait
 {
     /**
@@ -23,12 +27,12 @@ trait TagTrait
      */
     public final function tag($name, array $attributes = [])
     {
-        if (!\is_string($name) || '' === $name) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The tag name for service "%s" must be a non-empty string.', $this->id));
+        if (!is_string($name) || '' === $name) {
+            throw new InvalidArgumentException(sprintf('The tag name for service "%s" must be a non-empty string.', $this->id));
         }
         foreach ($attributes as $attribute => $value) {
-            if (!\is_scalar($value) && null !== $value) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('A tag attribute must be of a scalar-type for service "%s", tag "%s", attribute "%s".', $this->id, $name, $attribute));
+            if (!is_scalar($value) && null !== $value) {
+                throw new InvalidArgumentException(sprintf('A tag attribute must be of a scalar-type for service "%s", tag "%s", attribute "%s".', $this->id, $name, $attribute));
             }
         }
         $this->definition->addTag($name, $attributes);
