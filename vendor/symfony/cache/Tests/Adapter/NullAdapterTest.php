@@ -16,11 +16,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\NullAdapter;
 /**
  * @group time-sensitive
  */
-class NullAdapterTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class NullAdapterTest extends TestCase
 {
     public function createCachePool()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\NullAdapter();
+        return new NullAdapter();
     }
     public function testGetItem()
     {

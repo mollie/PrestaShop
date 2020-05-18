@@ -11,21 +11,30 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use ArrayAccess;
+use RuntimeException;
+use function call_user_func_array;
+use function get_class;
+use function is_array;
+use function is_callable;
+use function is_object;
+use function sprintf;
+
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class GetAttrNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class GetAttrNode extends Node
 {
     const PROPERTY_CALL = 1;
     const METHOD_CALL = 2;
     const ARRAY_CALL = 3;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $node, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $attribute, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ArrayNode $arguments, $type)
+    public function __construct(Node $node, Node $attribute, ArrayNode $arguments, $type)
     {
         parent::__construct(['node' => $node, 'attribute' => $attribute, 'arguments' => $arguments], ['type' => $type]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         switch ($this->attributes['type']) {
             case self::PROPERTY_CALL:
@@ -44,24 +53,24 @@ class GetAttrNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionL
         switch ($this->attributes['type']) {
             case self::PROPERTY_CALL:
                 $obj = $this->nodes['node']->evaluate($functions, $values);
-                if (!\is_object($obj)) {
-                    throw new \RuntimeException('Unable to get a property on a non-object.');
+                if (!is_object($obj)) {
+                    throw new RuntimeException('Unable to get a property on a non-object.');
                 }
                 $property = $this->nodes['attribute']->attributes['value'];
                 return $obj->{$property};
             case self::METHOD_CALL:
                 $obj = $this->nodes['node']->evaluate($functions, $values);
-                if (!\is_object($obj)) {
-                    throw new \RuntimeException('Unable to get a property on a non-object.');
+                if (!is_object($obj)) {
+                    throw new RuntimeException('Unable to get a property on a non-object.');
                 }
-                if (!\is_callable($toCall = [$obj, $this->nodes['attribute']->attributes['value']])) {
-                    throw new \RuntimeException(\sprintf('Unable to call method "%s" of object "%s".', $this->nodes['attribute']->attributes['value'], \get_class($obj)));
+                if (!is_callable($toCall = [$obj, $this->nodes['attribute']->attributes['value']])) {
+                    throw new RuntimeException(sprintf('Unable to call method "%s" of object "%s".', $this->nodes['attribute']->attributes['value'], get_class($obj)));
                 }
-                return \call_user_func_array($toCall, $this->nodes['arguments']->evaluate($functions, $values));
+                return call_user_func_array($toCall, $this->nodes['arguments']->evaluate($functions, $values));
             case self::ARRAY_CALL:
                 $array = $this->nodes['node']->evaluate($functions, $values);
-                if (!\is_array($array) && !$array instanceof \ArrayAccess) {
-                    throw new \RuntimeException('Unable to get an item on a non-array.');
+                if (!is_array($array) && !$array instanceof ArrayAccess) {
+                    throw new RuntimeException('Unable to get an item on a non-array.');
                 }
                 return $array[$this->nodes['attribute']->evaluate($functions, $values)];
         }

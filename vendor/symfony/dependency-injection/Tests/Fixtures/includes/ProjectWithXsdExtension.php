@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b;
 
-class ProjectWithXsdExtension extends \_PhpScoper5ea00cc67502b\ProjectExtension
+use function class_alias;
+
+class ProjectWithXsdExtension extends ProjectExtension
 {
     public function getXsdValidationBasePath()
     {
@@ -17,4 +19,4 @@ class ProjectWithXsdExtension extends \_PhpScoper5ea00cc67502b\ProjectExtension
         return 'projectwithxsd';
     }
 }
-\class_alias('_PhpScoper5ea00cc67502b\\ProjectWithXsdExtension', 'ProjectWithXsdExtension', \false);
+class_alias('_PhpScoper5ea00cc67502b\\ProjectWithXsdExtension', 'ProjectWithXsdExtension', false);

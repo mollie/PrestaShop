@@ -24,7 +24,7 @@ trait DeprecateTrait
      */
     public final function deprecate($template = null)
     {
-        $this->definition->setDeprecated(\true, $template);
+        $this->definition->setDeprecated(true, $template);
         return $this;
     }
 }

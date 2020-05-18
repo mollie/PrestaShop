@@ -150,7 +150,7 @@ use GuzzleHttp\Promise\Promise;
 
 $promise = new Promise();
 $promise->then(null, function ($reason) {
-    throw new \Exception($reason);
+    throw new Exception($reason);
 })->then(null, function ($reason) {
     assert($reason->getMessage() === 'Error!');
 });
@@ -220,7 +220,7 @@ the promise is rejected with the exception and the exception is thrown.
 
 ```php
 $promise = new Promise(function () use (&$promise) {
-    throw new \Exception('foo');
+    throw new Exception('foo');
 });
 
 $promise->wait(); // throws the exception.
@@ -397,7 +397,7 @@ $deferred = new React\Promise\Deferred();
 $reactPromise = $deferred->promise();
 
 // Create a Guzzle promise that is fulfilled with a React promise.
-$guzzlePromise = new \GuzzleHttp\Promise\Promise();
+$guzzlePromise = new Promise();
 $guzzlePromise->then(function ($value) use ($reactPromise) {
     // Do something something with the value...
     // Return the React promise
@@ -424,7 +424,7 @@ instance.
 
 ```php
 // Get the global task queue
-$queue = \GuzzleHttp\Promise\queue();
+use function GuzzleHttp\Promise\queue;$queue = queue();
 $queue->run();
 ```
 

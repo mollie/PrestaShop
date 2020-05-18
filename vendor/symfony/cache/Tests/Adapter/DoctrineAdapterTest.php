@@ -15,11 +15,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ArrayCache;
 /**
  * @group time-sensitive
  */
-class DoctrineAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class DoctrineAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = ['testDeferredSaveWithoutCommit' => 'Assumes a shared cache which ArrayCache is not.', 'testSaveWithoutExpire' => 'Assumes a shared cache which ArrayCache is not.', 'testNotUnserializable' => 'ArrayCache does not use serialize/unserialize'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\DoctrineAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures\ArrayCache($defaultLifetime), '', $defaultLifetime);
+        return new DoctrineAdapter(new ArrayCache($defaultLifetime), '', $defaultLifetime);
     }
 }

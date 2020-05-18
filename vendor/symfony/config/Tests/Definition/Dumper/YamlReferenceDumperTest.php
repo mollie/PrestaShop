@@ -13,12 +13,14 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Dump
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
-class YamlReferenceDumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function trim;
+
+class YamlReferenceDumperTest extends TestCase
 {
     public function testDumper()
     {
-        $configuration = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
+        $configuration = new ExampleConfiguration();
+        $dumper = new YamlReferenceDumper();
         $this->assertEquals($this->getConfigurationAsString(), $dumper->dump($configuration));
     }
     public function provideDumpAtPath()
@@ -62,9 +64,9 @@ EOL
      */
     public function testDumpAtPath($path, $expected)
     {
-        $configuration = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
-        $this->assertSame(\trim($expected), \trim($dumper->dumpAtPath($configuration, $path)));
+        $configuration = new ExampleConfiguration();
+        $dumper = new YamlReferenceDumper();
+        $this->assertSame(trim($expected), trim($dumper->dumpAtPath($configuration, $path)));
     }
     private function getConfigurationAsString()
     {

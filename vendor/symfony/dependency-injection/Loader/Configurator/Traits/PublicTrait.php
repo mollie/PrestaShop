@@ -21,7 +21,7 @@ trait PublicTrait
      */
     protected final function setPublic()
     {
-        $this->definition->setPublic(\true);
+        $this->definition->setPublic(true);
         return $this;
     }
     /**
@@ -29,7 +29,7 @@ trait PublicTrait
      */
     protected final function setPrivate()
     {
-        $this->definition->setPublic(\false);
+        $this->definition->setPublic(false);
         return $this;
     }
 }

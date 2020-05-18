@@ -10,7 +10,13 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
-@\trigger_error('The ' . __NAMESPACE__ . '\\LoggingFormatter class is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', \E_USER_DEPRECATED);
+use function get_class;
+use function implode;
+use function sprintf;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
+@trigger_error('The ' . __NAMESPACE__ . '\\LoggingFormatter class is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', E_USER_DEPRECATED);
 /**
  * Used to format logging messages during the compilation.
  *
@@ -20,28 +26,28 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler
  */
 class LoggingFormatter
 {
-    public function formatRemoveService(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $id, $reason)
+    public function formatRemoveService(CompilerPassInterface $pass, $id, $reason)
     {
-        return $this->format($pass, \sprintf('Removed service "%s"; reason: %s.', $id, $reason));
+        return $this->format($pass, sprintf('Removed service "%s"; reason: %s.', $id, $reason));
     }
-    public function formatInlineService(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $id, $target)
+    public function formatInlineService(CompilerPassInterface $pass, $id, $target)
     {
-        return $this->format($pass, \sprintf('Inlined service "%s" to "%s".', $id, $target));
+        return $this->format($pass, sprintf('Inlined service "%s" to "%s".', $id, $target));
     }
-    public function formatUpdateReference(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $serviceId, $oldDestId, $newDestId)
+    public function formatUpdateReference(CompilerPassInterface $pass, $serviceId, $oldDestId, $newDestId)
     {
-        return $this->format($pass, \sprintf('Changed reference of service "%s" previously pointing to "%s" to "%s".', $serviceId, $oldDestId, $newDestId));
+        return $this->format($pass, sprintf('Changed reference of service "%s" previously pointing to "%s" to "%s".', $serviceId, $oldDestId, $newDestId));
     }
-    public function formatResolveInheritance(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $childId, $parentId)
+    public function formatResolveInheritance(CompilerPassInterface $pass, $childId, $parentId)
     {
-        return $this->format($pass, \sprintf('Resolving inheritance for "%s" (parent: %s).', $childId, $parentId));
+        return $this->format($pass, sprintf('Resolving inheritance for "%s" (parent: %s).', $childId, $parentId));
     }
-    public function formatUnusedAutowiringPatterns(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $id, array $patterns)
+    public function formatUnusedAutowiringPatterns(CompilerPassInterface $pass, $id, array $patterns)
     {
-        return $this->format($pass, \sprintf('Autowiring\'s patterns "%s" for service "%s" don\'t match any method.', \implode('", "', $patterns), $id));
+        return $this->format($pass, sprintf('Autowiring\'s patterns "%s" for service "%s" don\'t match any method.', implode('", "', $patterns), $id));
     }
-    public function format(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $message)
+    public function format(CompilerPassInterface $pass, $message)
     {
-        return \sprintf('%s: %s', \get_class($pass), $message);
+        return sprintf('%s: %s', get_class($pass), $message);
     }
 }

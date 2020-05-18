@@ -16,31 +16,31 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInter
 /**
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class ContainerParametersResourceChecker implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ResourceCheckerInterface
+class ContainerParametersResourceChecker implements ResourceCheckerInterface
 {
     /** @var ContainerInterface */
     private $container;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
     /**
      * {@inheritdoc}
      */
-    public function supports(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface $metadata)
+    public function supports(ResourceInterface $metadata)
     {
-        return $metadata instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
+        return $metadata instanceof ContainerParametersResource;
     }
     /**
      * {@inheritdoc}
      */
-    public function isFresh(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface $resource, $timestamp)
+    public function isFresh(ResourceInterface $resource, $timestamp)
     {
         foreach ($resource->getParameters() as $key => $value) {
             if (!$this->container->hasParameter($key) || $this->container->getParameter($key) !== $value) {
-                return \false;
+                return false;
             }
         }
-        return \true;
+        return true;
     }
 }

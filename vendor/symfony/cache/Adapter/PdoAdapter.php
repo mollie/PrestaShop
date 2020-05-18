@@ -14,7 +14,9 @@ use _PhpScoper5ea00cc67502b\Doctrine\DBAL\Connection;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\PdoTrait;
-class PdoAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface
+use PDO;
+
+class PdoAdapter extends AbstractAdapter implements PruneableInterface
 {
     use PdoTrait;
     protected $maxIdLength = 255;
@@ -33,7 +35,7 @@ class PdoAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapte
      *  * db_password: The password when lazy-connect [default: '']
      *  * db_connection_options: An array of driver-specific connection options [default: []]
      *
-     * @param \PDO|Connection|string $connOrDsn       A \PDO or Connection instance or DSN string or null
+     * @param PDO|Connection|string $connOrDsn       A \PDO or Connection instance or DSN string or null
      * @param string                 $namespace
      * @param int                    $defaultLifetime
      * @param array                  $options         An associative array of options

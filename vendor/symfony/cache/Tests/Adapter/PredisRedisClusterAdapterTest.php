@@ -10,14 +10,18 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
-class PredisRedisClusterAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AbstractRedisAdapterTest
+use _PhpScoper5ea00cc67502b\Predis\Client;
+use function explode;
+use function getenv;
+
+class PredisRedisClusterAdapterTest extends AbstractRedisAdapterTest
 {
     public static function setUpBeforeClass()
     {
-        if (!($hosts = \getenv('REDIS_CLUSTER_HOSTS'))) {
+        if (!($hosts = getenv('REDIS_CLUSTER_HOSTS'))) {
             self::markTestSkipped('REDIS_CLUSTER_HOSTS env var is not defined.');
         }
-        self::$redis = new \_PhpScoper5ea00cc67502b\Predis\Client(\explode(' ', $hosts), ['cluster' => 'redis']);
+        self::$redis = new Client(explode(' ', $hosts), ['cluster' => 'redis']);
     }
     public static function tearDownAfterClass()
     {

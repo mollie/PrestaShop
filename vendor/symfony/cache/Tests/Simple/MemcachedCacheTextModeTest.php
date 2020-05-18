@@ -12,11 +12,14 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\MemcachedCache;
-class MemcachedCacheTextModeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\MemcachedCacheTest
+use function getenv;
+use function str_replace;
+
+class MemcachedCacheTextModeTest extends MemcachedCacheTest
 {
     public function createSimpleCache($defaultLifetime = 0)
     {
-        $client = \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['binary_protocol' => \false]);
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\MemcachedCache($client, \str_replace('\\', '.', __CLASS__), $defaultLifetime);
+        $client = AbstractAdapter::createConnection('memcached://' . getenv('MEMCACHED_HOST'), ['binary_protocol' => false]);
+        return new MemcachedCache($client, str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
 }

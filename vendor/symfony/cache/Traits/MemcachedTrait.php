@@ -10,8 +10,47 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
+use _PhpScoper5ea00cc67502b\Memcached;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Error;
+use ErrorException;
+use function array_change_key_case;
+use function array_key_exists;
+use function array_map;
+use function array_values;
+use function constant;
+use function count;
+use function explode;
+use function extension_loaded;
+use function get_class;
+use function gettype;
+use function ini_set;
+use function is_array;
+use function is_int;
+use function is_string;
+use function method_exists;
+use function parse_str;
+use function parse_url;
+use function phpversion;
+use function preg_match;
+use function preg_replace_callback;
+use function rawurldecode;
+use function rawurlencode;
+use function restore_error_handler;
+use function set_error_handler;
+use function sprintf;
+use function strlen;
+use function strpos;
+use function strtolower;
+use function strtoupper;
+use function substr;
+use function time;
+use function trigger_error;
+use function version_compare;
+use const CASE_UPPER;
+use const E_ERROR;
+
 /**
  * @author Rob Frawley 2nd <rmf@src.run>
  * @author Nicolas Grekas <p@tchwork.com>
@@ -20,24 +59,24 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentExc
  */
 trait MemcachedTrait
 {
-    private static $defaultClientOptions = ['persistent_id' => null, 'username' => null, 'password' => null, \_PhpScoper5ea00cc67502b\Memcached::OPT_SERIALIZER => \_PhpScoper5ea00cc67502b\Memcached::SERIALIZER_PHP];
+    private static $defaultClientOptions = ['persistent_id' => null, 'username' => null, 'password' => null, Memcached::OPT_SERIALIZER => Memcached::SERIALIZER_PHP];
     private $client;
     private $lazyClient;
     public static function isSupported()
     {
-        return \extension_loaded('memcached') && \version_compare(\phpversion('memcached'), '2.2.0', '>=');
+        return extension_loaded('memcached') && version_compare(phpversion('memcached'), '2.2.0', '>=');
     }
-    private function init(\_PhpScoper5ea00cc67502b\Memcached $client, $namespace, $defaultLifetime)
+    private function init(Memcached $client, $namespace, $defaultLifetime)
     {
         if (!static::isSupported()) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('Memcached >= 2.2.0 is required.');
+            throw new CacheException('Memcached >= 2.2.0 is required.');
         }
-        if ('Memcached' === \get_class($client)) {
-            $opt = $client->getOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_SERIALIZER);
-            if (\_PhpScoper5ea00cc67502b\Memcached::SERIALIZER_PHP !== $opt && \_PhpScoper5ea00cc67502b\Memcached::SERIALIZER_IGBINARY !== $opt) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
+        if ('Memcached' === get_class($client)) {
+            $opt = $client->getOption(Memcached::OPT_SERIALIZER);
+            if (Memcached::SERIALIZER_PHP !== $opt && Memcached::SERIALIZER_IGBINARY !== $opt) {
+                throw new CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
             }
-            $this->maxIdLength -= \strlen($client->getOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_PREFIX_KEY));
+            $this->maxIdLength -= strlen($client->getOption(Memcached::OPT_PREFIX_KEY));
             $this->client = $client;
         } else {
             $this->lazyClient = $client;
@@ -59,53 +98,53 @@ trait MemcachedTrait
      *
      * @return \Memcached
      *
-     * @throws \ErrorException When invalid options or servers are provided
+     * @throws ErrorException When invalid options or servers are provided
      */
     public static function createConnection($servers, array $options = [])
     {
-        if (\is_string($servers)) {
+        if (is_string($servers)) {
             $servers = [$servers];
-        } elseif (!\is_array($servers)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('MemcachedAdapter::createClient() expects array or string as first argument, "%s" given.', \gettype($servers)));
+        } elseif (!is_array($servers)) {
+            throw new InvalidArgumentException(sprintf('MemcachedAdapter::createClient() expects array or string as first argument, "%s" given.', gettype($servers)));
         }
         if (!static::isSupported()) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('Memcached >= 2.2.0 is required.');
+            throw new CacheException('Memcached >= 2.2.0 is required.');
         }
-        \set_error_handler(function ($type, $msg, $file, $line) {
-            throw new \ErrorException($msg, 0, $type, $file, $line);
+        set_error_handler(function ($type, $msg, $file, $line) {
+            throw new ErrorException($msg, 0, $type, $file, $line);
         });
         try {
             $options += static::$defaultClientOptions;
-            $client = new \_PhpScoper5ea00cc67502b\Memcached($options['persistent_id']);
+            $client = new Memcached($options['persistent_id']);
             $username = $options['username'];
             $password = $options['password'];
             // parse any DSN in $servers
             foreach ($servers as $i => $dsn) {
-                if (\is_array($dsn)) {
+                if (is_array($dsn)) {
                     continue;
                 }
-                if (0 !== \strpos($dsn, 'memcached://')) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Invalid Memcached DSN: "%s" does not start with "memcached://".', $dsn));
+                if (0 !== strpos($dsn, 'memcached://')) {
+                    throw new InvalidArgumentException(sprintf('Invalid Memcached DSN: "%s" does not start with "memcached://".', $dsn));
                 }
-                $params = \preg_replace_callback('#^memcached://(?:([^@]*+)@)?#', function ($m) use(&$username, &$password) {
+                $params = preg_replace_callback('#^memcached://(?:([^@]*+)@)?#', function ($m) use(&$username, &$password) {
                     if (!empty($m[1])) {
-                        list($username, $password) = \explode(':', $m[1], 2) + [1 => null];
+                        [$username, $password] = explode(':', $m[1], 2) + [1 => null];
                     }
                     return 'file://';
                 }, $dsn);
-                if (\false === ($params = \parse_url($params))) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Invalid Memcached DSN: "%s".', $dsn));
+                if (false === ($params = parse_url($params))) {
+                    throw new InvalidArgumentException(sprintf('Invalid Memcached DSN: "%s".', $dsn));
                 }
                 if (!isset($params['host']) && !isset($params['path'])) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Invalid Memcached DSN: "%s".', $dsn));
+                    throw new InvalidArgumentException(sprintf('Invalid Memcached DSN: "%s".', $dsn));
                 }
-                if (isset($params['path']) && \preg_match('#/(\\d+)$#', $params['path'], $m)) {
+                if (isset($params['path']) && preg_match('#/(\\d+)$#', $params['path'], $m)) {
                     $params['weight'] = $m[1];
-                    $params['path'] = \substr($params['path'], 0, -\strlen($m[0]));
+                    $params['path'] = substr($params['path'], 0, -strlen($m[0]));
                 }
                 $params += ['host' => isset($params['host']) ? $params['host'] : $params['path'], 'port' => isset($params['host']) ? 11211 : null, 'weight' => 0];
                 if (isset($params['query'])) {
-                    \parse_str($params['query'], $query);
+                    parse_str($params['query'], $query);
                     $params += $query;
                     $options = $query + $options;
                 }
@@ -113,21 +152,21 @@ trait MemcachedTrait
             }
             // set client's options
             unset($options['persistent_id'], $options['username'], $options['password'], $options['weight'], $options['lazy']);
-            $options = \array_change_key_case($options, \CASE_UPPER);
-            $client->setOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_BINARY_PROTOCOL, \true);
-            $client->setOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_NO_BLOCK, \true);
-            $client->setOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_TCP_NODELAY, \true);
-            if (!\array_key_exists('LIBKETAMA_COMPATIBLE', $options) && !\array_key_exists(\_PhpScoper5ea00cc67502b\Memcached::OPT_LIBKETAMA_COMPATIBLE, $options)) {
-                $client->setOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_LIBKETAMA_COMPATIBLE, \true);
+            $options = array_change_key_case($options, CASE_UPPER);
+            $client->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
+            $client->setOption(Memcached::OPT_NO_BLOCK, true);
+            $client->setOption(Memcached::OPT_TCP_NODELAY, true);
+            if (!array_key_exists('LIBKETAMA_COMPATIBLE', $options) && !array_key_exists(Memcached::OPT_LIBKETAMA_COMPATIBLE, $options)) {
+                $client->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
             }
             foreach ($options as $name => $value) {
-                if (\is_int($name)) {
+                if (is_int($name)) {
                     continue;
                 }
                 if ('HASH' === $name || 'SERIALIZER' === $name || 'DISTRIBUTION' === $name) {
-                    $value = \constant('Memcached::' . $name . '_' . \strtoupper($value));
+                    $value = constant('Memcached::' . $name . '_' . strtoupper($value));
                 }
-                $opt = \constant('Memcached::OPT_' . $name);
+                $opt = constant('Memcached::OPT_' . $name);
                 unset($options[$name]);
                 $options[$opt] = $value;
             }
@@ -140,8 +179,8 @@ trait MemcachedTrait
                 }
                 $newServers = [];
                 foreach ($servers as $server) {
-                    if (1 < \count($server)) {
-                        $server = \array_values($server);
+                    if (1 < count($server)) {
+                        $server = array_values($server);
                         unset($server[2]);
                         $server[1] = (int) $server[1];
                     }
@@ -155,14 +194,14 @@ trait MemcachedTrait
                 $client->addServers($servers);
             }
             if (null !== $username || null !== $password) {
-                if (!\method_exists($client, 'setSaslAuthData')) {
-                    \trigger_error('Missing SASL support: the memcached extension must be compiled with --enable-memcached-sasl.');
+                if (!method_exists($client, 'setSaslAuthData')) {
+                    trigger_error('Missing SASL support: the memcached extension must be compiled with --enable-memcached-sasl.');
                 }
                 $client->setSaslAuthData($username, $password);
             }
             return $client;
         } finally {
-            \restore_error_handler();
+            restore_error_handler();
         }
     }
     /**
@@ -171,11 +210,11 @@ trait MemcachedTrait
     protected function doSave(array $values, $lifetime)
     {
         if ($lifetime && $lifetime > 30 * 86400) {
-            $lifetime += \time();
+            $lifetime += time();
         }
         $encodedValues = [];
         foreach ($values as $key => $value) {
-            $encodedValues[\rawurlencode($key)] = $value;
+            $encodedValues[rawurlencode($key)] = $value;
         }
         return $this->checkResultCode($this->getClient()->setMulti($encodedValues, $lifetime));
     }
@@ -184,19 +223,19 @@ trait MemcachedTrait
      */
     protected function doFetch(array $ids)
     {
-        $unserializeCallbackHandler = \ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
+        $unserializeCallbackHandler = ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
         try {
-            $encodedIds = \array_map('rawurlencode', $ids);
+            $encodedIds = array_map('rawurlencode', $ids);
             $encodedResult = $this->checkResultCode($this->getClient()->getMulti($encodedIds));
             $result = [];
             foreach ($encodedResult as $key => $value) {
-                $result[\rawurldecode($key)] = $value;
+                $result[rawurldecode($key)] = $value;
             }
             return $result;
-        } catch (\Error $e) {
-            throw new \ErrorException($e->getMessage(), $e->getCode(), \E_ERROR, $e->getFile(), $e->getLine());
+        } catch (Error $e) {
+            throw new ErrorException($e->getMessage(), $e->getCode(), E_ERROR, $e->getFile(), $e->getLine());
         } finally {
-            \ini_set('unserialize_callback_func', $unserializeCallbackHandler);
+            ini_set('unserialize_callback_func', $unserializeCallbackHandler);
         }
     }
     /**
@@ -204,18 +243,18 @@ trait MemcachedTrait
      */
     protected function doHave($id)
     {
-        return \false !== $this->getClient()->get(\rawurlencode($id)) || $this->checkResultCode(\_PhpScoper5ea00cc67502b\Memcached::RES_SUCCESS === $this->client->getResultCode());
+        return false !== $this->getClient()->get(rawurlencode($id)) || $this->checkResultCode(Memcached::RES_SUCCESS === $this->client->getResultCode());
     }
     /**
      * {@inheritdoc}
      */
     protected function doDelete(array $ids)
     {
-        $ok = \true;
-        $encodedIds = \array_map('rawurlencode', $ids);
+        $ok = true;
+        $encodedIds = array_map('rawurlencode', $ids);
         foreach ($this->checkResultCode($this->getClient()->deleteMulti($encodedIds)) as $result) {
-            if (\_PhpScoper5ea00cc67502b\Memcached::RES_SUCCESS !== $result && \_PhpScoper5ea00cc67502b\Memcached::RES_NOTFOUND !== $result) {
-                $ok = \false;
+            if (Memcached::RES_SUCCESS !== $result && Memcached::RES_NOTFOUND !== $result) {
+                $ok = false;
                 break;
             }
         }
@@ -231,10 +270,10 @@ trait MemcachedTrait
     private function checkResultCode($result)
     {
         $code = $this->client->getResultCode();
-        if (\_PhpScoper5ea00cc67502b\Memcached::RES_SUCCESS === $code || \_PhpScoper5ea00cc67502b\Memcached::RES_NOTFOUND === $code) {
+        if (Memcached::RES_SUCCESS === $code || Memcached::RES_NOTFOUND === $code) {
             return $result;
         }
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException(\sprintf('MemcachedAdapter client error: %s.', \strtolower($this->client->getResultMessage())));
+        throw new CacheException(sprintf('MemcachedAdapter client error: %s.', strtolower($this->client->getResultMessage())));
     }
     /**
      * @return \Memcached
@@ -244,12 +283,12 @@ trait MemcachedTrait
         if ($this->client) {
             return $this->client;
         }
-        $opt = $this->lazyClient->getOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_SERIALIZER);
-        if (\_PhpScoper5ea00cc67502b\Memcached::SERIALIZER_PHP !== $opt && \_PhpScoper5ea00cc67502b\Memcached::SERIALIZER_IGBINARY !== $opt) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
+        $opt = $this->lazyClient->getOption(Memcached::OPT_SERIALIZER);
+        if (Memcached::SERIALIZER_PHP !== $opt && Memcached::SERIALIZER_IGBINARY !== $opt) {
+            throw new CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
         }
-        if ('' !== ($prefix = (string) $this->lazyClient->getOption(\_PhpScoper5ea00cc67502b\Memcached::OPT_PREFIX_KEY))) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException(\sprintf('MemcachedAdapter: "prefix_key" option must be empty when using proxified connections, "%s" given.', $prefix));
+        if ('' !== ($prefix = (string) $this->lazyClient->getOption(Memcached::OPT_PREFIX_KEY))) {
+            throw new CacheException(sprintf('MemcachedAdapter: "prefix_key" option must be empty when using proxified connections, "%s" given.', $prefix));
         }
         return $this->client = $this->lazyClient;
     }

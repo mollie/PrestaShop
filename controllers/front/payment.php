@@ -39,7 +39,11 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
+use Mollie\Config\Config;
+use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\PaymentFeeUtility;
+use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
     return;
@@ -67,7 +71,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws Exception
      */
     public function initContent()
@@ -91,7 +95,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        if (in_array($method, array(\Mollie\Config\Config::CARTES_BANCAIRES))) {
+        if (in_array($method, array(Config::CARTES_BANCAIRES))) {
             $method = 'creditcard';
         }
         $issuer = Tools::getValue('issuer') ?: null;
@@ -105,10 +109,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getContainer(\Mollie\Service\PaymentMethodService::class);
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        /** @var PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
@@ -345,8 +349,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 '{bankwire_address}' => $address,
             ];
         }
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 
         $orderFee = PaymentFeeUtility::getPaymentFee(
             new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),

@@ -11,6 +11,8 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
+use RuntimeException;
+
 /**
  * Interface for ConfigCache.
  *
@@ -39,7 +41,7 @@ interface ConfigCacheInterface
      * @param string                   $content  The content to write into the cache
      * @param ResourceInterface[]|null $metadata An array of ResourceInterface instances
      *
-     * @throws \RuntimeException When the cache file cannot be written
+     * @throws RuntimeException When the cache file cannot be written
      */
     public function write($content, array $metadata = null);
 }

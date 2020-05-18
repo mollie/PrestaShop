@@ -20,31 +20,41 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentExc
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\ProxyTrait;
+use Closure;
+use Traversable;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_int;
+use function is_object;
+use function iterator_to_array;
+use function sprintf;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class Psr6Cache implements CacheInterface, PruneableInterface, ResettableInterface
 {
     use ProxyTrait;
     private $createCacheItem;
     private $cacheItemPrototype;
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface $pool)
+    public function __construct(CacheItemPoolInterface $pool)
     {
         $this->pool = $pool;
-        if (!$pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface) {
+        if (!$pool instanceof AdapterInterface) {
             return;
         }
         $cacheItemPrototype =& $this->cacheItemPrototype;
-        $createCacheItem = \Closure::bind(static function ($key, $value, $allowInt = \false) use(&$cacheItemPrototype) {
+        $createCacheItem = Closure::bind(static function ($key, $value, $allowInt = false) use(&$cacheItemPrototype) {
             $item = clone $cacheItemPrototype;
-            $item->key = $allowInt && \is_int($key) ? (string) $key : \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+            $item->key = $allowInt && is_int($key) ? (string) $key : CacheItem::validateKey($key);
             $item->value = $value;
-            $item->isHit = \false;
+            $item->isHit = false;
             return $item;
-        }, null, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::class);
-        $this->createCacheItem = function ($key, $value, $allowInt = \false) use($createCacheItem) {
+        }, null, CacheItem::class);
+        $this->createCacheItem = function ($key, $value, $allowInt = false) use($createCacheItem) {
             if (null === $this->cacheItemPrototype) {
-                $this->get($allowInt && \is_int($key) ? (string) $key : $key);
+                $this->get($allowInt && is_int($key) ? (string) $key : $key);
             }
             $this->createCacheItem = $createCacheItem;
             return $createCacheItem($key, $value, $allowInt);
@@ -57,10 +67,10 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
     {
         try {
             $item = $this->pool->getItem($key);
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
         if (null === $this->cacheItemPrototype) {
             $this->cacheItemPrototype = clone $item;
@@ -79,10 +89,10 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
             } else {
                 $item = $this->pool->getItem($key)->set($value);
             }
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
         if (null !== $ttl) {
             $item->expiresAfter($ttl);
@@ -96,10 +106,10 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
     {
         try {
             return $this->pool->deleteItem($key);
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
     /**
@@ -114,17 +124,17 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
      */
     public function getMultiple($keys, $default = null)
     {
-        if ($keys instanceof \Traversable) {
-            $keys = \iterator_to_array($keys, \false);
-        } elseif (!\is_array($keys)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+        if ($keys instanceof Traversable) {
+            $keys = iterator_to_array($keys, false);
+        } elseif (!is_array($keys)) {
+            throw new InvalidArgumentException(sprintf('Cache keys must be array or Traversable, "%s" given.', is_object($keys) ? get_class($keys) : gettype($keys)));
         }
         try {
             $items = $this->pool->getItems($keys);
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
         $values = [];
         foreach ($items as $key => $item) {
@@ -137,16 +147,16 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
      */
     public function setMultiple($values, $ttl = null)
     {
-        $valuesIsArray = \is_array($values);
-        if (!$valuesIsArray && !$values instanceof \Traversable) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache values must be array or Traversable, "%s" given.', \is_object($values) ? \get_class($values) : \gettype($values)));
+        $valuesIsArray = is_array($values);
+        if (!$valuesIsArray && !$values instanceof Traversable) {
+            throw new InvalidArgumentException(sprintf('Cache values must be array or Traversable, "%s" given.', is_object($values) ? get_class($values) : gettype($values)));
         }
         $items = [];
         try {
             if (null !== ($f = $this->createCacheItem)) {
-                $valuesIsArray = \false;
+                $valuesIsArray = false;
                 foreach ($values as $key => $value) {
-                    $items[$key] = $f($key, $value, \true);
+                    $items[$key] = $f($key, $value, true);
                 }
             } elseif ($valuesIsArray) {
                 $items = [];
@@ -156,18 +166,18 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
                 $items = $this->pool->getItems($items);
             } else {
                 foreach ($values as $key => $value) {
-                    if (\is_int($key)) {
+                    if (is_int($key)) {
                         $key = (string) $key;
                     }
                     $items[$key] = $this->pool->getItem($key)->set($value);
                 }
             }
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
-        $ok = \true;
+        $ok = true;
         foreach ($items as $key => $item) {
             if ($valuesIsArray) {
                 $item->set($values[$key]);
@@ -184,17 +194,17 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
      */
     public function deleteMultiple($keys)
     {
-        if ($keys instanceof \Traversable) {
-            $keys = \iterator_to_array($keys, \false);
-        } elseif (!\is_array($keys)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+        if ($keys instanceof Traversable) {
+            $keys = iterator_to_array($keys, false);
+        } elseif (!is_array($keys)) {
+            throw new InvalidArgumentException(sprintf('Cache keys must be array or Traversable, "%s" given.', is_object($keys) ? get_class($keys) : gettype($keys)));
         }
         try {
             return $this->pool->deleteItems($keys);
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
     /**
@@ -204,10 +214,10 @@ class Psr6Cache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterfa
     {
         try {
             return $this->pool->hasItem($key);
-        } catch (\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException $e) {
+        } catch (SimpleCacheException $e) {
             throw $e;
-        } catch (\_PhpScoper5ea00cc67502b\Psr\Cache\CacheException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }

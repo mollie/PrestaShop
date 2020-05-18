@@ -10,18 +10,22 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception;
 
+use Exception;
+use function implode;
+use function sprintf;
+
 /**
  * This exception is thrown when a circular reference is detected.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ServiceCircularReferenceException extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException
+class ServiceCircularReferenceException extends RuntimeException
 {
     private $serviceId;
     private $path;
-    public function __construct($serviceId, array $path, \Exception $previous = null)
+    public function __construct($serviceId, array $path, Exception $previous = null)
     {
-        parent::__construct(\sprintf('Circular reference detected for service "%s", path: "%s".', $serviceId, \implode(' -> ', $path)), 0, $previous);
+        parent::__construct(sprintf('Circular reference detected for service "%s", path: "%s".', $serviceId, implode(' -> ', $path)), 0, $previous);
         $this->serviceId = $serviceId;
         $this->path = $path;
     }

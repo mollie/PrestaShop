@@ -16,13 +16,13 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
  *
  * @internal
  */
-class ConditionalNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class ConditionalNode extends Node
 {
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $expr1, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $expr2, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $expr3)
+    public function __construct(Node $expr1, Node $expr2, Node $expr3)
     {
         parent::__construct(['expr1' => $expr1, 'expr2' => $expr2, 'expr3' => $expr3]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler->raw('((')->compile($this->nodes['expr1'])->raw(') ? (')->compile($this->nodes['expr2'])->raw(') : (')->compile($this->nodes['expr3'])->raw('))');
     }

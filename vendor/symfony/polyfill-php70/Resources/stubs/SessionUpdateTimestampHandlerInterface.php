@@ -2,6 +2,8 @@
 
 namespace _PhpScoper5ea00cc67502b;
 
+use function class_alias;
+
 interface SessionUpdateTimestampHandlerInterface
 {
     /**
@@ -22,4 +24,4 @@ interface SessionUpdateTimestampHandlerInterface
      */
     public function updateTimestamp($key, $val);
 }
-\class_alias('_PhpScoper5ea00cc67502b\\SessionUpdateTimestampHandlerInterface', 'SessionUpdateTimestampHandlerInterface', \false);
+class_alias('_PhpScoper5ea00cc67502b\\SessionUpdateTimestampHandlerInterface', 'SessionUpdateTimestampHandlerInterface', false);

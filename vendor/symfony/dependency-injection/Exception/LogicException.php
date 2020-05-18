@@ -13,6 +13,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exceptio
 /**
  * Base LogicException for Dependency Injection component.
  */
-class LogicException extends \LogicException implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ExceptionInterface
+class LogicException extends \LogicException implements ExceptionInterface
 {
 }

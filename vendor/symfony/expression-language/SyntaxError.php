@@ -10,26 +10,32 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
 
-class SyntaxError extends \LogicException
+use LogicException;
+use function levenshtein;
+use function rtrim;
+use function sprintf;
+use const INF;
+
+class SyntaxError extends LogicException
 {
     public function __construct($message, $cursor = 0, $expression = '', $subject = null, array $proposals = null)
     {
-        $message = \sprintf('%s around position %d', \rtrim($message, '.'), $cursor);
+        $message = sprintf('%s around position %d', rtrim($message, '.'), $cursor);
         if ($expression) {
-            $message = \sprintf('%s for expression `%s`', $message, $expression);
+            $message = sprintf('%s for expression `%s`', $message, $expression);
         }
         $message .= '.';
         if (null !== $subject && null !== $proposals) {
-            $minScore = \INF;
+            $minScore = INF;
             foreach ($proposals as $proposal) {
-                $distance = \levenshtein($subject, $proposal);
+                $distance = levenshtein($subject, $proposal);
                 if ($distance < $minScore) {
                     $guess = $proposal;
                     $minScore = $distance;
                 }
             }
             if (isset($guess) && $minScore < 3) {
-                $message .= \sprintf(' Did you mean "%s"?', $guess);
+                $message .= sprintf(' Did you mean "%s"?', $guess);
             }
         }
         parent::__construct($message);

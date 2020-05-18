@@ -25,7 +25,7 @@ trait CallTrait
      */
     public final function call($method, array $arguments = [])
     {
-        $this->definition->addMethodCall($method, static::processValue($arguments, \true));
+        $this->definition->addMethodCall($method, static::processValue($arguments, true));
         return $this;
     }
 }

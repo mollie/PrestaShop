@@ -12,6 +12,40 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Finder\Finder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Finder\Glob;
+use FilesystemIterator;
+use InvalidArgumentException;
+use IteratorAggregate;
+use LogicException;
+use RecursiveCallbackFilterIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Serializable;
+use SplFileInfo;
+use function class_exists;
+use function defined;
+use function file_exists;
+use function hash_final;
+use function hash_init;
+use function hash_update;
+use function is_dir;
+use function is_file;
+use function iterator_to_array;
+use function preg_match;
+use function realpath;
+use function serialize;
+use function sort;
+use function sprintf;
+use function str_replace;
+use function strlen;
+use function strpos;
+use function substr;
+use function substr_replace;
+use function uasort;
+use function unserialize;
+use const DIRECTORY_SEPARATOR;
+use const GLOB_BRACE;
+use const GLOB_NOSORT;
+
 /**
  * GlobResource represents a set of resources stored on the filesystem.
  *
@@ -19,7 +53,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Finder\Glob;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class GlobResource implements \IteratorAggregate, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
+class GlobResource implements IteratorAggregate, SelfCheckingResourceInterface, Serializable
 {
     private $prefix;
     private $pattern;
@@ -30,15 +64,15 @@ class GlobResource implements \IteratorAggregate, \_PhpScoper5ea00cc67502b\Symfo
      * @param string $pattern   A glob pattern
      * @param bool   $recursive Whether directories should be scanned recursively or not
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($prefix, $pattern, $recursive)
     {
-        $this->prefix = \realpath($prefix) ?: (\file_exists($prefix) ? $prefix : \false);
+        $this->prefix = realpath($prefix) ?: (file_exists($prefix) ? $prefix : false);
         $this->pattern = $pattern;
         $this->recursive = $recursive;
-        if (\false === $this->prefix) {
-            throw new \InvalidArgumentException(\sprintf('The path "%s" does not exist.', $prefix));
+        if (false === $this->prefix) {
+            throw new InvalidArgumentException(sprintf('The path "%s" does not exist.', $prefix));
         }
     }
     public function getPrefix()
@@ -71,29 +105,29 @@ class GlobResource implements \IteratorAggregate, \_PhpScoper5ea00cc67502b\Symfo
         if (null === $this->hash) {
             $this->hash = $this->computeHash();
         }
-        return \serialize([$this->prefix, $this->pattern, $this->recursive, $this->hash]);
+        return serialize([$this->prefix, $this->pattern, $this->recursive, $this->hash]);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        list($this->prefix, $this->pattern, $this->recursive, $this->hash) = \unserialize($serialized);
+        [$this->prefix, $this->pattern, $this->recursive, $this->hash] = unserialize($serialized);
     }
     public function getIterator()
     {
-        if (!\file_exists($this->prefix) || !$this->recursive && '' === $this->pattern) {
+        if (!file_exists($this->prefix) || !$this->recursive && '' === $this->pattern) {
             return;
         }
-        if (0 !== \strpos($this->prefix, 'phar://') && \false === \strpos($this->pattern, '/**/') && (\defined('GLOB_BRACE') || \false === \strpos($this->pattern, '{'))) {
-            $paths = \glob($this->prefix . $this->pattern, \GLOB_NOSORT | (\defined('GLOB_BRACE') ? \GLOB_BRACE : 0));
-            \sort($paths);
+        if (0 !== strpos($this->prefix, 'phar://') && false === strpos($this->pattern, '/**/') && (defined('GLOB_BRACE') || false === strpos($this->pattern, '{'))) {
+            $paths = \glob($this->prefix . $this->pattern, GLOB_NOSORT | (defined('GLOB_BRACE') ? GLOB_BRACE : 0));
+            sort($paths);
             foreach ($paths as $path) {
-                if ($this->recursive && \is_dir($path)) {
-                    $files = \iterator_to_array(new \RecursiveIteratorIterator(new \RecursiveCallbackFilterIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS), function (\SplFileInfo $file) {
+                if ($this->recursive && is_dir($path)) {
+                    $files = iterator_to_array(new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS), function (SplFileInfo $file) {
                         return '.' !== $file->getBasename()[0];
-                    }), \RecursiveIteratorIterator::LEAVES_ONLY));
-                    \uasort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
+                    }), RecursiveIteratorIterator::LEAVES_ONLY));
+                    uasort($files, function (SplFileInfo $a, SplFileInfo $b) {
                         return (string) $a > (string) $b ? 1 : -1;
                     });
                     foreach ($files as $path => $info) {
@@ -101,33 +135,33 @@ class GlobResource implements \IteratorAggregate, \_PhpScoper5ea00cc67502b\Symfo
                             (yield $path => $info);
                         }
                     }
-                } elseif (\is_file($path)) {
-                    (yield $path => new \SplFileInfo($path));
+                } elseif (is_file($path)) {
+                    (yield $path => new SplFileInfo($path));
                 }
             }
             return;
         }
-        if (!\class_exists(\_PhpScoper5ea00cc67502b\Symfony\Component\Finder\Finder::class)) {
-            throw new \LogicException(\sprintf('Extended glob pattern "%s" cannot be used as the Finder component is not installed.', $this->pattern));
+        if (!class_exists(Finder::class)) {
+            throw new LogicException(sprintf('Extended glob pattern "%s" cannot be used as the Finder component is not installed.', $this->pattern));
         }
-        $finder = new \_PhpScoper5ea00cc67502b\Symfony\Component\Finder\Finder();
-        $regex = \_PhpScoper5ea00cc67502b\Symfony\Component\Finder\Glob::toRegex($this->pattern);
+        $finder = new Finder();
+        $regex = Glob::toRegex($this->pattern);
         if ($this->recursive) {
-            $regex = \substr_replace($regex, '(/|$)', -2, 1);
+            $regex = substr_replace($regex, '(/|$)', -2, 1);
         }
-        $prefixLen = \strlen($this->prefix);
+        $prefixLen = strlen($this->prefix);
         foreach ($finder->followLinks()->sortByName()->in($this->prefix) as $path => $info) {
-            if (\preg_match($regex, \substr('\\' === \DIRECTORY_SEPARATOR ? \str_replace('\\', '/', $path) : $path, $prefixLen)) && $info->isFile()) {
+            if (preg_match($regex, substr('\\' === DIRECTORY_SEPARATOR ? str_replace('\\', '/', $path) : $path, $prefixLen)) && $info->isFile()) {
                 (yield $path => $info);
             }
         }
     }
     private function computeHash()
     {
-        $hash = \hash_init('md5');
+        $hash = hash_init('md5');
         foreach ($this->getIterator() as $path => $info) {
-            \hash_update($hash, $path . "\n");
+            hash_update($hash, $path . "\n");
         }
-        return \hash_final($hash);
+        return hash_final($hash);
     }
 }

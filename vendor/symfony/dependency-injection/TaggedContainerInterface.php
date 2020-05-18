@@ -15,7 +15,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface TaggedContainerInterface extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
+interface TaggedContainerInterface extends ContainerInterface
 {
     /**
      * Returns service ids for a given tag.

@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * Retrieve a payment capture using the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -20,6 +24,6 @@ try {
     $capture = $payment->getCapture('cpt_4qqhO89gsT');
     $amount = $capture->amount->currency . ' ' . $capture->amount->value;
     echo 'Captured ' . $amount;
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

@@ -3,6 +3,12 @@
 namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use Exception;
+use RuntimeException;
+use function call_user_func;
+use function strlen;
+use const SEEK_SET;
+
 /**
  * Provides a read only stream that pumps data from a PHP callable.
  *
@@ -13,7 +19,7 @@ use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
  * the read() function of the PumpStream. The provided callable MUST return
  * false when there is no more data to read.
  */
-class PumpStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface
+class PumpStream implements StreamInterface
 {
     /** @var callable */
     private $source;
@@ -40,13 +46,13 @@ class PumpStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInte
         $this->source = $source;
         $this->size = isset($options['size']) ? $options['size'] : null;
         $this->metadata = isset($options['metadata']) ? $options['metadata'] : [];
-        $this->buffer = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\BufferStream();
+        $this->buffer = new BufferStream();
     }
     public function __toString()
     {
         try {
             return copy_to_string($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return '';
         }
     }
@@ -56,7 +62,7 @@ class PumpStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInte
     }
     public function detach()
     {
-        $this->tellPos = \false;
+        $this->tellPos = false;
         $this->source = null;
     }
     public function getSize()
@@ -73,38 +79,38 @@ class PumpStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInte
     }
     public function isSeekable()
     {
-        return \false;
+        return false;
     }
     public function rewind()
     {
         $this->seek(0);
     }
-    public function seek($offset, $whence = \SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET)
     {
-        throw new \RuntimeException('Cannot seek a PumpStream');
+        throw new RuntimeException('Cannot seek a PumpStream');
     }
     public function isWritable()
     {
-        return \false;
+        return false;
     }
     public function write($string)
     {
-        throw new \RuntimeException('Cannot write to a PumpStream');
+        throw new RuntimeException('Cannot write to a PumpStream');
     }
     public function isReadable()
     {
-        return \true;
+        return true;
     }
     public function read($length)
     {
         $data = $this->buffer->read($length);
-        $readLen = \strlen($data);
+        $readLen = strlen($data);
         $this->tellPos += $readLen;
         $remaining = $length - $readLen;
         if ($remaining) {
             $this->pump($remaining);
             $data .= $this->buffer->read($remaining);
-            $this->tellPos += \strlen($data) - $readLen;
+            $this->tellPos += strlen($data) - $readLen;
         }
         return $data;
     }
@@ -127,13 +133,13 @@ class PumpStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInte
     {
         if ($this->source) {
             do {
-                $data = \call_user_func($this->source, $length);
-                if ($data === \false || $data === null) {
+                $data = call_user_func($this->source, $length);
+                if ($data === false || $data === null) {
                     $this->source = null;
                     return;
                 }
                 $this->buffer->write($data);
-                $length -= \strlen($data);
+                $length -= strlen($data);
             } while ($length > 0);
         }
     }

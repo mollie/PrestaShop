@@ -13,14 +13,14 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Co
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolvePrivatesPass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-class ResolvePrivatesPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ResolvePrivatesPassTest extends TestCase
 {
     public function testPrivateHasHigherPrecedenceThanPublic()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo', 'stdClass')->setPublic(\true)->setPrivate(\true);
-        $container->setAlias('bar', 'foo')->setPublic(\false)->setPrivate(\false);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolvePrivatesPass())->process($container);
+        $container = new ContainerBuilder();
+        $container->register('foo', 'stdClass')->setPublic(true)->setPrivate(true);
+        $container->setAlias('bar', 'foo')->setPublic(false)->setPrivate(false);
+        (new ResolvePrivatesPass())->process($container);
         $this->assertFalse($container->getDefinition('foo')->isPublic());
         $this->assertFalse($container->getAlias('bar')->isPublic());
     }

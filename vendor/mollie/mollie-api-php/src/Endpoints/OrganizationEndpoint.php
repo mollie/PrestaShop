@@ -6,7 +6,9 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Organization;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrganizationCollection;
-class OrganizationEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use stdClass;
+
+class OrganizationEndpoint extends CollectionEndpointAbstract
 {
     protected $resourcePath = "organizations";
     /**
@@ -14,19 +16,19 @@ class OrganizationEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Organization($this->client);
+        return new Organization($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param \stdClass $_links
+     * @param stdClass $_links
      *
      * @return OrganizationCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrganizationCollection($this->client, $count, $_links);
+        return new OrganizationCollection($this->client, $count, $_links);
     }
     /**
      * Retrieve an organization from Mollie.
@@ -41,7 +43,7 @@ class OrganizationEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
     public function get($organizationId, array $parameters = [])
     {
         if (empty($organizationId)) {
-            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException("Organization ID is empty.");
+            throw new ApiException("Organization ID is empty.");
         }
         return parent::rest_read($organizationId, $parameters);
     }

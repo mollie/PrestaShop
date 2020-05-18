@@ -12,34 +12,34 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode;
-class EnumNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class EnumNodeTest extends TestCase
 {
     public function testFinalizeValue()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode('foo', null, ['foo', 'bar']);
+        $node = new EnumNode('foo', null, ['foo', 'bar']);
         $this->assertSame('foo', $node->finalize('foo'));
     }
     public function testConstructionWithNoValues()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('$values must contain at least one element.');
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode('foo', null, []);
+        new EnumNode('foo', null, []);
     }
     public function testConstructionWithOneValue()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode('foo', null, ['foo']);
+        $node = new EnumNode('foo', null, ['foo']);
         $this->assertSame('foo', $node->finalize('foo'));
     }
     public function testConstructionWithOneDistinctValue()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode('foo', null, ['foo', 'foo']);
+        $node = new EnumNode('foo', null, ['foo', 'foo']);
         $this->assertSame('foo', $node->finalize('foo'));
     }
     public function testFinalizeWithInvalidValue()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $this->expectExceptionMessage('The value "foobar" is not allowed for path "foo". Permissible values: "foo", "bar"');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode('foo', null, ['foo', 'bar']);
+        $node = new EnumNode('foo', null, ['foo', 'bar']);
         $node->finalize('foobar');
     }
 }

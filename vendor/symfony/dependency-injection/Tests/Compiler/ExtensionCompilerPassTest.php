@@ -18,21 +18,21 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Exte
 /**
  * @author Wouter J <wouter@wouterj.nl>
  */
-class ExtensionCompilerPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ExtensionCompilerPassTest extends TestCase
 {
     private $container;
     private $pass;
     protected function setUp()
     {
-        $this->container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $this->pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ExtensionCompilerPass();
+        $this->container = new ContainerBuilder();
+        $this->pass = new ExtensionCompilerPass();
     }
     public function testProcess()
     {
-        $extension1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\CompilerPassExtension('extension1');
-        $extension2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\DummyExtension('extension2');
-        $extension3 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\DummyExtension('extension3');
-        $extension4 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\CompilerPassExtension('extension4');
+        $extension1 = new CompilerPassExtension('extension1');
+        $extension2 = new DummyExtension('extension2');
+        $extension3 = new DummyExtension('extension3');
+        $extension4 = new CompilerPassExtension('extension4');
         $this->container->registerExtension($extension1);
         $this->container->registerExtension($extension2);
         $this->container->registerExtension($extension3);
@@ -44,7 +44,7 @@ class ExtensionCompilerPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
         $this->assertTrue($this->container->hasDefinition('extension4'));
     }
 }
-class DummyExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension
+class DummyExtension extends Extension
 {
     private $alias;
     public function __construct($alias)
@@ -55,14 +55,14 @@ class DummyExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     {
         return $this->alias;
     }
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
     }
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         $container->register($this->alias);
     }
 }
-class CompilerPassExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\DummyExtension implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class CompilerPassExtension extends DummyExtension implements CompilerPassInterface
 {
 }

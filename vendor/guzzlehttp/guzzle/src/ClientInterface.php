@@ -26,7 +26,7 @@ interface ClientInterface
      * @return ResponseInterface
      * @throws GuzzleException
      */
-    public function send(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, array $options = []);
+    public function send(RequestInterface $request, array $options = []);
     /**
      * Asynchronously send an HTTP request.
      *
@@ -36,7 +36,7 @@ interface ClientInterface
      *
      * @return PromiseInterface
      */
-    public function sendAsync(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, array $options = []);
+    public function sendAsync(RequestInterface $request, array $options = []);
     /**
      * Create and send an HTTP request.
      *

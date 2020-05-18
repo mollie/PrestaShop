@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class ShipmentCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseCollection
+class ShipmentCollection extends BaseCollection
 {
     /**
      * @return string

@@ -11,20 +11,25 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use DivisionByZeroError;
+use function in_array;
+use function preg_match;
+use function sprintf;
+
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class BinaryNode extends Node
 {
     private static $operators = ['~' => '.', 'and' => '&&', 'or' => '||'];
     private static $functions = ['**' => 'pow', '..' => 'range', 'in' => 'in_array', 'not in' => '!in_array'];
-    public function __construct($operator, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $left, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $right)
+    public function __construct($operator, Node $left, Node $right)
     {
         parent::__construct(['left' => $left, 'right' => $right], ['operator' => $operator]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $operator = $this->attributes['operator'];
         if ('matches' == $operator) {
@@ -32,7 +37,7 @@ class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLa
             return;
         }
         if (isset(self::$functions[$operator])) {
-            $compiler->raw(\sprintf('%s(', self::$functions[$operator]))->compile($this->nodes['left'])->raw(', ')->compile($this->nodes['right'])->raw(')');
+            $compiler->raw(sprintf('%s(', self::$functions[$operator]))->compile($this->nodes['left'])->raw(', ')->compile($this->nodes['right'])->raw(')');
             return;
         }
         if (isset(self::$operators[$operator])) {
@@ -47,7 +52,7 @@ class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLa
         if (isset(self::$functions[$operator])) {
             $right = $this->nodes['right']->evaluate($functions, $values);
             if ('not in' === $operator) {
-                return !\in_array($left, $right);
+                return !in_array($left, $right);
             }
             $f = self::$functions[$operator];
             return $f($left, $right);
@@ -85,9 +90,9 @@ class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLa
             case '<=':
                 return $left <= $right;
             case 'not in':
-                return !\in_array($left, $right);
+                return !in_array($left, $right);
             case 'in':
-                return \in_array($left, $right);
+                return in_array($left, $right);
             case '+':
                 return $left + $right;
             case '-':
@@ -98,16 +103,16 @@ class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLa
                 return $left * $right;
             case '/':
                 if (0 == $right) {
-                    throw new \DivisionByZeroError('Division by zero.');
+                    throw new DivisionByZeroError('Division by zero.');
                 }
                 return $left / $right;
             case '%':
                 if (0 == $right) {
-                    throw new \DivisionByZeroError('Modulo by zero.');
+                    throw new DivisionByZeroError('Modulo by zero.');
                 }
                 return $left % $right;
             case 'matches':
-                return \preg_match($right, $left);
+                return preg_match($right, $left);
         }
     }
     public function toArray()

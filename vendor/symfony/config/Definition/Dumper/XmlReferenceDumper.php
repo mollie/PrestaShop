@@ -15,6 +15,24 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ConfigurationInt
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode;
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function array_unshift;
+use function count;
+use function current;
+use function explode;
+use function get_class;
+use function implode;
+use function is_array;
+use function is_numeric;
+use function is_string;
+use function sprintf;
+use function str_repeat;
+use function str_replace;
+use function strlen;
+use const PHP_EOL;
+
 /**
  * Dumps a XML reference configuration for the given configuration/node instance.
  *
@@ -23,14 +41,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayN
 class XmlReferenceDumper
 {
     private $reference;
-    public function dump(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ConfigurationInterface $configuration, $namespace = null)
+    public function dump(ConfigurationInterface $configuration, $namespace = null)
     {
         return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree(), $namespace);
     }
-    public function dumpNode(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $node, $namespace = null)
+    public function dumpNode(NodeInterface $node, $namespace = null)
     {
         $this->reference = '';
-        $this->writeNode($node, 0, \true, $namespace);
+        $this->writeNode($node, 0, true, $namespace);
         $ref = $this->reference;
         $this->reference = null;
         return $ref;
@@ -40,26 +58,26 @@ class XmlReferenceDumper
      * @param bool   $root      If the node is the root node
      * @param string $namespace The namespace of the node
      */
-    private function writeNode(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $node, $depth = 0, $root = \false, $namespace = null)
+    private function writeNode(NodeInterface $node, $depth = 0, $root = false, $namespace = null)
     {
         $rootName = $root ? 'config' : $node->getName();
         $rootNamespace = $namespace ?: ($root ? 'http://example.org/schema/dic/' . $node->getName() : null);
         // xml remapping
         if ($node->getParent()) {
-            $remapping = \array_filter($node->getParent()->getXmlRemappings(), function ($mapping) use($rootName) {
+            $remapping = array_filter($node->getParent()->getXmlRemappings(), function ($mapping) use($rootName) {
                 return $rootName === $mapping[1];
             });
-            if (\count($remapping)) {
-                list($singular) = \current($remapping);
+            if (count($remapping)) {
+                [$singular] = current($remapping);
                 $rootName = $singular;
             }
         }
-        $rootName = \str_replace('_', '-', $rootName);
+        $rootName = str_replace('_', '-', $rootName);
         $rootAttributes = [];
         $rootAttributeComments = [];
         $rootChildren = [];
         $rootComments = [];
-        if ($node instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode) {
+        if ($node instanceof ArrayNode) {
             $children = $node->getChildren();
             // comments about the root node
             if ($rootInfo = $node->getInfo()) {
@@ -69,26 +87,26 @@ class XmlReferenceDumper
                 $rootComments[] = 'Namespace: ' . $rootNamespace;
             }
             // render prototyped nodes
-            if ($node instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode) {
+            if ($node instanceof PrototypedArrayNode) {
                 $prototype = $node->getPrototype();
                 $info = 'prototype';
                 if (null !== $prototype->getInfo()) {
                     $info .= ': ' . $prototype->getInfo();
                 }
-                \array_unshift($rootComments, $info);
+                array_unshift($rootComments, $info);
                 if ($key = $node->getKeyAttribute()) {
-                    $rootAttributes[$key] = \str_replace('-', ' ', $rootName) . ' ' . $key;
+                    $rootAttributes[$key] = str_replace('-', ' ', $rootName) . ' ' . $key;
                 }
-                if ($prototype instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode) {
+                if ($prototype instanceof PrototypedArrayNode) {
                     $prototype->setName($key);
                     $children = [$key => $prototype];
-                } elseif ($prototype instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode) {
+                } elseif ($prototype instanceof ArrayNode) {
                     $children = $prototype->getChildren();
                 } else {
                     if ($prototype->hasDefaultValue()) {
                         $prototypeValue = $prototype->getDefaultValue();
                     } else {
-                        switch (\get_class($prototype)) {
+                        switch (get_class($prototype)) {
                             case 'Symfony\\Component\\Config\\Definition\\ScalarNode':
                                 $prototypeValue = 'scalar value';
                                 break;
@@ -100,7 +118,7 @@ class XmlReferenceDumper
                                 $prototypeValue = 'true|false';
                                 break;
                             case 'Symfony\\Component\\Config\\Definition\\EnumNode':
-                                $prototypeValue = \implode('|', \array_map('json_encode', $prototype->getValues()));
+                                $prototypeValue = implode('|', array_map('json_encode', $prototype->getValues()));
                                 break;
                             default:
                                 $prototypeValue = 'value';
@@ -110,10 +128,10 @@ class XmlReferenceDumper
             }
             // get attributes and elements
             foreach ($children as $child) {
-                if (!$child instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode) {
+                if (!$child instanceof ArrayNode) {
                     // get attributes
                     // metadata
-                    $name = \str_replace('_', '-', $child->getName());
+                    $name = str_replace('_', '-', $child->getName());
                     $value = '%%%%not_defined%%%%';
                     // use a string which isn't used in the normal world
                     // comments
@@ -128,13 +146,13 @@ class XmlReferenceDumper
                         $comments[] = 'Required';
                     }
                     if ($child->isDeprecated()) {
-                        $comments[] = \sprintf('Deprecated (%s)', $child->getDeprecationMessage($child->getName(), $node->getPath()));
+                        $comments[] = sprintf('Deprecated (%s)', $child->getDeprecationMessage($child->getName(), $node->getPath()));
                     }
-                    if ($child instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode) {
-                        $comments[] = 'One of ' . \implode('; ', \array_map('json_encode', $child->getValues()));
+                    if ($child instanceof EnumNode) {
+                        $comments[] = 'One of ' . implode('; ', array_map('json_encode', $child->getValues()));
                     }
-                    if (\count($comments)) {
-                        $rootAttributeComments[$name] = \implode(";\n", $comments);
+                    if (count($comments)) {
+                        $rootAttributeComments[$name] = implode(";\n", $comments);
                     }
                     // default values
                     if ($child->hasDefaultValue()) {
@@ -150,18 +168,18 @@ class XmlReferenceDumper
         }
         // render comments
         // root node comment
-        if (\count($rootComments)) {
+        if (count($rootComments)) {
             foreach ($rootComments as $comment) {
                 $this->writeLine('<!-- ' . $comment . ' -->', $depth);
             }
         }
         // attribute comments
-        if (\count($rootAttributeComments)) {
+        if (count($rootAttributeComments)) {
             foreach ($rootAttributeComments as $attrName => $comment) {
-                $commentDepth = $depth + 4 + \strlen($attrName) + 2;
-                $commentLines = \explode("\n", $comment);
-                $multiline = \count($commentLines) > 1;
-                $comment = \implode(\PHP_EOL . \str_repeat(' ', $commentDepth), $commentLines);
+                $commentDepth = $depth + 4 + strlen($attrName) + 2;
+                $commentLines = explode("\n", $comment);
+                $multiline = count($commentLines) > 1;
+                $comment = implode(PHP_EOL . str_repeat(' ', $commentDepth), $commentLines);
                 if ($multiline) {
                     $this->writeLine('<!--', $depth);
                     $this->writeLine($attrName . ': ' . $comment, $depth + 4);
@@ -173,11 +191,11 @@ class XmlReferenceDumper
         }
         // render start tag + attributes
         $rootIsVariablePrototype = isset($prototypeValue);
-        $rootIsEmptyTag = 0 === \count($rootChildren) && !$rootIsVariablePrototype;
+        $rootIsEmptyTag = 0 === count($rootChildren) && !$rootIsVariablePrototype;
         $rootOpenTag = '<' . $rootName;
-        if (1 >= ($attributesCount = \count($rootAttributes))) {
+        if (1 >= ($attributesCount = count($rootAttributes))) {
             if (1 === $attributesCount) {
-                $rootOpenTag .= \sprintf(' %s="%s"', \current(\array_keys($rootAttributes)), $this->writeValue(\current($rootAttributes)));
+                $rootOpenTag .= sprintf(' %s="%s"', current(array_keys($rootAttributes)), $this->writeValue(current($rootAttributes)));
             }
             $rootOpenTag .= $rootIsEmptyTag ? ' />' : '>';
             if ($rootIsVariablePrototype) {
@@ -188,7 +206,7 @@ class XmlReferenceDumper
             $this->writeLine($rootOpenTag, $depth);
             $i = 1;
             foreach ($rootAttributes as $attrName => $attrValue) {
-                $attr = \sprintf('%s="%s"', $attrName, $this->writeValue($attrValue));
+                $attr = sprintf('%s="%s"', $attrName, $this->writeValue($attrValue));
                 $this->writeLine($attr, $depth + 4);
                 if ($attributesCount === $i++) {
                     $this->writeLine($rootIsEmptyTag ? '/>' : '>', $depth);
@@ -218,9 +236,9 @@ class XmlReferenceDumper
      */
     private function writeLine($text, $indent = 0)
     {
-        $indent = \strlen($text) + $indent;
+        $indent = strlen($text) + $indent;
         $format = '%' . $indent . 's';
-        $this->reference .= \sprintf($format, $text) . \PHP_EOL;
+        $this->reference .= sprintf($format, $text) . PHP_EOL;
     }
     /**
      * Renders the string conversion of the value.
@@ -234,13 +252,13 @@ class XmlReferenceDumper
         if ('%%%%not_defined%%%%' === $value) {
             return '';
         }
-        if (\is_string($value) || \is_numeric($value)) {
+        if (is_string($value) || is_numeric($value)) {
             return $value;
         }
-        if (\false === $value) {
+        if (false === $value) {
             return 'false';
         }
-        if (\true === $value) {
+        if (true === $value) {
             return 'true';
         }
         if (null === $value) {
@@ -249,8 +267,8 @@ class XmlReferenceDumper
         if (empty($value)) {
             return '';
         }
-        if (\is_array($value)) {
-            return \implode(',', $value);
+        if (is_array($value)) {
+            return implode(',', $value);
         }
         return '';
     }

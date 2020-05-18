@@ -5,6 +5,17 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * Example 10 -  Using OAuth access token to prepare a new payment.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function dirname;
+use function header;
+use function htmlspecialchars;
+use function reset;
+use function strcasecmp;
+use function time;
+use const PHP_EOL;
+use const PHP_SAPI;
+
 try {
     /*
      * Initialize the Mollie API library with your OAuth access token.
@@ -14,19 +25,19 @@ try {
      * Generate a unique order id for this example. It is important to include this unique attribute
      * in the redirectUrl (below) so a proper return page can be shown to the customer.
      */
-    $orderId = \time();
+    $orderId = time();
     /*
      * Determine the url parts to these example files.
      */
-    $protocol = isset($_SERVER['HTTPS']) && \strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
+    $protocol = isset($_SERVER['HTTPS']) && strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'] ?: "my.app";
-    $path = \dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
     /*
      * Since unlike an API key the OAuth access token does NOT belong to a profile, we need to retrieve a profile
      * so we can specify the profileId-parameter when creating a payment below.
      */
     $profiles = $mollie->profiles->page();
-    $profile = \reset($profiles);
+    $profile = reset($profiles);
     /**
      * Paramaters for creating a payment via oAuth
      *
@@ -36,16 +47,16 @@ try {
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper5ea00cc67502b\database_write($orderId, $payment->status);
+    database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code
      */
-    if (\PHP_SAPI === "cli") {
-        echo "Redirect to: " . $payment->getCheckoutUrl() . \PHP_EOL;
+    if (PHP_SAPI === "cli") {
+        echo "Redirect to: " . $payment->getCheckoutUrl() . PHP_EOL;
         return;
     }
-    \header("Location: " . $payment->getCheckoutUrl(), \true, 303);
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+    header("Location: " . $payment->getCheckoutUrl(), true, 303);
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

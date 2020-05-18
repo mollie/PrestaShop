@@ -18,12 +18,12 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\PhpD
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class NullDumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class NullDumperTest extends TestCase
 {
     public function testNullDumper()
     {
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\NullDumper();
-        $definition = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $dumper = new NullDumper();
+        $definition = new Definition('stdClass');
         $this->assertFalse($dumper->isProxyCandidate($definition));
         $this->assertSame('', $dumper->getProxyFactoryCode($definition, 'foo', '(false)'));
         $this->assertSame('', $dumper->getProxyCode($definition));

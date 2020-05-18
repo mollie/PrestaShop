@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface;
  */
 class StubbedTranslator
 {
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
     }
     public function addResource($format, $resource, $locale, $domain = null)

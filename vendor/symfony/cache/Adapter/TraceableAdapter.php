@@ -13,6 +13,8 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
 use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
+use function microtime;
+
 /**
  * An adapter that collects data about all cache calls.
  *
@@ -20,11 +22,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class TraceableAdapter implements AdapterInterface, PruneableInterface, ResettableInterface
 {
     protected $pool;
     private $calls = [];
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface $pool)
+    public function __construct(AdapterInterface $pool)
     {
         $this->pool = $pool;
     }
@@ -37,7 +39,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             $item = $this->pool->getItem($key);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
         if ($event->result[$key] = $item->isHit()) {
             ++$event->hits;
@@ -55,7 +57,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             return $event->result[$key] = $this->pool->hasItem($key);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -67,31 +69,31 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             return $event->result[$key] = $this->pool->deleteItem($key);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
      * {@inheritdoc}
      */
-    public function save(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function save(CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result[$item->getKey()] = $this->pool->save($item);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result[$item->getKey()] = $this->pool->saveDeferred($item);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -103,7 +105,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             $result = $this->pool->getItems($keys);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
         $f = function () use($result, $event) {
             $event->result = [];
@@ -127,7 +129,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             return $event->result = $this->pool->clear();
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -140,7 +142,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             return $event->result['result'] = $this->pool->deleteItems($keys);
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -152,7 +154,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         try {
             return $event->result = $this->pool->commit();
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -160,14 +162,14 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     public function prune()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
-            return \false;
+        if (!$this->pool instanceof PruneableInterface) {
+            return false;
         }
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result = $this->pool->prune();
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     /**
@@ -175,14 +177,14 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     public function reset()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface) {
+        if (!$this->pool instanceof ResettableInterface) {
             return;
         }
         $event = $this->start(__FUNCTION__);
         try {
             $this->pool->reset();
         } finally {
-            $event->end = \microtime(\true);
+            $event->end = microtime(true);
         }
     }
     public function getCalls()
@@ -195,9 +197,9 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     }
     protected function start($name)
     {
-        $this->calls[] = $event = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapterEvent();
+        $this->calls[] = $event = new TraceableAdapterEvent();
         $event->name = $name;
-        $event->start = \microtime(\true);
+        $event->start = microtime(true);
         return $event;
     }
 }

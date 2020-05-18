@@ -14,11 +14,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AliasConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
+class AliasConfigurator extends AbstractServiceConfigurator
 {
     const FACTORY = 'alias';
     use Traits\PublicTrait;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator $parent, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias $alias)
+    public function __construct(ServicesConfigurator $parent, Alias $alias)
     {
         $this->parent = $parent;
         $this->definition = $alias;

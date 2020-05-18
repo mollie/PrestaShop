@@ -11,20 +11,22 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use function sprintf;
+
 /**
  * Removes abstract Definitions.
  */
-class RemoveAbstractDefinitionsPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class RemoveAbstractDefinitionsPass implements CompilerPassInterface
 {
     /**
      * Removes abstract definitions from the ContainerBuilder.
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition->isAbstract()) {
                 $container->removeDefinition($id);
-                $container->log($this, \sprintf('Removed service "%s"; reason: abstract.', $id));
+                $container->log($this, sprintf('Removed service "%s"; reason: abstract.', $id));
             }
         }
     }

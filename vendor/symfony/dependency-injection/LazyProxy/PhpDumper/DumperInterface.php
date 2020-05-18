@@ -23,7 +23,7 @@ interface DumperInterface
      *
      * @return bool
      */
-    public function isProxyCandidate(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition);
+    public function isProxyCandidate(Definition $definition);
     /**
      * Generates the code to be used to instantiate a proxy in the dumped factory code.
      *
@@ -31,11 +31,11 @@ interface DumperInterface
      *
      * @return string
      */
-    public function getProxyFactoryCode(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id);
+    public function getProxyFactoryCode(Definition $definition, $id);
     /**
      * Generates the code for the lazy proxy.
      *
      * @return string
      */
-    public function getProxyCode(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition);
+    public function getProxyCode(Definition $definition);
 }

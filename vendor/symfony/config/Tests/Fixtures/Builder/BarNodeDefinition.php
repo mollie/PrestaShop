@@ -12,10 +12,10 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Builde
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\BarNode;
-class BarNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition
+class BarNodeDefinition extends NodeDefinition
 {
     protected function createNode()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\BarNode($this->name);
+        return new BarNode($this->name);
     }
 }

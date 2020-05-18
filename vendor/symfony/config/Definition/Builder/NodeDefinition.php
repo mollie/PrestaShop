@@ -17,27 +17,27 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeParentInterface
+abstract class NodeDefinition implements NodeParentInterface
 {
     protected $name;
     protected $normalization;
     protected $validation;
     protected $defaultValue;
-    protected $default = \false;
-    protected $required = \false;
+    protected $default = false;
+    protected $required = false;
     protected $deprecationMessage = null;
     protected $merge;
-    protected $allowEmptyValue = \true;
+    protected $allowEmptyValue = true;
     protected $nullEquivalent;
-    protected $trueEquivalent = \true;
-    protected $falseEquivalent = \false;
+    protected $trueEquivalent = true;
+    protected $falseEquivalent = false;
     protected $parent;
     protected $attributes = [];
     /**
      * @param string|null              $name   The name of the node
      * @param NodeParentInterface|null $parent The parent
      */
-    public function __construct($name, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeParentInterface $parent = null)
+    public function __construct($name, NodeParentInterface $parent = null)
     {
         $this->parent = $parent;
         $this->name = $name;
@@ -47,7 +47,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      *
      * @return $this
      */
-    public function setParent(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeParentInterface $parent)
+    public function setParent(NodeParentInterface $parent)
     {
         $this->parent = $parent;
         return $this;
@@ -103,16 +103,16 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      *
      * @return NodeInterface
      */
-    public function getNode($forceRootNode = \false)
+    public function getNode($forceRootNode = false)
     {
         if ($forceRootNode) {
             $this->parent = null;
         }
         if (null !== $this->normalization) {
-            $this->normalization->before = \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ExprBuilder::buildExpressions($this->normalization->before);
+            $this->normalization->before = ExprBuilder::buildExpressions($this->normalization->before);
         }
         if (null !== $this->validation) {
-            $this->validation->rules = \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ExprBuilder::buildExpressions($this->validation->rules);
+            $this->validation->rules = ExprBuilder::buildExpressions($this->validation->rules);
         }
         $node = $this->createNode();
         $node->setAttributes($this->attributes);
@@ -127,7 +127,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function defaultValue($value)
     {
-        $this->default = \true;
+        $this->default = true;
         $this->defaultValue = $value;
         return $this;
     }
@@ -138,7 +138,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function isRequired()
     {
-        $this->required = \true;
+        $this->required = true;
         return $this;
     }
     /**
@@ -208,7 +208,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function defaultTrue()
     {
-        return $this->defaultValue(\true);
+        return $this->defaultValue(true);
     }
     /**
      * Sets false as the default value.
@@ -217,7 +217,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function defaultFalse()
     {
-        return $this->defaultValue(\false);
+        return $this->defaultValue(false);
     }
     /**
      * Sets an expression to run before the normalization.
@@ -235,7 +235,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      */
     public function cannotBeEmpty()
     {
-        $this->allowEmptyValue = \false;
+        $this->allowEmptyValue = false;
         return $this;
     }
     /**
@@ -258,7 +258,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
      *
      * @return $this
      */
-    public function cannotBeOverwritten($deny = \true)
+    public function cannotBeOverwritten($deny = true)
     {
         $this->merge()->denyOverwrite($deny);
         return $this;
@@ -271,7 +271,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
     protected function validation()
     {
         if (null === $this->validation) {
-            $this->validation = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ValidationBuilder($this);
+            $this->validation = new ValidationBuilder($this);
         }
         return $this->validation;
     }
@@ -283,7 +283,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
     protected function merge()
     {
         if (null === $this->merge) {
-            $this->merge = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\MergeBuilder($this);
+            $this->merge = new MergeBuilder($this);
         }
         return $this->merge;
     }
@@ -295,7 +295,7 @@ abstract class NodeDefinition implements \_PhpScoper5ea00cc67502b\Symfony\Compon
     protected function normalization()
     {
         if (null === $this->normalization) {
-            $this->normalization = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NormalizationBuilder($this);
+            $this->normalization = new NormalizationBuilder($this);
         }
         return $this->normalization;
     }

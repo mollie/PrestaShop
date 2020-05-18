@@ -13,14 +13,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
-class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function array_map;
+
+class NormalizationTest extends TestCase
 {
     /**
      * @dataProvider getEncoderTests
      */
     public function testNormalizeEncoders($denormalized)
     {
-        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new TreeBuilder();
         $tree = $tb->root('root_name', 'array')->fixXmlConfig('encoder')->children()->node('encoders', 'array')->useAttributeAsKey('class')->prototype('array')->beforeNormalization()->ifString()->then(function ($v) {
             return ['algorithm' => $v];
         })->end()->children()->node('algorithm', 'scalar')->end()->end()->end()->end()->end()->end()->buildTree();
@@ -40,7 +42,7 @@ class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
         $configs[] = ['encoders' => ['foo' => 'plaintext']];
         // YAML/PHP
         $configs[] = ['encoders' => ['foo' => ['algorithm' => 'plaintext']]];
-        return \array_map(function ($v) {
+        return array_map(function ($v) {
             return [$v];
         }, $configs);
     }
@@ -49,7 +51,7 @@ class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
      */
     public function testAnonymousKeysArray($denormalized)
     {
-        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new TreeBuilder();
         $tree = $tb->root('root', 'array')->children()->node('logout', 'array')->fixXmlConfig('handler')->children()->node('handlers', 'array')->prototype('scalar')->end()->end()->end()->end()->end()->end()->buildTree();
         $normalized = ['logout' => ['handlers' => ['a', 'b', 'c']]];
         $this->assertNormalized($tree, $denormalized, $normalized);
@@ -59,7 +61,7 @@ class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
         $configs = [];
         $configs[] = ['logout' => ['handlers' => ['a', 'b', 'c']]];
         $configs[] = ['logout' => ['handler' => ['a', 'b', 'c']]];
-        return \array_map(function ($v) {
+        return array_map(function ($v) {
             return [$v];
         }, $configs);
     }
@@ -76,7 +78,7 @@ class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
         $configs = [];
         $configs[] = ['thing' => [42 => ['foo', 'bar'], 1337 => ['baz', 'qux']]];
         $configs[] = ['thing' => [['foo', 'bar', 'id' => 42], ['baz', 'qux', 'id' => 1337]]];
-        return \array_map(function ($v) {
+        return array_map(function ($v) {
             return [$v];
         }, $configs);
     }
@@ -89,18 +91,18 @@ class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
     }
     public function testAssociativeArrayPreserveKeys()
     {
-        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new TreeBuilder();
         $tree = $tb->root('root', 'array')->prototype('array')->children()->node('foo', 'scalar')->end()->end()->end()->end()->buildTree();
         $data = ['first' => ['foo' => 'bar']];
         $this->assertNormalized($tree, $data, $data);
     }
-    public static function assertNormalized(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $tree, $denormalized, $normalized)
+    public static function assertNormalized(NodeInterface $tree, $denormalized, $normalized)
     {
         self::assertSame($normalized, $tree->normalize($denormalized));
     }
     private function getNumericKeysTestTree()
     {
-        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new TreeBuilder();
         $tree = $tb->root('root', 'array')->children()->node('thing', 'array')->useAttributeAsKey('id')->prototype('array')->prototype('scalar')->end()->end()->end()->end()->end()->buildTree();
         return $tree;
     }

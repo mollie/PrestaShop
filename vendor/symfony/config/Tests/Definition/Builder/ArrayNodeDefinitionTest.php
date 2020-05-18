@@ -15,12 +15,15 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNod
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Processor;
-class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use ReflectionProperty;
+use function call_user_func_array;
+
+class ArrayNodeDefinitionTest extends TestCase
 {
     public function testAppendingSomeNode()
     {
-        $parent = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
-        $child = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition('child');
+        $parent = new ArrayNodeDefinition('root');
+        $child = new ScalarNodeDefinition('child');
         $parent->children()->scalarNode('foo')->end()->scalarNode('bar')->end()->end()->append($child);
         $this->assertCount(3, $this->getField($parent, 'children'));
         $this->assertContains($child, $this->getField($parent, 'children'));
@@ -31,8 +34,8 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     public function testPrototypeNodeSpecificOption($method, $args)
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidDefinitionException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
-        \call_user_func_array([$node, $method], $args);
+        $node = new ArrayNodeDefinition('root');
+        call_user_func_array([$node, $method], $args);
         $node->getNode();
     }
     public function providePrototypeNodeSpecificCalls()
@@ -42,20 +45,20 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     public function testConcreteNodeSpecificOption()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidDefinitionException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->addDefaultsIfNotSet()->prototype('array');
         $node->getNode();
     }
     public function testPrototypeNodesCantHaveADefaultValueWhenUsingDefaultChildren()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidDefinitionException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->defaultValue([])->addDefaultChildrenIfNoneSet('foo')->prototype('array');
         $node->getNode();
     }
     public function testPrototypedArrayNodeDefaultWhenUsingDefaultChildren()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->addDefaultChildrenIfNoneSet()->prototype('array');
         $tree = $node->getNode();
         $this->assertEquals([[]], $tree->getDefaultValue());
@@ -65,32 +68,32 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
      */
     public function testPrototypedArrayNodeDefault($args, $shouldThrowWhenUsingAttrAsKey, $shouldThrowWhenNotUsingAttrAsKey, $defaults)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->addDefaultChildrenIfNoneSet($args)->prototype('array');
         try {
             $tree = $node->getNode();
             $this->assertFalse($shouldThrowWhenNotUsingAttrAsKey);
             $this->assertEquals($defaults, $tree->getDefaultValue());
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException $e) {
+        } catch (InvalidDefinitionException $e) {
             $this->assertTrue($shouldThrowWhenNotUsingAttrAsKey);
         }
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->useAttributeAsKey('attr')->addDefaultChildrenIfNoneSet($args)->prototype('array');
         try {
             $tree = $node->getNode();
             $this->assertFalse($shouldThrowWhenUsingAttrAsKey);
             $this->assertEquals($defaults, $tree->getDefaultValue());
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidDefinitionException $e) {
+        } catch (InvalidDefinitionException $e) {
             $this->assertTrue($shouldThrowWhenUsingAttrAsKey);
         }
     }
     public function providePrototypedArrayNodeDefaults()
     {
-        return [[null, \true, \false, [[]]], [2, \true, \false, [[], []]], ['2', \false, \true, ['2' => []]], ['foo', \false, \true, ['foo' => []]], [['foo'], \false, \true, ['foo' => []]], [['foo', 'bar'], \false, \true, ['foo' => [], 'bar' => []]]];
+        return [[null, true, false, [[]]], [2, true, false, [[], []]], ['2', false, true, ['2' => []]], ['foo', false, true, ['foo' => []]], [['foo'], false, true, ['foo' => []]], [['foo', 'bar'], false, true, ['foo' => [], 'bar' => []]]];
     }
     public function testNestedPrototypedArrayNodes()
     {
-        $nodeDefinition = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $nodeDefinition = new ArrayNodeDefinition('root');
         $nodeDefinition->addDefaultChildrenIfNoneSet()->prototype('array')->prototype('array');
         $node = $nodeDefinition->getNode();
         $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\PrototypedArrayNode', $node);
@@ -98,28 +101,28 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     }
     public function testEnabledNodeDefaults()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->canBeEnabled()->children()->scalarNode('foo')->defaultValue('bar')->end();
-        $this->assertEquals(['enabled' => \false, 'foo' => 'bar'], $node->getNode()->getDefaultValue());
+        $this->assertEquals(['enabled' => false, 'foo' => 'bar'], $node->getNode()->getDefaultValue());
     }
     /**
      * @dataProvider getEnableableNodeFixtures
      */
     public function testTrueEnableEnabledNode($expected, $config, $message)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Processor();
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $processor = new Processor();
+        $node = new ArrayNodeDefinition('root');
         $node->canBeEnabled()->children()->scalarNode('foo')->defaultValue('bar')->end();
         $this->assertEquals($expected, $processor->process($node->getNode(), $config), $message);
     }
     public function testCanBeDisabled()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->canBeDisabled();
         $this->assertTrue($this->getField($node, 'addDefaults'));
-        $this->assertEquals(['enabled' => \false], $this->getField($node, 'falseEquivalent'));
-        $this->assertEquals(['enabled' => \true], $this->getField($node, 'trueEquivalent'));
-        $this->assertEquals(['enabled' => \true], $this->getField($node, 'nullEquivalent'));
+        $this->assertEquals(['enabled' => false], $this->getField($node, 'falseEquivalent'));
+        $this->assertEquals(['enabled' => true], $this->getField($node, 'trueEquivalent'));
+        $this->assertEquals(['enabled' => true], $this->getField($node, 'nullEquivalent'));
         $nodeChildren = $this->getField($node, 'children');
         $this->assertArrayHasKey('enabled', $nodeChildren);
         $enabledNode = $nodeChildren['enabled'];
@@ -128,7 +131,7 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     }
     public function testIgnoreExtraKeys()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertFalse($this->getField($node, 'ignoreExtraKeys'));
         $result = $node->ignoreExtraKeys();
         $this->assertEquals($node, $result);
@@ -136,15 +139,15 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     }
     public function testNormalizeKeys()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertTrue($this->getField($node, 'normalizeKeys'));
-        $result = $node->normalizeKeys(\false);
+        $result = $node->normalizeKeys(false);
         $this->assertEquals($node, $result);
         $this->assertFalse($this->getField($node, 'normalizeKeys'));
     }
     public function testUnsetChild()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->children()->scalarNode('value')->beforeNormalization()->ifTrue(function ($value) {
             return empty($value);
         })->thenUnset()->end()->end()->end();
@@ -152,46 +155,46 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
     }
     public function testPrototypeVariable()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('variable'), $node->variablePrototype());
     }
     public function testPrototypeScalar()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('scalar'), $node->scalarPrototype());
     }
     public function testPrototypeBoolean()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('boolean'), $node->booleanPrototype());
     }
     public function testPrototypeInteger()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('integer'), $node->integerPrototype());
     }
     public function testPrototypeFloat()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('float'), $node->floatPrototype());
     }
     public function testPrototypeArray()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('array'), $node->arrayPrototype());
     }
     public function testPrototypeEnum()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $this->assertEquals($node->prototype('enum'), $node->enumPrototype());
     }
     public function getEnableableNodeFixtures()
     {
-        return [[['enabled' => \true, 'foo' => 'bar'], [\true], 'true enables an enableable node'], [['enabled' => \true, 'foo' => 'bar'], [null], 'null enables an enableable node'], [['enabled' => \true, 'foo' => 'bar'], [['enabled' => \true]], 'An enableable node can be enabled'], [['enabled' => \true, 'foo' => 'baz'], [['foo' => 'baz']], 'any configuration enables an enableable node'], [['enabled' => \false, 'foo' => 'baz'], [['foo' => 'baz', 'enabled' => \false]], 'An enableable node can be disabled'], [['enabled' => \false, 'foo' => 'bar'], [\false], 'false disables an enableable node']];
+        return [[['enabled' => true, 'foo' => 'bar'], [true], 'true enables an enableable node'], [['enabled' => true, 'foo' => 'bar'], [null], 'null enables an enableable node'], [['enabled' => true, 'foo' => 'bar'], [['enabled' => true]], 'An enableable node can be enabled'], [['enabled' => true, 'foo' => 'baz'], [['foo' => 'baz']], 'any configuration enables an enableable node'], [['enabled' => false, 'foo' => 'baz'], [['foo' => 'baz', 'enabled' => false]], 'An enableable node can be disabled'], [['enabled' => false, 'foo' => 'bar'], [false], 'false disables an enableable node']];
     }
     public function testRequiresAtLeastOneElement()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->requiresAtLeastOneElement()->integerPrototype();
         $node->getNode()->finalize([1]);
         $this->addToAssertionCount(1);
@@ -202,13 +205,13 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
      */
     public function testCannotBeEmpty()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->cannotBeEmpty()->integerPrototype();
         $node->getNode()->finalize([]);
     }
     public function testSetDeprecated()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->children()->arrayNode('foo')->setDeprecated('The "%path%" node is deprecated.')->end()->end();
         $deprecatedNode = $node->getNode()->getChildren()['foo'];
         $this->assertTrue($deprecatedNode->isDeprecated());
@@ -220,14 +223,14 @@ class ArrayNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework
      */
     public function testCannotBeEmptyOnConcreteNode()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition('root');
+        $node = new ArrayNodeDefinition('root');
         $node->cannotBeEmpty();
         $node->getNode()->finalize([]);
     }
     protected function getField($object, $field)
     {
-        $reflection = new \ReflectionProperty($object, $field);
-        $reflection->setAccessible(\true);
+        $reflection = new ReflectionProperty($object, $field);
+        $reflection->setAccessible(true);
         return $reflection->getValue($object);
     }
 }

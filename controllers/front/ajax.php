@@ -1,7 +1,4 @@
 <?php
-
-use PrestaShop\Decimal\Number;
-
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -35,6 +32,9 @@ use PrestaShop\Decimal\Number;
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
+use PrestaShop\Decimal\Number;
+
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
 

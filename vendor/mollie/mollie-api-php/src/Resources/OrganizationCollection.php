@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class OrganizationCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class OrganizationCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class OrganizationCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resourc
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Organization($this->client);
+        return new Organization($this->client);
     }
 }

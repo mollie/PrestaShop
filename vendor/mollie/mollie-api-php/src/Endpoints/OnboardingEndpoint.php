@@ -6,12 +6,14 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Onboarding;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-class OnboardingEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\EndpointAbstract
+use BadMethodCallException;
+
+class OnboardingEndpoint extends EndpointAbstract
 {
     protected $resourcePath = "onboarding/me";
     protected function getResourceCollectionObject($count, $links)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
@@ -20,7 +22,7 @@ class OnboardingEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\E
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Onboarding($this->client);
+        return new Onboarding($this->client);
     }
     /**
      * Retrieve the organization's onboarding status from Mollie.
@@ -52,7 +54,7 @@ class OnboardingEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\E
     protected function rest_read($id, array $filters)
     {
         $result = $this->client->performHttpCall(self::REST_READ, $this->getResourcePath() . $this->buildQueryString($filters));
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     protected function rest_create(array $body, array $filters)
     {

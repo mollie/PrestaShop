@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class OrderCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class OrderCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class OrderCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Curs
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order($this->client);
+        return new Order($this->client);
     }
 }

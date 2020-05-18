@@ -3,11 +3,14 @@
 namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use function strlen;
+use function substr;
+
 /**
  * Stream decorator that begins dropping data once the size of the underlying
  * stream becomes too full.
  */
-class DroppingStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface
+class DroppingStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     private $maxLength;
@@ -15,7 +18,7 @@ class DroppingStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Stream
      * @param StreamInterface $stream    Underlying stream to decorate.
      * @param int             $maxLength Maximum size before dropping data.
      */
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $stream, $maxLength)
+    public function __construct(StreamInterface $stream, $maxLength)
     {
         $this->stream = $stream;
         $this->maxLength = $maxLength;
@@ -28,9 +31,9 @@ class DroppingStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Stream
             return 0;
         }
         // Write the stream or a subset of the stream if needed.
-        if (\strlen($string) < $diff) {
+        if (strlen($string) < $diff) {
             return $this->stream->write($string);
         }
-        return $this->stream->write(\substr($string, 0, $diff));
+        return $this->stream->write(substr($string, 0, $diff));
     }
 }

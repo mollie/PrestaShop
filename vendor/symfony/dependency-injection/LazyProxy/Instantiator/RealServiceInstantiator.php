@@ -12,6 +12,8 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProx
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
+use function call_user_func;
+
 /**
  * {@inheritdoc}
  *
@@ -19,13 +21,13 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class RealServiceInstantiator implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\InstantiatorInterface
+class RealServiceInstantiator implements InstantiatorInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function instantiateProxy(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface $container, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id, $realInstantiator)
+    public function instantiateProxy(ContainerInterface $container, Definition $definition, $id, $realInstantiator)
     {
-        return \call_user_func($realInstantiator);
+        return call_user_func($realInstantiator);
     }
 }

@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ScalarNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\VariableNodeDefinition
+class ScalarNodeDefinition extends VariableNodeDefinition
 {
     /**
      * Instantiate a Node.
@@ -25,6 +25,6 @@ class ScalarNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Co
      */
     protected function instantiateNode()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode($this->name, $this->parent);
+        return new ScalarNode($this->name, $this->parent);
     }
 }

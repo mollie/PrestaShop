@@ -11,7 +11,9 @@ namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Test\Operation;
 use _PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison;
-class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
+use function sprintf;
+
+class ComparisonTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Number
@@ -19,7 +21,7 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
     private static $zero;
     public static function setUpBeforeClass()
     {
-        static::$zero = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('0');
+        static::$zero = new Number('0');
     }
     /**
      * Given two numbers
@@ -37,9 +39,9 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItComparesNumbers($a, $b, $expected)
     {
-        $comparison = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Comparison();
-        $result1 = $comparison->compareUsingBcMath(new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($a), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($b));
-        $result2 = $comparison->compareWithoutBcMath(new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($a), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($b));
+        $comparison = new Comparison();
+        $result1 = $comparison->compareUsingBcMath(new Number($a), new Number($b));
+        $result2 = $comparison->compareWithoutBcMath(new Number($a), new Number($b));
         $this->assertSame($expected, $result1, "Failed assertion (BC Math)");
         $this->assertSame($expected, $result2, "Failed assertion");
     }
@@ -84,14 +86,14 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDetectsEqualsZero($number, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $this->assertSame($expected, $n->equalsZero(), \sprintf("Failed to assert that %s %s equal to zero", $number, $this->getIsVerb($expected)));
+        $n = new Number($number);
+        $this->assertSame($expected, $n->equalsZero(), sprintf("Failed to assert that %s %s equal to zero", $number, $this->getIsVerb($expected)));
         // double check
-        $this->assertSame($expected, $n->equals(static::$zero), \sprintf("Failed to assert that %s %s equal to Number zero", $number, $this->getIsVerb($expected)));
+        $this->assertSame($expected, $n->equals(static::$zero), sprintf("Failed to assert that %s %s equal to Number zero", $number, $this->getIsVerb($expected)));
     }
     public function provideEqualsZeroTests()
     {
-        return [['0', \true], ['000000', \true], ['0.0000', \true], ['-0.0000', \true], ['0.0001', \false], ['-0.0001', \false], ['10', \false], ['10.0', \false], ['10.000001', \false], ['10.100001', \false], ['-10', \false], ['-10.0', \false], ['-10.000001', \false], ['-10.100001', \false]];
+        return [['0', true], ['000000', true], ['0.0000', true], ['-0.0000', true], ['0.0001', false], ['-0.0001', false], ['10', false], ['10.0', false], ['10.000001', false], ['10.100001', false], ['-10', false], ['-10.0', false], ['-10.000001', false], ['-10.100001', false]];
     }
     /**
      * Given a number
@@ -104,14 +106,14 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDetectsGreaterThanZero($number, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $this->assertSame($expected, $n->isGreaterThanZero(), \sprintf("Failed to assert that %s %s greater than zero", $number, $this->getIsVerb($expected)));
+        $n = new Number($number);
+        $this->assertSame($expected, $n->isGreaterThanZero(), sprintf("Failed to assert that %s %s greater than zero", $number, $this->getIsVerb($expected)));
         // double check
-        $this->assertSame($expected, $n->isGreaterThan(static::$zero), \sprintf("Failed to assert that %s %s grater to Number zero", $number, $this->getIsVerb($expected)));
+        $this->assertSame($expected, $n->isGreaterThan(static::$zero), sprintf("Failed to assert that %s %s grater to Number zero", $number, $this->getIsVerb($expected)));
     }
     public function provideGreaterThanZeroTests()
     {
-        return [['0', \false], ['000000', \false], ['0.0000', \false], ['-0.0000', \false], ['0.0001', \true], ['-0.0001', \false], ['10', \true], ['10.0', \true], ['10.000001', \true], ['10.100001', \true], ['-10', \false], ['-10.0', \false], ['-10.000001', \false], ['-10.100001', \false]];
+        return [['0', false], ['000000', false], ['0.0000', false], ['-0.0000', false], ['0.0001', true], ['-0.0001', false], ['10', true], ['10.0', true], ['10.000001', true], ['10.100001', true], ['-10', false], ['-10.0', false], ['-10.000001', false], ['-10.100001', false]];
     }
     /**
      * Given a number
@@ -124,14 +126,14 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDetectsGreaterOrEqualThanZero($number, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $this->assertSame($expected, $n->isGreaterOrEqualThanZero(), \sprintf("Failed to assert that %s %s greater or equal than zero", $number, $this->getIsVerb($expected)));
+        $n = new Number($number);
+        $this->assertSame($expected, $n->isGreaterOrEqualThanZero(), sprintf("Failed to assert that %s %s greater or equal than zero", $number, $this->getIsVerb($expected)));
         // double check
-        $this->assertSame($expected, $n->isGreaterOrEqualThan(static::$zero), \sprintf("Failed to assert that %s %s greater or equal to Number zero", $number, $this->getIsVerb($expected)));
+        $this->assertSame($expected, $n->isGreaterOrEqualThan(static::$zero), sprintf("Failed to assert that %s %s greater or equal to Number zero", $number, $this->getIsVerb($expected)));
     }
     public function provideGreaterOrEqualThanZeroTests()
     {
-        return [['0', \true], ['000000', \true], ['0.0000', \true], ['-0.0000', \true], ['0.0001', \true], ['-0.0001', \false], ['10', \true], ['10.0', \true], ['10.000001', \true], ['10.100001', \true], ['-10', \false], ['-10.0', \false], ['-10.000001', \false], ['-10.100001', \false]];
+        return [['0', true], ['000000', true], ['0.0000', true], ['-0.0000', true], ['0.0001', true], ['-0.0001', false], ['10', true], ['10.0', true], ['10.000001', true], ['10.100001', true], ['-10', false], ['-10.0', false], ['-10.000001', false], ['-10.100001', false]];
     }
     /**
      * Given a number
@@ -144,14 +146,14 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDetectsLowerThanZero($number, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $this->assertSame($expected, $n->isLowerThanZero(), \sprintf("Failed to assert that %s %s lower than zero", $number, $this->getIsVerb($expected)));
+        $n = new Number($number);
+        $this->assertSame($expected, $n->isLowerThanZero(), sprintf("Failed to assert that %s %s lower than zero", $number, $this->getIsVerb($expected)));
         // double check
-        $this->assertSame($expected, $n->isLowerThan(static::$zero), \sprintf("Failed to assert that %s %s lower to Number zero", $number, $this->getIsVerb($expected)));
+        $this->assertSame($expected, $n->isLowerThan(static::$zero), sprintf("Failed to assert that %s %s lower to Number zero", $number, $this->getIsVerb($expected)));
     }
     public function provideLowerThanZeroTests()
     {
-        return [['0', \false], ['000000', \false], ['0.0000', \false], ['-0.0000', \false], ['0.0001', \false], ['-0.0001', \true], ['10', \false], ['10.0', \false], ['10.000001', \false], ['10.100001', \false], ['-10', \true], ['-10.0', \true], ['-10.000001', \true], ['-10.100001', \true]];
+        return [['0', false], ['000000', false], ['0.0000', false], ['-0.0000', false], ['0.0001', false], ['-0.0001', true], ['10', false], ['10.0', false], ['10.000001', false], ['10.100001', false], ['-10', true], ['-10.0', true], ['-10.000001', true], ['-10.100001', true]];
     }
     /**
      * Given a number
@@ -164,14 +166,14 @@ class ComparisonTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDetectsLowerOrEqualThanZero($number, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $this->assertSame($expected, $n->isLowerOrEqualThanZero(), \sprintf("Failed to assert that %s %s lower or equal than zero", $number, $this->getIsVerb($expected)));
+        $n = new Number($number);
+        $this->assertSame($expected, $n->isLowerOrEqualThanZero(), sprintf("Failed to assert that %s %s lower or equal than zero", $number, $this->getIsVerb($expected)));
         // double check
-        $this->assertSame($expected, $n->isLowerOrEqualThan(static::$zero), \sprintf("Failed to assert that %s %s lower or equal to Number zero", $number, $this->getIsVerb($expected)));
+        $this->assertSame($expected, $n->isLowerOrEqualThan(static::$zero), sprintf("Failed to assert that %s %s lower or equal to Number zero", $number, $this->getIsVerb($expected)));
     }
     public function provideLowerOrEqualThanZeroTests()
     {
-        return [['0', \true], ['000000', \true], ['0.0000', \true], ['-0.0000', \true], ['0.0001', \false], ['-0.0001', \true], ['10', \false], ['10.0', \false], ['10.000001', \false], ['10.100001', \false], ['-10', \true], ['-10.0', \true], ['-10.000001', \true], ['-10.100001', \true]];
+        return [['0', true], ['000000', true], ['0.0000', true], ['-0.0000', true], ['0.0001', false], ['-0.0001', true], ['10', false], ['10.0', false], ['10.000001', false], ['10.100001', false], ['-10', true], ['-10.0', true], ['-10.000001', true], ['-10.100001', true]];
     }
     /**
      * @param bool $assertion

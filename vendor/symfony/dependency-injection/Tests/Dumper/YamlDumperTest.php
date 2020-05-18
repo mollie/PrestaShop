@@ -20,35 +20,42 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFil
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml;
-class YamlDumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Exception;
+use stdClass;
+use function file_get_contents;
+use function realpath;
+use function str_replace;
+use const DIRECTORY_SEPARATOR;
+
+class YamlDumperTest extends TestCase
 {
     protected static $fixturesPath;
     public static function setUpBeforeClass()
     {
-        self::$fixturesPath = \realpath(__DIR__ . '/../Fixtures/');
+        self::$fixturesPath = realpath(__DIR__ . '/../Fixtures/');
     }
     public function testDump()
     {
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder());
-        $this->assertEqualYamlStructure(\file_get_contents(self::$fixturesPath . '/yaml/services1.yml'), $dumper->dump(), '->dump() dumps an empty container as an empty YAML file');
+        $dumper = new YamlDumper($container = new ContainerBuilder());
+        $this->assertEqualYamlStructure(file_get_contents(self::$fixturesPath . '/yaml/services1.yml'), $dumper->dump(), '->dump() dumps an empty container as an empty YAML file');
     }
     public function testAddParameters()
     {
         $container = (include self::$fixturesPath . '/containers/container8.php');
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container);
-        $this->assertEqualYamlStructure(\file_get_contents(self::$fixturesPath . '/yaml/services8.yml'), $dumper->dump(), '->dump() dumps parameters');
+        $dumper = new YamlDumper($container);
+        $this->assertEqualYamlStructure(file_get_contents(self::$fixturesPath . '/yaml/services8.yml'), $dumper->dump(), '->dump() dumps parameters');
     }
     public function testAddService()
     {
         $container = (include self::$fixturesPath . '/containers/container9.php');
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container);
-        $this->assertEqualYamlStructure(\str_replace('%path%', self::$fixturesPath . \DIRECTORY_SEPARATOR . 'includes' . \DIRECTORY_SEPARATOR, \file_get_contents(self::$fixturesPath . '/yaml/services9.yml')), $dumper->dump(), '->dump() dumps services');
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder());
-        $container->register('foo', 'FooClass')->addArgument(new \stdClass())->setPublic(\true);
+        $dumper = new YamlDumper($container);
+        $this->assertEqualYamlStructure(str_replace('%path%', self::$fixturesPath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR, file_get_contents(self::$fixturesPath . '/yaml/services9.yml')), $dumper->dump(), '->dump() dumps services');
+        $dumper = new YamlDumper($container = new ContainerBuilder());
+        $container->register('foo', 'FooClass')->addArgument(new stdClass())->setPublic(true);
         try {
             $dumper->dump();
             $this->fail('->dump() throws a RuntimeException if the container to be dumped has reference to objects or resources');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('\\RuntimeException', $e, '->dump() throws a RuntimeException if the container to be dumped has reference to objects or resources');
             $this->assertEquals('Unable to dump a service container if a parameter is an object or a resource.', $e->getMessage(), '->dump() throws a RuntimeException if the container to be dumped has reference to objects or resources');
         }
@@ -56,28 +63,28 @@ class YamlDumperTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     public function testDumpAutowireData()
     {
         $container = (include self::$fixturesPath . '/containers/container24.php');
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container);
+        $dumper = new YamlDumper($container);
         $this->assertStringEqualsFile(self::$fixturesPath . '/yaml/services24.yml', $dumper->dump());
     }
     public function testDumpLoad()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/yaml'));
+        $container = new ContainerBuilder();
+        $loader = new YamlFileLoader($container, new FileLocator(self::$fixturesPath . '/yaml'));
         $loader->load('services_dump_load.yml');
-        $this->assertEquals([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)], $container->getDefinition('foo')->getArguments());
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container);
+        $this->assertEquals([new Reference('bar', ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)], $container->getDefinition('foo')->getArguments());
+        $dumper = new YamlDumper($container);
         $this->assertStringEqualsFile(self::$fixturesPath . '/yaml/services_dump_load.yml', $dumper->dump());
     }
     public function testInlineServices()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo', 'Class1')->setPublic(\true)->addArgument((new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('Class2'))->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('Class2')));
-        $dumper = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\YamlDumper($container);
+        $container = new ContainerBuilder();
+        $container->register('foo', 'Class1')->setPublic(true)->addArgument((new Definition('Class2'))->addArgument(new Definition('Class2')));
+        $dumper = new YamlDumper($container);
         $this->assertStringEqualsFile(self::$fixturesPath . '/yaml/services_inline.yml', $dumper->dump());
     }
     private function assertEqualYamlStructure($expected, $yaml, $message = '')
     {
-        $parser = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser();
-        $this->assertEquals($parser->parse($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS), $parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS), $message);
+        $parser = new Parser();
+        $this->assertEquals($parser->parse($expected, Yaml::PARSE_CUSTOM_TAGS), $parser->parse($yaml, Yaml::PARSE_CUSTOM_TAGS), $message);
     }
 }

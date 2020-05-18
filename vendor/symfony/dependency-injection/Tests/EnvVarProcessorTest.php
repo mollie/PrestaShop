@@ -6,7 +6,11 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor;
-class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function base64_encode;
+use function json_encode;
+use const E_ERROR;
+
+class EnvVarProcessorTest extends TestCase
 {
     const TEST_CONST = 'test';
     /**
@@ -14,10 +18,10 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
      */
     public function testGetEnvString($value, $processed)
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setParameter('env(foo)', $value);
         $container->compile();
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor($container);
+        $processor = new EnvVarProcessor($container);
         $result = $processor->getEnv('string', 'foo', function () {
             $this->fail('Should not be called');
         });
@@ -32,7 +36,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
      */
     public function testGetEnvBool($value, $processed)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('bool', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -41,14 +45,14 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     }
     public function validBools()
     {
-        return [['true', \true], ['false', \false], ['null', \false], ['1', \true], ['0', \false], ['1.1', \true], ['1e1', \true]];
+        return [['true', true], ['false', false], ['null', false], ['1', true], ['0', false], ['1.1', true], ['1e1', true]];
     }
     /**
      * @dataProvider validInts
      */
     public function testGetEnvInt($value, $processed)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('int', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -66,7 +70,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Non-numeric env var');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('int', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -81,7 +85,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
      */
     public function testGetEnvFloat($value, $processed)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('float', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -99,7 +103,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Non-numeric env var');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('float', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -114,7 +118,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
      */
     public function testGetEnvConst($value, $processed)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('const', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -123,7 +127,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     }
     public function validConsts()
     {
-        return [['Symfony\\Component\\DependencyInjection\\Tests\\EnvVarProcessorTest::TEST_CONST', self::TEST_CONST], ['E_ERROR', \E_ERROR]];
+        return [['Symfony\\Component\\DependencyInjection\\Tests\\EnvVarProcessorTest::TEST_CONST', self::TEST_CONST], ['E_ERROR', E_ERROR]];
     }
     /**
      * @dataProvider invalidConsts
@@ -132,7 +136,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('undefined constant');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('const', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
             return $value;
@@ -144,19 +148,19 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     }
     public function testGetEnvBase64()
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('base64', 'foo', function ($name) {
             $this->assertSame('foo', $name);
-            return \base64_encode('hello');
+            return base64_encode('hello');
         });
         $this->assertSame('hello', $result);
     }
     public function testGetEnvJson()
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $result = $processor->getEnv('json', 'foo', function ($name) {
             $this->assertSame('foo', $name);
-            return \json_encode([1]);
+            return json_encode([1]);
         });
         $this->assertSame([1], $result);
     }
@@ -164,7 +168,7 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Syntax error');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('json', 'foo', function ($name) {
             $this->assertSame('foo', $name);
             return 'invalid_json';
@@ -177,21 +181,21 @@ class EnvVarProcessorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Invalid JSON env var');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('json', 'foo', function ($name) use($value) {
             $this->assertSame('foo', $name);
-            return \json_encode($value);
+            return json_encode($value);
         });
     }
     public function otherJsonValues()
     {
-        return [[1], [1.1], [\true], [\false]];
+        return [[1], [1.1], [true], [false]];
     }
     public function testGetEnvUnknown()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Unsupported env var prefix');
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container());
+        $processor = new EnvVarProcessor(new Container());
         $processor->getEnv('unknown', 'foo', function ($name) {
             $this->assertSame('foo', $name);
             return 'foo';

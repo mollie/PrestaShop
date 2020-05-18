@@ -14,14 +14,14 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-class ResolveParameterPlaceHoldersPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ResolveParameterPlaceHoldersPassTest extends TestCase
 {
     private $compilerPass;
     private $container;
     private $fooDefinition;
     protected function setUp()
     {
-        $this->compilerPass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
+        $this->compilerPass = new ResolveParameterPlaceHoldersPass();
         $this->container = $this->createContainerBuilder();
         $this->compilerPass->process($this->container);
         $this->fooDefinition = $this->container->getDefinition('foo');
@@ -56,31 +56,31 @@ class ResolveParameterPlaceHoldersPassTest extends \_PhpScoper5ea00cc67502b\PHPU
     }
     public function testBindingsShouldBeResolved()
     {
-        list($boundValue) = $this->container->getDefinition('foo')->getBindings()['$baz']->getValues();
+        [$boundValue] = $this->container->getDefinition('foo')->getBindings()['$baz']->getValues();
         $this->assertSame($this->container->getParameterBag()->resolveValue('%env(BAZ)%'), $boundValue);
     }
     public function testParameterNotFoundExceptionsIsThrown()
     {
-        $this->expectException(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException::class);
+        $this->expectException(ParameterNotFoundException::class);
         $this->expectExceptionMessage('The service "baz_service_id" has a dependency on a non-existent parameter "non_existent_param".');
-        $containerBuilder = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new ContainerBuilder();
         $definition = $containerBuilder->register('baz_service_id');
         $definition->setArgument(0, '%non_existent_param%');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
+        $pass = new ResolveParameterPlaceHoldersPass();
         $pass->process($containerBuilder);
     }
     public function testParameterNotFoundExceptionsIsNotThrown()
     {
-        $containerBuilder = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new ContainerBuilder();
         $definition = $containerBuilder->register('baz_service_id');
         $definition->setArgument(0, '%non_existent_param%');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass(\true, \false);
+        $pass = new ResolveParameterPlaceHoldersPass(true, false);
         $pass->process($containerBuilder);
         $this->assertCount(1, $definition->getErrors());
     }
     private function createContainerBuilder()
     {
-        $containerBuilder = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new ContainerBuilder();
         $containerBuilder->setParameter('foo.class', 'Foo');
         $containerBuilder->setParameter('foo.factory.class', 'FooFactory');
         $containerBuilder->setParameter('foo.arg1', 'bar');

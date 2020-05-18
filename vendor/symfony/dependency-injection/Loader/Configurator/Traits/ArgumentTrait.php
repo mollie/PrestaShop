@@ -21,7 +21,7 @@ trait ArgumentTrait
      */
     public final function args(array $arguments)
     {
-        $this->definition->setArguments(static::processValue($arguments, \true));
+        $this->definition->setArguments(static::processValue($arguments, true));
         return $this;
     }
     /**
@@ -34,7 +34,7 @@ trait ArgumentTrait
      */
     public final function arg($key, $value)
     {
-        $this->definition->setArgument($key, static::processValue($value, \true));
+        $this->definition->setArgument($key, static::processValue($value, true));
         return $this;
     }
 }

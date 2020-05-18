@@ -12,6 +12,10 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use SplPriorityQueue;
+use function array_merge;
+use const PHP_INT_MAX;
+
 /**
  * Overwrites a service but keeps the overridden one.
  *
@@ -19,12 +23,12 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Diego Saint Esteben <diego@saintesteben.me>
  */
-class DecoratorServicePass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class DecoratorServicePass implements CompilerPassInterface
 {
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
-        $definitions = new \SplPriorityQueue();
-        $order = \PHP_INT_MAX;
+        $definitions = new SplPriorityQueue();
+        $order = PHP_INT_MAX;
         foreach ($container->getDefinitions() as $id => $definition) {
             if (!($decorated = $definition->getDecoratedService())) {
                 continue;
@@ -32,8 +36,8 @@ class DecoratorServicePass implements \_PhpScoper5ea00cc67502b\Symfony\Component
             $definitions->insert([$id, $definition], [$decorated[2], --$order]);
         }
         $decoratingDefinitions = [];
-        foreach ($definitions as list($id, $definition)) {
-            list($inner, $renamedId) = $definition->getDecoratedService();
+        foreach ($definitions as [$id, $definition]) {
+            [$inner, $renamedId] = $definition->getDecoratedService();
             $definition->setDecoratedService(null);
             if (!$renamedId) {
                 $renamedId = $id . '.inner';
@@ -44,20 +48,20 @@ class DecoratorServicePass implements \_PhpScoper5ea00cc67502b\Symfony\Component
                 $alias = $container->getAlias($inner);
                 $public = $alias->isPublic();
                 $private = $alias->isPrivate();
-                $container->setAlias($renamedId, new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias($container->normalizeId($alias), \false));
+                $container->setAlias($renamedId, new Alias($container->normalizeId($alias), false));
             } else {
                 $decoratedDefinition = $container->getDefinition($inner);
                 $public = $decoratedDefinition->isPublic();
                 $private = $decoratedDefinition->isPrivate();
-                $decoratedDefinition->setPublic(\false);
+                $decoratedDefinition->setPublic(false);
                 $container->setDefinition($renamedId, $decoratedDefinition);
                 $decoratingDefinitions[$inner] = $decoratedDefinition;
             }
             if (isset($decoratingDefinitions[$inner])) {
                 $decoratingDefinition = $decoratingDefinitions[$inner];
-                $definition->setTags(\array_merge($decoratingDefinition->getTags(), $definition->getTags()));
-                $autowiringTypes = $decoratingDefinition->getAutowiringTypes(\false);
-                if ($types = \array_merge($autowiringTypes, $definition->getAutowiringTypes(\false))) {
+                $definition->setTags(array_merge($decoratingDefinition->getTags(), $definition->getTags()));
+                $autowiringTypes = $decoratingDefinition->getAutowiringTypes(false);
+                if ($types = array_merge($autowiringTypes, $definition->getAutowiringTypes(false))) {
                     $definition->setAutowiringTypes($types);
                 }
                 $decoratingDefinition->setTags([]);

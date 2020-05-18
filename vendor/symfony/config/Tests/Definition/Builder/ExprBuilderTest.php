@@ -12,7 +12,9 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Buil
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
-class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Closure;
+
+class ExprBuilderTest extends TestCase
 {
     public function testAlwaysExpression()
     {
@@ -22,13 +24,13 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
     public function testIfTrueExpression()
     {
         $test = $this->getTestBuilder()->ifTrue()->then($this->returnClosure('new_value'))->end();
-        $this->assertFinalizedValueIs('new_value', $test, ['key' => \true]);
+        $this->assertFinalizedValueIs('new_value', $test, ['key' => true]);
         $test = $this->getTestBuilder()->ifTrue(function ($v) {
-            return \true;
+            return true;
         })->then($this->returnClosure('new_value'))->end();
         $this->assertFinalizedValueIs('new_value', $test);
         $test = $this->getTestBuilder()->ifTrue(function ($v) {
-            return \false;
+            return false;
         })->then($this->returnClosure('new_value'))->end();
         $this->assertFinalizedValueIs('value', $test);
     }
@@ -126,7 +128,7 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
      */
     protected function getTestBuilder()
     {
-        $builder = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $builder = new TreeBuilder();
         return $builder->root('test')->children()->variableNode('key')->validate();
     }
     /**
@@ -147,7 +149,7 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
      *
      * @param mixed $val The value that the closure must return
      *
-     * @return \Closure
+     * @return Closure
      */
     protected function returnClosure($val)
     {

@@ -15,7 +15,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFile
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class PrototypeConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
+class PrototypeConfigurator extends AbstractServiceConfigurator
 {
     const FACTORY = 'load';
     use Traits\AbstractTrait;
@@ -37,9 +37,9 @@ class PrototypeConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\D
     private $resource;
     private $exclude;
     private $allowParent;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator $parent, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader $loader, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $defaults, $namespace, $resource, $allowParent)
+    public function __construct(ServicesConfigurator $parent, PhpFileLoader $loader, Definition $defaults, $namespace, $resource, $allowParent)
     {
-        $definition = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
+        $definition = new Definition();
         $definition->setPublic($defaults->isPublic());
         $definition->setAutowired($defaults->isAutowired());
         $definition->setAutoconfigured($defaults->isAutoconfigured());

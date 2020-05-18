@@ -12,27 +12,27 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver;
-class LoaderResolverTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class LoaderResolverTest extends TestCase
 {
     public function testConstructor()
     {
-        $resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([$loader = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Loader\\LoaderInterface')->getMock()]);
+        $resolver = new LoaderResolver([$loader = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Loader\\LoaderInterface')->getMock()]);
         $this->assertEquals([$loader], $resolver->getLoaders(), '__construct() takes an array of loaders as its first argument');
     }
     public function testResolve()
     {
         $loader = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Loader\\LoaderInterface')->getMock();
-        $resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([$loader]);
+        $resolver = new LoaderResolver([$loader]);
         $this->assertFalse($resolver->resolve('foo.foo'), '->resolve() returns false if no loader is able to load the resource');
         $loader = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Loader\\LoaderInterface')->getMock();
-        $loader->expects($this->once())->method('supports')->willReturn(\true);
-        $resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([$loader]);
+        $loader->expects($this->once())->method('supports')->willReturn(true);
+        $resolver = new LoaderResolver([$loader]);
         $this->assertEquals($loader, $resolver->resolve(function () {
         }), '->resolve() returns the loader for the given resource');
     }
     public function testLoaders()
     {
-        $resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver();
+        $resolver = new LoaderResolver();
         $resolver->addLoader($loader = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Loader\\LoaderInterface')->getMock());
         $this->assertEquals([$loader], $resolver->getLoaders(), 'addLoader() adds a loader');
     }

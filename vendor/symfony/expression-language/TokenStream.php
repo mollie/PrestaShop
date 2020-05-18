@@ -10,6 +10,9 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
 
+use function implode;
+use function sprintf;
+
 /**
  * Represents a token stream.
  *
@@ -38,7 +41,7 @@ class TokenStream
      */
     public function __toString()
     {
-        return \implode("\n", $this->tokens);
+        return implode("\n", $this->tokens);
     }
     /**
      * Sets the pointer to the next token and returns the old one.
@@ -47,7 +50,7 @@ class TokenStream
     {
         ++$this->position;
         if (!isset($this->tokens[$this->position])) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\SyntaxError('Unexpected end of expression.', $this->current->cursor, $this->expression);
+            throw new SyntaxError('Unexpected end of expression.', $this->current->cursor, $this->expression);
         }
         $this->current = $this->tokens[$this->position];
     }
@@ -62,7 +65,7 @@ class TokenStream
     {
         $token = $this->current;
         if (!$token->test($type, $value)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\SyntaxError(\sprintf('%sUnexpected token "%s" of value "%s" ("%s" expected%s).', $message ? $message . '. ' : '', $token->type, $token->value, $type, $value ? \sprintf(' with value "%s"', $value) : ''), $token->cursor, $this->expression);
+            throw new SyntaxError(sprintf('%sUnexpected token "%s" of value "%s" ("%s" expected%s).', $message ? $message . '. ' : '', $token->type, $token->value, $type, $value ? sprintf(' with value "%s"', $value) : ''), $token->cursor, $this->expression);
         }
         $this->next();
     }
@@ -73,7 +76,7 @@ class TokenStream
      */
     public function isEOF()
     {
-        return \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Token::EOF_TYPE === $this->current->type;
+        return Token::EOF_TYPE === $this->current->type;
     }
     /**
      * @internal

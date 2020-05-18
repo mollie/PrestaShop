@@ -16,10 +16,10 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class Dumper implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\DumperInterface
+abstract class Dumper implements DumperInterface
 {
     protected $container;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function __construct(ContainerBuilder $container)
     {
         $this->container = $container;
     }

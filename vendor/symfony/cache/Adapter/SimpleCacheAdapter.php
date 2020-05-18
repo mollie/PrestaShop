@@ -13,10 +13,12 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
 use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\ProxyTrait;
+use stdClass;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class SimpleCacheAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface
+class SimpleCacheAdapter extends AbstractAdapter implements PruneableInterface
 {
     /**
      * @internal
@@ -24,11 +26,11 @@ class SimpleCacheAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cach
     const NS_SEPARATOR = '_';
     use ProxyTrait;
     private $miss;
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface $pool, $namespace = '', $defaultLifetime = 0)
+    public function __construct(CacheInterface $pool, $namespace = '', $defaultLifetime = 0)
     {
         parent::__construct($namespace, $defaultLifetime);
         $this->pool = $pool;
-        $this->miss = new \stdClass();
+        $this->miss = new stdClass();
     }
     /**
      * {@inheritdoc}

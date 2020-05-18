@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class SettlementCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class SettlementCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class SettlementCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Settlement($this->client);
+        return new Settlement($this->client);
     }
 }

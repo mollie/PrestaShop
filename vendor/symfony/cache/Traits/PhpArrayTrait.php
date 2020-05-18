@@ -12,6 +12,35 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Exception;
+use function chmod;
+use function dirname;
+use function file_exists;
+use function file_put_contents;
+use function get_class;
+use function gettype;
+use function ini_set;
+use function is_array;
+use function is_dir;
+use function is_file;
+use function is_int;
+use function is_object;
+use function is_scalar;
+use function is_string;
+use function is_writable;
+use function mkdir;
+use function preg_match;
+use function rename;
+use function serialize;
+use function sprintf;
+use function str_replace;
+use function strpos;
+use function umask;
+use function uniqid;
+use function unlink;
+use function unserialize;
+use function var_export;
+
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
@@ -32,20 +61,20 @@ trait PhpArrayTrait
      */
     public function warmUp(array $values)
     {
-        if (\file_exists($this->file)) {
-            if (!\is_file($this->file)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache path exists and is not a file: "%s".', $this->file));
+        if (file_exists($this->file)) {
+            if (!is_file($this->file)) {
+                throw new InvalidArgumentException(sprintf('Cache path exists and is not a file: "%s".', $this->file));
             }
-            if (!\is_writable($this->file)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache file is not writable: "%s".', $this->file));
+            if (!is_writable($this->file)) {
+                throw new InvalidArgumentException(sprintf('Cache file is not writable: "%s".', $this->file));
             }
         } else {
-            $directory = \dirname($this->file);
-            if (!\is_dir($directory) && !@\mkdir($directory, 0777, \true)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory does not exist and cannot be created: "%s".', $directory));
+            $directory = dirname($this->file);
+            if (!is_dir($directory) && !@mkdir($directory, 0777, true)) {
+                throw new InvalidArgumentException(sprintf('Cache directory does not exist and cannot be created: "%s".', $directory));
             }
-            if (!\is_writable($directory)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory is not writable: "%s".', $directory));
+            if (!is_writable($directory)) {
+                throw new InvalidArgumentException(sprintf('Cache directory is not writable: "%s".', $directory));
             }
         }
         $dump = <<<'EOF'
@@ -58,41 +87,41 @@ return [
 
 EOF;
         foreach ($values as $key => $value) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey(\is_int($key) ? (string) $key : $key);
-            if (null === $value || \is_object($value)) {
+            CacheItem::validateKey(is_int($key) ? (string) $key : $key);
+            if (null === $value || is_object($value)) {
                 try {
-                    $value = \serialize($value);
-                } catch (\Exception $e) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \get_class($value)), 0, $e);
+                    $value = serialize($value);
+                } catch (Exception $e) {
+                    throw new InvalidArgumentException(sprintf('Cache key "%s" has non-serializable "%s" value.', $key, get_class($value)), 0, $e);
                 }
-            } elseif (\is_array($value)) {
+            } elseif (is_array($value)) {
                 try {
-                    $serialized = \serialize($value);
-                    $unserialized = \unserialize($serialized);
-                } catch (\Exception $e) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable array value.', $key), 0, $e);
+                    $serialized = serialize($value);
+                    $unserialized = unserialize($serialized);
+                } catch (Exception $e) {
+                    throw new InvalidArgumentException(sprintf('Cache key "%s" has non-serializable array value.', $key), 0, $e);
                 }
                 // Store arrays serialized if they contain any objects or references
-                if ($unserialized !== $value || \false !== \strpos($serialized, ';R:') && \preg_match('/;R:[1-9]/', $serialized)) {
+                if ($unserialized !== $value || false !== strpos($serialized, ';R:') && preg_match('/;R:[1-9]/', $serialized)) {
                     $value = $serialized;
                 }
-            } elseif (\is_string($value)) {
+            } elseif (is_string($value)) {
                 // Serialize strings if they could be confused with serialized objects or arrays
                 if ('N;' === $value || isset($value[2]) && ':' === $value[1]) {
-                    $value = \serialize($value);
+                    $value = serialize($value);
                 }
-            } elseif (!\is_scalar($value)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \gettype($value)));
+            } elseif (!is_scalar($value)) {
+                throw new InvalidArgumentException(sprintf('Cache key "%s" has non-serializable "%s" value.', $key, gettype($value)));
             }
-            $dump .= \var_export($key, \true) . ' => ' . \var_export($value, \true) . ",\n";
+            $dump .= var_export($key, true) . ' => ' . var_export($value, true) . ",\n";
         }
         $dump .= "\n];\n";
-        $dump = \str_replace("' . \"\\0\" . '", "\0", $dump);
-        $tmpFile = \uniqid($this->file, \true);
-        \file_put_contents($tmpFile, $dump);
-        @\chmod($tmpFile, 0666 & ~\umask());
+        $dump = str_replace("' . \"\\0\" . '", "\0", $dump);
+        $tmpFile = uniqid($this->file, true);
+        file_put_contents($tmpFile, $dump);
+        @chmod($tmpFile, 0666 & ~umask());
         unset($serialized, $unserialized, $value, $dump);
-        @\rename($tmpFile, $this->file);
+        @rename($tmpFile, $this->file);
         unset(self::$valuesCache[$this->file]);
         $this->initialize();
     }
@@ -102,7 +131,7 @@ EOF;
     public function clear()
     {
         $this->values = [];
-        $cleared = @\unlink($this->file) || !\file_exists($this->file);
+        $cleared = @unlink($this->file) || !file_exists($this->file);
         unset(self::$valuesCache[$this->file]);
         return $this->pool->clear() && $cleared;
     }
@@ -116,13 +145,13 @@ EOF;
             return;
         }
         if ($this->zendDetectUnicode) {
-            $zmb = \ini_set('zend.detect_unicode', 0);
+            $zmb = ini_set('zend.detect_unicode', 0);
         }
         try {
-            $this->values = self::$valuesCache[$this->file] = \file_exists($this->file) ? include $this->file ?: [] : [];
+            $this->values = self::$valuesCache[$this->file] = file_exists($this->file) ? include $this->file ?: [] : [];
         } finally {
             if ($this->zendDetectUnicode) {
-                \ini_set('zend.detect_unicode', $zmb);
+                ini_set('zend.detect_unicode', $zmb);
             }
         }
     }

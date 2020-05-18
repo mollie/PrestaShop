@@ -16,18 +16,20 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinitio
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function array_keys;
+
+class ResolveInstanceofConditionalsPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $def = $container->register('foo', self::class)->addTag('tag')->setAutowired(\true)->setChanges([]);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->setProperty('foo', 'bar')->addTag('baz', ['attr' => 123])]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $container = new ContainerBuilder();
+        $def = $container->register('foo', self::class)->addTag('tag')->setAutowired(true)->setChanges([]);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->setProperty('foo', 'bar')->addTag('baz', ['attr' => 123])]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
         $parent = 'instanceof.' . parent::class . '.0.foo';
         $def = $container->getDefinition('foo');
         $this->assertEmpty($def->getInstanceofConditionals());
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition::class, $def);
+        $this->assertInstanceOf(ChildDefinition::class, $def);
         $this->assertTrue($def->isAutowired());
         $this->assertSame($parent, $def->getParent());
         $this->assertSame(['tag' => [[]], 'baz' => [['attr' => 123]]], $def->getTags());
@@ -37,33 +39,33 @@ class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHP
     }
     public function testProcessInheritance()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('parent', parent::class)->addMethodCall('foo', ['foo']);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addMethodCall('foo', ['bar'])]);
-        $def = (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('parent'))->setClass(self::class);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->addMethodCall('foo', ['bar'])]);
+        $def = (new ChildDefinition('parent'))->setClass(self::class);
         $container->setDefinition('child', $def);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass())->process($container);
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
         $expected = [['foo', ['bar']], ['foo', ['foo']]];
         $this->assertSame($expected, $container->getDefinition('parent')->getMethodCalls());
         $this->assertSame($expected, $container->getDefinition('child')->getMethodCalls());
     }
     public function testProcessDoesReplaceShared()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('foo', 'stdClass');
-        $def->setInstanceofConditionals(['stdClass' => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->setShared(\false)]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $def->setInstanceofConditionals(['stdClass' => (new ChildDefinition(''))->setShared(false)]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
         $def = $container->getDefinition('foo');
         $this->assertFalse($def->isShared());
     }
     public function testProcessHandlesMultipleInheritance()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $def = $container->register('foo', self::class)->setShared(\true);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->setLazy(\true)->setShared(\false), self::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->setAutowired(\true)]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass())->process($container);
+        $container = new ContainerBuilder();
+        $def = $container->register('foo', self::class)->setShared(true);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->setLazy(true)->setShared(false), self::class => (new ChildDefinition(''))->setAutowired(true)]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
         $def = $container->getDefinition('foo');
         $this->assertTrue($def->isAutowired());
         $this->assertTrue($def->isLazy());
@@ -71,13 +73,13 @@ class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHP
     }
     public function testProcessUsesAutoconfiguredInstanceof()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('normal_service', self::class);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addTag('local_instanceof_tag')->setFactory('locally_set_factory')]);
-        $def->setAutoconfigured(\true);
-        $container->registerForAutoconfiguration(parent::class)->addTag('autoconfigured_tag')->setAutowired(\true)->setFactory('autoconfigured_factory');
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass())->process($container);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->addTag('local_instanceof_tag')->setFactory('locally_set_factory')]);
+        $def->setAutoconfigured(true);
+        $container->registerForAutoconfiguration(parent::class)->addTag('autoconfigured_tag')->setAutowired(true)->setFactory('autoconfigured_factory');
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
         $def = $container->getDefinition('normal_service');
         // autowired thanks to the autoconfigured instanceof
         $this->assertTrue($def->isAutowired());
@@ -88,25 +90,25 @@ class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHP
     }
     public function testAutoconfigureInstanceofDoesNotDuplicateTags()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('normal_service', self::class);
         $def->addTag('duplicated_tag')->addTag('duplicated_tag', ['and_attributes' => 1]);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addTag('duplicated_tag')]);
-        $def->setAutoconfigured(\true);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->addTag('duplicated_tag')]);
+        $def->setAutoconfigured(true);
         $container->registerForAutoconfiguration(parent::class)->addTag('duplicated_tag', ['and_attributes' => 1]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass())->process($container);
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
         $def = $container->getDefinition('normal_service');
         $this->assertSame(['duplicated_tag' => [[], ['and_attributes' => 1]]], $def->getTags());
     }
     public function testProcessDoesNotUseAutoconfiguredInstanceofIfNotEnabled()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('normal_service', self::class);
-        $def->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addTag('foo_tag')]);
-        $container->registerForAutoconfiguration(parent::class)->setAutowired(\true);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass())->process($container);
+        $def->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->addTag('foo_tag')]);
+        $container->registerForAutoconfiguration(parent::class)->setAutowired(true);
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
         $def = $container->getDefinition('normal_service');
         $this->assertFalse($def->isAutowired());
     }
@@ -114,40 +116,40 @@ class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHP
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('"App\\FakeInterface" is set as an "instanceof" conditional, but it does not exist.');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('normal_service', self::class);
-        $def->setInstanceofConditionals(['_PhpScoper5ea00cc67502b\\App\\FakeInterface' => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addTag('foo_tag')]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $def->setInstanceofConditionals(['_PhpScoper5ea00cc67502b\\App\\FakeInterface' => (new ChildDefinition(''))->addTag('foo_tag')]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
     }
     public function testBadInterfaceForAutomaticInstanceofIsOk()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('normal_service', self::class)->setAutoconfigured(\true);
-        $container->registerForAutoconfiguration('_PhpScoper5ea00cc67502b\\App\\FakeInterface')->setAutowired(\true);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $container = new ContainerBuilder();
+        $container->register('normal_service', self::class)->setAutoconfigured(true);
+        $container->registerForAutoconfiguration('_PhpScoper5ea00cc67502b\\App\\FakeInterface')->setAutowired(true);
+        (new ResolveInstanceofConditionalsPass())->process($container);
         $this->assertTrue($container->hasDefinition('normal_service'));
     }
     public function testProcessThrowsExceptionForAutoconfiguredCalls()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessageRegExp('/Autoconfigured instanceof for type "PHPUnit[\\\\_]Framework[\\\\_]TestCase" defines method calls but these are not supported and should be removed\\./');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->registerForAutoconfiguration(parent::class)->addMethodCall('setFoo');
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveInstanceofConditionalsPass())->process($container);
     }
     public function testProcessThrowsExceptionForArguments()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessageRegExp('/Autoconfigured instanceof for type "PHPUnit[\\\\_]Framework[\\\\_]TestCase" defines arguments but these are not supported and should be removed\\./');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->registerForAutoconfiguration(parent::class)->addArgument('bar');
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveInstanceofConditionalsPass())->process($container);
     }
     public function testMergeReset()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('bar', self::class)->addArgument('a')->addMethodCall('setB')->setDecoratedService('foo')->addTag('t')->setInstanceofConditionals([parent::class => (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition(''))->addTag('bar')]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $container = new ContainerBuilder();
+        $container->register('bar', self::class)->addArgument('a')->addMethodCall('setB')->setDecoratedService('foo')->addTag('t')->setInstanceofConditionals([parent::class => (new ChildDefinition(''))->addTag('bar')]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
         $abstract = $container->getDefinition('abstract.instanceof.bar');
         $this->assertEmpty($abstract->getArguments());
         $this->assertEmpty($abstract->getMethodCalls());
@@ -157,13 +159,13 @@ class ResolveInstanceofConditionalsPassTest extends \_PhpScoper5ea00cc67502b\PHP
     }
     public function testBindings()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $def = $container->register('foo', self::class)->setBindings(['$toto' => 123]);
-        $def->setInstanceofConditionals([parent::class => new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('')]);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass())->process($container);
+        $def->setInstanceofConditionals([parent::class => new ChildDefinition('')]);
+        (new ResolveInstanceofConditionalsPass())->process($container);
         $bindings = $container->getDefinition('foo')->getBindings();
-        $this->assertSame(['$toto'], \array_keys($bindings));
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument::class, $bindings['$toto']);
+        $this->assertSame(['$toto'], array_keys($bindings));
+        $this->assertInstanceOf(BoundArgument::class, $bindings['$toto']);
         $this->assertSame(123, $bindings['$toto']->getValues()[0]);
     }
 }

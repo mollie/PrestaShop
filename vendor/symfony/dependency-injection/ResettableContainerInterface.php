@@ -17,7 +17,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
  *
  * @author Christophe Coevoet <stof@notk.org>
  */
-interface ResettableContainerInterface extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
+interface ResettableContainerInterface extends ContainerInterface
 {
     /**
      * Resets shared services from the container.

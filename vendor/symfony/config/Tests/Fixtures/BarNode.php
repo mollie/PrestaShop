@@ -11,6 +11,6 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode;
-class BarNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode
+class BarNode extends ArrayNode
 {
 }

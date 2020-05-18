@@ -10,16 +10,58 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Tests;
 
+use ArrayObject;
+use Phar;
+use function chdir;
+use function chmod;
+use function defined;
+use function exec;
+use function fclose;
+use function file_get_contents;
+use function file_put_contents;
+use function fileinode;
+use function fileperms;
+use function fopen;
+use function fseek;
+use function fwrite;
+use function getcwd;
+use function getenv;
+use function in_array;
+use function is_dir;
+use function is_file;
+use function is_link;
+use function link;
+use function mkdir;
+use function mt_rand;
+use function readlink;
+use function realpath;
+use function rmdir;
+use function rtrim;
+use function str_repeat;
+use function str_replace;
+use function stream_get_wrappers;
+use function stream_wrapper_register;
+use function strlen;
+use function symlink;
+use function sys_get_temp_dir;
+use function time;
+use function touch;
+use function umask;
+use function uniqid;
+use function unlink;
+use const DIRECTORY_SEPARATOR;
+use const PHP_MAXPATHLEN;
+
 /**
  * Test class for Filesystem.
  */
-class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Tests\FilesystemTestCase
+class FilesystemTest extends FilesystemTestCase
 {
     public function testCopyCreatesNewFile()
     {
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
         $this->assertFileExists($targetFilePath);
         $this->assertStringEqualsFile($targetFilePath, 'SOURCE FILE');
@@ -27,63 +69,63 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testCopyFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
     }
     public function testCopyUnreadableFileFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         // skip test on Windows; PHP can't easily set file as unreadable on Windows
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('This test cannot run on Windows.');
         }
-        if (!\getenv('USER') || 'root' === \getenv('USER')) {
+        if (!getenv('USER') || 'root' === getenv('USER')) {
             $this->markTestSkipped('This test will fail if run under superuser');
         }
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
         // make sure target cannot be read
         $this->filesystem->chmod($sourceFilePath, 0222);
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
     }
     public function testCopyOverridesExistingFileIfModified()
     {
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
-        \file_put_contents($targetFilePath, 'TARGET FILE');
-        \touch($targetFilePath, \time() - 1000);
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
+        file_put_contents($targetFilePath, 'TARGET FILE');
+        touch($targetFilePath, time() - 1000);
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
         $this->assertFileExists($targetFilePath);
         $this->assertStringEqualsFile($targetFilePath, 'SOURCE FILE');
     }
     public function testCopyDoesNotOverrideExistingFileByDefault()
     {
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
-        \file_put_contents($targetFilePath, 'TARGET FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
+        file_put_contents($targetFilePath, 'TARGET FILE');
         // make sure both files have the same modification time
-        $modificationTime = \time() - 1000;
-        \touch($sourceFilePath, $modificationTime);
-        \touch($targetFilePath, $modificationTime);
+        $modificationTime = time() - 1000;
+        touch($sourceFilePath, $modificationTime);
+        touch($targetFilePath, $modificationTime);
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
         $this->assertFileExists($targetFilePath);
         $this->assertStringEqualsFile($targetFilePath, 'TARGET FILE');
     }
     public function testCopyOverridesExistingFileIfForced()
     {
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
-        \file_put_contents($targetFilePath, 'TARGET FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
+        file_put_contents($targetFilePath, 'TARGET FILE');
         // make sure both files have the same modification time
-        $modificationTime = \time() - 1000;
-        \touch($sourceFilePath, $modificationTime);
-        \touch($targetFilePath, $modificationTime);
-        $this->filesystem->copy($sourceFilePath, $targetFilePath, \true);
+        $modificationTime = time() - 1000;
+        touch($sourceFilePath, $modificationTime);
+        touch($targetFilePath, $modificationTime);
+        $this->filesystem->copy($sourceFilePath, $targetFilePath, true);
         $this->assertFileExists($targetFilePath);
         $this->assertStringEqualsFile($targetFilePath, 'SOURCE FILE');
     }
@@ -91,30 +133,30 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         // skip test on Windows; PHP can't easily set file as unwritable on Windows
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('This test cannot run on Windows.');
         }
-        if (!\getenv('USER') || 'root' === \getenv('USER')) {
+        if (!getenv('USER') || 'root' === getenv('USER')) {
             $this->markTestSkipped('This test will fail if run under superuser');
         }
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
-        \file_put_contents($targetFilePath, 'TARGET FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
+        file_put_contents($targetFilePath, 'TARGET FILE');
         // make sure both files have the same modification time
-        $modificationTime = \time() - 1000;
-        \touch($sourceFilePath, $modificationTime);
-        \touch($targetFilePath, $modificationTime);
+        $modificationTime = time() - 1000;
+        touch($sourceFilePath, $modificationTime);
+        touch($targetFilePath, $modificationTime);
         // make sure target is read-only
         $this->filesystem->chmod($targetFilePath, 0444);
-        $this->filesystem->copy($sourceFilePath, $targetFilePath, \true);
+        $this->filesystem->copy($sourceFilePath, $targetFilePath, true);
     }
     public function testCopyCreatesTargetDirectoryIfItDoesNotExist()
     {
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFileDirectory = $this->workspace . \DIRECTORY_SEPARATOR . 'directory';
-        $targetFilePath = $targetFileDirectory . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFileDirectory = $this->workspace . DIRECTORY_SEPARATOR . 'directory';
+        $targetFilePath = $targetFileDirectory . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
         $this->assertDirectoryExists($targetFileDirectory);
         $this->assertFileExists($targetFilePath);
@@ -125,25 +167,25 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
      */
     public function testCopyForOriginUrlsAndExistingLocalFileDefaultsToCopy()
     {
-        if (!\in_array('https', \stream_get_wrappers())) {
+        if (!in_array('https', stream_get_wrappers())) {
             $this->markTestSkipped('"https" stream wrapper is not enabled.');
         }
         $sourceFilePath = 'https://symfony.com/images/common/logo/logo_symfony_header.png';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($targetFilePath, 'TARGET FILE');
-        $this->filesystem->copy($sourceFilePath, $targetFilePath, \false);
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($targetFilePath, 'TARGET FILE');
+        $this->filesystem->copy($sourceFilePath, $targetFilePath, false);
         $this->assertFileExists($targetFilePath);
-        $this->assertEquals(\file_get_contents($sourceFilePath), \file_get_contents($targetFilePath));
+        $this->assertEquals(file_get_contents($sourceFilePath), file_get_contents($targetFilePath));
     }
     public function testMkdirCreatesDirectoriesRecursively()
     {
-        $directory = $this->workspace . \DIRECTORY_SEPARATOR . 'directory' . \DIRECTORY_SEPARATOR . 'sub_directory';
+        $directory = $this->workspace . DIRECTORY_SEPARATOR . 'directory' . DIRECTORY_SEPARATOR . 'sub_directory';
         $this->filesystem->mkdir($directory);
         $this->assertDirectoryExists($directory);
     }
     public function testMkdirCreatesDirectoriesFromArray()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
         $directories = [$basePath . '1', $basePath . '2', $basePath . '3'];
         $this->filesystem->mkdir($directories);
         $this->assertDirectoryExists($basePath . '1');
@@ -152,8 +194,8 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testMkdirCreatesDirectoriesFromTraversableObject()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        $directories = new \ArrayObject([$basePath . '1', $basePath . '2', $basePath . '3']);
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        $directories = new ArrayObject([$basePath . '1', $basePath . '2', $basePath . '3']);
         $this->filesystem->mkdir($directories);
         $this->assertDirectoryExists($basePath . '1');
         $this->assertDirectoryExists($basePath . '2');
@@ -162,26 +204,26 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testMkdirCreatesDirectoriesFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
         $dir = $basePath . '2';
-        \file_put_contents($dir, '');
+        file_put_contents($dir, '');
         $this->filesystem->mkdir($dir);
     }
     public function testTouchCreatesEmptyFile()
     {
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . '1';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . '1';
         $this->filesystem->touch($file);
         $this->assertFileExists($file);
     }
     public function testTouchFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . '1' . \DIRECTORY_SEPARATOR . '2';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . '1' . DIRECTORY_SEPARATOR . '2';
         $this->filesystem->touch($file);
     }
     public function testTouchCreatesEmptyFilesFromArray()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
         $files = [$basePath . '1', $basePath . '2', $basePath . '3'];
         $this->filesystem->touch($files);
         $this->assertFileExists($basePath . '1');
@@ -190,8 +232,8 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testTouchCreatesEmptyFilesFromTraversableObject()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        $files = new \ArrayObject([$basePath . '1', $basePath . '2', $basePath . '3']);
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        $files = new ArrayObject([$basePath . '1', $basePath . '2', $basePath . '3']);
         $this->filesystem->touch($files);
         $this->assertFileExists($basePath . '1');
         $this->assertFileExists($basePath . '2');
@@ -199,18 +241,18 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testRemoveCleansFilesAndDirectoriesIteratively()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR . 'directory' . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath);
-        \mkdir($basePath . 'dir');
-        \touch($basePath . 'file');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR . 'directory' . DIRECTORY_SEPARATOR;
+        mkdir($basePath);
+        mkdir($basePath . 'dir');
+        touch($basePath . 'file');
         $this->filesystem->remove($basePath);
         $this->assertFileNotExists($basePath);
     }
     public function testRemoveCleansArrayOfFilesAndDirectories()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath . 'dir');
-        \touch($basePath . 'file');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        mkdir($basePath . 'dir');
+        touch($basePath . 'file');
         $files = [$basePath . 'dir', $basePath . 'file'];
         $this->filesystem->remove($files);
         $this->assertFileNotExists($basePath . 'dir');
@@ -218,18 +260,18 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testRemoveCleansTraversableObjectOfFilesAndDirectories()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath . 'dir');
-        \touch($basePath . 'file');
-        $files = new \ArrayObject([$basePath . 'dir', $basePath . 'file']);
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        mkdir($basePath . 'dir');
+        touch($basePath . 'file');
+        $files = new ArrayObject([$basePath . 'dir', $basePath . 'file']);
         $this->filesystem->remove($files);
         $this->assertFileNotExists($basePath . 'dir');
         $this->assertFileNotExists($basePath . 'file');
     }
     public function testRemoveIgnoresNonExistingFiles()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath . 'dir');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        mkdir($basePath . 'dir');
         $files = [$basePath . 'dir', $basePath . 'file'];
         $this->filesystem->remove($files);
         $this->assertFileNotExists($basePath . 'dir');
@@ -237,79 +279,79 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testRemoveCleansInvalidLinks()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR . 'directory' . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath);
-        \mkdir($basePath . 'dir');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR . 'directory' . DIRECTORY_SEPARATOR;
+        mkdir($basePath);
+        mkdir($basePath . 'dir');
         // create symlink to nonexistent file
-        @\symlink($basePath . 'file', $basePath . 'file-link');
+        @symlink($basePath . 'file', $basePath . 'file-link');
         // create symlink to dir using trailing forward slash
         $this->filesystem->symlink($basePath . 'dir/', $basePath . 'dir-link');
         $this->assertDirectoryExists($basePath . 'dir-link');
         // create symlink to nonexistent dir
-        \rmdir($basePath . 'dir');
-        $this->assertFalse('\\' === \DIRECTORY_SEPARATOR ? @\readlink($basePath . 'dir-link') : \is_dir($basePath . 'dir-link'));
+        rmdir($basePath . 'dir');
+        $this->assertFalse('\\' === DIRECTORY_SEPARATOR ? @readlink($basePath . 'dir-link') : is_dir($basePath . 'dir-link'));
         $this->filesystem->remove($basePath);
         $this->assertFileNotExists($basePath);
     }
     public function testFilesExists()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR . 'directory' . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath);
-        \touch($basePath . 'file1');
-        \mkdir($basePath . 'folder');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR . 'directory' . DIRECTORY_SEPARATOR;
+        mkdir($basePath);
+        touch($basePath . 'file1');
+        mkdir($basePath . 'folder');
         $this->assertTrue($this->filesystem->exists($basePath . 'file1'));
         $this->assertTrue($this->filesystem->exists($basePath . 'folder'));
     }
     public function testFilesExistsFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
+        if ('\\' !== DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Long file names are an issue on Windows');
         }
         $basePath = $this->workspace . '\\directory\\';
-        $maxPathLength = \PHP_MAXPATHLEN - 2;
-        $oldPath = \getcwd();
-        \mkdir($basePath);
-        \chdir($basePath);
-        $file = \str_repeat('T', $maxPathLength - \strlen($basePath) + 1);
+        $maxPathLength = PHP_MAXPATHLEN - 2;
+        $oldPath = getcwd();
+        mkdir($basePath);
+        chdir($basePath);
+        $file = str_repeat('T', $maxPathLength - strlen($basePath) + 1);
         $path = $basePath . $file;
-        \exec('TYPE NUL >>' . $file);
+        exec('TYPE NUL >>' . $file);
         // equivalent of touch, we can not use the php touch() here because it suffers from the same limitation
         $this->longPathNamesWindows[] = $path;
         // save this so we can clean up later
-        \chdir($oldPath);
+        chdir($oldPath);
         $this->filesystem->exists($path);
     }
     public function testFilesExistsTraversableObjectOfFilesAndDirectories()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath . 'dir');
-        \touch($basePath . 'file');
-        $files = new \ArrayObject([$basePath . 'dir', $basePath . 'file']);
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        mkdir($basePath . 'dir');
+        touch($basePath . 'file');
+        $files = new ArrayObject([$basePath . 'dir', $basePath . 'file']);
         $this->assertTrue($this->filesystem->exists($files));
     }
     public function testFilesNotExistsTraversableObjectOfFilesAndDirectories()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR;
-        \mkdir($basePath . 'dir');
-        \touch($basePath . 'file');
-        \touch($basePath . 'file2');
-        $files = new \ArrayObject([$basePath . 'dir', $basePath . 'file', $basePath . 'file2']);
-        \unlink($basePath . 'file');
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR;
+        mkdir($basePath . 'dir');
+        touch($basePath . 'file');
+        touch($basePath . 'file2');
+        $files = new ArrayObject([$basePath . 'dir', $basePath . 'file', $basePath . 'file2']);
+        unlink($basePath . 'file');
         $this->assertFalse($this->filesystem->exists($files));
     }
     public function testInvalidFileNotExists()
     {
-        $basePath = $this->workspace . \DIRECTORY_SEPARATOR . 'directory' . \DIRECTORY_SEPARATOR;
-        $this->assertFalse($this->filesystem->exists($basePath . \time()));
+        $basePath = $this->workspace . DIRECTORY_SEPARATOR . 'directory' . DIRECTORY_SEPARATOR;
+        $this->assertFalse($this->filesystem->exists($basePath . time()));
     }
     public function testChmodChangesFileMode()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $file = $dir . \DIRECTORY_SEPARATOR . 'file';
-        \touch($file);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $file = $dir . DIRECTORY_SEPARATOR . 'file';
+        touch($file);
         $this->filesystem->chmod($file, 0400);
         $this->filesystem->chmod($dir, 0753);
         $this->assertFilePermissions(753, $dir);
@@ -318,43 +360,43 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChmodWithWrongModLeavesPreviousPermissionsUntouched()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        if (\defined('HHVM_VERSION')) {
+        if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('chmod() changes permissions even when passing invalid modes on HHVM');
         }
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        \touch($dir);
-        $permissions = \fileperms($dir);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        touch($dir);
+        $permissions = fileperms($dir);
         $this->filesystem->chmod($dir, 'Wrongmode');
-        $this->assertSame($permissions, \fileperms($dir));
+        $this->assertSame($permissions, fileperms($dir));
     }
     public function testChmodRecursive()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $file = $dir . \DIRECTORY_SEPARATOR . 'file';
-        \touch($file);
-        $this->filesystem->chmod($file, 0400, 00, \true);
-        $this->filesystem->chmod($dir, 0753, 00, \true);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $file = $dir . DIRECTORY_SEPARATOR . 'file';
+        touch($file);
+        $this->filesystem->chmod($file, 0400, 00, true);
+        $this->filesystem->chmod($dir, 0753, 00, true);
         $this->assertFilePermissions(753, $dir);
         $this->assertFilePermissions(753, $file);
     }
     public function testChmodAppliesUmask()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        touch($file);
         $this->filesystem->chmod($file, 0770, 022);
         $this->assertFilePermissions(750, $file);
     }
     public function testChmodChangesModeOfArrayOfFiles()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $directory = $this->workspace . \DIRECTORY_SEPARATOR . 'directory';
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
+        $directory = $this->workspace . DIRECTORY_SEPARATOR . 'directory';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
         $files = [$directory, $file];
-        \mkdir($directory);
-        \touch($file);
+        mkdir($directory);
+        touch($file);
         $this->filesystem->chmod($files, 0753);
         $this->assertFilePermissions(753, $file);
         $this->assertFilePermissions(753, $directory);
@@ -362,11 +404,11 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChmodChangesModeOfTraversableFileObject()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $directory = $this->workspace . \DIRECTORY_SEPARATOR . 'directory';
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $files = new \ArrayObject([$directory, $file]);
-        \mkdir($directory);
-        \touch($file);
+        $directory = $this->workspace . DIRECTORY_SEPARATOR . 'directory';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $files = new ArrayObject([$directory, $file]);
+        mkdir($directory);
+        touch($file);
         $this->filesystem->chmod($files, 0753);
         $this->assertFilePermissions(753, $file);
         $this->assertFilePermissions(753, $directory);
@@ -374,19 +416,19 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChmodChangesZeroModeOnSubdirectoriesOnRecursive()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $directory = $this->workspace . \DIRECTORY_SEPARATOR . 'directory';
-        $subdirectory = $directory . \DIRECTORY_SEPARATOR . 'subdirectory';
-        \mkdir($directory);
-        \mkdir($subdirectory);
-        \chmod($subdirectory, 00);
-        $this->filesystem->chmod($directory, 0753, 00, \true);
+        $directory = $this->workspace . DIRECTORY_SEPARATOR . 'directory';
+        $subdirectory = $directory . DIRECTORY_SEPARATOR . 'subdirectory';
+        mkdir($directory);
+        mkdir($subdirectory);
+        chmod($subdirectory, 00);
+        $this->filesystem->chmod($directory, 0753, 00, true);
         $this->assertFilePermissions(753, $subdirectory);
     }
     public function testChown()
     {
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
         $owner = $this->getFileOwner($dir);
         $this->filesystem->chown($dir, $owner);
         $this->assertSame($owner, $this->getFileOwner($dir));
@@ -394,20 +436,20 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChownRecursive()
     {
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $file = $dir . \DIRECTORY_SEPARATOR . 'file';
-        \touch($file);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $file = $dir . DIRECTORY_SEPARATOR . 'file';
+        touch($file);
         $owner = $this->getFileOwner($dir);
-        $this->filesystem->chown($dir, $owner, \true);
+        $this->filesystem->chown($dir, $owner, true);
         $this->assertSame($owner, $this->getFileOwner($file));
     }
     public function testChownSymlink()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->symlink($file, $link);
         $owner = $this->getFileOwner($link);
         $this->filesystem->chown($link, $owner);
@@ -416,9 +458,9 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChownLink()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->hardlink($file, $link);
         $owner = $this->getFileOwner($link);
         $this->filesystem->chown($link, $owner);
@@ -428,35 +470,35 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->symlink($file, $link);
-        $this->filesystem->chown($link, 'user' . \time() . \mt_rand(1000, 9999));
+        $this->filesystem->chown($link, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testChownLinkFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->hardlink($file, $link);
-        $this->filesystem->chown($link, 'user' . \time() . \mt_rand(1000, 9999));
+        $this->filesystem->chown($link, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testChownFail()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $this->filesystem->chown($dir, 'user' . \time() . \mt_rand(1000, 9999));
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $this->filesystem->chown($dir, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testChgrp()
     {
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
         $group = $this->getFileGroup($dir);
         $this->filesystem->chgrp($dir, $group);
         $this->assertSame($group, $this->getFileGroup($dir));
@@ -464,20 +506,20 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChgrpRecursive()
     {
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $file = $dir . \DIRECTORY_SEPARATOR . 'file';
-        \touch($file);
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $file = $dir . DIRECTORY_SEPARATOR . 'file';
+        touch($file);
         $group = $this->getFileGroup($dir);
-        $this->filesystem->chgrp($dir, $group, \true);
+        $this->filesystem->chgrp($dir, $group, true);
         $this->assertSame($group, $this->getFileGroup($file));
     }
     public function testChgrpSymlink()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->symlink($file, $link);
         $group = $this->getFileGroup($link);
         $this->filesystem->chgrp($link, $group);
@@ -486,9 +528,9 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testChgrpLink()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->hardlink($file, $link);
         $group = $this->getFileGroup($link);
         $this->filesystem->chgrp($link, $group);
@@ -498,35 +540,35 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->symlink($file, $link);
-        $this->filesystem->chgrp($link, 'user' . \time() . \mt_rand(1000, 9999));
+        $this->filesystem->chgrp($link, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testChgrpLinkFails()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->hardlink($file, $link);
-        $this->filesystem->chgrp($link, 'user' . \time() . \mt_rand(1000, 9999));
+        $this->filesystem->chgrp($link, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testChgrpFail()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->markAsSkippedIfPosixIsMissing();
-        $dir = $this->workspace . \DIRECTORY_SEPARATOR . 'dir';
-        \mkdir($dir);
-        $this->filesystem->chgrp($dir, 'user' . \time() . \mt_rand(1000, 9999));
+        $dir = $this->workspace . DIRECTORY_SEPARATOR . 'dir';
+        mkdir($dir);
+        $this->filesystem->chgrp($dir, 'user' . time() . mt_rand(1000, 9999));
     }
     public function testRename()
     {
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $newPath = $this->workspace . \DIRECTORY_SEPARATOR . 'new_file';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $newPath = $this->workspace . DIRECTORY_SEPARATOR . 'new_file';
+        touch($file);
         $this->filesystem->rename($file, $newPath);
         $this->assertFileNotExists($file);
         $this->assertFileExists($newPath);
@@ -534,42 +576,42 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testRenameThrowsExceptionIfTargetAlreadyExists()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $newPath = $this->workspace . \DIRECTORY_SEPARATOR . 'new_file';
-        \touch($file);
-        \touch($newPath);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $newPath = $this->workspace . DIRECTORY_SEPARATOR . 'new_file';
+        touch($file);
+        touch($newPath);
         $this->filesystem->rename($file, $newPath);
     }
     public function testRenameOverwritesTheTargetIfItAlreadyExists()
     {
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $newPath = $this->workspace . \DIRECTORY_SEPARATOR . 'new_file';
-        \touch($file);
-        \touch($newPath);
-        $this->filesystem->rename($file, $newPath, \true);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $newPath = $this->workspace . DIRECTORY_SEPARATOR . 'new_file';
+        touch($file);
+        touch($newPath);
+        $this->filesystem->rename($file, $newPath, true);
         $this->assertFileNotExists($file);
         $this->assertFileExists($newPath);
     }
     public function testRenameThrowsExceptionOnError()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . \uniqid('fs_test_', \true);
-        $newPath = $this->workspace . \DIRECTORY_SEPARATOR . 'new_file';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . uniqid('fs_test_', true);
+        $newPath = $this->workspace . DIRECTORY_SEPARATOR . 'new_file';
         $this->filesystem->rename($file, $newPath);
     }
     public function testSymlink()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support creating "broken" symlinks');
         }
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
         // $file does not exist right now: creating "broken" links is a wanted feature
         $this->filesystem->symlink($file, $link);
-        $this->assertTrue(\is_link($link));
+        $this->assertTrue(is_link($link));
         // Create the linked file AFTER creating the link
-        \touch($file);
-        $this->assertEquals($file, \readlink($link));
+        touch($file);
+        $this->assertEquals($file, readlink($link));
     }
     /**
      * @depends testSymlink
@@ -577,57 +619,57 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testRemoveSymlink()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
         $this->filesystem->remove($link);
-        $this->assertFalse(\is_link($link));
-        $this->assertFalse(\is_file($link));
+        $this->assertFalse(is_link($link));
+        $this->assertFalse(is_file($link));
         $this->assertDirectoryNotExists($link);
     }
     public function testSymlinkIsOverwrittenIfPointsToDifferentTarget()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
-        \symlink($this->workspace, $link);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
+        symlink($this->workspace, $link);
         $this->filesystem->symlink($file, $link);
-        $this->assertTrue(\is_link($link));
-        $this->assertEquals($file, \readlink($link));
+        $this->assertTrue(is_link($link));
+        $this->assertEquals($file, readlink($link));
     }
     public function testSymlinkIsNotOverwrittenIfAlreadyCreated()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
-        \symlink($file, $link);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
+        symlink($file, $link);
         $this->filesystem->symlink($file, $link);
-        $this->assertTrue(\is_link($link));
-        $this->assertEquals($file, \readlink($link));
+        $this->assertTrue(is_link($link));
+        $this->assertEquals($file, readlink($link));
     }
     public function testSymlinkCreatesTargetDirectoryIfItDoesNotExist()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link1 = $this->workspace . \DIRECTORY_SEPARATOR . 'dir' . \DIRECTORY_SEPARATOR . 'link';
-        $link2 = $this->workspace . \DIRECTORY_SEPARATOR . 'dir' . \DIRECTORY_SEPARATOR . 'subdir' . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link1 = $this->workspace . DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'link';
+        $link2 = $this->workspace . DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->symlink($file, $link1);
         $this->filesystem->symlink($file, $link2);
-        $this->assertTrue(\is_link($link1));
-        $this->assertEquals($file, \readlink($link1));
-        $this->assertTrue(\is_link($link2));
-        $this->assertEquals($file, \readlink($link2));
+        $this->assertTrue(is_link($link1));
+        $this->assertEquals($file, readlink($link1));
+        $this->assertTrue(is_link($link2));
+        $this->assertEquals($file, readlink($link2));
     }
     public function testLink()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         $this->filesystem->hardlink($file, $link);
-        $this->assertTrue(\is_file($link));
-        $this->assertEquals(\fileinode($file), \fileinode($link));
+        $this->assertTrue(is_file($link));
+        $this->assertEquals(fileinode($file), fileinode($link));
     }
     /**
      * @depends testLink
@@ -635,75 +677,75 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testRemoveLink()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
         $this->filesystem->remove($link);
-        $this->assertTrue(!\is_file($link));
+        $this->assertTrue(!is_file($link));
     }
     public function testLinkIsOverwrittenIfPointsToDifferentTarget()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $file2 = $this->workspace . \DIRECTORY_SEPARATOR . 'file2';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
-        \touch($file2);
-        \link($file2, $link);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $file2 = $this->workspace . DIRECTORY_SEPARATOR . 'file2';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
+        touch($file2);
+        link($file2, $link);
         $this->filesystem->hardlink($file, $link);
-        $this->assertTrue(\is_file($link));
-        $this->assertEquals(\fileinode($file), \fileinode($link));
+        $this->assertTrue(is_file($link));
+        $this->assertEquals(fileinode($file), fileinode($link));
     }
     public function testLinkIsNotOverwrittenIfAlreadyCreated()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
-        \link($file, $link);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
+        link($file, $link);
         $this->filesystem->hardlink($file, $link);
-        $this->assertTrue(\is_file($link));
-        $this->assertEquals(\fileinode($file), \fileinode($link));
+        $this->assertTrue(is_file($link));
+        $this->assertEquals(fileinode($file), fileinode($link));
     }
     public function testLinkWithSeveralTargets()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link1 = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        $link2 = $this->workspace . \DIRECTORY_SEPARATOR . 'link2';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link1 = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        $link2 = $this->workspace . DIRECTORY_SEPARATOR . 'link2';
+        touch($file);
         $this->filesystem->hardlink($file, [$link1, $link2]);
-        $this->assertTrue(\is_file($link1));
-        $this->assertEquals(\fileinode($file), \fileinode($link1));
-        $this->assertTrue(\is_file($link2));
-        $this->assertEquals(\fileinode($file), \fileinode($link2));
+        $this->assertTrue(is_file($link1));
+        $this->assertEquals(fileinode($file), fileinode($link1));
+        $this->assertTrue(is_file($link2));
+        $this->assertEquals(fileinode($file), fileinode($link2));
     }
     public function testLinkWithSameTarget()
     {
         $this->markAsSkippedIfLinkIsMissing();
-        $file = $this->workspace . \DIRECTORY_SEPARATOR . 'file';
-        $link = $this->workspace . \DIRECTORY_SEPARATOR . 'link';
-        \touch($file);
+        $file = $this->workspace . DIRECTORY_SEPARATOR . 'file';
+        $link = $this->workspace . DIRECTORY_SEPARATOR . 'link';
+        touch($file);
         // practically same as testLinkIsNotOverwrittenIfAlreadyCreated
         $this->filesystem->hardlink($file, [$link, $link]);
-        $this->assertTrue(\is_file($link));
-        $this->assertEquals(\fileinode($file), \fileinode($link));
+        $this->assertTrue(is_file($link));
+        $this->assertEquals(fileinode($file), fileinode($link));
     }
     public function testReadRelativeLink()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Relative symbolic links are not supported on Windows');
         }
         $file = $this->workspace . '/file';
         $link1 = $this->workspace . '/dir/link';
         $link2 = $this->workspace . '/dir/link2';
-        \touch($file);
+        touch($file);
         $this->filesystem->symlink('../file', $link1);
         $this->filesystem->symlink('link', $link2);
         $this->assertEquals($this->normalize('../file'), $this->filesystem->readlink($link1));
         $this->assertEquals('link', $this->filesystem->readlink($link2));
-        $this->assertEquals($file, $this->filesystem->readlink($link1, \true));
-        $this->assertEquals($file, $this->filesystem->readlink($link2, \true));
-        $this->assertEquals($file, $this->filesystem->readlink($file, \true));
+        $this->assertEquals($file, $this->filesystem->readlink($link1, true));
+        $this->assertEquals($file, $this->filesystem->readlink($link2, true));
+        $this->assertEquals($file, $this->filesystem->readlink($file, true));
     }
     public function testReadAbsoluteLink()
     {
@@ -711,28 +753,28 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
         $file = $this->normalize($this->workspace . '/file');
         $link1 = $this->normalize($this->workspace . '/dir/link');
         $link2 = $this->normalize($this->workspace . '/dir/link2');
-        \touch($file);
+        touch($file);
         $this->filesystem->symlink($file, $link1);
         $this->filesystem->symlink($link1, $link2);
         $this->assertEquals($file, $this->filesystem->readlink($link1));
         $this->assertEquals($link1, $this->filesystem->readlink($link2));
-        $this->assertEquals($file, $this->filesystem->readlink($link1, \true));
-        $this->assertEquals($file, $this->filesystem->readlink($link2, \true));
-        $this->assertEquals($file, $this->filesystem->readlink($file, \true));
+        $this->assertEquals($file, $this->filesystem->readlink($link1, true));
+        $this->assertEquals($file, $this->filesystem->readlink($link2, true));
+        $this->assertEquals($file, $this->filesystem->readlink($file, true));
     }
     public function testReadBrokenLink()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support creating "broken" symlinks');
         }
         $file = $this->workspace . '/file';
         $link = $this->workspace . '/link';
         $this->filesystem->symlink($file, $link);
         $this->assertEquals($file, $this->filesystem->readlink($link));
-        $this->assertNull($this->filesystem->readlink($link, \true));
-        \touch($file);
-        $this->assertEquals($file, $this->filesystem->readlink($link, \true));
+        $this->assertNull($this->filesystem->readlink($link, true));
+        touch($file);
+        $this->assertEquals($file, $this->filesystem->readlink($link, true));
     }
     public function testReadLinkDefaultPathDoesNotExist()
     {
@@ -741,20 +783,20 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testReadLinkDefaultPathNotLink()
     {
         $file = $this->normalize($this->workspace . '/file');
-        \touch($file);
+        touch($file);
         $this->assertNull($this->filesystem->readlink($file));
     }
     public function testReadLinkCanonicalizePath()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
         $file = $this->normalize($this->workspace . '/file');
-        \mkdir($this->normalize($this->workspace . '/dir'));
-        \touch($file);
-        $this->assertEquals($file, $this->filesystem->readlink($this->normalize($this->workspace . '/dir/../file'), \true));
+        mkdir($this->normalize($this->workspace . '/dir'));
+        touch($file);
+        $this->assertEquals($file, $this->filesystem->readlink($this->normalize($this->workspace . '/dir/../file'), true));
     }
     public function testReadLinkCanonicalizedPathDoesNotExist()
     {
-        $this->assertNull($this->filesystem->readlink($this->normalize($this->workspace . 'invalid'), \true));
+        $this->assertNull($this->filesystem->readlink($this->normalize($this->workspace . 'invalid'), true));
     }
     /**
      * @dataProvider providePathsForMakePathRelative
@@ -767,7 +809,7 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function providePathsForMakePathRelative()
     {
         $paths = [['/var/lib/symfony/src/Symfony/', '/var/lib/symfony/src/Symfony/Component', '../'], ['/var/lib/symfony/src/Symfony/', '/var/lib/symfony/src/Symfony/Component/', '../'], ['/var/lib/symfony/src/Symfony', '/var/lib/symfony/src/Symfony/Component', '../'], ['/var/lib/symfony/src/Symfony', '/var/lib/symfony/src/Symfony/Component/', '../'], ['/usr/lib/symfony/', '/var/lib/symfony/src/Symfony/Component', '../../../../../../usr/lib/symfony/'], ['/var/lib/symfony/src/Symfony/', '/var/lib/symfony/', 'src/Symfony/'], ['/aa/bb', '/aa/bb', './'], ['/aa/bb', '/aa/bb/', './'], ['/aa/bb/', '/aa/bb', './'], ['/aa/bb/', '/aa/bb/', './'], ['/aa/bb/cc', '/aa/bb/cc/dd', '../'], ['/aa/bb/cc', '/aa/bb/cc/dd/', '../'], ['/aa/bb/cc/', '/aa/bb/cc/dd', '../'], ['/aa/bb/cc/', '/aa/bb/cc/dd/', '../'], ['/aa/bb/cc', '/aa', 'bb/cc/'], ['/aa/bb/cc', '/aa/', 'bb/cc/'], ['/aa/bb/cc/', '/aa', 'bb/cc/'], ['/aa/bb/cc/', '/aa/', 'bb/cc/'], ['/a/aab/bb', '/a/aa', '../aab/bb/'], ['/a/aab/bb', '/a/aa/', '../aab/bb/'], ['/a/aab/bb/', '/a/aa', '../aab/bb/'], ['/a/aab/bb/', '/a/aa/', '../aab/bb/'], ['/a/aab/bb/', '/', 'a/aab/bb/'], ['/a/aab/bb/', '/b/aab', '../../a/aab/bb/'], ['/aab/bb', '/aa', '../aab/bb/'], ['/aab', '/aa', '../aab/'], ['/aa/bb/cc', '/aa/dd/..', 'bb/cc/'], ['/aa/../bb/cc', '/aa/dd/..', '../bb/cc/'], ['/aa/bb/../../cc', '/aa/../dd/..', 'cc/'], ['/../aa/bb/cc', '/aa/dd/..', 'bb/cc/'], ['/../../aa/../bb/cc', '/aa/dd/..', '../bb/cc/'], ['C:/aa/bb/cc', 'C:/aa/dd/..', 'bb/cc/'], ['c:/aa/../bb/cc', 'c:/aa/dd/..', '../bb/cc/'], ['C:/aa/bb/../../cc', 'C:/aa/../dd/..', 'cc/'], ['C:/../aa/bb/cc', 'C:/aa/dd/..', 'bb/cc/'], ['C:/../../aa/../bb/cc', 'C:/aa/dd/..', '../bb/cc/']];
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $paths[] = ['c:\\var\\lib/symfony/src/Symfony/', 'c:/var/lib/symfony/', 'src/Symfony/'];
         }
         return $paths;
@@ -788,38 +830,38 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testMirrorCopiesFilesAndDirectoriesRecursively()
     {
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        $directory = $sourcePath . 'directory' . \DIRECTORY_SEPARATOR;
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        $directory = $sourcePath . 'directory' . DIRECTORY_SEPARATOR;
         $file1 = $directory . 'file1';
         $file2 = $sourcePath . 'file2';
-        \mkdir($sourcePath);
-        \mkdir($directory);
-        \file_put_contents($file1, 'FILE1');
-        \file_put_contents($file2, 'FILE2');
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
+        mkdir($sourcePath);
+        mkdir($directory);
+        file_put_contents($file1, 'FILE1');
+        file_put_contents($file2, 'FILE2');
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertDirectoryExists($targetPath . 'directory');
-        $this->assertFileEquals($file1, $targetPath . 'directory' . \DIRECTORY_SEPARATOR . 'file1');
+        $this->assertFileEquals($file1, $targetPath . 'directory' . DIRECTORY_SEPARATOR . 'file1');
         $this->assertFileEquals($file2, $targetPath . 'file2');
         $this->filesystem->remove($file1);
-        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => \false]);
-        $this->assertTrue($this->filesystem->exists($targetPath . 'directory' . \DIRECTORY_SEPARATOR . 'file1'));
-        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => \true]);
-        $this->assertFalse($this->filesystem->exists($targetPath . 'directory' . \DIRECTORY_SEPARATOR . 'file1'));
-        \file_put_contents($file1, 'FILE1');
-        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => \true]);
-        $this->assertTrue($this->filesystem->exists($targetPath . 'directory' . \DIRECTORY_SEPARATOR . 'file1'));
+        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => false]);
+        $this->assertTrue($this->filesystem->exists($targetPath . 'directory' . DIRECTORY_SEPARATOR . 'file1'));
+        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => true]);
+        $this->assertFalse($this->filesystem->exists($targetPath . 'directory' . DIRECTORY_SEPARATOR . 'file1'));
+        file_put_contents($file1, 'FILE1');
+        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => true]);
+        $this->assertTrue($this->filesystem->exists($targetPath . 'directory' . DIRECTORY_SEPARATOR . 'file1'));
         $this->filesystem->remove($directory);
-        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => \true]);
+        $this->filesystem->mirror($sourcePath, $targetPath, null, ['delete' => true]);
         $this->assertFalse($this->filesystem->exists($targetPath . 'directory'));
-        $this->assertFalse($this->filesystem->exists($targetPath . 'directory' . \DIRECTORY_SEPARATOR . 'file1'));
+        $this->assertFalse($this->filesystem->exists($targetPath . 'directory' . DIRECTORY_SEPARATOR . 'file1'));
     }
     public function testMirrorCreatesEmptyDirectory()
     {
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        \mkdir($sourcePath);
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        mkdir($sourcePath);
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertDirectoryExists($targetPath);
         $this->filesystem->remove($sourcePath);
@@ -827,89 +869,89 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testMirrorCopiesLinks()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        \mkdir($sourcePath);
-        \file_put_contents($sourcePath . 'file1', 'FILE1');
-        \symlink($sourcePath . 'file1', $sourcePath . 'link1');
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        mkdir($sourcePath);
+        file_put_contents($sourcePath . 'file1', 'FILE1');
+        symlink($sourcePath . 'file1', $sourcePath . 'link1');
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertFileEquals($sourcePath . 'file1', $targetPath . 'link1');
-        $this->assertTrue(\is_link($targetPath . \DIRECTORY_SEPARATOR . 'link1'));
+        $this->assertTrue(is_link($targetPath . DIRECTORY_SEPARATOR . 'link1'));
     }
     public function testMirrorCopiesLinkedDirectoryContents()
     {
-        $this->markAsSkippedIfSymlinkIsMissing(\true);
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        \mkdir($sourcePath . 'nested/', 0777, \true);
-        \file_put_contents($sourcePath . '/nested/file1.txt', 'FILE1');
+        $this->markAsSkippedIfSymlinkIsMissing(true);
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        mkdir($sourcePath . 'nested/', 0777, true);
+        file_put_contents($sourcePath . '/nested/file1.txt', 'FILE1');
         // Note: We symlink directory, not file
-        \symlink($sourcePath . 'nested', $sourcePath . 'link1');
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
+        symlink($sourcePath . 'nested', $sourcePath . 'link1');
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertFileEquals($sourcePath . '/nested/file1.txt', $targetPath . 'link1/file1.txt');
-        $this->assertTrue(\is_link($targetPath . \DIRECTORY_SEPARATOR . 'link1'));
+        $this->assertTrue(is_link($targetPath . DIRECTORY_SEPARATOR . 'link1'));
     }
     public function testMirrorCopiesRelativeLinkedContents()
     {
-        $this->markAsSkippedIfSymlinkIsMissing(\true);
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        $oldPath = \getcwd();
-        \mkdir($sourcePath . 'nested/', 0777, \true);
-        \file_put_contents($sourcePath . '/nested/file1.txt', 'FILE1');
+        $this->markAsSkippedIfSymlinkIsMissing(true);
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        $oldPath = getcwd();
+        mkdir($sourcePath . 'nested/', 0777, true);
+        file_put_contents($sourcePath . '/nested/file1.txt', 'FILE1');
         // Note: Create relative symlink
-        \chdir($sourcePath);
-        \symlink('nested', 'link1');
-        \chdir($oldPath);
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
+        chdir($sourcePath);
+        symlink('nested', 'link1');
+        chdir($oldPath);
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertFileEquals($sourcePath . '/nested/file1.txt', $targetPath . 'link1/file1.txt');
-        $this->assertTrue(\is_link($targetPath . \DIRECTORY_SEPARATOR . 'link1'));
-        $this->assertEquals('\\' === \DIRECTORY_SEPARATOR ? \realpath($sourcePath . '\\nested') : 'nested', \readlink($targetPath . \DIRECTORY_SEPARATOR . 'link1'));
+        $this->assertTrue(is_link($targetPath . DIRECTORY_SEPARATOR . 'link1'));
+        $this->assertEquals('\\' === DIRECTORY_SEPARATOR ? realpath($sourcePath . '\\nested') : 'nested', readlink($targetPath . DIRECTORY_SEPARATOR . 'link1'));
     }
     public function testMirrorContentsWithSameNameAsSourceOrTargetWithoutDeleteOption()
     {
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        \mkdir($sourcePath);
-        \touch($sourcePath . 'source');
-        \touch($sourcePath . 'target');
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
-        $oldPath = \getcwd();
-        \chdir($this->workspace);
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        mkdir($sourcePath);
+        touch($sourcePath . 'source');
+        touch($sourcePath . 'target');
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
+        $oldPath = getcwd();
+        chdir($this->workspace);
         $this->filesystem->mirror('source', $targetPath);
-        \chdir($oldPath);
+        chdir($oldPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertFileExists($targetPath . 'source');
         $this->assertFileExists($targetPath . 'target');
     }
     public function testMirrorContentsWithSameNameAsSourceOrTargetWithDeleteOption()
     {
-        $sourcePath = $this->workspace . \DIRECTORY_SEPARATOR . 'source' . \DIRECTORY_SEPARATOR;
-        \mkdir($sourcePath);
-        \touch($sourcePath . 'source');
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'target' . \DIRECTORY_SEPARATOR;
-        \mkdir($targetPath);
-        \touch($targetPath . 'source');
-        \touch($targetPath . 'target');
-        $oldPath = \getcwd();
-        \chdir($this->workspace);
-        $this->filesystem->mirror('source', 'target', null, ['delete' => \true]);
-        \chdir($oldPath);
+        $sourcePath = $this->workspace . DIRECTORY_SEPARATOR . 'source' . DIRECTORY_SEPARATOR;
+        mkdir($sourcePath);
+        touch($sourcePath . 'source');
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR;
+        mkdir($targetPath);
+        touch($targetPath . 'source');
+        touch($targetPath . 'target');
+        $oldPath = getcwd();
+        chdir($this->workspace);
+        $this->filesystem->mirror('source', 'target', null, ['delete' => true]);
+        chdir($oldPath);
         $this->assertDirectoryExists($targetPath);
         $this->assertFileExists($targetPath . 'source');
         $this->assertFileNotExists($targetPath . 'target');
     }
     public function testMirrorFromSubdirectoryInToParentDirectory()
     {
-        $targetPath = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR;
-        $sourcePath = $targetPath . 'bar' . \DIRECTORY_SEPARATOR;
+        $targetPath = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR;
+        $sourcePath = $targetPath . 'bar' . DIRECTORY_SEPARATOR;
         $file1 = $sourcePath . 'file1';
         $file2 = $sourcePath . 'file2';
         $this->filesystem->mkdir($sourcePath);
-        \file_put_contents($file1, 'FILE1');
-        \file_put_contents($file2, 'FILE2');
+        file_put_contents($file1, 'FILE1');
+        file_put_contents($file2, 'FILE2');
         $this->filesystem->mirror($sourcePath, $targetPath);
         $this->assertFileEquals($file1, $targetPath . 'file1');
     }
@@ -923,7 +965,7 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function providePathsForIsAbsolutePath()
     {
-        return [['/var/lib', \true], ['_PhpScoper5ea00cc67502b\\c:\\var\\lib', \true], ['_PhpScoper5ea00cc67502b\\var\\lib', \true], ['var/lib', \false], ['../var/lib', \false], ['', \false], [null, \false]];
+        return [['/var/lib', true], ['_PhpScoper5ea00cc67502b\\c:\\var\\lib', true], ['_PhpScoper5ea00cc67502b\\var\\lib', true], ['var/lib', false], ['../var/lib', false], ['', false], [null, false]];
     }
     public function testTempnam()
     {
@@ -941,7 +983,7 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     }
     public function testTempnamWithMockScheme()
     {
-        \stream_wrapper_register('mock', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Tests\\Fixtures\\MockStream\\MockStream');
+        stream_wrapper_register('mock', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Tests\\Fixtures\\MockStream\\MockStream');
         $scheme = 'mock://';
         $dirname = $scheme . $this->workspace;
         $filename = $this->filesystem->tempnam($dirname, 'foo');
@@ -969,13 +1011,13 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         // Skip test if Phar disabled phar.readonly must be 0 in php.ini
-        if (!\Phar::canWrite()) {
+        if (!Phar::canWrite()) {
             $this->markTestSkipped('This test cannot run when phar.readonly is 1.');
         }
         $scheme = 'phar://';
         $dirname = $scheme . $this->workspace;
         $pharname = 'foo.phar';
-        new \Phar($this->workspace . '/' . $pharname, 0, $pharname);
+        new Phar($this->workspace . '/' . $pharname, 0, $pharname);
         // The phar:// stream does not support mode x: fails to create file, errors "failed to open stream: phar error: "$filename" is not a file in phar "$pharname"" and returns false
         $this->filesystem->tempnam($dirname, $pharname . '/bar');
     }
@@ -990,63 +1032,63 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testTempnamOnUnwritableFallsBackToSysTmp()
     {
         $scheme = 'file://';
-        $dirname = $scheme . $this->workspace . \DIRECTORY_SEPARATOR . 'does_not_exist';
+        $dirname = $scheme . $this->workspace . DIRECTORY_SEPARATOR . 'does_not_exist';
         $filename = $this->filesystem->tempnam($dirname, 'bar');
-        $realTempDir = \realpath(\sys_get_temp_dir());
-        $this->assertStringStartsWith(\rtrim($scheme . $realTempDir, \DIRECTORY_SEPARATOR), $filename);
+        $realTempDir = realpath(sys_get_temp_dir());
+        $this->assertStringStartsWith(rtrim($scheme . $realTempDir, DIRECTORY_SEPARATOR), $filename);
         $this->assertFileExists($filename);
         // Tear down
-        @\unlink($filename);
+        @unlink($filename);
     }
     public function testDumpFile()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
-            $oldMask = \umask(02);
+        if ('\\' !== DIRECTORY_SEPARATOR) {
+            $oldMask = umask(02);
         }
         $this->filesystem->dumpFile($filename, 'bar');
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
+        if ('\\' !== DIRECTORY_SEPARATOR) {
             $this->assertFilePermissions(664, $filename);
-            \umask($oldMask);
+            umask($oldMask);
         }
     }
     public function testDumpFileWithArray()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         $this->filesystem->dumpFile($filename, ['bar']);
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
     }
     public function testDumpFileWithResource()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
-        $resource = \fopen('php://memory', 'rw');
-        \fwrite($resource, 'bar');
-        \fseek($resource, 0);
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
+        $resource = fopen('php://memory', 'rw');
+        fwrite($resource, 'bar');
+        fseek($resource, 0);
         $this->filesystem->dumpFile($filename, $resource);
-        \fclose($resource);
+        fclose($resource);
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
     }
     public function testDumpFileOverwritesAnExistingFile()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo.txt';
-        \file_put_contents($filename, 'FOO BAR');
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo.txt';
+        file_put_contents($filename, 'FOO BAR');
         $this->filesystem->dumpFile($filename, 'bar');
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
     }
     public function testDumpFileWithFileScheme()
     {
-        if (\defined('HHVM_VERSION')) {
+        if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('HHVM does not handle the file:// scheme correctly');
         }
         $scheme = 'file://';
-        $filename = $scheme . $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $scheme . $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         $this->filesystem->dumpFile($filename, 'bar');
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
@@ -1054,36 +1096,36 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testDumpFileWithZlibScheme()
     {
         $scheme = 'compress.zlib://';
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         $this->filesystem->dumpFile($filename, 'bar');
         // Zlib stat uses file:// wrapper so remove scheme
-        $this->assertFileExists(\str_replace($scheme, '', $filename));
+        $this->assertFileExists(str_replace($scheme, '', $filename));
         $this->assertStringEqualsFile($filename, 'bar');
     }
     public function testAppendToFile()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'bar.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar.txt';
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
-            $oldMask = \umask(02);
+        if ('\\' !== DIRECTORY_SEPARATOR) {
+            $oldMask = umask(02);
         }
         $this->filesystem->dumpFile($filename, 'foo');
         $this->filesystem->appendToFile($filename, 'bar');
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'foobar');
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
+        if ('\\' !== DIRECTORY_SEPARATOR) {
             $this->assertFilePermissions(664, $filename);
-            \umask($oldMask);
+            umask($oldMask);
         }
     }
     public function testAppendToFileWithScheme()
     {
-        if (\defined('HHVM_VERSION')) {
+        if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('HHVM does not handle the file:// scheme correctly');
         }
         $scheme = 'file://';
-        $filename = $scheme . $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $scheme . $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         $this->filesystem->dumpFile($filename, 'foo');
         $this->filesystem->appendToFile($filename, 'bar');
         $this->assertFileExists($filename);
@@ -1092,26 +1134,26 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testAppendToFileWithZlibScheme()
     {
         $scheme = 'compress.zlib://';
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'baz.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'baz.txt';
         $this->filesystem->dumpFile($filename, 'foo');
         // Zlib stat uses file:// wrapper so remove it
-        $this->assertStringEqualsFile(\str_replace($scheme, '', $filename), 'foo');
+        $this->assertStringEqualsFile(str_replace($scheme, '', $filename), 'foo');
         $this->filesystem->appendToFile($filename, 'bar');
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'foobar');
     }
     public function testAppendToFileCreateTheFileIfNotExists()
     {
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo' . \DIRECTORY_SEPARATOR . 'bar.txt';
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar.txt';
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
-            $oldMask = \umask(02);
+        if ('\\' !== DIRECTORY_SEPARATOR) {
+            $oldMask = umask(02);
         }
         $this->filesystem->appendToFile($filename, 'bar');
         // skip mode check on Windows
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
+        if ('\\' !== DIRECTORY_SEPARATOR) {
             $this->assertFilePermissions(664, $filename);
-            \umask($oldMask);
+            umask($oldMask);
         }
         $this->assertFileExists($filename);
         $this->assertStringEqualsFile($filename, 'bar');
@@ -1119,19 +1161,19 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
     public function testDumpKeepsExistingPermissionsWhenOverwritingAnExistingFile()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $filename = $this->workspace . \DIRECTORY_SEPARATOR . 'foo.txt';
-        \file_put_contents($filename, 'FOO BAR');
-        \chmod($filename, 0745);
+        $filename = $this->workspace . DIRECTORY_SEPARATOR . 'foo.txt';
+        file_put_contents($filename, 'FOO BAR');
+        chmod($filename, 0745);
         $this->filesystem->dumpFile($filename, 'bar', null);
         $this->assertFilePermissions(745, $filename);
     }
     public function testCopyShouldKeepExecutionPermission()
     {
         $this->markAsSkippedIfChmodIsMissing();
-        $sourceFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_source_file';
-        $targetFilePath = $this->workspace . \DIRECTORY_SEPARATOR . 'copy_target_file';
-        \file_put_contents($sourceFilePath, 'SOURCE FILE');
-        \chmod($sourceFilePath, 0745);
+        $sourceFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_source_file';
+        $targetFilePath = $this->workspace . DIRECTORY_SEPARATOR . 'copy_target_file';
+        file_put_contents($sourceFilePath, 'SOURCE FILE');
+        chmod($sourceFilePath, 0745);
         $this->filesystem->copy($sourceFilePath, $targetFilePath);
         $this->assertFilePermissions(767, $targetFilePath);
     }
@@ -1144,6 +1186,6 @@ class FilesystemTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesyst
      */
     private function normalize($path)
     {
-        return \str_replace('/', \DIRECTORY_SEPARATOR, $path);
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 }

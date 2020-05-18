@@ -8,9 +8,10 @@
  */
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Test\Operation;
 
+use _PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\MagnitudeChange;
-class MagnitudeChangeTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
+class MagnitudeChangeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Given a decimal number
@@ -26,8 +27,8 @@ class MagnitudeChangeTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_Tes
      */
     public function testItChangesMagnitude($number, $exponent, $expected)
     {
-        $n = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
-        $result = (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\MagnitudeChange())->compute($n, $exponent);
+        $n = new Number($number);
+        $result = (new MagnitudeChange())->compute($n, $exponent);
         $this->assertSame($expected, (string) $result);
     }
     public function provideTestCases()

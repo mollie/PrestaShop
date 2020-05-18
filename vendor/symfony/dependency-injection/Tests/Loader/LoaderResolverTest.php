@@ -19,20 +19,22 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFile
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-class LoaderResolverTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function realpath;
+
+class LoaderResolverTest extends TestCase
 {
     private static $fixturesPath;
     /** @var LoaderResolver */
     private $resolver;
     protected function setUp()
     {
-        self::$fixturesPath = \realpath(__DIR__ . '/../Fixtures/');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $this->resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/yaml')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/php')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\ClosureLoader($container)]);
+        self::$fixturesPath = realpath(__DIR__ . '/../Fixtures/');
+        $container = new ContainerBuilder();
+        $this->resolver = new LoaderResolver([new XmlFileLoader($container, new FileLocator(self::$fixturesPath . '/xml')), new YamlFileLoader($container, new FileLocator(self::$fixturesPath . '/yaml')), new IniFileLoader($container, new FileLocator(self::$fixturesPath . '/ini')), new PhpFileLoader($container, new FileLocator(self::$fixturesPath . '/php')), new ClosureLoader($container)]);
     }
     public function provideResourcesToLoad()
     {
-        return [['ini_with_wrong_ext.xml', 'ini', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader::class], ['xml_with_wrong_ext.php', 'xml', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::class], ['php_with_wrong_ext.yml', 'php', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader::class], ['yaml_with_wrong_ext.ini', 'yaml', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader::class]];
+        return [['ini_with_wrong_ext.xml', 'ini', IniFileLoader::class], ['xml_with_wrong_ext.php', 'xml', XmlFileLoader::class], ['php_with_wrong_ext.yml', 'php', PhpFileLoader::class], ['yaml_with_wrong_ext.ini', 'yaml', YamlFileLoader::class]];
     }
     /**
      * @dataProvider provideResourcesToLoad

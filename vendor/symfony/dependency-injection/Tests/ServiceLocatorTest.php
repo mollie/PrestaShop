@@ -14,11 +14,13 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use stdClass;
+
+class ServiceLocatorTest extends TestCase
 {
     public function testHas()
     {
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () {
+        $locator = new ServiceLocator(['foo' => function () {
             return 'bar';
         }, 'bar' => function () {
             return 'baz';
@@ -31,7 +33,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     }
     public function testGet()
     {
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () {
+        $locator = new ServiceLocator(['foo' => function () {
             return 'bar';
         }, 'bar' => function () {
             return 'baz';
@@ -42,7 +44,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     public function testGetDoesNotMemoize()
     {
         $i = 0;
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () use(&$i) {
+        $locator = new ServiceLocator(['foo' => function () use(&$i) {
             ++$i;
             return 'bar';
         }]);
@@ -54,7 +56,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Psr\\Container\\NotFoundExceptionInterface');
         $this->expectExceptionMessage('Service "dummy" not found: the container inside "Symfony\\Component\\DependencyInjection\\Tests\\ServiceLocatorTest" is a smaller service locator that only knows about the "foo" and "bar" services.');
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () {
+        $locator = new ServiceLocator(['foo' => function () {
             return 'bar';
         }, 'bar' => function () {
             return 'baz';
@@ -65,7 +67,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Psr\\Container\\NotFoundExceptionInterface');
         $this->expectExceptionMessage('The service "foo" has a dependency on a non-existent service "bar". This locator only knows about the "foo" service.');
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () use(&$locator) {
+        $locator = new ServiceLocator(['foo' => function () use(&$locator) {
             return $locator->get('bar');
         }]);
         $locator->get('foo');
@@ -74,7 +76,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceCircularReferenceException');
         $this->expectExceptionMessage('Circular reference detected for service "bar", path: "bar -> baz -> bar".');
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () use(&$locator) {
+        $locator = new ServiceLocator(['foo' => function () use(&$locator) {
             return $locator->get('bar');
         }, 'bar' => function () use(&$locator) {
             return $locator->get('baz');
@@ -87,10 +89,10 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Psr\\Container\\NotFoundExceptionInterface');
         $this->expectExceptionMessage('Service "foo" not found: even though it exists in the app\'s container, the container inside "caller" is a smaller service locator that only knows about the "bar" service. Unless you need extra laziness, try using dependency injection instead. Otherwise, you need to declare it using "SomeServiceSubscriber::getSubscribedServices()".');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container();
-        $container->set('foo', new \stdClass());
-        $subscriber = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\SomeServiceSubscriber();
-        $subscriber->container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['bar' => function () {
+        $container = new Container();
+        $container->set('foo', new stdClass());
+        $subscriber = new SomeServiceSubscriber();
+        $subscriber->container = new ServiceLocator(['bar' => function () {
         }]);
         $subscriber->container = $subscriber->container->withContext('caller', $container);
         $subscriber->getFoo();
@@ -99,15 +101,15 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
         $this->expectExceptionMessage('Service "foo" not found: even though it exists in the app\'s container, the container inside "foo" is a smaller service locator that is empty... Try using dependency injection instead.');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container();
-        $container->set('foo', new \stdClass());
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator([]);
+        $container = new Container();
+        $container->set('foo', new stdClass());
+        $locator = new ServiceLocator([]);
         $locator = $locator->withContext('foo', $container);
         $locator->get('foo');
     }
     public function testInvoke()
     {
-        $locator = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['foo' => function () {
+        $locator = new ServiceLocator(['foo' => function () {
             return 'bar';
         }, 'bar' => function () {
             return 'baz';
@@ -117,7 +119,7 @@ class ServiceLocatorTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Test
         $this->assertNull($locator('dummy'), '->__invoke() should return null on invalid service');
     }
 }
-class SomeServiceSubscriber implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface
+class SomeServiceSubscriber implements ServiceSubscriberInterface
 {
     public $container;
     public function getFoo()

@@ -10,6 +10,11 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
 
+use Serializable;
+use function file_exists;
+use function serialize;
+use function unserialize;
+
 /**
  * FileExistenceResource represents a resource stored on the filesystem.
  * Freshness is only evaluated against resource creation or deletion.
@@ -18,7 +23,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
  *
  * @author Charles-Henri Bruyand <charleshenri.bruyand@gmail.com>
  */
-class FileExistenceResource implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
+class FileExistenceResource implements SelfCheckingResourceInterface, Serializable
 {
     private $resource;
     private $exists;
@@ -28,7 +33,7 @@ class FileExistenceResource implements \_PhpScoper5ea00cc67502b\Symfony\Componen
     public function __construct($resource)
     {
         $this->resource = (string) $resource;
-        $this->exists = \file_exists($resource);
+        $this->exists = file_exists($resource);
     }
     /**
      * {@inheritdoc}
@@ -49,20 +54,20 @@ class FileExistenceResource implements \_PhpScoper5ea00cc67502b\Symfony\Componen
      */
     public function isFresh($timestamp)
     {
-        return \file_exists($this->resource) === $this->exists;
+        return file_exists($this->resource) === $this->exists;
     }
     /**
      * @internal
      */
     public function serialize()
     {
-        return \serialize([$this->resource, $this->exists]);
+        return serialize([$this->resource, $this->exists]);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        list($this->resource, $this->exists) = \unserialize($serialized);
+        [$this->resource, $this->exists] = unserialize($serialized);
     }
 }

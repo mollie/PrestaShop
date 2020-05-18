@@ -13,7 +13,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-class CrossCheckTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use ReflectionProperty;
+use function copy;
+use function file_put_contents;
+use function serialize;
+use function sys_get_temp_dir;
+use function tempnam;
+use function ucfirst;
+use function unlink;
+
+class CrossCheckTest extends TestCase
 {
     protected static $fixturesPath;
     public static function setUpBeforeClass()
@@ -27,34 +36,34 @@ class CrossCheckTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testCrossCheck($fixture, $type)
     {
-        $loaderClass = 'Symfony\\Component\\DependencyInjection\\Loader\\' . \ucfirst($type) . 'FileLoader';
-        $dumperClass = 'Symfony\\Component\\DependencyInjection\\Dumper\\' . \ucfirst($type) . 'Dumper';
-        $tmp = \tempnam(\sys_get_temp_dir(), 'sf');
-        \copy(self::$fixturesPath . '/' . $type . '/' . $fixture, $tmp);
-        $container1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader1 = new $loaderClass($container1, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator());
+        $loaderClass = 'Symfony\\Component\\DependencyInjection\\Loader\\' . ucfirst($type) . 'FileLoader';
+        $dumperClass = 'Symfony\\Component\\DependencyInjection\\Dumper\\' . ucfirst($type) . 'Dumper';
+        $tmp = tempnam(sys_get_temp_dir(), 'sf');
+        copy(self::$fixturesPath . '/' . $type . '/' . $fixture, $tmp);
+        $container1 = new ContainerBuilder();
+        $loader1 = new $loaderClass($container1, new FileLocator());
         $loader1->load($tmp);
         $dumper = new $dumperClass($container1);
-        \file_put_contents($tmp, $dumper->dump());
-        $container2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader2 = new $loaderClass($container2, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator());
+        file_put_contents($tmp, $dumper->dump());
+        $container2 = new ContainerBuilder();
+        $loader2 = new $loaderClass($container2, new FileLocator());
         $loader2->load($tmp);
-        \unlink($tmp);
+        unlink($tmp);
         $this->assertEquals($container2->getAliases(), $container1->getAliases(), 'loading a dump from a previously loaded container returns the same container');
         $this->assertEquals($container2->getDefinitions(), $container1->getDefinitions(), 'loading a dump from a previously loaded container returns the same container');
         $this->assertEquals($container2->getParameterBag()->all(), $container1->getParameterBag()->all(), '->getParameterBag() returns the same value for both containers');
-        $r = new \ReflectionProperty(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder::class, 'normalizedIds');
-        $r->setAccessible(\true);
+        $r = new ReflectionProperty(ContainerBuilder::class, 'normalizedIds');
+        $r->setAccessible(true);
         $r->setValue($container2, []);
         $r->setValue($container1, []);
-        $this->assertEquals(\serialize($container2), \serialize($container1), 'loading a dump from a previously loaded container returns the same container');
+        $this->assertEquals(serialize($container2), serialize($container1), 'loading a dump from a previously loaded container returns the same container');
         $services1 = [];
         foreach ($container1 as $id => $service) {
-            $services1[$id] = \serialize($service);
+            $services1[$id] = serialize($service);
         }
         $services2 = [];
         foreach ($container2 as $id => $service) {
-            $services2[$id] = \serialize($service);
+            $services2[$id] = serialize($service);
         }
         unset($services1['service_container'], $services2['service_container']);
         $this->assertEquals($services2, $services1, 'Iterator on the containers returns the same services');

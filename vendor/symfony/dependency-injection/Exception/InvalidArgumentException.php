@@ -15,6 +15,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exceptio
  *
  * @author Bulat Shakirzyanov <bulat@theopenskyproject.com>
  */
-class InvalidArgumentException extends \InvalidArgumentException implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

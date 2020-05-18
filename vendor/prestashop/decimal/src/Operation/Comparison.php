@@ -9,6 +9,11 @@
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation;
 
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number as DecimalNumber;
+use function function_exists;
+use function max;
+use function strcmp;
+use function strlen;
+
 /**
  * Compares two decimal numbers
  */
@@ -22,9 +27,9 @@ class Comparison
      *
      * @return int Returns 1 if $a > $b, -1 if $a < $b, and 0 if they are equal.
      */
-    public function compare(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function compare(DecimalNumber $a, DecimalNumber $b)
     {
-        if (\function_exists('_PhpScoper5ea00cc67502b\\bccomp')) {
+        if (function_exists('_PhpScoper5ea00cc67502b\\bccomp')) {
             return $this->compareUsingBcMath($a, $b);
         }
         return $this->compareWithoutBcMath($a, $b);
@@ -37,9 +42,9 @@ class Comparison
      *
      * @return int Returns 1 if $a > $b, -1 if $a < $b, and 0 if they are equal.
      */
-    public function compareUsingBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function compareUsingBcMath(DecimalNumber $a, DecimalNumber $b)
     {
-        return bccomp((string) $a, (string) $b, \max($a->getExponent(), $b->getExponent()));
+        return bccomp((string) $a, (string) $b, max($a->getExponent(), $b->getExponent()));
     }
     /**
      * Compares two decimal numbers without using BC Math
@@ -49,7 +54,7 @@ class Comparison
      *
      * @return int Returns 1 if $a > $b, -1 if $a < $b, and 0 if they are equal.
      */
-    public function compareWithoutBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    public function compareWithoutBcMath(DecimalNumber $a, DecimalNumber $b)
     {
         $signCompare = $this->compareSigns($a->getSign(), $b->getSign());
         if ($signCompare !== 0) {
@@ -71,10 +76,10 @@ class Comparison
      *
      * @return int Returns 1 if $a > $b, -1 if $a < $b, and 0 if they are equal.
      */
-    private function positiveCompare(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b)
+    private function positiveCompare(DecimalNumber $a, DecimalNumber $b)
     {
         // compare integer length
-        $intLengthCompare = $this->compareNumeric(\strlen($a->getIntegerPart()), \strlen($b->getIntegerPart()));
+        $intLengthCompare = $this->compareNumeric(strlen($a->getIntegerPart()), strlen($b->getIntegerPart()));
         if ($intLengthCompare !== 0) {
             return $intLengthCompare;
         }
@@ -133,7 +138,7 @@ class Comparison
      */
     private function compareBinary($a, $b)
     {
-        $comparison = \strcmp($a, $b);
+        $comparison = strcmp($a, $b);
         if ($comparison > 0) {
             return 1;
         }

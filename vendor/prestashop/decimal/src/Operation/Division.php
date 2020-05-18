@@ -10,6 +10,10 @@ namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation;
 
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Exception\DivisionByZeroException;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number as DecimalNumber;
+use function function_exists;
+use function max;
+use function strlen;
+
 /**
  * Computes the division between two decimal numbers.
  */
@@ -32,9 +36,9 @@ class Division
      * @return DecimalNumber Result of the division
      * @throws DivisionByZeroException
      */
-    public function compute(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b, $precision = self::DEFAULT_PRECISION)
+    public function compute(DecimalNumber $a, DecimalNumber $b, $precision = self::DEFAULT_PRECISION)
     {
-        if (\function_exists('_PhpScoper5ea00cc67502b\\bcdiv')) {
+        if (function_exists('_PhpScoper5ea00cc67502b\\bcdiv')) {
             return $this->computeUsingBcMath($a, $b, $precision);
         }
         return $this->computeWithoutBcMath($a, $b, $precision);
@@ -49,12 +53,12 @@ class Division
      * @return DecimalNumber Result of the division
      * @throws DivisionByZeroException
      */
-    public function computeUsingBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b, $precision = self::DEFAULT_PRECISION)
+    public function computeUsingBcMath(DecimalNumber $a, DecimalNumber $b, $precision = self::DEFAULT_PRECISION)
     {
         if ((string) $b === '0') {
-            throw new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Exception\DivisionByZeroException();
+            throw new DivisionByZeroException();
         }
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number((string) bcdiv($a, $b, $precision));
+        return new DecimalNumber((string) bcdiv($a, $b, $precision));
     }
     /**
      * Performs the division without BC Math
@@ -66,11 +70,11 @@ class Division
      * @return DecimalNumber Result of the division
      * @throws DivisionByZeroException
      */
-    public function computeWithoutBcMath(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b, $precision = self::DEFAULT_PRECISION)
+    public function computeWithoutBcMath(DecimalNumber $a, DecimalNumber $b, $precision = self::DEFAULT_PRECISION)
     {
         $bString = (string) $b;
         if ('0' === $bString) {
-            throw new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Exception\DivisionByZeroException();
+            throw new DivisionByZeroException();
         }
         $aString = (string) $a;
         // 0 as dividend always yields 0
@@ -87,17 +91,17 @@ class Division
         }
         // if dividend and divisor are equal, the result is always 1
         if ($a->equals($b)) {
-            return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('1');
+            return new DecimalNumber('1');
         }
         $aPrecision = $a->getPrecision();
         $bPrecision = $b->getPrecision();
-        $maxPrecision = \max($aPrecision, $bPrecision);
+        $maxPrecision = max($aPrecision, $bPrecision);
         if ($maxPrecision > 0) {
             // make $a and $b integers by multiplying both by 10^(maximum number of decimals)
             $a = $a->toMagnitude($maxPrecision);
             $b = $b->toMagnitude($maxPrecision);
         }
-        $result = $this->integerDivision($a, $b, \max($precision, $aPrecision));
+        $result = $this->integerDivision($a, $b, max($precision, $aPrecision));
         return $result;
     }
     /**
@@ -109,11 +113,11 @@ class Division
      *
      * @return DecimalNumber
      */
-    private function integerDivision(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $a, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $b, $precision)
+    private function integerDivision(DecimalNumber $a, DecimalNumber $b, $precision)
     {
         $dividend = $a->getCoefficient();
-        $divisor = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($b->getCoefficient());
-        $dividendLength = \strlen($dividend);
+        $divisor = new DecimalNumber($b->getCoefficient());
+        $dividendLength = strlen($dividend);
         $result = '';
         $exponent = 0;
         $currentSequence = '';
@@ -126,7 +130,7 @@ class Division
                 }
             } else {
                 // subtract divisor as many times as we can
-                $remainder = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($currentSequence);
+                $remainder = new DecimalNumber($currentSequence);
                 $multiple = 0;
                 do {
                     $multiple++;
@@ -146,6 +150,6 @@ class Division
             }
         }
         $sign = ($a->isNegative() xor $b->isNegative()) ? '-' : '';
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($sign . $result, $exponent);
+        return new DecimalNumber($sign . $result, $exponent);
     }
 }

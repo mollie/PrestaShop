@@ -15,6 +15,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception;
  *
  * @author Romain Neutron <imprec@gmail.com>
  */
-class RuntimeException extends \RuntimeException implements \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ExceptionInterface
+class RuntimeException extends \RuntimeException implements ExceptionInterface
 {
 }

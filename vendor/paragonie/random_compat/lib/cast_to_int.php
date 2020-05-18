@@ -2,6 +2,12 @@
 
 namespace _PhpScoper5ea00cc67502b;
 
+use function is_callable;
+use function is_float;
+use function is_int;
+use function is_numeric;
+use const PHP_INT_MAX;
+
 /**
  * Random_* Compatibility Library
  * for using the new PHP 7 random_* API in PHP 5 projects
@@ -28,7 +34,7 @@ namespace _PhpScoper5ea00cc67502b;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-if (!\is_callable('RandomCompat_intval')) {
+if (!is_callable('RandomCompat_intval')) {
     /**
      * Cast to an integer if we can, safely.
      *
@@ -46,19 +52,19 @@ if (!\is_callable('RandomCompat_intval')) {
      *
      * @throws TypeError
      */
-    function RandomCompat_intval($number, $fail_open = \false)
+    function RandomCompat_intval($number, $fail_open = false)
     {
-        if (\is_int($number) || \is_float($number)) {
+        if (is_int($number) || is_float($number)) {
             $number += 0;
-        } elseif (\is_numeric($number)) {
+        } elseif (is_numeric($number)) {
             /** @psalm-suppress InvalidOperand */
             $number += 0;
         }
         /** @var int|float $number */
-        if (\is_float($number) && $number > ~\PHP_INT_MAX && $number < \PHP_INT_MAX) {
+        if (is_float($number) && $number > ~PHP_INT_MAX && $number < PHP_INT_MAX) {
             $number = (int) $number;
         }
-        if (\is_int($number)) {
+        if (is_int($number)) {
             return (int) $number;
         } elseif (!$fail_open) {
             throw new \TypeError('Expected an integer.');

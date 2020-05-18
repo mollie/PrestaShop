@@ -9,13 +9,21 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Inva
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use stdClass;
+use function array_key_exists;
+use function class_alias;
+use function sprintf;
+use function strtolower;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container
+class ProjectServiceContainer extends Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -25,60 +33,60 @@ class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component
         $this->services = [];
         $this->normalizedIds = ['bar_%env(bar)%' => 'bar_%env(BAR)%'];
         $this->methodMap = ['bar' => 'getBarService', 'bar_%env(BAR)%' => 'getBarenvBARService', 'foo' => 'getFooService'];
-        $this->privates = ['bar_%env(BAR)%' => \true];
+        $this->privates = ['bar_%env(BAR)%' => true];
         $this->aliases = [];
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'bar_%env(BAR)%' => \true, 'baz_%env(BAR)%' => \true];
+        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => true, 'bar_%env(BAR)%' => true, 'baz_%env(BAR)%' => true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
-        return \true;
+        return true;
     }
     public function isFrozen()
     {
-        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
-        return \true;
+        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
+        return true;
     }
     /**
      * Gets the public 'bar' shared service.
      *
-     * @return \stdClass
+     * @return stdClass
      */
     protected function getBarService()
     {
-        return $this->services['bar'] = new \stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : ($this->services['bar_%env(BAR)%'] = new \stdClass())) && \false ?: '_'});
+        return $this->services['bar'] = new stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : ($this->services['bar_%env(BAR)%'] = new stdClass())) && false ?: '_'});
     }
     /**
      * Gets the public 'foo' shared service.
      *
-     * @return \stdClass
+     * @return stdClass
      */
     protected function getFooService()
     {
-        return $this->services['foo'] = new \stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : ($this->services['bar_%env(BAR)%'] = new \stdClass())) && \false ?: '_'}, ['baz_' . $this->getEnv('string:BAR') => new \stdClass()]);
+        return $this->services['foo'] = new stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : ($this->services['bar_%env(BAR)%'] = new stdClass())) && false ?: '_'}, ['baz_' . $this->getEnv('string:BAR') => new stdClass()]);
     }
     /**
      * Gets the private 'bar_%env(BAR)%' shared service.
      *
-     * @return \stdClass
+     * @return stdClass
      */
     protected function getBarenvBARService()
     {
-        return $this->services['bar_%env(BAR)%'] = new \stdClass();
+        return $this->services['bar_%env(BAR)%'] = new stdClass();
     }
     public function getParameter($name)
     {
         $name = (string) $name;
-        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
+        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters))) {
             $name = $this->normalizeParameterName($name);
-            if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The parameter "%s" must be defined.', $name));
+            if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters))) {
+                throw new InvalidArgumentException(sprintf('The parameter "%s" must be defined.', $name));
             }
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -90,11 +98,11 @@ class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component
     {
         $name = (string) $name;
         $name = $this->normalizeParameterName($name);
-        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters);
+        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters);
     }
     public function setParameter($name, $value)
     {
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('Impossible to call set() on a frozen ParameterBag.');
+        throw new LogicException('Impossible to call set() on a frozen ParameterBag.');
     }
     public function getParameterBag()
     {
@@ -103,7 +111,7 @@ class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component
             foreach ($this->loadedDynamicParameters as $name => $loaded) {
                 $parameters[$name] = $loaded ? $this->dynamicParameters[$name] : $this->getDynamicParameter($name);
             }
-            $this->parameterBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
+            $this->parameterBag = new FrozenParameterBag($parameters);
         }
         return $this->parameterBag;
     }
@@ -120,15 +128,15 @@ class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component
      */
     private function getDynamicParameter($name)
     {
-        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The dynamic parameter "%s" must be defined.', $name));
+        throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
     }
     private $normalizedParameterNames = ['env(bar)' => 'env(BAR)'];
     private function normalizeParameterName($name)
     {
-        if (isset($this->normalizedParameterNames[$normalizedName = \strtolower($name)]) || isset($this->parameters[$normalizedName]) || \array_key_exists($normalizedName, $this->parameters)) {
+        if (isset($this->normalizedParameterNames[$normalizedName = strtolower($name)]) || isset($this->parameters[$normalizedName]) || array_key_exists($normalizedName, $this->parameters)) {
             $normalizedName = isset($this->normalizedParameterNames[$normalizedName]) ? $this->normalizedParameterNames[$normalizedName] : $normalizedName;
             if ((string) $name !== $normalizedName) {
-                @\trigger_error(\sprintf('Parameter names will be made case sensitive in Symfony 4.0. Using "%s" instead of "%s" is deprecated since Symfony 3.4.', $name, $normalizedName), \E_USER_DEPRECATED);
+                @trigger_error(sprintf('Parameter names will be made case sensitive in Symfony 4.0. Using "%s" instead of "%s" is deprecated since Symfony 3.4.', $name, $normalizedName), E_USER_DEPRECATED);
             }
         } else {
             $normalizedName = $this->normalizedParameterNames[$normalizedName] = (string) $name;
@@ -151,4 +159,4 @@ class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', false);

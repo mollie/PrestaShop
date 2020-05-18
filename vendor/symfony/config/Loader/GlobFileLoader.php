@@ -15,7 +15,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class GlobFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\FileLoader
+class GlobFileLoader extends FileLoader
 {
     /**
      * {@inheritdoc}

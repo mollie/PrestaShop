@@ -10,6 +10,10 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
 
+use function is_int;
+use function is_string;
+use function key;
+
 /**
  * This class is the entry point for config normalization/merging/finalization.
  *
@@ -25,7 +29,7 @@ class Processor
      *
      * @return array The processed configuration
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $configTree, array $configs)
+    public function process(NodeInterface $configTree, array $configs)
     {
         $currentConfig = [];
         foreach ($configs as $config) {
@@ -42,7 +46,7 @@ class Processor
      *
      * @return array The processed configuration
      */
-    public function processConfiguration(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ConfigurationInterface $configuration, array $configs)
+    public function processConfiguration(ConfigurationInterface $configuration, array $configs)
     {
         return $this->process($configuration->getConfigTreeBuilder()->buildTree(), $configs);
     }
@@ -78,7 +82,7 @@ class Processor
             return $config[$plural];
         }
         if (isset($config[$key])) {
-            if (\is_string($config[$key]) || !\is_int(\key($config[$key]))) {
+            if (is_string($config[$key]) || !is_int(key($config[$key]))) {
                 // only one
                 return [$config[$key]];
             }

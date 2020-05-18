@@ -14,13 +14,13 @@ use _PhpScoper5ea00cc67502b\Doctrine\Common\Cache\CacheProvider;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\DoctrineProvider;
-class DoctrineProviderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class DoctrineProviderTest extends TestCase
 {
     public function testProvider()
     {
-        $pool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter();
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\DoctrineProvider($pool);
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Doctrine\Common\Cache\CacheProvider::class, $cache);
+        $pool = new ArrayAdapter();
+        $cache = new DoctrineProvider($pool);
+        $this->assertInstanceOf(CacheProvider::class, $cache);
         $key = '{}()/\\@:';
         $this->assertTrue($cache->delete($key));
         $this->assertFalse($cache->contains($key));

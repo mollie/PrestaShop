@@ -6,6 +6,15 @@ use _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Response;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use BadMethodCallException;
+use Exception;
+use RuntimeException;
+use function _PhpScoper5ea00cc67502b\GuzzleHttp\headers_from_lines;
+use function _PhpScoper5ea00cc67502b\GuzzleHttp\normalize_header_keys;
+use function array_shift;
+use function explode;
+use function substr;
+
 /**
  * Represents a cURL easy handle and the data it populates.
  *
@@ -27,22 +36,22 @@ final class EasyHandle
     public $options = [];
     /** @var int cURL error number (if any) */
     public $errno = 0;
-    /** @var \Exception Exception during on_headers (if any) */
+    /** @var Exception Exception during on_headers (if any) */
     public $onHeadersException;
     /**
      * Attach a response to the easy handle based on the received headers.
      *
-     * @throws \RuntimeException if no headers have been received.
+     * @throws RuntimeException if no headers have been received.
      */
     public function createResponse()
     {
         if (empty($this->headers)) {
-            throw new \RuntimeException('No headers have been received');
+            throw new RuntimeException('No headers have been received');
         }
         // HTTP-version SP status-code SP reason-phrase
-        $startLine = \explode(' ', \array_shift($this->headers), 3);
-        $headers = \_PhpScoper5ea00cc67502b\GuzzleHttp\headers_from_lines($this->headers);
-        $normalizedKeys = \_PhpScoper5ea00cc67502b\GuzzleHttp\normalize_header_keys($headers);
+        $startLine = explode(' ', array_shift($this->headers), 3);
+        $headers = headers_from_lines($this->headers);
+        $normalizedKeys = normalize_header_keys($headers);
         if (!empty($this->options['decode_content']) && isset($normalizedKeys['content-encoding'])) {
             $headers['x-encoded-content-encoding'] = $headers[$normalizedKeys['content-encoding']];
             unset($headers[$normalizedKeys['content-encoding']]);
@@ -57,11 +66,11 @@ final class EasyHandle
             }
         }
         // Attach a response to the easy handle with the parsed headers.
-        $this->response = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Response($startLine[1], $headers, $this->sink, \substr($startLine[0], 5), isset($startLine[2]) ? (string) $startLine[2] : null);
+        $this->response = new Response($startLine[1], $headers, $this->sink, substr($startLine[0], 5), isset($startLine[2]) ? (string) $startLine[2] : null);
     }
     public function __get($name)
     {
         $msg = $name === 'handle' ? 'The EasyHandle has been released' : 'Invalid property: ' . $name;
-        throw new \BadMethodCallException($msg);
+        throw new BadMethodCallException($msg);
     }
 }

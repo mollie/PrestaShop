@@ -16,5 +16,5 @@ interface PrependExtensionInterface
     /**
      * Allow an extension to prepend the extension configurations.
      */
-    public function prepend(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container);
+    public function prepend(ContainerBuilder $container);
 }

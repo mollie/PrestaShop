@@ -37,6 +37,7 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
+use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -66,7 +67,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      * Unset the cart id from cookie if the order exists
      *
      * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      */
     public function init()
     {
@@ -89,7 +90,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws Adapter_Exception
      * @throws SmartyException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      */
     public function initContent()
     {
@@ -215,7 +216,7 @@ class MollieReturnModuleFrontController extends ModuleFrontController
      *
      * @throws PrestaShopException
      * @throws Adapter_Exception
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws CoreException
      * @throws SmartyException
      *
      * @since 3.3.2
@@ -363,8 +364,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
                 '`transaction_id` = \''.pSQL($transactionId).'\''
             );
         } catch (Exception $e) {
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }

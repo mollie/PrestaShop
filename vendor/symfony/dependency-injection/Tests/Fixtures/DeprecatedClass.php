@@ -10,7 +10,10 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures;
 
-@\trigger_error('deprecated', \E_USER_DEPRECATED);
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
+@trigger_error('deprecated', E_USER_DEPRECATED);
 class DeprecatedClass
 {
 }

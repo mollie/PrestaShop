@@ -10,6 +10,12 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
 
+use InvalidArgumentException;
+use function call_user_func;
+use function gettype;
+use function is_callable;
+use function sprintf;
+
 /**
  * Basic implementation of ConfigCacheFactoryInterface that
  * creates an instance of the default ConfigCache.
@@ -19,7 +25,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ConfigCacheFactory implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCacheFactoryInterface
+class ConfigCacheFactory implements ConfigCacheFactoryInterface
 {
     private $debug;
     /**
@@ -34,12 +40,12 @@ class ConfigCacheFactory implements \_PhpScoper5ea00cc67502b\Symfony\Component\C
      */
     public function cache($file, $callback)
     {
-        if (!\is_callable($callback)) {
-            throw new \InvalidArgumentException(\sprintf('Invalid type for callback argument. Expected callable, but got "%s".', \gettype($callback)));
+        if (!is_callable($callback)) {
+            throw new InvalidArgumentException(sprintf('Invalid type for callback argument. Expected callable, but got "%s".', gettype($callback)));
         }
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($file, $this->debug);
+        $cache = new ConfigCache($file, $this->debug);
         if (!$cache->isFresh()) {
-            \call_user_func($callback, $cache);
+            call_user_func($callback, $cache);
         }
         return $cache;
     }

@@ -1,5 +1,6 @@
-{**
- * Copyright (c) 2012-2019, Mollie B.V.
+<?php
+/**
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,22 +30,15 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
-*}
-<button id="mollie-update" type="button" class="btn btn-primary pull-right"><i class="icon icon-cloud-download"></i> {l s='Update this module' mod='mollie'}</button>
-<script type="text/javascript">
-  (function initMollieUpdater() {
+ * @codingStandardsIgnoreStart
+ */
 
-    window.MollieModule.updater.default(
-      document.getElementById('mollie-update'),
-      {
-        endpoint: '{$link->getAdminLink('AdminModules', true)|escape:'javascript':'UTF-8' nofilter}&configure=mollie&module_name=mollie&ajax=1',
-      },
-      {
-        error: '{l s='Error' mod='mollie' js=1}',
-        unableToConnect: '{l s='Unable to connect' mod='mollie' js=1}',
-        unableToUnzip: '{l s='Unable to unzip new module' mod='mollie' js=1}',
-        updated: '{l s='The module has been updated!' mod='mollie' js=1}',
-      }
-    );
-  }());
-</script>
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
+
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+header("Location: ../");
+exit;

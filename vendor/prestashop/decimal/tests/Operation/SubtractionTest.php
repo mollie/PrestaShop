@@ -8,9 +8,10 @@
  */
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Test\Operation;
 
+use _PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Subtraction;
-class SubtractionTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
+class SubtractionTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Given two decimal numbers
@@ -25,9 +26,9 @@ class SubtractionTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCas
      */
     public function testItSubtractsNumbers($number1, $number2, $expectedResult)
     {
-        $n1 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number1);
-        $n2 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number2);
-        $operation = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Subtraction();
+        $n1 = new Number($number1);
+        $n2 = new Number($number2);
+        $operation = new Subtraction();
         $result1 = $operation->computeUsingBcMath($n1, $n2);
         $result2 = $operation->computeWithoutBcMath($n1, $n2);
         $this->assertSame($expectedResult, (string) $result1, "Failed asserting {$number1} - {$number2} = {$expectedResult} (BC Math)");

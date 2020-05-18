@@ -12,27 +12,31 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
 use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+use ReflectionObject;
+use function file_exists;
+use function sys_get_temp_dir;
+
 /**
  * @group time-sensitive
  */
-class PhpFilesAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class PhpFilesAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = ['testDefaultLifeTime' => 'PhpFilesAdapter does not allow configuring a default lifetime.'];
     public function createCachePool()
     {
-        if (!\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpFilesAdapter::isSupported()) {
+        if (!PhpFilesAdapter::isSupported()) {
             $this->markTestSkipped('OPcache extension is not enabled.');
         }
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpFilesAdapter('sf-cache');
+        return new PhpFilesAdapter('sf-cache');
     }
     public static function tearDownAfterClass()
     {
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
+        FilesystemAdapterTest::rmdir(sys_get_temp_dir() . '/symfony-cache');
     }
-    protected function isPruned(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface $cache, $name)
+    protected function isPruned(CacheItemPoolInterface $cache, $name)
     {
-        $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
-        $getFileMethod->setAccessible(\true);
-        return !\file_exists($getFileMethod->invoke($cache, $name));
+        $getFileMethod = (new ReflectionObject($cache))->getMethod('getFile');
+        $getFileMethod->setAccessible(true);
+        return !file_exists($getFileMethod->invoke($cache, $name));
     }
 }

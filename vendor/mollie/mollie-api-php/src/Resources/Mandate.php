@@ -4,7 +4,10 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\MandateStatus;
-class Mandate extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+use function json_encode;
+
+class Mandate extends BaseResource
 {
     /**
      * @var string
@@ -27,7 +30,7 @@ class Mandate extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $method;
     /**
-     * @var \stdClass|null
+     * @var stdClass|null
      */
     public $details;
     /**
@@ -49,7 +52,7 @@ class Mandate extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $signatureDate;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
@@ -57,21 +60,21 @@ class Mandate extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isValid()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\MandateStatus::STATUS_VALID;
+        return $this->status === MandateStatus::STATUS_VALID;
     }
     /**
      * @return bool
      */
     public function isPending()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\MandateStatus::STATUS_PENDING;
+        return $this->status === MandateStatus::STATUS_PENDING;
     }
     /**
      * @return bool
      */
     public function isInvalid()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\MandateStatus::STATUS_INVALID;
+        return $this->status === MandateStatus::STATUS_INVALID;
     }
     /**
      * Revoke the mandate
@@ -85,9 +88,9 @@ class Mandate extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
         }
         $body = null;
         if ($this->client->usesOAuth()) {
-            $body = \json_encode(["testmode" => $this->mode === "test" ? \true : \false]);
+            $body = json_encode(["testmode" => $this->mode === "test" ? true : false]);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
         return $result;
     }
 }

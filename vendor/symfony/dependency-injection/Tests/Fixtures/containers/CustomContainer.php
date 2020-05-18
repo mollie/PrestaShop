@@ -4,7 +4,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fi
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-class CustomContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container
+class CustomContainer extends Container
 {
     public function getBarService()
     {

@@ -6,7 +6,11 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Subscription;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\SubscriptionCollection;
-class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use Mollie\Api\Exceptions\ApiException;
+use stdClass;
+use function array_merge;
+
+class SubscriptionEndpoint extends CollectionEndpointAbstract
 {
     protected $resourcePath = "customers_subscriptions";
     /**
@@ -16,19 +20,19 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Subscription($this->client);
+        return new Subscription($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param \stdClass $_links
+     * @param stdClass $_links
      *
      * @return SubscriptionCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\SubscriptionCollection($this->client, $count, $_links);
+        return new SubscriptionCollection($this->client, $count, $_links);
     }
     /**
      * Create a subscription for a Customer
@@ -39,7 +43,7 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      *
      * @return Subscription
      */
-    public function createFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer $customer, array $options = [], array $filters = [])
+    public function createFor(Customer $customer, array $options = [], array $filters = [])
     {
         $this->parentId = $customer->id;
         return parent::rest_create($options, $filters);
@@ -51,7 +55,7 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      *
      * @return Subscription
      */
-    public function getFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer $customer, $subscriptionId, array $parameters = [])
+    public function getFor(Customer $customer, $subscriptionId, array $parameters = [])
     {
         $this->parentId = $customer->id;
         return parent::rest_read($subscriptionId, $parameters);
@@ -64,7 +68,7 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      *
      * @return SubscriptionCollection
      */
-    public function listFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer $customer, $from = null, $limit = null, array $parameters = [])
+    public function listFor(Customer $customer, $from = null, $limit = null, array $parameters = [])
     {
         $this->parentId = $customer->id;
         return parent::rest_list($from, $limit, $parameters);
@@ -75,9 +79,9 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      *
      * @param array $data
      * @return null
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
-    public function cancelFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer $customer, $subscriptionId, array $data = [])
+    public function cancelFor(Customer $customer, $subscriptionId, array $data = [])
     {
         $this->parentId = $customer->id;
         return parent::rest_delete($subscriptionId, $data);
@@ -90,17 +94,17 @@ class SubscriptionEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints
      * @param array $parameters
      *
      * @return SubscriptionCollection
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     public function page($from = null, $limit = null, array $parameters = [])
     {
-        $filters = \array_merge(["from" => $from, "limit" => $limit], $parameters);
+        $filters = array_merge(["from" => $from, "limit" => $limit], $parameters);
         $apiPath = 'subscriptions' . $this->buildQueryString($filters);
         $result = $this->client->performHttpCall(self::REST_LIST, $apiPath);
         /** @var SubscriptionCollection $collection */
         $collection = $this->getResourceCollectionObject($result->count, $result->_links);
         foreach ($result->_embedded->{$collection->getCollectionResourceName()} as $dataResult) {
-            $collection[] = \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
+            $collection[] = ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
         }
         return $collection;
     }

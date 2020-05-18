@@ -10,13 +10,15 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception;
 
+use Exception;
+
 /**
  * Thrown when a definition cannot be autowired.
  */
-class AutowiringFailedException extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException
+class AutowiringFailedException extends RuntimeException
 {
     private $serviceId;
-    public function __construct($serviceId, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($serviceId, $message = '', $code = 0, Exception $previous = null)
     {
         $this->serviceId = $serviceId;
         parent::__construct($message, $code, $previous);

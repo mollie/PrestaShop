@@ -10,10 +10,14 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument;
 
+use Countable;
+use IteratorAggregate;
+use function is_callable;
+
 /**
  * @internal
  */
-class RewindableGenerator implements \IteratorAggregate, \Countable
+class RewindableGenerator implements IteratorAggregate, Countable
 {
     private $generator;
     private $count;
@@ -32,7 +36,7 @@ class RewindableGenerator implements \IteratorAggregate, \Countable
     }
     public function count()
     {
-        if (\is_callable($count = $this->count)) {
+        if (is_callable($count = $this->count)) {
             $this->count = $count();
         }
         return $this->count;

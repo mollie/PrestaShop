@@ -16,23 +16,23 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Resol
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-class ResolveReferencesToAliasesPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ResolveReferencesToAliasesPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setAlias('bar', 'foo');
-        $def = $container->register('moo')->setArguments([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('bar')]);
+        $def = $container->register('moo')->setArguments([new Reference('bar')]);
         $this->process($container);
         $arguments = $def->getArguments();
         $this->assertEquals('foo', (string) $arguments[0]);
     }
     public function testProcessRecursively()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setAlias('bar', 'foo');
         $container->setAlias('moo', 'bar');
-        $def = $container->register('foobar')->setArguments([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('moo')]);
+        $def = $container->register('foobar')->setArguments([new Reference('moo')]);
         $this->process($container);
         $arguments = $def->getArguments();
         $this->assertEquals('foo', (string) $arguments[0]);
@@ -40,20 +40,20 @@ class ResolveReferencesToAliasesPassTest extends \_PhpScoper5ea00cc67502b\PHPUni
     public function testAliasCircularReference()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceCircularReferenceException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setAlias('bar', 'foo');
         $container->setAlias('foo', 'bar');
         $this->process($container);
     }
     public function testResolveFactory()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('factory', 'Factory');
-        $container->setAlias('factory_alias', new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias('factory'));
-        $foo = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
-        $foo->setFactory([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('factory_alias'), 'createFoo']);
+        $container->setAlias('factory_alias', new Alias('factory'));
+        $foo = new Definition();
+        $foo->setFactory([new Reference('factory_alias'), 'createFoo']);
         $container->setDefinition('foo', $foo);
-        $bar = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
+        $bar = new Definition();
         $bar->setFactory(['Factory', 'createFoo']);
         $container->setDefinition('bar', $bar);
         $this->process($container);
@@ -62,9 +62,9 @@ class ResolveReferencesToAliasesPassTest extends \_PhpScoper5ea00cc67502b\PHPUni
         $this->assertSame('factory', (string) $resolvedFooFactory[0]);
         $this->assertSame('Factory', (string) $resolvedBarFactory[0]);
     }
-    protected function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function process(ContainerBuilder $container)
     {
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveReferencesToAliasesPass();
+        $pass = new ResolveReferencesToAliasesPass();
         $pass->process($container);
     }
 }

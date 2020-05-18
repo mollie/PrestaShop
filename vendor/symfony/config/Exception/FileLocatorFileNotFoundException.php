@@ -10,12 +10,14 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception;
 
+use InvalidArgumentException;
+
 /**
  * File locator exception if a file does not exist.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class FileLocatorFileNotFoundException extends \InvalidArgumentException
+class FileLocatorFileNotFoundException extends InvalidArgumentException
 {
     private $paths;
     public function __construct($message = '', $code = 0, $previous = null, array $paths = [])

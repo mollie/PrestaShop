@@ -17,6 +17,19 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Para
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use function array_key_exists;
+use function array_merge;
+use function get_class;
+use function implode;
+use function is_array;
+use function is_string;
+use function preg_match;
+use function preg_replace;
+use function sprintf;
+use function str_replace;
+use function strtolower;
+use function substr;
+
 /**
  * GraphvizDumper dumps a service container as a graphviz file.
  *
@@ -26,7 +39,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\Dumper
+class GraphvizDumper extends Dumper
 {
     private $nodes;
     private $edges;
@@ -50,15 +63,15 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     {
         foreach (['graph', 'node', 'edge', 'node.instance', 'node.definition', 'node.missing'] as $key) {
             if (isset($options[$key])) {
-                $this->options[$key] = \array_merge($this->options[$key], $options[$key]);
+                $this->options[$key] = array_merge($this->options[$key], $options[$key]);
             }
         }
         $this->nodes = $this->findNodes();
         $this->edges = [];
         foreach ($this->container->getDefinitions() as $id => $definition) {
-            $this->edges[$id] = \array_merge($this->findEdges($id, $definition->getArguments(), \true, ''), $this->findEdges($id, $definition->getProperties(), \false, ''));
+            $this->edges[$id] = array_merge($this->findEdges($id, $definition->getArguments(), true, ''), $this->findEdges($id, $definition->getProperties(), false, ''));
             foreach ($definition->getMethodCalls() as $call) {
-                $this->edges[$id] = \array_merge($this->edges[$id], $this->findEdges($id, $call[1], \false, $call[0] . '()'));
+                $this->edges[$id] = array_merge($this->edges[$id], $this->findEdges($id, $call[1], false, $call[0] . '()'));
             }
         }
         return $this->container->resolveEnvPlaceholders($this->startDot() . $this->addNodes() . $this->addEdges() . $this->endDot(), '__ENV_%s__');
@@ -73,7 +86,7 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
         $code = '';
         foreach ($this->nodes as $id => $node) {
             $aliases = $this->getAliases($id);
-            $code .= \sprintf("  node_%s [label=\"%s\\n%s\\n\", shape=%s%s];\n", $this->dotize($id), $id . ($aliases ? ' (' . \implode(', ', $aliases) . ')' : ''), $node['class'], $this->options['node']['shape'], $this->addAttributes($node['attributes']));
+            $code .= sprintf("  node_%s [label=\"%s\\n%s\\n\", shape=%s%s];\n", $this->dotize($id), $id . ($aliases ? ' (' . implode(', ', $aliases) . ')' : ''), $node['class'], $this->options['node']['shape'], $this->addAttributes($node['attributes']));
         }
         return $code;
     }
@@ -87,7 +100,7 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
         $code = '';
         foreach ($this->edges as $id => $edges) {
             foreach ($edges as $edge) {
-                $code .= \sprintf("  node_%s -> node_%s [label=\"%s\" style=\"%s\"%s];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['name'], $edge['required'] ? 'filled' : 'dashed', $edge['lazy'] ? ' color="#9999ff"' : '');
+                $code .= sprintf("  node_%s -> node_%s [label=\"%s\" style=\"%s\"%s];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['name'], $edge['required'] ? 'filled' : 'dashed', $edge['lazy'] ? ' color="#9999ff"' : '');
             }
         }
         return $code;
@@ -102,16 +115,16 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
      *
      * @return array An array of edges
      */
-    private function findEdges($id, array $arguments, $required, $name, $lazy = \false)
+    private function findEdges($id, array $arguments, $required, $name, $lazy = false)
     {
         $edges = [];
         foreach ($arguments as $argument) {
-            if ($argument instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter) {
+            if ($argument instanceof Parameter) {
                 $argument = $this->container->hasParameter($argument) ? $this->container->getParameter($argument) : null;
-            } elseif (\is_string($argument) && \preg_match('/^%([^%]+)%$/', $argument, $match)) {
+            } elseif (is_string($argument) && preg_match('/^%([^%]+)%$/', $argument, $match)) {
                 $argument = $this->container->hasParameter($match[1]) ? $this->container->getParameter($match[1]) : null;
             }
-            if ($argument instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference) {
+            if ($argument instanceof Reference) {
                 $lazyEdge = $lazy;
                 if (!$this->container->has((string) $argument)) {
                     $this->nodes[(string) $argument] = ['name' => $name, 'required' => $required, 'class' => '', 'attributes' => $this->options['node.missing']];
@@ -119,15 +132,15 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
                     $lazyEdge = $lazy || $this->container->getDefinition((string) $argument)->isLazy();
                 }
                 $edges[] = ['name' => $name, 'required' => $required, 'to' => $argument, 'lazy' => $lazyEdge];
-            } elseif ($argument instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
-                $edges = \array_merge($edges, $this->findEdges($id, $argument->getValues(), $required, $name, \true));
-            } elseif ($argument instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition) {
-                $edges = \array_merge($edges, $this->findEdges($id, $argument->getArguments(), $required, ''), $this->findEdges($id, $argument->getProperties(), \false, ''));
+            } elseif ($argument instanceof ArgumentInterface) {
+                $edges = array_merge($edges, $this->findEdges($id, $argument->getValues(), $required, $name, true));
+            } elseif ($argument instanceof Definition) {
+                $edges = array_merge($edges, $this->findEdges($id, $argument->getArguments(), $required, ''), $this->findEdges($id, $argument->getProperties(), false, ''));
                 foreach ($argument->getMethodCalls() as $call) {
-                    $edges = \array_merge($edges, $this->findEdges($id, $call[1], \false, $call[0] . '()'));
+                    $edges = array_merge($edges, $this->findEdges($id, $call[1], false, $call[0] . '()'));
                 }
-            } elseif (\is_array($argument)) {
-                $edges = \array_merge($edges, $this->findEdges($id, $argument, $required, $name, $lazy));
+            } elseif (is_array($argument)) {
+                $edges = array_merge($edges, $this->findEdges($id, $argument, $required, $name, $lazy));
             }
         }
         return $edges;
@@ -143,30 +156,30 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
         $container = $this->cloneContainer();
         foreach ($container->getDefinitions() as $id => $definition) {
             $class = $definition->getClass();
-            if ('\\' === \substr($class, 0, 1)) {
-                $class = \substr($class, 1);
+            if ('\\' === substr($class, 0, 1)) {
+                $class = substr($class, 1);
             }
             try {
                 $class = $this->container->getParameterBag()->resolveValue($class);
-            } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException $e) {
+            } catch (ParameterNotFoundException $e) {
             }
-            $nodes[$id] = ['class' => \str_replace('\\', '\\\\', $class), 'attributes' => \array_merge($this->options['node.definition'], ['style' => $definition->isShared() ? 'filled' : 'dotted'])];
-            $container->setDefinition($id, new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass'));
+            $nodes[$id] = ['class' => str_replace('\\', '\\\\', $class), 'attributes' => array_merge($this->options['node.definition'], ['style' => $definition->isShared() ? 'filled' : 'dotted'])];
+            $container->setDefinition($id, new Definition('stdClass'));
         }
         foreach ($container->getServiceIds() as $id) {
-            if (\array_key_exists($id, $container->getAliases())) {
+            if (array_key_exists($id, $container->getAliases())) {
                 continue;
             }
             if (!$container->hasDefinition($id)) {
-                $nodes[$id] = ['class' => \str_replace('\\', '\\\\', \get_class($container->get($id))), 'attributes' => $this->options['node.instance']];
+                $nodes[$id] = ['class' => str_replace('\\', '\\\\', get_class($container->get($id))), 'attributes' => $this->options['node.instance']];
             }
         }
         return $nodes;
     }
     private function cloneContainer()
     {
-        $parameterBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag($this->container->getParameterBag()->all());
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder($parameterBag);
+        $parameterBag = new ParameterBag($this->container->getParameterBag()->all());
+        $container = new ContainerBuilder($parameterBag);
         $container->setDefinitions($this->container->getDefinitions());
         $container->setAliases($this->container->getAliases());
         $container->setResources($this->container->getResources());
@@ -182,7 +195,7 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
      */
     private function startDot()
     {
-        return \sprintf("digraph sc {\n  %s\n  node [%s];\n  edge [%s];\n\n", $this->addOptions($this->options['graph']), $this->addOptions($this->options['node']), $this->addOptions($this->options['edge']));
+        return sprintf("digraph sc {\n  %s\n  node [%s];\n  edge [%s];\n\n", $this->addOptions($this->options['graph']), $this->addOptions($this->options['node']), $this->addOptions($this->options['edge']));
     }
     /**
      * Returns the end dot.
@@ -204,9 +217,9 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     {
         $code = [];
         foreach ($attributes as $k => $v) {
-            $code[] = \sprintf('%s="%s"', $k, $v);
+            $code[] = sprintf('%s="%s"', $k, $v);
         }
-        return $code ? ', ' . \implode(', ', $code) : '';
+        return $code ? ', ' . implode(', ', $code) : '';
     }
     /**
      * Adds options.
@@ -219,9 +232,9 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     {
         $code = [];
         foreach ($options as $k => $v) {
-            $code[] = \sprintf('%s="%s"', $k, $v);
+            $code[] = sprintf('%s="%s"', $k, $v);
         }
-        return \implode(' ', $code);
+        return implode(' ', $code);
     }
     /**
      * Dotizes an identifier.
@@ -232,7 +245,7 @@ class GraphvizDumper extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
      */
     private function dotize($id)
     {
-        return \strtolower(\preg_replace('/\\W/i', '_', $id));
+        return strtolower(preg_replace('/\\W/i', '_', $id));
     }
     /**
      * Compiles an array of aliases for a specified service id.

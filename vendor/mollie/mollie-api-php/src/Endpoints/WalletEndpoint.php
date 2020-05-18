@@ -3,7 +3,9 @@
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource;
-class WalletEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\EndpointAbstract
+use function json_encode;
+
+class WalletEndpoint extends EndpointAbstract
 {
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
@@ -18,6 +20,6 @@ class WalletEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Endpo
     {
         $body = $this->parseRequestBody(['domain' => $domain, 'validationUrl' => $validationUrl]);
         $response = $this->client->performHttpCall(self::REST_CREATE, 'wallets/applepay/sessions', $body);
-        return \json_encode($response);
+        return json_encode($response);
     }
 }

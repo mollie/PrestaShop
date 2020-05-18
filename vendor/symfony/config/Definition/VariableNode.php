@@ -11,6 +11,10 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Closure;
+use function json_encode;
+use function sprintf;
+
 /**
  * This node represents a value of variable type in the config tree.
  *
@@ -19,14 +23,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Invali
  *
  * @author Jeremy Mikola <jmikola@gmail.com>
  */
-class VariableNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\BaseNode implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypeNodeInterface
+class VariableNode extends BaseNode implements PrototypeNodeInterface
 {
-    protected $defaultValueSet = \false;
+    protected $defaultValueSet = false;
     protected $defaultValue;
-    protected $allowEmptyValue = \true;
+    protected $allowEmptyValue = true;
     public function setDefaultValue($value)
     {
-        $this->defaultValueSet = \true;
+        $this->defaultValueSet = true;
         $this->defaultValue = $value;
     }
     /**
@@ -42,7 +46,7 @@ class VariableNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Def
     public function getDefaultValue()
     {
         $v = $this->defaultValue;
-        return $v instanceof \Closure ? $v() : $v;
+        return $v instanceof Closure ? $v() : $v;
     }
     /**
      * Sets if this node is allowed to have an empty value.
@@ -72,7 +76,7 @@ class VariableNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Def
     protected function finalizeValue($value)
     {
         if (!$this->allowEmptyValue && $this->isValueEmpty($value)) {
-            $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), \json_encode($value)));
+            $ex = new InvalidConfigurationException(sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), json_encode($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }

@@ -11,18 +11,18 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\NameNode;
-class NameNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node\AbstractNodeTest
+class NameNodeTest extends AbstractNodeTest
 {
     public function getEvaluateData()
     {
-        return [['bar', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\NameNode('foo'), ['foo' => 'bar']]];
+        return [['bar', new NameNode('foo'), ['foo' => 'bar']]];
     }
     public function getCompileData()
     {
-        return [['$foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\NameNode('foo')]];
+        return [['$foo', new NameNode('foo')]];
     }
     public function getDumpData()
     {
-        return [['foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\NameNode('foo')]];
+        return [['foo', new NameNode('foo')]];
     }
 }

@@ -14,6 +14,15 @@ use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
+use stdClass;
+use Traversable;
+use function array_values;
+use function count;
+use function get_class;
+use function is_object;
+use function iterator_to_array;
+use function sprintf;
+
 /**
  * Chains several caches together.
  *
@@ -22,7 +31,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class ChainCache implements CacheInterface, PruneableInterface, ResettableInterface
 {
     private $miss;
     private $caches = [];
@@ -35,16 +44,16 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
     public function __construct(array $caches, $defaultLifetime = 0)
     {
         if (!$caches) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException('At least one cache must be specified.');
+            throw new InvalidArgumentException('At least one cache must be specified.');
         }
         foreach ($caches as $cache) {
-            if (!$cache instanceof \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', \get_class($cache), \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface::class));
+            if (!$cache instanceof CacheInterface) {
+                throw new InvalidArgumentException(sprintf('The class "%s" does not implement the "%s" interface.', get_class($cache), CacheInterface::class));
             }
         }
-        $this->miss = new \stdClass();
-        $this->caches = \array_values($caches);
-        $this->cacheCount = \count($this->caches);
+        $this->miss = new stdClass();
+        $this->caches = array_values($caches);
+        $this->cacheCount = count($this->caches);
         $this->defaultLifetime = 0 < $defaultLifetime ? (int) $defaultLifetime : null;
     }
     /**
@@ -52,7 +61,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function get($key, $default = null)
     {
-        $miss = null !== $default && \is_object($default) ? $default : $this->miss;
+        $miss = null !== $default && is_object($default) ? $default : $this->miss;
         foreach ($this->caches as $i => $cache) {
             $value = $cache->get($key, $miss);
             if ($miss !== $value) {
@@ -69,7 +78,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function getMultiple($keys, $default = null)
     {
-        $miss = null !== $default && \is_object($default) ? $default : $this->miss;
+        $miss = null !== $default && is_object($default) ? $default : $this->miss;
         return $this->generateItems($this->caches[0]->getMultiple($keys, $miss), 0, $miss, $default);
     }
     private function generateItems($values, $cacheIndex, $miss, $default)
@@ -106,17 +115,17 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
     {
         foreach ($this->caches as $cache) {
             if ($cache->has($key)) {
-                return \true;
+                return true;
             }
         }
-        return \false;
+        return false;
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        $cleared = \true;
+        $cleared = true;
         $i = $this->cacheCount;
         while ($i--) {
             $cleared = $this->caches[$i]->clear() && $cleared;
@@ -128,7 +137,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function delete($key)
     {
-        $deleted = \true;
+        $deleted = true;
         $i = $this->cacheCount;
         while ($i--) {
             $deleted = $this->caches[$i]->delete($key) && $deleted;
@@ -140,10 +149,10 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function deleteMultiple($keys)
     {
-        if ($keys instanceof \Traversable) {
-            $keys = \iterator_to_array($keys, \false);
+        if ($keys instanceof Traversable) {
+            $keys = iterator_to_array($keys, false);
         }
-        $deleted = \true;
+        $deleted = true;
         $i = $this->cacheCount;
         while ($i--) {
             $deleted = $this->caches[$i]->deleteMultiple($keys) && $deleted;
@@ -155,7 +164,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function set($key, $value, $ttl = null)
     {
-        $saved = \true;
+        $saved = true;
         $i = $this->cacheCount;
         while ($i--) {
             $saved = $this->caches[$i]->set($key, $value, $ttl) && $saved;
@@ -167,7 +176,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function setMultiple($values, $ttl = null)
     {
-        if ($values instanceof \Traversable) {
+        if ($values instanceof Traversable) {
             $valuesIterator = $values;
             $values = function () use($valuesIterator, &$values) {
                 $generatedValues = [];
@@ -179,7 +188,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
             };
             $values = $values();
         }
-        $saved = \true;
+        $saved = true;
         $i = $this->cacheCount;
         while ($i--) {
             $saved = $this->caches[$i]->setMultiple($values, $ttl) && $saved;
@@ -191,9 +200,9 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
      */
     public function prune()
     {
-        $pruned = \true;
+        $pruned = true;
         foreach ($this->caches as $cache) {
-            if ($cache instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
+            if ($cache instanceof PruneableInterface) {
                 $pruned = $cache->prune() && $pruned;
             }
         }
@@ -205,7 +214,7 @@ class ChainCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterf
     public function reset()
     {
         foreach ($this->caches as $cache) {
-            if ($cache instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface) {
+            if ($cache instanceof ResettableInterface) {
                 $cache->reset();
             }
         }

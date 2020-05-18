@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class Capture extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class Capture extends BaseResource
 {
     /**
      * Always 'capture' for this object
@@ -23,13 +25,13 @@ class Capture extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     /**
      * Amount object containing the value and currency
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $amount;
     /**
      * Amount object containing the settlement value and currency
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $settlementAmount;
     /**
@@ -55,7 +57,7 @@ class Capture extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $createdAt;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
 }

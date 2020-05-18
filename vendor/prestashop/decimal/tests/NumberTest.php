@@ -8,9 +8,13 @@
  */
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\tests\Unit\Core\Decimal;
 
+use _PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding;
-class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
+use InvalidArgumentException;
+use function sprintf;
+
+class NumberTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Given a valid number in a string
@@ -27,7 +31,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItInterpretsNumbers($number, $expectedSign, $expectedInteger, $expectedFraction, $expectedStr)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        $decimalNumber = new Number($number);
         $this->assertSame($expectedSign, $decimalNumber->getSign(), 'The sign is not as expected');
         $this->assertSame($expectedInteger, $decimalNumber->getIntegerPart(), 'The integer part is not as expected');
         $this->assertSame($expectedFraction, $decimalNumber->getFractionalPart(), 'The fraction part is not as expected');
@@ -46,7 +50,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItInterpretsExponents($coefficient, $exponent, $expectedStr)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($coefficient, $exponent);
+        $decimalNumber = new Number($coefficient, $exponent);
         $this->assertSame($expectedStr, (string) $decimalNumber);
     }
     /**
@@ -57,11 +61,11 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      * @param mixed $number
      *
      * @dataProvider provideInvalidNumbers
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testItThrowsExceptionWhenGivenInvalidNumber($number)
     {
-        new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        new Number($number);
     }
     /**
      * Given an invalid coefficient or exponent
@@ -72,11 +76,11 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      * @param mixed $exponent
      *
      * @dataProvider provideInvalidCoefficients
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testItThrowsExceptionWhenGivenInvalidCoefficientOrExponent($coefficient, $exponent)
     {
-        new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($coefficient, $exponent);
+        new Number($coefficient, $exponent);
     }
     /**
      * Given a Number constructed with a valid number
@@ -90,7 +94,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItDropsNonSignificantDigits($number, $expected)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        $decimalNumber = new Number($number);
         $this->assertSame($expected, (string) $decimalNumber);
     }
     /**
@@ -107,7 +111,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testPrecision($number, $precision, $mode, $expected)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        $decimalNumber = new Number($number);
         $this->assertSame($expected, (string) $decimalNumber->toPrecision($precision, $mode));
     }
     /**
@@ -124,7 +128,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testRounding($number, $precision, $mode, $expected)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        $decimalNumber = new Number($number);
         $this->assertSame($expected, (string) $decimalNumber->round($precision, $mode), "Failed to assert that round {$number} to {$precision} decimals = {$expected}");
     }
     /**
@@ -140,7 +144,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItExtendsPrecisionAsNeeded($number, $precision, $expected)
     {
-        $decimalNumber = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number);
+        $decimalNumber = new Number($number);
         $this->assertSame($expected, (string) $decimalNumber->toPrecision($precision), "Failed to assert that fixing {$number} to {$precision} decimals = {$expected}");
     }
     /**
@@ -156,7 +160,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItIsAbleToTellIfEqual($number1, $number2, $expected)
     {
-        $this->assertSame($expected, $number1->equals($number2), \sprintf('Failed to assert equality between "%s" and "%s"', $number1, $number2));
+        $this->assertSame($expected, $number1->equals($number2), sprintf('Failed to assert equality between "%s" and "%s"', $number1, $number2));
     }
     /**
      * Given two numbers
@@ -172,8 +176,8 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
     public function testIsAbleToTellIfGreaterThan($number1, $number2, $expected)
     {
         $shouldBeGreater = 1 === $expected;
-        $number1 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number1);
-        $number2 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number2);
+        $number1 = new Number($number1);
+        $number2 = new Number($number2);
         $this->assertSame($number1->isGreaterThan($number2), $shouldBeGreater);
     }
     /**
@@ -190,8 +194,8 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
     public function testIsAbleToTellIfLowerThan($number1, $number2, $expected)
     {
         $shouldBeLower = -1 === $expected;
-        $number1 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number1);
-        $number2 = new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number2);
+        $number1 = new Number($number1);
+        $number2 = new Number($number2);
         $this->assertSame($number1->isLowerThan($number2), $shouldBeLower);
     }
     /**
@@ -206,7 +210,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItTransformsPositiveToNegative($number, $expected)
     {
-        $number = (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number))->toNegative();
+        $number = (new Number($number))->toNegative();
         $this->assertSame((string) $number, $expected);
     }
     /**
@@ -221,7 +225,7 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
      */
     public function testItTransformsNegativeToPositive($number, $expected)
     {
-        $number = (new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number))->toPositive();
+        $number = (new Number($number))->toPositive();
         $this->assertSame((string) $number, $expected);
     }
     public function provideValidNumbers()
@@ -263,11 +267,11 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
     }
     public function provideInvalidNumbers()
     {
-        return ['bool false' => [\false], 'bool true' => [\true], 'empty string' => [''], 'NaN' => ['asd'], 'NaN with dot' => ['asd.foo'], 'NaN with comma' => ['asd,foo'], 'array' => [array()], 'null' => [null], '1.' => ['1.']];
+        return ['bool false' => [false], 'bool true' => [true], 'empty string' => [''], 'NaN' => ['asd'], 'NaN with dot' => ['asd.foo'], 'NaN with comma' => ['asd,foo'], 'array' => [array()], 'null' => [null], '1.' => ['1.']];
     }
     public function provideInvalidCoefficients()
     {
-        return ['bool false' => [\false, 0], 'bool true' => [\true, 0], 'empty string' => ['', 0], 'NaN' => ['asd', 0], 'NaN with dot' => ['asd.foo', 0], 'NaN with comma' => ['asd,foo', 0], 'array' => [array(), 0], 'null' => [null, 0], 'negative coefficient' => ['123', -5]];
+        return ['bool false' => [false, 0], 'bool true' => [true, 0], 'empty string' => ['', 0], 'NaN' => ['asd', 0], 'NaN with dot' => ['asd.foo', 0], 'NaN with comma' => ['asd,foo', 0], 'array' => [array(), 0], 'null' => [null, 0], 'negative coefficient' => ['123', -5]];
     }
     public function provideNumbersWithNonSignificantCharacters()
     {
@@ -280,94 +284,94 @@ class NumberTest extends \_PhpScoper5ea00cc67502b\PHPUnit_Framework_TestCase
     public function provideRoundingTestCases()
     {
         return [
-            'truncate 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1'],
-            'truncate 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2'],
-            'truncate 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23'],
-            'truncate 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.234'],
-            'truncate 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2345'],
-            'truncate 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456'],
-            'truncate 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.234567'],
-            'truncate 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2345678'],
-            'truncate 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456789'],
+            'truncate 0' => ['1.23456789', 0, Rounding::ROUND_TRUNCATE, '1'],
+            'truncate 1' => ['1.23456789', 1, Rounding::ROUND_TRUNCATE, '1.2'],
+            'truncate 2' => ['1.23456789', 2, Rounding::ROUND_TRUNCATE, '1.23'],
+            'truncate 3' => ['1.23456789', 3, Rounding::ROUND_TRUNCATE, '1.234'],
+            'truncate 4' => ['1.23456789', 4, Rounding::ROUND_TRUNCATE, '1.2345'],
+            'truncate 5' => ['1.23456789', 5, Rounding::ROUND_TRUNCATE, '1.23456'],
+            'truncate 6' => ['1.23456789', 6, Rounding::ROUND_TRUNCATE, '1.234567'],
+            'truncate 7' => ['1.23456789', 7, Rounding::ROUND_TRUNCATE, '1.2345678'],
+            'truncate 8' => ['1.23456789', 8, Rounding::ROUND_TRUNCATE, '1.23456789'],
             // does not add trailing zeroes
-            'truncate 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456789'],
-            'truncate 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456789'],
-            'truncate zeroes 1' => ['1.00000001', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1'],
-            'truncate zeroes 2' => ['1.00000001', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.00000001'],
-            'ceil 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '2'],
-            'ceil 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.3'],
-            'ceil 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.24'],
-            'ceil 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.235'],
-            'ceil 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.2346'],
-            'ceil 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23457'],
-            'ceil 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.234568'],
-            'ceil 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.2345679'],
-            'ceil 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23456789'],
+            'truncate 9' => ['1.23456789', 9, Rounding::ROUND_TRUNCATE, '1.23456789'],
+            'truncate 10' => ['1.23456789', 10, Rounding::ROUND_TRUNCATE, '1.23456789'],
+            'truncate zeroes 1' => ['1.00000001', 3, Rounding::ROUND_TRUNCATE, '1'],
+            'truncate zeroes 2' => ['1.00000001', 9, Rounding::ROUND_TRUNCATE, '1.00000001'],
+            'ceil 0' => ['1.23456789', 0, Rounding::ROUND_CEIL, '2'],
+            'ceil 1' => ['1.23456789', 1, Rounding::ROUND_CEIL, '1.3'],
+            'ceil 2' => ['1.23456789', 2, Rounding::ROUND_CEIL, '1.24'],
+            'ceil 3' => ['1.23456789', 3, Rounding::ROUND_CEIL, '1.235'],
+            'ceil 4' => ['1.23456789', 4, Rounding::ROUND_CEIL, '1.2346'],
+            'ceil 5' => ['1.23456789', 5, Rounding::ROUND_CEIL, '1.23457'],
+            'ceil 6' => ['1.23456789', 6, Rounding::ROUND_CEIL, '1.234568'],
+            'ceil 7' => ['1.23456789', 7, Rounding::ROUND_CEIL, '1.2345679'],
+            'ceil 8' => ['1.23456789', 8, Rounding::ROUND_CEIL, '1.23456789'],
             // does not add trailing zeroes
-            'ceil 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23456789'],
-            'ceil 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23456789'],
-            'round half up 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1'],
-            'round half up 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2'],
-            'round half up 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23'],
-            'round half up 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.235'],
-            'round half up 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2346'],
-            'round half up 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23457'],
-            'round half up 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.234568'],
-            'round half up 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2345679'],
-            'round half up 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23456789'],
+            'ceil 9' => ['1.23456789', 9, Rounding::ROUND_CEIL, '1.23456789'],
+            'ceil 10' => ['1.23456789', 10, Rounding::ROUND_CEIL, '1.23456789'],
+            'round half up 0' => ['1.23456789', 0, Rounding::ROUND_HALF_UP, '1'],
+            'round half up 1' => ['1.23456789', 1, Rounding::ROUND_HALF_UP, '1.2'],
+            'round half up 2' => ['1.23456789', 2, Rounding::ROUND_HALF_UP, '1.23'],
+            'round half up 3' => ['1.23456789', 3, Rounding::ROUND_HALF_UP, '1.235'],
+            'round half up 4' => ['1.23456789', 4, Rounding::ROUND_HALF_UP, '1.2346'],
+            'round half up 5' => ['1.23456789', 5, Rounding::ROUND_HALF_UP, '1.23457'],
+            'round half up 6' => ['1.23456789', 6, Rounding::ROUND_HALF_UP, '1.234568'],
+            'round half up 7' => ['1.23456789', 7, Rounding::ROUND_HALF_UP, '1.2345679'],
+            'round half up 8' => ['1.23456789', 8, Rounding::ROUND_HALF_UP, '1.23456789'],
             // does not add trailing zeroes
-            'round half up 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23456789'],
-            'round half up 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23456789'],
+            'round half up 9' => ['1.23456789', 9, Rounding::ROUND_HALF_UP, '1.23456789'],
+            'round half up 10' => ['1.23456789', 10, Rounding::ROUND_HALF_UP, '1.23456789'],
         ];
     }
     public function providePrecisionTestCases()
     {
         return [
-            'truncate 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1'],
-            'truncate 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2'],
-            'truncate 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23'],
-            'truncate 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.234'],
-            'truncate 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2345'],
-            'truncate 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456'],
-            'truncate 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.234567'],
-            'truncate 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2345678'],
-            'truncate 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.23456789'],
+            'truncate 0' => ['1.23456789', 0, Rounding::ROUND_TRUNCATE, '1'],
+            'truncate 1' => ['1.23456789', 1, Rounding::ROUND_TRUNCATE, '1.2'],
+            'truncate 2' => ['1.23456789', 2, Rounding::ROUND_TRUNCATE, '1.23'],
+            'truncate 3' => ['1.23456789', 3, Rounding::ROUND_TRUNCATE, '1.234'],
+            'truncate 4' => ['1.23456789', 4, Rounding::ROUND_TRUNCATE, '1.2345'],
+            'truncate 5' => ['1.23456789', 5, Rounding::ROUND_TRUNCATE, '1.23456'],
+            'truncate 6' => ['1.23456789', 6, Rounding::ROUND_TRUNCATE, '1.234567'],
+            'truncate 7' => ['1.23456789', 7, Rounding::ROUND_TRUNCATE, '1.2345678'],
+            'truncate 8' => ['1.23456789', 8, Rounding::ROUND_TRUNCATE, '1.23456789'],
             // adds trailing zeroes
-            'truncate 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.234567890'],
-            'truncate 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.2345678900'],
+            'truncate 9' => ['1.23456789', 9, Rounding::ROUND_TRUNCATE, '1.234567890'],
+            'truncate 10' => ['1.23456789', 10, Rounding::ROUND_TRUNCATE, '1.2345678900'],
             // keeps trailing zeroes
-            'truncate zeroes 1' => ['1.00000001', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.000'],
-            'truncate zeroes 2' => ['1.00000001', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, '1.00000001'],
-            'ceil 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '2'],
-            'ceil 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.3'],
-            'ceil 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.24'],
-            'ceil 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.235'],
-            'ceil 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.2346'],
-            'ceil 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23457'],
-            'ceil 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.234568'],
-            'ceil 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.2345679'],
-            'ceil 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.23456789'],
-            'ceil zeroes' => ['1.00000001', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.0000001'],
+            'truncate zeroes 1' => ['1.00000001', 3, Rounding::ROUND_TRUNCATE, '1.000'],
+            'truncate zeroes 2' => ['1.00000001', 8, Rounding::ROUND_TRUNCATE, '1.00000001'],
+            'ceil 0' => ['1.23456789', 0, Rounding::ROUND_CEIL, '2'],
+            'ceil 1' => ['1.23456789', 1, Rounding::ROUND_CEIL, '1.3'],
+            'ceil 2' => ['1.23456789', 2, Rounding::ROUND_CEIL, '1.24'],
+            'ceil 3' => ['1.23456789', 3, Rounding::ROUND_CEIL, '1.235'],
+            'ceil 4' => ['1.23456789', 4, Rounding::ROUND_CEIL, '1.2346'],
+            'ceil 5' => ['1.23456789', 5, Rounding::ROUND_CEIL, '1.23457'],
+            'ceil 6' => ['1.23456789', 6, Rounding::ROUND_CEIL, '1.234568'],
+            'ceil 7' => ['1.23456789', 7, Rounding::ROUND_CEIL, '1.2345679'],
+            'ceil 8' => ['1.23456789', 8, Rounding::ROUND_CEIL, '1.23456789'],
+            'ceil zeroes' => ['1.00000001', 7, Rounding::ROUND_CEIL, '1.0000001'],
             // adds trailing zeroes
-            'ceil 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.234567890'],
-            'ceil 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, '1.2345678900'],
-            'round half up 0' => ['1.23456789', 0, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1'],
-            'round half up 1' => ['1.23456789', 1, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2'],
-            'round half up 2' => ['1.23456789', 2, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23'],
-            'round half up 3' => ['1.23456789', 3, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.235'],
-            'round half up 4' => ['1.23456789', 4, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2346'],
-            'round half up 5' => ['1.23456789', 5, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23457'],
-            'round half up 6' => ['1.23456789', 6, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.234568'],
-            'round half up 7' => ['1.23456789', 7, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2345679'],
-            'round half up 8' => ['1.23456789', 8, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.23456789'],
+            'ceil 9' => ['1.23456789', 9, Rounding::ROUND_CEIL, '1.234567890'],
+            'ceil 10' => ['1.23456789', 10, Rounding::ROUND_CEIL, '1.2345678900'],
+            'round half up 0' => ['1.23456789', 0, Rounding::ROUND_HALF_UP, '1'],
+            'round half up 1' => ['1.23456789', 1, Rounding::ROUND_HALF_UP, '1.2'],
+            'round half up 2' => ['1.23456789', 2, Rounding::ROUND_HALF_UP, '1.23'],
+            'round half up 3' => ['1.23456789', 3, Rounding::ROUND_HALF_UP, '1.235'],
+            'round half up 4' => ['1.23456789', 4, Rounding::ROUND_HALF_UP, '1.2346'],
+            'round half up 5' => ['1.23456789', 5, Rounding::ROUND_HALF_UP, '1.23457'],
+            'round half up 6' => ['1.23456789', 6, Rounding::ROUND_HALF_UP, '1.234568'],
+            'round half up 7' => ['1.23456789', 7, Rounding::ROUND_HALF_UP, '1.2345679'],
+            'round half up 8' => ['1.23456789', 8, Rounding::ROUND_HALF_UP, '1.23456789'],
             // adds trailing zeroes
-            'round half up 9' => ['1.23456789', 9, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.234567890'],
-            'round half up 10' => ['1.23456789', 10, \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, '1.2345678900'],
+            'round half up 9' => ['1.23456789', 9, Rounding::ROUND_HALF_UP, '1.234567890'],
+            'round half up 10' => ['1.23456789', 10, Rounding::ROUND_HALF_UP, '1.2345678900'],
         ];
     }
     public function provideEqualityTestCases()
     {
-        return [[new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('0'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('0', 5), \true], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('0.1234'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('1234', 4), \true], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('1234.01'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('123401', 2), \true], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-0'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('0'), \true], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-1234.01'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-123401', 2), \true], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-1234.01'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('123401', 2), \false], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('1234.01'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-123401', 2), \false], [new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('1234.01'), new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number('-1234.01'), \false]];
+        return [[new Number('0'), new Number('0', 5), true], [new Number('0.1234'), new Number('1234', 4), true], [new Number('1234.01'), new Number('123401', 2), true], [new Number('-0'), new Number('0'), true], [new Number('-1234.01'), new Number('-123401', 2), true], [new Number('-1234.01'), new Number('123401', 2), false], [new Number('1234.01'), new Number('-123401', 2), false], [new Number('1234.01'), new Number('-1234.01'), false]];
     }
     public function provideComparisonTestCases()
     {

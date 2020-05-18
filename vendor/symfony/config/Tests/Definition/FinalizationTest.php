@@ -14,19 +14,19 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Processor;
-class FinalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class FinalizationTest extends TestCase
 {
     public function testUnsetKeyWithDeepHierarchy()
     {
-        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new TreeBuilder();
         $tree = $tb->root('config', 'array')->children()->node('level1', 'array')->canBeUnset()->children()->node('level2', 'array')->canBeUnset()->children()->node('somevalue', 'scalar')->end()->node('anothervalue', 'scalar')->end()->end()->end()->node('level1_scalar', 'scalar')->end()->end()->end()->end()->end()->buildTree();
         $a = ['level1' => ['level2' => ['somevalue' => 'foo', 'anothervalue' => 'bar'], 'level1_scalar' => 'foo']];
-        $b = ['level1' => ['level2' => \false]];
+        $b = ['level1' => ['level2' => false]];
         $this->assertEquals(['level1' => ['level1_scalar' => 'foo']], $this->process($tree, [$a, $b]));
     }
-    protected function process(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $tree, array $configs)
+    protected function process(NodeInterface $tree, array $configs)
     {
-        $processor = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Processor();
+        $processor = new Processor();
         return $processor->process($tree, $configs);
     }
 }

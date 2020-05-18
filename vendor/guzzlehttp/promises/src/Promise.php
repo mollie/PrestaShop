@@ -2,12 +2,18 @@
 
 namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
 
+use Exception;
+use LogicException;
+use Throwable;
+use function array_merge;
+use function method_exists;
+
 /**
  * Promises/A+ implementation that avoids recursion when possible.
  *
  * @link https://promisesaplus.com/
  */
-class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface
+class Promise implements PromiseInterface
 {
     private $state = self::PENDING;
     private $result;
@@ -27,7 +33,7 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
     public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if ($this->state === self::PENDING) {
-            $p = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promise(null, [$this, 'cancel']);
+            $p = new Promise(null, [$this, 'cancel']);
             $this->handlers[] = [$p, $onFulfilled, $onRejected];
             $p->waitList = $this->waitList;
             $p->waitList[] = $this;
@@ -46,12 +52,12 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
     {
         return $this->then(null, $onRejected);
     }
-    public function wait($unwrap = \true)
+    public function wait($unwrap = true)
     {
         $this->waitIfPending();
-        $inner = $this->result instanceof \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface ? $this->result->wait($unwrap) : $this->result;
+        $inner = $this->result instanceof PromiseInterface ? $this->result->wait($unwrap) : $this->result;
         if ($unwrap) {
-            if ($this->result instanceof \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface || $this->state === self::FULFILLED) {
+            if ($this->result instanceof PromiseInterface || $this->state === self::FULFILLED) {
                 return $inner;
             } else {
                 // It's rejected so "unwrap" and throw an exception.
@@ -74,15 +80,15 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
             $this->cancelFn = null;
             try {
                 $fn();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->reject($e);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->reject($e);
             }
         }
         // Reject the promise only if it wasn't rejected in a then callback.
         if ($this->state === self::PENDING) {
-            $this->reject(new \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\CancellationException('Promise has been cancelled'));
+            $this->reject(new CancellationException('Promise has been cancelled'));
         }
     }
     public function resolve($value)
@@ -100,10 +106,10 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
             if ($state === $this->state && $value === $this->result) {
                 return;
             }
-            throw $this->state === $state ? new \LogicException("The promise is already {$state}.") : new \LogicException("Cannot change a {$this->state} promise to {$state}");
+            throw $this->state === $state ? new LogicException("The promise is already {$state}.") : new LogicException("Cannot change a {$this->state} promise to {$state}");
         }
         if ($value === $this) {
-            throw new \LogicException('Cannot fulfill or reject a promise with itself');
+            throw new LogicException('Cannot fulfill or reject a promise with itself');
         }
         // Clear out the state of the promise but stash the handlers.
         $this->state = $state;
@@ -117,7 +123,7 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
         }
         // If the value was not a settled promise or a thenable, then resolve
         // it in the task queue using the correct ID.
-        if (!\method_exists($value, 'then')) {
+        if (!method_exists($value, 'then')) {
             $id = $state === self::FULFILLED ? 1 : 2;
             // It's a success, so resolve the handlers in the queue.
             queue()->add(static function () use($id, $value, $handlers) {
@@ -125,9 +131,9 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
                     self::callHandler($id, $value, $handler);
                 }
             });
-        } elseif ($value instanceof \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promise && $value->getState() === self::PENDING) {
+        } elseif ($value instanceof Promise && $value->getState() === self::PENDING) {
             // We can just merge our handlers onto the next promise.
-            $value->handlers = \array_merge($value->handlers, $handlers);
+            $value->handlers = array_merge($value->handlers, $handlers);
         } else {
             // Resolve the handlers when the forwarded promise is resolved.
             $value->then(static function ($value) use($handlers) {
@@ -169,9 +175,9 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
                 // Forward rejections down the chain.
                 $promise->reject($value);
             }
-        } catch (\Throwable $reason) {
+        } catch (Throwable $reason) {
             $promise->reject($reason);
-        } catch (\Exception $reason) {
+        } catch (Exception $reason) {
             $promise->reject($reason);
         }
     }
@@ -197,8 +203,8 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
         try {
             $wfn = $this->waitFn;
             $this->waitFn = null;
-            $wfn(\true);
-        } catch (\Exception $reason) {
+            $wfn(true);
+        } catch (Exception $reason) {
             if ($this->state === self::PENDING) {
                 // The promise has not been resolved yet, so reject the promise
                 // with the exception.
@@ -215,13 +221,13 @@ class Promise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInte
         $waitList = $this->waitList;
         $this->waitList = null;
         foreach ($waitList as $result) {
-            while (\true) {
+            while (true) {
                 $result->waitIfPending();
-                if ($result->result instanceof \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promise) {
+                if ($result->result instanceof Promise) {
                     $result = $result->result;
                 } else {
-                    if ($result->result instanceof \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface) {
-                        $result->result->wait(\false);
+                    if ($result->result instanceof PromiseInterface) {
+                        $result->result->wait(false);
                     }
                     break;
                 }

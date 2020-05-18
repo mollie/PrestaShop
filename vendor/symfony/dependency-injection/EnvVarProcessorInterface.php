@@ -11,6 +11,8 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use Closure;
+
 /**
  * The EnvVarProcessorInterface is implemented by objects that manage environment-like variables.
  *
@@ -23,13 +25,13 @@ interface EnvVarProcessorInterface
      *
      * @param string   $prefix The namespace of the variable
      * @param string   $name   The name of the variable within the namespace
-     * @param \Closure $getEnv A closure that allows fetching more env vars
+     * @param Closure $getEnv A closure that allows fetching more env vars
      *
      * @return mixed
      *
      * @throws RuntimeException on error
      */
-    public function getEnv($prefix, $name, \Closure $getEnv);
+    public function getEnv($prefix, $name, Closure $getEnv);
     /**
      * @return string[] The PHP-types managed by getEnv(), keyed by prefixes
      */

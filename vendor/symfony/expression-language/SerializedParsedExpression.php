@@ -10,12 +10,14 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
 
+use function unserialize;
+
 /**
  * Represents an already parsed expression.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class SerializedParsedExpression extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression
+class SerializedParsedExpression extends ParsedExpression
 {
     private $nodes;
     /**
@@ -29,6 +31,6 @@ class SerializedParsedExpression extends \_PhpScoper5ea00cc67502b\Symfony\Compon
     }
     public function getNodes()
     {
-        return \unserialize($this->nodes);
+        return unserialize($this->nodes);
     }
 }

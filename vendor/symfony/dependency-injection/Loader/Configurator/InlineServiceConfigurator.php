@@ -14,7 +14,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class InlineServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
+class InlineServiceConfigurator extends AbstractConfigurator
 {
     const FACTORY = 'inline';
     use Traits\ArgumentTrait;
@@ -25,7 +25,7 @@ class InlineServiceConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Compone
     use Traits\LazyTrait;
     use Traits\ParentTrait;
     use Traits\TagTrait;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition)
+    public function __construct(Definition $definition)
     {
         $this->definition = $definition;
     }

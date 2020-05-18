@@ -15,12 +15,12 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapter;
 /**
  * @group time-sensitive
  */
-class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class TraceableAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = ['testPrune' => 'TraceableAdapter just proxies'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime));
+        return new TraceableAdapter(new FilesystemAdapter('', $defaultLifetime));
     }
     public function testGetItemMissTrace()
     {
@@ -30,7 +30,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(1, $calls);
         $call = $calls[0];
         $this->assertSame('getItem', $call->name);
-        $this->assertSame(['k' => \false], $call->result);
+        $this->assertSame(['k' => false], $call->result);
         $this->assertSame(0, $call->hits);
         $this->assertSame(1, $call->misses);
         $this->assertNotEmpty($call->start);
@@ -59,7 +59,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(1, $calls);
         $call = $calls[0];
         $this->assertSame('getItems', $call->name);
-        $this->assertSame(['k0' => \false, 'k1' => \false], $call->result);
+        $this->assertSame(['k0' => false, 'k1' => false], $call->result);
         $this->assertSame(2, $call->misses);
         $this->assertNotEmpty($call->start);
         $this->assertNotEmpty($call->end);
@@ -72,7 +72,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(1, $calls);
         $call = $calls[0];
         $this->assertSame('hasItem', $call->name);
-        $this->assertSame(['k' => \false], $call->result);
+        $this->assertSame(['k' => false], $call->result);
         $this->assertNotEmpty($call->start);
         $this->assertNotEmpty($call->end);
     }
@@ -86,7 +86,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(3, $calls);
         $call = $calls[2];
         $this->assertSame('hasItem', $call->name);
-        $this->assertSame(['k' => \true], $call->result);
+        $this->assertSame(['k' => true], $call->result);
         $this->assertNotEmpty($call->start);
         $this->assertNotEmpty($call->end);
     }
@@ -98,7 +98,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(1, $calls);
         $call = $calls[0];
         $this->assertSame('deleteItem', $call->name);
-        $this->assertSame(['k' => \true], $call->result);
+        $this->assertSame(['k' => true], $call->result);
         $this->assertSame(0, $call->hits);
         $this->assertSame(0, $call->misses);
         $this->assertNotEmpty($call->start);
@@ -113,7 +113,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(1, $calls);
         $call = $calls[0];
         $this->assertSame('deleteItems', $call->name);
-        $this->assertSame(['keys' => $arg, 'result' => \true], $call->result);
+        $this->assertSame(['keys' => $arg, 'result' => true], $call->result);
         $this->assertSame(0, $call->hits);
         $this->assertSame(0, $call->misses);
         $this->assertNotEmpty($call->start);
@@ -128,7 +128,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(2, $calls);
         $call = $calls[1];
         $this->assertSame('save', $call->name);
-        $this->assertSame(['k' => \true], $call->result);
+        $this->assertSame(['k' => true], $call->result);
         $this->assertSame(0, $call->hits);
         $this->assertSame(0, $call->misses);
         $this->assertNotEmpty($call->start);
@@ -143,7 +143,7 @@ class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Ca
         $this->assertCount(2, $calls);
         $call = $calls[1];
         $this->assertSame('saveDeferred', $call->name);
-        $this->assertSame(['k' => \true], $call->result);
+        $this->assertSame(['k' => true], $call->result);
         $this->assertSame(0, $call->hits);
         $this->assertSame(0, $call->misses);
         $this->assertNotEmpty($call->start);
