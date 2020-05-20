@@ -6,6 +6,7 @@ use Cart;
 use Configuration;
 use Currency;
 use Mollie;
+use Mollie\Utility\CartPriceUtility;
 use Tools;
 
 class CartLinesService
@@ -62,7 +63,7 @@ class CartLinesService
             $aItems[$productHash] = [];
 
             // Try to spread this product evenly and account for rounding differences on the order line
-            foreach (\Mollie\Utility\CartPriceUtility::spreadAmountEvenly($roundedTotalWithTax, $quantity) as $unitPrice => $qty) {
+            foreach (CartPriceUtility::spreadAmountEvenly($roundedTotalWithTax, $quantity) as $unitPrice => $qty) {
                 $aItems[$productHash][] = [
                     'name' => $cartItem['name'],
                     'sku' => $productHash,
@@ -249,7 +250,7 @@ class CartLinesService
         $newTotal = round($newTotal, $apiRoundingPrecision);
         $quantity = array_sum(array_column($cartLineGroup, 'quantity'));
         $newCartLineGroup = [];
-        $spread = \Mollie\Utility\CartPriceUtility::spreadAmountEvenly($newTotal, $quantity);
+        $spread = CartPriceUtility::spreadAmountEvenly($newTotal, $quantity);
         foreach ($spread as $unitPrice => $qty) {
             $newCartLineGroup[] = [
                 'name' => $cartLineGroup[0]['name'],

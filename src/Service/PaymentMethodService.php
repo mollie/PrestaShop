@@ -13,8 +13,14 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\LocaleUtility;
+use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use State;
 use Tools;
 
@@ -82,8 +88,8 @@ class PaymentMethodService
      *
      * @return array
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @since 3.0.0
      * @since 3.4.0 public
      *
@@ -176,12 +182,12 @@ class PaymentMethodService
         if (!$orderReference) {
             $this->module->currentOrderReference = $orderReference = Order::generateReference();
         }
-        $description = \Mollie\Utility\TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
+        $description = TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
         $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($molPaymentMethod, $amount);
+        $paymentFee = PaymentFeeUtility::getPaymentFee($molPaymentMethod, $amount);
         $totalAmount = (number_format(str_replace(',', '.', $amount), 2, '.', ''));
         $totalAmount += $paymentFee;
 
@@ -209,7 +215,7 @@ class PaymentMethodService
         if ($cardToken) {
             $paymentData['cardToken'] = $cardToken;
         }
-        if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
+        if (!EnvironmentUtility::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
                 'webhook',
@@ -229,7 +235,7 @@ class PaymentMethodService
                 && Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE) === Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE)
             || $molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API
         ) {
-            $locale = \Mollie\Utility\LocaleUtility::getWebshopLocale();
+            $locale = LocaleUtility::getWebshopLocale();
             if (preg_match(
                 '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
                 $locale
@@ -276,7 +282,7 @@ class PaymentMethodService
             switch ($method) {
                 case PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
-                    $paymentData['locale'] = \Mollie\Utility\LocaleUtility::getWebshopLocale();
+                    $paymentData['locale'] = LocaleUtility::getWebshopLocale();
                     break;
                 case PaymentMethod::BITCOIN:
                     $paymentData['billingEmail'] = $customer->email;
@@ -313,7 +319,7 @@ class PaymentMethodService
 
             $paymentData['lines'] = $this->cartLinesService->getCartLines($amount, $paymentFee, $cart);
             $paymentData['payment'] = [];
-            if (!\Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
+            if (!EnvironmentUtility::isLocalEnvironment()) {
                 $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
                     'mollie',
                     'webhook',

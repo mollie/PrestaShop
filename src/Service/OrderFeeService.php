@@ -2,6 +2,7 @@
 
 namespace Mollie\Service;
 
+use Mollie\Utility\PaymentFeeUtility;
 use MolPaymentMethod;
 use Tools;
 
@@ -16,7 +17,7 @@ class OrderFeeService
                 continue;
             }
             $paymentMethod = new MolPaymentMethod($method['id_payment_method']);
-            $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($paymentMethod, $totalPrice);
+            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $totalPrice);
             $methods[$index]['fee'] = $paymentFee;
             $methods[$index]['fee_display'] = Tools::displayPrice($paymentFee);
         }

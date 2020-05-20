@@ -7,12 +7,14 @@ use Carrier;
 use Context;
 use Country;
 use Language;
+use MolCarrierInformation;
 use Mollie\Config\Config;
 use Mollie\Repository\MolCarrierInformationRepository;
 use Mollie\Repository\OrderShipmentRepository;
 use Order;
 use OrderCarrier;
 use PrestaShopDatabaseException;
+use PrestaShopException;
 use Tools;
 use Validate;
 
@@ -45,7 +47,7 @@ class ShipmentService
      * @return array|null
      *
      * @throws PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @since 3.3.0
      */
     public function getShipmentInformation($orderReference)
@@ -57,7 +59,7 @@ class ShipmentService
         $invoiceAddress = new Address($order->id_address_invoice);
         $deliveryAddress = new Address($order->id_address_delivery);
         $carrierInformationId = $this->informationRepository->getMollieCarrierInformationIdByCarrierId($order->id_carrier);
-        $carrierInformation = new \MolCarrierInformation($carrierInformationId);
+        $carrierInformation = new MolCarrierInformation($carrierInformationId);
         if (!Validate::isLoadedObject($invoiceAddress)
             || !Validate::isLoadedObject($deliveryAddress)
             || !$carrierInformation

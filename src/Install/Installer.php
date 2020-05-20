@@ -6,6 +6,7 @@ use Configuration;
 use Context;
 use Db;
 use DbQuery;
+use Exception;
 use Language;
 use Mollie;
 use OrderState;
@@ -39,26 +40,26 @@ class Installer
 
         try {
             $this->partialRefundOrderState($context->language->id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install Mollie partially refunded order state');
             return false;
         }
         try {
             $this->awaitingMollieOrderState($context->language->id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install Mollie awaiting state');
             return false;
         }
 
         try {
             $this->initConfig();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install config');
             return false;
         }
         try {
             $this->setDefaultCarrierStatuses();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install default carrier statuses');
             return false;
         }

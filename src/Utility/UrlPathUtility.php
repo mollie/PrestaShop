@@ -119,7 +119,7 @@ class UrlPathUtility
             $manifest = [];
             foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
                 $manifest[$chunk['name']] = array_map(function ($chunk) {
-                    return \Mollie\Utility\UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
+                    return UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
                 }, $chunk['files']);
             }
         }

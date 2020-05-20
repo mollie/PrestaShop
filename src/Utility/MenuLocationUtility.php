@@ -3,6 +3,8 @@
 namespace Mollie\Utility;
 
 use Context;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Tab;
 use Validate;
 
@@ -16,8 +18,8 @@ class MenuLocationUtility
      *
      * @return string
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @since 3.3.2
      */
     public static function getMenuLocation($class, $idLang = null)
@@ -38,8 +40,8 @@ class MenuLocationUtility
      *
      * @return Tab[]|null
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @since 3.3.2
      */
     public static function getTabTreeByClass($class)

@@ -7,14 +7,20 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
+use ErrorException;
 use Exception;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\CartPriceUtility;
+use Mollie\Utility\UrlPathUtility;
 use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
+use PrestaShop\PrestaShop\Adapter\CoreException;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use SmartyException;
 use Tools;
 
 class ApiService
@@ -150,7 +156,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
+            foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
                 if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = [
                         'id' => $id,
@@ -158,9 +164,9 @@ class ApiService
                         'enabled' => true,
                         'available' => !in_array($id, $notAvailable),
                         'image' => [
-                            'size1x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
+                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
+                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
+                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
                         ],
                         'issuers' => null,
                     ];
@@ -173,9 +179,9 @@ class ApiService
                         'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
                         'available' => !in_array($id, $notAvailable),
                         'image' => [
-                            'size1x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => \Mollie\Utility\UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
+                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
+                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
+                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
                         ],
                         'issuers' => null,
                     ];
@@ -236,7 +242,7 @@ class ApiService
             return (array)$apiMethod;
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
-            foreach ([\Mollie\Config\Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
+            foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
                 $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
@@ -268,10 +274,10 @@ class ApiService
      * @return array|null
      *
      * @throws ApiException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \SmartyException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws CoreException
+     * @throws SmartyException
      * @since 3.3.0
      * @since 3.3.2 $process option
      */
@@ -334,7 +340,7 @@ class ApiService
      * @param string $transactionId
      * @return array|null
      *
-     * @throws \ErrorException
+     * @throws ErrorException
      * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 $process option

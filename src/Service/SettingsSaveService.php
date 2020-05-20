@@ -14,6 +14,8 @@ use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethodIssuer;
 use OrderState;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Tools;
 
 class SettingsSaveService
@@ -65,8 +67,8 @@ class SettingsSaveService
      *
      * @return string
      * @throws ApiException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function saveSettings(&$errors = [])
     {
@@ -158,7 +160,7 @@ class SettingsSaveService
                 Config::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
             );
-            $carriers = \Carrier::getCarriers(
+            $carriers = Carrier::getCarriers(
                 Context::getContext()->language->id,
                 false,
                 false,

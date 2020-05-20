@@ -9,6 +9,10 @@ use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
+use PrestaShop\PrestaShop\Adapter\CoreException;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use SmartyException;
 use Tools;
 
 class RefundService
@@ -29,9 +33,9 @@ class RefundService
      *
      * @return array
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws CoreException
      * @throws ApiException
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
      * @since 3.3.2 Omit $orderId
@@ -88,10 +92,10 @@ class RefundService
      *
      * @return array
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \SmartyException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws CoreException
+     * @throws SmartyException
      * @since 3.3.0
      */
     public function doRefundOrderLines($transactionId, $lines = [])

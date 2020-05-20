@@ -7,6 +7,8 @@ use Context;
 use Mollie\Config\Config;
 use Order;
 use OrderHistory;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Tools;
 use Validate;
 
@@ -20,8 +22,8 @@ class OrderStatusService
      *
      * @return void
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @since 3.3.2 Accept both Order ID and Order object
      * @since 3.3.2 Accept both Mollie status string and PrestaShop status ID
      * @since 3.3.2 $useExistingPayment option

@@ -8,6 +8,10 @@ use Mollie;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
+use PrestaShop\PrestaShop\Adapter\CoreException;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use SmartyException;
 use Tools;
 
 class CancelService
@@ -28,10 +32,10 @@ class CancelService
      *
      * @return array
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Adapter\CoreException
-     * @throws \SmartyException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws CoreException
+     * @throws SmartyException
      * @since 3.3.0
      */
     public function doCancelOrderLines($transactionId, $lines = [])
