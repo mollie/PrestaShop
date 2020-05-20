@@ -1,8 +1,4 @@
 <?php
-
-use Mollie\Config\Config;
-use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
-
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -36,6 +32,9 @@ use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Config\Config;
+use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 class MollieFailModuleFrontController extends ModuleFrontController
 {
