@@ -13,7 +13,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument
 /**
  * @author Guilhem Niot <guilhem.niot@gmail.com>
  */
-final class BoundArgument implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface
+final class BoundArgument implements ArgumentInterface
 {
     private static $sequence = 0;
     private $value;

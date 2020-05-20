@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\VariableNode;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class VariableNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition
+class VariableNodeDefinition extends NodeDefinition
 {
     /**
      * Instantiate a Node.
@@ -25,7 +25,7 @@ class VariableNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\
      */
     protected function instantiateNode()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\VariableNode($this->name, $this->parent);
+        return new VariableNode($this->name, $this->parent);
     }
     /**
      * {@inheritdoc}
@@ -39,13 +39,13 @@ class VariableNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\
         if (null !== $this->merge) {
             $node->setAllowOverwrite($this->merge->allowOverwrite);
         }
-        if (\true === $this->default) {
+        if (true === $this->default) {
             $node->setDefaultValue($this->defaultValue);
         }
         $node->setAllowEmptyValue($this->allowEmptyValue);
         $node->addEquivalentValue(null, $this->nullEquivalent);
-        $node->addEquivalentValue(\true, $this->trueEquivalent);
-        $node->addEquivalentValue(\false, $this->falseEquivalent);
+        $node->addEquivalentValue(true, $this->trueEquivalent);
+        $node->addEquivalentValue(false, $this->falseEquivalent);
         $node->setRequired($this->required);
         $node->setDeprecated($this->deprecationMessage);
         if (null !== $this->validation) {

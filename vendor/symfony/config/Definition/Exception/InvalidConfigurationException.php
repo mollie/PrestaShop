@@ -16,10 +16,10 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class InvalidConfigurationException extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception
+class InvalidConfigurationException extends Exception
 {
     private $path;
-    private $containsHints = \false;
+    private $containsHints = false;
     public function setPath($path)
     {
         $this->path = $path;
@@ -37,7 +37,7 @@ class InvalidConfigurationException extends \_PhpScoper5ea00cc67502b\Symfony\Com
     {
         if (!$this->containsHints) {
             $this->message .= "\nHint: " . $hint;
-            $this->containsHints = \true;
+            $this->containsHints = true;
         } else {
             $this->message .= ', ' . $hint;
         }

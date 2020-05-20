@@ -19,7 +19,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveHotPathPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+class ResolveHotPathPass extends AbstractRecursivePass
 {
     private $tagName;
     private $resolvedIds = [];
@@ -30,7 +30,7 @@ class ResolveHotPathPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Depe
     /**
      * {@inheritdoc}
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         try {
             parent::process($container);
@@ -42,20 +42,20 @@ class ResolveHotPathPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Depe
     /**
      * {@inheritdoc}
      */
-    protected function processValue($value, $isRoot = \false)
+    protected function processValue($value, $isRoot = false)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
+        if ($value instanceof ArgumentInterface) {
             return $value;
         }
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition && $isRoot && (isset($this->resolvedIds[$this->currentId]) || !$value->hasTag($this->tagName) || $value->isDeprecated())) {
+        if ($value instanceof Definition && $isRoot && (isset($this->resolvedIds[$this->currentId]) || !$value->hasTag($this->tagName) || $value->isDeprecated())) {
             return $value->isDeprecated() ? $value->clearTag($this->tagName) : $value;
         }
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference && \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->getInvalidBehavior() && $this->container->has($id = $this->container->normalizeId($value))) {
+        if ($value instanceof Reference && ContainerBuilder::IGNORE_ON_UNINITIALIZED_REFERENCE !== $value->getInvalidBehavior() && $this->container->has($id = $this->container->normalizeId($value))) {
             $definition = $this->container->findDefinition($id);
             if (!$definition->hasTag($this->tagName) && !$definition->isDeprecated()) {
-                $this->resolvedIds[$id] = \true;
+                $this->resolvedIds[$id] = true;
                 $definition->addTag($this->tagName);
-                parent::processValue($definition, \false);
+                parent::processValue($definition, false);
             }
             return $value;
         }

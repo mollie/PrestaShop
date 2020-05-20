@@ -11,12 +11,16 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function is_scalar;
+use function is_string;
+use function sprintf;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @method InstanceofConfigurator instanceof(string $fqcn)
  */
-class DefaultsConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
+class DefaultsConfigurator extends AbstractServiceConfigurator
 {
     const FACTORY = 'defaults';
     use Traits\AutoconfigureTrait;
@@ -35,12 +39,12 @@ class DefaultsConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\De
      */
     public final function tag($name, array $attributes = [])
     {
-        if (!\is_string($name) || '' === $name) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('The tag name in "_defaults" must be a non-empty string.');
+        if (!is_string($name) || '' === $name) {
+            throw new InvalidArgumentException('The tag name in "_defaults" must be a non-empty string.');
         }
         foreach ($attributes as $attribute => $value) {
-            if (!\is_scalar($value) && null !== $value) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Tag "%s", attribute "%s" in "_defaults" must be of a scalar-type.', $name, $attribute));
+            if (!is_scalar($value) && null !== $value) {
+                throw new InvalidArgumentException(sprintf('Tag "%s", attribute "%s" in "_defaults" must be of a scalar-type.', $name, $attribute));
             }
         }
         $this->definition->addTag($name, $attributes);

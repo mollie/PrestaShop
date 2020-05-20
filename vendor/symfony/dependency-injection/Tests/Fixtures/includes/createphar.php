@@ -2,11 +2,15 @@
 
 namespace _PhpScoper5ea00cc67502b;
 
+use Phar;
+use function is_file;
+use function unlink;
+
 $file = __DIR__ . '/ProjectWithXsdExtensionInPhar.phar';
-if (\is_file($file)) {
-    @\unlink($file);
+if (is_file($file)) {
+    @unlink($file);
 }
-$phar = new \Phar($file, 0, 'ProjectWithXsdExtensionInPhar.phar');
+$phar = new Phar($file, 0, 'ProjectWithXsdExtensionInPhar.phar');
 $phar->addFromString('ProjectWithXsdExtensionInPhar.php', <<<'EOT'
 <?php
 

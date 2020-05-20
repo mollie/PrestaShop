@@ -11,7 +11,7 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\ApcuTrait;
-class ApcuAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter
+class ApcuAdapter extends AbstractAdapter
 {
     use ApcuTrait;
     /**

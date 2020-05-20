@@ -12,18 +12,18 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Nod
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode;
-class UnaryNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node\AbstractNodeTest
+class UnaryNodeTest extends AbstractNodeTest
 {
     public function getEvaluateData()
     {
-        return [[-1, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('-', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1))], [3, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('+', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3))], [\false, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('!', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))], [\false, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('not', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))]];
+        return [[-1, new UnaryNode('-', new ConstantNode(1))], [3, new UnaryNode('+', new ConstantNode(3))], [false, new UnaryNode('!', new ConstantNode(true))], [false, new UnaryNode('not', new ConstantNode(true))]];
     }
     public function getCompileData()
     {
-        return [['(-1)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('-', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1))], ['(+3)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('+', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3))], ['(!true)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('!', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))], ['(!true)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('not', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))]];
+        return [['(-1)', new UnaryNode('-', new ConstantNode(1))], ['(+3)', new UnaryNode('+', new ConstantNode(3))], ['(!true)', new UnaryNode('!', new ConstantNode(true))], ['(!true)', new UnaryNode('not', new ConstantNode(true))]];
     }
     public function getDumpData()
     {
-        return [['(- 1)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('-', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(1))], ['(+ 3)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('+', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3))], ['(! true)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('!', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))], ['(not true)', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\UnaryNode('not', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true))]];
+        return [['(- 1)', new UnaryNode('-', new ConstantNode(1))], ['(+ 3)', new UnaryNode('+', new ConstantNode(3))], ['(! true)', new UnaryNode('!', new ConstantNode(true))], ['(not true)', new UnaryNode('not', new ConstantNode(true))]];
     }
 }

@@ -12,6 +12,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception;
 
 use _PhpScoper5ea00cc67502b\Psr\Cache\InvalidArgumentException as Psr6CacheInterface;
 use _PhpScoper5ea00cc67502b\Psr\SimpleCache\InvalidArgumentException as SimpleCacheInterface;
-class InvalidArgumentException extends \InvalidArgumentException implements \_PhpScoper5ea00cc67502b\Psr\Cache\InvalidArgumentException, \_PhpScoper5ea00cc67502b\Psr\SimpleCache\InvalidArgumentException
+class InvalidArgumentException extends \InvalidArgumentException implements Psr6CacheInterface, SimpleCacheInterface
 {
 }

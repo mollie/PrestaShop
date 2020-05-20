@@ -11,6 +11,12 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Closure;
+use function dirname;
+use function is_string;
+use function pathinfo;
+use const PATHINFO_EXTENSION;
+
 /**
  * PhpFileLoader loads service definitions from a PHP file.
  *
@@ -19,7 +25,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configu
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class PhpFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\FileLoader
+class PhpFileLoader extends FileLoader
 {
     /**
      * {@inheritdoc}
@@ -30,15 +36,15 @@ class PhpFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
         $container = $this->container;
         $loader = $this;
         $path = $this->locator->locate($resource);
-        $this->setCurrentDir(\dirname($path));
+        $this->setCurrentDir(dirname($path));
         $this->container->fileExists($path);
         // the closure forbids access to the private scope in the included file
-        $load = \Closure::bind(function ($path) use($container, $loader, $resource, $type) {
+        $load = Closure::bind(function ($path) use($container, $loader, $resource, $type) {
             return include $path;
-        }, $this, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\ProtectedPhpFileLoader::class);
+        }, $this, ProtectedPhpFileLoader::class);
         $callback = $load($path);
-        if ($callback instanceof \Closure) {
-            $callback(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator($this->container, $this, $this->instanceof, $path, $resource), $this->container, $this);
+        if ($callback instanceof Closure) {
+            $callback(new ContainerConfigurator($this->container, $this, $this->instanceof, $path, $resource), $this->container, $this);
         }
     }
     /**
@@ -46,11 +52,11 @@ class PhpFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
      */
     public function supports($resource, $type = null)
     {
-        if (!\is_string($resource)) {
-            return \false;
+        if (!is_string($resource)) {
+            return false;
         }
-        if (null === $type && 'php' === \pathinfo($resource, \PATHINFO_EXTENSION)) {
-            return \true;
+        if (null === $type && 'php' === pathinfo($resource, PATHINFO_EXTENSION)) {
+            return true;
         }
         return 'php' === $type;
     }
@@ -58,6 +64,6 @@ class PhpFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
 /**
  * @internal
  */
-final class ProtectedPhpFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader
+final class ProtectedPhpFileLoader extends PhpFileLoader
 {
 }

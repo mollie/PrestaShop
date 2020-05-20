@@ -18,26 +18,26 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
  *
  * @final since version 3.3
  */
-class NullDumper implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\DumperInterface
+class NullDumper implements DumperInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function isProxyCandidate(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition)
+    public function isProxyCandidate(Definition $definition)
     {
-        return \false;
+        return false;
     }
     /**
      * {@inheritdoc}
      */
-    public function getProxyFactoryCode(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $id, $factoryCode = null)
+    public function getProxyFactoryCode(Definition $definition, $id, $factoryCode = null)
     {
         return '';
     }
     /**
      * {@inheritdoc}
      */
-    public function getProxyCode(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition)
+    public function getProxyCode(Definition $definition)
     {
         return '';
     }

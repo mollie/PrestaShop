@@ -11,12 +11,16 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode;
+use InvalidArgumentException;
+use RuntimeException;
+use function array_unique;
+
 /**
  * Enum Node Definition.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class EnumNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition
+class EnumNodeDefinition extends ScalarNodeDefinition
 {
     private $values;
     /**
@@ -24,9 +28,9 @@ class EnumNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Conf
      */
     public function values(array $values)
     {
-        $values = \array_unique($values);
+        $values = array_unique($values);
         if (empty($values)) {
-            throw new \InvalidArgumentException('->values() must be called with at least one value.');
+            throw new InvalidArgumentException('->values() must be called with at least one value.');
         }
         $this->values = $values;
         return $this;
@@ -36,13 +40,13 @@ class EnumNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Conf
      *
      * @return EnumNode The node
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function instantiateNode()
     {
         if (null === $this->values) {
-            throw new \RuntimeException('You must call ->values() on enum nodes.');
+            throw new RuntimeException('You must call ->values() on enum nodes.');
         }
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode($this->name, $this->parent, $this->values);
+        return new EnumNode($this->name, $this->parent, $this->values);
     }
 }

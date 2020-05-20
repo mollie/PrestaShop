@@ -10,6 +10,8 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 
+use Closure;
+
 /**
  * This class builds normalization conditions.
  *
@@ -20,7 +22,7 @@ class NormalizationBuilder
     protected $node;
     public $before = [];
     public $remappings = [];
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition $node)
+    public function __construct(NodeDefinition $node)
     {
         $this->node = $node;
     }
@@ -42,12 +44,12 @@ class NormalizationBuilder
      *
      * @return ExprBuilder|$this
      */
-    public function before(\Closure $closure = null)
+    public function before(Closure $closure = null)
     {
         if (null !== $closure) {
             $this->before[] = $closure;
             return $this;
         }
-        return $this->before[] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\ExprBuilder($this->node);
+        return $this->before[] = new ExprBuilder($this->node);
     }
 }

@@ -3,7 +3,9 @@
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus;
-class Invoice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class Invoice extends BaseResource
 {
     /**
      * @var string
@@ -46,32 +48,32 @@ class Invoice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     /**
      * Amount object containing the total amount of the invoice excluding VAT.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $netAmount;
     /**
      * Amount object containing the VAT amount of the invoice. Only for merchants registered in the Netherlands.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $vatAmount;
     /**
      * Total amount of the invoice including VAT.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $grossAmount;
     /**
      * Object containing the invoice lines.
      * See https://docs.mollie.com/reference/v2/invoices-api/get-invoice for reference
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $lines;
     /**
      * Contains a PDF to the Invoice
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
@@ -79,20 +81,20 @@ class Invoice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isPaid()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_PAID;
+        return $this->status == InvoiceStatus::STATUS_PAID;
     }
     /**
      * @return bool
      */
     public function isOpen()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_OPEN;
+        return $this->status == InvoiceStatus::STATUS_OPEN;
     }
     /**
      * @return bool
      */
     public function isOverdue()
     {
-        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_OVERDUE;
+        return $this->status == InvoiceStatus::STATUS_OVERDUE;
     }
 }

@@ -10,9 +10,13 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
-@\trigger_error('The ' . __NAMESPACE__ . '\\ResolveDefinitionTemplatesPass class is deprecated since Symfony 3.4 and will be removed in 4.0. Use the ResolveChildDefinitionsPass class instead.', \E_USER_DEPRECATED);
-\class_exists(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass::class);
-if (\false) {
+use function class_exists;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
+@trigger_error('The ' . __NAMESPACE__ . '\\ResolveDefinitionTemplatesPass class is deprecated since Symfony 3.4 and will be removed in 4.0. Use the ResolveChildDefinitionsPass class instead.', E_USER_DEPRECATED);
+class_exists(ResolveChildDefinitionsPass::class);
+if (false) {
     /**
      * This definition decorates another definition.
      *
@@ -20,7 +24,7 @@ if (\false) {
      *
      * @deprecated The ResolveDefinitionTemplatesPass class is deprecated since version 3.4 and will be removed in 4.0. Use the ResolveChildDefinitionsPass class instead.
      */
-    class ResolveDefinitionTemplatesPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+    class ResolveDefinitionTemplatesPass extends AbstractRecursivePass
     {
     }
 }

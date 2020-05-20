@@ -13,11 +13,13 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\DefinitionDecorator;
-class ChildDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function ucfirst;
+
+class ChildDefinitionTest extends TestCase
 {
     public function testConstructor()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $this->assertSame('foo', $def->getParent());
         $this->assertSame([], $def->getChanges());
     }
@@ -26,13 +28,13 @@ class ChildDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
      */
     public function testSetProperty($property, $changeKey)
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
-        $getter = 'get' . \ucfirst($property);
-        $setter = 'set' . \ucfirst($property);
+        $def = new ChildDefinition('foo');
+        $getter = 'get' . ucfirst($property);
+        $setter = 'set' . ucfirst($property);
         $this->assertNull($def->{$getter}());
         $this->assertSame($def, $def->{$setter}('foo'));
         $this->assertSame('foo', $def->{$getter}());
-        $this->assertSame([$changeKey => \true], $def->getChanges());
+        $this->assertSame([$changeKey => true], $def->getChanges());
     }
     public function getPropertyTests()
     {
@@ -40,31 +42,31 @@ class ChildDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     }
     public function testSetPublic()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $this->assertTrue($def->isPublic());
-        $this->assertSame($def, $def->setPublic(\false));
+        $this->assertSame($def, $def->setPublic(false));
         $this->assertFalse($def->isPublic());
-        $this->assertSame(['public' => \true], $def->getChanges());
+        $this->assertSame(['public' => true], $def->getChanges());
     }
     public function testSetLazy()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $this->assertFalse($def->isLazy());
-        $this->assertSame($def, $def->setLazy(\false));
+        $this->assertSame($def, $def->setLazy(false));
         $this->assertFalse($def->isLazy());
-        $this->assertSame(['lazy' => \true], $def->getChanges());
+        $this->assertSame(['lazy' => true], $def->getChanges());
     }
     public function testSetAutowired()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $this->assertFalse($def->isAutowired());
-        $this->assertSame($def, $def->setAutowired(\true));
+        $this->assertSame($def, $def->setAutowired(true));
         $this->assertTrue($def->isAutowired());
-        $this->assertSame(['autowired' => \true], $def->getChanges());
+        $this->assertSame(['autowired' => true], $def->getChanges());
     }
     public function testSetArgument()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $this->assertSame([], $def->getArguments());
         $this->assertSame($def, $def->replaceArgument(0, 'foo'));
         $this->assertSame(['index_0' => 'foo'], $def->getArguments());
@@ -72,12 +74,12 @@ class ChildDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     public function testReplaceArgumentShouldRequireIntegerIndex()
     {
         $this->expectException('InvalidArgumentException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $def->replaceArgument('0', 'foo');
     }
     public function testReplaceArgument()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $def->setArguments([0 => 'foo', 1 => 'bar']);
         $this->assertSame('foo', $def->getArgument(0));
         $this->assertSame('bar', $def->getArgument(1));
@@ -92,25 +94,25 @@ class ChildDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Tes
     public function testGetArgumentShouldCheckBounds()
     {
         $this->expectException('OutOfBoundsException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
+        $def = new ChildDefinition('foo');
         $def->setArguments([0 => 'foo']);
         $def->replaceArgument(0, 'foo');
         $def->getArgument(1);
     }
     public function testDefinitionDecoratorAliasExistsForBackwardsCompatibility()
     {
-        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition::class, new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\DefinitionDecorator('foo'));
+        $this->assertInstanceOf(ChildDefinition::class, new DefinitionDecorator('foo'));
     }
     public function testCannotCallSetAutoconfigured()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\BadMethodCallException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
-        $def->setAutoconfigured(\true);
+        $def = new ChildDefinition('foo');
+        $def->setAutoconfigured(true);
     }
     public function testCannotCallSetInstanceofConditionals()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\BadMethodCallException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('foo');
-        $def->setInstanceofConditionals(['Foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition('')]);
+        $def = new ChildDefinition('foo');
+        $def->setInstanceofConditionals(['Foo' => new ChildDefinition('')]);
     }
 }

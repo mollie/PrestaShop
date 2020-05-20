@@ -11,6 +11,6 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler;
 
 use _PhpScoper5ea00cc67502b\Symfony\Bug\NotExistClass;
-class OptionalServiceClass extends \_PhpScoper5ea00cc67502b\Symfony\Bug\NotExistClass
+class OptionalServiceClass extends NotExistClass
 {
 }

@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class CaptureCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class CaptureCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class CaptureCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Cu
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Capture($this->client);
+        return new Capture($this->client);
     }
 }

@@ -7,13 +7,13 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fi
  */
 class NamedArgumentsDummy
 {
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass $c, $apiKey, $hostName)
+    public function __construct(CaseSensitiveClass $c, $apiKey, $hostName)
     {
     }
     public function setApiKey($apiKey)
     {
     }
-    public function setSensitiveClass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass $c)
+    public function setSensitiveClass(CaseSensitiveClass $c)
     {
     }
 }

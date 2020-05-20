@@ -12,11 +12,15 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-class CacheItemTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Closure;
+use Exception;
+use function call_user_func;
+
+class CacheItemTest extends TestCase
 {
     public function testValidKey()
     {
-        $this->assertSame('foo', \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey('foo'));
+        $this->assertSame('foo', CacheItem::validateKey('foo'));
     }
     /**
      * @dataProvider provideInvalidKey
@@ -25,20 +29,20 @@ class CacheItemTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Cache key');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
+        CacheItem::validateKey($key);
     }
     public function provideInvalidKey()
     {
-        return [[''], ['{'], ['}'], ['('], [')'], ['/'], ['\\'], ['@'], [':'], [\true], [null], [1], [1.1], [[[]]], [new \Exception('foo')]];
+        return [[''], ['{'], ['}'], ['('], [')'], ['/'], ['\\'], ['@'], [':'], [true], [null], [1], [1.1], [[[]]], [new Exception('foo')]];
     }
     public function testTag()
     {
-        $item = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem();
+        $item = new CacheItem();
         $this->assertSame($item, $item->tag('foo'));
         $this->assertSame($item, $item->tag(['bar', 'baz']));
-        \call_user_func(\Closure::bind(function () use($item) {
+        call_user_func(Closure::bind(function () use($item) {
             $this->assertSame(['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'], $item->tags);
-        }, $this, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::class));
+        }, $this, CacheItem::class));
     }
     /**
      * @dataProvider provideInvalidKey
@@ -47,7 +51,7 @@ class CacheItemTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Cache tag');
-        $item = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem();
+        $item = new CacheItem();
         $item->tag($tag);
     }
 }

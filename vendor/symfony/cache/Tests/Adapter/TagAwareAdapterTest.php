@@ -15,18 +15,21 @@ use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use function sleep;
+use function sys_get_temp_dir;
+
 /**
  * @group time-sensitive
  */
-class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class TagAwareAdapterTest extends AdapterTestCase
 {
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime));
+        return new TagAwareAdapter(new FilesystemAdapter('', $defaultLifetime));
     }
     public static function tearDownAfterClass()
     {
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
+        FilesystemAdapterTest::rmdir(sys_get_temp_dir() . '/symfony-cache');
     }
     public function testInvalidTag()
     {
@@ -103,7 +106,7 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $pool->save($item);
         $pool->invalidateTags(['baz']);
         $this->assertFalse($pool->getItem('foo')->isHit());
-        \sleep(20);
+        sleep(20);
         $this->assertFalse($pool->getItem('foo')->isHit());
     }
     public function testGetPreviousTags()
@@ -116,30 +119,30 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     }
     public function testPrune()
     {
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter($this->getPruneableMock());
+        $cache = new TagAwareAdapter($this->getPruneableMock());
         $this->assertTrue($cache->prune());
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter($this->getNonPruneableMock());
+        $cache = new TagAwareAdapter($this->getNonPruneableMock());
         $this->assertFalse($cache->prune());
-        $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter($this->getFailingPruneableMock());
+        $cache = new TagAwareAdapter($this->getFailingPruneableMock());
         $this->assertFalse($cache->prune());
     }
     public function testKnownTagVersionsTtl()
     {
-        $itemsPool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', 10);
-        $tagsPool = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface::class)->getMock();
-        $pool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter($itemsPool, $tagsPool, 10);
+        $itemsPool = new FilesystemAdapter('', 10);
+        $tagsPool = $this->getMockBuilder(AdapterInterface::class)->getMock();
+        $pool = new TagAwareAdapter($itemsPool, $tagsPool, 10);
         $item = $pool->getItem('foo');
         $item->tag(['baz']);
         $item->expiresAfter(100);
-        $tag = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface::class)->getMock();
+        $tag = $this->getMockBuilder(CacheItemInterface::class)->getMock();
         $tag->expects(self::exactly(2))->method('get')->willReturn(10);
-        $tagsPool->expects(self::exactly(2))->method('getItems')->willReturn(['baz' . \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter::TAGS_PREFIX => $tag]);
+        $tagsPool->expects(self::exactly(2))->method('getItems')->willReturn(['baz' . TagAwareAdapter::TAGS_PREFIX => $tag]);
         $pool->save($item);
         $this->assertTrue($pool->getItem('foo')->isHit());
         $this->assertTrue($pool->getItem('foo')->isHit());
-        \sleep(20);
+        sleep(20);
         $this->assertTrue($pool->getItem('foo')->isHit());
-        \sleep(5);
+        sleep(5);
         $this->assertTrue($pool->getItem('foo')->isHit());
     }
     public function testTagEntryIsCreatedForItemWithoutTags()
@@ -148,8 +151,8 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $itemKey = 'foo';
         $item = $pool->getItem($itemKey);
         $pool->save($item);
-        $adapter = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter();
-        $this->assertTrue($adapter->hasItem(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter::TAGS_PREFIX . $itemKey));
+        $adapter = new FilesystemAdapter();
+        $this->assertTrue($adapter->hasItem(TagAwareAdapter::TAGS_PREFIX . $itemKey));
     }
     public function testHasItemReturnsFalseWhenPoolDoesNotHaveItemTags()
     {
@@ -158,8 +161,8 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $item = $pool->getItem($itemKey);
         $pool->save($item);
         $anotherPool = $this->createCachePool();
-        $adapter = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter();
-        $adapter->deleteItem(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter::TAGS_PREFIX . $itemKey);
+        $adapter = new FilesystemAdapter();
+        $adapter->deleteItem(TagAwareAdapter::TAGS_PREFIX . $itemKey);
         //simulate item losing tags pair
         $this->assertFalse($anotherPool->hasItem($itemKey));
     }
@@ -170,8 +173,8 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $item = $pool->getItem($itemKey);
         $pool->save($item);
         $anotherPool = $this->createCachePool();
-        $adapter = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter();
-        $adapter->deleteItem(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter::TAGS_PREFIX . $itemKey);
+        $adapter = new FilesystemAdapter();
+        $adapter->deleteItem(TagAwareAdapter::TAGS_PREFIX . $itemKey);
         //simulate item losing tags pair
         $item = $anotherPool->getItem($itemKey);
         $this->assertFalse($item->isHit());
@@ -183,7 +186,7 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $item = $pool->getItem($itemKey);
         $pool->save($item);
         $anotherPool = $this->createCachePool();
-        $adapter = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter();
+        $adapter = new FilesystemAdapter();
         $adapter->deleteItem($itemKey);
         //simulate losing item but keeping tags
         $this->assertFalse($anotherPool->hasItem($itemKey));
@@ -195,7 +198,7 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
         $item = $pool->getItem($itemKey);
         $pool->save($item);
         $anotherPool = $this->createCachePool();
-        $adapter = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter();
+        $adapter = new FilesystemAdapter();
         $adapter->deleteItem($itemKey);
         //simulate losing item but keeping tags
         $item = $anotherPool->getItem($itemKey);
@@ -206,8 +209,8 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     private function getPruneableMock()
     {
-        $pruneable = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
-        $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(\true);
+        $pruneable = $this->getMockBuilder(PruneableCacheInterface::class)->getMock();
+        $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(true);
         return $pruneable;
     }
     /**
@@ -215,8 +218,8 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     private function getFailingPruneableMock()
     {
-        $pruneable = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
-        $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(\false);
+        $pruneable = $this->getMockBuilder(PruneableCacheInterface::class)->getMock();
+        $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(false);
         return $pruneable;
     }
     /**
@@ -224,6 +227,6 @@ class TagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     private function getNonPruneableMock()
     {
-        return $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface::class)->getMock();
+        return $this->getMockBuilder(AdapterInterface::class)->getMock();
     }
 }

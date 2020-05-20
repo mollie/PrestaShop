@@ -12,36 +12,36 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Pa
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-class FrozenParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class FrozenParameterBagTest extends TestCase
 {
     public function testConstructor()
     {
         $parameters = ['foo' => 'foo', 'bar' => 'bar'];
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
+        $bag = new FrozenParameterBag($parameters);
         $this->assertEquals($parameters, $bag->all(), '__construct() takes an array of parameters as its first argument');
     }
     public function testClear()
     {
         $this->expectException('LogicException');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag([]);
+        $bag = new FrozenParameterBag([]);
         $bag->clear();
     }
     public function testSet()
     {
         $this->expectException('LogicException');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag([]);
+        $bag = new FrozenParameterBag([]);
         $bag->set('foo', 'bar');
     }
     public function testAdd()
     {
         $this->expectException('LogicException');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag([]);
+        $bag = new FrozenParameterBag([]);
         $bag->add([]);
     }
     public function testRemove()
     {
         $this->expectException('LogicException');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag(['foo' => 'bar']);
+        $bag = new FrozenParameterBag(['foo' => 'bar']);
         $bag->remove('foo');
     }
 }

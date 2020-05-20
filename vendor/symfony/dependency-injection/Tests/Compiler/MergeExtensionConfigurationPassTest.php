@@ -19,103 +19,106 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Merge
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-class MergeExtensionConfigurationPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Exception;
+use function array_keys;
+
+class MergeExtensionConfigurationPassTest extends TestCase
 {
     public function testExpressionLanguageProviderForwarding()
     {
         $tmpProviders = [];
         $extension = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface')->getMock();
-        $extension->expects($this->any())->method('getXsdValidationBasePath')->willReturn(\false);
+        $extension->expects($this->any())->method('getXsdValidationBasePath')->willReturn(false);
         $extension->expects($this->any())->method('getNamespace')->willReturn('http://example.org/schema/dic/foo');
         $extension->expects($this->any())->method('getAlias')->willReturn('foo');
-        $extension->expects($this->once())->method('load')->willReturnCallback(function (array $config, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container) use(&$tmpProviders) {
+        $extension->expects($this->once())->method('load')->willReturnCallback(function (array $config, ContainerBuilder $container) use(&$tmpProviders) {
             $tmpProviders = $container->getExpressionLanguageProviders();
         });
         $provider = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\ExpressionFunctionProviderInterface')->getMock();
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag());
+        $container = new ContainerBuilder(new ParameterBag());
         $container->registerExtension($extension);
-        $container->prependExtensionConfig('foo', ['bar' => \true]);
+        $container->prependExtensionConfig('foo', ['bar' => true]);
         $container->addExpressionLanguageProvider($provider);
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass();
+        $pass = new MergeExtensionConfigurationPass();
         $pass->process($container);
         $this->assertEquals([$provider], $tmpProviders);
     }
     public function testExtensionLoadGetAMergeExtensionConfigurationContainerBuilderInstance()
     {
-        $extension = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooExtension::class)->setMethods(['load'])->getMock();
-        $extension->expects($this->once())->method('load')->with($this->isType('array'), $this->isInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationContainerBuilder::class));
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag());
+        $extension = $this->getMockBuilder(FooExtension::class)->setMethods(['load'])->getMock();
+        $extension->expects($this->once())->method('load')->with($this->isType('array'), $this->isInstanceOf(MergeExtensionConfigurationContainerBuilder::class));
+        $container = new ContainerBuilder(new ParameterBag());
         $container->registerExtension($extension);
         $container->prependExtensionConfig('foo', []);
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass();
+        $pass = new MergeExtensionConfigurationPass();
         $pass->process($container);
     }
     public function testExtensionConfigurationIsTrackedByDefault()
     {
-        $extension = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooExtension::class)->setMethods(['getConfiguration'])->getMock();
-        $extension->expects($this->exactly(2))->method('getConfiguration')->willReturn(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooConfiguration());
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag());
+        $extension = $this->getMockBuilder(FooExtension::class)->setMethods(['getConfiguration'])->getMock();
+        $extension->expects($this->exactly(2))->method('getConfiguration')->willReturn(new FooConfiguration());
+        $container = new ContainerBuilder(new ParameterBag());
         $container->registerExtension($extension);
-        $container->prependExtensionConfig('foo', ['bar' => \true]);
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass();
+        $container->prependExtensionConfig('foo', ['bar' => true]);
+        $pass = new MergeExtensionConfigurationPass();
         $pass->process($container);
-        $this->assertContainsEquals(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource(__FILE__), $container->getResources());
+        $this->assertContainsEquals(new FileResource(__FILE__), $container->getResources());
     }
     public function testOverriddenEnvsAreMerged()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooExtension());
+        $container = new ContainerBuilder();
+        $container->registerExtension(new FooExtension());
         $container->prependExtensionConfig('foo', ['bar' => '%env(FOO)%']);
         $container->prependExtensionConfig('foo', ['bar' => '%env(BAR)%', 'baz' => '%env(BAZ)%']);
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass();
+        $pass = new MergeExtensionConfigurationPass();
         $pass->process($container);
-        $this->assertSame(['BAZ', 'FOO'], \array_keys($container->getParameterBag()->getEnvPlaceholders()));
+        $this->assertSame(['BAZ', 'FOO'], array_keys($container->getParameterBag()->getEnvPlaceholders()));
         $this->assertSame(['BAZ' => 1, 'FOO' => 0], $container->getEnvCounters());
     }
     public function testProcessedEnvsAreIncompatibleWithResolve()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('Using a cast in "env(int:FOO)" is incompatible with resolution at compile time in "Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\BarExtension". The logic in the extension should be moved to a compiler pass, or an env parameter with no cast should be used instead.');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\BarExtension());
+        $container = new ContainerBuilder();
+        $container->registerExtension(new BarExtension());
         $container->prependExtensionConfig('bar', []);
-        (new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass())->process($container);
+        (new MergeExtensionConfigurationPass())->process($container);
     }
     public function testThrowingExtensionsGetMergedBag()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ThrowingExtension());
+        $container = new ContainerBuilder();
+        $container->registerExtension(new ThrowingExtension());
         $container->prependExtensionConfig('throwing', ['bar' => '%env(FOO)%']);
         try {
-            $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass();
+            $pass = new MergeExtensionConfigurationPass();
             $pass->process($container);
             $this->fail('An exception should have been thrown.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
-        $this->assertSame(['FOO'], \array_keys($container->getParameterBag()->getEnvPlaceholders()));
+        $this->assertSame(['FOO'], array_keys($container->getParameterBag()->getEnvPlaceholders()));
     }
 }
-class FooConfiguration implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ConfigurationInterface
+class FooConfiguration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('foo');
         $rootNode->children()->scalarNode('bar')->end()->scalarNode('baz')->end()->end();
         return $treeBuilder;
     }
 }
-class FooExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension
+class FooExtension extends Extension
 {
     public function getAlias()
     {
         return 'foo';
     }
-    public function getConfiguration(array $config, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooConfiguration();
+        return new FooConfiguration();
     }
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -125,25 +128,25 @@ class FooExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         }
     }
 }
-class BarExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension
+class BarExtension extends Extension
 {
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
-        $container->resolveEnvPlaceholders('%env(int:FOO)%', \true);
+        $container->resolveEnvPlaceholders('%env(int:FOO)%', true);
     }
 }
-class ThrowingExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension
+class ThrowingExtension extends Extension
 {
     public function getAlias()
     {
         return 'throwing';
     }
-    public function getConfiguration(array $config, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\FooConfiguration();
+        return new FooConfiguration();
     }
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 }

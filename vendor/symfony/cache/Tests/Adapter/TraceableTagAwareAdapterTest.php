@@ -16,11 +16,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableTagAwareAda
 /**
  * @group time-sensitive
  */
-class TraceableTagAwareAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\TraceableAdapterTest
+class TraceableTagAwareAdapterTest extends TraceableAdapterTest
 {
     public function testInvalidateTags()
     {
-        $pool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableTagAwareAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TagAwareAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter()));
+        $pool = new TraceableTagAwareAdapter(new TagAwareAdapter(new FilesystemAdapter()));
         $pool->invalidateTags(['foo']);
         $calls = $pool->getCalls();
         $this->assertCount(1, $calls);

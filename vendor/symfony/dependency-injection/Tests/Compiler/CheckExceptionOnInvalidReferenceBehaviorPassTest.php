@@ -16,12 +16,12 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Check
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-class CheckExceptionOnInvalidReferenceBehaviorPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class CheckExceptionOnInvalidReferenceBehaviorPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'));
+        $container = new ContainerBuilder();
+        $container->register('a', '\\stdClass')->addArgument(new Reference('b'));
         $container->register('b', '\\stdClass');
         $this->process($container);
         $this->addToAssertionCount(1);
@@ -29,29 +29,29 @@ class CheckExceptionOnInvalidReferenceBehaviorPassTest extends \_PhpScoper5ea00c
     public function testProcessThrowsExceptionOnInvalidReference()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'));
+        $container = new ContainerBuilder();
+        $container->register('a', '\\stdClass')->addArgument(new Reference('b'));
         $this->process($container);
     }
     public function testProcessThrowsExceptionOnInvalidReferenceFromInlinedDefinition()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
-        $def->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'));
+        $container = new ContainerBuilder();
+        $def = new Definition();
+        $def->addArgument(new Reference('b'));
         $container->register('a', '\\stdClass')->addArgument($def);
         $this->process($container);
     }
     public function testProcessDefinitionWithBindings()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('b')->setBindings([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('a'))]);
+        $container = new ContainerBuilder();
+        $container->register('b')->setBindings([new BoundArgument(new Reference('a'))]);
         $this->process($container);
         $this->addToAssertionCount(1);
     }
-    private function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    private function process(ContainerBuilder $container)
     {
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CheckExceptionOnInvalidReferenceBehaviorPass();
+        $pass = new CheckExceptionOnInvalidReferenceBehaviorPass();
         $pass->process($container);
     }
 }

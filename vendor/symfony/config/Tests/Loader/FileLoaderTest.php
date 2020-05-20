@@ -14,7 +14,11 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\FileLoader;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver;
-class FileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Exception;
+use function strtr;
+use const DIRECTORY_SEPARATOR;
+
+class FileLoaderTest extends TestCase
 {
     public function testImportWithFileLocatorDelegation()
     {
@@ -31,12 +35,12 @@ class FileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
             // Exception
             ['path/to/file1', 'path/to/file2']
         ));
-        $fileLoader = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader\TestFileLoader($locatorMock);
-        $fileLoader->setSupports(\false);
+        $fileLoader = new TestFileLoader($locatorMock);
+        $fileLoader->setSupports(false);
         $fileLoader->setCurrentDir('.');
-        $additionalLoader = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader\TestFileLoader($locatorMockForAdditionalLoader);
+        $additionalLoader = new TestFileLoader($locatorMockForAdditionalLoader);
         $additionalLoader->setCurrentDir('.');
-        $fileLoader->setResolver($loaderResolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([$fileLoader, $additionalLoader]));
+        $fileLoader->setResolver($loaderResolver = new LoaderResolver([$fileLoader, $additionalLoader]));
         // Default case
         $this->assertSame('path/to/file1', $fileLoader->import('my_resource'));
         // Check first file is imported if not already loading
@@ -48,7 +52,7 @@ class FileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
         try {
             $fileLoader->import('my_resource');
             $this->fail('->import() throws a FileLoaderImportCircularReferenceException if the resource is already loading');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Exception\\FileLoaderImportCircularReferenceException', $e, '->import() throws a FileLoaderImportCircularReferenceException if the resource is already loading');
         }
         // Check exception throws if all files are already loading
@@ -56,31 +60,31 @@ class FileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
             $fileLoader->addLoading('path/to/file2');
             $fileLoader->import('my_resource');
             $this->fail('->import() throws a FileLoaderImportCircularReferenceException if the resource is already loading');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Exception\\FileLoaderImportCircularReferenceException', $e, '->import() throws a FileLoaderImportCircularReferenceException if the resource is already loading');
         }
     }
     public function testImportWithGlobLikeResource()
     {
         $locatorMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\FileLocatorInterface')->getMock();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader\TestFileLoader($locatorMock);
+        $loader = new TestFileLoader($locatorMock);
         $this->assertSame('[foo]', $loader->import('[foo]'));
     }
     public function testImportWithNoGlobMatch()
     {
         $locatorMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\FileLocatorInterface')->getMock();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader\TestFileLoader($locatorMock);
+        $loader = new TestFileLoader($locatorMock);
         $this->assertNull($loader->import('./*.abc'));
     }
     public function testImportWithSimpleGlob()
     {
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Loader\TestFileLoader(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(__DIR__));
-        $this->assertSame(__FILE__, \strtr($loader->import('FileLoaderTest.*'), '/', \DIRECTORY_SEPARATOR));
+        $loader = new TestFileLoader(new FileLocator(__DIR__));
+        $this->assertSame(__FILE__, strtr($loader->import('FileLoaderTest.*'), '/', DIRECTORY_SEPARATOR));
     }
 }
-class TestFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\FileLoader
+class TestFileLoader extends FileLoader
 {
-    private $supports = \true;
+    private $supports = true;
     public function load($resource, $type = null)
     {
         return $resource;
@@ -91,7 +95,7 @@ class TestFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\L
     }
     public function addLoading($resource)
     {
-        self::$loading[$resource] = \true;
+        self::$loading[$resource] = true;
     }
     public function removeLoading($resource)
     {

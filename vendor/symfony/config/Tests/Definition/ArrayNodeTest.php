@@ -14,36 +14,43 @@ use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode;
-class ArrayNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use Exception;
+use ReflectionMethod;
+use function get_class;
+use function restore_error_handler;
+use function set_error_handler;
+use const E_USER_DEPRECATED;
+
+class ArrayNodeTest extends TestCase
 {
     public function testNormalizeThrowsExceptionWhenFalseIsNotAllowed()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
-        $node->normalize(\false);
+        $node = new ArrayNode('root');
+        $node->normalize(false);
     }
     public function testExceptionThrownOnUnrecognizedChild()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $this->expectExceptionMessage('Unrecognized option "foo" under "root"');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
+        $node = new ArrayNode('root');
         $node->normalize(['foo' => 'bar']);
     }
     public function ignoreAndRemoveMatrixProvider()
     {
-        $unrecognizedOptionException = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException('Unrecognized option "foo" under "root"');
-        return [[\true, \true, [], 'no exception is thrown for an unrecognized child if the ignoreExtraKeys option is set to true'], [\true, \false, ['foo' => 'bar'], 'extra keys are not removed when ignoreExtraKeys second option is set to false'], [\false, \true, $unrecognizedOptionException], [\false, \false, $unrecognizedOptionException]];
+        $unrecognizedOptionException = new InvalidConfigurationException('Unrecognized option "foo" under "root"');
+        return [[true, true, [], 'no exception is thrown for an unrecognized child if the ignoreExtraKeys option is set to true'], [true, false, ['foo' => 'bar'], 'extra keys are not removed when ignoreExtraKeys second option is set to false'], [false, true, $unrecognizedOptionException], [false, false, $unrecognizedOptionException]];
     }
     /**
      * @dataProvider ignoreAndRemoveMatrixProvider
      */
     public function testIgnoreAndRemoveBehaviors($ignore, $remove, $expected, $message = '')
     {
-        if ($expected instanceof \Exception) {
-            $this->expectException(\get_class($expected));
+        if ($expected instanceof Exception) {
+            $this->expectException(get_class($expected));
             $this->expectExceptionMessage($expected->getMessage());
         }
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
+        $node = new ArrayNode('root');
         $node->setIgnoreExtraKeys($ignore, $remove);
         $result = $node->normalize(['foo' => 'bar']);
         $this->assertSame($expected, $result, $message);
@@ -53,9 +60,9 @@ class ArrayNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testPreNormalize($denormalized, $normalized)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
-        $r = new \ReflectionMethod($node, 'preNormalize');
-        $r->setAccessible(\true);
+        $node = new ArrayNode('foo');
+        $r = new ReflectionMethod($node, 'preNormalize');
+        $r->setAccessible(true);
         $this->assertSame($normalized, $r->invoke($node, $denormalized));
     }
     public function getPreNormalizationTests()
@@ -67,17 +74,17 @@ class ArrayNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testNodeNameCanBeZero($denormalized, $normalized)
     {
-        $zeroNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode(0);
-        $zeroNode->addChild(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('name'));
-        $fiveNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode(5);
-        $fiveNode->addChild(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode(0));
-        $fiveNode->addChild(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('new_key'));
-        $rootNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
+        $zeroNode = new ArrayNode(0);
+        $zeroNode->addChild(new ScalarNode('name'));
+        $fiveNode = new ArrayNode(5);
+        $fiveNode->addChild(new ScalarNode(0));
+        $fiveNode->addChild(new ScalarNode('new_key'));
+        $rootNode = new ArrayNode('root');
         $rootNode->addChild($zeroNode);
         $rootNode->addChild($fiveNode);
-        $rootNode->addChild(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('string_key'));
-        $r = new \ReflectionMethod($rootNode, 'normalizeValue');
-        $r->setAccessible(\true);
+        $rootNode->addChild(new ScalarNode('string_key'));
+        $r = new ReflectionMethod($rootNode, 'normalizeValue');
+        $r->setAccessible(true);
         $this->assertSame($normalized, $r->invoke($rootNode, $denormalized));
     }
     public function getZeroNamedNodeExamplesData()
@@ -89,15 +96,15 @@ class ArrayNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testChildrenOrderIsMaintainedOnNormalizeValue($prenormalized, $normalized)
     {
-        $scalar1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('1');
-        $scalar2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('2');
-        $scalar3 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('3');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
+        $scalar1 = new ScalarNode('1');
+        $scalar2 = new ScalarNode('2');
+        $scalar3 = new ScalarNode('3');
+        $node = new ArrayNode('foo');
         $node->addChild($scalar1);
         $node->addChild($scalar3);
         $node->addChild($scalar2);
-        $r = new \ReflectionMethod($node, 'normalizeValue');
-        $r->setAccessible(\true);
+        $r = new ReflectionMethod($node, 'normalizeValue');
+        $r->setAccessible(true);
         $this->assertSame($normalized, $r->invoke($node, $prenormalized));
     }
     public function getPreNormalizedNormalizedOrderedData()
@@ -108,49 +115,49 @@ class ArrayNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Child nodes must be named.');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
-        $childNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('');
+        $node = new ArrayNode('root');
+        $childNode = new ArrayNode('');
         $node->addChild($childNode);
     }
     public function testAddChildNameAlreadyExists()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('A child node named "foo" already exists.');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
-        $childNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
+        $node = new ArrayNode('root');
+        $childNode = new ArrayNode('foo');
         $node->addChild($childNode);
-        $childNodeWithSameName = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
+        $childNodeWithSameName = new ArrayNode('foo');
         $node->addChild($childNodeWithSameName);
     }
     public function testGetDefaultValueWithoutDefaultValue()
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('The node at path "foo" has no default value.');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
+        $node = new ArrayNode('foo');
         $node->getDefaultValue();
     }
     public function testSetDeprecated()
     {
-        $childNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('foo');
+        $childNode = new ArrayNode('foo');
         $childNode->setDeprecated('"%node%" is deprecated');
         $this->assertTrue($childNode->isDeprecated());
         $this->assertSame('"foo" is deprecated', $childNode->getDeprecationMessage($childNode->getName(), $childNode->getPath()));
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
+        $node = new ArrayNode('root');
         $node->addChild($childNode);
-        $deprecationTriggered = \false;
+        $deprecationTriggered = false;
         $deprecationHandler = function ($level, $message, $file, $line) use(&$prevErrorHandler, &$deprecationTriggered) {
-            if (\E_USER_DEPRECATED === $level) {
-                return $deprecationTriggered = \true;
+            if (E_USER_DEPRECATED === $level) {
+                return $deprecationTriggered = true;
             }
-            return $prevErrorHandler ? $prevErrorHandler($level, $message, $file, $line) : \false;
+            return $prevErrorHandler ? $prevErrorHandler($level, $message, $file, $line) : false;
         };
-        $prevErrorHandler = \set_error_handler($deprecationHandler);
+        $prevErrorHandler = set_error_handler($deprecationHandler);
         $node->finalize([]);
-        \restore_error_handler();
+        restore_error_handler();
         $this->assertFalse($deprecationTriggered, '->finalize() should not trigger if the deprecated node is not set');
-        $prevErrorHandler = \set_error_handler($deprecationHandler);
+        $prevErrorHandler = set_error_handler($deprecationHandler);
         $node->finalize(['foo' => []]);
-        \restore_error_handler();
+        restore_error_handler();
         $this->assertTrue($deprecationTriggered, '->finalize() should trigger if the deprecated node is set');
     }
 }

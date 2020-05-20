@@ -2,13 +2,15 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
+use stdClass;
+
 /**
  * @method Refund[]|RefundCollection all($from = null, $limit = 50, array $filters = [])
  * @method Refund get($refundId, array $filters = [])
  * @method Refund create(array $data = [], array $filters = [])
  * @method Refund delete($refundId)
  */
-class Chargeback extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+class Chargeback extends BaseResource
 {
     /**
      * Id of the payment method.
@@ -19,7 +21,7 @@ class Chargeback extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResou
     /**
      * The $amount that was refunded.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $amount;
     /**
@@ -38,11 +40,11 @@ class Chargeback extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResou
     /**
      * The settlement amount
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $settlementAmount;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
 }

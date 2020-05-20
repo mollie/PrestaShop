@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * List shipment for an order using the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -24,6 +28,6 @@ try {
             echo $line->name . ' - status: <b>' . $line->status . '</b>.';
         }
     }
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

@@ -18,10 +18,18 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\Runt
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference;
+use ReflectionFunctionAbstract;
+use function array_key_exists;
+use function array_pop;
+use function count;
+use function gettype;
+use function ksort;
+use function sprintf;
+
 /**
  * @author Guilhem Niot <guilhem.niot@gmail.com>
  */
-class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+class ResolveBindingsPass extends AbstractRecursivePass
 {
     private $usedBindings = [];
     private $unusedBindings = [];
@@ -29,20 +37,20 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
     /**
      * {@inheritdoc}
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         $this->usedBindings = $container->getRemovedBindingIds();
         try {
             parent::process($container);
-            foreach ($this->unusedBindings as list($key, $serviceId)) {
-                $message = \sprintf('Unused binding "%s" in service "%s".', $key, $serviceId);
+            foreach ($this->unusedBindings as [$key, $serviceId]) {
+                $message = sprintf('Unused binding "%s" in service "%s".', $key, $serviceId);
                 if ($this->errorMessages) {
-                    $message .= \sprintf("\nCould be related to%s:", 1 < \count($this->errorMessages) ? ' one of' : '');
+                    $message .= sprintf("\nCould be related to%s:", 1 < count($this->errorMessages) ? ' one of' : '');
                 }
                 foreach ($this->errorMessages as $m) {
                     $message .= "\n - " . $m;
                 }
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException($message);
+                throw new InvalidArgumentException($message);
             }
         } finally {
             $this->usedBindings = [];
@@ -53,9 +61,9 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
     /**
      * {@inheritdoc}
      */
-    protected function processValue($value, $isRoot = \false)
+    protected function processValue($value, $isRoot = false)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference && $value->getType() === $this->container->normalizeId($value)) {
+        if ($value instanceof TypedReference && $value->getType() === $this->container->normalizeId($value)) {
             // Already checked
             $bindings = $this->container->getDefinition($this->currentId)->getBindings();
             if (isset($bindings[$value->getType()])) {
@@ -63,13 +71,13 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
             }
             return parent::processValue($value, $isRoot);
         }
-        if (!$value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition || !($bindings = $value->getBindings())) {
+        if (!$value instanceof Definition || !($bindings = $value->getBindings())) {
             return parent::processValue($value, $isRoot);
         }
         foreach ($bindings as $key => $binding) {
-            list($bindingValue, $bindingId, $used) = $binding->getValues();
+            [$bindingValue, $bindingId, $used] = $binding->getValues();
             if ($used) {
-                $this->usedBindings[$bindingId] = \true;
+                $this->usedBindings[$bindingId] = true;
                 unset($this->unusedBindings[$bindingId]);
             } elseif (!isset($this->usedBindings[$bindingId])) {
                 $this->unusedBindings[$bindingId] = [$key, $this->currentId];
@@ -77,8 +85,8 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
             if (isset($key[0]) && '$' === $key[0]) {
                 continue;
             }
-            if (null !== $bindingValue && !$bindingValue instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference && !$bindingValue instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid value for binding key "%s" for service "%s": expected null, an instance of "%s" or an instance of "%s", "%s" given.', $key, $this->currentId, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition::class, \gettype($bindingValue)));
+            if (null !== $bindingValue && !$bindingValue instanceof Reference && !$bindingValue instanceof Definition) {
+                throw new InvalidArgumentException(sprintf('Invalid value for binding key "%s" for service "%s": expected null, an instance of "%s" or an instance of "%s", "%s" given.', $key, $this->currentId, Reference::class, Definition::class, gettype($bindingValue)));
             }
         }
         if ($value->isAbstract()) {
@@ -86,22 +94,22 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
         }
         $calls = $value->getMethodCalls();
         try {
-            if ($constructor = $this->getConstructor($value, \false)) {
+            if ($constructor = $this->getConstructor($value, false)) {
                 $calls[] = [$constructor, $value->getArguments()];
             }
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->errorMessages[] = $e->getMessage();
             $this->container->getDefinition($this->currentId)->addError($e->getMessage());
             return parent::processValue($value, $isRoot);
         }
         foreach ($calls as $i => $call) {
-            list($method, $arguments) = $call;
-            if ($method instanceof \ReflectionFunctionAbstract) {
+            [$method, $arguments] = $call;
+            if ($method instanceof ReflectionFunctionAbstract) {
                 $reflectionMethod = $method;
             } else {
                 try {
                     $reflectionMethod = $this->getReflectionMethod($value, $method);
-                } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
+                } catch (RuntimeException $e) {
                     if ($value->getFactory()) {
                         continue;
                     }
@@ -109,26 +117,26 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
                 }
             }
             foreach ($reflectionMethod->getParameters() as $key => $parameter) {
-                if (\array_key_exists($key, $arguments) && '' !== $arguments[$key]) {
+                if (array_key_exists($key, $arguments) && '' !== $arguments[$key]) {
                     continue;
                 }
-                if (\array_key_exists('$' . $parameter->name, $bindings)) {
+                if (array_key_exists('$' . $parameter->name, $bindings)) {
                     $arguments[$key] = $this->getBindingValue($bindings['$' . $parameter->name]);
                     continue;
                 }
-                $typeHint = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($reflectionMethod, $parameter, \true);
+                $typeHint = ProxyHelper::getTypeHint($reflectionMethod, $parameter, true);
                 if (!isset($bindings[$typeHint])) {
                     continue;
                 }
                 $arguments[$key] = $this->getBindingValue($bindings[$typeHint]);
             }
             if ($arguments !== $call[1]) {
-                \ksort($arguments);
+                ksort($arguments);
                 $calls[$i][1] = $arguments;
             }
         }
         if ($constructor) {
-            list(, $arguments) = \array_pop($calls);
+            [, $arguments] = array_pop($calls);
             if ($arguments !== $value->getArguments()) {
                 $value->setArguments($arguments);
             }
@@ -138,10 +146,10 @@ class ResolveBindingsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dep
         }
         return parent::processValue($value, $isRoot);
     }
-    private function getBindingValue(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument $binding)
+    private function getBindingValue(BoundArgument $binding)
     {
-        list($bindingValue, $bindingId) = $binding->getValues();
-        $this->usedBindings[$bindingId] = \true;
+        [$bindingValue, $bindingId] = $binding->getValues();
+        $this->usedBindings[$bindingId] = true;
         unset($this->unusedBindings[$bindingId]);
         return $bindingValue;
     }

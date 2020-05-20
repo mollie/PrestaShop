@@ -7,7 +7,7 @@ use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
  * Lazily reads or writes to a file that is opened only after an IO operation
  * take place on the stream.
  */
-class LazyOpenStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface
+class LazyOpenStream implements StreamInterface
 {
     use StreamDecoratorTrait;
     /** @var string File to open */

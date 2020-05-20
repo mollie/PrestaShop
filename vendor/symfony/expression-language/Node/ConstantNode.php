@@ -11,20 +11,23 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use function is_array;
+use function is_numeric;
+
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ConstantNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class ConstantNode extends Node
 {
     private $isIdentifier;
-    public function __construct($value, $isIdentifier = \false)
+    public function __construct($value, $isIdentifier = false)
     {
         $this->isIdentifier = $isIdentifier;
         parent::__construct([], ['value' => $value]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler->repr($this->attributes['value']);
     }
@@ -38,15 +41,15 @@ class ConstantNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Expression
         $value = $this->attributes['value'];
         if ($this->isIdentifier) {
             $array[] = $value;
-        } elseif (\true === $value) {
+        } elseif (true === $value) {
             $array[] = 'true';
-        } elseif (\false === $value) {
+        } elseif (false === $value) {
             $array[] = 'false';
         } elseif (null === $value) {
             $array[] = 'null';
-        } elseif (\is_numeric($value)) {
+        } elseif (is_numeric($value)) {
             $array[] = $value;
-        } elseif (!\is_array($value)) {
+        } elseif (!is_array($value)) {
             $array[] = $this->dumpString($value);
         } elseif ($this->isHash($value)) {
             foreach ($value as $k => $v) {

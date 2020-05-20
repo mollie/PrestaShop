@@ -16,14 +16,14 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
  *
  * @internal
  */
-class UnaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class UnaryNode extends Node
 {
     private static $operators = ['!' => '!', 'not' => '!', '+' => '+', '-' => '-'];
-    public function __construct($operator, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $node)
+    public function __construct($operator, Node $node)
     {
         parent::__construct(['node' => $node], ['operator' => $operator]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler->raw('(')->raw(self::$operators[$this->attributes['operator']])->compile($this->nodes['node'])->raw(')');
     }

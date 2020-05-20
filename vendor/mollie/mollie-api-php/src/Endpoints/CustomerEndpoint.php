@@ -5,7 +5,9 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CustomerCollection;
-class CustomerEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use stdClass;
+
+class CustomerEndpoint extends CollectionEndpointAbstract
 {
     protected $resourcePath = "customers";
     /**
@@ -15,19 +17,19 @@ class CustomerEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Col
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer($this->client);
+        return new Customer($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param \stdClass $_links
+     * @param stdClass $_links
      *
      * @return CustomerCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CustomerCollection($this->client, $count, $_links);
+        return new CustomerCollection($this->client, $count, $_links);
     }
     /**
      * Creates a customer in Mollie.

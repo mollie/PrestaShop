@@ -5,6 +5,10 @@ namespace _PhpScoper5ea00cc67502b;
 /*
  * Refund all eligible items for an order using the Mollie API.
  */
+
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use function htmlspecialchars;
+
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -19,6 +23,6 @@ try {
     $refund = $order->refundAll();
     echo 'Refund ' . $refund->id . ' was created for order ' . $order->id;
     echo 'You will receive ' . $refund->amount->currency . $refund->amount->value;
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . \htmlspecialchars($e->getMessage());
+} catch (ApiException $e) {
+    echo "API call failed: " . htmlspecialchars($e->getMessage());
 }

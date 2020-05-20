@@ -16,6 +16,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class UnsetKeyException extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception
+class UnsetKeyException extends Exception
 {
 }

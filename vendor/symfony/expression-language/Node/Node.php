@@ -11,6 +11,16 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use BadMethodCallException;
+use function addcslashes;
+use function count;
+use function explode;
+use function implode;
+use function is_scalar;
+use function sprintf;
+use function str_replace;
+use function var_export;
+
 /**
  * Represents a node in the AST.
  *
@@ -33,12 +43,12 @@ class Node
     {
         $attributes = [];
         foreach ($this->attributes as $name => $value) {
-            $attributes[] = \sprintf('%s: %s', $name, \str_replace("\n", '', \var_export($value, \true)));
+            $attributes[] = sprintf('%s: %s', $name, str_replace("\n", '', var_export($value, true)));
         }
-        $repr = [\str_replace('Symfony\\Component\\ExpressionLanguage\\Node\\', '', static::class) . '(' . \implode(', ', $attributes)];
-        if (\count($this->nodes)) {
+        $repr = [str_replace('Symfony\\Component\\ExpressionLanguage\\Node\\', '', static::class) . '(' . implode(', ', $attributes)];
+        if (count($this->nodes)) {
             foreach ($this->nodes as $node) {
-                foreach (\explode("\n", (string) $node) as $line) {
+                foreach (explode("\n", (string) $node) as $line) {
                     $repr[] = '    ' . $line;
                 }
             }
@@ -46,9 +56,9 @@ class Node
         } else {
             $repr[0] .= ')';
         }
-        return \implode("\n", $repr);
+        return implode("\n", $repr);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         foreach ($this->nodes as $node) {
             $node->compile($compiler);
@@ -64,28 +74,28 @@ class Node
     }
     public function toArray()
     {
-        throw new \BadMethodCallException(\sprintf('Dumping a "%s" instance is not supported yet.', static::class));
+        throw new BadMethodCallException(sprintf('Dumping a "%s" instance is not supported yet.', static::class));
     }
     public function dump()
     {
         $dump = '';
         foreach ($this->toArray() as $v) {
-            $dump .= \is_scalar($v) ? $v : $v->dump();
+            $dump .= is_scalar($v) ? $v : $v->dump();
         }
         return $dump;
     }
     protected function dumpString($value)
     {
-        return \sprintf('"%s"', \addcslashes($value, "\0\t\"\\"));
+        return sprintf('"%s"', addcslashes($value, "\0\t\"\\"));
     }
     protected function isHash(array $value)
     {
         $expectedKey = 0;
         foreach ($value as $key => $val) {
             if ($key !== $expectedKey++) {
-                return \true;
+                return true;
             }
         }
-        return \false;
+        return false;
     }
 }

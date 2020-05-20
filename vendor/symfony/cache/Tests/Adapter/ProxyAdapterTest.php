@@ -14,31 +14,33 @@ use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
+use Exception;
+
 /**
  * @group time-sensitive
  */
-class ProxyAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class ProxyAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = ['testDeferredSaveWithoutCommit' => 'Assumes a shared cache which ArrayAdapter is not.', 'testSaveWithoutExpire' => 'Assumes a shared cache which ArrayAdapter is not.', 'testPrune' => 'ProxyAdapter just proxies'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter(), '', $defaultLifetime);
+        return new ProxyAdapter(new ArrayAdapter(), '', $defaultLifetime);
     }
     public function testProxyfiedItem()
     {
         $this->expectException('Exception');
         $this->expectExceptionMessage('OK bar');
-        $item = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem();
-        $pool = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ProxyAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\TestingArrayAdapter($item));
+        $item = new CacheItem();
+        $pool = new ProxyAdapter(new TestingArrayAdapter($item));
         $proxyItem = $pool->getItem('foo');
         $this->assertNotSame($item, $proxyItem);
         $pool->save($proxyItem->set('bar'));
     }
 }
-class TestingArrayAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter
+class TestingArrayAdapter extends ArrayAdapter
 {
     private $item;
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function __construct(CacheItemInterface $item)
     {
         $this->item = $item;
     }
@@ -46,10 +48,10 @@ class TestingArrayAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     {
         return $this->item;
     }
-    public function save(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function save(CacheItemInterface $item)
     {
         if ($item === $this->item) {
-            throw new \Exception('OK ' . $item->get());
+            throw new Exception('OK ' . $item->get());
         }
     }
 }

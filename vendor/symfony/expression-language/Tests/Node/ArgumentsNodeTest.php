@@ -11,7 +11,7 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ArgumentsNode;
-class ArgumentsNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node\ArrayNodeTest
+class ArgumentsNodeTest extends ArrayNodeTest
 {
     public function getCompileData()
     {
@@ -23,6 +23,6 @@ class ArgumentsNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Expre
     }
     protected function createArrayNode()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ArgumentsNode();
+        return new ArgumentsNode();
     }
 }

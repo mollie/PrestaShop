@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\IntegerNode;
  *
  * @author Jeanmonod David <david.jeanmonod@gmail.com>
  */
-class IntegerNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NumericNodeDefinition
+class IntegerNodeDefinition extends NumericNodeDefinition
 {
     /**
      * Instantiates a Node.
@@ -25,6 +25,6 @@ class IntegerNodeDefinition extends \_PhpScoper5ea00cc67502b\Symfony\Component\C
      */
     protected function instantiateNode()
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\IntegerNode($this->name, $this->parent, $this->min, $this->max);
+        return new IntegerNode($this->name, $this->parent, $this->min, $this->max);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class ChargebackCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class ChargebackCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class ChargebackCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Chargeback($this->client);
+        return new Chargeback($this->client);
     }
 }

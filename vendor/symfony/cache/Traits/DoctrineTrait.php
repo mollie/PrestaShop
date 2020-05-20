@@ -10,6 +10,11 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
+use Error;
+use ErrorException;
+use function ini_set;
+use const E_ERROR;
+
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -31,22 +36,22 @@ trait DoctrineTrait
      */
     protected function doFetch(array $ids)
     {
-        $unserializeCallbackHandler = \ini_set('unserialize_callback_func', parent::class . '::handleUnserializeCallback');
+        $unserializeCallbackHandler = ini_set('unserialize_callback_func', parent::class . '::handleUnserializeCallback');
         try {
             return $this->provider->fetchMultiple($ids);
-        } catch (\Error $e) {
+        } catch (Error $e) {
             $trace = $e->getTrace();
             if (isset($trace[0]['function']) && !isset($trace[0]['class'])) {
                 switch ($trace[0]['function']) {
                     case 'unserialize':
                     case 'apcu_fetch':
                     case 'apc_fetch':
-                        throw new \ErrorException($e->getMessage(), $e->getCode(), \E_ERROR, $e->getFile(), $e->getLine());
+                        throw new ErrorException($e->getMessage(), $e->getCode(), E_ERROR, $e->getFile(), $e->getLine());
                 }
             }
             throw $e;
         } finally {
-            \ini_set('unserialize_callback_func', $unserializeCallbackHandler);
+            ini_set('unserialize_callback_func', $unserializeCallbackHandler);
         }
     }
     /**
@@ -69,7 +74,7 @@ trait DoctrineTrait
      */
     protected function doDelete(array $ids)
     {
-        $ok = \true;
+        $ok = true;
         foreach ($ids as $id) {
             $ok = $this->provider->delete($id) && $ok;
         }

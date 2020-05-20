@@ -11,6 +11,10 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
+use function gettype;
+use function is_scalar;
+use function sprintf;
+
 /**
  * This node represents a scalar value in the config tree.
  *
@@ -23,15 +27,15 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Invali
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ScalarNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\VariableNode
+class ScalarNode extends VariableNode
 {
     /**
      * {@inheritdoc}
      */
     protected function validateType($value)
     {
-        if (!\is_scalar($value) && null !== $value) {
-            $ex = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException(\sprintf('Invalid type for path "%s". Expected scalar, but got %s.', $this->getPath(), \gettype($value)));
+        if (!is_scalar($value) && null !== $value) {
+            $ex = new InvalidTypeException(sprintf('Invalid type for path "%s". Expected scalar, but got %s.', $this->getPath(), gettype($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }

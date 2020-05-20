@@ -2,7 +2,7 @@
 <module>
     <name>mollie</name>
     <displayName><![CDATA[Mollie]]></displayName>
-    <version><![CDATA[4.0.0]]></version>
+    <version><![CDATA[4.0.1]]></version>
     <description><![CDATA[Mollie Payments]]></description>
     <author><![CDATA[Mollie B.V.]]></author>
     <tab><![CDATA[payments_gateways]]></tab>

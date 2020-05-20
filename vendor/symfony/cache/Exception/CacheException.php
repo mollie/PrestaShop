@@ -12,6 +12,8 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception;
 
 use _PhpScoper5ea00cc67502b\Psr\Cache\CacheException as Psr6CacheInterface;
 use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException as SimpleCacheInterface;
-class CacheException extends \Exception implements \_PhpScoper5ea00cc67502b\Psr\Cache\CacheException, \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheException
+use Exception;
+
+class CacheException extends Exception implements Psr6CacheInterface, SimpleCacheInterface
 {
 }

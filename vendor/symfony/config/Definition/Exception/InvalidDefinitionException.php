@@ -15,6 +15,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
  *
  * @author Victor Berchet <victor.berchet@suumit.com>
  */
-class InvalidDefinitionException extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception
+class InvalidDefinitionException extends Exception
 {
 }

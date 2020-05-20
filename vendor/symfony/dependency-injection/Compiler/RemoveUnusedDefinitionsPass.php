@@ -11,28 +11,34 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use function array_unique;
+use function count;
+use function reset;
+use function serialize;
+use function sprintf;
+
 /**
  * Removes unused service definitions from the container.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class RemoveUnusedDefinitionsPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
+class RemoveUnusedDefinitionsPass implements RepeatablePassInterface
 {
     private $repeatedPass;
     /**
      * {@inheritdoc}
      */
-    public function setRepeatedPass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
+    public function setRepeatedPass(RepeatedPass $repeatedPass)
     {
         $this->repeatedPass = $repeatedPass;
     }
     /**
      * Processes the ContainerBuilder to remove unused definitions.
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(ContainerBuilder $container)
     {
         $graph = $container->getCompiler()->getServiceReferenceGraph();
-        $hasChanged = \false;
+        $hasChanged = false;
         foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition->isPublic() || $definition->isPrivate()) {
                 continue;
@@ -51,22 +57,22 @@ class RemoveUnusedDefinitionsPass implements \_PhpScoper5ea00cc67502b\Symfony\Co
                         $referencingAliases[] = $node->getValue();
                     }
                 }
-                $isReferenced = \count(\array_unique($sourceIds)) - \count($referencingAliases) > 0;
+                $isReferenced = count(array_unique($sourceIds)) - count($referencingAliases) > 0;
             } else {
                 $referencingAliases = [];
-                $isReferenced = \false;
+                $isReferenced = false;
             }
-            if (1 === \count($referencingAliases) && \false === $isReferenced) {
-                $container->setDefinition((string) \reset($referencingAliases), $definition);
+            if (1 === count($referencingAliases) && false === $isReferenced) {
+                $container->setDefinition((string) reset($referencingAliases), $definition);
                 $definition->setPublic(!$definition->isPrivate());
-                $definition->setPrivate(\reset($referencingAliases)->isPrivate());
+                $definition->setPrivate(reset($referencingAliases)->isPrivate());
                 $container->removeDefinition($id);
-                $container->log($this, \sprintf('Removed service "%s"; reason: replaces alias %s.', $id, \reset($referencingAliases)));
-            } elseif (0 === \count($referencingAliases) && \false === $isReferenced) {
+                $container->log($this, sprintf('Removed service "%s"; reason: replaces alias %s.', $id, reset($referencingAliases)));
+            } elseif (0 === count($referencingAliases) && false === $isReferenced) {
                 $container->removeDefinition($id);
-                $container->resolveEnvPlaceholders(\serialize($definition));
-                $container->log($this, \sprintf('Removed service "%s"; reason: unused.', $id));
-                $hasChanged = \true;
+                $container->resolveEnvPlaceholders(serialize($definition));
+                $container->log($this, sprintf('Removed service "%s"; reason: unused.', $id));
+                $hasChanged = true;
             }
         }
         if ($hasChanged) {

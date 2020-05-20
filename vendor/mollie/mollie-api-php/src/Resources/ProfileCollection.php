@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class ProfileCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class ProfileCollection extends CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class ProfileCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Cu
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile($this->client);
+        return new Profile($this->client);
     }
 }

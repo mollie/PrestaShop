@@ -12,26 +12,29 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Pa
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
-class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function array_values;
+use function sprintf;
+
+class EnvPlaceholderParameterBagTest extends TestCase
 {
     public function testGetThrowsInvalidArgumentExceptionIfEnvNameContainsNonWordCharacters()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->get('env(%foo%)');
     }
     public function testMergeWillNotDuplicateIdenticalParameters()
     {
         $envVariableName = 'DB_HOST';
-        $parameter = \sprintf('env(%s)', $envVariableName);
-        $firstBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $parameter = sprintf('env(%s)', $envVariableName);
+        $firstBag = new EnvPlaceholderParameterBag();
         // initialize placeholders
         $firstBag->get($parameter);
         $secondBag = clone $firstBag;
         $firstBag->mergeEnvPlaceholders($secondBag);
         $mergedPlaceholders = $firstBag->getEnvPlaceholders();
         $placeholderForVariable = $mergedPlaceholders[$envVariableName];
-        $placeholder = \array_values($placeholderForVariable)[0];
+        $placeholder = array_values($placeholderForVariable)[0];
         $this->assertCount(1, $placeholderForVariable);
         $this->assertIsString($placeholder);
         $this->assertStringContainsString($envVariableName, $placeholder);
@@ -39,16 +42,16 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     public function testMergeWhereFirstBagIsEmptyWillWork()
     {
         $envVariableName = 'DB_HOST';
-        $parameter = \sprintf('env(%s)', $envVariableName);
-        $firstBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
-        $secondBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $parameter = sprintf('env(%s)', $envVariableName);
+        $firstBag = new EnvPlaceholderParameterBag();
+        $secondBag = new EnvPlaceholderParameterBag();
         // initialize placeholder only in second bag
         $secondBag->get($parameter);
         $this->assertEmpty($firstBag->getEnvPlaceholders());
         $firstBag->mergeEnvPlaceholders($secondBag);
         $mergedPlaceholders = $firstBag->getEnvPlaceholders();
         $placeholderForVariable = $mergedPlaceholders[$envVariableName];
-        $placeholder = \array_values($placeholderForVariable)[0];
+        $placeholder = array_values($placeholderForVariable)[0];
         $this->assertCount(1, $placeholderForVariable);
         $this->assertIsString($placeholder);
         $this->assertStringContainsString($envVariableName, $placeholder);
@@ -57,9 +60,9 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     {
         $uniqueEnvName = 'DB_HOST';
         $commonEnvName = 'DB_USER';
-        $uniqueParamName = \sprintf('env(%s)', $uniqueEnvName);
-        $commonParamName = \sprintf('env(%s)', $commonEnvName);
-        $firstBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $uniqueParamName = sprintf('env(%s)', $uniqueEnvName);
+        $commonParamName = sprintf('env(%s)', $commonEnvName);
+        $firstBag = new EnvPlaceholderParameterBag();
         // initialize common placeholder
         $firstBag->get($commonParamName);
         $secondBag = clone $firstBag;
@@ -74,9 +77,9 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     public function testMergeWithDifferentIdentifiersForPlaceholders()
     {
         $envName = 'DB_USER';
-        $paramName = \sprintf('env(%s)', $envName);
-        $firstBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
-        $secondBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $paramName = sprintf('env(%s)', $envName);
+        $firstBag = new EnvPlaceholderParameterBag();
+        $secondBag = new EnvPlaceholderParameterBag();
         // initialize placeholders
         $firstPlaceholder = $firstBag->get($paramName);
         $secondPlaceholder = $secondBag->get($paramName);
@@ -87,7 +90,7 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     }
     public function testResolveEnvCastsIntToString()
     {
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->get('env(INT_VAR)');
         $bag->set('env(INT_VAR)', 2);
         $bag->resolve();
@@ -95,7 +98,7 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     }
     public function testResolveEnvAllowsNull()
     {
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->get('env(NULL_VAR)');
         $bag->set('env(NULL_VAR)', null);
         $bag->resolve();
@@ -105,14 +108,14 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('The default value of env parameter "ARRAY_VAR" must be scalar or null, "array" given.');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->get('env(ARRAY_VAR)');
         $bag->set('env(ARRAY_VAR)', []);
         $bag->resolve();
     }
     public function testGetEnvAllowsNull()
     {
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->set('env(NULL_VAR)', null);
         $bag->get('env(NULL_VAR)');
         $bag->resolve();
@@ -122,7 +125,7 @@ class EnvPlaceholderParameterBagTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Fr
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
         $this->expectExceptionMessage('The default value of an env() parameter must be scalar or null, but "array" given to "env(ARRAY_VAR)".');
-        $bag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $bag = new EnvPlaceholderParameterBag();
         $bag->set('env(ARRAY_VAR)', []);
         $bag->get('env(ARRAY_VAR)');
         $bag->resolve();

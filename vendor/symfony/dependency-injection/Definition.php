@@ -13,6 +13,21 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\OutOfBoundsException;
+use function array_key_exists;
+use function array_keys;
+use function count;
+use function explode;
+use function func_get_arg;
+use function func_num_args;
+use function is_int;
+use function is_string;
+use function preg_match;
+use function sprintf;
+use function str_replace;
+use function strpos;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
 /**
  * Definition represents a service definition.
  *
@@ -23,22 +38,22 @@ class Definition
     private $class;
     private $file;
     private $factory;
-    private $shared = \true;
-    private $deprecated = \false;
+    private $shared = true;
+    private $deprecated = false;
     private $deprecationTemplate;
     private $properties = [];
     private $calls = [];
     private $instanceof = [];
-    private $autoconfigured = \false;
+    private $autoconfigured = false;
     private $configurator;
     private $tags = [];
-    private $public = \true;
-    private $private = \true;
-    private $synthetic = \false;
-    private $abstract = \false;
-    private $lazy = \false;
+    private $public = true;
+    private $private = true;
+    private $synthetic = false;
+    private $abstract = false;
+    private $lazy = false;
     private $decoratedService;
-    private $autowired = \false;
+    private $autowired = false;
     private $autowiringTypes = [];
     private $changes = [];
     private $bindings = [];
@@ -86,9 +101,9 @@ class Definition
      */
     public function setFactory($factory)
     {
-        $this->changes['factory'] = \true;
-        if (\is_string($factory) && \false !== \strpos($factory, '::')) {
-            $factory = \explode('::', $factory, 2);
+        $this->changes['factory'] = true;
+        if (is_string($factory) && false !== strpos($factory, '::')) {
+            $factory = explode('::', $factory, 2);
         }
         $this->factory = $factory;
         return $this;
@@ -116,9 +131,9 @@ class Definition
     public function setDecoratedService($id, $renamedId = null, $priority = 0)
     {
         if ($renamedId && $id === $renamedId) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The decorated service inner name for "%s" must be different than the service name itself.', $id));
+            throw new InvalidArgumentException(sprintf('The decorated service inner name for "%s" must be different than the service name itself.', $id));
         }
-        $this->changes['decorated_service'] = \true;
+        $this->changes['decorated_service'] = true;
         if (null === $id) {
             $this->decoratedService = null;
         } else {
@@ -144,7 +159,7 @@ class Definition
      */
     public function setClass($class)
     {
-        $this->changes['class'] = \true;
+        $this->changes['class'] = true;
         $this->class = $class;
         return $this;
     }
@@ -223,14 +238,14 @@ class Definition
      */
     public function replaceArgument($index, $argument)
     {
-        if (0 === \count($this->arguments)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\OutOfBoundsException('Cannot replace arguments if none have been configured yet.');
+        if (0 === count($this->arguments)) {
+            throw new OutOfBoundsException('Cannot replace arguments if none have been configured yet.');
         }
-        if (\is_int($index) && ($index < 0 || $index > \count($this->arguments) - 1)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\OutOfBoundsException(\sprintf('The index "%d" is not in the range [0, %d].', $index, \count($this->arguments) - 1));
+        if (is_int($index) && ($index < 0 || $index > count($this->arguments) - 1)) {
+            throw new OutOfBoundsException(sprintf('The index "%d" is not in the range [0, %d].', $index, count($this->arguments) - 1));
         }
-        if (!\array_key_exists($index, $this->arguments)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\OutOfBoundsException(\sprintf('The argument "%s" doesn\'t exist.', $index));
+        if (!array_key_exists($index, $this->arguments)) {
+            throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
         }
         $this->arguments[$index] = $argument;
         return $this;
@@ -268,8 +283,8 @@ class Definition
      */
     public function getArgument($index)
     {
-        if (!\array_key_exists($index, $this->arguments)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\OutOfBoundsException(\sprintf('The argument "%s" doesn\'t exist.', $index));
+        if (!array_key_exists($index, $this->arguments)) {
+            throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
         }
         return $this->arguments[$index];
     }
@@ -299,7 +314,7 @@ class Definition
     public function addMethodCall($method, array $arguments = [])
     {
         if (empty($method)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('Method name cannot be empty.');
+            throw new InvalidArgumentException('Method name cannot be empty.');
         }
         $this->calls[] = [$method, $arguments];
         return $this;
@@ -332,10 +347,10 @@ class Definition
     {
         foreach ($this->calls as $call) {
             if ($call[0] === $method) {
-                return \true;
+                return true;
             }
         }
-        return \false;
+        return false;
     }
     /**
      * Gets the methods to call after service initialization.
@@ -376,7 +391,7 @@ class Definition
      */
     public function setAutoconfigured($autoconfigured)
     {
-        $this->changes['autoconfigured'] = \true;
+        $this->changes['autoconfigured'] = true;
         $this->autoconfigured = $autoconfigured;
         return $this;
     }
@@ -472,7 +487,7 @@ class Definition
      */
     public function setFile($file)
     {
-        $this->changes['file'] = \true;
+        $this->changes['file'] = true;
         $this->file = $file;
         return $this;
     }
@@ -494,7 +509,7 @@ class Definition
      */
     public function setShared($shared)
     {
-        $this->changes['shared'] = \true;
+        $this->changes['shared'] = true;
         $this->shared = (bool) $shared;
         return $this;
     }
@@ -516,9 +531,9 @@ class Definition
      */
     public function setPublic($boolean)
     {
-        $this->changes['public'] = \true;
+        $this->changes['public'] = true;
         $this->public = (bool) $boolean;
-        $this->private = \false;
+        $this->private = false;
         return $this;
     }
     /**
@@ -565,7 +580,7 @@ class Definition
      */
     public function setLazy($lazy)
     {
-        $this->changes['lazy'] = \true;
+        $this->changes['lazy'] = true;
         $this->lazy = (bool) $lazy;
         return $this;
     }
@@ -635,18 +650,18 @@ class Definition
      *
      * @throws InvalidArgumentException when the message template is invalid
      */
-    public function setDeprecated($status = \true, $template = null)
+    public function setDeprecated($status = true, $template = null)
     {
         if (null !== $template) {
-            if (\preg_match('#[\\r\\n]|\\*/#', $template)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('Invalid characters found in deprecation template.');
+            if (preg_match('#[\\r\\n]|\\*/#', $template)) {
+                throw new InvalidArgumentException('Invalid characters found in deprecation template.');
             }
-            if (\false === \strpos($template, '%service_id%')) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('The deprecation template must contain the "%service_id%" placeholder.');
+            if (false === strpos($template, '%service_id%')) {
+                throw new InvalidArgumentException('The deprecation template must contain the "%service_id%" placeholder.');
             }
             $this->deprecationTemplate = $template;
         }
-        $this->changes['deprecated'] = \true;
+        $this->changes['deprecated'] = true;
         $this->deprecated = (bool) $status;
         return $this;
     }
@@ -669,7 +684,7 @@ class Definition
      */
     public function getDeprecationMessage($id)
     {
-        return \str_replace('%service_id%', $id, $this->deprecationTemplate ?: self::$defaultDeprecationTemplate);
+        return str_replace('%service_id%', $id, $this->deprecationTemplate ?: self::$defaultDeprecationTemplate);
     }
     /**
      * Sets a configurator to call after the service is fully initialized.
@@ -680,9 +695,9 @@ class Definition
      */
     public function setConfigurator($configurator)
     {
-        $this->changes['configurator'] = \true;
-        if (\is_string($configurator) && \false !== \strpos($configurator, '::')) {
-            $configurator = \explode('::', $configurator, 2);
+        $this->changes['configurator'] = true;
+        if (is_string($configurator) && false !== strpos($configurator, '::')) {
+            $configurator = explode('::', $configurator, 2);
         }
         $this->configurator = $configurator;
         return $this;
@@ -707,10 +722,10 @@ class Definition
      */
     public function setAutowiringTypes(array $types)
     {
-        @\trigger_error('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead.', \E_USER_DEPRECATED);
+        @trigger_error('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead.', E_USER_DEPRECATED);
         $this->autowiringTypes = [];
         foreach ($types as $type) {
-            $this->autowiringTypes[$type] = \true;
+            $this->autowiringTypes[$type] = true;
         }
         return $this;
     }
@@ -732,7 +747,7 @@ class Definition
      */
     public function setAutowired($autowired)
     {
-        $this->changes['autowired'] = \true;
+        $this->changes['autowired'] = true;
         $this->autowired = (bool) $autowired;
         return $this;
     }
@@ -745,10 +760,10 @@ class Definition
      */
     public function getAutowiringTypes()
     {
-        if (1 > \func_num_args() || \func_get_arg(0)) {
-            @\trigger_error('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead.', \E_USER_DEPRECATED);
+        if (1 > func_num_args() || func_get_arg(0)) {
+            @trigger_error('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead.', E_USER_DEPRECATED);
         }
-        return \array_keys($this->autowiringTypes);
+        return array_keys($this->autowiringTypes);
     }
     /**
      * Adds a type that will default to this definition.
@@ -761,8 +776,8 @@ class Definition
      */
     public function addAutowiringType($type)
     {
-        @\trigger_error(\sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), \E_USER_DEPRECATED);
-        $this->autowiringTypes[$type] = \true;
+        @trigger_error(sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), E_USER_DEPRECATED);
+        $this->autowiringTypes[$type] = true;
         return $this;
     }
     /**
@@ -776,7 +791,7 @@ class Definition
      */
     public function removeAutowiringType($type)
     {
-        @\trigger_error(\sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), \E_USER_DEPRECATED);
+        @trigger_error(sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), E_USER_DEPRECATED);
         unset($this->autowiringTypes[$type]);
         return $this;
     }
@@ -791,7 +806,7 @@ class Definition
      */
     public function hasAutowiringType($type)
     {
-        @\trigger_error(\sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), \E_USER_DEPRECATED);
+        @trigger_error(sprintf('Autowiring-types are deprecated since Symfony 3.3 and will be removed in 4.0. Use aliases instead for "%s".', $type), E_USER_DEPRECATED);
         return isset($this->autowiringTypes[$type]);
     }
     /**
@@ -815,8 +830,8 @@ class Definition
     public function setBindings(array $bindings)
     {
         foreach ($bindings as $key => $binding) {
-            if (!$binding instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument) {
-                $bindings[$key] = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\BoundArgument($binding);
+            if (!$binding instanceof BoundArgument) {
+                $bindings[$key] = new BoundArgument($binding);
             }
         }
         $this->bindings = $bindings;

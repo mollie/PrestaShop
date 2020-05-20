@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class OrderLineCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseCollection
+class OrderLineCollection extends BaseCollection
 {
     /**
      * @return string|null

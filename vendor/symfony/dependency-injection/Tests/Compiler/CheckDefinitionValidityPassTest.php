@@ -13,35 +13,35 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Co
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CheckDefinitionValidityPass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-class CheckDefinitionValidityPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class CheckDefinitionValidityPassTest extends TestCase
 {
     public function testProcessDetectsSyntheticNonPublicDefinitions()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('a')->setSynthetic(\true)->setPublic(\false);
+        $container = new ContainerBuilder();
+        $container->register('a')->setSynthetic(true)->setPublic(false);
         $this->process($container);
     }
     public function testProcessDetectsNonSyntheticNonAbstractDefinitionWithoutClass()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('a')->setSynthetic(\false)->setAbstract(\false);
+        $container = new ContainerBuilder();
+        $container->register('a')->setSynthetic(false)->setAbstract(false);
         $this->process($container);
     }
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('a', 'class');
-        $container->register('b', 'class')->setSynthetic(\true)->setPublic(\true);
-        $container->register('c', 'class')->setAbstract(\true);
-        $container->register('d', 'class')->setSynthetic(\true);
+        $container->register('b', 'class')->setSynthetic(true)->setPublic(true);
+        $container->register('c', 'class')->setAbstract(true);
+        $container->register('d', 'class')->setSynthetic(true);
         $this->process($container);
         $this->addToAssertionCount(1);
     }
     public function testValidTags()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('a', 'class')->addTag('foo', ['bar' => 'baz']);
         $container->register('b', 'class')->addTag('foo', ['bar' => null]);
         $container->register('c', 'class')->addTag('foo', ['bar' => 1]);
@@ -52,38 +52,38 @@ class CheckDefinitionValidityPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\F
     public function testInvalidTags()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('a', 'class')->addTag('foo', ['bar' => ['baz' => 'baz']]);
         $this->process($container);
     }
     public function testDynamicPublicServiceName()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\EnvParameterException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $env = $container->getParameterBag()->get('env(BAR)');
-        $container->register("foo.{$env}", 'class')->setPublic(\true);
+        $container->register("foo.{$env}", 'class')->setPublic(true);
         $this->process($container);
     }
     public function testDynamicPublicAliasName()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\EnvParameterException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $env = $container->getParameterBag()->get('env(BAR)');
-        $container->setAlias("foo.{$env}", 'class')->setPublic(\true);
+        $container->setAlias("foo.{$env}", 'class')->setPublic(true);
         $this->process($container);
     }
     public function testDynamicPrivateName()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $env = $container->getParameterBag()->get('env(BAR)');
         $container->register("foo.{$env}", 'class');
         $container->setAlias("bar.{$env}", 'class');
         $this->process($container);
         $this->addToAssertionCount(1);
     }
-    protected function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function process(ContainerBuilder $container)
     {
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CheckDefinitionValidityPass();
+        $pass = new CheckDefinitionValidityPass();
         $pass->process($container);
     }
 }

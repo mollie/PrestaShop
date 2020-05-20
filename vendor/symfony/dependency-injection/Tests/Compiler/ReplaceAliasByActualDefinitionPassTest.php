@@ -16,15 +16,15 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
 require_once __DIR__ . '/../Fixtures/includes/foo.php';
-class ReplaceAliasByActualDefinitionPassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ReplaceAliasByActualDefinitionPassTest extends TestCase
 {
     public function testProcess()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $aDefinition = $container->register('a', '\\stdClass');
-        $aDefinition->setFactory([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'), 'createA']);
-        $bDefinition = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('\\stdClass');
-        $bDefinition->setPublic(\false);
+        $aDefinition->setFactory([new Reference('b'), 'createA']);
+        $bDefinition = new Definition('\\stdClass');
+        $bDefinition->setPublic(false);
         $container->setDefinition('b', $bDefinition);
         $container->setAlias('a_alias', 'a');
         $container->setAlias('b_alias', 'b');
@@ -41,13 +41,13 @@ class ReplaceAliasByActualDefinitionPassTest extends \_PhpScoper5ea00cc67502b\PH
     public function testProcessWithInvalidAlias()
     {
         $this->expectException('InvalidArgumentException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setAlias('a_alias', 'a');
         $this->process($container);
     }
-    protected function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function process(ContainerBuilder $container)
     {
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ReplaceAliasByActualDefinitionPass();
+        $pass = new ReplaceAliasByActualDefinitionPass();
         $pass->process($container);
     }
 }

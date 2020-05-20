@@ -13,41 +13,41 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Co
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-class AutoAliasServicePassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class AutoAliasServicePassTest extends TestCase
 {
     public function testProcessWithMissingParameter()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ParameterNotFoundException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('example')->addTag('auto_alias', ['format' => '%non_existing%.example']);
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass();
+        $pass = new AutoAliasServicePass();
         $pass->process($container);
     }
     public function testProcessWithMissingFormat()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('example')->addTag('auto_alias', []);
         $container->setParameter('existing', 'mysql');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass();
+        $pass = new AutoAliasServicePass();
         $pass->process($container);
     }
     public function testProcessWithNonExistingAlias()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassDefault')->addTag('auto_alias', ['format' => '%existing%.example']);
         $container->setParameter('existing', 'mysql');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass();
+        $pass = new AutoAliasServicePass();
         $pass->process($container);
         $this->assertEquals('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassDefault', $container->getDefinition('example')->getClass());
     }
     public function testProcessWithExistingAlias()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassDefault')->addTag('auto_alias', ['format' => '%existing%.example']);
         $container->register('mysql.example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassMysql');
         $container->setParameter('existing', 'mysql');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass();
+        $pass = new AutoAliasServicePass();
         $pass->process($container);
         $this->assertTrue($container->hasAlias('example'));
         $this->assertEquals('mysql.example', $container->getAlias('example'));
@@ -55,13 +55,13 @@ class AutoAliasServicePassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewor
     }
     public function testProcessWithManualAlias()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->register('example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassDefault')->addTag('auto_alias', ['format' => '%existing%.example']);
         $container->register('mysql.example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassMysql');
         $container->register('mariadb.example', '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\ServiceClassMariaDb');
         $container->setAlias('example', 'mariadb.example');
         $container->setParameter('existing', 'mysql');
-        $pass = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutoAliasServicePass();
+        $pass = new AutoAliasServicePass();
         $pass->process($container);
         $this->assertTrue($container->hasAlias('example'));
         $this->assertEquals('mariadb.example', $container->getAlias('example'));
@@ -71,9 +71,9 @@ class AutoAliasServicePassTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewor
 class ServiceClassDefault
 {
 }
-class ServiceClassMysql extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceClassDefault
+class ServiceClassMysql extends ServiceClassDefault
 {
 }
-class ServiceClassMariaDb extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceClassMysql
+class ServiceClassMariaDb extends ServiceClassMysql
 {
 }

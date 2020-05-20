@@ -16,13 +16,13 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
  *
  * @internal
  */
-class NameNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class NameNode extends Node
 {
     public function __construct($name)
     {
         parent::__construct([], ['name' => $name]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler->raw('$' . $this->attributes['name']);
     }

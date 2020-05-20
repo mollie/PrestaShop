@@ -3,6 +3,22 @@
 namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use InvalidArgumentException;
+use function array_map;
+use function array_merge;
+use function count;
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_int;
+use function is_object;
+use function is_scalar;
+use function is_string;
+use function sprintf;
+use function strtolower;
+use function trim;
+
 /**
  * Trait implementing functionality common to requests and responses.
  */
@@ -35,11 +51,11 @@ trait MessageTrait
     }
     public function hasHeader($header)
     {
-        return isset($this->headerNames[\strtolower($header)]);
+        return isset($this->headerNames[strtolower($header)]);
     }
     public function getHeader($header)
     {
-        $header = \strtolower($header);
+        $header = strtolower($header);
         if (!isset($this->headerNames[$header])) {
             return [];
         }
@@ -48,13 +64,13 @@ trait MessageTrait
     }
     public function getHeaderLine($header)
     {
-        return \implode(', ', $this->getHeader($header));
+        return implode(', ', $this->getHeader($header));
     }
     public function withHeader($header, $value)
     {
         $this->assertHeader($header);
         $value = $this->normalizeHeaderValue($value);
-        $normalized = \strtolower($header);
+        $normalized = strtolower($header);
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
             unset($new->headers[$new->headerNames[$normalized]]);
@@ -67,11 +83,11 @@ trait MessageTrait
     {
         $this->assertHeader($header);
         $value = $this->normalizeHeaderValue($value);
-        $normalized = \strtolower($header);
+        $normalized = strtolower($header);
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
             $header = $this->headerNames[$normalized];
-            $new->headers[$header] = \array_merge($this->headers[$header], $value);
+            $new->headers[$header] = array_merge($this->headers[$header], $value);
         } else {
             $new->headerNames[$normalized] = $header;
             $new->headers[$header] = $value;
@@ -80,7 +96,7 @@ trait MessageTrait
     }
     public function withoutHeader($header)
     {
-        $normalized = \strtolower($header);
+        $normalized = strtolower($header);
         if (!isset($this->headerNames[$normalized])) {
             return $this;
         }
@@ -96,7 +112,7 @@ trait MessageTrait
         }
         return $this->stream;
     }
-    public function withBody(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $body)
+    public function withBody(StreamInterface $body)
     {
         if ($body === $this->stream) {
             return $this;
@@ -109,17 +125,17 @@ trait MessageTrait
     {
         $this->headerNames = $this->headers = [];
         foreach ($headers as $header => $value) {
-            if (\is_int($header)) {
+            if (is_int($header)) {
                 // Numeric array keys are converted to int by PHP but having a header name '123' is not forbidden by the spec
                 // and also allowed in withHeader(). So we need to cast it to string again for the following assertion to pass.
                 $header = (string) $header;
             }
             $this->assertHeader($header);
             $value = $this->normalizeHeaderValue($value);
-            $normalized = \strtolower($header);
+            $normalized = strtolower($header);
             if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
-                $this->headers[$header] = \array_merge($this->headers[$header], $value);
+                $this->headers[$header] = array_merge($this->headers[$header], $value);
             } else {
                 $this->headerNames[$normalized] = $header;
                 $this->headers[$header] = $value;
@@ -128,11 +144,11 @@ trait MessageTrait
     }
     private function normalizeHeaderValue($value)
     {
-        if (!\is_array($value)) {
+        if (!is_array($value)) {
             return $this->trimHeaderValues([$value]);
         }
-        if (\count($value) === 0) {
-            throw new \InvalidArgumentException('Header value can not be an empty array.');
+        if (count($value) === 0) {
+            throw new InvalidArgumentException('Header value can not be an empty array.');
         }
         return $this->trimHeaderValues($value);
     }
@@ -152,20 +168,20 @@ trait MessageTrait
      */
     private function trimHeaderValues(array $values)
     {
-        return \array_map(function ($value) {
-            if (!\is_scalar($value) && null !== $value) {
-                throw new \InvalidArgumentException(\sprintf('Header value must be scalar or null but %s provided.', \is_object($value) ? \get_class($value) : \gettype($value)));
+        return array_map(function ($value) {
+            if (!is_scalar($value) && null !== $value) {
+                throw new InvalidArgumentException(sprintf('Header value must be scalar or null but %s provided.', is_object($value) ? get_class($value) : gettype($value)));
             }
-            return \trim((string) $value, " \t");
+            return trim((string) $value, " \t");
         }, $values);
     }
     private function assertHeader($header)
     {
-        if (!\is_string($header)) {
-            throw new \InvalidArgumentException(\sprintf('Header name must be a string but %s provided.', \is_object($header) ? \get_class($header) : \gettype($header)));
+        if (!is_string($header)) {
+            throw new InvalidArgumentException(sprintf('Header name must be a string but %s provided.', is_object($header) ? get_class($header) : gettype($header)));
         }
         if ($header === '') {
-            throw new \InvalidArgumentException('Header name can not be empty.');
+            throw new InvalidArgumentException('Header name can not be empty.');
         }
     }
 }

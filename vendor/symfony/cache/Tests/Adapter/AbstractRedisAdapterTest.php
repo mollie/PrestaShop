@@ -10,22 +10,28 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
+use _PhpScoper5ea00cc67502b\Redis;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter;
-abstract class AbstractRedisAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+use function error_get_last;
+use function extension_loaded;
+use function getenv;
+use function str_replace;
+
+abstract class AbstractRedisAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = ['testExpiration' => 'Testing expiration slows down the test suite', 'testHasItemReturnsFalseWhenDeferredItemIsExpired' => 'Testing expiration slows down the test suite', 'testDefaultLifeTime' => 'Testing expiration slows down the test suite'];
     protected static $redis;
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\RedisAdapter(self::$redis, \str_replace('\\', '.', __CLASS__), $defaultLifetime);
+        return new RedisAdapter(self::$redis, str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
     public static function setUpBeforeClass()
     {
-        if (!\extension_loaded('redis')) {
+        if (!extension_loaded('redis')) {
             self::markTestSkipped('Extension redis required.');
         }
-        if (!@(new \_PhpScoper5ea00cc67502b\Redis())->connect(\getenv('REDIS_HOST'))) {
-            $e = \error_get_last();
+        if (!@(new Redis())->connect(getenv('REDIS_HOST'))) {
+            $e = error_get_last();
             self::markTestSkipped($e['message']);
         }
     }

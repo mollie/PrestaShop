@@ -12,13 +12,16 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Co
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
-class ContainerParametersResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function serialize;
+use function unserialize;
+
+class ContainerParametersResourceTest extends TestCase
 {
     /** @var ContainerParametersResource */
     private $resource;
     protected function setUp()
     {
-        $this->resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
+        $this->resource = new ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
     }
     public function testToString()
     {
@@ -26,7 +29,7 @@ class ContainerParametersResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\F
     }
     public function testSerializeUnserialize()
     {
-        $unserialized = \unserialize(\serialize($this->resource));
+        $unserialized = unserialize(serialize($this->resource));
         $this->assertEquals($this->resource, $unserialized);
     }
     public function testGetParameters()

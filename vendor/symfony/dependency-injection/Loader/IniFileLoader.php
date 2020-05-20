@@ -12,12 +12,27 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function constant;
+use function defined;
+use function is_array;
+use function is_string;
+use function parse_ini_file;
+use function pathinfo;
+use function rtrim;
+use function sprintf;
+use function strlen;
+use function strtolower;
+use function substr;
+use function substr_replace;
+use const INI_SCANNER_RAW;
+use const PATHINFO_EXTENSION;
+
 /**
  * IniFileLoader loads parameters from INI files.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class IniFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\FileLoader
+class IniFileLoader extends FileLoader
 {
     /**
      * {@inheritdoc}
@@ -27,13 +42,13 @@ class IniFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
         $path = $this->locator->locate($resource);
         $this->container->fileExists($path);
         // first pass to catch parsing errors
-        $result = \parse_ini_file($path, \true);
-        if (\false === $result || [] === $result) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The "%s" file is not valid.', $resource));
+        $result = parse_ini_file($path, true);
+        if (false === $result || [] === $result) {
+            throw new InvalidArgumentException(sprintf('The "%s" file is not valid.', $resource));
         }
         // real raw parsing
-        $result = \parse_ini_file($path, \true, \INI_SCANNER_RAW);
-        if (isset($result['parameters']) && \is_array($result['parameters'])) {
+        $result = parse_ini_file($path, true, INI_SCANNER_RAW);
+        if (isset($result['parameters']) && is_array($result['parameters'])) {
             foreach ($result['parameters'] as $key => $value) {
                 $this->container->setParameter($key, $this->phpize($value));
             }
@@ -44,11 +59,11 @@ class IniFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
      */
     public function supports($resource, $type = null)
     {
-        if (!\is_string($resource)) {
-            return \false;
+        if (!is_string($resource)) {
+            return false;
         }
-        if (null === $type && 'ini' === \pathinfo($resource, \PATHINFO_EXTENSION)) {
-            return \true;
+        if (null === $type && 'ini' === pathinfo($resource, PATHINFO_EXTENSION)) {
+            return true;
         }
         return 'ini' === $type;
     }
@@ -60,22 +75,22 @@ class IniFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependenc
     private function phpize($value)
     {
         // trim on the right as comments removal keep whitespaces
-        if ($value !== ($v = \rtrim($value))) {
-            $value = '""' === \substr_replace($v, '', 1, -1) ? \substr($v, 1, -1) : $v;
+        if ($value !== ($v = rtrim($value))) {
+            $value = '""' === substr_replace($v, '', 1, -1) ? substr($v, 1, -1) : $v;
         }
-        $lowercaseValue = \strtolower($value);
-        switch (\true) {
-            case \defined($value):
-                return \constant($value);
+        $lowercaseValue = strtolower($value);
+        switch (true) {
+            case defined($value):
+                return constant($value);
             case 'yes' === $lowercaseValue || 'on' === $lowercaseValue:
-                return \true;
+                return true;
             case 'no' === $lowercaseValue || 'off' === $lowercaseValue || 'none' === $lowercaseValue:
-                return \false;
-            case isset($value[1]) && ("'" === $value[0] && "'" === $value[\strlen($value) - 1] || '"' === $value[0] && '"' === $value[\strlen($value) - 1]):
+                return false;
+            case isset($value[1]) && ("'" === $value[0] && "'" === $value[strlen($value) - 1] || '"' === $value[0] && '"' === $value[strlen($value) - 1]):
                 // quoted string
-                return \substr($value, 1, -1);
+                return substr($value, 1, -1);
             default:
-                return \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::phpize($value);
+                return XmlUtils::phpize($value);
         }
     }
 }

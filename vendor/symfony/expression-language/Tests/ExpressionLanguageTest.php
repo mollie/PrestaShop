@@ -15,19 +15,23 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunct
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Fixtures\TestProvider;
-class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use stdClass;
+use function sprintf;
+use const PHP_VERSION;
+
+class ExpressionLanguageTest extends TestCase
 {
     public function testCachedParse()
     {
         $cacheMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Psr\\Cache\\CacheItemPoolInterface')->getMock();
         $cacheItemMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Psr\\Cache\\CacheItemInterface')->getMock();
         $savedParsedExpression = null;
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage($cacheMock);
+        $expressionLanguage = new ExpressionLanguage($cacheMock);
         $cacheMock->expects($this->exactly(2))->method('getItem')->with('1%20%2B%201%2F%2F')->willReturn($cacheItemMock);
         $cacheItemMock->expects($this->exactly(2))->method('get')->willReturnCallback(function () use(&$savedParsedExpression) {
             return $savedParsedExpression;
         });
-        $cacheItemMock->expects($this->exactly(1))->method('set')->with($this->isInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression::class))->willReturnCallback(function ($parsedExpression) use(&$savedParsedExpression) {
+        $cacheItemMock->expects($this->exactly(1))->method('set')->with($this->isInstanceOf(ParsedExpression::class))->willReturnCallback(function ($parsedExpression) use(&$savedParsedExpression) {
             $savedParsedExpression = $parsedExpression;
         });
         $cacheMock->expects($this->exactly(1))->method('save')->with($cacheItemMock);
@@ -43,9 +47,9 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     {
         $cacheMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\ParserCache\\ParserCacheInterface')->getMock();
         $savedParsedExpression = null;
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage($cacheMock);
+        $expressionLanguage = new ExpressionLanguage($cacheMock);
         $cacheMock->expects($this->exactly(1))->method('fetch')->with('1%20%2B%201%2F%2F')->willReturn($savedParsedExpression);
-        $cacheMock->expects($this->exactly(1))->method('save')->with('1%20%2B%201%2F%2F', $this->isInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression::class))->willReturnCallback(function ($key, $expression) use(&$savedParsedExpression) {
+        $cacheMock->expects($this->exactly(1))->method('save')->with('1%20%2B%201%2F%2F', $this->isInstanceOf(ParsedExpression::class))->willReturnCallback(function ($key, $expression) use(&$savedParsedExpression) {
             $savedParsedExpression = $expression;
         });
         $parsedExpression = $expressionLanguage->parse('1 + 1', []);
@@ -56,18 +60,18 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Cache argument has to implement "Psr\\Cache\\CacheItemPoolInterface".');
         $cacheMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Psr\\Cache\\CacheItemSpoolInterface')->getMock();
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage($cacheMock);
+        new ExpressionLanguage($cacheMock);
     }
     public function testConstantFunction()
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
-        $this->assertEquals(\PHP_VERSION, $expressionLanguage->evaluate('constant("PHP_VERSION")'));
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
+        $this->assertEquals(PHP_VERSION, $expressionLanguage->evaluate('constant("PHP_VERSION")'));
+        $expressionLanguage = new ExpressionLanguage();
         $this->assertEquals('\\constant("PHP_VERSION")', $expressionLanguage->compile('constant("PHP_VERSION")'));
     }
     public function testProviders()
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage(null, [new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Fixtures\TestProvider()]);
+        $expressionLanguage = new ExpressionLanguage(null, [new TestProvider()]);
         $this->assertEquals('foo', $expressionLanguage->evaluate('identity("foo")'));
         $this->assertEquals('"foo"', $expressionLanguage->compile('identity("foo")'));
         $this->assertEquals('FOO', $expressionLanguage->evaluate('strtoupper("foo")'));
@@ -82,7 +86,7 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
      */
     public function testShortCircuitOperatorsEvaluate($expression, array $values, $expected)
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
         $this->assertEquals($expected, $expressionLanguage->evaluate($expression, $values));
     }
     /**
@@ -91,30 +95,30 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     public function testShortCircuitOperatorsCompile($expression, array $names, $expected)
     {
         $result = null;
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
-        eval(\sprintf('$result = %s;', $expressionLanguage->compile($expression, $names)));
+        $expressionLanguage = new ExpressionLanguage();
+        eval(sprintf('$result = %s;', $expressionLanguage->compile($expression, $names)));
         $this->assertSame($expected, $result);
     }
     public function testParseThrowsInsteadOfNotice()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\SyntaxError');
         $this->expectExceptionMessage('Unexpected end of expression around position 6 for expression `node.`.');
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
         $expressionLanguage->parse('node.', ['node']);
     }
     public function shortCircuitProviderEvaluate()
     {
         $object = $this->getMockBuilder('stdClass')->setMethods(['foo'])->getMock();
         $object->expects($this->never())->method('foo');
-        return [['false and object.foo()', ['object' => $object], \false], ['false && object.foo()', ['object' => $object], \false], ['true || object.foo()', ['object' => $object], \true], ['true or object.foo()', ['object' => $object], \true]];
+        return [['false and object.foo()', ['object' => $object], false], ['false && object.foo()', ['object' => $object], false], ['true || object.foo()', ['object' => $object], true], ['true or object.foo()', ['object' => $object], true]];
     }
     public function shortCircuitProviderCompile()
     {
-        return [['false and foo', ['foo' => 'foo'], \false], ['false && foo', ['foo' => 'foo'], \false], ['true || foo', ['foo' => 'foo'], \true], ['true or foo', ['foo' => 'foo'], \true]];
+        return [['false and foo', ['foo' => 'foo'], false], ['false && foo', ['foo' => 'foo'], false], ['true || foo', ['foo' => 'foo'], true], ['true or foo', ['foo' => 'foo'], true]];
     }
     public function testCachingForOverriddenVariableNames()
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
         $expression = 'a + b';
         $expressionLanguage->evaluate($expression, ['a' => 1, 'b' => 1]);
         $result = $expressionLanguage->compile($expression, ['a', 'B' => 'b']);
@@ -122,7 +126,7 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     }
     public function testStrictEquality()
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
         $expression = '123 === a';
         $result = $expressionLanguage->compile($expression, ['a']);
         $this->assertSame('(123 === $a)', $result);
@@ -131,13 +135,13 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     {
         $cacheMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Psr\\Cache\\CacheItemPoolInterface')->getMock();
         $cacheItemMock = $this->getMockBuilder('_PhpScoper5ea00cc67502b\\Psr\\Cache\\CacheItemInterface')->getMock();
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage($cacheMock);
+        $expressionLanguage = new ExpressionLanguage($cacheMock);
         $savedParsedExpression = null;
         $cacheMock->expects($this->exactly(2))->method('getItem')->with('a%20%2B%20b%2F%2Fa%7CB%3Ab')->willReturn($cacheItemMock);
         $cacheItemMock->expects($this->exactly(2))->method('get')->willReturnCallback(function () use(&$savedParsedExpression) {
             return $savedParsedExpression;
         });
-        $cacheItemMock->expects($this->exactly(1))->method('set')->with($this->isInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression::class))->willReturnCallback(function ($parsedExpression) use(&$savedParsedExpression) {
+        $cacheItemMock->expects($this->exactly(1))->method('set')->with($this->isInstanceOf(ParsedExpression::class))->willReturnCallback(function ($parsedExpression) use(&$savedParsedExpression) {
             $savedParsedExpression = $parsedExpression;
         });
         $cacheMock->expects($this->exactly(1))->method('save')->with($cacheItemMock);
@@ -147,7 +151,7 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     }
     public function testOperatorCollisions()
     {
-        $expressionLanguage = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $expressionLanguage = new ExpressionLanguage();
         $expression = 'foo.not in [bar]';
         $compiled = $expressionLanguage->compile($expression, ['foo', 'bar']);
         $this->assertSame('in_array($foo->not, [0 => $bar])', $compiled);
@@ -160,7 +164,7 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     public function testRegisterAfterParse($registerCallback)
     {
         $this->expectException('LogicException');
-        $el = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $el = new ExpressionLanguage();
         $el->parse('1 + 1', []);
         $registerCallback($el);
     }
@@ -170,7 +174,7 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     public function testRegisterAfterEval($registerCallback)
     {
         $this->expectException('LogicException');
-        $el = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $el = new ExpressionLanguage();
         $el->evaluate('1 + 1');
         $registerCallback($el);
     }
@@ -178,8 +182,8 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessageRegExp('/Unable to call method "\\w+" of object "\\w+"./');
-        $el = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
-        $el->evaluate('foo.myfunction()', ['foo' => new \stdClass()]);
+        $el = new ExpressionLanguage();
+        $el->evaluate('foo.myfunction()', ['foo' => new stdClass()]);
     }
     /**
      * @dataProvider getRegisterCallbacks
@@ -187,22 +191,22 @@ class ExpressionLanguageTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\
     public function testRegisterAfterCompile($registerCallback)
     {
         $this->expectException('LogicException');
-        $el = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        $el = new ExpressionLanguage();
         $el->compile('1 + 1');
         $registerCallback($el);
     }
     public function getRegisterCallbacks()
     {
-        return [[function (\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage $el) {
+        return [[function (ExpressionLanguage $el) {
             $el->register('fn', function () {
             }, function () {
             });
-        }], [function (\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage $el) {
-            $el->addFunction(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction('fn', function () {
+        }], [function (ExpressionLanguage $el) {
+            $el->addFunction(new ExpressionFunction('fn', function () {
             }, function () {
             }));
-        }], [function (\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage $el) {
-            $el->registerProvider(new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Fixtures\TestProvider());
+        }], [function (ExpressionLanguage $el) {
+            $el->registerProvider(new TestProvider());
         }]];
     }
 }

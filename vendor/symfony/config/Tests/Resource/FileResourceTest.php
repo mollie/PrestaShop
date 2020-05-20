@@ -12,43 +12,53 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
 
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource;
-class FileResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function file_exists;
+use function mt_rand;
+use function realpath;
+use function serialize;
+use function sys_get_temp_dir;
+use function time;
+use function touch;
+use function unlink;
+use function unserialize;
+
+class FileResourceTest extends TestCase
 {
     protected $resource;
     protected $file;
     protected $time;
     protected function setUp()
     {
-        $this->file = \sys_get_temp_dir() . '/tmp.xml';
-        $this->time = \time();
-        \touch($this->file, $this->time);
-        $this->resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource($this->file);
+        $this->file = sys_get_temp_dir() . '/tmp.xml';
+        $this->time = time();
+        touch($this->file, $this->time);
+        $this->resource = new FileResource($this->file);
     }
     protected function tearDown()
     {
-        if (!\file_exists($this->file)) {
+        if (!file_exists($this->file)) {
             return;
         }
-        \unlink($this->file);
+        unlink($this->file);
     }
     public function testGetResource()
     {
-        $this->assertSame(\realpath($this->file), $this->resource->getResource(), '->getResource() returns the path to the resource');
+        $this->assertSame(realpath($this->file), $this->resource->getResource(), '->getResource() returns the path to the resource');
     }
     public function testGetResourceWithScheme()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource('file://' . $this->file);
+        $resource = new FileResource('file://' . $this->file);
         $this->assertSame('file://' . $this->file, $resource->getResource(), '->getResource() returns the path to the schemed resource');
     }
     public function testToString()
     {
-        $this->assertSame(\realpath($this->file), (string) $this->resource);
+        $this->assertSame(realpath($this->file), (string) $this->resource);
     }
     public function testResourceDoesNotExist()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessageRegExp('/The file ".*" does not exist./');
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource('/____foo/foobar' . \mt_rand(1, 999999));
+        new FileResource('/____foo/foobar' . mt_rand(1, 999999));
     }
     public function testIsFresh()
     {
@@ -58,12 +68,12 @@ class FileResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCa
     }
     public function testIsFreshForDeletedResources()
     {
-        \unlink($this->file);
+        unlink($this->file);
         $this->assertFalse($this->resource->isFresh($this->time), '->isFresh() returns false if the resource does not exist');
     }
     public function testSerializeUnserialize()
     {
-        \unserialize(\serialize($this->resource));
-        $this->assertSame(\realpath($this->file), $this->resource->getResource());
+        unserialize(serialize($this->resource));
+        $this->assertSame(realpath($this->file), $this->resource->getResource());
     }
 }

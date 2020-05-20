@@ -11,6 +11,10 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function func_get_arg;
+use function func_num_args;
+use function sprintf;
+
 /**
  * This is a directed graph of your services.
  *
@@ -50,7 +54,7 @@ class ServiceReferenceGraph
     public function getNode($id)
     {
         if (!isset($this->nodes[$id])) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('There is no node with id "%s".', $id));
+            throw new InvalidArgumentException(sprintf('There is no node with id "%s".', $id));
         }
         return $this->nodes[$id];
     }
@@ -84,15 +88,15 @@ class ServiceReferenceGraph
      */
     public function connect($sourceId, $sourceValue, $destId, $destValue = null, $reference = null)
     {
-        $lazy = \func_num_args() >= 6 ? \func_get_arg(5) : \false;
-        $weak = \func_num_args() >= 7 ? \func_get_arg(6) : \false;
-        $byConstructor = \func_num_args() >= 8 ? \func_get_arg(7) : \false;
+        $lazy = func_num_args() >= 6 ? func_get_arg(5) : false;
+        $weak = func_num_args() >= 7 ? func_get_arg(6) : false;
+        $byConstructor = func_num_args() >= 8 ? func_get_arg(7) : false;
         if (null === $sourceId || null === $destId) {
             return;
         }
         $sourceNode = $this->createNode($sourceId, $sourceValue);
         $destNode = $this->createNode($destId, $destValue);
-        $edge = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge($sourceNode, $destNode, $reference, $lazy, $weak, $byConstructor);
+        $edge = new ServiceReferenceGraphEdge($sourceNode, $destNode, $reference, $lazy, $weak, $byConstructor);
         $sourceNode->addOutEdge($edge);
         $destNode->addInEdge($edge);
     }
@@ -109,6 +113,6 @@ class ServiceReferenceGraph
         if (isset($this->nodes[$id]) && $this->nodes[$id]->getValue() === $value) {
             return $this->nodes[$id];
         }
-        return $this->nodes[$id] = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphNode($id, $value);
+        return $this->nodes[$id] = new ServiceReferenceGraphNode($id, $value);
     }
 }

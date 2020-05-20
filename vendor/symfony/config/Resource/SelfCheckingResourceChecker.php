@@ -19,13 +19,13 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\ResourceCheckerInterface;
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class SelfCheckingResourceChecker implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\ResourceCheckerInterface
+class SelfCheckingResourceChecker implements ResourceCheckerInterface
 {
-    public function supports(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface $metadata)
+    public function supports(ResourceInterface $metadata)
     {
-        return $metadata instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
+        return $metadata instanceof SelfCheckingResourceInterface;
     }
-    public function isFresh(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface $resource, $timestamp)
+    public function isFresh(ResourceInterface $resource, $timestamp)
     {
         /* @var SelfCheckingResourceInterface $resource */
         return $resource->isFresh($timestamp);

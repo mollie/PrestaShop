@@ -4,7 +4,10 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
-class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use Mollie\Api\Exceptions\ApiException;
+use stdClass;
+
+class Refund extends BaseResource
 {
     /**
      * @var string
@@ -19,7 +22,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     /**
      * The $amount that was refunded.
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $amount;
     /**
@@ -58,7 +61,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
     /**
      * The settlement amount
      *
-     * @var \stdClass
+     * @var stdClass
      */
     public $settlementAmount;
     /**
@@ -68,7 +71,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public $status;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
@@ -78,7 +81,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isQueued()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus::STATUS_QUEUED;
+        return $this->status === RefundStatus::STATUS_QUEUED;
     }
     /**
      * Is this refund pending?
@@ -87,7 +90,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isPending()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus::STATUS_PENDING;
+        return $this->status === RefundStatus::STATUS_PENDING;
     }
     /**
      * Is this refund processing?
@@ -96,7 +99,7 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isProcessing()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus::STATUS_PROCESSING;
+        return $this->status === RefundStatus::STATUS_PROCESSING;
     }
     /**
      * Is this refund transferred to consumer?
@@ -105,18 +108,18 @@ class Refund extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
      */
     public function isTransferred()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED;
+        return $this->status === RefundStatus::STATUS_REFUNDED;
     }
     /**
      * Cancel the refund.
      * Returns null if successful.
      *
      * @return null
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     public function cancel()
     {
-        $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href);
+        $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_DELETE, $this->_links->self->href);
         return null;
     }
 }

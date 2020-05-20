@@ -21,7 +21,7 @@ trait ConfiguratorTrait
      */
     public final function configurator($configurator)
     {
-        $this->definition->setConfigurator(static::processValue($configurator, \true));
+        $this->definition->setConfigurator(static::processValue($configurator, true));
         return $this;
     }
 }

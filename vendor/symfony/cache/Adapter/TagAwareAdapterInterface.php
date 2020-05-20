@@ -16,7 +16,7 @@ use _PhpScoper5ea00cc67502b\Psr\Cache\InvalidArgumentException;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface TagAwareAdapterInterface extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface
+interface TagAwareAdapterInterface extends AdapterInterface
 {
     /**
      * Invalidates cached items using tags.

@@ -11,16 +11,18 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use function array_pop;
+
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArgumentsNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ArrayNode
+class ArgumentsNode extends ArrayNode
 {
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
-        $this->compileArguments($compiler, \false);
+        $this->compileArguments($compiler, false);
     }
     public function toArray()
     {
@@ -29,7 +31,7 @@ class ArgumentsNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\Expressio
             $array[] = $pair['value'];
             $array[] = ', ';
         }
-        \array_pop($array);
+        array_pop($array);
         return $array;
     }
 }

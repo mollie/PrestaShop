@@ -12,6 +12,9 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\Loader;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use Closure;
+use function call_user_func;
+
 /**
  * ClosureLoader loads service definitions from a PHP closure.
  *
@@ -19,10 +22,10 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ClosureLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\Loader
+class ClosureLoader extends Loader
 {
     private $container;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function __construct(ContainerBuilder $container)
     {
         $this->container = $container;
     }
@@ -31,13 +34,13 @@ class ClosureLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Lo
      */
     public function load($resource, $type = null)
     {
-        \call_user_func($resource, $this->container);
+        call_user_func($resource, $this->container);
     }
     /**
      * {@inheritdoc}
      */
     public function supports($resource, $type = null)
     {
-        return $resource instanceof \Closure;
+        return $resource instanceof Closure;
     }
 }

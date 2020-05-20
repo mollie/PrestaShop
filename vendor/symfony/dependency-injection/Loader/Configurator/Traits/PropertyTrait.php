@@ -22,7 +22,7 @@ trait PropertyTrait
      */
     public final function property($name, $value)
     {
-        $this->definition->setProperty($name, static::processValue($value, \true));
+        $this->definition->setProperty($name, static::processValue($value, true));
         return $this;
     }
 }

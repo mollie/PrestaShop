@@ -38,9 +38,9 @@ interface ParentNodeDefinitionInterface
      *
      * @return $this
      */
-    public function append(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition $node);
+    public function append(NodeDefinition $node);
     /**
      * Sets a custom children builder.
      */
-    public function setBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder);
+    public function setBuilder(NodeBuilder $builder);
 }

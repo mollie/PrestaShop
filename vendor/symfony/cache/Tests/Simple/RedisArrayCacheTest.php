@@ -10,14 +10,18 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
-class RedisArrayCacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\AbstractRedisCacheTest
+use _PhpScoper5ea00cc67502b\RedisArray;
+use function class_exists;
+use function getenv;
+
+class RedisArrayCacheTest extends AbstractRedisCacheTest
 {
     public static function setUpBeforeClass()
     {
         parent::setupBeforeClass();
-        if (!\class_exists('_PhpScoper5ea00cc67502b\\RedisArray')) {
+        if (!class_exists('_PhpScoper5ea00cc67502b\\RedisArray')) {
             self::markTestSkipped('The RedisArray class is required.');
         }
-        self::$redis = new \_PhpScoper5ea00cc67502b\RedisArray([\getenv('REDIS_HOST')], ['lazy_connect' => \true]);
+        self::$redis = new RedisArray([getenv('REDIS_HOST')], ['lazy_connect' => true]);
     }
 }

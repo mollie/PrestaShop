@@ -15,14 +15,14 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class GlobFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\FileLoader
+class GlobFileLoader extends FileLoader
 {
     /**
      * {@inheritdoc}
      */
     public function load($resource, $type = null)
     {
-        foreach ($this->glob($resource, \false, $globResource) as $path => $info) {
+        foreach ($this->glob($resource, false, $globResource) as $path => $info) {
             $this->import($path);
         }
         $this->container->addResource($globResource);

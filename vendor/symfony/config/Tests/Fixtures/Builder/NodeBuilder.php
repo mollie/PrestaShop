@@ -11,7 +11,9 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Builder;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder as BaseNodeBuilder;
-class NodeBuilder extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder
+use function ucfirst;
+
+class NodeBuilder extends BaseNodeBuilder
 {
     public function barNode($name)
     {
@@ -21,9 +23,9 @@ class NodeBuilder extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Defi
     {
         switch ($type) {
             case 'variable':
-                return __NAMESPACE__ . '\\' . \ucfirst($type) . 'NodeDefinition';
+                return __NAMESPACE__ . '\\' . ucfirst($type) . 'NodeDefinition';
             case 'bar':
-                return __NAMESPACE__ . '\\' . \ucfirst($type) . 'NodeDefinition';
+                return __NAMESPACE__ . '\\' . ucfirst($type) . 'NodeDefinition';
             default:
                 return parent::getNodeClass($type);
         }

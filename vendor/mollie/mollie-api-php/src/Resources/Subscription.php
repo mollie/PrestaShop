@@ -4,7 +4,11 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus;
-class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use Mollie\Api\Exceptions\ApiException;
+use stdClass;
+use function json_encode;
+
+class Subscription extends BaseResource
 {
     /**
      * @var string
@@ -35,7 +39,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public $status;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $amount;
     /**
@@ -77,25 +81,25 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
     /**
      * Contains an optional 'webhookUrl'.
      *
-     * @var \stdClass|null
+     * @var stdClass|null
      */
     public $webhookUrl;
     /**
-     * @var \stdClass
+     * @var stdClass
      */
     public $_links;
     /**
      * @return BaseResource|Subscription
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     public function update()
     {
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = \json_encode(["amount" => $this->amount, "times" => $this->times, "startDate" => $this->startDate, "webhookUrl" => $this->webhookUrl, "description" => $this->description, "mandateId" => $this->mandateId, "metadata" => $this->metadata, "interval" => $this->interval]);
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Subscription($this->client));
+        $body = json_encode(["amount" => $this->amount, "times" => $this->times, "startDate" => $this->startDate, "webhookUrl" => $this->webhookUrl, "description" => $this->description, "mandateId" => $this->mandateId, "metadata" => $this->metadata, "interval" => $this->interval]);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return ResourceFactory::createFromApiResult($result, new Subscription($this->client));
     }
     /**
      * Returns whether the Subscription is active or not.
@@ -104,7 +108,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public function isActive()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus::STATUS_ACTIVE;
+        return $this->status === SubscriptionStatus::STATUS_ACTIVE;
     }
     /**
      * Returns whether the Subscription is pending or not.
@@ -113,7 +117,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public function isPending()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus::STATUS_PENDING;
+        return $this->status === SubscriptionStatus::STATUS_PENDING;
     }
     /**
      * Returns whether the Subscription is canceled or not.
@@ -122,7 +126,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public function isCanceled()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus::STATUS_CANCELED;
+        return $this->status === SubscriptionStatus::STATUS_CANCELED;
     }
     /**
      * Returns whether the Subscription is suspended or not.
@@ -131,7 +135,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public function isSuspended()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus::STATUS_SUSPENDED;
+        return $this->status === SubscriptionStatus::STATUS_SUSPENDED;
     }
     /**
      * Returns whether the Subscription is completed or not.
@@ -140,7 +144,7 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
      */
     public function isCompleted()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\SubscriptionStatus::STATUS_COMPLETED;
+        return $this->status === SubscriptionStatus::STATUS_COMPLETED;
     }
     /**
      * Cancels this subscription
@@ -154,17 +158,17 @@ class Subscription extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseRes
         }
         $body = null;
         if ($this->client->usesOAuth()) {
-            $body = \json_encode(["testmode" => $this->mode === "test" ? \true : \false]);
+            $body = json_encode(["testmode" => $this->mode === "test" ? true : false]);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Subscription($this->client));
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
+        return ResourceFactory::createFromApiResult($result, new Subscription($this->client));
     }
     public function payments()
     {
         if (!isset($this->_links->payments->href)) {
-            return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\PaymentCollection($this->client, 0, null);
+            return new PaymentCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->payments->href);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->payments, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->payments->href);
+        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->payments, Payment::class, $result->_links);
     }
 }

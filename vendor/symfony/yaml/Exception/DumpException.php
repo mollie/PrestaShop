@@ -15,6 +15,6 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DumpException extends \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\RuntimeException
+class DumpException extends RuntimeException
 {
 }

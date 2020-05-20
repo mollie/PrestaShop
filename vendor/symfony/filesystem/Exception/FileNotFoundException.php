@@ -10,21 +10,24 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception;
 
+use Exception;
+use function sprintf;
+
 /**
  * Exception class thrown when a file couldn't be found.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Christian Gärtner <christiangaertner.film@googlemail.com>
  */
-class FileNotFoundException extends \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception\IOException
+class FileNotFoundException extends IOException
 {
-    public function __construct($message = null, $code = 0, \Exception $previous = null, $path = null)
+    public function __construct($message = null, $code = 0, Exception $previous = null, $path = null)
     {
         if (null === $message) {
             if (null === $path) {
                 $message = 'File could not be found.';
             } else {
-                $message = \sprintf('File "%s" could not be found.', $path);
+                $message = sprintf('File "%s" could not be found.', $path);
             }
         }
         parent::__construct($message, $code, $previous, $path);

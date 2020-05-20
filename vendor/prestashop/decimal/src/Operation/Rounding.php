@@ -9,6 +9,14 @@
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Operation;
 
 use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number as DecimalNumber;
+use InvalidArgumentException;
+use function is_numeric;
+use function print_r;
+use function sprintf;
+use function str_pad;
+use function substr;
+use const STR_PAD_LEFT;
+
 /**
  * Allows transforming a decimal number's precision
  */
@@ -29,7 +37,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function compute(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision, $roundingMode)
+    public function compute(DecimalNumber $number, $precision, $roundingMode)
     {
         switch ($roundingMode) {
             case self::ROUND_HALF_UP:
@@ -51,7 +59,7 @@ class Rounding
                 return $this->roundHalfEven($number, $precision);
                 break;
         }
-        throw new \InvalidArgumentException(\sprintf("Invalid rounding mode: %s", \print_r($roundingMode, \true)));
+        throw new InvalidArgumentException(sprintf("Invalid rounding mode: %s", print_r($roundingMode, true)));
     }
     /**
      * Truncates a number to a target number of decimal digits.
@@ -61,16 +69,16 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function truncate(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function truncate(DecimalNumber $number, $precision)
     {
         $precision = $this->sanitizePrecision($precision);
         if ($number->getPrecision() <= $precision) {
             return $number;
         }
         if (0 === $precision) {
-            return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number->getSign() . $number->getIntegerPart());
+            return new DecimalNumber($number->getSign() . $number->getIntegerPart());
         }
-        return new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($number->getSign() . $number->getIntegerPart() . '.' . \substr($number->getFractionalPart(), 0, $precision));
+        return new DecimalNumber($number->getSign() . $number->getIntegerPart() . '.' . substr($number->getFractionalPart(), 0, $precision));
     }
     /**
      * Rounds a number up if its precision is greater than the target one.
@@ -96,7 +104,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function ceil(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function ceil(DecimalNumber $number, $precision)
     {
         $precision = $this->sanitizePrecision($precision);
         if ($number->getPrecision() <= $precision) {
@@ -119,11 +127,11 @@ class Rounding
         if ($precision > 0) {
             // we know that D > 0, because we have already checked that the number's precision
             // is greater than the target precision
-            $numberToAdd = '0.' . \str_pad('1', $precision, '0', \STR_PAD_LEFT);
+            $numberToAdd = '0.' . str_pad('1', $precision, '0', STR_PAD_LEFT);
         } else {
             $numberToAdd = '1';
         }
-        return $this->truncate($number, $precision)->plus(new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($numberToAdd));
+        return $this->truncate($number, $precision)->plus(new DecimalNumber($numberToAdd));
     }
     /**
      * Rounds a number down if its precision is greater than the target one.
@@ -149,7 +157,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function floor(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function floor(DecimalNumber $number, $precision)
     {
         $precision = $this->sanitizePrecision($precision);
         if ($number->getPrecision() <= $precision) {
@@ -172,11 +180,11 @@ class Rounding
         if ($precision > 0) {
             // we know that D > 0, because we have already checked that the number's precision
             // is greater than the target precision
-            $numberToSubtract = '0.' . \str_pad('1', $precision, '0', \STR_PAD_LEFT);
+            $numberToSubtract = '0.' . str_pad('1', $precision, '0', STR_PAD_LEFT);
         } else {
             $numberToSubtract = '1';
         }
-        return $this->truncate($number, $precision)->minus(new \_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number($numberToSubtract));
+        return $this->truncate($number, $precision)->minus(new DecimalNumber($numberToSubtract));
     }
     /**
      * Rounds the number according to the digit D located at precision P.
@@ -202,7 +210,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function roundHalfUp(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function roundHalfUp(DecimalNumber $number, $precision)
     {
         return $this->roundHalf($number, $precision, 5);
     }
@@ -230,7 +238,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function roundHalfDown(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function roundHalfDown(DecimalNumber $number, $precision)
     {
         return $this->roundHalf($number, $precision, 6);
     }
@@ -276,7 +284,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    public function roundHalfEven(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision)
+    public function roundHalfEven(DecimalNumber $number, $precision)
     {
         $precision = $this->sanitizePrecision($precision);
         if ($number->getPrecision() <= $precision) {
@@ -302,7 +310,7 @@ class Rounding
         }
         // retrieve the digit to the left of it
         if ($precision === 0) {
-            $referenceDigit = (int) \substr($number->getIntegerPart(), -1);
+            $referenceDigit = (int) substr($number->getIntegerPart(), -1);
         } else {
             $referenceDigit = (int) $fractionalPart[$precision - 1];
         }
@@ -327,7 +335,7 @@ class Rounding
      *
      * @return DecimalNumber
      */
-    private function roundHalf(\_PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number $number, $precision, $halfwayValue)
+    private function roundHalf(DecimalNumber $number, $precision, $halfwayValue)
     {
         $precision = $this->sanitizePrecision($precision);
         if ($number->getPrecision() <= $precision) {
@@ -361,12 +369,12 @@ class Rounding
      *
      * @return int Precision
      *
-     * @throws \InvalidArgumentException if precision is not a positive integer
+     * @throws InvalidArgumentException if precision is not a positive integer
      */
     private function sanitizePrecision($precision)
     {
-        if (!\is_numeric($precision) || $precision < 0) {
-            throw new \InvalidArgumentException(\sprintf('Invalid precision: %s', \print_r($precision, \true)));
+        if (!is_numeric($precision) || $precision < 0) {
+            throw new InvalidArgumentException(sprintf('Invalid precision: %s', print_r($precision, true)));
         }
         return (int) $precision;
     }

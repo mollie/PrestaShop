@@ -8,9 +8,11 @@
  */
 namespace _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Exception;
 
+use Exception;
+
 /**
  * Thrown when attempting to divide by zero
  */
-class DivisionByZeroException extends \Exception
+class DivisionByZeroException extends Exception
 {
 }

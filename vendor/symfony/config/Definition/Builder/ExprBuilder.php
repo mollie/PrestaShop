@@ -11,6 +11,15 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\UnsetKeyException;
+use Closure;
+use InvalidArgumentException;
+use RuntimeException;
+use function in_array;
+use function is_array;
+use function is_string;
+use function json_encode;
+use function sprintf;
+
 /**
  * This class builds an if expression.
  *
@@ -22,7 +31,7 @@ class ExprBuilder
     protected $node;
     public $ifPart;
     public $thenPart;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition $node)
+    public function __construct(NodeDefinition $node)
     {
         $this->node = $node;
     }
@@ -31,10 +40,10 @@ class ExprBuilder
      *
      * @return $this
      */
-    public function always(\Closure $then = null)
+    public function always(Closure $then = null)
     {
         $this->ifPart = function ($v) {
-            return \true;
+            return true;
         };
         if (null !== $then) {
             $this->thenPart = $then;
@@ -48,11 +57,11 @@ class ExprBuilder
      *
      * @return $this
      */
-    public function ifTrue(\Closure $closure = null)
+    public function ifTrue(Closure $closure = null)
     {
         if (null === $closure) {
             $closure = function ($v) {
-                return \true === $v;
+                return true === $v;
             };
         }
         $this->ifPart = $closure;
@@ -66,7 +75,7 @@ class ExprBuilder
     public function ifString()
     {
         $this->ifPart = function ($v) {
-            return \is_string($v);
+            return is_string($v);
         };
         return $this;
     }
@@ -102,7 +111,7 @@ class ExprBuilder
     public function ifArray()
     {
         $this->ifPart = function ($v) {
-            return \is_array($v);
+            return is_array($v);
         };
         return $this;
     }
@@ -114,7 +123,7 @@ class ExprBuilder
     public function ifInArray(array $array)
     {
         $this->ifPart = function ($v) use($array) {
-            return \in_array($v, $array, \true);
+            return in_array($v, $array, true);
         };
         return $this;
     }
@@ -126,7 +135,7 @@ class ExprBuilder
     public function ifNotInArray(array $array)
     {
         $this->ifPart = function ($v) use($array) {
-            return !\in_array($v, $array, \true);
+            return !in_array($v, $array, true);
         };
         return $this;
     }
@@ -138,7 +147,7 @@ class ExprBuilder
     public function castToArray()
     {
         $this->ifPart = function ($v) {
-            return !\is_array($v);
+            return !is_array($v);
         };
         $this->thenPart = function ($v) {
             return [$v];
@@ -150,7 +159,7 @@ class ExprBuilder
      *
      * @return $this
      */
-    public function then(\Closure $closure)
+    public function then(Closure $closure)
     {
         $this->thenPart = $closure;
         return $this;
@@ -176,12 +185,12 @@ class ExprBuilder
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function thenInvalid($message)
     {
         $this->thenPart = function ($v) use($message) {
-            throw new \InvalidArgumentException(\sprintf($message, \json_encode($v)));
+            throw new InvalidArgumentException(sprintf($message, json_encode($v)));
         };
         return $this;
     }
@@ -195,7 +204,7 @@ class ExprBuilder
     public function thenUnset()
     {
         $this->thenPart = function ($v) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\UnsetKeyException('Unsetting key.');
+            throw new UnsetKeyException('Unsetting key.');
         };
         return $this;
     }
@@ -204,15 +213,15 @@ class ExprBuilder
      *
      * @return NodeDefinition|ArrayNodeDefinition|VariableNodeDefinition
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function end()
     {
         if (null === $this->ifPart) {
-            throw new \RuntimeException('You must specify an if part.');
+            throw new RuntimeException('You must specify an if part.');
         }
         if (null === $this->thenPart) {
-            throw new \RuntimeException('You must specify a then part.');
+            throw new RuntimeException('You must specify a then part.');
         }
         return $this->node;
     }

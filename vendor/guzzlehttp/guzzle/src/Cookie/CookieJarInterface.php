@@ -4,6 +4,9 @@ namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Cookie;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
+use Countable;
+use IteratorAggregate;
+
 /**
  * Stores HTTP cookies.
  *
@@ -14,7 +17,7 @@ use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
  *
  * @link http://docs.python.org/2/library/cookielib.html Inspiration
  */
-interface CookieJarInterface extends \Countable, \IteratorAggregate
+interface CookieJarInterface extends Countable, IteratorAggregate
 {
     /**
      * Create a request with added cookie headers.
@@ -26,14 +29,14 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
      *
      * @return RequestInterface returns the modified request.
      */
-    public function withCookieHeader(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request);
+    public function withCookieHeader(RequestInterface $request);
     /**
      * Extract cookies from an HTTP response and store them in the CookieJar.
      *
      * @param RequestInterface  $request  Request that was sent
      * @param ResponseInterface $response Response that was received
      */
-    public function extractCookies(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, \_PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface $response);
+    public function extractCookies(RequestInterface $request, ResponseInterface $response);
     /**
      * Sets a cookie in the cookie jar.
      *
@@ -41,7 +44,7 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
      *
      * @return bool Returns true on success or false on failure
      */
-    public function setCookie(\_PhpScoper5ea00cc67502b\GuzzleHttp\Cookie\SetCookie $cookie);
+    public function setCookie(SetCookie $cookie);
     /**
      * Remove cookies currently held in the cookie jar.
      *

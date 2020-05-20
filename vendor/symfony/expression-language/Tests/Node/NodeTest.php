@@ -13,11 +13,14 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Nod
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node;
-class NodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function serialize;
+use function unserialize;
+
+class NodeTest extends TestCase
 {
     public function testToString()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node([new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')]);
+        $node = new Node([new ConstantNode('foo')]);
         $this->assertEquals(<<<'EOF'
 Node(
     ConstantNode(value: 'foo')
@@ -27,9 +30,9 @@ EOF
     }
     public function testSerialization()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node(['foo' => 'bar'], ['bar' => 'foo']);
-        $serializedNode = \serialize($node);
-        $unserializedNode = \unserialize($serializedNode);
+        $node = new Node(['foo' => 'bar'], ['bar' => 'foo']);
+        $serializedNode = serialize($node);
+        $unserializedNode = unserialize($serializedNode);
         $this->assertEquals($node, $unserializedNode);
     }
 }

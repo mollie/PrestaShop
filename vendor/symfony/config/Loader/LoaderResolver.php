@@ -18,7 +18,7 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class LoaderResolver implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolverInterface
+class LoaderResolver implements LoaderResolverInterface
 {
     /**
      * @var LoaderInterface[] An array of LoaderInterface objects
@@ -43,9 +43,9 @@ class LoaderResolver implements \_PhpScoper5ea00cc67502b\Symfony\Component\Confi
                 return $loader;
             }
         }
-        return \false;
+        return false;
     }
-    public function addLoader(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderInterface $loader)
+    public function addLoader(LoaderInterface $loader)
     {
         $this->loaders[] = $loader;
         $loader->setResolver($this);

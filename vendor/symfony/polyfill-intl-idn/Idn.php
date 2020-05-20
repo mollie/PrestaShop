@@ -26,6 +26,23 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Polyfill\Intl\Idn;
 
+use function array_unique;
+use function count;
+use function explode;
+use function implode;
+use function mb_strlen;
+use function mb_strtolower;
+use function mb_substr;
+use function sort;
+use function strlen;
+use function strpos;
+use function strrpos;
+use function strtolower;
+use function substr;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+use const PHP_VERSION_ID;
+
 /**
  * Partial intl implementation in pure PHP.
  *
@@ -48,44 +65,44 @@ final class Idn
     private static $decodeTable = array('a' => 0, 'b' => 1, 'c' => 2, 'd' => 3, 'e' => 4, 'f' => 5, 'g' => 6, 'h' => 7, 'i' => 8, 'j' => 9, 'k' => 10, 'l' => 11, 'm' => 12, 'n' => 13, 'o' => 14, 'p' => 15, 'q' => 16, 'r' => 17, 's' => 18, 't' => 19, 'u' => 20, 'v' => 21, 'w' => 22, 'x' => 23, 'y' => 24, 'z' => 25, '0' => 26, '1' => 27, '2' => 28, '3' => 29, '4' => 30, '5' => 31, '6' => 32, '7' => 33, '8' => 34, '9' => 35);
     public static function idn_to_ascii($domain, $options, $variant, &$idna_info = array())
     {
-        if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
-            @\trigger_error('idn_to_ascii(): INTL_IDNA_VARIANT_2003 is deprecated', \E_USER_DEPRECATED);
+        if (PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
+            @trigger_error('idn_to_ascii(): INTL_IDNA_VARIANT_2003 is deprecated', E_USER_DEPRECATED);
         }
         if (self::INTL_IDNA_VARIANT_UTS46 === $variant) {
-            $domain = \mb_strtolower($domain, 'utf-8');
+            $domain = mb_strtolower($domain, 'utf-8');
         }
-        $parts = \explode('.', $domain);
+        $parts = explode('.', $domain);
         foreach ($parts as $i => &$part) {
-            if ('' === $part && \count($parts) > 1 + $i) {
-                return \false;
+            if ('' === $part && count($parts) > 1 + $i) {
+                return false;
             }
-            if (\false === ($part = self::encodePart($part))) {
-                return \false;
+            if (false === ($part = self::encodePart($part))) {
+                return false;
             }
         }
-        $output = \implode('.', $parts);
-        $idna_info = array('result' => \strlen($output) > 255 ? \false : $output, 'isTransitionalDifferent' => \false, 'errors' => 0);
+        $output = implode('.', $parts);
+        $idna_info = array('result' => strlen($output) > 255 ? false : $output, 'isTransitionalDifferent' => false, 'errors' => 0);
         return $idna_info['result'];
     }
     public static function idn_to_utf8($domain, $options, $variant, &$idna_info = array())
     {
-        if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
-            @\trigger_error('idn_to_utf8(): INTL_IDNA_VARIANT_2003 is deprecated', \E_USER_DEPRECATED);
+        if (PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
+            @trigger_error('idn_to_utf8(): INTL_IDNA_VARIANT_2003 is deprecated', E_USER_DEPRECATED);
         }
-        $parts = \explode('.', $domain);
+        $parts = explode('.', $domain);
         foreach ($parts as &$part) {
-            $length = \strlen($part);
+            $length = strlen($part);
             if ($length < 1 || 63 < $length) {
                 continue;
             }
-            if (0 !== \strpos($part, 'xn--')) {
+            if (0 !== strpos($part, 'xn--')) {
                 continue;
             }
-            $part = \substr($part, 4);
+            $part = substr($part, 4);
             $part = self::decodePart($part);
         }
-        $output = \implode('.', $parts);
-        $idna_info = array('result' => \strlen($output) > 255 ? \false : $output, 'isTransitionalDifferent' => \false, 'errors' => 0);
+        $output = implode('.', $parts);
+        $idna_info = array('result' => strlen($output) > 255 ? false : $output, 'isTransitionalDifferent' => false, 'errors' => 0);
         return $idna_info['result'];
     }
     private static function encodePart($input)
@@ -94,7 +111,7 @@ final class Idn
         $n = 128;
         $bias = 72;
         $delta = 0;
-        $h = $b = \count($codePoints['basic']);
+        $h = $b = count($codePoints['basic']);
         $output = '';
         foreach ($codePoints['basic'] as $code) {
             $output .= mb_chr($code, 'utf-8');
@@ -105,10 +122,10 @@ final class Idn
         if ($b > 0) {
             $output .= '-';
         }
-        $codePoints['nonBasic'] = \array_unique($codePoints['nonBasic']);
-        \sort($codePoints['nonBasic']);
+        $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);
+        sort($codePoints['nonBasic']);
         $i = 0;
-        $length = \mb_strlen($input, 'utf-8');
+        $length = mb_strlen($input, 'utf-8');
         while ($h < $length) {
             $m = $codePoints['nonBasic'][$i++];
             $delta += ($m - $n) * ($h + 1);
@@ -138,14 +155,14 @@ final class Idn
             ++$n;
         }
         $output = 'xn--' . $output;
-        return \strlen($output) < 1 || 63 < \strlen($output) ? \false : \strtolower($output);
+        return strlen($output) < 1 || 63 < strlen($output) ? false : strtolower($output);
     }
     private static function listCodePoints($input)
     {
         $codePoints = array('all' => array(), 'basic' => array(), 'nonBasic' => array());
-        $length = \mb_strlen($input, 'utf-8');
+        $length = mb_strlen($input, 'utf-8');
         for ($i = 0; $i < $length; ++$i) {
-            $char = \mb_substr($input, $i, 1, 'utf-8');
+            $char = mb_substr($input, $i, 1, 'utf-8');
             $code = mb_ord($char, 'utf-8');
             if ($code < 128) {
                 $codePoints['all'][] = $codePoints['basic'][] = $code;
@@ -182,14 +199,14 @@ final class Idn
         $i = 0;
         $bias = 72;
         $output = '';
-        $pos = \strrpos($input, '-');
-        if (\false !== $pos) {
-            $output = \substr($input, 0, $pos++);
+        $pos = strrpos($input, '-');
+        if (false !== $pos) {
+            $output = substr($input, 0, $pos++);
         } else {
             $pos = 0;
         }
-        $outputLength = \strlen($output);
-        $inputLength = \strlen($input);
+        $outputLength = strlen($output);
+        $inputLength = strlen($input);
         while ($pos < $inputLength) {
             $oldi = $i;
             $w = 1;
@@ -205,7 +222,7 @@ final class Idn
             $bias = self::adapt($i - $oldi, ++$outputLength, 0 === $oldi);
             $n = $n + (int) ($i / $outputLength);
             $i = $i % $outputLength;
-            $output = \mb_substr($output, 0, $i, 'utf-8') . mb_chr($n, 'utf-8') . \mb_substr($output, $i, $outputLength - 1, 'utf-8');
+            $output = mb_substr($output, 0, $i, 'utf-8') . mb_chr($n, 'utf-8') . mb_substr($output, $i, $outputLength - 1, 'utf-8');
             ++$i;
         }
         return $output;

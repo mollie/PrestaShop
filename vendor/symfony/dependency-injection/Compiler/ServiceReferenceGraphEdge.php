@@ -31,7 +31,7 @@ class ServiceReferenceGraphEdge
      * @param bool  $weak
      * @param bool  $byConstructor
      */
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphNode $sourceNode, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphNode $destNode, $value = null, $lazy = \false, $weak = \false, $byConstructor = \false)
+    public function __construct(ServiceReferenceGraphNode $sourceNode, ServiceReferenceGraphNode $destNode, $value = null, $lazy = false, $weak = false, $byConstructor = false)
     {
         $this->sourceNode = $sourceNode;
         $this->destNode = $destNode;

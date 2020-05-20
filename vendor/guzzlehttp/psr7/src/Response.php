@@ -4,10 +4,14 @@ namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use InvalidArgumentException;
+use function filter_var;
+use const FILTER_VALIDATE_INT;
+
 /**
  * PSR-7 response implementation.
  */
-class Response implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface
+class Response implements ResponseInterface
 {
     use MessageTrait;
     /** @var array Map of standard HTTP status code/reason phrases */
@@ -63,14 +67,14 @@ class Response implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInte
     }
     private function assertStatusCodeIsInteger($statusCode)
     {
-        if (\filter_var($statusCode, \FILTER_VALIDATE_INT) === \false) {
-            throw new \InvalidArgumentException('Status code must be an integer value.');
+        if (filter_var($statusCode, FILTER_VALIDATE_INT) === false) {
+            throw new InvalidArgumentException('Status code must be an integer value.');
         }
     }
     private function assertStatusCodeRange($statusCode)
     {
         if ($statusCode < 100 || $statusCode >= 600) {
-            throw new \InvalidArgumentException('Status code must be an integer value between 1xx and 5xx.');
+            throw new InvalidArgumentException('Status code must be an integer value between 1xx and 5xx.');
         }
     }
 }

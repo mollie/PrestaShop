@@ -4,18 +4,20 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\C
 
 use _PhpScoper5ea00cc67502b\Bar\FooClass;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter;
+use function realpath;
+
 require_once __DIR__ . '/../includes/classes.php';
 require_once __DIR__ . '/../includes/foo.php';
-return function (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $c) {
+return function (ContainerConfigurator $c) {
     $p = $c->parameters();
     $p->set('baz_class', 'BazClass');
-    $p->set('foo_class', \_PhpScoper5ea00cc67502b\Bar\FooClass::class)->set('foo', 'bar');
+    $p->set('foo_class', FooClass::class)->set('foo', 'bar');
     $s = $c->services();
-    $s->set('foo')->args(['foo', ref('foo.baz'), ['%foo%' => 'foo is %foo%', 'foobar' => '%foo%'], \true, ref('service_container')])->class(\_PhpScoper5ea00cc67502b\Bar\FooClass::class)->tag('foo', ['foo' => 'foo'])->tag('foo', ['bar' => 'bar', 'baz' => 'baz'])->factory([\_PhpScoper5ea00cc67502b\Bar\FooClass::class, 'getInstance'])->property('foo', 'bar')->property('moo', ref('foo.baz'))->property('qux', ['%foo%' => 'foo is %foo%', 'foobar' => '%foo%'])->call('setBar', [ref('bar')])->call('initialize')->configurator('sc_configure');
+    $s->set('foo')->args(['foo', ref('foo.baz'), ['%foo%' => 'foo is %foo%', 'foobar' => '%foo%'], true, ref('service_container')])->class(FooClass::class)->tag('foo', ['foo' => 'foo'])->tag('foo', ['bar' => 'bar', 'baz' => 'baz'])->factory([FooClass::class, 'getInstance'])->property('foo', 'bar')->property('moo', ref('foo.baz'))->property('qux', ['%foo%' => 'foo is %foo%', 'foobar' => '%foo%'])->call('setBar', [ref('bar')])->call('initialize')->configurator('sc_configure');
     $s->set('foo.baz', '%baz_class%')->factory(['%baz_class%', 'getInstance'])->configurator(['%baz_class%', 'configureStatic1']);
-    $s->set('bar', \_PhpScoper5ea00cc67502b\Bar\FooClass::class)->args(['foo', ref('foo.baz'), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Parameter('foo_bar')])->configurator([ref('foo.baz'), 'configure']);
-    $s->set('foo_bar', '%foo_class%')->args([ref('deprecated_service')])->share(\false);
-    $s->set('method_call1', '_PhpScoper5ea00cc67502b\\Bar\\FooClass')->file(\realpath(__DIR__ . '/../includes/foo.php'))->call('setBar', [ref('foo')])->call('setBar', [ref('foo2')->nullOnInvalid()])->call('setBar', [ref('foo3')->ignoreOnInvalid()])->call('setBar', [ref('foobaz')->ignoreOnInvalid()])->call('setBar', [expr('service("foo").foo() ~ (container.hasParameter("foo") ? parameter("foo") : "default")')]);
+    $s->set('bar', FooClass::class)->args(['foo', ref('foo.baz'), new Parameter('foo_bar')])->configurator([ref('foo.baz'), 'configure']);
+    $s->set('foo_bar', '%foo_class%')->args([ref('deprecated_service')])->share(false);
+    $s->set('method_call1', '_PhpScoper5ea00cc67502b\\Bar\\FooClass')->file(realpath(__DIR__ . '/../includes/foo.php'))->call('setBar', [ref('foo')])->call('setBar', [ref('foo2')->nullOnInvalid()])->call('setBar', [ref('foo3')->ignoreOnInvalid()])->call('setBar', [ref('foobaz')->ignoreOnInvalid()])->call('setBar', [expr('service("foo").foo() ~ (container.hasParameter("foo") ? parameter("foo") : "default")')]);
     $s->set('foo_with_inline', 'Foo')->call('setBar', [ref('inlined')]);
     $s->set('inlined', 'Bar')->property('pub', 'pub')->call('setBaz', [ref('baz')])->private();
     $s->set('baz', 'Baz')->call('setFoo', [ref('foo_with_inline')]);

@@ -10,8 +10,9 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
+use _PhpScoper5ea00cc67502b\Memcached;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\MemcachedTrait;
-class MemcachedCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache
+class MemcachedCache extends AbstractCache
 {
     use MemcachedTrait;
     protected $maxIdLength = 250;
@@ -19,7 +20,7 @@ class MemcachedCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Si
      * @param string $namespace
      * @param int    $defaultLifetime
      */
-    public function __construct(\_PhpScoper5ea00cc67502b\Memcached $client, $namespace = '', $defaultLifetime = 0)
+    public function __construct(Memcached $client, $namespace = '', $defaultLifetime = 0)
     {
         $this->init($client, $namespace, $defaultLifetime);
     }

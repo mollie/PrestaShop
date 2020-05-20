@@ -13,16 +13,21 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
 use _PhpScoper5ea00cc67502b\Composer\Autoload\ClassLoader;
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ComposerResource;
-class ComposerResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use ReflectionClass;
+use function serialize;
+use function strpos;
+use function unserialize;
+
+class ComposerResourceTest extends TestCase
 {
     public function testGetVendor()
     {
-        $res = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ComposerResource();
-        $r = new \ReflectionClass(\_PhpScoper5ea00cc67502b\Composer\Autoload\ClassLoader::class);
-        $found = \false;
+        $res = new ComposerResource();
+        $r = new ReflectionClass(ClassLoader::class);
+        $found = false;
         foreach ($res->getVendors() as $vendor) {
-            if ($vendor && 0 === \strpos($r->getFileName(), $vendor)) {
-                $found = \true;
+            if ($vendor && 0 === strpos($r->getFileName(), $vendor)) {
+                $found = true;
                 break;
             }
         }
@@ -30,8 +35,8 @@ class ComposerResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\Te
     }
     public function testSerializeUnserialize()
     {
-        $res = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ComposerResource();
-        $ser = \unserialize(\serialize($res));
+        $res = new ComposerResource();
+        $ser = unserialize(serialize($res));
         $this->assertTrue($res->isFresh(0));
         $this->assertTrue($ser->isFresh(0));
         $this->assertEquals($res, $ser);

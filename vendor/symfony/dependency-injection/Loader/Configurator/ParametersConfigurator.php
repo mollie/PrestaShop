@@ -14,11 +14,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuild
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ParametersConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
+class ParametersConfigurator extends AbstractConfigurator
 {
     const FACTORY = 'parameters';
     private $container;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function __construct(ContainerBuilder $container)
     {
         $this->container = $container;
     }
@@ -32,7 +32,7 @@ class ParametersConfigurator extends \_PhpScoper5ea00cc67502b\Symfony\Component\
      */
     public final function set($name, $value)
     {
-        $this->container->setParameter($name, static::processValue($value, \true));
+        $this->container->setParameter($name, static::processValue($value, true));
         return $this;
     }
     /**

@@ -2,7 +2,9 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class MethodPrice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use stdClass;
+
+class MethodPrice extends BaseResource
 {
     /**
      * The area or product-type where the pricing is applied for, translated in the optional locale passed.
@@ -14,7 +16,7 @@ class MethodPrice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseReso
     /**
      * The fixed price per transaction. This excludes the variable amount.
      *
-     * @var \stdClass An amount object consisting of `value` and `currency`
+     * @var stdClass An amount object consisting of `value` and `currency`
      */
     public $fixed;
     /**

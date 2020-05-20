@@ -3,7 +3,7 @@
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-class CurrentProfile extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile
+class CurrentProfile extends Profile
 {
     /**
      * Enable a payment method for this profile.

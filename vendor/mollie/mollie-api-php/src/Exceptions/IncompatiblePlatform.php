@@ -2,7 +2,7 @@
 
 namespace _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions;
 
-class IncompatiblePlatform extends \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException
+class IncompatiblePlatform extends ApiException
 {
     const INCOMPATIBLE_PHP_VERSION = 1000;
     const INCOMPATIBLE_CURL_EXTENSION = 2000;

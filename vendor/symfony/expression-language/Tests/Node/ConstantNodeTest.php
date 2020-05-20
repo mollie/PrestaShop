@@ -11,18 +11,18 @@
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node;
 
 use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
-class ConstantNodeTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node\AbstractNodeTest
+class ConstantNodeTest extends AbstractNodeTest
 {
     public function getEvaluateData()
     {
-        return [[\false, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false)], [\true, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true)], [null, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(null)], [3, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3)], [3.3, new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3.3)], ['foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')], [[1, 'b' => 'a'], new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode([1, 'b' => 'a'])]];
+        return [[false, new ConstantNode(false)], [true, new ConstantNode(true)], [null, new ConstantNode(null)], [3, new ConstantNode(3)], [3.3, new ConstantNode(3.3)], ['foo', new ConstantNode('foo')], [[1, 'b' => 'a'], new ConstantNode([1, 'b' => 'a'])]];
     }
     public function getCompileData()
     {
-        return [['false', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false)], ['true', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true)], ['null', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(null)], ['3', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3)], ['3.3', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3.3)], ['"foo"', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')], ['[0 => 1, "b" => "a"]', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode([1, 'b' => 'a'])]];
+        return [['false', new ConstantNode(false)], ['true', new ConstantNode(true)], ['null', new ConstantNode(null)], ['3', new ConstantNode(3)], ['3.3', new ConstantNode(3.3)], ['"foo"', new ConstantNode('foo')], ['[0 => 1, "b" => "a"]', new ConstantNode([1, 'b' => 'a'])]];
     }
     public function getDumpData()
     {
-        return [['false', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\false)], ['true', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(\true)], ['null', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(null)], ['3', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3)], ['3.3', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(3.3)], ['"foo"', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')], ['foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo', \true)], ['{0: 1, "b": "a", 1: true}', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode([1, 'b' => 'a', \true])], ['{"a\\"b": "c", "a\\\\b": "d"}', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(['a"b' => 'c', '_PhpScoper5ea00cc67502b\\a\\b' => 'd'])], ['["c", "d"]', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(['c', 'd'])], ['{"a": ["b"]}', new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(['a' => ['b']])]];
+        return [['false', new ConstantNode(false)], ['true', new ConstantNode(true)], ['null', new ConstantNode(null)], ['3', new ConstantNode(3)], ['3.3', new ConstantNode(3.3)], ['"foo"', new ConstantNode('foo')], ['foo', new ConstantNode('foo', true)], ['{0: 1, "b": "a", 1: true}', new ConstantNode([1, 'b' => 'a', true])], ['{"a\\"b": "c", "a\\\\b": "d"}', new ConstantNode(['a"b' => 'c', '_PhpScoper5ea00cc67502b\\a\\b' => 'd'])], ['["c", "d"]', new ConstantNode(['c', 'd'])], ['{"a": ["b"]}', new ConstantNode(['a' => ['b']])]];
     }
 }

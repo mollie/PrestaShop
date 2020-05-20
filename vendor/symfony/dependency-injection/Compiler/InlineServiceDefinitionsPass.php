@@ -14,19 +14,29 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\Argum
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use function array_keys;
+use function array_search;
+use function array_slice;
+use function array_unique;
+use function count;
+use function is_array;
+use function sprintf;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
 /**
  * Inline service definitions where this is possible.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class InlineServiceDefinitionsPass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
+class InlineServiceDefinitionsPass extends AbstractRecursivePass implements RepeatablePassInterface
 {
     private $cloningIds = [];
     private $inlinedServiceIds = [];
     /**
      * {@inheritdoc}
      */
-    public function setRepeatedPass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
+    public function setRepeatedPass(RepeatedPass $repeatedPass)
     {
         // no-op for BC
     }
@@ -41,42 +51,42 @@ class InlineServiceDefinitionsPass extends \_PhpScoper5ea00cc67502b\Symfony\Comp
      */
     public function getInlinedServiceIds()
     {
-        @\trigger_error('Calling InlineServiceDefinitionsPass::getInlinedServiceIds() is deprecated since Symfony 3.4 and will be removed in 4.0.', \E_USER_DEPRECATED);
+        @trigger_error('Calling InlineServiceDefinitionsPass::getInlinedServiceIds() is deprecated since Symfony 3.4 and will be removed in 4.0.', E_USER_DEPRECATED);
         return $this->inlinedServiceIds;
     }
     /**
      * {@inheritdoc}
      */
-    protected function processValue($value, $isRoot = \false)
+    protected function processValue($value, $isRoot = false)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
+        if ($value instanceof ArgumentInterface) {
             // Reference found in ArgumentInterface::getValues() are not inlineable
             return $value;
         }
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition && $this->cloningIds) {
+        if ($value instanceof Definition && $this->cloningIds) {
             if ($value->isShared()) {
                 return $value;
             }
             $value = clone $value;
         }
-        if (!$value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference || !$this->container->hasDefinition($id = $this->container->normalizeId($value))) {
+        if (!$value instanceof Reference || !$this->container->hasDefinition($id = $this->container->normalizeId($value))) {
             return parent::processValue($value, $isRoot);
         }
         $definition = $this->container->getDefinition($id);
         if (!$this->isInlineableDefinition($id, $definition, $this->container->getCompiler()->getServiceReferenceGraph())) {
             return $value;
         }
-        $this->container->log($this, \sprintf('Inlined service "%s" to "%s".', $id, $this->currentId));
+        $this->container->log($this, sprintf('Inlined service "%s" to "%s".', $id, $this->currentId));
         $this->inlinedServiceIds[$id][] = $this->currentId;
         if ($definition->isShared()) {
             return $definition;
         }
         if (isset($this->cloningIds[$id])) {
-            $ids = \array_keys($this->cloningIds);
+            $ids = array_keys($this->cloningIds);
             $ids[] = $id;
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, \array_slice($ids, \array_search($id, $ids)));
+            throw new ServiceCircularReferenceException($id, array_slice($ids, array_search($id, $ids)));
         }
-        $this->cloningIds[$id] = \true;
+        $this->cloningIds[$id] = true;
         try {
             return $this->processValue($definition);
         } finally {
@@ -88,40 +98,40 @@ class InlineServiceDefinitionsPass extends \_PhpScoper5ea00cc67502b\Symfony\Comp
      *
      * @return bool If the definition is inlineable
      */
-    private function isInlineableDefinition($id, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraph $graph)
+    private function isInlineableDefinition($id, Definition $definition, ServiceReferenceGraph $graph)
     {
         if ($definition->getErrors() || $definition->isDeprecated() || $definition->isLazy() || $definition->isSynthetic()) {
-            return \false;
+            return false;
         }
         if (!$definition->isShared()) {
-            return \true;
+            return true;
         }
         if ($definition->isPublic() || $definition->isPrivate()) {
-            return \false;
+            return false;
         }
         if (!$graph->hasNode($id)) {
-            return \true;
+            return true;
         }
         if ($this->currentId == $id) {
-            return \false;
+            return false;
         }
         $ids = [];
-        $isReferencedByConstructor = \false;
+        $isReferencedByConstructor = false;
         foreach ($graph->getNode($id)->getInEdges() as $edge) {
             $isReferencedByConstructor = $isReferencedByConstructor || $edge->isReferencedByConstructor();
             if ($edge->isWeak() || $edge->isLazy()) {
-                return \false;
+                return false;
             }
             $ids[] = $edge->getSourceNode()->getId();
         }
         if (!$ids) {
-            return \true;
+            return true;
         }
-        if (\count(\array_unique($ids)) > 1) {
-            return \false;
+        if (count(array_unique($ids)) > 1) {
+            return false;
         }
-        if (\count($ids) > 1 && \is_array($factory = $definition->getFactory()) && ($factory[0] instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference || $factory[0] instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition)) {
-            return \false;
+        if (count($ids) > 1 && is_array($factory = $definition->getFactory()) && ($factory[0] instanceof Reference || $factory[0] instanceof Definition)) {
+            return false;
         }
         return $this->container->getDefinition($ids[0])->isShared();
     }

@@ -23,7 +23,7 @@ trait AbstractTrait
      *
      * @return $this
      */
-    protected final function setAbstract($abstract = \true)
+    protected final function setAbstract($abstract = true)
     {
         $this->definition->setAbstract($abstract);
         return $this;

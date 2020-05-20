@@ -3,6 +3,14 @@
 namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
 use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use BadMethodCallException;
+use Exception;
+use UnexpectedValueException;
+use function call_user_func_array;
+use function trigger_error;
+use const E_USER_ERROR;
+use const SEEK_SET;
+
 /**
  * Stream decorator trait
  * @property StreamInterface stream
@@ -12,7 +20,7 @@ trait StreamDecoratorTrait
     /**
      * @param StreamInterface $stream Stream to decorate
      */
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $stream)
+    public function __construct(StreamInterface $stream)
     {
         $this->stream = $stream;
     }
@@ -30,7 +38,7 @@ trait StreamDecoratorTrait
             $this->stream = $this->createStream();
             return $this->stream;
         }
-        throw new \UnexpectedValueException("{$name} not found on class");
+        throw new UnexpectedValueException("{$name} not found on class");
     }
     public function __toString()
     {
@@ -39,9 +47,9 @@ trait StreamDecoratorTrait
                 $this->seek(0);
             }
             return $this->getContents();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Really, PHP? https://bugs.php.net/bug.php?id=53648
-            \trigger_error('StreamDecorator::__toString exception: ' . (string) $e, \E_USER_ERROR);
+            trigger_error('StreamDecorator::__toString exception: ' . (string) $e, E_USER_ERROR);
             return '';
         }
     }
@@ -59,7 +67,7 @@ trait StreamDecoratorTrait
      */
     public function __call($method, array $args)
     {
-        $result = \call_user_func_array([$this->stream, $method], $args);
+        $result = call_user_func_array([$this->stream, $method], $args);
         // Always return the wrapped object if the result is a return $this
         return $result === $this->stream ? $this : $result;
     }
@@ -103,7 +111,7 @@ trait StreamDecoratorTrait
     {
         $this->seek(0);
     }
-    public function seek($offset, $whence = \SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET)
     {
         $this->stream->seek($offset, $whence);
     }
@@ -119,10 +127,10 @@ trait StreamDecoratorTrait
      * Implement in subclasses to dynamically create streams when requested.
      *
      * @return StreamInterface
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     protected function createStream()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 }

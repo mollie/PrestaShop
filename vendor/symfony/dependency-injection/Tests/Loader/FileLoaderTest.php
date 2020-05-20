@@ -31,106 +31,111 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\OtherDir\Baz;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface;
-class FileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use function array_keys;
+use function realpath;
+use function sprintf;
+use const PHP_EOL;
+
+class FileLoaderTest extends TestCase
 {
     protected static $fixturesPath;
     public static function setUpBeforeClass()
     {
-        self::$fixturesPath = \realpath(__DIR__ . '/../');
+        self::$fixturesPath = realpath(__DIR__ . '/../');
     }
     public function testImportWithGlobPattern()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath));
-        $resolver = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver([new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/php')), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/yaml'))]);
+        $container = new ContainerBuilder();
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath));
+        $resolver = new LoaderResolver([new IniFileLoader($container, new FileLocator(self::$fixturesPath . '/ini')), new XmlFileLoader($container, new FileLocator(self::$fixturesPath . '/xml')), new PhpFileLoader($container, new FileLocator(self::$fixturesPath . '/php')), new YamlFileLoader($container, new FileLocator(self::$fixturesPath . '/yaml'))]);
         $loader->setResolver($resolver);
         $loader->import('{F}ixtures/{xml,yaml}/services2.{yml,xml}');
         $actual = $container->getParameterBag()->all();
-        $expected = ['a string', 'foo' => 'bar', 'values' => [0, 'integer' => 4, 100 => null, 'true', \true, \false, 'on', 'off', 'float' => 1.3, 1000.3, 'a string', ['foo', 'bar']], 'mixedcase' => ['MixedCaseKey' => 'value'], 'constant' => \PHP_EOL, 'bar' => '%foo%', 'escape' => '@escapeme', 'foo_bar' => new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('foo_bar')];
-        $this->assertEquals(\array_keys($expected), \array_keys($actual), '->load() imports and merges imported files');
+        $expected = ['a string', 'foo' => 'bar', 'values' => [0, 'integer' => 4, 100 => null, 'true', true, false, 'on', 'off', 'float' => 1.3, 1000.3, 'a string', ['foo', 'bar']], 'mixedcase' => ['MixedCaseKey' => 'value'], 'constant' => PHP_EOL, 'bar' => '%foo%', 'escape' => '@escapeme', 'foo_bar' => new Reference('foo_bar')];
+        $this->assertEquals(array_keys($expected), array_keys($actual), '->load() imports and merges imported files');
     }
     public function testRegisterClasses()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setParameter('sub_dir', 'Sub');
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
-        $loader->registerClasses(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Sub\\', 'Prototype/%sub_dir%/*');
-        $this->assertEquals(['service_container', \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar::class], \array_keys($container->getDefinitions()));
-        $this->assertEquals([\_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface::class], \array_keys($container->getAliases()));
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
+        $loader->registerClasses(new Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Sub\\', 'Prototype/%sub_dir%/*');
+        $this->assertEquals(['service_container', Bar::class], array_keys($container->getDefinitions()));
+        $this->assertEquals([PsrContainerInterface::class, ContainerInterface::class, BarInterface::class], array_keys($container->getAliases()));
     }
     public function testRegisterClassesWithExclude()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setParameter('other_dir', 'OtherDir');
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
         $loader->registerClasses(
-            new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(),
+            new Definition(),
             'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\',
             'Prototype/*',
             // load everything, except OtherDir/AnotherSub & Foo.php
             'Prototype/{%other_dir%/AnotherSub,Foo.php}'
         );
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar::class));
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\OtherDir\Baz::class));
-        $this->assertFalse($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo::class));
-        $this->assertFalse($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\OtherDir\AnotherSub\DeeperBaz::class));
-        $this->assertEquals([\_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface::class], \array_keys($container->getAliases()));
-        $loader->registerClasses(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', 'Prototype/*', 'Prototype/NotExistingDir');
+        $this->assertTrue($container->has(Bar::class));
+        $this->assertTrue($container->has(Baz::class));
+        $this->assertFalse($container->has(Foo::class));
+        $this->assertFalse($container->has(DeeperBaz::class));
+        $this->assertEquals([PsrContainerInterface::class, ContainerInterface::class, BarInterface::class], array_keys($container->getAliases()));
+        $loader->registerClasses(new Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', 'Prototype/*', 'Prototype/NotExistingDir');
     }
     public function testNestedRegisterClasses()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
-        $prototype = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
-        $prototype->setPublic(\true)->setPrivate(\true);
+        $container = new ContainerBuilder();
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
+        $prototype = new Definition();
+        $prototype->setPublic(true)->setPrivate(true);
         $loader->registerClasses($prototype, 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', 'Prototype/*');
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar::class));
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\OtherDir\Baz::class));
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo::class));
-        $this->assertEquals([\_PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::class, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\FooInterface::class], \array_keys($container->getAliases()));
-        $alias = $container->getAlias(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\FooInterface::class);
-        $this->assertSame(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo::class, (string) $alias);
+        $this->assertTrue($container->has(Bar::class));
+        $this->assertTrue($container->has(Baz::class));
+        $this->assertTrue($container->has(Foo::class));
+        $this->assertEquals([PsrContainerInterface::class, ContainerInterface::class, FooInterface::class], array_keys($container->getAliases()));
+        $alias = $container->getAlias(FooInterface::class);
+        $this->assertSame(Foo::class, (string) $alias);
         $this->assertFalse($alias->isPublic());
         $this->assertFalse($alias->isPrivate());
     }
     public function testMissingParentClass()
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new ContainerBuilder();
         $container->setParameter('bad_classes_dir', 'BadClasses');
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
-        $loader->registerClasses((new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition())->setPublic(\false), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\BadClasses\\', 'Prototype/%bad_classes_dir%/*');
-        $this->assertTrue($container->has(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\BadClasses\MissingParent::class));
-        $this->assertRegExp('{Class "?Symfony\\\\Component\\\\DependencyInjection\\\\Tests\\\\Fixtures\\\\Prototype\\\\BadClasses\\\\MissingClass"? not found}', $container->getDefinition(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\BadClasses\MissingParent::class)->getErrors()[0]);
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
+        $loader->registerClasses((new Definition())->setPublic(false), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\BadClasses\\', 'Prototype/%bad_classes_dir%/*');
+        $this->assertTrue($container->has(MissingParent::class));
+        $this->assertRegExp('{Class "?Symfony\\\\Component\\\\DependencyInjection\\\\Tests\\\\Fixtures\\\\Prototype\\\\BadClasses\\\\MissingClass"? not found}', $container->getDefinition(MissingParent::class)->getErrors()[0]);
     }
     public function testRegisterClassesWithBadPrefix()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessageRegExp('/Expected to find class "Symfony\\\\Component\\\\DependencyInjection\\\\Tests\\\\Fixtures\\\\Prototype\\\\Bar" in file ".+" while importing services from resource "Prototype\\/Sub\\/\\*", but it was not found\\! Check the namespace prefix used with the resource/');
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
+        $container = new ContainerBuilder();
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
         // the Sub is missing from namespace prefix
-        $loader->registerClasses(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', 'Prototype/Sub/*');
+        $loader->registerClasses(new Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', 'Prototype/Sub/*');
     }
     /**
      * @dataProvider getIncompatibleExcludeTests
      */
     public function testRegisterClassesWithIncompatibleExclude($resourcePattern, $excludePattern)
     {
-        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader\TestFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/Fixtures'));
+        $container = new ContainerBuilder();
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath . '/Fixtures'));
         try {
-            $loader->registerClasses(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', $resourcePattern, $excludePattern);
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException $e) {
-            $this->assertEquals(\sprintf('Invalid "exclude" pattern when importing classes for "Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\": make sure your "exclude" pattern (%s) is a subset of the "resource" pattern (%s).', $excludePattern, $resourcePattern), $e->getMessage());
+            $loader->registerClasses(new Definition(), 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\', $resourcePattern, $excludePattern);
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals(sprintf('Invalid "exclude" pattern when importing classes for "Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\": make sure your "exclude" pattern (%s) is a subset of the "resource" pattern (%s).', $excludePattern, $resourcePattern), $e->getMessage());
         }
     }
     public function getIncompatibleExcludeTests()
     {
-        (yield ['Prototype/*', 'yaml/*', \false]);
-        (yield ['Prototype/OtherDir/*', 'Prototype/*', \false]);
+        (yield ['Prototype/*', 'yaml/*', false]);
+        (yield ['Prototype/OtherDir/*', 'Prototype/*', false]);
     }
 }
-class TestFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\FileLoader
+class TestFileLoader extends FileLoader
 {
     public function load($resource, $type = null)
     {
@@ -138,6 +143,6 @@ class TestFileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependen
     }
     public function supports($resource, $type = null)
     {
-        return \false;
+        return false;
     }
 }

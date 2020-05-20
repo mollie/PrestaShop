@@ -10,14 +10,16 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures;
 
-class Bar implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface
+use _PhpScoper5ea00cc67502b\NonExistent;
+
+class Bar implements BarInterface
 {
     public $quz;
-    public function __construct($quz = null, \_PhpScoper5ea00cc67502b\NonExistent $nonExistent = null, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface $decorated = null, array $foo = [])
+    public function __construct($quz = null, NonExistent $nonExistent = null, BarInterface $decorated = null, array $foo = [])
     {
         $this->quz = $quz;
     }
-    public static function create(\_PhpScoper5ea00cc67502b\NonExistent $nonExistent = null, $factory = null)
+    public static function create(NonExistent $nonExistent = null, $factory = null)
     {
     }
 }

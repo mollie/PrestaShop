@@ -10,16 +10,21 @@
  */
 namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
-class RedisClusterCacheTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\AbstractRedisCacheTest
+use _PhpScoper5ea00cc67502b\RedisCluster;
+use function class_exists;
+use function explode;
+use function getenv;
+
+class RedisClusterCacheTest extends AbstractRedisCacheTest
 {
     public static function setUpBeforeClass()
     {
-        if (!\class_exists('_PhpScoper5ea00cc67502b\\RedisCluster')) {
+        if (!class_exists('_PhpScoper5ea00cc67502b\\RedisCluster')) {
             self::markTestSkipped('The RedisCluster class is required.');
         }
-        if (!($hosts = \getenv('REDIS_CLUSTER_HOSTS'))) {
+        if (!($hosts = getenv('REDIS_CLUSTER_HOSTS'))) {
             self::markTestSkipped('REDIS_CLUSTER_HOSTS env var is not defined.');
         }
-        self::$redis = new \_PhpScoper5ea00cc67502b\RedisCluster(null, \explode(' ', $hosts));
+        self::$redis = new RedisCluster(null, explode(' ', $hosts));
     }
 }

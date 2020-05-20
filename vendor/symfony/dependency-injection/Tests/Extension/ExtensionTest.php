@@ -13,34 +13,34 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Ex
 use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
 use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension;
-class ExtensionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+class ExtensionTest extends TestCase
 {
     /**
      * @dataProvider getResolvedEnabledFixtures
      */
     public function testIsConfigEnabledReturnsTheResolvedValue($enabled)
     {
-        $extension = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
-        $this->assertSame($enabled, $extension->isConfigEnabled(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(), ['enabled' => $enabled]));
+        $extension = new EnableableExtension();
+        $this->assertSame($enabled, $extension->isConfigEnabled(new ContainerBuilder(), ['enabled' => $enabled]));
     }
     public function getResolvedEnabledFixtures()
     {
-        return [[\true], [\false]];
+        return [[true], [false]];
     }
     public function testIsConfigEnabledOnNonEnableableConfig()
     {
         $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The config array has no \'enabled\' key.');
-        $extension = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
-        $extension->isConfigEnabled(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(), []);
+        $extension = new EnableableExtension();
+        $extension->isConfigEnabled(new ContainerBuilder(), []);
     }
 }
-class EnableableExtension extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\Extension
+class EnableableExtension extends Extension
 {
-    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
     }
-    public function isConfigEnabled(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $config)
+    public function isConfigEnabled(ContainerBuilder $container, array $config)
     {
         return parent::isConfigEnabled($container, $config);
     }
