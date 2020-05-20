@@ -40,6 +40,8 @@ services:
     arguments:
       - '@mollie'
 
+  Mollie\Service\CarrierService:
+
   Mollie\Service\OrderStatusService:
 
   Mollie\Service\CountryService:

@@ -35,45 +35,53 @@
 
 namespace Mollie\Service;
 
+use Carrier;
+use Configuration;
 use Context;
-use Mollie;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Config\Config;
+use Order;
+use Validate;
 
-class IssuerService
+class CarrierService
 {
     /**
-     * @var PaymentMethodRepository
+     * Get carrier configuration
+     *
+     * @return array
+     *
+     * @since 3.3.0
      */
-    private $paymentMethodRepository;
-    /**
-     * @var Mollie
-     */
-    private $module;
-
-    public function __construct(Mollie $module, PaymentMethodRepository $paymentMethodRepository)
+    public function carrierConfig($trackingUrls)
     {
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->module = $module;
-    }
-
-    public function getIdealIssuers()
-    {
-        $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL);
-        $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
-        $issuers = json_decode($issuersJson, true);
-        $issuerList[PaymentMethod::IDEAL] = [];
-        $context = Context::getContext();
-        foreach ($issuers as $issuer) {
-            $issuer['href'] = $context->link->getModuleLink(
-                $this->module->name,
-                'payment',
-                ['method' => $methodId , 'issuer' => $issuer['id'], 'rand' => time()],
-                true
-            );
-            $issuerList[PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+        if (!is_array($trackingUrls)) {
+            $trackingUrls = [];
         }
 
-        return $issuerList;
+        $carriers = Carrier::getCarriers(
+            Context::getContext()->language->id,
+            false,
+            false,
+            false,
+            null,
+            Carrier::ALL_CARRIERS
+        );
+
+        $configCarriers = [];
+        foreach ($carriers as $carrier) {
+            $idCarrier = (int)$carrier['id_carrier'];
+            $configCarriers[] = [
+                'id_carrier' => $idCarrier,
+                'name' => $carrier['name'],
+                'source' => isset($dbConfig[$idCarrier]) ? $trackingUrls[$idCarrier]['source'] : ($carrier['external_module_name'] ? Config::MOLLIE_CARRIER_MODULE : Config::MOLLIE_CARRIER_CARRIER),
+                'module' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
+                'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
+                'custom_url' => isset($dbConfig[$idCarrier]) ? $trackingUrls[$idCarrier]['custom_url'] : '',
+            ];
+        }
+        if (count($trackingUrls) !== count($configCarriers)) {
+            Configuration::updateValue(Config::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
+        }
+
+        return $configCarriers;
     }
 }

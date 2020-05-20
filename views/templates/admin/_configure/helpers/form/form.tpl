@@ -259,11 +259,9 @@
                         <td class="left">
                             <input
                                     type="text"
-                                    {if $carrier.source !== "custom_url"}disabled=""
-                                    value=""{else}
-                                    value="{$carrier.custom_url}"
-                                    {/if}
+                                    {if $carrier.source !== "custom_url"}disabled=""{/if}
                                     name="MOLLIE_CARRIER_CUSTOM_URL_{$carrier.id_carrier}"
+                                    value=""
                             >
                         </td>
                     </tr>

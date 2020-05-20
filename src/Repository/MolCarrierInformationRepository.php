@@ -49,5 +49,4 @@ class MolCarrierInformationRepository
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
     }
-
 }

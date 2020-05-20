@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Builder;
+NameSpace Mollie\Builder;
 
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
@@ -194,7 +194,7 @@ class FormBuilder
                         ],
                     ],
                     'desc' => $this->module->display(
-                        $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
+                        $this->module->getPathUri() , 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
@@ -245,8 +245,7 @@ class FormBuilder
                 'class' => 'fixed-width-xxl',
             ];
 
-            $input = array_merge($input,
-                [
+            $input = array_merge($input, [
                     [
                         'type' => 'mollie-h3',
                         'tab' => $generalSettings,
@@ -382,7 +381,7 @@ class FormBuilder
                 Config::PARTIAL_REFUND_CODE,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], ['paid', Config::PARTIAL_REFUND_CODE])) {
+            if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],
