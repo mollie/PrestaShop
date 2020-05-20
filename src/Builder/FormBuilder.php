@@ -345,7 +345,7 @@ class FormBuilder
                 \Mollie\Config\Config::PARTIAL_REFUND_CODE,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], ['paid', \Mollie\Config\Config::PARTIAL_REFUND_CODE])) {
+            if (!in_array($status['name'], [\Mollie\Config\Config::PARTIAL_REFUND_CODE])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],
