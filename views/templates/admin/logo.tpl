@@ -1,5 +1,5 @@
 {**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
 *}
-<div style="width: 100%; align-content: center; text-align: center;">
-  <img src="/modules/mollie/views/img/mollie_logo.png" style="max-width:100%; height:auto; margin: 0 auto">
+<div style="width: 263px; align-content: center; text-align: left; padding-bottom: 12px;">
+  <img src="{$logo_url|escape:'htmlall':'UTF-8'}" style="max-width:100%; height:auto; margin: 0 auto">
 </div>
 

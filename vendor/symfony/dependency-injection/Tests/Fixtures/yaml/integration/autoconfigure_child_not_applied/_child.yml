@@ -1,0 +1,4 @@
+services:
+    child_service:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        parent: parent_service

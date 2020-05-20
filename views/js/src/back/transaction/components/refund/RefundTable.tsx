@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,10 +40,10 @@ import { formatCurrency } from '@shared/tools';
 import { IMollieApiRefund } from '@shared/globals';
 
 export default function RefundTable(): ReactElement<{}> {
-  const { payment, currencies }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { payment, currencies }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     payment: state.payment,
     currencies: state.currencies,
-  })), []);
+  }));
 
   return (
     <div className="table-responsive">

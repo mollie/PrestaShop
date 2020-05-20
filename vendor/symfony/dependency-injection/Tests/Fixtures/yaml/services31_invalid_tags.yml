@@ -1,0 +1,6 @@
+services:
+    _defaults:
+        tags: ['foo']
+
+    _PhpScoper5ea00cc67502b\Foo\Bar:
+        tags: invalid

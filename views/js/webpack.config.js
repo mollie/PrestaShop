@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,14 +46,14 @@ const plugins = [
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   new HtmlWebpackPlugin({
     filename: 'manifest.php',
-    template: 'manifest.php.tpl',
+    template: '../templates/admin/manifest.php.tpl',
     inject: false,
     production,
     version,
     chunksSortMode: 'none',
   }),
   new WebpackRequireFrom({ variableName: 'window.MollieModule.urls.publicPath' }),
-  new webpack.BannerPlugin(` Copyright (c) 2012-2019, Mollie B.V.
+  new webpack.BannerPlugin(` Copyright (c) 2012-2020, Mollie B.V.
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without

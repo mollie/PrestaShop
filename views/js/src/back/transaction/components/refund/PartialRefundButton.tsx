@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,10 +42,10 @@ interface IProps {
 }
 
 export default function PartialRefundButton({ loading, disabled, refundPayment }: IProps): ReactElement<{}> {
-  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   const content = (
     <button

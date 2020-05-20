@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  * @package    Mollie
  * @link       https://www.mollie.nl
  */
-import React, { ReactElement, useCallback } from 'react';
+import React, {ReactElement, useCallback, useState} from 'react';
 import styled from 'styled-components';
 
 import OrderLinesTable from '@transaction/components/orderlines/OrderLinesTable';
@@ -53,11 +53,11 @@ const Div = styled.div`
 ` as any;
 
 export default function OrderLinesInfo(): ReactElement<{}> {
-  const { translations, order, config: { legacy } }: IProps = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, order, config: { legacy } }: IProps = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     order: state.order,
     config: state.config,
-  })), []);
+  }));
 
   if (legacy) {
     return (

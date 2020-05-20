@@ -63,3 +63,45 @@
     -moz-box-shadow: 2px 2px 16px -2px rgba(0,0,0,0.75);
     box-shadow: 2px 2px 16px -2px rgba(0,0,0,0.75);
 }
+
+.form-group.form-separator {
+    margin-left: 0;
+}
+
+#module_form .mollie-input-error {
+    border: 1px solid #f13340;
+}
+
+.js-mollie-payment-error .error-text {
+    margin: 0;
+}
+
+.mollie-signature {
+    padding-top: 20px;
+}
+
+.mollie_button {
+    width: 100%;
+}
+.payment-method a.text {
+    color: #0a0a0a;
+}
+.payment-method a.text.collapsed svg {
+    color: #0a0a0a;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.payment-method {
+    padding: 10px;
+    border-color: #999798;
+    border-bottom: 1px solid;
+}
+
+svg.mollie-svg {
+    width: 1em;
+    height: 1em;
+    display: inline;
+}

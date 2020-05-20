@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ function upgrade_module_3_3_0($module)
             );
         }
     } catch (PrestaShopException $e) {
-        Logger::addLog("Mollie update error: {$e->getMessage()}");
+        PrestaShopLogger::addLog("Mollie update error: {$e->getMessage()}");
     }
 
     if (method_exists($module, 'setDefaultCarrierStatuses')) {

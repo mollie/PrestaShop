@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,10 @@ import EmptyRefundTable from '@transaction/components/refund/EmptyRefundTable';
 import RefundTable from '@transaction/components/refund/RefundTable';
 
 export default function RefundHistory(): ReactElement<{}> {
-  const { translations, payment }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, payment }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     payment: state.payment,
-  })), []);
+  }));
 
   return (
     <>

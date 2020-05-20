@@ -1,0 +1,12 @@
+services:
+  Mollie\Builder\FormBuilder:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\ApiService'
+      - '@Mollie\Service\CountryService'
+      - '@Mollie\Repository\CountryRepository'
+      - '@Mollie\Service\ConfigFieldService'
+      - '@Mollie\Service\MolCarrierInformationService'
+      - '@language'
+      - '@smarty'
+      - '@link'

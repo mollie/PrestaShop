@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2019, Mollie B.V.
+* Copyright (c) 2012-2020, Mollie B.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,7 @@
 </head>
 <body>
   <div class="ideal-container">
-    <img class="ideal-logo" src="{$ideal_logo|escape:'htmlall':'UTF-8' nofilter}" alt="">
+    <img class="ideal-logo" src="{$ideal_logo|escape:'htmlall':'UTF-8'}" alt="">
   </div>
   {if !empty($canceled)}
     <h1>{l s='Welcome back' mod='mollie'}</h1>

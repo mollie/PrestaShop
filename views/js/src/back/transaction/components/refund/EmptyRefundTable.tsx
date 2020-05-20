@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,9 @@ import RefundTableHeader from '@transaction/components/refund/RefundTableHeader'
 import { useMappedState } from 'redux-react-hook';
 
 export default function EmptyRefundTable(): ReactElement<{}> {
-  const { translations }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations
-  })), []);
+  }));
 
   return (
     <div className="table-responsive">

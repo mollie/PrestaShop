@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import xss from 'xss';
 import { get } from 'lodash';
 
 import { updatePayment } from '@transaction/store/actions';
+import { updateWarning } from '@transaction/store/actions';
 import RefundButton from '@transaction/components/refund/RefundButton';
 import PartialRefundButton from '@transaction/components/refund/PartialRefundButton';
 import { refundPayment as refundPaymentAjax } from '@transaction/misc/ajax';
@@ -46,14 +47,13 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 export default function RefundForm(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
   const [refundInput, setRefundInput] = useState<string>('');
-  const { translations, payment: { id: transactionId }, payment, currencies, config: { legacy } }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, payment: { id: transactionId }, payment, currencies, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
     payment: state.payment,
     currencies: state.currencies,
-  }),), []);
+  }),);
   const dispatch = useDispatch();
-  const _dispatchUpdatePayment = (payment: IMollieApiPayment) => useCallback(() => dispatch(updatePayment(payment)), []);
 
   async function _refundPayment(partial = false): Promise<boolean> {
     let amount;
@@ -94,7 +94,8 @@ export default function RefundForm(): ReactElement<{}> {
         const { success = false, payment = null } = await refundPaymentAjax(transactionId, amount);
         if (success) {
           if (payment) {
-            _dispatchUpdatePayment(payment);
+            dispatch(updateWarning('refunded'));
+            dispatch(updatePayment(payment));
             setRefundInput('');
           }
         } else {
@@ -111,7 +112,6 @@ export default function RefundForm(): ReactElement<{}> {
       }
     }
   }
-
   if (legacy) {
     return (
       <>
@@ -146,18 +146,23 @@ export default function RefundForm(): ReactElement<{}> {
       </>
     );
   }
-
+  let html;
+  if (payment.settlementAmount) {
+    html = (<RefundButton
+        refundPayment={_refundPayment}
+        loading={loading}
+        disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+    />);
+  } else {
+    html = '';
+  }
   return (
     <>
       <h4>{translations.refund}</h4>
       <div className="well well-sm">
         <div className="form-inline">
           <div className="form-group">
-            <RefundButton
-              refundPayment={_refundPayment}
-              loading={loading}
-              disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
-            />
+            {html}
           </div>
           <div className="form-group">
             <div className="input-group" style={{ minWidth: '100px' }}>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ import OrderLinesTableFooter from '@transaction/components/orderlines//OrderLine
 import OrderLinesEditor from '@transaction/components/orderlines//OrderLinesEditor';
 import ShipmentTrackingEditor from '@transaction/components/orderlines//ShipmentTrackingEditor';
 import { cancelOrder, refundOrder, shipOrder } from '@transaction/misc/ajax';
-import { updateOrder } from '@transaction/store/actions';
+import {updateOrder, updateWarning} from '@transaction/store/actions';
 import OrderLinesTableActions from '@transaction/components/orderlines//OrderLinesTableActions';
 import { formatCurrency } from '@shared/tools';
 import { IMollieApiOrder, IMollieOrderLine, IMollieTracking, } from '@shared/globals';
@@ -57,15 +57,14 @@ const TableContainer = styled.div`
 
 export default function OrderLinesTable(): ReactElement<{}> {
   const [loading, setLoading] = useState<boolean>(false);
-  const { translations, order, currencies, config: { legacy }, config, viewportWidth }: Partial<IMollieOrderState> = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, order, currencies, config: { legacy }, config, viewportWidth }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     order: state.order,
     currencies: state.currencies,
     translations: state.translations,
     config: state.config,
     viewportWidth: state.viewportWidth,
-  })), []);
+  }));
   const dispatch = useDispatch();
-  const _dispatchUpdateOrder = (order: IMollieApiOrder) => useCallback(() => dispatch(updateOrder(order)), []);
 
   async function _ship(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
@@ -131,7 +130,8 @@ export default function OrderLinesTable(): ReactElement<{}> {
           setLoading(true);
           const { success, order: newOrder } = await shipOrder(order.id, lines, tracking);
           if (success) {
-            _dispatchUpdateOrder(newOrder);
+            dispatch(updateOrder(newOrder));
+            dispatch(updateWarning('shipped'));
           } else {
             import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
               swal({
@@ -185,7 +185,8 @@ export default function OrderLinesTable(): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await refundOrder(order.id, lines);
         if (success) {
-          _dispatchUpdateOrder(newOrder);
+          dispatch(updateWarning('refunded'));
+          dispatch(updateOrder(newOrder));
         } else {
           import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert').then(({ default: swal }) => {
             swal({
@@ -239,7 +240,8 @@ export default function OrderLinesTable(): ReactElement<{}> {
         setLoading(true);
         const { success, order: newOrder } = await cancelOrder(order.id, lines);
         if (success) {
-          _dispatchUpdateOrder(newOrder);
+          dispatch(updateOrder(newOrder));
+          dispatch(updateWarning('canceled'));
         } else {
           swal({
             icon: 'error',

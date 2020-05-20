@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2019, Mollie B.V.
+* Copyright (c) 2012-2020, Mollie B.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,11 @@
 * @link       https://www.mollie.nl
 *}
 {capture name=path}
-  <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}">
+  <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8'}">
     {l s='Payment' mod='mollie'}
   </a>
   <span class="navigation-pipe">
-        {$navigationPipe|escape:'htmlall':'UTF-8' nofilter}
+        {$navigationPipe|escape:'htmlall':'UTF-8'}
     </span>
   <span class="navigation_page">
         {l s='Payment error' mod='mollie'}
@@ -45,13 +45,13 @@
   <strong>{l s='An error occurred' mod='mollie'}:</strong>
   <ul>
     {foreach from=$errors item='error'}
-      <li>{$error|escape:'htmlall':'UTF-8' nofilter}</li>
+      <li>{$error|escape:'htmlall':'UTF-8'}</li>
     {/foreach}
   </ul>
 </div>
 <ul class="footer_links clearfix">
   <li>
-    <a class="btn btn-default button button-small" href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8' nofilter}" title="{l s='Back to your shopping cart' mod='mollie'}">
+    <a class="btn btn-default button button-small" href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8'}" title="{l s='Back to your shopping cart' mod='mollie'}">
       <span><i class="icon-chevron-left"></i> {l s='Back to your shopping cart' mod='mollie'}</span>
     </a>
   </li>

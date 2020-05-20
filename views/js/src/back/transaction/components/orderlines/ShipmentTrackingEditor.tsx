@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 
 import { IMollieOrderConfig, IMollieTracking, ITranslations } from '@shared/globals';
+import {useMappedState} from "redux-react-hook";
 
 interface IProps {
   edited: (newLines: IMollieTracking) => void;
@@ -70,13 +71,12 @@ text-align: left!important;
 
 export default function ShipmentTrackingEditor(props: IProps): ReactElement<{}> {
   const [skipTracking, setSkipTracking] = useState<boolean>(false);
-  const [carrier, setCarrier] = useState<string>(get(props, 'config.tracking.carrier', ''));
-  const [carrierChanged, setCarrierChanged] = useState<boolean>(!!get(props, 'config.tracking.carrier', false));
-  const [code, setCode] = useState<string>(get(props, 'config.tracking.code', ''));
-  const [codeChanged, setCodeChanged] = useState<boolean>(!!get(props, 'config.tracking.code', ''));
-  const [url, setUrl] = useState<string>(get(props, 'config.tracking.url', ''));
+  const [carrier, setCarrier] = useState<string>(get(props, 'config.tracking.tracking.carrier', ''));
+  const [carrierChanged, setCarrierChanged] = useState<boolean>(!!get(props, 'config.tracking.tracking.carrier', false));
+  const [code, setCode] = useState<string>(get(props, 'config.tracking.tracking.code', ''));
+  const [codeChanged, setCodeChanged] = useState<boolean>(!!get(props, 'config.tracking.tracking.code', ''));
+  const [url, setUrl] = useState<string>(get(props, 'config.tracking.tracking.url', ''));
   const { translations, edited } = props;
-
   function _getCarrierInvalid(): boolean {
     return !skipTracking && isEmpty(carrier.replace(/\s+/, '')) && carrierChanged;
   }

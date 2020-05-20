@@ -1,0 +1,103 @@
+
+.mollie-iframe-container {
+    /*width: calc(100% - 80px);*/
+    /*padding-bottom: 20px;*/
+    padding: 20px;
+    max-width: 600px;
+    margin: 0;
+}
+
+label.mollie-input-error {
+    color: red;
+    padding-top: 10px;
+}
+
+.mollie-iframe-container .mollie-label {
+    position: absolute;
+    left: 15px;
+    color: #999;
+    pointer-events: none;
+}
+
+.mollie-input {
+    width: 100%;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: inset 0px 0px 0px 0px transparent,
+    0px 1px 1px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+    transition: all 0.05s ease;
+    height: 45px;
+}
+
+.mollie-input.card-number{
+    border-radius: 10px 10px 0 0;
+}
+
+.mollie-input.expiry-date {
+    border-radius: 0 0 0 10px;
+}
+
+.mollie-input.verification-code {
+    border-radius: 0 0 10px 0;
+}
+
+.mollie-input.has-focus {
+    box-shadow: inset 0px 0px 0px 2px #07f, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
+    0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+}
+
+.mollie-input.is-invalid {
+    box-shadow: 0px 0px 0px 1px #f33, 0px 1px 1px 0px rgba(0, 0, 0, 0.1),
+    0px 2px 6px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+    background-color: #fff0f0;
+}
+
+
+.form-group-expiry-date,
+.form-group-verification-code {
+    width: 50%;
+    flex: 0 1 auto;
+}
+
+.form-group-card-number {
+    width: 100%;
+    flex: 0 1 auto;
+}
+.inline-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0 0;
+}
+.mollie-iframe-container .form-group {
+    position: relative;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.inline-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0 0;
+}
+
+.mollie-information-label {
+    font-size: 15px;
+    padding-bottom: 10px;
+}
+
+.is-focused label.mollie-label,
+.is-dirty label.mollie-label {
+    display: none !important;
+}
+
+@media (max-width: 412px) {
+    body#checkout .additional-information.mollie-addition-info {
+        margin-left: 0;
+    }
+}
+
+#mollie-notifications {
+    margin-bottom: 0;
+}

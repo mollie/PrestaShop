@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ import { throttle } from 'lodash';
 import { ICurrencies, IMollieOrderConfig, ITranslations } from '@shared/globals';
 
 import LoadingDots from '@shared/components/LoadingDots';
+import {updateWarning} from "@transaction/store/actions";
 
 const MolliePanel = lazy(() => import('@transaction/components/MolliePanel'));
 

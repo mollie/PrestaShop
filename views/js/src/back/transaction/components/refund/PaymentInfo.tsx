@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,10 +44,10 @@ const Div = styled.div`
 ` as any;
 
 export default function PaymentInfo(): ReactElement<{}> {
-  const { translations, config: { legacy } } = useCallback(useMappedState((state: IMollieOrderState): any => ({
+  const { translations, config: { legacy } } = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
     config: state.config,
-  })), []);
+  }));
 
   if (legacy) {
     return (

@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2019, Mollie B.V.
+* Copyright (c) 2012-2020, Mollie B.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -30,4 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8' nofilter}</h4>
+<h4 id="mollie-ok">{$okMessage|escape:'html':'UTF-8'}</h4>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2019, Mollie B.V.
+ * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,6 +102,7 @@ export interface IMolliePaymentMethodItem {
   name: string;
   enabled: boolean;
   available?: boolean;
+  tipEnableSSL?: boolean;
   image: IMolliePaymentMethodImage;
   issuers: Array<IMolliePaymentIssuer>;
 }

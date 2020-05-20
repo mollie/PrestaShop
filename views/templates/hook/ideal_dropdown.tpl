@@ -1,5 +1,5 @@
 {**
-* Copyright (c) 2012-2019, Mollie B.V.
+* Copyright (c) 2012-2020, Mollie B.V.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@
   </button>
   <div class="dropdown-menu">
     {foreach $idealIssuers as $issuer}
-      <a class="dropdown-item mollie-issuer-item" data-ideal-issuer="{$issuer['id']|escape:'htmlall':'UTF-8' nofilter}" style="cursor: pointer">
-        <img src="{$issuer['image']['size2x']|escape:'htmlall':'UTF-8' nofilter}" style="height: 24px; width: auto;"> {$issuer['name']|escape:'htmlall':'UTF-8' nofilter}
+      <a class="dropdown-item mollie-issuer-item" data-ideal-issuer="{$issuer['id']|escape:'htmlall':'UTF-8'}" style="cursor: pointer">
+        <img src="{$issuer['image']['size2x']|escape:'htmlall':'UTF-8'}" style="height: 24px; width: auto;"> {$issuer['name']|escape:'htmlall':'UTF-8'}
       </a>
     {/foreach}
   </div>
