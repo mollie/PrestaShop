@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
+use _PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class NullCache implements CacheInterface
+class NullCache implements \_PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface
 {
     /**
      * {@inheritdoc}
@@ -37,41 +37,41 @@ class NullCache implements CacheInterface
      */
     public function has($key)
     {
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function delete($key)
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function deleteMultiple($keys)
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function set($key, $value, $ttl = null)
     {
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
     public function setMultiple($values, $ttl = null)
     {
-        return false;
+        return \false;
     }
 }

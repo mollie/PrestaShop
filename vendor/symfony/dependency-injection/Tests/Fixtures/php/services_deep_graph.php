@@ -1,28 +1,21 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph;
-use stdClass;
-use function class_alias;
-use function sprintf;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class Symfony_DI_PhpDumper_Test_Deep_Graph extends Container
+class Symfony_DI_PhpDumper_Test_Deep_Graph extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -34,30 +27,30 @@ class Symfony_DI_PhpDumper_Test_Deep_Graph extends Container
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => true];
+        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
     }
     public function compile()
     {
-        throw new LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
-        return true;
+        return \true;
     }
     public function isFrozen()
     {
-        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
-        return true;
+        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
+        return \true;
     }
     /**
      * Gets the public 'bar' shared service.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function getBarService()
     {
-        $this->services['bar'] = $instance = new stdClass();
-        $instance->p5 = new stdClass(${($_ = isset($this->services['foo']) ? $this->services['foo'] : $this->getFooService()) && false ?: '_'});
+        $this->services['bar'] = $instance = new \stdClass();
+        $instance->p5 = new \stdClass(${($_ = isset($this->services['foo']) ? $this->services['foo'] : $this->getFooService()) && \false ?: '_'});
         return $instance;
     }
     /**
@@ -67,15 +60,15 @@ class Symfony_DI_PhpDumper_Test_Deep_Graph extends Container
      */
     protected function getFooService()
     {
-        $a = ${($_ = isset($this->services['bar']) ? $this->services['bar'] : $this->getBarService()) && false ?: '_'};
+        $a = ${($_ = isset($this->services['bar']) ? $this->services['bar'] : $this->getBarService()) && \false ?: '_'};
         if (isset($this->services['foo'])) {
             return $this->services['foo'];
         }
-        $b = new stdClass();
-        $c = new stdClass();
-        $c->p3 = new stdClass();
+        $b = new \stdClass();
+        $c = new \stdClass();
+        $c->p3 = new \stdClass();
         $b->p2 = $c;
-        return $this->services['foo'] = new FooForDeepGraph($a, $b);
+        return $this->services['foo'] = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph($a, $b);
     }
 }
 /**
@@ -84,4 +77,4 @@ class Symfony_DI_PhpDumper_Test_Deep_Graph extends Container
  *
  * @final since Symfony 3.3
  */
-class_alias('_PhpScoper5ea00cc67502b\\Symfony_DI_PhpDumper_Test_Deep_Graph', 'Symfony_DI_PhpDumper_Test_Deep_Graph', false);
+\class_alias('_PhpScoper5ece82d7231e4\\Symfony_DI_PhpDumper_Test_Deep_Graph', 'Symfony_DI_PhpDumper_Test_Deep_Graph', \false);

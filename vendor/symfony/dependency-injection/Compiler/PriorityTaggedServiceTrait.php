@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-use function call_user_func_array;
-use function krsort;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
 /**
  * Trait that allows a generic method to find and sort service by priority option in the tag.
  *
@@ -36,16 +33,16 @@ trait PriorityTaggedServiceTrait
      *
      * @return Reference[]
      */
-    private function findAndSortTaggedServices($tagName, ContainerBuilder $container)
+    private function findAndSortTaggedServices($tagName, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $services = [];
-        foreach ($container->findTaggedServiceIds($tagName, true) as $serviceId => $attributes) {
+        foreach ($container->findTaggedServiceIds($tagName, \true) as $serviceId => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
-            $services[$priority][] = new Reference($serviceId);
+            $services[$priority][] = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference($serviceId);
         }
         if ($services) {
-            krsort($services);
-            $services = call_user_func_array('array_merge', $services);
+            \krsort($services);
+            $services = \call_user_func_array('array_merge', $services);
         }
         return $services;
     }

@@ -8,20 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
-use function gettype;
-use function is_float;
-use function is_int;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 /**
  * This node represents a float value in the config tree.
  *
  * @author Jeanmonod David <david.jeanmonod@gmail.com>
  */
-class FloatNode extends NumericNode
+class FloatNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NumericNode
 {
     /**
      * {@inheritdoc}
@@ -29,11 +24,11 @@ class FloatNode extends NumericNode
     protected function validateType($value)
     {
         // Integers are also accepted, we just cast them
-        if (is_int($value)) {
+        if (\is_int($value)) {
             $value = (float) $value;
         }
-        if (!is_float($value)) {
-            $ex = new InvalidTypeException(sprintf('Invalid type for path "%s". Expected float, but got %s.', $this->getPath(), gettype($value)));
+        if (!\is_float($value)) {
+            $ex = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidTypeException(\sprintf('Invalid type for path "%s". Expected float, but got %s.', $this->getPath(), \gettype($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }

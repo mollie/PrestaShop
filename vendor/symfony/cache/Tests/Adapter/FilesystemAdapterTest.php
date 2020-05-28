@@ -8,56 +8,45 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Exception;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ReflectionObject;
-use function dirname;
-use function file_exists;
-use function rmdir;
-use function strpos;
-use function sys_get_temp_dir;
-use function unlink;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\FilesystemAdapter;
 /**
  * @group time-sensitive
  */
-class FilesystemAdapterTest extends AdapterTestCase
+class FilesystemAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     public function createCachePool($defaultLifetime = 0)
     {
-        return new FilesystemAdapter('', $defaultLifetime);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime);
     }
     public static function tearDownAfterClass()
     {
-        self::rmdir(sys_get_temp_dir() . '/symfony-cache');
+        self::rmdir(\sys_get_temp_dir() . '/symfony-cache');
     }
     public static function rmdir($dir)
     {
-        if (!file_exists($dir)) {
+        if (!\file_exists($dir)) {
             return;
         }
-        if (!$dir || 0 !== strpos(dirname($dir), sys_get_temp_dir())) {
-            throw new Exception(__METHOD__ . "() operates only on subdirs of system's temp dir");
+        if (!$dir || 0 !== \strpos(\dirname($dir), \sys_get_temp_dir())) {
+            throw new \Exception(__METHOD__ . "() operates only on subdirs of system's temp dir");
         }
-        $children = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+        $children = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($children as $child) {
             if ($child->isDir()) {
-                rmdir($child);
+                \rmdir($child);
             } else {
-                unlink($child);
+                \unlink($child);
             }
         }
-        rmdir($dir);
+        \rmdir($dir);
     }
-    protected function isPruned(CacheItemPoolInterface $cache, $name)
+    protected function isPruned(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface $cache, $name)
     {
-        $getFileMethod = (new ReflectionObject($cache))->getMethod('getFile');
-        $getFileMethod->setAccessible(true);
-        return !file_exists($getFileMethod->invoke($cache, $name));
+        $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
+        $getFileMethod->setAccessible(\true);
+        return !\file_exists($getFileMethod->invoke($cache, $name));
     }
 }

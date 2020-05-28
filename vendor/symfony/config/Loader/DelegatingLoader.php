@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Exception\FileLoaderLoadException;
 /**
  * DelegatingLoader delegates loading to other loaders using a loader resolver.
  *
@@ -19,9 +19,9 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadExc
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DelegatingLoader extends Loader
+class DelegatingLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\Loader
 {
-    public function __construct(LoaderResolverInterface $resolver)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\LoaderResolverInterface $resolver)
     {
         $this->resolver = $resolver;
     }
@@ -30,8 +30,8 @@ class DelegatingLoader extends Loader
      */
     public function load($resource, $type = null)
     {
-        if (false === ($loader = $this->resolver->resolve($resource, $type))) {
-            throw new FileLoaderLoadException($resource, null, null, null, $type);
+        if (\false === ($loader = $this->resolver->resolve($resource, $type))) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Exception\FileLoaderLoadException($resource, null, null, null, $type);
         }
         return $loader->load($resource, $type);
     }
@@ -40,6 +40,6 @@ class DelegatingLoader extends Loader
      */
     public function supports($resource, $type = null)
     {
-        return false !== $this->resolver->resolve($resource, $type);
+        return \false !== $this->resolver->resolve($resource, $type);
     }
 }

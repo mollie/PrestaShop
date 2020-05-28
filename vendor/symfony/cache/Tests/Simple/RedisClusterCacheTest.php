@@ -8,23 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ea00cc67502b\RedisCluster;
-use function class_exists;
-use function explode;
-use function getenv;
-
-class RedisClusterCacheTest extends AbstractRedisCacheTest
+class RedisClusterCacheTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\AbstractRedisCacheTest
 {
     public static function setUpBeforeClass()
     {
-        if (!class_exists('_PhpScoper5ea00cc67502b\\RedisCluster')) {
+        if (!\class_exists('_PhpScoper5ece82d7231e4\\RedisCluster')) {
             self::markTestSkipped('The RedisCluster class is required.');
         }
-        if (!($hosts = getenv('REDIS_CLUSTER_HOSTS'))) {
+        if (!($hosts = \getenv('REDIS_CLUSTER_HOSTS'))) {
             self::markTestSkipped('REDIS_CLUSTER_HOSTS env var is not defined.');
         }
-        self::$redis = new RedisCluster(null, explode(' ', $hosts));
+        self::$redis = new \_PhpScoper5ece82d7231e4\RedisCluster(null, \explode(' ', $hosts));
     }
 }

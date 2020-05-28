@@ -1,21 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp;
 
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
-use function array_filter;
-use function array_keys;
-use function constant;
-use function defined;
-use function function_exists;
-use function get_defined_constants;
-use function idn_to_ascii;
-use function implode;
-use function microtime;
-use function substr;
-use const INTL_IDNA_VARIANT_UTS46;
-
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Polyfill\Intl\Idn\Idn;
 final class Utils
 {
     /**
@@ -28,7 +17,7 @@ final class Utils
      */
     public static function currentTime()
     {
-        return function_exists('_PhpScoper5ea00cc67502b\\hrtime') ? hrtime(true) / 1000000000.0 : microtime(true);
+        return \function_exists('_PhpScoper5ece82d7231e4\\hrtime') ? hrtime(\true) / 1000000000.0 : \microtime(\true);
     }
     /**
      * @param int $options
@@ -38,27 +27,26 @@ final class Utils
      *
      * @internal
      */
-    public static function idnUriConvert(UriInterface $uri, $options = 0)
+    public static function idnUriConvert(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, $options = 0)
     {
         if ($uri->getHost()) {
-            $idnaVariant = defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
-            $asciiHost = $idnaVariant === 0 ? idn_to_ascii($uri->getHost(), $options) : idn_to_ascii($uri->getHost(), $options, $idnaVariant, $info);
-            if ($asciiHost === false) {
+            $asciiHost = self::idnToAsci($uri->getHost(), $options, $info);
+            if ($asciiHost === \false) {
                 $errorBitSet = isset($info['errors']) ? $info['errors'] : 0;
-                $errorConstants = array_filter(array_keys(get_defined_constants()), function ($name) {
-                    return substr($name, 0, 11) === 'IDNA_ERROR_';
+                $errorConstants = \array_filter(\array_keys(\get_defined_constants()), function ($name) {
+                    return \substr($name, 0, 11) === 'IDNA_ERROR_';
                 });
                 $errors = [];
                 foreach ($errorConstants as $errorConstant) {
-                    if ($errorBitSet & constant($errorConstant)) {
+                    if ($errorBitSet & \constant($errorConstant)) {
                         $errors[] = $errorConstant;
                     }
                 }
                 $errorMessage = 'IDN conversion failed';
                 if ($errors) {
-                    $errorMessage .= ' (errors: ' . implode(', ', $errors) . ')';
+                    $errorMessage .= ' (errors: ' . \implode(', ', $errors) . ')';
                 }
-                throw new InvalidArgumentException($errorMessage);
+                throw new \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\InvalidArgumentException($errorMessage);
             } else {
                 if ($uri->getHost() !== $asciiHost) {
                     // Replace URI only if the ASCII version is different
@@ -67,5 +55,26 @@ final class Utils
             }
         }
         return $uri;
+    }
+    /**
+     * @param string $domain
+     * @param int    $options
+     * @param array  $info
+     *
+     * @return string|false
+     */
+    private static function idnToAsci($domain, $options, &$info = [])
+    {
+        if (\preg_match('%^[ -~]+$%', $domain) === 1) {
+            return $domain;
+        }
+        if (\extension_loaded('intl') && \defined('INTL_IDNA_VARIANT_UTS46')) {
+            return \idn_to_ascii($domain, $options, \INTL_IDNA_VARIANT_UTS46, $info);
+        }
+        /*
+         * The Idn class is marked as @internal. We've locked the version to
+         * symfony/polyfill-intl-idn to avoid issues in the future.
+         */
+        return \_PhpScoper5ece82d7231e4\Symfony\Polyfill\Intl\Idn\Idn::idn_to_ascii($domain, $options, \_PhpScoper5ece82d7231e4\Symfony\Polyfill\Intl\Idn\Idn::INTL_IDNA_VARIANT_UTS46, $info);
     }
 }

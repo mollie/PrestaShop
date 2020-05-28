@@ -8,25 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression;
-use function array_filter;
-use function array_map;
-use function dirname;
-use function implode;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ContainerConfigurator extends AbstractConfigurator
+class ContainerConfigurator extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
 {
     const FACTORY = 'container';
     private $container;
@@ -34,7 +28,7 @@ class ContainerConfigurator extends AbstractConfigurator
     private $instanceof;
     private $path;
     private $file;
-    public function __construct(ContainerBuilder $container, PhpFileLoader $loader, array &$instanceof, $path, $file)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader $loader, array &$instanceof, $path, $file)
     {
         $this->container = $container;
         $this->loader = $loader;
@@ -45,16 +39,16 @@ class ContainerConfigurator extends AbstractConfigurator
     public final function extension($namespace, array $config)
     {
         if (!$this->container->hasExtension($namespace)) {
-            $extensions = array_filter(array_map(function ($ext) {
+            $extensions = \array_filter(\array_map(function ($ext) {
                 return $ext->getAlias();
             }, $this->container->getExtensions()));
-            throw new InvalidArgumentException(sprintf('There is no extension able to load the configuration for "%s" (in "%s"). Looked for namespace "%s", found "%s".', $namespace, $this->file, $namespace, $extensions ? implode('", "', $extensions) : 'none'));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('There is no extension able to load the configuration for "%s" (in "%s"). Looked for namespace "%s", found "%s".', $namespace, $this->file, $namespace, $extensions ? \implode('", "', $extensions) : 'none'));
         }
         $this->container->loadFromExtension($namespace, static::processValue($config));
     }
-    public final function import($resource, $type = null, $ignoreErrors = false)
+    public final function import($resource, $type = null, $ignoreErrors = \false)
     {
-        $this->loader->setCurrentDir(dirname($this->path));
+        $this->loader->setCurrentDir(\dirname($this->path));
         $this->loader->import($resource, $type, $ignoreErrors, $this->file);
     }
     /**
@@ -62,14 +56,14 @@ class ContainerConfigurator extends AbstractConfigurator
      */
     public final function parameters()
     {
-        return new ParametersConfigurator($this->container);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ParametersConfigurator($this->container);
     }
     /**
      * @return ServicesConfigurator
      */
     public final function services()
     {
-        return new ServicesConfigurator($this->container, $this->loader, $this->instanceof);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator($this->container, $this->loader, $this->instanceof);
     }
 }
 /**
@@ -81,7 +75,7 @@ class ContainerConfigurator extends AbstractConfigurator
  */
 function ref($id)
 {
-    return new ReferenceConfigurator($id);
+    return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator($id);
 }
 /**
  * Creates an inline service.
@@ -92,7 +86,7 @@ function ref($id)
  */
 function inline($class = null)
 {
-    return new InlineServiceConfigurator(new Definition($class));
+    return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\InlineServiceConfigurator(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition($class));
 }
 /**
  * Creates a lazy iterator.
@@ -103,7 +97,7 @@ function inline($class = null)
  */
 function iterator(array $values)
 {
-    return new IteratorArgument(AbstractConfigurator::processValue($values, true));
+    return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator::processValue($values, \true));
 }
 /**
  * Creates a lazy iterator by tag name.
@@ -114,7 +108,7 @@ function iterator(array $values)
  */
 function tagged($tag)
 {
-    return new TaggedIteratorArgument($tag);
+    return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument($tag);
 }
 /**
  * Creates an expression.
@@ -125,5 +119,5 @@ function tagged($tag)
  */
 function expr($expression)
 {
-    return new Expression($expression);
+    return new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression($expression);
 }

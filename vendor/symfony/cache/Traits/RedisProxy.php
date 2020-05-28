@@ -8,11 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
-
-use _PhpScoper5ea00cc67502b\Redis;
-use Closure;
-use function call_user_func_array;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -23,8 +19,8 @@ class RedisProxy
 {
     private $redis;
     private $initializer;
-    private $ready = false;
-    public function __construct(Redis $redis, Closure $initializer)
+    private $ready = \false;
+    public function __construct(\_PhpScoper5ece82d7231e4\Redis $redis, \Closure $initializer)
     {
         $this->redis = $redis;
         $this->initializer = $initializer;
@@ -32,7 +28,7 @@ class RedisProxy
     public function __call($method, array $args)
     {
         $this->ready ?: ($this->ready = $this->initializer->__invoke($this->redis));
-        return call_user_func_array([$this->redis, $method], $args);
+        return \call_user_func_array([$this->redis, $method], $args);
     }
     public function hscan($strKey, &$iIterator, $strPattern = null, $iCount = null)
     {

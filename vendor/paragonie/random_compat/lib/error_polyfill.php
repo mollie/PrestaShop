@@ -1,10 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
-
-use Exception;
-use function class_exists;
-use function is_subclass_of;
+namespace _PhpScoper5ece82d7231e4;
 
 /**
  * Random_* Compatibility Library
@@ -32,19 +28,19 @@ use function is_subclass_of;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-if (!class_exists('Error', false)) {
+if (!\class_exists('Error', \false)) {
     // We can't really avoid making this extend Exception in PHP 5.
-    class Error extends Exception
+    class Error extends \Exception
     {
     }
 }
-if (!class_exists('TypeError', false)) {
-    if (is_subclass_of('Error', 'Exception')) {
+if (!\class_exists('TypeError', \false)) {
+    if (\is_subclass_of('Error', 'Exception')) {
         class TypeError extends \Error
         {
         }
     } else {
-        class TypeError extends Exception
+        class TypeError extends \Exception
         {
         }
     }

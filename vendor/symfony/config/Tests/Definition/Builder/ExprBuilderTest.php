@@ -8,13 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Closure;
-
-class ExprBuilderTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder;
+class ExprBuilderTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testAlwaysExpression()
     {
@@ -24,13 +22,13 @@ class ExprBuilderTest extends TestCase
     public function testIfTrueExpression()
     {
         $test = $this->getTestBuilder()->ifTrue()->then($this->returnClosure('new_value'))->end();
-        $this->assertFinalizedValueIs('new_value', $test, ['key' => true]);
+        $this->assertFinalizedValueIs('new_value', $test, ['key' => \true]);
         $test = $this->getTestBuilder()->ifTrue(function ($v) {
-            return true;
+            return \true;
         })->then($this->returnClosure('new_value'))->end();
         $this->assertFinalizedValueIs('new_value', $test);
         $test = $this->getTestBuilder()->ifTrue(function ($v) {
-            return false;
+            return \false;
         })->then($this->returnClosure('new_value'))->end();
         $this->assertFinalizedValueIs('value', $test);
     }
@@ -98,7 +96,7 @@ class ExprBuilderTest extends TestCase
     }
     public function testThenInvalid()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $test = $this->getTestBuilder()->ifString()->thenInvalid('Invalid value')->end();
         $this->finalizeTestBuilder($test);
     }
@@ -128,7 +126,7 @@ class ExprBuilderTest extends TestCase
      */
     protected function getTestBuilder()
     {
-        $builder = new TreeBuilder();
+        $builder = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         return $builder->root('test')->children()->variableNode('key')->validate();
     }
     /**
@@ -149,7 +147,7 @@ class ExprBuilderTest extends TestCase
      *
      * @param mixed $val The value that the closure must return
      *
-     * @return Closure
+     * @return \Closure
      */
     protected function returnClosure($val)
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-class PaymentCollection extends CursorCollection
+class PaymentCollection extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class PaymentCollection extends CursorCollection
      */
     protected function createResourceObject()
     {
-        return new Payment($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment($this->client);
     }
 }

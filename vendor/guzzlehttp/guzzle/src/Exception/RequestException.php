@@ -1,22 +1,15 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Exception;
 
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
-use Exception;
-use function _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\get_message_body_summary;
-use function floor;
-use function sprintf;
-use function strpos;
-use function substr;
-
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
 /**
  * HTTP Request exception
  */
-class RequestException extends TransferException
+class RequestException extends \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\TransferException
 {
     /** @var RequestInterface */
     private $request;
@@ -24,10 +17,10 @@ class RequestException extends TransferException
     private $response;
     /** @var array */
     private $handlerContext;
-    public function __construct($message, RequestInterface $request, ResponseInterface $response = null, Exception $previous = null, array $handlerContext = [])
+    public function __construct($message, \_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, \_PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $handlerContext = [])
     {
         // Set the code of the exception if the response is set and not future.
-        $code = $response && !$response instanceof PromiseInterface ? $response->getStatusCode() : 0;
+        $code = $response && !$response instanceof \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface ? $response->getStatusCode() : 0;
         parent::__construct($message, $code, $previous);
         $this->request = $request;
         $this->response = $response;
@@ -37,36 +30,36 @@ class RequestException extends TransferException
      * Wrap non-RequestExceptions with a RequestException
      *
      * @param RequestInterface $request
-     * @param Exception       $e
+     * @param \Exception       $e
      *
      * @return RequestException
      */
-    public static function wrapException(RequestInterface $request, Exception $e)
+    public static function wrapException(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, \Exception $e)
     {
-        return $e instanceof RequestException ? $e : new RequestException($e->getMessage(), $request, null, $e);
+        return $e instanceof \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\RequestException ? $e : new \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\RequestException($e->getMessage(), $request, null, $e);
     }
     /**
      * Factory method to create a new exception with a normalized error message
      *
      * @param RequestInterface  $request  Request
      * @param ResponseInterface $response Response received
-     * @param Exception        $previous Previous exception
+     * @param \Exception        $previous Previous exception
      * @param array             $ctx      Optional handler context.
      *
      * @return self
      */
-    public static function create(RequestInterface $request, ResponseInterface $response = null, Exception $previous = null, array $ctx = [])
+    public static function create(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, \_PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $ctx = [])
     {
         if (!$response) {
             return new self('Error completing request', $request, null, $previous, $ctx);
         }
-        $level = (int) floor($response->getStatusCode() / 100);
+        $level = (int) \floor($response->getStatusCode() / 100);
         if ($level === 4) {
             $label = 'Client error';
-            $className = ClientException::class;
+            $className = \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\ClientException::class;
         } elseif ($level === 5) {
             $label = 'Server error';
-            $className = ServerException::class;
+            $className = \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\ServerException::class;
         } else {
             $label = 'Unsuccessful request';
             $className = __CLASS__;
@@ -75,7 +68,7 @@ class RequestException extends TransferException
         $uri = static::obfuscateUri($uri);
         // Client Error: `GET /` resulted in a `404 Not Found` response:
         // <html> ... (truncated)
-        $message = sprintf('%s: `%s %s` resulted in a `%s %s` response', $label, $request->getMethod(), $uri, $response->getStatusCode(), $response->getReasonPhrase());
+        $message = \sprintf('%s: `%s %s` resulted in a `%s %s` response', $label, $request->getMethod(), $uri, $response->getStatusCode(), $response->getReasonPhrase());
         $summary = static::getResponseBodySummary($response);
         if ($summary !== null) {
             $message .= ":\n{$summary}\n";
@@ -91,9 +84,9 @@ class RequestException extends TransferException
      *
      * @return string|null
      */
-    public static function getResponseBodySummary(ResponseInterface $response)
+    public static function getResponseBodySummary(\_PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface $response)
     {
-        return get_message_body_summary($response);
+        return \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\get_message_body_summary($response);
     }
     /**
      * Obfuscates URI if there is a username and a password present
@@ -102,11 +95,11 @@ class RequestException extends TransferException
      *
      * @return UriInterface
      */
-    private static function obfuscateUri(UriInterface $uri)
+    private static function obfuscateUri(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
     {
         $userInfo = $uri->getUserInfo();
-        if (false !== ($pos = strpos($userInfo, ':'))) {
-            return $uri->withUserInfo(substr($userInfo, 0, $pos), '***');
+        if (\false !== ($pos = \strpos($userInfo, ':'))) {
+            return $uri->withUserInfo(\substr($userInfo, 0, $pos), '***');
         }
         return $uri;
     }

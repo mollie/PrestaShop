@@ -1,20 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Cookie;
-
-use RuntimeException;
-use function file_exists;
-use function file_get_contents;
-use function file_put_contents;
-use function is_array;
-use function json_decode;
-use function strlen;
-use const LOCK_EX;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Cookie;
 
 /**
  * Persists non-session cookies using a JSON formatted file
  */
-class FileCookieJar extends CookieJar
+class FileCookieJar extends \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\CookieJar
 {
     /** @var string filename */
     private $filename;
@@ -27,14 +18,14 @@ class FileCookieJar extends CookieJar
      * @param bool $storeSessionCookies Set to true to store session cookies
      *                                  in the cookie jar.
      *
-     * @throws RuntimeException if the file cannot be found or created
+     * @throws \RuntimeException if the file cannot be found or created
      */
-    public function __construct($cookieFile, $storeSessionCookies = false)
+    public function __construct($cookieFile, $storeSessionCookies = \false)
     {
         parent::__construct();
         $this->filename = $cookieFile;
         $this->storeSessionCookies = $storeSessionCookies;
-        if (file_exists($cookieFile)) {
+        if (\file_exists($cookieFile)) {
             $this->load($cookieFile);
         }
     }
@@ -49,20 +40,20 @@ class FileCookieJar extends CookieJar
      * Saves the cookies to a file.
      *
      * @param string $filename File to save
-     * @throws RuntimeException if the file cannot be found or created
+     * @throws \RuntimeException if the file cannot be found or created
      */
     public function save($filename)
     {
         $json = [];
         foreach ($this as $cookie) {
             /** @var SetCookie $cookie */
-            if (CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
+            if (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
                 $json[] = $cookie->toArray();
             }
         }
-        $jsonStr = \_PhpScoper5ea00cc67502b\GuzzleHttp\json_encode($json);
-        if (false === file_put_contents($filename, $jsonStr, LOCK_EX)) {
-            throw new RuntimeException("Unable to save file {$filename}");
+        $jsonStr = \_PhpScoper5ece82d7231e4\GuzzleHttp\json_encode($json);
+        if (\false === \file_put_contents($filename, $jsonStr, \LOCK_EX)) {
+            throw new \RuntimeException("Unable to save file {$filename}");
         }
     }
     /**
@@ -71,23 +62,23 @@ class FileCookieJar extends CookieJar
      * Old cookies are kept unless overwritten by newly loaded ones.
      *
      * @param string $filename Cookie file to load.
-     * @throws RuntimeException if the file cannot be loaded.
+     * @throws \RuntimeException if the file cannot be loaded.
      */
     public function load($filename)
     {
-        $json = file_get_contents($filename);
-        if (false === $json) {
-            throw new RuntimeException("Unable to load file {$filename}");
+        $json = \file_get_contents($filename);
+        if (\false === $json) {
+            throw new \RuntimeException("Unable to load file {$filename}");
         } elseif ($json === '') {
             return;
         }
-        $data = \_PhpScoper5ea00cc67502b\GuzzleHttp\json_decode($json, true);
-        if (is_array($data)) {
-            foreach (json_decode($json, true) as $cookie) {
-                $this->setCookie(new SetCookie($cookie));
+        $data = \_PhpScoper5ece82d7231e4\GuzzleHttp\json_decode($json, \true);
+        if (\is_array($data)) {
+            foreach (\json_decode($json, \true) as $cookie) {
+                $this->setCookie(new \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie($cookie));
             }
-        } elseif (strlen($data)) {
-            throw new RuntimeException("Invalid cookie file: {$filename}");
+        } elseif (\strlen($data)) {
+            throw new \RuntimeException("Invalid cookie file: {$filename}");
         }
     }
 }

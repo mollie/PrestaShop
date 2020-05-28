@@ -8,28 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Loader;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-use function bindec;
-use function defined;
-use function parse_ini_file;
-use function realpath;
-use function sprintf;
-use const INI_SCANNER_TYPED;
-use const PHP_VERSION;
-
-class IniFileLoaderTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+class IniFileLoaderTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     protected $container;
     protected $loader;
     protected function setUp()
     {
-        $this->container = new ContainerBuilder();
-        $this->loader = new IniFileLoader($this->container, new FileLocator(realpath(__DIR__ . '/../Fixtures/') . '/ini'));
+        $this->container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $this->loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator(\realpath(__DIR__ . '/../Fixtures/') . '/ini'));
     }
     public function testIniFileCanBeLoaded()
     {
@@ -52,53 +44,53 @@ class IniFileLoaderTest extends TestCase
      */
     public function testTypeConversionsWithNativePhp($key, $value, $supported)
     {
-        if (defined('HHVM_VERSION_ID')) {
+        if (\defined('HHVM_VERSION_ID')) {
             $this->markTestSkipped();
         }
         if (!$supported) {
-            $this->markTestSkipped(sprintf('Converting the value "%s" to "%s" is not supported by the IniFileLoader.', $key, $value));
+            $this->markTestSkipped(\sprintf('Converting the value "%s" to "%s" is not supported by the IniFileLoader.', $key, $value));
         }
-        $expected = parse_ini_file(__DIR__ . '/../Fixtures/ini/types.ini', true, INI_SCANNER_TYPED);
+        $expected = \parse_ini_file(__DIR__ . '/../Fixtures/ini/types.ini', \true, \INI_SCANNER_TYPED);
         $this->assertSame($value, $expected['parameters'][$key], '->load() converts values to PHP types');
     }
     public function getTypeConversions()
     {
         return [
-            ['true_comment', true, true],
-            ['true', true, true],
-            ['false', false, true],
-            ['on', true, true],
-            ['off', false, true],
-            ['yes', true, true],
-            ['no', false, true],
-            ['none', false, true],
-            ['null', null, true],
-            ['constant', PHP_VERSION, true],
-            ['12', 12, true],
-            ['12_string', '12', true],
-            ['12_quoted_number', 12, false],
+            ['true_comment', \true, \true],
+            ['true', \true, \true],
+            ['false', \false, \true],
+            ['on', \true, \true],
+            ['off', \false, \true],
+            ['yes', \true, \true],
+            ['no', \false, \true],
+            ['none', \false, \true],
+            ['null', null, \true],
+            ['constant', \PHP_VERSION, \true],
+            ['12', 12, \true],
+            ['12_string', '12', \true],
+            ['12_quoted_number', 12, \false],
             // INI_SCANNER_RAW removes the double quotes
-            ['12_comment', 12, true],
-            ['12_string_comment', '12', true],
-            ['12_quoted_number_comment', 12, false],
+            ['12_comment', 12, \true],
+            ['12_string_comment', '12', \true],
+            ['12_quoted_number_comment', 12, \false],
             // INI_SCANNER_RAW removes the double quotes
-            ['-12', -12, true],
-            ['1', 1, true],
-            ['0', 0, true],
-            ['0b0110', bindec('0b0110'), false],
+            ['-12', -12, \true],
+            ['1', 1, \true],
+            ['0', 0, \true],
+            ['0b0110', \bindec('0b0110'), \false],
             // not supported by INI_SCANNER_TYPED
-            ['11112222333344445555', '1111,2222,3333,4444,5555', true],
-            ['0777', 0777, false],
+            ['11112222333344445555', '1111,2222,3333,4444,5555', \true],
+            ['0777', 0777, \false],
             // not supported by INI_SCANNER_TYPED
-            ['255', 0xff, false],
+            ['255', 0xff, \false],
             // not supported by INI_SCANNER_TYPED
-            ['100.0', 100.0, false],
+            ['100.0', 100.0, \false],
             // not supported by INI_SCANNER_TYPED
-            ['-120.0', -120.0, false],
+            ['-120.0', -120.0, \false],
             // not supported by INI_SCANNER_TYPED
-            ['-10100.1', -10100.1, false],
+            ['-10100.1', -10100.1, \false],
             // not supported by INI_SCANNER_TYPED
-            ['-10,100.1', '-10,100.1', true],
+            ['-10,100.1', '-10,100.1', \true],
         ];
     }
     public function testExceptionIsRaisedWhenIniFileDoesNotExist()
@@ -109,19 +101,19 @@ class IniFileLoaderTest extends TestCase
     }
     public function testExceptionIsRaisedWhenIniFileCannotBeParsed()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The "nonvalid.ini" file is not valid.');
         @$this->loader->load('nonvalid.ini');
     }
     public function testExceptionIsRaisedWhenIniFileIsAlmostValid()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The "almostvalid.ini" file is not valid.');
         @$this->loader->load('almostvalid.ini');
     }
     public function testSupports()
     {
-        $loader = new IniFileLoader(new ContainerBuilder(), new FileLocator());
+        $loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator());
         $this->assertTrue($loader->supports('foo.ini'), '->supports() returns true if the resource is loadable');
         $this->assertFalse($loader->supports('foo.foo'), '->supports() returns false if the resource is not loadable');
         $this->assertTrue($loader->supports('with_wrong_ext.yml', 'ini'), '->supports() returns true if the resource with forced type is loadable');

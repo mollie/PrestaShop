@@ -8,49 +8,41 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-use ReflectionMethod;
-use function array_key_exists;
-use function array_pop;
-use function gettype;
-use function is_int;
-use function ksort;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
 /**
  * Resolves named arguments to their corresponding numeric index.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class ResolveNamedArgumentsPass extends AbstractRecursivePass
+class ResolveNamedArgumentsPass extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
 {
     /**
      * {@inheritdoc}
      */
-    protected function processValue($value, $isRoot = false)
+    protected function processValue($value, $isRoot = \false)
     {
-        if (!$value instanceof Definition) {
+        if (!$value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         $calls = $value->getMethodCalls();
         $calls[] = ['__construct', $value->getArguments()];
         foreach ($calls as $i => $call) {
-            [$method, $arguments] = $call;
+            list($method, $arguments) = $call;
             $parameters = null;
             $resolvedArguments = [];
             foreach ($arguments as $key => $argument) {
-                if (is_int($key)) {
+                if (\is_int($key)) {
                     $resolvedArguments[$key] = $argument;
                     continue;
                 }
                 if (null === $parameters) {
                     $r = $this->getReflectionMethod($value, $method);
-                    $class = $r instanceof ReflectionMethod ? $r->class : $this->currentId;
+                    $class = $r instanceof \ReflectionMethod ? $r->class : $this->currentId;
                     $method = $r->getName();
                     $parameters = $r->getParameters();
                 }
@@ -61,28 +53,28 @@ class ResolveNamedArgumentsPass extends AbstractRecursivePass
                             continue 2;
                         }
                     }
-                    throw new InvalidArgumentException(sprintf('Invalid service "%s": method "%s()" has no argument named "%s". Check your service definition.', $this->currentId, $class !== $this->currentId ? $class . '::' . $method : $method, $key));
+                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid service "%s": method "%s()" has no argument named "%s". Check your service definition.', $this->currentId, $class !== $this->currentId ? $class . '::' . $method : $method, $key));
                 }
-                if (null !== $argument && !$argument instanceof Reference && !$argument instanceof Definition) {
-                    throw new InvalidArgumentException(sprintf('Invalid service "%s": the value of argument "%s" of method "%s()" must be null, an instance of "%s" or an instance of "%s", "%s" given.', $this->currentId, $key, $class !== $this->currentId ? $class . '::' . $method : $method, Reference::class, Definition::class, gettype($argument)));
+                if (null !== $argument && !$argument instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference && !$argument instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
+                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid service "%s": the value of argument "%s" of method "%s()" must be null, an instance of "%s" or an instance of "%s", "%s" given.', $this->currentId, $key, $class !== $this->currentId ? $class . '::' . $method : $method, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference::class, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition::class, \gettype($argument)));
                 }
-                $typeFound = false;
+                $typeFound = \false;
                 foreach ($parameters as $j => $p) {
-                    if (!array_key_exists($j, $resolvedArguments) && ProxyHelper::getTypeHint($r, $p, true) === $key) {
+                    if (!\array_key_exists($j, $resolvedArguments) && \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($r, $p, \true) === $key) {
                         $resolvedArguments[$j] = $argument;
-                        $typeFound = true;
+                        $typeFound = \true;
                     }
                 }
                 if (!$typeFound) {
-                    throw new InvalidArgumentException(sprintf('Invalid service "%s": method "%s()" has no argument type-hinted as "%s". Check your service definition.', $this->currentId, $class !== $this->currentId ? $class . '::' . $method : $method, $key));
+                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid service "%s": method "%s()" has no argument type-hinted as "%s". Check your service definition.', $this->currentId, $class !== $this->currentId ? $class . '::' . $method : $method, $key));
                 }
             }
             if ($resolvedArguments !== $call[1]) {
-                ksort($resolvedArguments);
+                \ksort($resolvedArguments);
                 $calls[$i][1] = $resolvedArguments;
             }
         }
-        [, $arguments] = array_pop($calls);
+        list(, $arguments) = \array_pop($calls);
         if ($arguments !== $value->getArguments()) {
             $value->setArguments($arguments);
         }

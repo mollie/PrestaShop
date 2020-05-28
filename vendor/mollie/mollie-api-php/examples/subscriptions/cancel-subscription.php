@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * How to cancel a subscription.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -32,7 +28,7 @@ try {
     /*
      * The subscription status should now be canceled
      */
-    echo "<p>The subscription status is now: '" . htmlspecialchars($canceledSubscription->status) . "'.</p>\n";
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+    echo "<p>The subscription status is now: '" . \htmlspecialchars($canceledSubscription->status) . "'.</p>\n";
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

@@ -8,13 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
-use function microtime;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface;
 /**
  * An adapter that collects data about all cache calls.
  *
@@ -22,11 +20,11 @@ use function microtime;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TraceableAdapter implements AdapterInterface, PruneableInterface, ResettableInterface
+class TraceableAdapter implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface
 {
     protected $pool;
     private $calls = [];
-    public function __construct(AdapterInterface $pool)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AdapterInterface $pool)
     {
         $this->pool = $pool;
     }
@@ -39,7 +37,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             $item = $this->pool->getItem($key);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
         if ($event->result[$key] = $item->isHit()) {
             ++$event->hits;
@@ -57,7 +55,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             return $event->result[$key] = $this->pool->hasItem($key);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -69,31 +67,31 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             return $event->result[$key] = $this->pool->deleteItem($key);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
      * {@inheritdoc}
      */
-    public function save(CacheItemInterface $item)
+    public function save(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result[$item->getKey()] = $this->pool->save($item);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result[$item->getKey()] = $this->pool->saveDeferred($item);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -105,7 +103,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             $result = $this->pool->getItems($keys);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
         $f = function () use($result, $event) {
             $event->result = [];
@@ -129,7 +127,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             return $event->result = $this->pool->clear();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -142,7 +140,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             return $event->result['result'] = $this->pool->deleteItems($keys);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -154,7 +152,7 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
         try {
             return $event->result = $this->pool->commit();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -162,14 +160,14 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
      */
     public function prune()
     {
-        if (!$this->pool instanceof PruneableInterface) {
-            return false;
+        if (!$this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface) {
+            return \false;
         }
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result = $this->pool->prune();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -177,15 +175,10 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
      */
     public function reset()
     {
-        if (!$this->pool instanceof ResettableInterface) {
-            return;
-        }
-        $event = $this->start(__FUNCTION__);
-        try {
+        if ($this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface) {
             $this->pool->reset();
-        } finally {
-            $event->end = microtime(true);
         }
+        $this->clearCalls();
     }
     public function getCalls()
     {
@@ -197,9 +190,9 @@ class TraceableAdapter implements AdapterInterface, PruneableInterface, Resettab
     }
     protected function start($name)
     {
-        $this->calls[] = $event = new TraceableAdapterEvent();
+        $this->calls[] = $event = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\TraceableAdapterEvent();
         $event->name = $name;
-        $event->start = microtime(true);
+        $event->start = \microtime(\true);
         return $event;
     }
 }

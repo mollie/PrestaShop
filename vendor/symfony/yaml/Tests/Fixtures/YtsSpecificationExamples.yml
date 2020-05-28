@@ -374,9 +374,9 @@ yaml: |
     \//||\/||
     // ||  ||_
 perl: |
-  "\\//||\\/||\n// ||  ||_PhpScoper5ea00cc67502b\_\n"
+  "\\//||\\/||\n// ||  ||_PhpScoper5ece82d7231e4\_\n"
 ruby: |
-  "\\//||\\/||\n// ||  ||_PhpScoper5ea00cc67502b\_\n"
+  "\\//||\\/||\n// ||  ||_PhpScoper5ece82d7231e4\_\n"
 python: |
     [
         flushLeft(
@@ -388,7 +388,7 @@ python: |
     ]
 syck: |
   struct test_node stream[] = {
-      { T_STR, 0, "\\//||\\/||\n// ||  ||_PhpScoper5ea00cc67502b\_\n" },
+      { T_STR, 0, "\\//||\\/||\n// ||  ||_PhpScoper5ece82d7231e4\_\n" },
       end_node
   };
 
@@ -427,9 +427,9 @@ yaml: |
 
    What a year!
 perl: |
-  "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ea00cc67502b\n\n  63 Home _PhpScoper5ea00cc67502b\Runs\n  0.288 Batting _PhpScoper5ea00cc67502b\Average\n\nWhat a year!\n"
+  "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ece82d7231e4\n\n  63 Home _PhpScoper5ece82d7231e4\Runs\n  0.288 Batting _PhpScoper5ece82d7231e4\Average\n\nWhat a year!\n"
 ruby: |
-  "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ea00cc67502b\n\n  63 Home _PhpScoper5ea00cc67502b\Runs\n  0.288 Batting _PhpScoper5ea00cc67502b\Average\n\nWhat a year!\n"
+  "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ece82d7231e4\n\n  63 Home _PhpScoper5ece82d7231e4\Runs\n  0.288 Batting _PhpScoper5ece82d7231e4\Average\n\nWhat a year!\n"
 python: |
     [
         flushLeft(
@@ -445,7 +445,7 @@ python: |
     ]
 syck: |
   struct test_node stream[] = {
-      { T_STR, 0, "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ea00cc67502b\n\n  63 Home _PhpScoper5ea00cc67502b\Runs\n  0.288 Batting _PhpScoper5ea00cc67502b\Average\n\nWhat a year!\n" },
+      { T_STR, 0, "Sammy Sosa completed another fine season with great stats.\_PhpScoper5ece82d7231e4\n\n  63 Home _PhpScoper5ece82d7231e4\Runs\n  0.288 Batting _PhpScoper5ece82d7231e4\Average\n\nWhat a year!\n" },
       end_node
   };
 
@@ -465,7 +465,7 @@ php: |
   [
     'name' => 'Mark McGwire',
     'accomplishment' => "Mark set a major league home run record in 1998.\n",
-    'stats' => "65 Home _PhpScoper5ea00cc67502b\Runs\n0.278 Batting _PhpScoper5ea00cc67502b\Average\n"
+    'stats' => "65 Home _PhpScoper5ece82d7231e4\Runs\n0.278 Batting _PhpScoper5ece82d7231e4\Average\n"
   ]
 ---
 test: Quoted scalars
@@ -473,8 +473,8 @@ todo: true
 spec: 2.17
 yaml: |
   unicode: "Sosa did fine.\u263A"
-  control: "\_PhpScoper5ea00cc67502b\b1998\t1999\t2000\n"
-  hexesc:  "\_PhpScoper5ea00cc67502b\x0D\x0A is \_PhpScoper5ea00cc67502b\r\n"
+  control: "\_PhpScoper5ece82d7231e4\b1998\t1999\t2000\n"
+  hexesc:  "\_PhpScoper5ece82d7231e4\x0D\x0A is \_PhpScoper5ece82d7231e4\r\n"
 
   single: '"Howdy!" he cried.'
   quoted: ' # not a ''comment''.'
@@ -482,11 +482,11 @@ yaml: |
 ruby: |
   {
     "tie-fighter" => "|\\-*-/|",
-    "control"=>"\_PhpScoper5ea00cc67502b\0101998\t1999\t2000\n",
+    "control"=>"\_PhpScoper5ece82d7231e4\0101998\t1999\t2000\n",
     "unicode"=>"Sosa did fine." + ["263A".hex ].pack('U*'),
     "quoted"=>" # not a 'comment'.",
     "single"=>"\"Howdy!\" he cried.",
-    "hexesc"=>"\_PhpScoper5ea00cc67502b\r\n is \_PhpScoper5ea00cc67502b\r\n"
+    "hexesc"=>"\_PhpScoper5ece82d7231e4\r\n is \_PhpScoper5ece82d7231e4\r\n"
   }
 ---
 test: Multiline flow scalars
@@ -611,8 +611,8 @@ ruby-setup: |
 ruby: |
   {
     'not-date' => '2002-04-28',
-    'picture' => "_PhpScoper5ea00cc67502b\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\_PhpScoper5ea00cc67502b\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236i^\020' \_PhpScoper5ea00cc67502b\202\n\001\000;",
-    'application specific tag' => "SOMETHING: The semantics of the _PhpScoper5ea00cc67502b\tag\nabove may be different _PhpScoper5ea00cc67502b\for\ndifferent documents.\n"
+    'picture' => "_PhpScoper5ece82d7231e4\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\_PhpScoper5ece82d7231e4\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236i^\020' \_PhpScoper5ece82d7231e4\202\n\001\000;",
+    'application specific tag' => "SOMETHING: The semantics of the _PhpScoper5ece82d7231e4\tag\nabove may be different _PhpScoper5ece82d7231e4\for\ndifferent documents.\n"
   }
 ---
 test: Application specific family
@@ -757,9 +757,9 @@ php: |
   [
      'invoice' => 34843, 'date' => gmmktime(0, 0, 0, 1, 23, 2001),
      'bill-to' =>
-      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #_PhpScoper5ea00cc67502b\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
+      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #_PhpScoper5ece82d7231e4\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
      , 'ship-to' =>
-      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #_PhpScoper5ea00cc67502b\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
+      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #_PhpScoper5ece82d7231e4\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
      , 'product' =>
        [
         [ 'sku' => 'BL394D', 'quantity' => 4, 'description' => 'Basketball', 'price' => 450.00 ],
@@ -794,7 +794,7 @@ yaml: |
     - file: TopClass.py
       line: 23
       code: |
-        x = MoreObject("_PhpScoper5ea00cc67502b\345\n")
+        x = MoreObject("_PhpScoper5ece82d7231e4\345\n")
     - file: MoreClass.py
       line: 58
       code: |-
@@ -802,13 +802,13 @@ yaml: |
 ruby: |
   y = YAML::Stream.new
   y.add( { 'Time' => YAML::mktime( 2001, 11, 23, 15, 01, 42, 00, "-05:00" ),
-           'User' => 'ed', 'Warning' => "This is an error message for the log _PhpScoper5ea00cc67502b\file\n" } )
+           'User' => 'ed', 'Warning' => "This is an error message for the log _PhpScoper5ece82d7231e4\file\n" } )
   y.add( { 'Time' => YAML::mktime( 2001, 11, 23, 15, 02, 31, 00, "-05:00" ),
            'User' => 'ed', 'Warning' => "A slightly different error message.\n" } )
   y.add( { 'Date' => YAML::mktime( 2001, 11, 23, 15, 03, 17, 00, "-05:00" ),
            'User' => 'ed', 'Fatal' => "Unknown variable \"bar\"\n",
            'Stack' => [
-           { 'file' => 'TopClass.py', 'line' => 23, 'code' => "x = MoreObject(\"_PhpScoper5ea00cc67502b\\345\\n\")\n" },
+           { 'file' => 'TopClass.py', 'line' => 23, 'code' => "x = MoreObject(\"_PhpScoper5ece82d7231e4\\345\\n\")\n" },
            { 'file' => 'MoreClass.py', 'line' => 58, 'code' => "foo = bar" } ] } )
 documents: 3
 
@@ -827,7 +827,7 @@ yaml: |
    # lines (the first line is empty).
 php: |
    [
-     'this' => "contains three lines of text.\nThe third one starts with _PhpScoper5ea00cc67502b\a\n# character. This isn't a comment.\n"
+     'this' => "contains three lines of text.\nThe third one starts with _PhpScoper5ece82d7231e4\a\n# character. This isn't a comment.\n"
    ]
 ---
 test: Document with a single value
@@ -988,7 +988,7 @@ test: URI Escaping
 todo: true
 yaml: |
   same:
-    - !domain.tld,2002/_PhpScoper5ea00cc67502b\type\x30 value
+    - !domain.tld,2002/_PhpScoper5ece82d7231e4\type\x30 value
     - !domain.tld,2002/type0 value
   different: # As far as the YAML parser is concerned
     - !domain.tld,2002/type%30 value
@@ -1060,7 +1060,7 @@ yaml: |
 ruby: |
   { 'empty' => [], 'flow' => [ 'one', 'two', 'three', 'four', 'five' ],
     'block' => [ 'First item in top sequence', [ 'Subordinate sequence entry' ],
-    "A folded sequence _PhpScoper5ea00cc67502b\entry\n", 'Sixth item in top sequence' ] }
+    "A folded sequence _PhpScoper5ece82d7231e4\entry\n", 'Sixth item in top sequence' ] }
 ---
 test: Complete mapping test
 todo: true
@@ -1117,7 +1117,7 @@ ruby: |
         { 'A key' => 'value pair in a sequence.', 'A second' => 'key:value pair.' } ],
     12.0 => 'This key is a float.', "?\n" => 'This key had to be protected.',
     "\a" => 'This key had to be escaped.',
-    "This is a multi-line folded _PhpScoper5ea00cc67502b\key\n" => "Whose value is also multi-line.",
+    "This is a multi-line folded _PhpScoper5ece82d7231e4\key\n" => "Whose value is also multi-line.",
     'this also works as a key' => 'with a value at the next line.',
     [ 'This key', 'is a sequence' ] => [ 'With a sequence value.' ] } }
   # Couldn't recreate map exactly, so we'll do a detailed check to be sure it's entact
@@ -1155,7 +1155,7 @@ php: |
    [
       'leading spaces' => "    This value starts with four spaces.\n",
       'leading line break' => "\nThis value starts with a line break.\n",
-      'leading comment indicator' => "# first line starts with _PhpScoper5ea00cc67502b\a\n# character.\n",
+      'leading comment indicator' => "# first line starts with _PhpScoper5ece82d7231e4\a\n# character.\n",
       'redundant' => "This value is indented 2 spaces.\n"
    ]
 ---
@@ -1174,15 +1174,15 @@ yaml: |
     kept: |+
         This has two newlines.
 
-    same as "kept" above: "This has two newlines.\_PhpScoper5ea00cc67502b\n\n"
+    same as "kept" above: "This has two newlines.\_PhpScoper5ece82d7231e4\n\n"
 php: |
     [
       'clipped' => "This has one newline.\n",
       'same as "clipped" above' => "This has one newline.\n",
       'stripped' => 'This has no newline.',
       'same as "stripped" above' => 'This has no newline.',
-      'kept' => "This has two newlines.\_PhpScoper5ea00cc67502b\n\n",
-      'same as "kept" above' => "This has two newlines.\_PhpScoper5ea00cc67502b\n\n"
+      'kept' => "This has two newlines.\_PhpScoper5ece82d7231e4\n\n",
+      'same as "kept" above' => "This has two newlines.\_PhpScoper5ece82d7231e4\n\n"
     ]
 ---
 test: Literal combinations
@@ -1202,11 +1202,11 @@ yaml: |
     not start with one.
 
    is equal to: "The \\ ' \" characters may \
-    _PhpScoper5ea00cc67502b\be\nfreely used. Leading _PhpScoper5ea00cc67502b\white\n   space \
-    is significant.\_PhpScoper5ea00cc67502b\n\nLine breaks are \
+    _PhpScoper5ece82d7231e4\be\nfreely used. Leading _PhpScoper5ece82d7231e4\white\n   space \
+    is significant.\_PhpScoper5ece82d7231e4\n\nLine breaks are \
     significant.\nThus this value contains \
-    _PhpScoper5ea00cc67502b\one\nempty line and ends with _PhpScoper5ea00cc67502b\a\nsingle \
-    line break, but _PhpScoper5ea00cc67502b\does\nnot start with one.\n"
+    _PhpScoper5ece82d7231e4\one\nempty line and ends with _PhpScoper5ece82d7231e4\a\nsingle \
+    line break, but _PhpScoper5ece82d7231e4\does\nnot start with one.\n"
 
    # Comments may follow a block
    # scalar value. They must be
@@ -1223,12 +1223,12 @@ yaml: |
 php: |
    [
      'empty' => '',
-     'literal' => "The \\ ' \" characters may _PhpScoper5ea00cc67502b\be\nfreely used. Leading _PhpScoper5ea00cc67502b\white\n   space " +
-       "is significant.\_PhpScoper5ea00cc67502b\n\nLine breaks are significant.\nThus this value contains _PhpScoper5ea00cc67502b\one\n" +
-       "empty line and ends with _PhpScoper5ea00cc67502b\a\nsingle line break, but _PhpScoper5ea00cc67502b\does\nnot start with one.\n",
-     'is equal to' => "The \\ ' \" characters may _PhpScoper5ea00cc67502b\be\nfreely used. Leading _PhpScoper5ea00cc67502b\white\n   space " +
-       "is significant.\_PhpScoper5ea00cc67502b\n\nLine breaks are significant.\nThus this value contains _PhpScoper5ea00cc67502b\one\n" +
-       "empty line and ends with _PhpScoper5ea00cc67502b\a\nsingle line break, but _PhpScoper5ea00cc67502b\does\nnot start with one.\n",
+     'literal' => "The \\ ' \" characters may _PhpScoper5ece82d7231e4\be\nfreely used. Leading _PhpScoper5ece82d7231e4\white\n   space " +
+       "is significant.\_PhpScoper5ece82d7231e4\n\nLine breaks are significant.\nThus this value contains _PhpScoper5ece82d7231e4\one\n" +
+       "empty line and ends with _PhpScoper5ece82d7231e4\a\nsingle line break, but _PhpScoper5ece82d7231e4\does\nnot start with one.\n",
+     'is equal to' => "The \\ ' \" characters may _PhpScoper5ece82d7231e4\be\nfreely used. Leading _PhpScoper5ece82d7231e4\white\n   space " +
+       "is significant.\_PhpScoper5ece82d7231e4\n\nLine breaks are significant.\nThus this value contains _PhpScoper5ece82d7231e4\one\n" +
+       "empty line and ends with _PhpScoper5ece82d7231e4\a\nsingle line break, but _PhpScoper5ece82d7231e4\does\nnot start with one.\n",
      'indented and chomped' => '  This has no newline.',
      'also written as' => '  This has no newline.',
      'both are equal to' => '  This has no newline.'
@@ -1295,11 +1295,11 @@ php: |
      'multiple paragraphs' => "\nAn empty line, either at the start or in the value:\n".
        "Is interpreted as a line break. Thus this value contains three line breaks.\n",
      'indented text' => "This is a folded paragraph followed by a list:\n".
-       " * first _PhpScoper5ea00cc67502b\entry\n * second _PhpScoper5ea00cc67502b\entry\nFollowed by another folded paragraph, ".
-       "another list:\_PhpScoper5ea00cc67502b\n\n * first _PhpScoper5ea00cc67502b\entry\n\n * second _PhpScoper5ea00cc67502b\entry\n\nAnd a final folded paragraph.\n",
+       " * first _PhpScoper5ece82d7231e4\entry\n * second _PhpScoper5ece82d7231e4\entry\nFollowed by another folded paragraph, ".
+       "another list:\_PhpScoper5ece82d7231e4\n\n * first _PhpScoper5ece82d7231e4\entry\n\n * second _PhpScoper5ece82d7231e4\entry\n\nAnd a final folded paragraph.\n",
      'above is equal to' => "This is a folded paragraph followed by a list:\n".
-       " * first _PhpScoper5ea00cc67502b\entry\n * second _PhpScoper5ea00cc67502b\entry\nFollowed by another folded paragraph, ".
-       "another list:\_PhpScoper5ea00cc67502b\n\n * first _PhpScoper5ea00cc67502b\entry\n\n * second _PhpScoper5ea00cc67502b\entry\n\nAnd a final folded paragraph.\n"
+       " * first _PhpScoper5ece82d7231e4\entry\n * second _PhpScoper5ece82d7231e4\entry\nFollowed by another folded paragraph, ".
+       "another list:\_PhpScoper5ece82d7231e4\n\n * first _PhpScoper5ece82d7231e4\entry\n\n * second _PhpScoper5ece82d7231e4\entry\n\nAnd a final folded paragraph.\n"
    ]
 ---
 test: Single quotes
@@ -1313,14 +1313,14 @@ yaml: |
 
          and one
          line break'
-   is same as: "this contains six _PhpScoper5ea00cc67502b\spaces\nand one line break"
+   is same as: "this contains six _PhpScoper5ece82d7231e4\spaces\nand one line break"
 php: |
    [
      'empty' => '',
      'second' => '! : \\ etc. can be used freely.',
      'third' => "a single quote ' must be escaped.",
-     'span' => "this contains six _PhpScoper5ea00cc67502b\spaces\nand one line break",
-     'is same as' => "this contains six _PhpScoper5ea00cc67502b\spaces\nand one line break"
+     'span' => "this contains six _PhpScoper5ece82d7231e4\spaces\nand one line break",
+     'is same as' => "this contains six _PhpScoper5ece82d7231e4\spaces\nand one line break"
    ]
 ---
 test: Double quotes
@@ -1375,7 +1375,7 @@ php: |
      'first' => 'There is no unquoted empty string.',
      'second' => 12,
      'third' => '12',
-     'span' => "this contains six _PhpScoper5ea00cc67502b\spaces\nand one line break",
+     'span' => "this contains six _PhpScoper5ece82d7231e4\spaces\nand one line break",
      'indicators' => "this has no comments. #:foo and bar# are both text.",
      'flow' => [ 'can span lines', 'like this' ],
      'note' => { 'one-line keys' => 'but multi-line values' }
@@ -1595,7 +1595,7 @@ yaml: |
     The binary value above is a tiny arrow
     encoded as a gif image.
 ruby-setup: |
-   arrow_gif = "_PhpScoper5ea00cc67502b\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\_PhpScoper5ea00cc67502b\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236iiiccc\243\243\243\204\204\204\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371!\_PhpScoper5ea00cc67502b\376\016Made with _PhpScoper5ea00cc67502b\GIMP\000,\_PhpScoper5ea00cc67502b\000\000\000\000\f\000\f\000\000\005,  \_PhpScoper5ea00cc67502b\216\2010\236\343@\_PhpScoper5ea00cc67502b\024\350i\020\304\321\212\010\034\317\200M$_PhpScoper5ea00cc67502b\z\357\3770\205p\270\2601f\r\e\316\001\303\001\036\020' \_PhpScoper5ea00cc67502b\202\n\001\000;"
+   arrow_gif = "_PhpScoper5ece82d7231e4\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\_PhpScoper5ece82d7231e4\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236iiiccc\243\243\243\204\204\204\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371!\_PhpScoper5ece82d7231e4\376\016Made with _PhpScoper5ece82d7231e4\GIMP\000,\_PhpScoper5ece82d7231e4\000\000\000\000\f\000\f\000\000\005,  \_PhpScoper5ece82d7231e4\216\2010\236\343@\_PhpScoper5ece82d7231e4\024\350i\020\304\321\212\010\034\317\200M$_PhpScoper5ece82d7231e4\z\357\3770\205p\270\2601f\r\e\316\001\303\001\036\020' \_PhpScoper5ece82d7231e4\202\n\001\000;"
 ruby: |
    {
      'canonical' => arrow_gif,

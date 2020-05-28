@@ -8,25 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
 /**
  * Compiler pass to inject their service locator to service subscribers.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveServiceSubscribersPass extends AbstractRecursivePass
+class ResolveServiceSubscribersPass extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
 {
     private $serviceLocator;
-    protected function processValue($value, $isRoot = false)
+    protected function processValue($value, $isRoot = \false)
     {
-        if ($value instanceof Reference && $this->serviceLocator && ContainerInterface::class === $this->container->normalizeId($value)) {
-            return new Reference($this->serviceLocator);
+        if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference && $this->serviceLocator && \_PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface::class === $this->container->normalizeId($value)) {
+            return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference($this->serviceLocator);
         }
-        if (!$value instanceof Definition) {
+        if (!$value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         $serviceLocator = $this->serviceLocator;

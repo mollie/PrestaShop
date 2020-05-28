@@ -1,11 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
-
-use function array_shift;
-use function error_get_last;
-use function register_shutdown_function;
-use const E_ERROR;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Promise;
 
 /**
  * A task queue that executes tasks in a FIFO order.
@@ -16,18 +11,18 @@ use const E_ERROR;
  *
  *     GuzzleHttp\Promise\queue()->run();
  */
-class TaskQueue implements TaskQueueInterface
+class TaskQueue implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\TaskQueueInterface
 {
-    private $enableShutdown = true;
+    private $enableShutdown = \true;
     private $queue = [];
-    public function __construct($withShutdown = true)
+    public function __construct($withShutdown = \true)
     {
         if ($withShutdown) {
-            register_shutdown_function(function () {
+            \register_shutdown_function(function () {
                 if ($this->enableShutdown) {
                     // Only run the tasks if an E_ERROR didn't occur.
-                    $err = error_get_last();
-                    if (!$err || $err['type'] ^ E_ERROR) {
+                    $err = \error_get_last();
+                    if (!$err || $err['type'] ^ \E_ERROR) {
                         $this->run();
                     }
                 }
@@ -45,7 +40,7 @@ class TaskQueue implements TaskQueueInterface
     public function run()
     {
         /** @var callable $task */
-        while ($task = array_shift($this->queue)) {
+        while ($task = \array_shift($this->queue)) {
             $task();
         }
     }
@@ -62,6 +57,6 @@ class TaskQueue implements TaskQueueInterface
      */
     public function disableShutdown()
     {
-        $this->enableShutdown = false;
+        $this->enableShutdown = \false;
     }
 }

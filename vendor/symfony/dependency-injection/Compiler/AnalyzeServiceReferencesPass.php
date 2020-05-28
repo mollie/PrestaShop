@@ -8,22 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ExpressionLanguage;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression;
-use function class_exists;
-use function sprintf;
-use function stripcslashes;
-use function substr;
-use function substr_replace;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ExpressionLanguage;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression;
 /**
  * Run this pass before passes that need to know more about the relation of
  * your services.
@@ -33,7 +27,7 @@ use function substr_replace;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class AnalyzeServiceReferencesPass extends AbstractRecursivePass implements RepeatablePassInterface
+class AnalyzeServiceReferencesPass extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
 {
     private $graph;
     private $currentDefinition;
@@ -45,7 +39,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass implements Repe
     /**
      * @param bool $onlyConstructorArguments Sets this Service Reference pass to ignore method calls
      */
-    public function __construct($onlyConstructorArguments = false, $hasProxyDumper = true)
+    public function __construct($onlyConstructorArguments = \false, $hasProxyDumper = \true)
     {
         $this->onlyConstructorArguments = (bool) $onlyConstructorArguments;
         $this->hasProxyDumper = (bool) $hasProxyDumper;
@@ -53,46 +47,46 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass implements Repe
     /**
      * {@inheritdoc}
      */
-    public function setRepeatedPass(RepeatedPass $repeatedPass)
+    public function setRepeatedPass(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
     {
         // no-op for BC
     }
     /**
      * Processes a ContainerBuilder object to populate the service reference graph.
      */
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $this->container = $container;
         $this->graph = $container->getCompiler()->getServiceReferenceGraph();
         $this->graph->clear();
-        $this->lazy = false;
-        $this->byConstructor = false;
+        $this->lazy = \false;
+        $this->byConstructor = \false;
         foreach ($container->getAliases() as $id => $alias) {
             $targetId = $this->getDefinitionId((string) $alias);
             $this->graph->connect($id, $alias, $targetId, $this->getDefinition($targetId), null);
         }
         parent::process($container);
     }
-    protected function processValue($value, $isRoot = false)
+    protected function processValue($value, $isRoot = \false)
     {
         $lazy = $this->lazy;
-        if ($value instanceof ArgumentInterface) {
-            $this->lazy = true;
+        if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
+            $this->lazy = \true;
             parent::processValue($value->getValues());
             $this->lazy = $lazy;
             return $value;
         }
-        if ($value instanceof Expression) {
+        if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression) {
             $this->getExpressionLanguage()->compile((string) $value, ['this' => 'container']);
             return $value;
         }
-        if ($value instanceof Reference) {
+        if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference) {
             $targetId = $this->getDefinitionId((string) $value);
             $targetDefinition = $this->getDefinition($targetId);
-            $this->graph->connect($this->currentId, $this->currentDefinition, $targetId, $targetDefinition, $value, $this->lazy || $this->hasProxyDumper && $targetDefinition && $targetDefinition->isLazy(), ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(), $this->byConstructor);
+            $this->graph->connect($this->currentId, $this->currentDefinition, $targetId, $targetDefinition, $value, $this->lazy || $this->hasProxyDumper && $targetDefinition && $targetDefinition->isLazy(), \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(), $this->byConstructor);
             return $value;
         }
-        if (!$value instanceof Definition) {
+        if (!$value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         if ($isRoot) {
@@ -103,7 +97,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass implements Repe
         } elseif ($this->currentDefinition === $value) {
             return $value;
         }
-        $this->lazy = false;
+        $this->lazy = \false;
         $byConstructor = $this->byConstructor;
         $this->byConstructor = $isRoot || $byConstructor;
         $this->processValue($value->getFactory());
@@ -141,17 +135,17 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass implements Repe
     private function getExpressionLanguage()
     {
         if (null === $this->expressionLanguage) {
-            if (!class_exists(ExpressionLanguage::class)) {
-                throw new RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+            if (!\class_exists(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ExpressionLanguage::class)) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $providers = $this->container->getExpressionLanguageProviders();
-            $this->expressionLanguage = new ExpressionLanguage(null, $providers, function ($arg) {
-                if ('""' === substr_replace($arg, '', 1, -1)) {
-                    $id = stripcslashes(substr($arg, 1, -1));
+            $this->expressionLanguage = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ExpressionLanguage(null, $providers, function ($arg) {
+                if ('""' === \substr_replace($arg, '', 1, -1)) {
+                    $id = \stripcslashes(\substr($arg, 1, -1));
                     $id = $this->getDefinitionId($id);
                     $this->graph->connect($this->currentId, $this->currentDefinition, $id, $this->getDefinition($id));
                 }
-                return sprintf('$this->get(%s)', $arg);
+                return \sprintf('$this->get(%s)', $arg);
             });
         }
         return $this->expressionLanguage;

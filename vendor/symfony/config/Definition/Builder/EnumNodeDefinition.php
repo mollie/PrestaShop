@@ -8,19 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\EnumNode;
-use InvalidArgumentException;
-use RuntimeException;
-use function array_unique;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\EnumNode;
 /**
  * Enum Node Definition.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class EnumNodeDefinition extends ScalarNodeDefinition
+class EnumNodeDefinition extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition
 {
     private $values;
     /**
@@ -28,9 +24,9 @@ class EnumNodeDefinition extends ScalarNodeDefinition
      */
     public function values(array $values)
     {
-        $values = array_unique($values);
+        $values = \array_unique($values);
         if (empty($values)) {
-            throw new InvalidArgumentException('->values() must be called with at least one value.');
+            throw new \InvalidArgumentException('->values() must be called with at least one value.');
         }
         $this->values = $values;
         return $this;
@@ -40,13 +36,13 @@ class EnumNodeDefinition extends ScalarNodeDefinition
      *
      * @return EnumNode The node
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     protected function instantiateNode()
     {
         if (null === $this->values) {
-            throw new RuntimeException('You must call ->values() on enum nodes.');
+            throw new \RuntimeException('You must call ->values() on enum nodes.');
         }
-        return new EnumNode($this->name, $this->parent, $this->values);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\EnumNode($this->name, $this->parent, $this->values);
     }
 }

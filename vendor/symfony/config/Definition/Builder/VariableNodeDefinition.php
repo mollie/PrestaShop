@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\VariableNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\VariableNode;
 /**
  * This class provides a fluent interface for defining a node.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class VariableNodeDefinition extends NodeDefinition
+class VariableNodeDefinition extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeDefinition
 {
     /**
      * Instantiate a Node.
@@ -25,7 +25,7 @@ class VariableNodeDefinition extends NodeDefinition
      */
     protected function instantiateNode()
     {
-        return new VariableNode($this->name, $this->parent);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\VariableNode($this->name, $this->parent);
     }
     /**
      * {@inheritdoc}
@@ -39,13 +39,13 @@ class VariableNodeDefinition extends NodeDefinition
         if (null !== $this->merge) {
             $node->setAllowOverwrite($this->merge->allowOverwrite);
         }
-        if (true === $this->default) {
+        if (\true === $this->default) {
             $node->setDefaultValue($this->defaultValue);
         }
         $node->setAllowEmptyValue($this->allowEmptyValue);
         $node->addEquivalentValue(null, $this->nullEquivalent);
-        $node->addEquivalentValue(true, $this->trueEquivalent);
-        $node->addEquivalentValue(false, $this->falseEquivalent);
+        $node->addEquivalentValue(\true, $this->trueEquivalent);
+        $node->addEquivalentValue(\false, $this->falseEquivalent);
         $node->setRequired($this->required);
         $node->setDeprecated($this->deprecationMessage);
         if (null !== $this->validation) {

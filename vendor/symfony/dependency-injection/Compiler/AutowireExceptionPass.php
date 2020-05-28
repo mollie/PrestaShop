@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-@trigger_error('The ' . __NAMESPACE__ . '\\AutowireExceptionPass class is deprecated since Symfony 3.4 and will be removed in 4.0. Use the DefinitionErrorExceptionPass class instead.', E_USER_DEPRECATED);
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+@\trigger_error('The ' . __NAMESPACE__ . '\\AutowireExceptionPass class is deprecated since Symfony 3.4 and will be removed in 4.0. Use the DefinitionErrorExceptionPass class instead.', \E_USER_DEPRECATED);
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Throws autowire exceptions from AutowirePass for definitions that still exist.
  *
@@ -22,16 +19,16 @@ use const E_USER_DEPRECATED;
  *
  * @author Ryan Weaver <ryan@knpuniversity.com>
  */
-class AutowireExceptionPass implements CompilerPassInterface
+class AutowireExceptionPass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     private $autowirePass;
     private $inlineServicePass;
-    public function __construct(AutowirePass $autowirePass, InlineServiceDefinitionsPass $inlineServicePass)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AutowirePass $autowirePass, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass $inlineServicePass)
     {
         $this->autowirePass = $autowirePass;
         $this->inlineServicePass = $inlineServicePass;
     }
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         // the pass should only be run once
         if (null === $this->autowirePass || null === $this->inlineServicePass) {
@@ -48,19 +45,19 @@ class AutowireExceptionPass implements CompilerPassInterface
             }
         }
     }
-    private function doesServiceExistInTheContainer($serviceId, ContainerBuilder $container, array $inlinedIds)
+    private function doesServiceExistInTheContainer($serviceId, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $inlinedIds)
     {
         if ($container->hasDefinition($serviceId)) {
-            return true;
+            return \true;
         }
         // was the service inlined? Of so, does its parent service exist?
         if (isset($inlinedIds[$serviceId])) {
             foreach ($inlinedIds[$serviceId] as $parentId) {
                 if ($this->doesServiceExistInTheContainer($parentId, $container, $inlinedIds)) {
-                    return true;
+                    return \true;
                 }
             }
         }
-        return false;
+        return \false;
     }
 }

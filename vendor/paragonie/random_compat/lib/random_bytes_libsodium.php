@@ -1,11 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
-
-use Exception;
-use function _PhpScoper5ea00cc67502b\Sodium\randombytes_buf;
-use function is_callable;
-use function is_string;
+namespace _PhpScoper5ece82d7231e4;
 
 /**
  * Random_* Compatibility Library
@@ -33,7 +28,7 @@ use function is_string;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-if (!is_callable('random_bytes')) {
+if (!\is_callable('random_bytes')) {
     /**
      * If the libsodium PHP extension is loaded, we'll use it above any other
      * solution.
@@ -51,7 +46,7 @@ if (!is_callable('random_bytes')) {
     {
         try {
             /** @var int $bytes */
-            $bytes = RandomCompat_intval($bytes);
+            $bytes = \_PhpScoper5ece82d7231e4\RandomCompat_intval($bytes);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_bytes(): $bytes must be an integer');
         }
@@ -67,20 +62,20 @@ if (!is_callable('random_bytes')) {
             $buf = '';
             for ($i = 0; $i < $bytes; $i += 1073741824) {
                 $n = $bytes - $i > 1073741824 ? 1073741824 : $bytes - $i;
-                $buf .= randombytes_buf($n);
+                $buf .= \_PhpScoper5ece82d7231e4\Sodium\randombytes_buf($n);
             }
         } else {
             /** @var string|bool $buf */
-            $buf = randombytes_buf($bytes);
+            $buf = \_PhpScoper5ece82d7231e4\Sodium\randombytes_buf($bytes);
         }
-        if (is_string($buf)) {
-            if (RandomCompat_strlen($buf) === $bytes) {
+        if (\is_string($buf)) {
+            if (\_PhpScoper5ece82d7231e4\RandomCompat_strlen($buf) === $bytes) {
                 return $buf;
             }
         }
         /**
          * If we reach here, PHP has failed us.
          */
-        throw new Exception('Could not gather sufficient random data');
+        throw new \Exception('Could not gather sufficient random data');
     }
 }

@@ -8,92 +8,45 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface as PsrContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ClassExistenceResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ComposerResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ReflectionClassResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\Compiler;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\InstantiatorInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\RealServiceInstantiator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Expression;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
-use Exception;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionMethod;
-use function array_diff;
-use function array_keys;
-use function array_map;
-use function array_merge;
-use function array_search;
-use function array_slice;
-use function array_unique;
-use function array_unshift;
-use function array_values;
-use function base64_encode;
-use function call_user_func;
-use function call_user_func_array;
-use function class_exists;
-use function file_exists;
-use function func_get_arg;
-use function func_num_args;
-use function get_class;
-use function gettype;
-use function hash;
-use function interface_exists;
-use function is_array;
-use function is_callable;
-use function is_dir;
-use function is_numeric;
-use function is_object;
-use function is_string;
-use function realpath;
-use function serialize;
-use function spl_object_hash;
-use function sprintf;
-use function str_ireplace;
-use function str_replace;
-use function strcspn;
-use function stripos;
-use function strlen;
-use function strpbrk;
-use function strpos;
-use function strtolower;
-use function substr;
-use function trigger_error;
-use const DIRECTORY_SEPARATOR;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface as PsrContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ClassExistenceResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ComposerResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\DirectoryResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\FileExistenceResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\FileResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ResourceInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\Compiler;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\InstantiatorInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\RealServiceInstantiator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression;
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 /**
  * ContainerBuilder is a DI container that provides an API to easily describe services.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ContainerBuilder extends Container implements TaggedContainerInterface
+class ContainerBuilder extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\TaggedContainerInterface
 {
     /**
      * @var ExtensionInterface[]
@@ -152,17 +105,17 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     private $autoconfiguredInstanceof = [];
     private $removedIds = [];
     private $removedBindingIds = [];
-    private static $internalTypes = ['int' => true, 'float' => true, 'string' => true, 'bool' => true, 'resource' => true, 'object' => true, 'array' => true, 'null' => true, 'callable' => true, 'iterable' => true, 'mixed' => true];
-    public function __construct(ParameterBagInterface $parameterBag = null)
+    private static $internalTypes = ['int' => \true, 'float' => \true, 'string' => \true, 'bool' => \true, 'resource' => \true, 'object' => \true, 'array' => \true, 'null' => \true, 'callable' => \true, 'iterable' => \true, 'mixed' => \true];
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface $parameterBag = null)
     {
         parent::__construct($parameterBag);
-        $this->trackResources = interface_exists('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Resource\\ResourceInterface');
-        $this->setDefinition('service_container', (new Definition(ContainerInterface::class))->setSynthetic(true)->setPublic(true));
-        $this->setAlias(PsrContainerInterface::class, new Alias('service_container', false));
-        $this->setAlias(ContainerInterface::class, new Alias('service_container', false));
+        $this->trackResources = \interface_exists('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Resource\\ResourceInterface');
+        $this->setDefinition('service_container', (new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::class))->setSynthetic(\true)->setPublic(\true));
+        $this->setAlias(\_PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface::class, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias('service_container', \false));
+        $this->setAlias(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::class, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias('service_container', \false));
     }
     /**
-     * @var ReflectionClass[] a list of class reflectors
+     * @var \ReflectionClass[] a list of class reflectors
      */
     private $classReflectors;
     /**
@@ -189,14 +142,14 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     /**
      * Sets the instantiator to be used when fetching proxies.
      */
-    public function setProxyInstantiator(InstantiatorInterface $proxyInstantiator)
+    public function setProxyInstantiator(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\InstantiatorInterface $proxyInstantiator)
     {
         $this->proxyInstantiator = $proxyInstantiator;
     }
-    public function registerExtension(ExtensionInterface $extension)
+    public function registerExtension(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Extension\ExtensionInterface $extension)
     {
         $this->extensions[$extension->getAlias()] = $extension;
-        if (false !== $extension->getNamespace()) {
+        if (\false !== $extension->getNamespace()) {
             $this->extensionsByNs[$extension->getNamespace()] = $extension;
         }
     }
@@ -217,7 +170,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         if (isset($this->extensionsByNs[$name])) {
             return $this->extensionsByNs[$name];
         }
-        throw new LogicException(sprintf('Container extension "%s" is not registered.', $name));
+        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException(\sprintf('Container extension "%s" is not registered.', $name));
     }
     /**
      * Returns all registered extensions.
@@ -246,17 +199,17 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function getResources()
     {
-        return array_values($this->resources);
+        return \array_values($this->resources);
     }
     /**
      * @return $this
      */
-    public function addResource(ResourceInterface $resource)
+    public function addResource(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ResourceInterface $resource)
     {
         if (!$this->trackResources) {
             return $this;
         }
-        if ($resource instanceof GlobResource && $this->inVendors($resource->getPrefix())) {
+        if ($resource instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource && $this->inVendors($resource->getPrefix())) {
             return $this;
         }
         $this->resources[(string) $resource] = $resource;
@@ -287,25 +240,25 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function addObjectResource($object)
     {
         if ($this->trackResources) {
-            if (is_object($object)) {
-                $object = get_class($object);
+            if (\is_object($object)) {
+                $object = \get_class($object);
             }
             if (!isset($this->classReflectors[$object])) {
-                $this->classReflectors[$object] = new ReflectionClass($object);
+                $this->classReflectors[$object] = new \ReflectionClass($object);
             }
             $class = $this->classReflectors[$object];
             foreach ($class->getInterfaceNames() as $name) {
                 if (null === ($interface =& $this->classReflectors[$name])) {
-                    $interface = new ReflectionClass($name);
+                    $interface = new \ReflectionClass($name);
                 }
                 $file = $interface->getFileName();
-                if (false !== $file && file_exists($file)) {
+                if (\false !== $file && \file_exists($file)) {
                     $this->fileExists($file);
                 }
             }
             do {
                 $file = $class->getFileName();
-                if (false !== $file && file_exists($file)) {
+                if (\false !== $file && \file_exists($file)) {
                     $this->fileExists($file);
                 }
                 foreach ($class->getTraitNames() as $name) {
@@ -322,9 +275,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @deprecated since version 3.3, to be removed in 4.0. Use addObjectResource() or getReflectionClass() instead.
      */
-    public function addClassResource(ReflectionClass $class)
+    public function addClassResource(\ReflectionClass $class)
     {
-        @trigger_error('The ' . __METHOD__ . '() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the addObjectResource() or the getReflectionClass() method instead.', E_USER_DEPRECATED);
+        @\trigger_error('The ' . __METHOD__ . '() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the addObjectResource() or the getReflectionClass() method instead.', \E_USER_DEPRECATED);
         return $this->addObjectResource($class->name);
     }
     /**
@@ -333,13 +286,13 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      * @param string $class
      * @param bool   $throw
      *
-     * @return ReflectionClass|null
+     * @return \ReflectionClass|null
      *
-     * @throws ReflectionException when a parent class/interface/trait is not found and $throw is true
+     * @throws \ReflectionException when a parent class/interface/trait is not found and $throw is true
      *
      * @final
      */
-    public function getReflectionClass($class, $throw = true)
+    public function getReflectionClass($class, $throw = \true)
     {
         if (!($class = $this->getParameterBag()->resolveValue($class))) {
             return null;
@@ -351,24 +304,24 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         try {
             if (isset($this->classReflectors[$class])) {
                 $classReflector = $this->classReflectors[$class];
-            } elseif (class_exists(ClassExistenceResource::class)) {
-                $resource = new ClassExistenceResource($class, false);
-                $classReflector = $resource->isFresh(0) ? false : new ReflectionClass($class);
+            } elseif (\class_exists(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ClassExistenceResource::class)) {
+                $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ClassExistenceResource($class, \false);
+                $classReflector = $resource->isFresh(0) ? \false : new \ReflectionClass($class);
             } else {
-                $classReflector = class_exists($class) ? new ReflectionClass($class) : false;
+                $classReflector = \class_exists($class) ? new \ReflectionClass($class) : \false;
             }
-        } catch (ReflectionException $e) {
+        } catch (\ReflectionException $e) {
             if ($throw) {
                 throw $e;
             }
         }
         if ($this->trackResources) {
             if (!$classReflector) {
-                $this->addResource($resource ?: new ClassExistenceResource($class, false));
+                $this->addResource($resource ?: new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ClassExistenceResource($class, \false));
             } elseif (!$classReflector->isInternal()) {
                 $path = $classReflector->getFileName();
                 if (!$this->inVendors($path)) {
-                    $this->addResource(new ReflectionClassResource($classReflector, $this->vendors));
+                    $this->addResource(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource($classReflector, $this->vendors));
                 }
             }
             $this->classReflectors[$class] = $classReflector;
@@ -386,24 +339,24 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @final
      */
-    public function fileExists($path, $trackContents = true)
+    public function fileExists($path, $trackContents = \true)
     {
-        $exists = file_exists($path);
+        $exists = \file_exists($path);
         if (!$this->trackResources || $this->inVendors($path)) {
             return $exists;
         }
         if (!$exists) {
-            $this->addResource(new FileExistenceResource($path));
+            $this->addResource(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\FileExistenceResource($path));
             return $exists;
         }
-        if (is_dir($path)) {
+        if (\is_dir($path)) {
             if ($trackContents) {
-                $this->addResource(new DirectoryResource($path, is_string($trackContents) ? $trackContents : null));
+                $this->addResource(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\DirectoryResource($path, \is_string($trackContents) ? $trackContents : null));
             } else {
-                $this->addResource(new GlobResource($path, '/*', false));
+                $this->addResource(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($path, '/*', \false));
             }
         } elseif ($trackContents) {
-            $this->addResource(new FileResource($path));
+            $this->addResource(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\FileResource($path));
         }
         return $exists;
     }
@@ -421,9 +374,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function loadFromExtension($extension, array $values = null)
     {
         if ($this->isCompiled()) {
-            throw new BadMethodCallException('Cannot load from an extension on a compiled container.');
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\BadMethodCallException('Cannot load from an extension on a compiled container.');
         }
-        if (func_num_args() < 2) {
+        if (\func_num_args() < 2) {
             $values = [];
         }
         $namespace = $this->getExtension($extension)->getAlias();
@@ -439,15 +392,15 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @return $this
      */
-    public function addCompilerPass(CompilerPassInterface $pass, $type = PassConfig::TYPE_BEFORE_OPTIMIZATION)
+    public function addCompilerPass(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $type = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION)
     {
-        if (func_num_args() >= 3) {
-            $priority = func_get_arg(2);
+        if (\func_num_args() >= 3) {
+            $priority = \func_get_arg(2);
         } else {
             if (__CLASS__ !== static::class) {
-                $r = new ReflectionMethod($this, __FUNCTION__);
+                $r = new \ReflectionMethod($this, __FUNCTION__);
                 if (__CLASS__ !== $r->getDeclaringClass()->getName()) {
-                    @trigger_error(sprintf('Method %s() will have a third `int $priority = 0` argument in version 4.0. Not defining it is deprecated since Symfony 3.2.', __METHOD__), E_USER_DEPRECATED);
+                    @\trigger_error(\sprintf('Method %s() will have a third `int $priority = 0` argument in version 4.0. Not defining it is deprecated since Symfony 3.2.', __METHOD__), \E_USER_DEPRECATED);
                 }
             }
             $priority = 0;
@@ -473,7 +426,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function getCompiler()
     {
         if (null === $this->compiler) {
-            $this->compiler = new Compiler();
+            $this->compiler = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\Compiler();
         }
         return $this->compiler;
     }
@@ -490,7 +443,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         $id = $this->normalizeId($id);
         if ($this->isCompiled() && (isset($this->definitions[$id]) && !$this->definitions[$id]->isSynthetic())) {
             // setting a synthetic service on a compiled container is alright
-            throw new BadMethodCallException(sprintf('Setting service "%s" for an unknown or non-synthetic service definition on a compiled container is not allowed.', $id));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\BadMethodCallException(\sprintf('Setting service "%s" for an unknown or non-synthetic service definition on a compiled container is not allowed.', $id));
         }
         unset($this->definitions[$id], $this->aliasDefinitions[$id], $this->removedIds[$id]);
         parent::set($id, $service);
@@ -504,7 +457,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         if (isset($this->definitions[$id = $this->normalizeId($id)])) {
             unset($this->definitions[$id]);
-            $this->removedIds[$id] = true;
+            $this->removedIds[$id] = \true;
         }
     }
     /**
@@ -530,35 +483,35 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      * @throws InvalidArgumentException          when no definitions are available
      * @throws ServiceCircularReferenceException When a circular reference is detected
      * @throws ServiceNotFoundException          When the service is not defined
-     * @throws Exception
+     * @throws \Exception
      *
      * @see Reference
      */
-    public function get($id, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE)
+    public function get($id, $invalidBehavior = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE)
     {
         if ($this->isCompiled() && isset($this->removedIds[$id = $this->normalizeId($id)])) {
-            @trigger_error(sprintf('Fetching the "%s" private service or alias is deprecated since Symfony 3.4 and will fail in 4.0. Make it public instead.', $id), E_USER_DEPRECATED);
+            @\trigger_error(\sprintf('Fetching the "%s" private service or alias is deprecated since Symfony 3.4 and will fail in 4.0. Make it public instead.', $id), \E_USER_DEPRECATED);
         }
         return $this->doGet($id, $invalidBehavior);
     }
-    private function doGet($id, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, array &$inlineServices = null, $isConstructorArgument = false)
+    private function doGet($id, $invalidBehavior = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, array &$inlineServices = null, $isConstructorArgument = \false)
     {
         $id = $this->normalizeId($id);
         if (isset($inlineServices[$id])) {
             return $inlineServices[$id];
         }
         if (null === $inlineServices) {
-            $isConstructorArgument = true;
+            $isConstructorArgument = \true;
             $inlineServices = [];
         }
         try {
-            if (ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $invalidBehavior) {
+            if (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $invalidBehavior) {
                 return parent::get($id, $invalidBehavior);
             }
-            if ($service = parent::get($id, ContainerInterface::NULL_ON_INVALID_REFERENCE)) {
+            if ($service = parent::get($id, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE)) {
                 return $service;
             }
-        } catch (ServiceCircularReferenceException $e) {
+        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException $e) {
             if ($isConstructorArgument) {
                 throw $e;
             }
@@ -568,14 +521,14 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
         try {
             $definition = $this->getDefinition($id);
-        } catch (ServiceNotFoundException $e) {
-            if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE !== $invalidBehavior) {
+        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException $e) {
+            if (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE !== $invalidBehavior) {
                 return null;
             }
             throw $e;
         }
         if ($isConstructorArgument) {
-            $this->loading[$id] = true;
+            $this->loading[$id] = \true;
         }
         try {
             return $this->createService($definition, $inlineServices, $isConstructorArgument, $id);
@@ -608,7 +561,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function merge(self $container)
     {
         if ($this->isCompiled()) {
-            throw new BadMethodCallException('Cannot merge on a compiled container.');
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\BadMethodCallException('Cannot merge on a compiled container.');
         }
         $this->addDefinitions($container->getDefinitions());
         $this->addAliases($container->getAliases());
@@ -622,9 +575,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             if (!isset($this->extensionConfigs[$name])) {
                 $this->extensionConfigs[$name] = [];
             }
-            $this->extensionConfigs[$name] = array_merge($this->extensionConfigs[$name], $container->getExtensionConfig($name));
+            $this->extensionConfigs[$name] = \array_merge($this->extensionConfigs[$name], $container->getExtensionConfig($name));
         }
-        if ($this->getParameterBag() instanceof EnvPlaceholderParameterBag && $container->getParameterBag() instanceof EnvPlaceholderParameterBag) {
+        if ($this->getParameterBag() instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag && $container->getParameterBag() instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag) {
             $envPlaceholders = $container->getParameterBag()->getEnvPlaceholders();
             $this->getParameterBag()->mergeEnvPlaceholders($container->getParameterBag());
         } else {
@@ -642,7 +595,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
         foreach ($container->getAutoconfiguredInstanceof() as $interface => $childDefinition) {
             if (isset($this->autoconfiguredInstanceof[$interface])) {
-                throw new InvalidArgumentException(sprintf('"%s" has already been autoconfigured and merge() does not support merging autoconfiguration for the same class/interface.', $interface));
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('"%s" has already been autoconfigured and merge() does not support merging autoconfiguration for the same class/interface.', $interface));
             }
             $this->autoconfiguredInstanceof[$interface] = $childDefinition;
         }
@@ -672,7 +625,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         if (!isset($this->extensionConfigs[$name])) {
             $this->extensionConfigs[$name] = [];
         }
-        array_unshift($this->extensionConfigs[$name], $config);
+        \array_unshift($this->extensionConfigs[$name], $config);
     }
     /**
      * Compiles the container.
@@ -695,16 +648,16 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function compile()
     {
-        if (1 <= func_num_args()) {
-            $resolveEnvPlaceholders = func_get_arg(0);
+        if (1 <= \func_num_args()) {
+            $resolveEnvPlaceholders = \func_get_arg(0);
         } else {
             if (__CLASS__ !== static::class) {
-                $r = new ReflectionMethod($this, __FUNCTION__);
+                $r = new \ReflectionMethod($this, __FUNCTION__);
                 if (__CLASS__ !== $r->getDeclaringClass()->getName() && (1 > $r->getNumberOfParameters() || 'resolveEnvPlaceholders' !== $r->getParameters()[0]->name)) {
-                    @trigger_error(sprintf('The %s::compile() method expects a first "$resolveEnvPlaceholders" argument since Symfony 3.3. It will be made mandatory in 4.0.', static::class), E_USER_DEPRECATED);
+                    @\trigger_error(\sprintf('The %s::compile() method expects a first "$resolveEnvPlaceholders" argument since Symfony 3.3. It will be made mandatory in 4.0.', static::class), \E_USER_DEPRECATED);
                 }
             }
-            $resolveEnvPlaceholders = false;
+            $resolveEnvPlaceholders = \false;
         }
         $compiler = $this->getCompiler();
         if ($this->trackResources) {
@@ -713,8 +666,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
         $bag = $this->getParameterBag();
-        if ($resolveEnvPlaceholders && $bag instanceof EnvPlaceholderParameterBag) {
-            $compiler->addPass(new ResolveEnvPlaceholdersPass(), PassConfig::TYPE_AFTER_REMOVING, -1000);
+        if ($resolveEnvPlaceholders && $bag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag) {
+            $compiler->addPass(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass(), \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_AFTER_REMOVING, -1000);
         }
         $compiler->compile($this);
         foreach ($this->definitions as $id => $definition) {
@@ -723,16 +676,16 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
         $this->extensionConfigs = [];
-        if ($bag instanceof EnvPlaceholderParameterBag) {
+        if ($bag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag) {
             if ($resolveEnvPlaceholders) {
-                $this->parameterBag = new ParameterBag($this->resolveEnvPlaceholders($bag->all(), true));
+                $this->parameterBag = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag($this->resolveEnvPlaceholders($bag->all(), \true));
             }
             $this->envPlaceholders = $bag->getEnvPlaceholders();
         }
         parent::compile();
         foreach ($this->definitions + $this->aliasDefinitions as $id => $definition) {
             if (!$definition->isPublic() || $definition->isPrivate()) {
-                $this->removedIds[$id] = true;
+                $this->removedIds[$id] = \true;
             }
         }
     }
@@ -741,7 +694,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function getServiceIds()
     {
-        return array_map('strval', array_unique(array_merge(array_keys($this->getDefinitions()), array_keys($this->aliasDefinitions), parent::getServiceIds())));
+        return \array_map('strval', \array_unique(\array_merge(\array_keys($this->getDefinitions()), \array_keys($this->aliasDefinitions), parent::getServiceIds())));
     }
     /**
      * Gets removed service or alias ids.
@@ -783,16 +736,16 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function setAlias($alias, $id)
     {
         $alias = $this->normalizeId($alias);
-        if ('' === $alias || '\\' === substr($alias, -1) || strlen($alias) !== strcspn($alias, "\0\r\n'")) {
-            throw new InvalidArgumentException(sprintf('Invalid alias id: "%s".', $alias));
+        if ('' === $alias || '\\' === \substr($alias, -1) || \strlen($alias) !== \strcspn($alias, "\0\r\n'")) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid alias id: "%s".', $alias));
         }
-        if (is_string($id)) {
-            $id = new Alias($this->normalizeId($id));
-        } elseif (!$id instanceof Alias) {
-            throw new InvalidArgumentException('$id must be a string, or an Alias object.');
+        if (\is_string($id)) {
+            $id = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias($this->normalizeId($id));
+        } elseif (!$id instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('$id must be a string, or an Alias object.');
         }
         if ($alias === (string) $id) {
-            throw new InvalidArgumentException(sprintf('An alias can not reference itself, got a circular reference on "%s".', $alias));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('An alias can not reference itself, got a circular reference on "%s".', $alias));
         }
         unset($this->definitions[$alias], $this->removedIds[$alias]);
         return $this->aliasDefinitions[$alias] = $id;
@@ -806,7 +759,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         if (isset($this->aliasDefinitions[$alias = $this->normalizeId($alias)])) {
             unset($this->aliasDefinitions[$alias]);
-            $this->removedIds[$alias] = true;
+            $this->removedIds[$alias] = \true;
         }
     }
     /**
@@ -842,7 +795,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         $id = $this->normalizeId($id);
         if (!isset($this->aliasDefinitions[$id])) {
-            throw new InvalidArgumentException(sprintf('The service alias "%s" does not exist.', $id));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service alias "%s" does not exist.', $id));
         }
         return $this->aliasDefinitions[$id];
     }
@@ -859,7 +812,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function register($id, $class = null)
     {
-        return $this->setDefinition($id, new Definition($class));
+        return $this->setDefinition($id, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition($class));
     }
     /**
      * Registers an autowired service definition.
@@ -874,7 +827,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function autowire($id, $class = null)
     {
-        return $this->setDefinition($id, (new Definition($class))->setAutowired(true));
+        return $this->setDefinition($id, (new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition($class))->setAutowired(\true));
     }
     /**
      * Adds the service definitions.
@@ -916,14 +869,14 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @throws BadMethodCallException When this ContainerBuilder is compiled
      */
-    public function setDefinition($id, Definition $definition)
+    public function setDefinition($id, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition)
     {
         if ($this->isCompiled()) {
-            throw new BadMethodCallException('Adding definition to a compiled container is not allowed.');
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\BadMethodCallException('Adding definition to a compiled container is not allowed.');
         }
         $id = $this->normalizeId($id);
-        if ('' === $id || '\\' === substr($id, -1) || strlen($id) !== strcspn($id, "\0\r\n'")) {
-            throw new InvalidArgumentException(sprintf('Invalid service id: "%s".', $id));
+        if ('' === $id || '\\' === \substr($id, -1) || \strlen($id) !== \strcspn($id, "\0\r\n'")) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid service id: "%s".', $id));
         }
         unset($this->aliasDefinitions[$id], $this->removedIds[$id]);
         return $this->definitions[$id] = $definition;
@@ -952,7 +905,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         $id = $this->normalizeId($id);
         if (!isset($this->definitions[$id])) {
-            throw new ServiceNotFoundException($id);
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id);
         }
         return $this->definitions[$id];
     }
@@ -974,10 +927,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         while (isset($this->aliasDefinitions[$id])) {
             $id = (string) $this->aliasDefinitions[$id];
             if (isset($seen[$id])) {
-                $seen = array_values($seen);
-                $seen = array_slice($seen, array_search($id, $seen));
+                $seen = \array_values($seen);
+                $seen = \array_slice($seen, \array_search($id, $seen));
                 $seen[] = $id;
-                throw new ServiceCircularReferenceException($id, $seen);
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, $seen);
             }
             $seen[$id] = $id;
         }
@@ -996,23 +949,23 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      * @throws RuntimeException         When the service is a synthetic service
      * @throws InvalidArgumentException When configure callable is not callable
      */
-    private function createService(Definition $definition, array &$inlineServices, $isConstructorArgument = false, $id = null, $tryProxy = true)
+    private function createService(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition, array &$inlineServices, $isConstructorArgument = \false, $id = null, $tryProxy = \true)
     {
-        if (null === $id && isset($inlineServices[$h = spl_object_hash($definition)])) {
+        if (null === $id && isset($inlineServices[$h = \spl_object_hash($definition)])) {
             return $inlineServices[$h];
         }
-        if ($definition instanceof ChildDefinition) {
-            throw new RuntimeException(sprintf('Constructing service "%s" from a parent definition is not supported at build time.', $id));
+        if ($definition instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Constructing service "%s" from a parent definition is not supported at build time.', $id));
         }
         if ($definition->isSynthetic()) {
-            throw new RuntimeException(sprintf('You have requested a synthetic service ("%s"). The DIC does not know how to construct this service.', $id));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('You have requested a synthetic service ("%s"). The DIC does not know how to construct this service.', $id));
         }
         if ($definition->isDeprecated()) {
-            @trigger_error($definition->getDeprecationMessage($id), E_USER_DEPRECATED);
+            @\trigger_error($definition->getDeprecationMessage($id), \E_USER_DEPRECATED);
         }
-        if ($tryProxy && $definition->isLazy() && !($tryProxy = !($proxy = $this->proxyInstantiator) || $proxy instanceof RealServiceInstantiator)) {
+        if ($tryProxy && $definition->isLazy() && !($tryProxy = !($proxy = $this->proxyInstantiator) || $proxy instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\Instantiator\RealServiceInstantiator)) {
             $proxy = $proxy->instantiateProxy($this, $definition, $id, function () use($definition, &$inlineServices, $id) {
-                return $this->createService($definition, $inlineServices, true, $id, false);
+                return $this->createService($definition, $inlineServices, \true, $id, \false);
             });
             $this->shareService($definition, $proxy, $id, $inlineServices);
             return $proxy;
@@ -1023,31 +976,31 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
         $arguments = $this->doResolveServices($parameterBag->unescapeValue($parameterBag->resolveValue($definition->getArguments())), $inlineServices, $isConstructorArgument);
         if (null !== ($factory = $definition->getFactory())) {
-            if (is_array($factory)) {
+            if (\is_array($factory)) {
                 $factory = [$this->doResolveServices($parameterBag->resolveValue($factory[0]), $inlineServices, $isConstructorArgument), $factory[1]];
-            } elseif (!is_string($factory)) {
-                throw new RuntimeException(sprintf('Cannot create service "%s" because of invalid factory.', $id));
+            } elseif (!\is_string($factory)) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Cannot create service "%s" because of invalid factory.', $id));
             }
         }
         if (null !== $id && $definition->isShared() && isset($this->services[$id]) && ($tryProxy || !$definition->isLazy())) {
             return $this->services[$id];
         }
         if (null !== $factory) {
-            $service = call_user_func_array($factory, $arguments);
-            if (!$definition->isDeprecated() && is_array($factory) && is_string($factory[0])) {
-                $r = new ReflectionClass($factory[0]);
-                if (0 < strpos($r->getDocComment(), "\n * @deprecated ")) {
-                    @trigger_error(sprintf('The "%s" service relies on the deprecated "%s" factory class. It should either be deprecated or its factory upgraded.', $id, $r->name), E_USER_DEPRECATED);
+            $service = \call_user_func_array($factory, $arguments);
+            if (!$definition->isDeprecated() && \is_array($factory) && \is_string($factory[0])) {
+                $r = new \ReflectionClass($factory[0]);
+                if (0 < \strpos($r->getDocComment(), "\n * @deprecated ")) {
+                    @\trigger_error(\sprintf('The "%s" service relies on the deprecated "%s" factory class. It should either be deprecated or its factory upgraded.', $id, $r->name), \E_USER_DEPRECATED);
                 }
             }
         } else {
-            $r = new ReflectionClass($class = $parameterBag->resolveValue($definition->getClass()));
+            $r = new \ReflectionClass($class = $parameterBag->resolveValue($definition->getClass()));
             $service = null === $r->getConstructor() ? $r->newInstance() : $r->newInstanceArgs($arguments);
             // don't trigger deprecations for internal uses
             // @deprecated since version 3.3, to be removed in 4.0 along with the deprecated class
-            $deprecationWhitelist = ['event_dispatcher' => ContainerAwareEventDispatcher::class];
-            if (!$definition->isDeprecated() && 0 < strpos($r->getDocComment(), "\n * @deprecated ") && (!isset($deprecationWhitelist[$id]) || $deprecationWhitelist[$id] !== $class)) {
-                @trigger_error(sprintf('The "%s" service relies on the deprecated "%s" class. It should either be deprecated or its implementation upgraded.', $id, $r->name), E_USER_DEPRECATED);
+            $deprecationWhitelist = ['event_dispatcher' => \_PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher::class];
+            if (!$definition->isDeprecated() && 0 < \strpos($r->getDocComment(), "\n * @deprecated ") && (!isset($deprecationWhitelist[$id]) || $deprecationWhitelist[$id] !== $class)) {
+                @\trigger_error(\sprintf('The "%s" service relies on the deprecated "%s" class. It should either be deprecated or its implementation upgraded.', $id, $r->name), \E_USER_DEPRECATED);
             }
         }
         if ($tryProxy || !$definition->isLazy()) {
@@ -1062,18 +1015,18 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             $this->callMethod($service, $call, $inlineServices);
         }
         if ($callable = $definition->getConfigurator()) {
-            if (is_array($callable)) {
+            if (\is_array($callable)) {
                 $callable[0] = $parameterBag->resolveValue($callable[0]);
-                if ($callable[0] instanceof Reference) {
+                if ($callable[0] instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference) {
                     $callable[0] = $this->doGet((string) $callable[0], $callable[0]->getInvalidBehavior(), $inlineServices);
-                } elseif ($callable[0] instanceof Definition) {
+                } elseif ($callable[0] instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
                     $callable[0] = $this->createService($callable[0], $inlineServices);
                 }
             }
-            if (!is_callable($callable)) {
-                throw new InvalidArgumentException(sprintf('The configure callable for class "%s" is not a callable.', get_class($service)));
+            if (!\is_callable($callable)) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The configure callable for class "%s" is not a callable.', \get_class($service)));
             }
-            call_user_func($callable, $service);
+            \call_user_func($callable, $service);
         }
         return $service;
     }
@@ -1089,19 +1042,19 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         return $this->doResolveServices($value);
     }
-    private function doResolveServices($value, array &$inlineServices = [], $isConstructorArgument = false)
+    private function doResolveServices($value, array &$inlineServices = [], $isConstructorArgument = \false)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             foreach ($value as $k => $v) {
                 $value[$k] = $this->doResolveServices($v, $inlineServices, $isConstructorArgument);
             }
-        } elseif ($value instanceof ServiceClosureArgument) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument) {
             $reference = $value->getValues()[0];
             $value = function () use($reference) {
                 return $this->resolveServices($reference);
             };
-        } elseif ($value instanceof IteratorArgument) {
-            $value = new RewindableGenerator(function () use($value) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument) {
+            $value = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () use($value) {
                 foreach ($value->getValues() as $k => $v) {
                     foreach (self::getServiceConditionals($v) as $s) {
                         if (!$this->has($s)) {
@@ -1109,7 +1062,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
                         }
                     }
                     foreach (self::getInitializedConditionals($v) as $s) {
-                        if (!$this->doGet($s, ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)) {
+                        if (!$this->doGet($s, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)) {
                             continue 2;
                         }
                     }
@@ -1124,7 +1077,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
                         }
                     }
                     foreach (self::getInitializedConditionals($v) as $s) {
-                        if (!$this->doGet($s, ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)) {
+                        if (!$this->doGet($s, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE)) {
                             continue 2;
                         }
                     }
@@ -1132,13 +1085,13 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
                 }
                 return $count;
             });
-        } elseif ($value instanceof Reference) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference) {
             $value = $this->doGet((string) $value, $value->getInvalidBehavior(), $inlineServices, $isConstructorArgument);
-        } elseif ($value instanceof Definition) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
             $value = $this->createService($value, $inlineServices, $isConstructorArgument);
-        } elseif ($value instanceof Parameter) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Parameter) {
             $value = $this->getParameter((string) $value);
-        } elseif ($value instanceof Expression) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Expression) {
             $value = $this->getExpressionLanguage()->evaluate($value, ['container' => $this]);
         }
         return $value;
@@ -1162,14 +1115,14 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      *
      * @return array An array of tags with the tagged service as key, holding a list of attribute arrays
      */
-    public function findTaggedServiceIds($name, $throwOnAbstract = false)
+    public function findTaggedServiceIds($name, $throwOnAbstract = \false)
     {
         $this->usedTags[] = $name;
         $tags = [];
         foreach ($this->getDefinitions() as $id => $definition) {
             if ($definition->hasTag($name)) {
                 if ($throwOnAbstract && $definition->isAbstract()) {
-                    throw new InvalidArgumentException(sprintf('The service "%s" tagged "%s" must not be abstract.', $id, $name));
+                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service "%s" tagged "%s" must not be abstract.', $id, $name));
                 }
                 $tags[$id] = $definition->getTag($name);
             }
@@ -1185,9 +1138,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         $tags = [];
         foreach ($this->getDefinitions() as $id => $definition) {
-            $tags = array_merge(array_keys($definition->getTags()), $tags);
+            $tags = \array_merge(\array_keys($definition->getTags()), $tags);
         }
-        return array_unique($tags);
+        return \array_unique($tags);
     }
     /**
      * Returns all tags not queried by findTaggedServiceIds.
@@ -1196,9 +1149,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function findUnusedTags()
     {
-        return array_values(array_diff($this->findTags(), $this->usedTags));
+        return \array_values(\array_diff($this->findTags(), $this->usedTags));
     }
-    public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
+    public function addExpressionLanguageProvider(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface $provider)
     {
         $this->expressionLanguageProviders[] = $provider;
     }
@@ -1219,7 +1172,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function registerForAutoconfiguration($interface)
     {
         if (!isset($this->autoconfiguredInstanceof[$interface])) {
-            $this->autoconfiguredInstanceof[$interface] = new ChildDefinition('');
+            $this->autoconfiguredInstanceof[$interface] = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition('');
         }
         return $this->autoconfiguredInstanceof[$interface];
     }
@@ -1249,37 +1202,37 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             $format = '%%env(%s)%%';
         }
         $bag = $this->getParameterBag();
-        if (true === $format) {
+        if (\true === $format) {
             $value = $bag->resolveValue($value);
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $result = [];
             foreach ($value as $k => $v) {
-                $result[is_string($k) ? $this->resolveEnvPlaceholders($k, $format, $usedEnvs) : $k] = $this->resolveEnvPlaceholders($v, $format, $usedEnvs);
+                $result[\is_string($k) ? $this->resolveEnvPlaceholders($k, $format, $usedEnvs) : $k] = $this->resolveEnvPlaceholders($v, $format, $usedEnvs);
             }
             return $result;
         }
-        if (!is_string($value) || 38 > strlen($value)) {
+        if (!\is_string($value) || 38 > \strlen($value)) {
             return $value;
         }
-        $envPlaceholders = $bag instanceof EnvPlaceholderParameterBag ? $bag->getEnvPlaceholders() : $this->envPlaceholders;
-        $completed = false;
+        $envPlaceholders = $bag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag ? $bag->getEnvPlaceholders() : $this->envPlaceholders;
+        $completed = \false;
         foreach ($envPlaceholders as $env => $placeholders) {
             foreach ($placeholders as $placeholder) {
-                if (false !== stripos($value, $placeholder)) {
-                    if (true === $format) {
+                if (\false !== \stripos($value, $placeholder)) {
+                    if (\true === $format) {
                         $resolved = $bag->escapeValue($this->getEnv($env));
                     } else {
-                        $resolved = sprintf($format, $env);
+                        $resolved = \sprintf($format, $env);
                     }
                     if ($placeholder === $value) {
                         $value = $resolved;
-                        $completed = true;
+                        $completed = \true;
                     } else {
-                        if (!is_string($resolved) && !is_numeric($resolved)) {
-                            throw new RuntimeException(sprintf('A string value must be composed of strings and/or numbers, but found parameter "env(%s)" of type "%s" inside string value "%s".', $env, gettype($resolved), $this->resolveEnvPlaceholders($value)));
+                        if (!\is_string($resolved) && !\is_numeric($resolved)) {
+                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('A string value must be composed of strings and/or numbers, but found parameter "env(%s)" of type "%s" inside string value "%s".', $env, \gettype($resolved), $this->resolveEnvPlaceholders($value)));
                         }
-                        $value = str_ireplace($placeholder, $resolved, $value);
+                        $value = \str_ireplace($placeholder, $resolved, $value);
                     }
                     $usedEnvs[$env] = $env;
                     $this->envCounters[$env] = isset($this->envCounters[$env]) ? 1 + $this->envCounters[$env] : 1;
@@ -1299,7 +1252,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function getEnvCounters()
     {
         $bag = $this->getParameterBag();
-        $envPlaceholders = $bag instanceof EnvPlaceholderParameterBag ? $bag->getEnvPlaceholders() : $this->envPlaceholders;
+        $envPlaceholders = $bag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag ? $bag->getEnvPlaceholders() : $this->envPlaceholders;
         foreach ($envPlaceholders as $env => $placeholders) {
             if (!isset($this->envCounters[$env])) {
                 $this->envCounters[$env] = 0;
@@ -1323,7 +1276,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     /**
      * @final
      */
-    public function log(CompilerPassInterface $pass, $message)
+    public function log(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $message)
     {
         $this->getCompiler()->log($pass, $this->resolveEnvPlaceholders($message));
     }
@@ -1332,7 +1285,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public function normalizeId($id)
     {
-        if (!is_string($id)) {
+        if (!\is_string($id)) {
             $id = (string) $id;
         }
         return isset($this->definitions[$id]) || isset($this->aliasDefinitions[$id]) || isset($this->removedIds[$id]) ? $id : parent::normalizeId($id);
@@ -1359,8 +1312,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         if ($this->hasDefinition($id)) {
             foreach ($this->getDefinition($id)->getBindings() as $key => $binding) {
-                [, $bindingId] = $binding->getValues();
-                $this->removedBindingIds[(int) $bindingId] = true;
+                list(, $bindingId) = $binding->getValues();
+                $this->removedBindingIds[(int) $bindingId] = \true;
             }
         }
     }
@@ -1376,11 +1329,11 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public static function getServiceConditionals($value)
     {
         $services = [];
-        if (is_array($value)) {
+        if (\is_array($value)) {
             foreach ($value as $v) {
-                $services = array_unique(array_merge($services, self::getServiceConditionals($v)));
+                $services = \array_unique(\array_merge($services, self::getServiceConditionals($v)));
             }
-        } elseif ($value instanceof Reference && ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $value->getInvalidBehavior()) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference && \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $value->getInvalidBehavior()) {
             $services[] = (string) $value;
         }
         return $services;
@@ -1397,11 +1350,11 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public static function getInitializedConditionals($value)
     {
         $services = [];
-        if (is_array($value)) {
+        if (\is_array($value)) {
             foreach ($value as $v) {
-                $services = array_unique(array_merge($services, self::getInitializedConditionals($v)));
+                $services = \array_unique(\array_merge($services, self::getInitializedConditionals($v)));
             }
-        } elseif ($value instanceof Reference && ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior()) {
+        } elseif ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference && \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior()) {
             $services[] = (string) $value;
         }
         return $services;
@@ -1415,8 +1368,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     public static function hash($value)
     {
-        $hash = substr(base64_encode(hash('sha256', serialize($value), true)), 0, 7);
-        return str_replace(['/', '+'], ['.', '_'], strtolower($hash));
+        $hash = \substr(\base64_encode(\hash('sha256', \serialize($value), \true)), 0, 7);
+        return \str_replace(['/', '+'], ['.', '_'], \strtolower($hash));
     }
     /**
      * {@inheritdoc}
@@ -1425,18 +1378,18 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         $value = parent::getEnv($name);
         $bag = $this->getParameterBag();
-        if (!is_string($value) || !$bag instanceof EnvPlaceholderParameterBag) {
+        if (!\is_string($value) || !$bag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag) {
             return $value;
         }
         foreach ($bag->getEnvPlaceholders() as $env => $placeholders) {
             if (isset($placeholders[$value])) {
-                $bag = new ParameterBag($bag->all());
+                $bag = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag($bag->all());
                 return $bag->unescapeValue($bag->get("env({$name})"));
             }
         }
-        $this->resolving["env({$name})"] = true;
+        $this->resolving["env({$name})"] = \true;
         try {
-            return $bag->unescapeValue($this->resolveEnvPlaceholders($bag->escapeValue($value), true));
+            return $bag->unescapeValue($this->resolveEnvPlaceholders($bag->escapeValue($value), \true));
         } finally {
             unset($this->resolving["env({$name})"]);
         }
@@ -1449,11 +1402,11 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
         foreach (self::getInitializedConditionals($call[1]) as $s) {
-            if (!$this->doGet($s, ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE, $inlineServices)) {
+            if (!$this->doGet($s, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE, $inlineServices)) {
                 return;
             }
         }
-        call_user_func_array([$service, $call[0]], $this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices));
+        \call_user_func_array([$service, $call[0]], $this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices));
     }
     /**
      * Shares a given service in the container.
@@ -1461,9 +1414,9 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      * @param mixed       $service
      * @param string|null $id
      */
-    private function shareService(Definition $definition, $service, $id, array &$inlineServices)
+    private function shareService(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition, $service, $id, array &$inlineServices)
     {
-        $inlineServices[null !== $id ? $id : spl_object_hash($definition)] = $service;
+        $inlineServices[null !== $id ? $id : \spl_object_hash($definition)] = $service;
         if (null !== $id && $definition->isShared()) {
             $this->services[$id] = $service;
             unset($this->loading[$id]);
@@ -1472,26 +1425,26 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     private function getExpressionLanguage()
     {
         if (null === $this->expressionLanguage) {
-            if (!class_exists('_PhpScoper5ea00cc67502b\\Symfony\\Component\\ExpressionLanguage\\ExpressionLanguage')) {
-                throw new RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+            if (!\class_exists('_PhpScoper5ece82d7231e4\\Symfony\\Component\\ExpressionLanguage\\ExpressionLanguage')) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
-            $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders);
+            $this->expressionLanguage = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ExpressionLanguage(null, $this->expressionLanguageProviders);
         }
         return $this->expressionLanguage;
     }
     private function inVendors($path)
     {
         if (null === $this->vendors) {
-            $resource = new ComposerResource();
+            $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ComposerResource();
             $this->vendors = $resource->getVendors();
             $this->addResource($resource);
         }
-        $path = realpath($path) ?: $path;
+        $path = \realpath($path) ?: $path;
         foreach ($this->vendors as $vendor) {
-            if (0 === strpos($path, $vendor) && false !== strpbrk(substr($path, strlen($vendor), 1), '/' . DIRECTORY_SEPARATOR)) {
-                return true;
+            if (0 === \strpos($path, $vendor) && \false !== \strpbrk(\substr($path, \strlen($vendor), 1), '/' . \DIRECTORY_SEPARATOR)) {
+                return \true;
             }
         }
-        return false;
+        return \false;
     }
 }

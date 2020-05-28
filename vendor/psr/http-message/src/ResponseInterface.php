@@ -1,8 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Psr\Http\Message;
-
-use InvalidArgumentException;
+namespace _PhpScoper5ece82d7231e4\Psr\Http\Message;
 
 /**
  * Representation of an outgoing, server-side response.
@@ -19,7 +17,7 @@ use InvalidArgumentException;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-interface ResponseInterface extends MessageInterface
+interface ResponseInterface extends \_PhpScoper5ece82d7231e4\Psr\Http\Message\MessageInterface
 {
     /**
      * Gets the response status code.
@@ -48,7 +46,7 @@ interface ResponseInterface extends MessageInterface
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
      * @return static
-     * @throws InvalidArgumentException For invalid status code arguments.
+     * @throws \InvalidArgumentException For invalid status code arguments.
      */
     public function withStatus($code, $reasonPhrase = '');
     /**

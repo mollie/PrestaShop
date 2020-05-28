@@ -8,30 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
-
-use InvalidArgumentException;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RuntimeException;
-use Serializable;
-use function file_exists;
-use function filemtime;
-use function is_dir;
-use function md5;
-use function preg_match;
-use function realpath;
-use function serialize;
-use function sprintf;
-use function substr;
-use function unserialize;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource;
 
 /**
  * DirectoryResource represents a resources stored in a subdirectory tree.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DirectoryResource implements SelfCheckingResourceInterface, Serializable
+class DirectoryResource implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $resource;
     private $pattern;
@@ -39,14 +23,14 @@ class DirectoryResource implements SelfCheckingResourceInterface, Serializable
      * @param string      $resource The file path to the resource
      * @param string|null $pattern  A pattern to restrict monitored files
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct($resource, $pattern = null)
     {
-        $this->resource = realpath($resource) ?: (file_exists($resource) ? $resource : false);
+        $this->resource = \realpath($resource) ?: (\file_exists($resource) ? $resource : \false);
         $this->pattern = $pattern;
-        if (false === $this->resource || !is_dir($this->resource)) {
-            throw new InvalidArgumentException(sprintf('The directory "%s" does not exist.', $resource));
+        if (\false === $this->resource || !\is_dir($this->resource)) {
+            throw new \InvalidArgumentException(\sprintf('The directory "%s" does not exist.', $resource));
         }
     }
     /**
@@ -54,7 +38,7 @@ class DirectoryResource implements SelfCheckingResourceInterface, Serializable
      */
     public function __toString()
     {
-        return md5(serialize([$this->resource, $this->pattern]));
+        return \md5(\serialize([$this->resource, $this->pattern]));
     }
     /**
      * @return string The file path to the resource
@@ -77,47 +61,47 @@ class DirectoryResource implements SelfCheckingResourceInterface, Serializable
      */
     public function isFresh($timestamp)
     {
-        if (!is_dir($this->resource)) {
-            return false;
+        if (!\is_dir($this->resource)) {
+            return \false;
         }
-        if ($timestamp < filemtime($this->resource)) {
-            return false;
+        if ($timestamp < \filemtime($this->resource)) {
+            return \false;
         }
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->resource), RecursiveIteratorIterator::SELF_FIRST) as $file) {
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->resource), \RecursiveIteratorIterator::SELF_FIRST) as $file) {
             // if regex filtering is enabled only check matching files
-            if ($this->pattern && $file->isFile() && !preg_match($this->pattern, $file->getBasename())) {
+            if ($this->pattern && $file->isFile() && !\preg_match($this->pattern, $file->getBasename())) {
                 continue;
             }
             // always monitor directories for changes, except the .. entries
             // (otherwise deleted files wouldn't get detected)
-            if ($file->isDir() && '/..' === substr($file, -3)) {
+            if ($file->isDir() && '/..' === \substr($file, -3)) {
                 continue;
             }
             // for broken links
             try {
                 $fileMTime = $file->getMTime();
-            } catch (RuntimeException $e) {
+            } catch (\RuntimeException $e) {
                 continue;
             }
             // early return if a file's mtime exceeds the passed timestamp
             if ($timestamp < $fileMTime) {
-                return false;
+                return \false;
             }
         }
-        return true;
+        return \true;
     }
     /**
      * @internal
      */
     public function serialize()
     {
-        return serialize([$this->resource, $this->pattern]);
+        return \serialize([$this->resource, $this->pattern]);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        [$this->resource, $this->pattern] = unserialize($serialized);
+        list($this->resource, $this->pattern) = \unserialize($serialized);
     }
 }

@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\getallheaders\\Tests\\": "tests\/"
+            "_PhpScoper5ece82d7231e4\\getallheaders\\Tests\\": "tests\/"
         }
     }
 }

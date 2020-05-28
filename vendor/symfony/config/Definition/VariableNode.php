@@ -8,13 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Closure;
-use function json_encode;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 /**
  * This node represents a value of variable type in the config tree.
  *
@@ -23,14 +19,14 @@ use function sprintf;
  *
  * @author Jeremy Mikola <jmikola@gmail.com>
  */
-class VariableNode extends BaseNode implements PrototypeNodeInterface
+class VariableNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\BaseNode implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypeNodeInterface
 {
-    protected $defaultValueSet = false;
+    protected $defaultValueSet = \false;
     protected $defaultValue;
-    protected $allowEmptyValue = true;
+    protected $allowEmptyValue = \true;
     public function setDefaultValue($value)
     {
-        $this->defaultValueSet = true;
+        $this->defaultValueSet = \true;
         $this->defaultValue = $value;
     }
     /**
@@ -46,7 +42,7 @@ class VariableNode extends BaseNode implements PrototypeNodeInterface
     public function getDefaultValue()
     {
         $v = $this->defaultValue;
-        return $v instanceof Closure ? $v() : $v;
+        return $v instanceof \Closure ? $v() : $v;
     }
     /**
      * Sets if this node is allowed to have an empty value.
@@ -76,7 +72,7 @@ class VariableNode extends BaseNode implements PrototypeNodeInterface
     protected function finalizeValue($value)
     {
         if (!$this->allowEmptyValue && $this->isValueEmpty($value)) {
-            $ex = new InvalidConfigurationException(sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), json_encode($value)));
+            $ex = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), \json_encode($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }

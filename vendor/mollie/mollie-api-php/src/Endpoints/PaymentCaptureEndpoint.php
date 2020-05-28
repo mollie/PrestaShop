@@ -1,15 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Capture;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CaptureCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class PaymentCaptureEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Capture;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\CaptureCollection;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment;
+class PaymentCaptureEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_captures";
     /**
@@ -19,19 +15,19 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Capture($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Capture($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return \Mollie\Api\Resources\CaptureCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new CaptureCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CaptureCollection($this->client, $count, $_links);
     }
     /**
      * @param Payment $payment
@@ -39,9 +35,9 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return Capture
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(Payment $payment, $captureId, array $parameters = [])
+    public function getFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment $payment, $captureId, array $parameters = [])
     {
         return $this->getForId($payment->id, $captureId, $parameters);
     }
@@ -50,8 +46,8 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      * @param string $captureId
      * @param array $parameters
      *
-     * @return BaseResource|\Mollie\Api\Resources\Capture
-     * @throws ApiException
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Capture
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function getForId($paymentId, $captureId, array $parameters = [])
     {

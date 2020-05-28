@@ -1,15 +1,12 @@
 
 services:
     service_container:
-        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
+        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:
         class: Class2
-        public: true
         file: file.php
         lazy: true
         arguments: [!service { class: Class1, public: false }]
-    bar:
-        alias: foo
-        public: true
+    bar: '@foo'

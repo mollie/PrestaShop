@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
 
 final class Rfc7230
 {
@@ -13,6 +13,6 @@ final class Rfc7230
      * @link    https://github.com/amphp/http/blob/v1.0.1/src/Rfc7230.php#L12-L15
      * @license https://github.com/amphp/http/blob/v1.0.1/LICENSE
      */
-    const HEADER_REGEX = "(^([^()<>@,;:\\\"/[\\]?={}\1- ]++):[ \t]*+((?:[ \t]*+[!-~ï¿½-ï¿½]++)*+)[ \t]*+\r?\n)m";
+    const HEADER_REGEX = "(^([^()<>@,;:\\\"/[\\]?={}\1- ]++):[ \t]*+((?:[ \t]*+[!-~€-ÿ]++)*+)[ \t]*+\r?\n)m";
     const HEADER_FOLD_REGEX = "(\r?\n[ \t]++)";
 }

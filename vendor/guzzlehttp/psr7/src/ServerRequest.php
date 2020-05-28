@@ -1,19 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\ServerRequestInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface;
-use function array_key_exists;
-use function array_keys;
-use function explode;
-use function is_array;
-use function parse_url;
-use function str_replace;
-
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\ServerRequestInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\UploadedFileInterface;
 /**
  * Server-side HTTP request
  *
@@ -28,7 +21,7 @@ use function str_replace;
  * implemented such that they retain the internal state of the current
  * message and return a new instance that contains the changed state.
  */
-class ServerRequest extends Request implements ServerRequestInterface
+class ServerRequest extends \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Request implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\ServerRequestInterface
 {
     /**
      * @var array
@@ -78,15 +71,15 @@ class ServerRequest extends Request implements ServerRequestInterface
     {
         $normalized = [];
         foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
+            if ($value instanceof \_PhpScoper5ece82d7231e4\Psr\Http\Message\UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (is_array($value) && isset($value['tmp_name'])) {
+            } elseif (\is_array($value) && isset($value['tmp_name'])) {
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
                 continue;
             } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
+                throw new \InvalidArgumentException('Invalid value in files specification');
             }
         }
         return $normalized;
@@ -102,10 +95,10 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     private static function createUploadedFileFromSpec(array $value)
     {
-        if (is_array($value['tmp_name'])) {
+        if (\is_array($value['tmp_name'])) {
             return self::normalizeNestedFileSpec($value);
         }
-        return new UploadedFile($value['tmp_name'], (int) $value['size'], (int) $value['error'], $value['name'], $value['type']);
+        return new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\UploadedFile($value['tmp_name'], (int) $value['size'], (int) $value['error'], $value['name'], $value['type']);
     }
     /**
      * Normalize an array of file specifications.
@@ -119,7 +112,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     private static function normalizeNestedFileSpec(array $files = [])
     {
         $normalizedFiles = [];
-        foreach (array_keys($files['tmp_name']) as $key) {
+        foreach (\array_keys($files['tmp_name']) as $key) {
             $spec = ['tmp_name' => $files['tmp_name'][$key], 'size' => $files['size'][$key], 'error' => $files['error'][$key], 'name' => $files['name'][$key], 'type' => $files['type'][$key]];
             $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
         }
@@ -140,16 +133,16 @@ class ServerRequest extends Request implements ServerRequestInterface
         $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
         $headers = getallheaders();
         $uri = self::getUriFromGlobals();
-        $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
-        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
-        $serverRequest = new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
+        $body = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\CachingStream(new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\LazyOpenStream('php://input', 'r+'));
+        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? \str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
+        $serverRequest = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
         return $serverRequest->withCookieParams($_COOKIE)->withQueryParams($_GET)->withParsedBody($_POST)->withUploadedFiles(self::normalizeFiles($_FILES));
     }
     private static function extractHostAndPortFromAuthority($authority)
     {
         $uri = 'http://' . $authority;
-        $parts = parse_url($uri);
-        if (false === $parts) {
+        $parts = \parse_url($uri);
+        if (\false === $parts) {
             return [null, null];
         }
         $host = isset($parts['host']) ? $parts['host'] : null;
@@ -163,16 +156,16 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public static function getUriFromGlobals()
     {
-        $uri = new Uri('');
+        $uri = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Uri('');
         $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
-        $hasPort = false;
+        $hasPort = \false;
         if (isset($_SERVER['HTTP_HOST'])) {
-            [$host, $port] = self::extractHostAndPortFromAuthority($_SERVER['HTTP_HOST']);
+            list($host, $port) = self::extractHostAndPortFromAuthority($_SERVER['HTTP_HOST']);
             if ($host !== null) {
                 $uri = $uri->withHost($host);
             }
             if ($port !== null) {
-                $hasPort = true;
+                $hasPort = \true;
                 $uri = $uri->withPort($port);
             }
         } elseif (isset($_SERVER['SERVER_NAME'])) {
@@ -183,12 +176,12 @@ class ServerRequest extends Request implements ServerRequestInterface
         if (!$hasPort && isset($_SERVER['SERVER_PORT'])) {
             $uri = $uri->withPort($_SERVER['SERVER_PORT']);
         }
-        $hasQuery = false;
+        $hasQuery = \false;
         if (isset($_SERVER['REQUEST_URI'])) {
-            $requestUriParts = explode('?', $_SERVER['REQUEST_URI'], 2);
+            $requestUriParts = \explode('?', $_SERVER['REQUEST_URI'], 2);
             $uri = $uri->withPath($requestUriParts[0]);
             if (isset($requestUriParts[1])) {
-                $hasQuery = true;
+                $hasQuery = \true;
                 $uri = $uri->withQuery($requestUriParts[1]);
             }
         }
@@ -280,7 +273,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function getAttribute($attribute, $default = null)
     {
-        if (false === array_key_exists($attribute, $this->attributes)) {
+        if (\false === \array_key_exists($attribute, $this->attributes)) {
             return $default;
         }
         return $this->attributes[$attribute];
@@ -299,7 +292,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function withoutAttribute($attribute)
     {
-        if (false === array_key_exists($attribute, $this->attributes)) {
+        if (\false === \array_key_exists($attribute, $this->attributes)) {
             return $this;
         }
         $new = clone $this;

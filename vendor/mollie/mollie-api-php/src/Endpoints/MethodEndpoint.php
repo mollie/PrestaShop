@@ -1,16 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\MethodCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-use Mollie\Api\Resources\BaseCollection;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class MethodEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Method;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\MethodCollection;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory;
+class MethodEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "methods";
     /**
@@ -18,7 +14,7 @@ class MethodEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Method($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Method($this->client);
     }
     /**
      * Retrieve all active methods. In test mode, this includes pending methods. The results are not paginated.
@@ -26,7 +22,7 @@ class MethodEndpoint extends CollectionEndpointAbstract
      * @deprecated Use allActive() instead
      * @param array $parameters
      *
-     * @return BaseCollection|\Mollie\Api\Resources\MethodCollection
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\MethodCollection
      * @throws ApiException
      */
     public function all(array $parameters = [])
@@ -39,7 +35,7 @@ class MethodEndpoint extends CollectionEndpointAbstract
      *
      * @param array $parameters
      *
-     * @return BaseCollection|\Mollie\Api\Resources\MethodCollection
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\MethodCollection
      * @throws ApiException
      */
     public function allActive(array $parameters = [])
@@ -51,26 +47,26 @@ class MethodEndpoint extends CollectionEndpointAbstract
      * results are not paginated. Make sure to include the profileId parameter if using an OAuth Access Token.
      *
      * @param array $parameters Query string parameters.
-     * @return BaseCollection|\Mollie\Api\Resources\MethodCollection
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\MethodCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function allAvailable(array $parameters = [])
     {
         $url = 'methods/all' . $this->buildQueryString($parameters);
         $result = $this->client->performHttpCall('GET', $url);
-        return ResourceFactory::createBaseResourceCollection($this->client, Method::class, $result->_embedded->methods, $result->_links);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Method::class, $result->_embedded->methods, $result->_links);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return MethodCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new MethodCollection($count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\MethodCollection($count, $_links);
     }
     /**
      * Retrieve a payment method from Mollie.
@@ -79,13 +75,13 @@ class MethodEndpoint extends CollectionEndpointAbstract
      *
      * @param string $methodId
      * @param array $parameters
-     * @return BaseResource|\Mollie\Api\Resources\Method
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Method
      * @throws ApiException
      */
     public function get($methodId, array $parameters = [])
     {
         if (empty($methodId)) {
-            throw new ApiException("Method ID is empty.");
+            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("Method ID is empty.");
         }
         return parent::rest_read($methodId, $parameters);
     }

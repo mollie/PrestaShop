@@ -1,16 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * How to verify Mollie API Payments in a webhook.
  *
  * See: https://docs.mollie.com/guides/webhooks
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key.
@@ -26,7 +22,7 @@ try {
     /*
      * Update the order in the database.
      */
-    database_write($orderId, $payment->status);
+    \_PhpScoper5ece82d7231e4\database_write($orderId, $payment->status);
     if ($payment->isPaid() && !$payment->hasRefunds() && !$payment->hasChargebacks()) {
         /*
          * The payment is paid and isn't refunded or charged back.
@@ -63,6 +59,6 @@ try {
          * The status of the payment is still "paid"
          */
     }
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

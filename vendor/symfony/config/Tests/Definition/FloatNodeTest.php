@@ -8,20 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\FloatNode;
-use stdClass;
-
-class FloatNodeTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\FloatNode;
+class FloatNodeTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getValidValues
      */
     public function testNormalize($value)
     {
-        $node = new FloatNode('test');
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\FloatNode('test');
         $this->assertSame($value, $node->normalize($value));
     }
     /**
@@ -31,8 +29,8 @@ class FloatNodeTest extends TestCase
      */
     public function testValidNonEmptyValues($value)
     {
-        $node = new FloatNode('test');
-        $node->setAllowEmptyValue(false);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\FloatNode('test');
+        $node->setAllowEmptyValue(\false);
         $this->assertSame($value, $node->finalize($value));
     }
     public function getValidValues()
@@ -53,12 +51,12 @@ class FloatNodeTest extends TestCase
      */
     public function testNormalizeThrowsExceptionOnInvalidValues($value)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
-        $node = new FloatNode('test');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\FloatNode('test');
         $node->normalize($value);
     }
     public function getInvalidValues()
     {
-        return [[null], [''], ['foo'], [true], [false], [[]], [['foo' => 'bar']], [new stdClass()]];
+        return [[null], [''], ['foo'], [\true], [\false], [[]], [['foo' => 'bar']], [new \stdClass()]];
     }
 }

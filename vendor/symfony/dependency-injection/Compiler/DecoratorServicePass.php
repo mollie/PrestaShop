@@ -8,14 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use SplPriorityQueue;
-use function array_merge;
-use const PHP_INT_MAX;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Overwrites a service but keeps the overridden one.
  *
@@ -23,12 +19,12 @@ use const PHP_INT_MAX;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Diego Saint Esteben <diego@saintesteben.me>
  */
-class DecoratorServicePass implements CompilerPassInterface
+class DecoratorServicePass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
-        $definitions = new SplPriorityQueue();
-        $order = PHP_INT_MAX;
+        $definitions = new \SplPriorityQueue();
+        $order = \PHP_INT_MAX;
         foreach ($container->getDefinitions() as $id => $definition) {
             if (!($decorated = $definition->getDecoratedService())) {
                 continue;
@@ -36,8 +32,8 @@ class DecoratorServicePass implements CompilerPassInterface
             $definitions->insert([$id, $definition], [$decorated[2], --$order]);
         }
         $decoratingDefinitions = [];
-        foreach ($definitions as [$id, $definition]) {
-            [$inner, $renamedId] = $definition->getDecoratedService();
+        foreach ($definitions as list($id, $definition)) {
+            list($inner, $renamedId) = $definition->getDecoratedService();
             $definition->setDecoratedService(null);
             if (!$renamedId) {
                 $renamedId = $id . '.inner';
@@ -48,20 +44,20 @@ class DecoratorServicePass implements CompilerPassInterface
                 $alias = $container->getAlias($inner);
                 $public = $alias->isPublic();
                 $private = $alias->isPrivate();
-                $container->setAlias($renamedId, new Alias($container->normalizeId($alias), false));
+                $container->setAlias($renamedId, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias($container->normalizeId($alias), \false));
             } else {
                 $decoratedDefinition = $container->getDefinition($inner);
                 $public = $decoratedDefinition->isPublic();
                 $private = $decoratedDefinition->isPrivate();
-                $decoratedDefinition->setPublic(false);
+                $decoratedDefinition->setPublic(\false);
                 $container->setDefinition($renamedId, $decoratedDefinition);
                 $decoratingDefinitions[$inner] = $decoratedDefinition;
             }
             if (isset($decoratingDefinitions[$inner])) {
                 $decoratingDefinition = $decoratingDefinitions[$inner];
-                $definition->setTags(array_merge($decoratingDefinition->getTags(), $definition->getTags()));
-                $autowiringTypes = $decoratingDefinition->getAutowiringTypes(false);
-                if ($types = array_merge($autowiringTypes, $definition->getAutowiringTypes(false))) {
+                $definition->setTags(\array_merge($decoratingDefinition->getTags(), $definition->getTags()));
+                $autowiringTypes = $decoratingDefinition->getAutowiringTypes(\false);
+                if ($types = \array_merge($autowiringTypes, $definition->getAutowiringTypes(\false))) {
                     $definition->setAutowiringTypes($types);
                 }
                 $decoratingDefinition->setTags([]);

@@ -1,19 +1,15 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CurrentProfile;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ProfileCollection;
-use Mollie\Api\Resources\BaseCollection;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class ProfileEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\CurrentProfile;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Profile;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ProfileCollection;
+class ProfileEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "profiles";
-    protected $resourceClass = Profile::class;
+    protected $resourceClass = \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Profile::class;
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *
@@ -27,13 +23,13 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return ProfileCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new ProfileCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ProfileCollection($this->client, $count, $_links);
     }
     /**
      * Creates a Profile in Mollie.
@@ -41,7 +37,7 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      * @param array $data An array containing details on the profile.
      * @param array $filters
      *
-     * @return BaseResource|\Mollie\Api\Resources\Profile
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Profile
      * @throws ApiException
      */
     public function create(array $data = [], array $filters = [])
@@ -56,7 +52,7 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      * @param string $profileId
      * @param array $parameters
      *
-     * @return BaseResource|\Mollie\Api\Resources\Profile
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Profile
      * @throws ApiException
      */
     public function get($profileId, array $parameters = [])
@@ -71,12 +67,12 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      *
      * @param array $parameters
      *
-     * @return BaseResource|\Mollie\Api\Resources\CurrentProfile
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\CurrentProfile
      * @throws ApiException
      */
     public function getCurrent(array $parameters = [])
     {
-        $this->resourceClass = CurrentProfile::class;
+        $this->resourceClass = \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CurrentProfile::class;
         return $this->rest_read('me', $parameters);
     }
     /**
@@ -88,7 +84,7 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      * @param string $profileId
      *
      * @param array $data
-     * @return BaseResource|\Mollie\Api\Resources\Profile
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Profile
      * @throws ApiException
      */
     public function delete($profileId, array $data = [])
@@ -102,7 +98,7 @@ class ProfileEndpoint extends CollectionEndpointAbstract
      * @param int $limit
      * @param array $parameters
      *
-     * @return BaseCollection|\Mollie\Api\Resources\ProfileCollection
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\ProfileCollection
      * @throws ApiException
      */
     public function page($from = null, $limit = null, array $parameters = [])

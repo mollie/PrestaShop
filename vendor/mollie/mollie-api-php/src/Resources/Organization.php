@@ -1,10 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use stdClass;
-
-class Organization extends BaseResource
+class Organization extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * Id of the payment method.
@@ -33,7 +31,7 @@ class Organization extends BaseResource
     /**
      * The address of the organization.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $address;
     /**
@@ -51,7 +49,7 @@ class Organization extends BaseResource
      */
     public $vatNumber;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
 }

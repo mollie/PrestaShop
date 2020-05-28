@@ -1,11 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use ArrayObject;
-use stdClass;
-
-abstract class BaseCollection extends ArrayObject
+abstract class BaseCollection extends \ArrayObject
 {
     /**
      * Total number of retrieved objects.
@@ -14,12 +11,12 @@ abstract class BaseCollection extends ArrayObject
      */
     public $count;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      */
     public function __construct($count, $_links)
     {

@@ -8,41 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Closure;
-use Exception;
-use ReflectionMethod;
-use function array_key_exists;
-use function array_keys;
-use function array_map;
-use function array_merge;
-use function array_unique;
-use function get_class_methods;
-use function is_string;
-use function levenshtein;
-use function method_exists;
-use function preg_match;
-use function preg_replace;
-use function sprintf;
-use function str_replace;
-use function strlen;
-use function strpos;
-use function strtolower;
-use function strtr;
-use function substr;
-use function trigger_error;
-use function ucwords;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 /**
  * Container is a dependency injection container.
  *
@@ -60,7 +35,7 @@ use const E_USER_DEPRECATED;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Container implements ResettableContainerInterface
+class Container implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ResettableContainerInterface
 {
     protected $parameterBag;
     protected $services = [];
@@ -80,11 +55,11 @@ class Container implements ResettableContainerInterface
     protected $normalizedIds = [];
     private $underscoreMap = ['_' => '', '.' => '_', '\\' => '_'];
     private $envCache = [];
-    private $compiled = false;
+    private $compiled = \false;
     private $getEnv;
-    public function __construct(ParameterBagInterface $parameterBag = null)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface $parameterBag = null)
     {
-        $this->parameterBag = $parameterBag ?: new EnvPlaceholderParameterBag();
+        $this->parameterBag = $parameterBag ?: new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
     }
     /**
      * Compiles the container.
@@ -97,8 +72,8 @@ class Container implements ResettableContainerInterface
     public function compile()
     {
         $this->parameterBag->resolve();
-        $this->parameterBag = new FrozenParameterBag($this->parameterBag->all());
-        $this->compiled = true;
+        $this->parameterBag = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($this->parameterBag->all());
+        $this->compiled = \true;
     }
     /**
      * Returns true if the container is compiled.
@@ -118,8 +93,8 @@ class Container implements ResettableContainerInterface
      */
     public function isFrozen()
     {
-        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
-        return $this->parameterBag instanceof FrozenParameterBag;
+        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
+        return $this->parameterBag instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
     }
     /**
      * Gets the service container parameter bag.
@@ -176,29 +151,29 @@ class Container implements ResettableContainerInterface
     public function set($id, $service)
     {
         // Runs the internal initializer; used by the dumped container to include always-needed files
-        if (isset($this->privates['service_container']) && $this->privates['service_container'] instanceof Closure) {
+        if (isset($this->privates['service_container']) && $this->privates['service_container'] instanceof \Closure) {
             $initialize = $this->privates['service_container'];
             unset($this->privates['service_container']);
             $initialize();
         }
         $id = $this->normalizeId($id);
         if ('service_container' === $id) {
-            throw new InvalidArgumentException('You cannot set service "service_container".');
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('You cannot set service "service_container".');
         }
         if (isset($this->privates[$id]) || !(isset($this->fileMap[$id]) || isset($this->methodMap[$id]))) {
             if (!isset($this->privates[$id]) && !isset($this->getRemovedIds()[$id])) {
                 // no-op
             } elseif (null === $service) {
-                @trigger_error(sprintf('The "%s" service is private, unsetting it is deprecated since Symfony 3.2 and will fail in 4.0.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is private, unsetting it is deprecated since Symfony 3.2 and will fail in 4.0.', $id), \E_USER_DEPRECATED);
                 unset($this->privates[$id]);
             } else {
-                @trigger_error(sprintf('The "%s" service is private, replacing it is deprecated since Symfony 3.2 and will fail in 4.0.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is private, replacing it is deprecated since Symfony 3.2 and will fail in 4.0.', $id), \E_USER_DEPRECATED);
             }
         } elseif (isset($this->services[$id])) {
             if (null === $service) {
-                @trigger_error(sprintf('The "%s" service is already initialized, unsetting it is deprecated since Symfony 3.3 and will fail in 4.0.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is already initialized, unsetting it is deprecated since Symfony 3.3 and will fail in 4.0.', $id), \E_USER_DEPRECATED);
             } else {
-                @trigger_error(sprintf('The "%s" service is already initialized, replacing it is deprecated since Symfony 3.3 and will fail in 4.0.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is already initialized, replacing it is deprecated since Symfony 3.3 and will fail in 4.0.', $id), \E_USER_DEPRECATED);
             }
         }
         if (isset($this->aliases[$id])) {
@@ -221,19 +196,19 @@ class Container implements ResettableContainerInterface
     {
         for ($i = 2;;) {
             if (isset($this->privates[$id])) {
-                @trigger_error(sprintf('The "%s" service is private, checking for its existence is deprecated since Symfony 3.2 and will fail in 4.0.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is private, checking for its existence is deprecated since Symfony 3.2 and will fail in 4.0.', $id), \E_USER_DEPRECATED);
             }
             if (isset($this->aliases[$id])) {
                 $id = $this->aliases[$id];
             }
             if (isset($this->services[$id])) {
-                return true;
+                return \true;
             }
             if ('service_container' === $id) {
-                return true;
+                return \true;
             }
             if (isset($this->fileMap[$id]) || isset($this->methodMap[$id])) {
-                return true;
+                return \true;
             }
             if (--$i && $id !== ($normalizedId = $this->normalizeId($id))) {
                 $id = $normalizedId;
@@ -241,11 +216,11 @@ class Container implements ResettableContainerInterface
             }
             // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
             // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
-            if (!$this->methodMap && !$this instanceof ContainerBuilder && __CLASS__ !== static::class && method_exists($this, 'get' . strtr($id, $this->underscoreMap) . 'Service')) {
-                @trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', E_USER_DEPRECATED);
-                return true;
+            if (!$this->methodMap && !$this instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
+                @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
+                return \true;
             }
-            return false;
+            return \false;
         }
     }
     /**
@@ -261,7 +236,7 @@ class Container implements ResettableContainerInterface
      *
      * @throws ServiceCircularReferenceException When a circular reference is detected
      * @throws ServiceNotFoundException          When the service is not defined
-     * @throws Exception                        if an exception has been thrown when the service has been resolved
+     * @throws \Exception                        if an exception has been thrown when the service has been resolved
      *
      * @see Reference
      */
@@ -273,7 +248,7 @@ class Container implements ResettableContainerInterface
         // calling $this->normalizeId($id) unless necessary.
         for ($i = 2;;) {
             if (isset($this->privates[$id])) {
-                @trigger_error(sprintf('The "%s" service is private, getting it from the container is deprecated since Symfony 3.2 and will fail in 4.0. You should either make the service public, or stop using the container directly and use dependency injection instead.', $id), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('The "%s" service is private, getting it from the container is deprecated since Symfony 3.2 and will fail in 4.0. You should either make the service public, or stop using the container directly and use dependency injection instead.', $id), \E_USER_DEPRECATED);
             }
             if (isset($this->aliases[$id])) {
                 $id = $this->aliases[$id];
@@ -286,9 +261,9 @@ class Container implements ResettableContainerInterface
                 return $this;
             }
             if (isset($this->loading[$id])) {
-                throw new ServiceCircularReferenceException($id, array_merge(array_keys($this->loading), [$id]));
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, \array_merge(\array_keys($this->loading), [$id]));
             }
-            $this->loading[$id] = true;
+            $this->loading[$id] = \true;
             try {
                 if (isset($this->fileMap[$id])) {
                     return 4 === $invalidBehavior ? null : $this->load($this->fileMap[$id]);
@@ -298,14 +273,14 @@ class Container implements ResettableContainerInterface
                     unset($this->loading[$id]);
                     $id = $normalizedId;
                     continue;
-                } elseif (!$this->methodMap && !$this instanceof ContainerBuilder && __CLASS__ !== static::class && method_exists($this, $method = 'get' . strtr($id, $this->underscoreMap) . 'Service')) {
+                } elseif (!$this->methodMap && !$this instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, $method = 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
                     // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
                     // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
-                    @trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', E_USER_DEPRECATED);
+                    @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
                     return 4 === $invalidBehavior ? null : $this->{$method}();
                 }
                 break;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 unset($this->services[$id]);
                 throw $e;
             } finally {
@@ -314,22 +289,22 @@ class Container implements ResettableContainerInterface
         }
         if (1 === $invalidBehavior) {
             if (!$id) {
-                throw new ServiceNotFoundException($id);
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id);
             }
             if (isset($this->syntheticIds[$id])) {
-                throw new ServiceNotFoundException($id, null, null, [], sprintf('The "%s" service is synthetic, it needs to be set at boot time before it can be used.', $id));
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service is synthetic, it needs to be set at boot time before it can be used.', $id));
             }
             if (isset($this->getRemovedIds()[$id])) {
-                throw new ServiceNotFoundException($id, null, null, [], sprintf('The "%s" service or alias has been removed or inlined when the container was compiled. You should either make it public, or stop using the container directly and use dependency injection instead.', $id));
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service or alias has been removed or inlined when the container was compiled. You should either make it public, or stop using the container directly and use dependency injection instead.', $id));
             }
             $alternatives = [];
             foreach ($this->getServiceIds() as $knownId) {
-                $lev = levenshtein($id, $knownId);
-                if ($lev <= strlen($id) / 3 || false !== strpos($knownId, $id)) {
+                $lev = \levenshtein($id, $knownId);
+                if ($lev <= \strlen($id) / 3 || \false !== \strpos($knownId, $id)) {
                     $alternatives[] = $knownId;
                 }
             }
-            throw new ServiceNotFoundException($id, null, null, $alternatives);
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, $alternatives);
         }
     }
     /**
@@ -343,13 +318,13 @@ class Container implements ResettableContainerInterface
     {
         $id = $this->normalizeId($id);
         if (isset($this->privates[$id])) {
-            @trigger_error(sprintf('Checking for the initialization of the "%s" private service is deprecated since Symfony 3.4 and won\'t be supported anymore in Symfony 4.0.', $id), E_USER_DEPRECATED);
+            @\trigger_error(\sprintf('Checking for the initialization of the "%s" private service is deprecated since Symfony 3.4 and won\'t be supported anymore in Symfony 4.0.', $id), \E_USER_DEPRECATED);
         }
         if (isset($this->aliases[$id])) {
             $id = $this->aliases[$id];
         }
         if ('service_container' === $id) {
-            return false;
+            return \false;
         }
         return isset($this->services[$id]);
     }
@@ -368,18 +343,18 @@ class Container implements ResettableContainerInterface
     public function getServiceIds()
     {
         $ids = [];
-        if (!$this->methodMap && !$this instanceof ContainerBuilder && __CLASS__ !== static::class) {
+        if (!$this->methodMap && !$this instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class) {
             // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
             // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
-            @trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', E_USER_DEPRECATED);
-            foreach (get_class_methods($this) as $method) {
-                if (preg_match('/^get(.+)Service$/', $method, $match)) {
+            @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
+            foreach (\get_class_methods($this) as $method) {
+                if (\preg_match('/^get(.+)Service$/', $method, $match)) {
                     $ids[] = self::underscore($match[1]);
                 }
             }
         }
         $ids[] = 'service_container';
-        return array_map('strval', array_unique(array_merge($ids, array_keys($this->methodMap), array_keys($this->fileMap), array_keys($this->aliases), array_keys($this->services))));
+        return \array_map('strval', \array_unique(\array_merge($ids, \array_keys($this->methodMap), \array_keys($this->fileMap), \array_keys($this->aliases), \array_keys($this->services))));
     }
     /**
      * Gets service ids that existed at compile time.
@@ -399,7 +374,7 @@ class Container implements ResettableContainerInterface
      */
     public static function camelize($id)
     {
-        return strtr(ucwords(strtr($id, ['_' => ' ', '.' => '_ ', '\\' => '_ '])), [' ' => '']);
+        return \strtr(\ucwords(\strtr($id, ['_' => ' ', '.' => '_ ', '\\' => '_ '])), [' ' => '']);
     }
     /**
      * A string to underscore.
@@ -410,7 +385,7 @@ class Container implements ResettableContainerInterface
      */
     public static function underscore($id)
     {
-        return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], str_replace('_', '.', $id)));
+        return \strtolower(\preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], \str_replace('_', '.', $id)));
     }
     /**
      * Creates a service by requiring its factory file.
@@ -431,29 +406,29 @@ class Container implements ResettableContainerInterface
     protected function getEnv($name)
     {
         if (isset($this->resolving[$envName = "env({$name})"])) {
-            throw new ParameterCircularReferenceException(array_keys($this->resolving));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($this->resolving));
         }
-        if (isset($this->envCache[$name]) || array_key_exists($name, $this->envCache)) {
+        if (isset($this->envCache[$name]) || \array_key_exists($name, $this->envCache)) {
             return $this->envCache[$name];
         }
         if (!$this->has($id = 'container.env_var_processors_locator')) {
-            $this->set($id, new ServiceLocator([]));
+            $this->set($id, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceLocator([]));
         }
         if (!$this->getEnv) {
-            $this->getEnv = new ReflectionMethod($this, __FUNCTION__);
-            $this->getEnv->setAccessible(true);
+            $this->getEnv = new \ReflectionMethod($this, __FUNCTION__);
+            $this->getEnv->setAccessible(\true);
             $this->getEnv = $this->getEnv->getClosure($this);
         }
         $processors = $this->get($id);
-        if (false !== ($i = strpos($name, ':'))) {
-            $prefix = substr($name, 0, $i);
-            $localName = substr($name, 1 + $i);
+        if (\false !== ($i = \strpos($name, ':'))) {
+            $prefix = \substr($name, 0, $i);
+            $localName = \substr($name, 1 + $i);
         } else {
             $prefix = 'string';
             $localName = $name;
         }
-        $processor = $processors->has($prefix) ? $processors->get($prefix) : new EnvVarProcessor($this);
-        $this->resolving[$envName] = true;
+        $processor = $processors->has($prefix) ? $processors->get($prefix) : new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\EnvVarProcessor($this);
+        $this->resolving[$envName] = \true;
         try {
             return $this->envCache[$name] = $processor->getEnv($prefix, $localName, $this->getEnv);
         } finally {
@@ -471,13 +446,13 @@ class Container implements ResettableContainerInterface
      */
     public function normalizeId($id)
     {
-        if (!is_string($id)) {
+        if (!\is_string($id)) {
             $id = (string) $id;
         }
-        if (isset($this->normalizedIds[$normalizedId = strtolower($id)])) {
+        if (isset($this->normalizedIds[$normalizedId = \strtolower($id)])) {
             $normalizedId = $this->normalizedIds[$normalizedId];
             if ($id !== $normalizedId) {
-                @trigger_error(sprintf('Service identifiers will be made case sensitive in Symfony 4.0. Using "%s" instead of "%s" is deprecated since Symfony 3.3.', $id, $normalizedId), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('Service identifiers will be made case sensitive in Symfony 4.0. Using "%s" instead of "%s" is deprecated since Symfony 3.3.', $id, $normalizedId), \E_USER_DEPRECATED);
             }
         } else {
             $normalizedId = $this->normalizedIds[$normalizedId] = $id;

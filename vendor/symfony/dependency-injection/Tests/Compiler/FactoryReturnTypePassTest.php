@@ -8,42 +8,37 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\FactoryReturnTypePass;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\factoryFunction;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent;
-use ReflectionMethod;
-use stdClass;
-use function defined;
-use function method_exists;
-
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\FactoryReturnTypePass;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\factoryFunction;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent;
 /**
  * @author Guilhem N. <egetick@gmail.com>
  *
  * @group legacy
  */
-class FactoryReturnTypePassTest extends TestCase
+class FactoryReturnTypePassTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testProcess()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $factory = $container->register('factory');
-        $factory->setFactory([FactoryDummy::class, 'createFactory']);
+        $factory->setFactory([\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, 'createFactory']);
         $container->setAlias('alias_factory', 'factory');
         $foo = $container->register('foo');
-        $foo->setFactory([new Reference('alias_factory'), 'create']);
+        $foo->setFactory([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('alias_factory'), 'create']);
         $bar = $container->register('bar', __CLASS__);
-        $bar->setFactory([new Reference('factory'), 'create']);
-        $pass = new FactoryReturnTypePass();
+        $bar->setFactory([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('factory'), 'create']);
+        $pass = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\FactoryReturnTypePass();
         $pass->process($container);
-        if (method_exists(ReflectionMethod::class, 'getReturnType')) {
-            $this->assertEquals(FactoryDummy::class, $factory->getClass());
-            $this->assertEquals(stdClass::class, $foo->getClass());
+        if (\method_exists(\ReflectionMethod::class, 'getReturnType')) {
+            $this->assertEquals(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, $factory->getClass());
+            $this->assertEquals(\stdClass::class, $foo->getClass());
         } else {
             $this->assertNull($factory->getClass());
             $this->assertNull($foo->getClass());
@@ -53,17 +48,17 @@ class FactoryReturnTypePassTest extends TestCase
     /**
      * @dataProvider returnTypesProvider
      */
-    public function testReturnTypes($factory, $returnType, $hhvmSupport = true)
+    public function testReturnTypes($factory, $returnType, $hhvmSupport = \true)
     {
-        if (!$hhvmSupport && defined('HHVM_VERSION')) {
+        if (!$hhvmSupport && \defined('HHVM_VERSION')) {
             $this->markTestSkipped('Scalar typehints not supported by hhvm.');
         }
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $service = $container->register('service');
         $service->setFactory($factory);
-        $pass = new FactoryReturnTypePass();
+        $pass = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\FactoryReturnTypePass();
         $pass->process($container);
-        if (method_exists(ReflectionMethod::class, 'getReturnType')) {
+        if (\method_exists(\ReflectionMethod::class, 'getReturnType')) {
             $this->assertEquals($returnType, $service->getClass());
         } else {
             $this->assertNull($service->getClass());
@@ -73,20 +68,20 @@ class FactoryReturnTypePassTest extends TestCase
     {
         return [
             // must be loaded before the function as they are in the same file
-            [[FactoryDummy::class, 'createBuiltin'], null, false],
-            [[FactoryDummy::class, 'createParent'], FactoryParent::class],
-            [[FactoryDummy::class, 'createSelf'], FactoryDummy::class],
-            [factoryFunction::class, FactoryDummy::class],
+            [[\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, 'createBuiltin'], null, \false],
+            [[\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, 'createParent'], \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent::class],
+            [[\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, 'createSelf'], \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class],
+            [\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\factoryFunction::class, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class],
         ];
     }
     public function testCircularReference()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $factory = $container->register('factory');
-        $factory->setFactory([new Reference('factory2'), 'createSelf']);
+        $factory->setFactory([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('factory2'), 'createSelf']);
         $factory2 = $container->register('factory2');
-        $factory2->setFactory([new Reference('factory'), 'create']);
-        $pass = new FactoryReturnTypePass();
+        $factory2->setFactory([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('factory'), 'create']);
+        $pass = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\FactoryReturnTypePass();
         $pass->process($container);
         $this->assertNull($factory->getClass());
         $this->assertNull($factory2->getClass());
@@ -97,10 +92,10 @@ class FactoryReturnTypePassTest extends TestCase
      */
     public function testCompile()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $factory = $container->register('factory');
-        $factory->setFactory([FactoryDummy::class, 'createFactory']);
+        $factory->setFactory([\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, 'createFactory']);
         $container->compile();
-        $this->assertEquals(FactoryDummy::class, $container->getDefinition('factory')->getClass());
+        $this->assertEquals(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy::class, $container->getDefinition('factory')->getClass());
     }
 }

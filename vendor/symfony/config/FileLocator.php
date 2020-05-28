@@ -8,27 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
-use InvalidArgumentException;
-use function array_unique;
-use function array_unshift;
-use function ctype_alpha;
-use function file_exists;
-use function implode;
-use function parse_url;
-use function sprintf;
-use function strlen;
-use const DIRECTORY_SEPARATOR;
-use const PHP_URL_SCHEME;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 /**
  * FileLocator uses an array of pre-defined paths to find files.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class FileLocator implements FileLocatorInterface
+class FileLocator implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocatorInterface
 {
     protected $paths;
     /**
@@ -41,26 +29,26 @@ class FileLocator implements FileLocatorInterface
     /**
      * {@inheritdoc}
      */
-    public function locate($name, $currentPath = null, $first = true)
+    public function locate($name, $currentPath = null, $first = \true)
     {
         if ('' == $name) {
-            throw new InvalidArgumentException('An empty file name is not valid to be located.');
+            throw new \InvalidArgumentException('An empty file name is not valid to be located.');
         }
         if ($this->isAbsolutePath($name)) {
-            if (!file_exists($name)) {
-                throw new FileLocatorFileNotFoundException(sprintf('The file "%s" does not exist.', $name), 0, null, [$name]);
+            if (!\file_exists($name)) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException(\sprintf('The file "%s" does not exist.', $name), 0, null, [$name]);
             }
             return $name;
         }
         $paths = $this->paths;
         if (null !== $currentPath) {
-            array_unshift($paths, $currentPath);
+            \array_unshift($paths, $currentPath);
         }
-        $paths = array_unique($paths);
+        $paths = \array_unique($paths);
         $filepaths = $notfound = [];
         foreach ($paths as $path) {
-            if (@file_exists($file = $path . DIRECTORY_SEPARATOR . $name)) {
-                if (true === $first) {
+            if (@\file_exists($file = $path . \DIRECTORY_SEPARATOR . $name)) {
+                if (\true === $first) {
                     return $file;
                 }
                 $filepaths[] = $file;
@@ -69,7 +57,7 @@ class FileLocator implements FileLocatorInterface
             }
         }
         if (!$filepaths) {
-            throw new FileLocatorFileNotFoundException(sprintf('The file "%s" does not exist (in: "%s").', $name, implode('", "', $paths)), 0, null, $notfound);
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException(\sprintf('The file "%s" does not exist (in: "%s").', $name, \implode('", "', $paths)), 0, null, $notfound);
         }
         return $filepaths;
     }
@@ -82,9 +70,9 @@ class FileLocator implements FileLocatorInterface
      */
     private function isAbsolutePath($file)
     {
-        if ('/' === $file[0] || '\\' === $file[0] || strlen($file) > 3 && ctype_alpha($file[0]) && ':' === $file[1] && ('\\' === $file[2] || '/' === $file[2]) || null !== parse_url($file, PHP_URL_SCHEME)) {
-            return true;
+        if ('/' === $file[0] || '\\' === $file[0] || \strlen($file) > 3 && \ctype_alpha($file[0]) && ':' === $file[1] && ('\\' === $file[2] || '/' === $file[2]) || null !== \parse_url($file, \PHP_URL_SCHEME)) {
+            return \true;
         }
-        return false;
+        return \false;
     }
 }

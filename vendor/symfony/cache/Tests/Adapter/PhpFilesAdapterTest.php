@@ -8,35 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use ReflectionObject;
-use function file_exists;
-use function sys_get_temp_dir;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 /**
  * @group time-sensitive
  */
-class PhpFilesAdapterTest extends AdapterTestCase
+class PhpFilesAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testDefaultLifeTime' => 'PhpFilesAdapter does not allow configuring a default lifetime.'];
     public function createCachePool()
     {
-        if (!PhpFilesAdapter::isSupported()) {
+        if (!\_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\PhpFilesAdapter::isSupported()) {
             $this->markTestSkipped('OPcache extension is not enabled.');
         }
-        return new PhpFilesAdapter('sf-cache');
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\PhpFilesAdapter('sf-cache');
     }
     public static function tearDownAfterClass()
     {
-        FilesystemAdapterTest::rmdir(sys_get_temp_dir() . '/symfony-cache');
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
     }
-    protected function isPruned(CacheItemPoolInterface $cache, $name)
+    protected function isPruned(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface $cache, $name)
     {
-        $getFileMethod = (new ReflectionObject($cache))->getMethod('getFile');
-        $getFileMethod->setAccessible(true);
-        return !file_exists($getFileMethod->invoke($cache, $name));
+        $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
+        $getFileMethod->setAccessible(\true);
+        return !\file_exists($getFileMethod->invoke($cache, $name));
     }
 }

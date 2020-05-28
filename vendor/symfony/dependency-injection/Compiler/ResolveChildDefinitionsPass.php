@@ -8,24 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ExceptionInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use ReflectionProperty;
-use function array_merge;
-use function array_search;
-use function array_slice;
-use function class_alias;
-use function is_numeric;
-use function sprintf;
-use function strlen;
-use function strpos;
-use function substr;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ExceptionInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 /**
  * This replaces all ChildDefinition instances with their equivalent fully
  * merged Definition instance.
@@ -33,12 +22,12 @@ use function substr;
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveChildDefinitionsPass extends AbstractRecursivePass
+class ResolveChildDefinitionsPass extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
 {
     private $currentPath;
-    protected function processValue($value, $isRoot = false)
+    protected function processValue($value, $isRoot = \false)
     {
-        if (!$value instanceof Definition) {
+        if (!$value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         if ($isRoot) {
@@ -46,7 +35,7 @@ class ResolveChildDefinitionsPass extends AbstractRecursivePass
             // container to ensure we are not operating on stale data
             $value = $this->container->getDefinition($this->currentId);
         }
-        if ($value instanceof ChildDefinition) {
+        if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition) {
             $this->currentPath = [];
             $value = $this->resolveDefinition($value);
             if ($isRoot) {
@@ -62,50 +51,50 @@ class ResolveChildDefinitionsPass extends AbstractRecursivePass
      *
      * @throws RuntimeException When the definition is invalid
      */
-    private function resolveDefinition(ChildDefinition $definition)
+    private function resolveDefinition(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition $definition)
     {
         try {
             return $this->doResolveDefinition($definition);
-        } catch (ServiceCircularReferenceException $e) {
+        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException $e) {
             throw $e;
-        } catch (ExceptionInterface $e) {
-            $r = new ReflectionProperty($e, 'message');
-            $r->setAccessible(true);
-            $r->setValue($e, sprintf('Service "%s": %s', $this->currentId, $e->getMessage()));
+        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ExceptionInterface $e) {
+            $r = new \ReflectionProperty($e, 'message');
+            $r->setAccessible(\true);
+            $r->setValue($e, \sprintf('Service "%s": %s', $this->currentId, $e->getMessage()));
             throw $e;
         }
     }
-    private function doResolveDefinition(ChildDefinition $definition)
+    private function doResolveDefinition(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition $definition)
     {
         if (!$this->container->has($parent = $definition->getParent())) {
-            throw new RuntimeException(sprintf('Parent definition "%s" does not exist.', $parent));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Parent definition "%s" does not exist.', $parent));
         }
-        $searchKey = array_search($parent, $this->currentPath);
+        $searchKey = \array_search($parent, $this->currentPath);
         $this->currentPath[] = $parent;
-        if (false !== $searchKey) {
-            throw new ServiceCircularReferenceException($parent, array_slice($this->currentPath, $searchKey));
+        if (\false !== $searchKey) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($parent, \array_slice($this->currentPath, $searchKey));
         }
         $parentDef = $this->container->findDefinition($parent);
-        if ($parentDef instanceof ChildDefinition) {
+        if ($parentDef instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition) {
             $id = $this->currentId;
             $this->currentId = $parent;
             $parentDef = $this->resolveDefinition($parentDef);
             $this->container->setDefinition($parent, $parentDef);
             $this->currentId = $id;
         }
-        $this->container->log($this, sprintf('Resolving inheritance for "%s" (parent: %s).', $this->currentId, $parent));
-        $def = new Definition();
+        $this->container->log($this, \sprintf('Resolving inheritance for "%s" (parent: %s).', $this->currentId, $parent));
+        $def = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition();
         // merge in parent definition
         // purposely ignored attributes: abstract, shared, tags, autoconfigured
         $def->setClass($parentDef->getClass());
         $def->setArguments($parentDef->getArguments());
         $def->setMethodCalls($parentDef->getMethodCalls());
         $def->setProperties($parentDef->getProperties());
-        if ($parentDef->getAutowiringTypes(false)) {
-            $def->setAutowiringTypes($parentDef->getAutowiringTypes(false));
+        if ($parentDef->getAutowiringTypes(\false)) {
+            $def->setAutowiringTypes($parentDef->getAutowiringTypes(\false));
         }
         if ($parentDef->isDeprecated()) {
-            $def->setDeprecated(true, $parentDef->getDeprecationMessage('%service_id%'));
+            $def->setDeprecated(\true, $parentDef->getDeprecationMessage('%service_id%'));
         }
         $def->setFactory($parentDef->getFactory());
         $def->setConfigurator($parentDef->getConfigurator());
@@ -156,10 +145,10 @@ class ResolveChildDefinitionsPass extends AbstractRecursivePass
         }
         // merge arguments
         foreach ($definition->getArguments() as $k => $v) {
-            if (is_numeric($k)) {
+            if (\is_numeric($k)) {
                 $def->addArgument($v);
-            } elseif (0 === strpos($k, 'index_')) {
-                $def->replaceArgument((int) substr($k, strlen('index_')), $v);
+            } elseif (0 === \strpos($k, 'index_')) {
+                $def->replaceArgument((int) \substr($k, \strlen('index_')), $v);
             } else {
                 $def->setArgument($k, $v);
             }
@@ -170,10 +159,10 @@ class ResolveChildDefinitionsPass extends AbstractRecursivePass
         }
         // append method calls
         if ($calls = $definition->getMethodCalls()) {
-            $def->setMethodCalls(array_merge($def->getMethodCalls(), $calls));
+            $def->setMethodCalls(\array_merge($def->getMethodCalls(), $calls));
         }
         // merge autowiring types
-        foreach ($definition->getAutowiringTypes(false) as $autowiringType) {
+        foreach ($definition->getAutowiringTypes(\false) as $autowiringType) {
             $def->addAutowiringType($autowiringType);
         }
         // these attributes are always taken from the child
@@ -185,4 +174,4 @@ class ResolveChildDefinitionsPass extends AbstractRecursivePass
         return $def;
     }
 }
-class_alias(ResolveChildDefinitionsPass::class, ResolveDefinitionTemplatesPass::class);
+\class_alias(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass::class, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass::class);

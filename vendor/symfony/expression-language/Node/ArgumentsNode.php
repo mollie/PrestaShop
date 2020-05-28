@@ -8,21 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
-use function array_pop;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArgumentsNode extends ArrayNode
+class ArgumentsNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ArrayNode
 {
-    public function compile(Compiler $compiler)
+    public function compile(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
-        $this->compileArguments($compiler, false);
+        $this->compileArguments($compiler, \false);
     }
     public function toArray()
     {
@@ -31,7 +29,7 @@ class ArgumentsNode extends ArrayNode
             $array[] = $pair['value'];
             $array[] = ', ';
         }
-        array_pop($array);
+        \array_pop($array);
         return $array;
     }
 }

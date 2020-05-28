@@ -1,9 +1,7 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Exception;
 
-use RuntimeException;
-
-class TransferException extends RuntimeException implements GuzzleException
+class TransferException extends \RuntimeException implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\GuzzleException
 {
 }

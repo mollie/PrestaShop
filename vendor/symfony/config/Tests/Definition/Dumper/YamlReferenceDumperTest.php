@@ -8,19 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Dumper;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition\Dumper;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
-use function trim;
-
-class YamlReferenceDumperTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
+class YamlReferenceDumperTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testDumper()
     {
-        $configuration = new ExampleConfiguration();
-        $dumper = new YamlReferenceDumper();
+        $configuration = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
         $this->assertEquals($this->getConfigurationAsString(), $dumper->dump($configuration));
     }
     public function provideDumpAtPath()
@@ -64,9 +62,9 @@ EOL
      */
     public function testDumpAtPath($path, $expected)
     {
-        $configuration = new ExampleConfiguration();
-        $dumper = new YamlReferenceDumper();
-        $this->assertSame(trim($expected), trim($dumper->dumpAtPath($configuration, $path)));
+        $configuration = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
+        $this->assertSame(\trim($expected), \trim($dumper->dumpAtPath($configuration, $path)));
     }
     private function getConfigurationAsString()
     {

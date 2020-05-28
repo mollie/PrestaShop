@@ -8,19 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\RedisTrait;
-use Predis\Client;
-use Redis;
-use RedisArray;
-use RedisCluster;
-
-class RedisAdapter extends AbstractAdapter
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\RedisTrait;
+class RedisAdapter extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AbstractAdapter
 {
     use RedisTrait;
     /**
-     * @param Redis|RedisArray|RedisCluster|Client $redisClient     The redis client
+     * @param \Redis|\RedisArray|\RedisCluster|\Predis\Client $redisClient     The redis client
      * @param string                                          $namespace       The default namespace
      * @param int                                             $defaultLifetime The default lifetime
      */

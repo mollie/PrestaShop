@@ -8,18 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use Traversable;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
 /**
  * Interface for adapters managing instances of Symfony's CacheItem.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-interface AdapterInterface extends CacheItemPoolInterface
+interface AdapterInterface extends \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface
 {
     /**
      * {@inheritdoc}
@@ -30,7 +28,7 @@ interface AdapterInterface extends CacheItemPoolInterface
     /**
      * {@inheritdoc}
      *
-     * @return Traversable|CacheItem[]
+     * @return \Traversable|CacheItem[]
      */
     public function getItems(array $keys = []);
 }

@@ -8,51 +8,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionMethod;
-use ReflectionParameter;
-use ReflectionProperty;
-use Serializable;
-use function call_user_func;
-use function class_implements;
-use function class_parents;
-use function class_uses;
-use function defined;
-use function file_exists;
-use function filemtime;
-use function hash_final;
-use function hash_init;
-use function hash_update;
-use function implode;
-use function interface_exists;
-use function is_object;
-use function preg_replace;
-use function print_r;
-use function serialize;
-use function strlen;
-use function strpbrk;
-use function strpos;
-use function substr;
-use function unserialize;
-use const DIRECTORY_SEPARATOR;
-use const PHP_VERSION_ID;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ReflectionClassResource implements SelfCheckingResourceInterface, Serializable
+class ReflectionClassResource implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $files = [];
     private $className;
     private $classReflector;
     private $excludedVendors = [];
     private $hash;
-    public function __construct(ReflectionClass $classReflector, $excludedVendors = [])
+    public function __construct(\ReflectionClass $classReflector, $excludedVendors = [])
     {
         $this->className = $classReflector->name;
         $this->classReflector = $classReflector;
@@ -65,14 +35,14 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, Serializ
             $this->loadFiles($this->classReflector);
         }
         foreach ($this->files as $file => $v) {
-            if (false === ($filemtime = @filemtime($file))) {
-                return false;
+            if (\false === ($filemtime = @\filemtime($file))) {
+                return \false;
             }
             if ($filemtime > $timestamp) {
                 return $this->hash === $this->computeHash();
             }
         }
-        return true;
+        return \true;
     }
     public function __toString()
     {
@@ -87,26 +57,26 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, Serializ
             $this->hash = $this->computeHash();
             $this->loadFiles($this->classReflector);
         }
-        return serialize([$this->files, $this->className, $this->hash]);
+        return \serialize([$this->files, $this->className, $this->hash]);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        [$this->files, $this->className, $this->hash] = unserialize($serialized);
+        list($this->files, $this->className, $this->hash) = \unserialize($serialized);
     }
-    private function loadFiles(ReflectionClass $class)
+    private function loadFiles(\ReflectionClass $class)
     {
         foreach ($class->getInterfaces() as $v) {
             $this->loadFiles($v);
         }
         do {
             $file = $class->getFileName();
-            if (false !== $file && file_exists($file)) {
+            if (\false !== $file && \file_exists($file)) {
                 foreach ($this->excludedVendors as $vendor) {
-                    if (0 === strpos($file, $vendor) && false !== strpbrk(substr($file, strlen($vendor), 1), '/' . DIRECTORY_SEPARATOR)) {
-                        $file = false;
+                    if (0 === \strpos($file, $vendor) && \false !== \strpbrk(\substr($file, \strlen($vendor), 1), '/' . \DIRECTORY_SEPARATOR)) {
+                        $file = \false;
                         break;
                     }
                 }
@@ -123,44 +93,44 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, Serializ
     {
         if (null === $this->classReflector) {
             try {
-                $this->classReflector = new ReflectionClass($this->className);
-            } catch (ReflectionException $e) {
+                $this->classReflector = new \ReflectionClass($this->className);
+            } catch (\ReflectionException $e) {
                 // the class does not exist anymore
-                return false;
+                return \false;
             }
         }
-        $hash = hash_init('md5');
+        $hash = \hash_init('md5');
         foreach ($this->generateSignature($this->classReflector) as $info) {
-            hash_update($hash, $info);
+            \hash_update($hash, $info);
         }
-        return hash_final($hash);
+        return \hash_final($hash);
     }
-    private function generateSignature(ReflectionClass $class)
+    private function generateSignature(\ReflectionClass $class)
     {
         (yield $class->getDocComment());
         (yield (int) $class->isFinal());
         (yield (int) $class->isAbstract());
         if ($class->isTrait()) {
-            (yield print_r(class_uses($class->name), true));
+            (yield \print_r(\class_uses($class->name), \true));
         } else {
-            (yield print_r(class_parents($class->name), true));
-            (yield print_r(class_implements($class->name), true));
-            (yield print_r($class->getConstants(), true));
+            (yield \print_r(\class_parents($class->name), \true));
+            (yield \print_r(\class_implements($class->name), \true));
+            (yield \print_r($class->getConstants(), \true));
         }
         if (!$class->isInterface()) {
             $defaults = $class->getDefaultProperties();
-            foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED) as $p) {
+            foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $p) {
                 (yield $p->getDocComment() . $p);
-                (yield print_r(isset($defaults[$p->name]) && !is_object($defaults[$p->name]) ? $defaults[$p->name] : null, true));
+                (yield \print_r(isset($defaults[$p->name]) && !\is_object($defaults[$p->name]) ? $defaults[$p->name] : null, \true));
             }
         }
-        if (defined('HHVM_VERSION')) {
-            foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $m) {
+        if (\defined('HHVM_VERSION')) {
+            foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
                 // workaround HHVM bug with variadics, see https://github.com/facebook/hhvm/issues/5762
-                (yield preg_replace('/^  @@.*/m', '', new ReflectionMethodHhvmWrapper($m->class, $m->name)));
+                (yield \preg_replace('/^  @@.*/m', '', new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionMethodHhvmWrapper($m->class, $m->name)));
             }
         } else {
-            foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $m) {
+            foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
                 $defaults = [];
                 $parametersWithUndefinedConstants = [];
                 foreach ($m->getParameters() as $p) {
@@ -168,56 +138,56 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, Serializ
                         $defaults[$p->name] = null;
                         continue;
                     }
-                    if (!$p->isDefaultValueConstant() || defined($p->getDefaultValueConstantName())) {
+                    if (!$p->isDefaultValueConstant() || \defined($p->getDefaultValueConstantName())) {
                         $defaults[$p->name] = $p->getDefaultValue();
                         continue;
                     }
                     $defaults[$p->name] = $p->getDefaultValueConstantName();
-                    $parametersWithUndefinedConstants[$p->name] = true;
+                    $parametersWithUndefinedConstants[$p->name] = \true;
                 }
                 if (!$parametersWithUndefinedConstants) {
-                    (yield preg_replace('/^  @@.*/m', '', $m));
+                    (yield \preg_replace('/^  @@.*/m', '', $m));
                 } else {
-                    $stack = [$m->getDocComment(), $m->getName(), $m->isAbstract(), $m->isFinal(), $m->isStatic(), $m->isPublic(), $m->isPrivate(), $m->isProtected(), $m->returnsReference(), PHP_VERSION_ID >= 70000 && $m->hasReturnType() ? PHP_VERSION_ID >= 70100 ? $m->getReturnType()->getName() : (string) $m->getReturnType() : ''];
+                    $stack = [$m->getDocComment(), $m->getName(), $m->isAbstract(), $m->isFinal(), $m->isStatic(), $m->isPublic(), $m->isPrivate(), $m->isProtected(), $m->returnsReference(), \PHP_VERSION_ID >= 70000 && $m->hasReturnType() ? \PHP_VERSION_ID >= 70100 ? $m->getReturnType()->getName() : (string) $m->getReturnType() : ''];
                     foreach ($m->getParameters() as $p) {
                         if (!isset($parametersWithUndefinedConstants[$p->name])) {
                             $stack[] = (string) $p;
                         } else {
                             $stack[] = $p->isOptional();
-                            $stack[] = PHP_VERSION_ID >= 70000 && $p->hasType() ? PHP_VERSION_ID >= 70100 ? $p->getType()->getName() : (string) $p->getType() : '';
+                            $stack[] = \PHP_VERSION_ID >= 70000 && $p->hasType() ? \PHP_VERSION_ID >= 70100 ? $p->getType()->getName() : (string) $p->getType() : '';
                             $stack[] = $p->isPassedByReference();
-                            $stack[] = PHP_VERSION_ID >= 50600 ? $p->isVariadic() : '';
+                            $stack[] = \PHP_VERSION_ID >= 50600 ? $p->isVariadic() : '';
                             $stack[] = $p->getName();
                         }
                     }
-                    (yield implode(',', $stack));
+                    (yield \implode(',', $stack));
                 }
-                (yield print_r($defaults, true));
+                (yield \print_r($defaults, \true));
             }
         }
         if ($class->isAbstract() || $class->isInterface() || $class->isTrait()) {
             return;
         }
-        if (interface_exists(EventSubscriberInterface::class, false) && $class->isSubclassOf(EventSubscriberInterface::class)) {
-            (yield EventSubscriberInterface::class);
-            (yield print_r(call_user_func([$class->name, 'getSubscribedEvents']), true));
+        if (\interface_exists(\_PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface::class)) {
+            (yield \_PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface::class);
+            (yield \print_r(\call_user_func([$class->name, 'getSubscribedEvents']), \true));
         }
-        if (interface_exists(ServiceSubscriberInterface::class, false) && $class->isSubclassOf(ServiceSubscriberInterface::class)) {
-            (yield ServiceSubscriberInterface::class);
-            (yield print_r(call_user_func([$class->name, 'getSubscribedServices']), true));
+        if (\interface_exists(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
+            (yield \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class);
+            (yield \print_r(\call_user_func([$class->name, 'getSubscribedServices']), \true));
         }
     }
 }
 /**
  * @internal
  */
-class ReflectionMethodHhvmWrapper extends ReflectionMethod
+class ReflectionMethodHhvmWrapper extends \ReflectionMethod
 {
     public function getParameters()
     {
         $params = [];
         foreach (parent::getParameters() as $i => $p) {
-            $params[] = new ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
+            $params[] = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
         }
         return $params;
     }
@@ -225,7 +195,7 @@ class ReflectionMethodHhvmWrapper extends ReflectionMethod
 /**
  * @internal
  */
-class ReflectionParameterHhvmWrapper extends ReflectionParameter
+class ReflectionParameterHhvmWrapper extends \ReflectionParameter
 {
     public function getDefaultValue()
     {

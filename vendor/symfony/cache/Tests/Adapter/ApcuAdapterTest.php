@@ -8,37 +8,27 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Log\NullLogger;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ApcuAdapter;
-use function filter_var;
-use function function_exists;
-use function ini_get;
-use function restore_error_handler;
-use function set_error_handler;
-use function str_replace;
-use const DIRECTORY_SEPARATOR;
-use const FILTER_VALIDATE_BOOLEAN;
-use const PHP_SAPI;
-
-class ApcuAdapterTest extends AdapterTestCase
+use _PhpScoper5ece82d7231e4\Psr\Log\NullLogger;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter;
+class ApcuAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testExpiration' => 'Testing expiration slows down the test suite', 'testHasItemReturnsFalseWhenDeferredItemIsExpired' => 'Testing expiration slows down the test suite', 'testDefaultLifeTime' => 'Testing expiration slows down the test suite'];
     public function createCachePool($defaultLifetime = 0)
     {
-        if (!function_exists('_PhpScoper5ea00cc67502b\\apcu_fetch') || !filter_var(ini_get('apc.enabled'), FILTER_VALIDATE_BOOLEAN)) {
+        if (!\function_exists('_PhpScoper5ece82d7231e4\\apcu_fetch') || !\filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN)) {
             $this->markTestSkipped('APCu extension is required.');
         }
-        if ('cli' === PHP_SAPI && !filter_var(ini_get('apc.enable_cli'), FILTER_VALIDATE_BOOLEAN)) {
+        if ('cli' === \PHP_SAPI && !\filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
             if ('testWithCliSapi' !== $this->getName()) {
                 $this->markTestSkipped('apc.enable_cli=1 is required.');
             }
         }
-        if ('\\' === DIRECTORY_SEPARATOR) {
+        if ('\\' === \DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Fails transiently on Windows.');
         }
-        return new ApcuAdapter(str_replace('\\', '.', __CLASS__), $defaultLifetime);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter(\str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
     public function testUnserializable()
     {
@@ -52,15 +42,15 @@ class ApcuAdapterTest extends AdapterTestCase
     }
     public function testVersion()
     {
-        $namespace = str_replace('\\', '.', static::class);
-        $pool1 = new ApcuAdapter($namespace, 0, 'p1');
+        $namespace = \str_replace('\\', '.', static::class);
+        $pool1 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter($namespace, 0, 'p1');
         $item = $pool1->getItem('foo');
         $this->assertFalse($item->isHit());
         $this->assertTrue($pool1->save($item->set('bar')));
         $item = $pool1->getItem('foo');
         $this->assertTrue($item->isHit());
         $this->assertSame('bar', $item->get());
-        $pool2 = new ApcuAdapter($namespace, 0, 'p2');
+        $pool2 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter($namespace, 0, 'p2');
         $item = $pool2->getItem('foo');
         $this->assertFalse($item->isHit());
         $this->assertNull($item->get());
@@ -70,15 +60,15 @@ class ApcuAdapterTest extends AdapterTestCase
     }
     public function testNamespace()
     {
-        $namespace = str_replace('\\', '.', static::class);
-        $pool1 = new ApcuAdapter($namespace . '_1', 0, 'p1');
+        $namespace = \str_replace('\\', '.', static::class);
+        $pool1 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter($namespace . '_1', 0, 'p1');
         $item = $pool1->getItem('foo');
         $this->assertFalse($item->isHit());
         $this->assertTrue($pool1->save($item->set('bar')));
         $item = $pool1->getItem('foo');
         $this->assertTrue($item->isHit());
         $this->assertSame('bar', $item->get());
-        $pool2 = new ApcuAdapter($namespace . '_2', 0, 'p1');
+        $pool2 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter($namespace . '_2', 0, 'p1');
         $item = $pool2->getItem('foo');
         $this->assertFalse($item->isHit());
         $this->assertNull($item->get());
@@ -90,18 +80,18 @@ class ApcuAdapterTest extends AdapterTestCase
     {
         try {
             // disable PHPUnit error handler to mimic a production environment
-            $isCalled = false;
-            set_error_handler(function () use(&$isCalled) {
-                $isCalled = true;
+            $isCalled = \false;
+            \set_error_handler(function () use(&$isCalled) {
+                $isCalled = \true;
             });
-            $pool = new ApcuAdapter(str_replace('\\', '.', __CLASS__));
-            $pool->setLogger(new NullLogger());
+            $pool = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter(\str_replace('\\', '.', __CLASS__));
+            $pool->setLogger(new \_PhpScoper5ece82d7231e4\Psr\Log\NullLogger());
             $item = $pool->getItem('foo');
             $item->isHit();
             $pool->save($item->set('bar'));
             $this->assertFalse($isCalled);
         } finally {
-            restore_error_handler();
+            \restore_error_handler();
         }
     }
 }

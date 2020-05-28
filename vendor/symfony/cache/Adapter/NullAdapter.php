@@ -8,26 +8,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use Closure;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class NullAdapter implements AdapterInterface
+class NullAdapter implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AdapterInterface
 {
     private $createCacheItem;
     public function __construct()
     {
-        $this->createCacheItem = Closure::bind(function ($key) {
-            $item = new CacheItem();
+        $this->createCacheItem = \Closure::bind(function ($key) {
+            $item = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem();
             $item->key = $key;
-            $item->isHit = false;
+            $item->isHit = \false;
             return $item;
-        }, $this, CacheItem::class);
+        }, $this, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::class);
     }
     /**
      * {@inheritdoc}
@@ -49,49 +47,49 @@ class NullAdapter implements AdapterInterface
      */
     public function hasItem($key)
     {
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function deleteItem($key)
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function deleteItems(array $keys)
     {
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
-    public function save(CacheItemInterface $item)
+    public function save(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
     public function commit()
     {
-        return false;
+        return \false;
     }
     private function generateItems(array $keys)
     {

@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
 
 trait AutowireTrait
 {
@@ -19,7 +19,7 @@ trait AutowireTrait
      *
      * @return $this
      */
-    public final function autowire($autowired = true)
+    public final function autowire($autowired = \true)
     {
         $this->definition->setAutowired($autowired);
         return $this;

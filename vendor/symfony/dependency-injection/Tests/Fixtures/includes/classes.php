@@ -1,23 +1,19 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\DumperInterface as ProxyDumper;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use function class_alias;
-use function is_object;
-use function is_scalar;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\DumperInterface as ProxyDumper;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 function sc_configure($instance)
 {
     $instance->configure();
 }
-class BarClass extends BazClass
+class BarClass extends \_PhpScoper5ece82d7231e4\BazClass
 {
     protected $baz;
     public $foo = 'foo';
-    public function setBaz(BazClass $baz)
+    public function setBaz(\_PhpScoper5ece82d7231e4\BazClass $baz)
     {
         $this->baz = $baz;
     }
@@ -26,11 +22,11 @@ class BarClass extends BazClass
         return $this->baz;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\BarClass', 'BarClass', false);
+\class_alias('_PhpScoper5ece82d7231e4\\BarClass', 'BarClass', \false);
 class BazClass
 {
     protected $foo;
-    public function setFoo(Foo $foo)
+    public function setFoo(\_PhpScoper5ece82d7231e4\Foo $foo)
     {
         $this->foo = $foo;
     }
@@ -50,47 +46,47 @@ class BazClass
     {
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\BazClass', 'BazClass', false);
+\class_alias('_PhpScoper5ece82d7231e4\\BazClass', 'BazClass', \false);
 class BarUserClass
 {
     public $bar;
-    public function __construct(BarClass $bar)
+    public function __construct(\_PhpScoper5ece82d7231e4\BarClass $bar)
     {
         $this->bar = $bar;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\BarUserClass', 'BarUserClass', false);
+\class_alias('_PhpScoper5ece82d7231e4\\BarUserClass', 'BarUserClass', \false);
 class MethodCallClass
 {
     public $simple;
     public $complex;
-    private $callPassed = false;
+    private $callPassed = \false;
     public function callMe()
     {
-        $this->callPassed = is_scalar($this->simple) && is_object($this->complex);
+        $this->callPassed = \is_scalar($this->simple) && \is_object($this->complex);
     }
     public function callPassed()
     {
         return $this->callPassed;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\MethodCallClass', 'MethodCallClass', false);
-class DummyProxyDumper implements ProxyDumper
+\class_alias('_PhpScoper5ece82d7231e4\\MethodCallClass', 'MethodCallClass', \false);
+class DummyProxyDumper implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\DumperInterface
 {
-    public function isProxyCandidate(Definition $definition)
+    public function isProxyCandidate(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition)
     {
         return $definition->isLazy();
     }
-    public function getProxyFactoryCode(Definition $definition, $id, $factoryCall = null)
+    public function getProxyFactoryCode(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition, $id, $factoryCall = null)
     {
         return "        // lazy factory for {$definition->getClass()}\n\n";
     }
-    public function getProxyCode(Definition $definition)
+    public function getProxyCode(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition)
     {
         return "// proxy code for {$definition->getClass()}\n";
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\DummyProxyDumper', 'DummyProxyDumper', false);
+\class_alias('_PhpScoper5ece82d7231e4\\DummyProxyDumper', 'DummyProxyDumper', \false);
 class LazyContext
 {
     public $lazyValues;
@@ -101,28 +97,28 @@ class LazyContext
         $this->lazyEmptyValues = $lazyEmptyValues;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\LazyContext', 'LazyContext', false);
+\class_alias('_PhpScoper5ece82d7231e4\\LazyContext', 'LazyContext', \false);
 class FoobarCircular
 {
-    public function __construct(FooCircular $foo)
+    public function __construct(\_PhpScoper5ece82d7231e4\FooCircular $foo)
     {
         $this->foo = $foo;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\FoobarCircular', 'FoobarCircular', false);
+\class_alias('_PhpScoper5ece82d7231e4\\FoobarCircular', 'FoobarCircular', \false);
 class FooCircular
 {
-    public function __construct(BarCircular $bar)
+    public function __construct(\_PhpScoper5ece82d7231e4\BarCircular $bar)
     {
         $this->bar = $bar;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\FooCircular', 'FooCircular', false);
+\class_alias('_PhpScoper5ece82d7231e4\\FooCircular', 'FooCircular', \false);
 class BarCircular
 {
-    public function addFoobar(FoobarCircular $foobar)
+    public function addFoobar(\_PhpScoper5ece82d7231e4\FoobarCircular $foobar)
     {
         $this->foobar = $foobar;
     }
 }
-class_alias('_PhpScoper5ea00cc67502b\\BarCircular', 'BarCircular', false);
+\class_alias('_PhpScoper5ece82d7231e4\\BarCircular', 'BarCircular', \false);

@@ -8,35 +8,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
-use function array_chunk;
-use function array_push;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArrayNode extends Node
+class ArrayNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node
 {
     protected $index;
     public function __construct()
     {
         $this->index = -1;
     }
-    public function addElement(Node $value, Node $key = null)
+    public function addElement(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node $value, \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node $key = null)
     {
         if (null === $key) {
-            $key = new ConstantNode(++$this->index);
+            $key = new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode(++$this->index);
         }
-        array_push($this->nodes, $key, $value);
+        \array_push($this->nodes, $key, $value);
     }
     /**
      * Compiles the node to PHP.
      */
-    public function compile(Compiler $compiler)
+    public function compile(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
         $compiler->raw('[');
         $this->compileArguments($compiler);
@@ -60,7 +57,7 @@ class ArrayNode extends Node
         if ($this->isHash($value)) {
             foreach ($value as $k => $v) {
                 $array[] = ', ';
-                $array[] = new ConstantNode($k);
+                $array[] = new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode($k);
                 $array[] = ': ';
                 $array[] = $v;
             }
@@ -79,19 +76,19 @@ class ArrayNode extends Node
     protected function getKeyValuePairs()
     {
         $pairs = [];
-        foreach (array_chunk($this->nodes, 2) as $pair) {
+        foreach (\array_chunk($this->nodes, 2) as $pair) {
             $pairs[] = ['key' => $pair[0], 'value' => $pair[1]];
         }
         return $pairs;
     }
-    protected function compileArguments(Compiler $compiler, $withKeys = true)
+    protected function compileArguments(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler, $withKeys = \true)
     {
-        $first = true;
+        $first = \true;
         foreach ($this->getKeyValuePairs() as $pair) {
             if (!$first) {
                 $compiler->raw(', ');
             }
-            $first = false;
+            $first = \false;
             if ($withKeys) {
                 $compiler->compile($pair['key'])->raw(' => ');
             }

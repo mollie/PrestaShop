@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Promise;
 
 use Exception;
 use Generator;
@@ -40,7 +40,7 @@ use Throwable;
  * @return Promise
  * @link https://github.com/petkaantonov/bluebird/blob/master/API.md#generators inspiration
  */
-final class Coroutine implements PromiseInterface
+final class Coroutine implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface
 {
     /**
      * @var PromiseInterface|null
@@ -57,7 +57,7 @@ final class Coroutine implements PromiseInterface
     public function __construct(callable $generatorFn)
     {
         $this->generator = $generatorFn();
-        $this->result = new Promise(function () {
+        $this->result = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\Promise(function () {
             while (isset($this->currentPromise)) {
                 $this->currentPromise->wait();
             }
@@ -72,7 +72,7 @@ final class Coroutine implements PromiseInterface
     {
         return $this->result->otherwise($onRejected);
     }
-    public function wait($unwrap = true)
+    public function wait($unwrap = \true)
     {
         return $this->result->wait($unwrap);
     }
@@ -110,9 +110,9 @@ final class Coroutine implements PromiseInterface
             } else {
                 $this->result->resolve($value);
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->result->reject($exception);
-        } catch (Throwable $throwable) {
+        } catch (\Throwable $throwable) {
             $this->result->reject($throwable);
         }
     }
@@ -126,9 +126,9 @@ final class Coroutine implements PromiseInterface
             $nextYield = $this->generator->throw(exception_for($reason));
             // The throw was caught, so keep iterating on the coroutine
             $this->nextCoroutine($nextYield);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->result->reject($exception);
-        } catch (Throwable $throwable) {
+        } catch (\Throwable $throwable) {
             $this->result->reject($throwable);
         }
     }

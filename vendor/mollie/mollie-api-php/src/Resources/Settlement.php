@@ -1,13 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\SettlementStatus;
-use stdClass;
-
-class Settlement extends BaseResource
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\SettlementStatus;
+class Settlement extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -48,13 +46,13 @@ class Settlement extends BaseResource
     /**
      * Total settlement amount in euros.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $amount;
     /**
      * Revenues and costs nested per year, per month, and per payment method.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $periods;
     /**
@@ -64,7 +62,7 @@ class Settlement extends BaseResource
      */
     public $invoiceId;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
@@ -74,7 +72,7 @@ class Settlement extends BaseResource
      */
     public function isOpen()
     {
-        return $this->status === SettlementStatus::STATUS_OPEN;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SettlementStatus::STATUS_OPEN;
     }
     /**
      * Is this settlement pending?
@@ -83,7 +81,7 @@ class Settlement extends BaseResource
      */
     public function isPending()
     {
-        return $this->status === SettlementStatus::STATUS_PENDING;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SettlementStatus::STATUS_PENDING;
     }
     /**
      * Is this settlement paidout?
@@ -92,7 +90,7 @@ class Settlement extends BaseResource
      */
     public function isPaidout()
     {
-        return $this->status === SettlementStatus::STATUS_PAIDOUT;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT;
     }
     /**
      * Is this settlement failed?
@@ -101,7 +99,7 @@ class Settlement extends BaseResource
      */
     public function isFailed()
     {
-        return $this->status === SettlementStatus::STATUS_FAILED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SettlementStatus::STATUS_FAILED;
     }
     /**
      * Retrieves all payments associated with this settlement
@@ -112,10 +110,10 @@ class Settlement extends BaseResource
     public function payments()
     {
         if (!isset($this->_links->payments->href)) {
-            return new PaymentCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\PaymentCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->payments->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->payments, Payment::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->payments->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->payments, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment::class, $result->_links);
     }
     /**
      * Retrieves all refunds associated with this settlement
@@ -126,10 +124,10 @@ class Settlement extends BaseResource
     public function refunds()
     {
         if (!isset($this->_links->refunds->href)) {
-            return new RefundCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->refunds->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, Refund::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->refunds->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund::class, $result->_links);
     }
     /**
      * Retrieves all chargebacks associated with this settlement
@@ -140,10 +138,10 @@ class Settlement extends BaseResource
     public function chargebacks()
     {
         if (!isset($this->_links->chargebacks->href)) {
-            return new ChargebackCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ChargebackCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, Chargeback::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Chargeback::class, $result->_links);
     }
     /**
      * Retrieves all captures associated with this settlement
@@ -154,9 +152,9 @@ class Settlement extends BaseResource
     public function captures()
     {
         if (!isset($this->_links->captures->href)) {
-            return new CaptureCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CaptureCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->captures->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->captures, Capture::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->captures->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->captures, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Capture::class, $result->_links);
     }
 }

@@ -8,15 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\Exception;
-
-use InvalidArgumentException;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\Exception;
 
 /**
  * Exception class for when XML cannot be parsed properly.
  *
  * @author Ole Rößner <ole@roessner.it>
  */
-class XmlParsingException extends InvalidArgumentException
+class XmlParsingException extends \InvalidArgumentException
 {
 }

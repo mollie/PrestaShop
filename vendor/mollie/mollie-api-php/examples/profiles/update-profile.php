@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * Updating an existing profile via the Mollie API.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -29,7 +25,7 @@ try {
     $profile->phone = '0612345670';
     $profile->categoryCode = 5399;
     $profile->update();
-    echo "<p>Profile updated: " . htmlspecialchars($profile->name) . "</p>";
-} catch (ApiException $e) {
-    echo "<p>API call failed: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p>Profile updated: " . \htmlspecialchars($profile->name) . "</p>";
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "<p>API call failed: " . \htmlspecialchars($e->getMessage()) . "</p>";
 }

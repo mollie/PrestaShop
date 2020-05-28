@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ParametersConfigurator extends AbstractConfigurator
+class ParametersConfigurator extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
 {
     const FACTORY = 'parameters';
     private $container;
-    public function __construct(ContainerBuilder $container)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $this->container = $container;
     }
@@ -32,7 +32,7 @@ class ParametersConfigurator extends AbstractConfigurator
      */
     public final function set($name, $value)
     {
-        $this->container->setParameter($name, static::processValue($value, true));
+        $this->container->setParameter($name, static::processValue($value, \true));
         return $this;
     }
     /**

@@ -8,9 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition;
 
 /**
  * Configuration interface.
@@ -22,7 +20,7 @@ interface ConfigurationInterface
     /**
      * Generates the configuration tree builder.
      *
-     * @return TreeBuilder The tree builder
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
     public function getConfigTreeBuilder();
 }

@@ -8,18 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\FilesystemCache;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\PhpArrayCache;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
-use function file_exists;
-use function sys_get_temp_dir;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\FilesystemCache;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\PhpArrayCache;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 /**
  * @group time-sensitive
  */
-class PhpArrayCacheWithFallbackTest extends CacheTestCase
+class PhpArrayCacheWithFallbackTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     protected $skippedTests = [
         'testGetInvalidKeys' => 'PhpArrayCache does no validation',
@@ -37,17 +34,17 @@ class PhpArrayCacheWithFallbackTest extends CacheTestCase
     protected static $file;
     public static function setUpBeforeClass()
     {
-        self::$file = sys_get_temp_dir() . '/symfony-cache/php-array-adapter-test.php';
+        self::$file = \sys_get_temp_dir() . '/symfony-cache/php-array-adapter-test.php';
     }
     protected function tearDown()
     {
         $this->createSimpleCache()->clear();
-        if (file_exists(sys_get_temp_dir() . '/symfony-cache')) {
-            FilesystemAdapterTest::rmdir(sys_get_temp_dir() . '/symfony-cache');
+        if (\file_exists(\sys_get_temp_dir() . '/symfony-cache')) {
+            \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
         }
     }
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new PhpArrayCache(self::$file, new FilesystemCache('php-array-fallback', $defaultLifetime));
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\PhpArrayCache(self::$file, new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\FilesystemCache('php-array-fallback', $defaultLifetime));
     }
 }

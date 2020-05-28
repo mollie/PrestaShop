@@ -12,7 +12,7 @@ yaml: |
         Foo
         Bar
 php: |
-    ['this' => "_PhpScoper5ea00cc67502b\Foo\nBar\n"]
+    ['this' => "_PhpScoper5ece82d7231e4\Foo\nBar\n"]
 ---
 test: The '+' indicator
 brief: >
@@ -29,8 +29,8 @@ yaml: |
     dummy: value
 php: |
     [
-        'normal' => "extra new lines not _PhpScoper5ea00cc67502b\kept\n",
-        'preserving' => "extra new lines are _PhpScoper5ea00cc67502b\kept\n\n\n",
+        'normal' => "extra new lines not _PhpScoper5ece82d7231e4\kept\n",
+        'preserving' => "extra new lines are _PhpScoper5ece82d7231e4\kept\n\n\n",
         'dummy' => 'value'
     ]
 ---
@@ -62,15 +62,15 @@ yaml: |
 
 
 
-    same as "kept" above: "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n"
+    same as "kept" above: "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n"
 php: |
     [
       'clipped' => "This has one newline.\n",
       'same as "clipped" above' => "This has one newline.\n",
       'stripped' => 'This has no newline.',
       'same as "stripped" above' => 'This has no newline.',
-      'kept' => "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n",
-      'same as "kept" above' => "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n"
+      'kept' => "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n",
+      'same as "kept" above' => "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n"
     ]
 ---
 test: Extra trailing newlines with spaces
@@ -95,8 +95,8 @@ yaml: |
 
 
 php: |
-    ['this' => "_PhpScoper5ea00cc67502b\Foo\n\n  \n",
-      'kept' => "_PhpScoper5ea00cc67502b\Foo\n\n  \n"]
+    ['this' => "_PhpScoper5ece82d7231e4\Foo\n\n  \n",
+      'kept' => "_PhpScoper5ece82d7231e4\Foo\n\n  \n"]
 
 ---
 test: Folded Block in a Sequence
@@ -118,7 +118,7 @@ php: |
     [
         'apple',
         'banana',
-        "can't you see the beauty of yaml? _PhpScoper5ea00cc67502b\hmm\n",
+        "can't you see the beauty of yaml? _PhpScoper5ece82d7231e4\hmm\n",
         'dog'
     ]
 ---
@@ -164,13 +164,13 @@ yaml: |
 
 
 
-    same as "kept" above: "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n"
+    same as "kept" above: "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n"
 php: |
     [
       'clipped' => "This has one newline.\n",
       'same as "clipped" above' => "This has one newline.\n",
       'stripped' => 'This has no newline.',
       'same as "stripped" above' => 'This has no newline.',
-      'kept' => "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n",
-      'same as "kept" above' => "This has four newlines.\_PhpScoper5ea00cc67502b\n\n\n\n"
+      'kept' => "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n",
+      'same as "kept" above' => "This has four newlines.\_PhpScoper5ece82d7231e4\n\n\n\n"
     ]

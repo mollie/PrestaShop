@@ -1,7 +1,7 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\BadClasses;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\BadClasses;
 
-class MissingParent extends MissingClass
+class MissingParent extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\BadClasses\MissingClass
 {
 }

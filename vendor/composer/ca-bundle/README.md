@@ -39,9 +39,9 @@ Basic usage
 #### To use with curl
 
 ```php
-use Composer\CaBundle\CaBundle;$curl = curl_init("https://example.org/");
+$curl = curl_init("https://example.org/");
 
-$caPathOrFile = CaBundle::getSystemCaRootBundlePath();
+$caPathOrFile = \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath();
 if (is_dir($caPathOrFile)) {
     curl_setopt($curl, CURLOPT_CAPATH, $caPathOrFile);
 } else {
@@ -60,7 +60,7 @@ $opts = array(
     )
 );
 
-$caPathOrFile = CaBundle::getSystemCaRootBundlePath();
+$caPathOrFile = \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath();
 if (is_dir($caPathOrFile)) {
     $opts['ssl']['capath'] = $caPathOrFile;
 } else {
@@ -74,8 +74,8 @@ $result = file_get_contents('https://example.com', false, $context);
 #### To use with Guzzle
 
 ```php
-use Composer\CaBundle\CaBundle;use GuzzleHttp\Client;use GuzzleHttp\RequestOptions;$client = new Client([
-    RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath()
+$client = new \GuzzleHttp\Client([
+    \GuzzleHttp\RequestOptions::VERIFY => \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath()
 ]);
 ```
 

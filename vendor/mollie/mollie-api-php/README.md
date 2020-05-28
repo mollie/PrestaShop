@@ -60,7 +60,7 @@ Find our full documentation online on [docs.mollie.com](https://docs.mollie.com)
 Initializing the Mollie API client, and setting your API key.
 
 ```php
-use Mollie\Api\MollieApiClient;$mollie = new MollieApiClient();
+$mollie = new \Mollie\Api\MollieApiClient();
 $mollie->setApiKey("test_dHar4XY7LxsDOtmnkVtjNVWXLSlXsM");
 ``` 
 
@@ -141,7 +141,7 @@ the payment.
 Retrieve the iDEAL method and include the issuers
 
 ```php
-use Mollie\Api\Types\PaymentMethod;$method = $mollie->methods->get(PaymentMethod::IDEAL, ["include" => "issuers"]);
+$method = $mollie->methods->get(\Mollie\Api\Types\PaymentMethod::IDEAL, ["include" => "issuers"]);
 ```
 
 _`$method->issuers` will be a list of objects. Use the property `$id` of this object in the
@@ -158,7 +158,7 @@ $payment = $mollie->payments->create([
     "description" => "My first API payment",
     "redirectUrl" => "https://webshop.example.org/order/12345/",
     "webhookUrl"  => "https://webshop.example.org/mollie-webhook/",
-    "method"      => PaymentMethod::IDEAL,
+    "method"      => \Mollie\Api\Types\PaymentMethod::IDEAL,
     "issuer"      => $selectedIssuerId, // e.g. "ideal_INGBNL2A"
 ]);
 ```
