@@ -8,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
-use function array_unshift;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 /**
  * Adds some function to the default ExpressionLanguage.
  *
@@ -20,7 +18,7 @@ use function array_unshift;
  *
  * @see ExpressionLanguageProvider
  */
-class ExpressionLanguage extends BaseExpressionLanguage
+class ExpressionLanguage extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ExpressionLanguage
 {
     /**
      * {@inheritdoc}
@@ -28,7 +26,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
     public function __construct($cache = null, array $providers = [], callable $serviceCompiler = null)
     {
         // prepend the default provider to let users override it easily
-        array_unshift($providers, new ExpressionLanguageProvider($serviceCompiler));
+        \array_unshift($providers, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ExpressionLanguageProvider($serviceCompiler));
         parent::__construct($cache, $providers);
     }
 }

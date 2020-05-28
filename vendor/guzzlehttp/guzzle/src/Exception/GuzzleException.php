@@ -1,18 +1,16 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Exception;
 
 use Throwable;
-use function interface_exists;
-
-if (interface_exists(Throwable::class)) {
-    interface GuzzleException extends Throwable
+if (\interface_exists(\Throwable::class)) {
+    interface GuzzleException extends \Throwable
     {
     }
 } else {
     /**
      * @method string getMessage()
-     * @method Throwable|null getPrevious()
+     * @method \Throwable|null getPrevious()
      * @method mixed getCode()
      * @method string getFile()
      * @method int getLine()

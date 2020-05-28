@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * List captures for a payment using the Mollie API.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -25,6 +21,6 @@ try {
         $amount = $capture->amount->currency . ' ' . $capture->amount->value;
         echo 'Captured ' . $amount . ' for payment ' . $payment->id;
     }
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

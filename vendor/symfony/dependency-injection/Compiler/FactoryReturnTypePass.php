@@ -8,46 +8,33 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-use ReflectionException;
-use ReflectionFunction;
-use ReflectionMethod;
-use ReflectionNamedType;
-use function file_exists;
-use function get_parent_class;
-use function is_string;
-use function method_exists;
-use function sprintf;
-use function strtolower;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
 /**
  * @author Guilhem N. <egetick@gmail.com>
  *
  * @deprecated since version 3.3, to be removed in 4.0.
  */
-class FactoryReturnTypePass implements CompilerPassInterface
+class FactoryReturnTypePass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     private $resolveClassPass;
-    public function __construct(ResolveClassPass $resolveClassPass = null)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveClassPass $resolveClassPass = null)
     {
         if (null === $resolveClassPass) {
-            @trigger_error('The ' . __CLASS__ . ' class is deprecated since Symfony 3.3 and will be removed in 4.0.', E_USER_DEPRECATED);
+            @\trigger_error('The ' . __CLASS__ . ' class is deprecated since Symfony 3.3 and will be removed in 4.0.', \E_USER_DEPRECATED);
         }
         $this->resolveClassPass = $resolveClassPass;
     }
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         // works only since php 7.0 and hhvm 3.11
-        if (!method_exists(ReflectionMethod::class, 'getReturnType')) {
+        if (!\method_exists(\ReflectionMethod::class, 'getReturnType')) {
             return;
         }
         $resolveClassPassChanges = null !== $this->resolveClassPass ? $this->resolveClassPass->getChanges() : [];
@@ -55,7 +42,7 @@ class FactoryReturnTypePass implements CompilerPassInterface
             $this->updateDefinition($container, $id, $definition, $resolveClassPassChanges);
         }
     }
-    private function updateDefinition(ContainerBuilder $container, $id, Definition $definition, array $resolveClassPassChanges, array $previous = [])
+    private function updateDefinition(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container, $id, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition, array $resolveClassPassChanges, array $previous = [])
     {
         // circular reference
         if (isset($previous[$id])) {
@@ -66,18 +53,18 @@ class FactoryReturnTypePass implements CompilerPassInterface
             return;
         }
         $class = null;
-        if (is_string($factory)) {
+        if (\is_string($factory)) {
             try {
-                $m = new ReflectionFunction($factory);
-                if (false !== $m->getFileName() && file_exists($m->getFileName())) {
+                $m = new \ReflectionFunction($factory);
+                if (\false !== $m->getFileName() && \file_exists($m->getFileName())) {
                     $container->fileExists($m->getFileName());
                 }
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
                 return;
             }
         } else {
-            if ($factory[0] instanceof Reference) {
-                $previous[$id] = true;
+            if ($factory[0] instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference) {
+                $previous[$id] = \true;
                 $factoryId = $container->normalizeId($factory[0]);
                 $factoryDefinition = $container->findDefinition($factoryId);
                 $this->updateDefinition($container, $factoryId, $factoryDefinition, $resolveClassPassChanges, $previous);
@@ -85,28 +72,28 @@ class FactoryReturnTypePass implements CompilerPassInterface
             } else {
                 $class = $factory[0];
             }
-            if (!($m = $container->getReflectionClass($class, false))) {
+            if (!($m = $container->getReflectionClass($class, \false))) {
                 return;
             }
             try {
                 $m = $m->getMethod($factory[1]);
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
                 return;
             }
         }
         $returnType = $m->getReturnType();
         if (null !== $returnType && !$returnType->isBuiltin()) {
-            $returnType = $returnType instanceof ReflectionNamedType ? $returnType->getName() : $returnType->__toString();
+            $returnType = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : $returnType->__toString();
             if (null !== $class) {
                 $declaringClass = $m->getDeclaringClass()->getName();
-                if ('self' === strtolower($returnType)) {
+                if ('self' === \strtolower($returnType)) {
                     $returnType = $declaringClass;
-                } elseif ('parent' === strtolower($returnType)) {
-                    $returnType = get_parent_class($declaringClass) ?: null;
+                } elseif ('parent' === \strtolower($returnType)) {
+                    $returnType = \get_parent_class($declaringClass) ?: null;
                 }
             }
             if (null !== $returnType && (!isset($resolveClassPassChanges[$id]) || $returnType !== $resolveClassPassChanges[$id])) {
-                @trigger_error(sprintf('Relying on its factory\'s return-type to define the class of service "%s" is deprecated since Symfony 3.3 and won\'t work in 4.0. Set the "class" attribute to "%s" on the service definition instead.', $id, $returnType), E_USER_DEPRECATED);
+                @\trigger_error(\sprintf('Relying on its factory\'s return-type to define the class of service "%s" is deprecated since Symfony 3.3 and won\'t work in 4.0. Set the "class" attribute to "%s" on the service definition instead.', $id, $returnType), \E_USER_DEPRECATED);
             }
             $definition->setClass($returnType);
         }

@@ -1,23 +1,13 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
-use InvalidArgumentException;
-use function array_key_exists;
-use function basename;
-use function sha1;
-use function sprintf;
-use function strtolower;
-use function substr;
-use function trim;
-use function uniqid;
-
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
 /**
  * Stream that when read returns bytes for a streaming multipart or
  * multipart/form-data stream.
  */
-class MultipartStream implements StreamInterface
+class MultipartStream implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface
 {
     use StreamDecoratorTrait;
     private $boundary;
@@ -31,11 +21,11 @@ class MultipartStream implements StreamInterface
      *                         string to send as the filename in the part.
      * @param string $boundary You can optionally provide a specific boundary
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $elements = [], $boundary = null)
     {
-        $this->boundary = $boundary ?: sha1(uniqid('', true));
+        $this->boundary = $boundary ?: \sha1(\uniqid('', \true));
         $this->stream = $this->createStream($elements);
     }
     /**
@@ -49,7 +39,7 @@ class MultipartStream implements StreamInterface
     }
     public function isWritable()
     {
-        return false;
+        return \false;
     }
     /**
      * Get the headers needed before transferring the content of a POST file
@@ -60,14 +50,14 @@ class MultipartStream implements StreamInterface
         foreach ($headers as $key => $value) {
             $str .= "{$key}: {$value}\r\n";
         }
-        return "--{$this->boundary}\r\n" . trim($str) . "\r\n\r\n";
+        return "--{$this->boundary}\r\n" . \trim($str) . "\r\n\r\n";
     }
     /**
      * Create the aggregate stream that will be used to upload the POST data
      */
     protected function createStream(array $elements)
     {
-        $stream = new AppendStream();
+        $stream = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\AppendStream();
         foreach ($elements as $element) {
             $this->addElement($stream, $element);
         }
@@ -75,21 +65,21 @@ class MultipartStream implements StreamInterface
         $stream->addStream(stream_for("--{$this->boundary}--\r\n"));
         return $stream;
     }
-    private function addElement(AppendStream $stream, array $element)
+    private function addElement(\_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\AppendStream $stream, array $element)
     {
         foreach (['contents', 'name'] as $key) {
-            if (!array_key_exists($key, $element)) {
-                throw new InvalidArgumentException("A '{$key}' key is required");
+            if (!\array_key_exists($key, $element)) {
+                throw new \InvalidArgumentException("A '{$key}' key is required");
             }
         }
         $element['contents'] = stream_for($element['contents']);
         if (empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
-            if (substr($uri, 0, 6) !== 'php://') {
+            if (\substr($uri, 0, 6) !== 'php://') {
                 $element['filename'] = $uri;
             }
         }
-        [$body, $headers] = $this->createElement($element['name'], $element['contents'], isset($element['filename']) ? $element['filename'] : null, isset($element['headers']) ? $element['headers'] : []);
+        list($body, $headers) = $this->createElement($element['name'], $element['contents'], isset($element['filename']) ? $element['filename'] : null, isset($element['headers']) ? $element['headers'] : []);
         $stream->addStream(stream_for($this->getHeaders($headers)));
         $stream->addStream($body);
         $stream->addStream(stream_for("\r\n"));
@@ -97,12 +87,12 @@ class MultipartStream implements StreamInterface
     /**
      * @return array
      */
-    private function createElement($name, StreamInterface $stream, $filename, array $headers)
+    private function createElement($name, \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface $stream, $filename, array $headers)
     {
         // Set a default content-disposition header if one was no provided
         $disposition = $this->getHeader($headers, 'content-disposition');
         if (!$disposition) {
-            $headers['Content-Disposition'] = $filename === '0' || $filename ? sprintf('form-data; name="%s"; filename="%s"', $name, basename($filename)) : "form-data; name=\"{$name}\"";
+            $headers['Content-Disposition'] = $filename === '0' || $filename ? \sprintf('form-data; name="%s"; filename="%s"', $name, \basename($filename)) : "form-data; name=\"{$name}\"";
         }
         // Set a default content-length header if one was no provided
         $length = $this->getHeader($headers, 'content-length');
@@ -122,9 +112,9 @@ class MultipartStream implements StreamInterface
     }
     private function getHeader(array $headers, $key)
     {
-        $lowercaseHeader = strtolower($key);
+        $lowercaseHeader = \strtolower($key);
         foreach ($headers as $k => $v) {
-            if (strtolower($k) === $lowercaseHeader) {
+            if (\strtolower($k) === $lowercaseHeader) {
                 return $v;
             }
         }

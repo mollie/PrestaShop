@@ -8,16 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
-
-use function unserialize;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage;
 
 /**
  * Represents an already parsed expression.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class SerializedParsedExpression extends ParsedExpression
+class SerializedParsedExpression extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParsedExpression
 {
     private $nodes;
     /**
@@ -31,6 +29,6 @@ class SerializedParsedExpression extends ParsedExpression
     }
     public function getNodes()
     {
-        return unserialize($this->nodes);
+        return \unserialize($this->nodes);
     }
 }

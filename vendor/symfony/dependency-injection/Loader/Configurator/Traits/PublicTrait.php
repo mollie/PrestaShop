@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
 
 /**
  * @method $this public()
@@ -21,7 +21,7 @@ trait PublicTrait
      */
     protected final function setPublic()
     {
-        $this->definition->setPublic(true);
+        $this->definition->setPublic(\true);
         return $this;
     }
     /**
@@ -29,7 +29,7 @@ trait PublicTrait
      */
     protected final function setPrivate()
     {
-        $this->definition->setPublic(false);
+        $this->definition->setPublic(\false);
         return $this;
     }
 }

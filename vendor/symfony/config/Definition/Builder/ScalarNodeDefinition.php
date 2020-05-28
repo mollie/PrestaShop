@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode;
 /**
  * This class provides a fluent interface for defining a node.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ScalarNodeDefinition extends VariableNodeDefinition
+class ScalarNodeDefinition extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\VariableNodeDefinition
 {
     /**
      * Instantiate a Node.
@@ -25,6 +25,6 @@ class ScalarNodeDefinition extends VariableNodeDefinition
      */
     protected function instantiateNode()
     {
-        return new ScalarNode($this->name, $this->parent);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode($this->name, $this->parent);
     }
 }

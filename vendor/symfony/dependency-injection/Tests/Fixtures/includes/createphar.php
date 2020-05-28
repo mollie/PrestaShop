@@ -1,22 +1,18 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
-
-use Phar;
-use function is_file;
-use function unlink;
+namespace _PhpScoper5ece82d7231e4;
 
 $file = __DIR__ . '/ProjectWithXsdExtensionInPhar.phar';
-if (is_file($file)) {
-    @unlink($file);
+if (\is_file($file)) {
+    @\unlink($file);
 }
-$phar = new Phar($file, 0, 'ProjectWithXsdExtensionInPhar.phar');
+$phar = new \Phar($file, 0, 'ProjectWithXsdExtensionInPhar.phar');
 $phar->addFromString('ProjectWithXsdExtensionInPhar.php', <<<'EOT'
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-class ProjectWithXsdExtensionInPhar extends \_PhpScoper5ea00cc67502b\ProjectExtension
+class ProjectWithXsdExtensionInPhar extends \_PhpScoper5ece82d7231e4\ProjectExtension
 {
     public function getXsdValidationBasePath()
     {
@@ -31,7 +27,7 @@ class ProjectWithXsdExtensionInPhar extends \_PhpScoper5ea00cc67502b\ProjectExte
         return 'projectwithxsdinphar';
     }
 }
-\class_alias('_PhpScoper5ea00cc67502b\\ProjectWithXsdExtensionInPhar', 'ProjectWithXsdExtensionInPhar', \false);
+\class_alias('_PhpScoper5ece82d7231e4\\ProjectWithXsdExtensionInPhar', 'ProjectWithXsdExtensionInPhar', \false);
 EOT
 );
 $phar->addFromString('schema/project-1.0.xsd', <<<'EOT'

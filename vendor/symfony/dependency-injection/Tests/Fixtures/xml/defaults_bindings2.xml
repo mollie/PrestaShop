@@ -5,6 +5,6 @@
             <bind key="$quz">overridden</bind>
         </defaults>
 
-        <service id="bar" class="_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar"/>
+        <service id="bar" class="_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar"/>
     </services>
 </container>

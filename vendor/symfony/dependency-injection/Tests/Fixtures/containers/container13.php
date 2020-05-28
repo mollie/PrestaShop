@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-$container = new ContainerBuilder();
-$container->register('foo', 'FooClass')->addArgument(new Reference('bar'))->setPublic(true);
-$container->register('bar', 'BarClass')->setPublic(true);
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
+$container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+$container->register('foo', 'FooClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar'))->setPublic(\true);
+$container->register('bar', 'BarClass')->setPublic(\true);
 $container->compile();
 return $container;

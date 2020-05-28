@@ -8,20 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Polyfill\Php70;
-
-use ArithmeticError;
-use DivisionByZeroError;
-use TypeError;
-use function gettype;
-use function is_int;
-use function is_numeric;
-use function preg_replace_callback;
-use function restore_error_handler;
-use function set_error_handler;
-use function sprintf;
-use function trigger_error;
-use const PHP_INT_MAX;
+namespace _PhpScoper5ece82d7231e4\Symfony\Polyfill\Php70;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -35,10 +22,10 @@ final class Php70
         $dividend = self::intArg($dividend, __FUNCTION__, 1);
         $divisor = self::intArg($divisor, __FUNCTION__, 2);
         if (0 === $divisor) {
-            throw new DivisionByZeroError('Division by zero');
+            throw new \DivisionByZeroError('Division by zero');
         }
-        if (-1 === $divisor && ~PHP_INT_MAX === $dividend) {
-            throw new ArithmeticError('Division of PHP_INT_MIN by -1 is not an integer');
+        if (-1 === $divisor && ~\PHP_INT_MAX === $dividend) {
+            throw new \ArithmeticError('Division of PHP_INT_MIN by -1 is not an integer');
         }
         return ($dividend - $dividend % $divisor) / $divisor;
     }
@@ -50,7 +37,7 @@ final class Php70
             return $result;
         }
         foreach ($patterns as $pattern => $callback) {
-            $result = preg_replace_callback($pattern, $callback, $result, $limit, $c);
+            $result = \preg_replace_callback($pattern, $callback, $result, $limit, $c);
             $count += $c;
         }
         return $result;
@@ -60,20 +47,20 @@ final class Php70
         static $handler;
         if (!$handler) {
             $handler = function () {
-                return false;
+                return \false;
             };
         }
-        set_error_handler($handler);
-        @trigger_error('');
-        restore_error_handler();
+        \set_error_handler($handler);
+        @\trigger_error('');
+        \restore_error_handler();
     }
     private static function intArg($value, $caller, $pos)
     {
-        if (is_int($value)) {
+        if (\is_int($value)) {
             return $value;
         }
-        if (!is_numeric($value) || PHP_INT_MAX <= ($value += 0) || ~PHP_INT_MAX >= $value) {
-            throw new TypeError(sprintf('%s() expects parameter %d to be integer, %s given', $caller, $pos, gettype($value)));
+        if (!\is_numeric($value) || \PHP_INT_MAX <= ($value += 0) || ~\PHP_INT_MAX >= $value) {
+            throw new \TypeError(\sprintf('%s() expects parameter %d to be integer, %s given', $caller, $pos, \gettype($value)));
         }
         return (int) $value;
     }

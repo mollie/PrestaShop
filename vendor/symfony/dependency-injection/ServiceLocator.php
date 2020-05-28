@@ -8,32 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface as PsrContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use function array_keys;
-use function array_pop;
-use function array_search;
-use function array_slice;
-use function array_values;
-use function count;
-use function debug_backtrace;
-use function end;
-use function get_class;
-use function implode;
-use function is_subclass_of;
-use function preg_replace;
-use function sprintf;
-use const DEBUG_BACKTRACE_IGNORE_ARGS;
-use const DEBUG_BACKTRACE_PROVIDE_OBJECT;
-
+use _PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface as PsrContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 /**
  * @author Robin Chalas <robin.chalas@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ServiceLocator implements PsrContainerInterface
+class ServiceLocator implements \_PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface
 {
     private $factories;
     private $loading = [];
@@ -59,13 +43,13 @@ class ServiceLocator implements PsrContainerInterface
     public function get($id)
     {
         if (!isset($this->factories[$id])) {
-            throw new ServiceNotFoundException($id, end($this->loading) ?: null, null, [], $this->createServiceNotFoundMessage($id));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, \end($this->loading) ?: null, null, [], $this->createServiceNotFoundMessage($id));
         }
         if (isset($this->loading[$id])) {
-            $ids = array_values($this->loading);
-            $ids = array_slice($this->loading, array_search($id, $ids));
+            $ids = \array_values($this->loading);
+            $ids = \array_slice($this->loading, \array_search($id, $ids));
             $ids[] = $id;
-            throw new ServiceCircularReferenceException($id, $ids);
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, $ids);
         }
         $this->loading[$id] = $id;
         try {
@@ -81,7 +65,7 @@ class ServiceLocator implements PsrContainerInterface
     /**
      * @internal
      */
-    public function withContext($externalId, Container $container)
+    public function withContext($externalId, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container $container)
     {
         $locator = clone $this;
         $locator->externalId = $externalId;
@@ -91,13 +75,13 @@ class ServiceLocator implements PsrContainerInterface
     private function createServiceNotFoundMessage($id)
     {
         if ($this->loading) {
-            return sprintf('The service "%s" has a dependency on a non-existent service "%s". This locator %s', end($this->loading), $id, $this->formatAlternatives());
+            return \sprintf('The service "%s" has a dependency on a non-existent service "%s". This locator %s', \end($this->loading), $id, $this->formatAlternatives());
         }
-        $class = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-        $class = isset($class[2]['object']) ? get_class($class[2]['object']) : null;
+        $class = \debug_backtrace(\DEBUG_BACKTRACE_PROVIDE_OBJECT | \DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        $class = isset($class[2]['object']) ? \get_class($class[2]['object']) : null;
         $externalId = $this->externalId ?: $class;
         $msg = [];
-        $msg[] = sprintf('Service "%s" not found:', $id);
+        $msg[] = \sprintf('Service "%s" not found:', $id);
         if (!$this->container) {
             $class = null;
         } elseif ($this->container->has($id) || isset($this->container->getRemovedIds()[$id])) {
@@ -106,38 +90,38 @@ class ServiceLocator implements PsrContainerInterface
             try {
                 $this->container->get($id);
                 $class = null;
-            } catch (ServiceNotFoundException $e) {
+            } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException $e) {
                 if ($e->getAlternatives()) {
-                    $msg[] = sprintf('did you mean %s? Anyway,', $this->formatAlternatives($e->getAlternatives(), 'or'));
+                    $msg[] = \sprintf('did you mean %s? Anyway,', $this->formatAlternatives($e->getAlternatives(), 'or'));
                 } else {
                     $class = null;
                 }
             }
         }
         if ($externalId) {
-            $msg[] = sprintf('the container inside "%s" is a smaller service locator that %s', $externalId, $this->formatAlternatives());
+            $msg[] = \sprintf('the container inside "%s" is a smaller service locator that %s', $externalId, $this->formatAlternatives());
         } else {
-            $msg[] = sprintf('the current service locator %s', $this->formatAlternatives());
+            $msg[] = \sprintf('the current service locator %s', $this->formatAlternatives());
         }
         if (!$class) {
             // no-op
-        } elseif (is_subclass_of($class, ServiceSubscriberInterface::class)) {
-            $msg[] = sprintf('Unless you need extra laziness, try using dependency injection instead. Otherwise, you need to declare it using "%s::getSubscribedServices()".', preg_replace('/([^\\\\]++\\\\)++/', '', $class));
+        } elseif (\is_subclass_of($class, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
+            $msg[] = \sprintf('Unless you need extra laziness, try using dependency injection instead. Otherwise, you need to declare it using "%s::getSubscribedServices()".', \preg_replace('/([^\\\\]++\\\\)++/', '', $class));
         } else {
             $msg[] = 'Try using dependency injection instead.';
         }
-        return implode(' ', $msg);
+        return \implode(' ', $msg);
     }
     private function formatAlternatives(array $alternatives = null, $separator = 'and')
     {
         $format = '"%s"%s';
         if (null === $alternatives) {
-            if (!($alternatives = array_keys($this->factories))) {
+            if (!($alternatives = \array_keys($this->factories))) {
                 return 'is empty...';
             }
-            $format = sprintf('only knows about the %s service%s.', $format, 1 < count($alternatives) ? 's' : '');
+            $format = \sprintf('only knows about the %s service%s.', $format, 1 < \count($alternatives) ? 's' : '');
         }
-        $last = array_pop($alternatives);
-        return sprintf($format, $alternatives ? implode('", "', $alternatives) : $last, $alternatives ? sprintf(' %s "%s"', $separator, $last) : '');
+        $last = \array_pop($alternatives);
+        return \sprintf($format, $alternatives ? \implode('", "', $alternatives) : $last, $alternatives ? \sprintf(' %s "%s"', $separator, $last) : '');
     }
 }

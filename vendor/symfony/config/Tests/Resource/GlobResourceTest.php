@@ -8,91 +8,81 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource;
-use SplFileInfo;
-use function current;
-use function dirname;
-use function iterator_to_array;
-use function mkdir;
-use function rmdir;
-use function touch;
-use function unlink;
-use const DIRECTORY_SEPARATOR;
-
-class GlobResourceTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource;
+class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     protected function tearDown()
     {
-        $dir = dirname(__DIR__) . '/Fixtures';
-        @rmdir($dir . '/TmpGlob');
-        @unlink($dir . '/TmpGlob');
-        @unlink($dir . '/Resource/TmpGlob');
-        touch($dir . '/Resource/.hiddenFile');
+        $dir = \dirname(__DIR__) . '/Fixtures';
+        @\rmdir($dir . '/TmpGlob');
+        @\unlink($dir . '/TmpGlob');
+        @\unlink($dir . '/Resource/TmpGlob');
+        \touch($dir . '/Resource/.hiddenFile');
     }
     public function testIterator()
     {
-        $dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Fixtures';
-        $resource = new GlobResource($dir, '/Resource', true);
-        $paths = iterator_to_array($resource);
-        $file = $dir . '/Resource' . DIRECTORY_SEPARATOR . 'ConditionalClass.php';
-        $this->assertEquals([$file => new SplFileInfo($file)], $paths);
-        $this->assertInstanceOf('SplFileInfo', current($paths));
+        $dir = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . 'Fixtures';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/Resource', \true);
+        $paths = \iterator_to_array($resource);
+        $file = $dir . '/Resource' . \DIRECTORY_SEPARATOR . 'ConditionalClass.php';
+        $this->assertEquals([$file => new \SplFileInfo($file)], $paths);
+        $this->assertInstanceOf('SplFileInfo', \current($paths));
         $this->assertSame($dir, $resource->getPrefix());
-        $resource = new GlobResource($dir, '/**/Resource', true);
-        $paths = iterator_to_array($resource);
-        $file = $dir . DIRECTORY_SEPARATOR . 'Resource' . DIRECTORY_SEPARATOR . 'ConditionalClass.php';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/**/Resource', \true);
+        $paths = \iterator_to_array($resource);
+        $file = $dir . \DIRECTORY_SEPARATOR . 'Resource' . \DIRECTORY_SEPARATOR . 'ConditionalClass.php';
         $this->assertEquals([$file => $file], $paths);
-        $this->assertInstanceOf('SplFileInfo', current($paths));
+        $this->assertInstanceOf('SplFileInfo', \current($paths));
         $this->assertSame($dir, $resource->getPrefix());
     }
     public function testIsFreshNonRecursiveDetectsNewFile()
     {
-        $dir = dirname(__DIR__) . '/Fixtures';
-        $resource = new GlobResource($dir, '/*', false);
+        $dir = \dirname(__DIR__) . '/Fixtures';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
         $this->assertTrue($resource->isFresh(0));
-        mkdir($dir . '/TmpGlob');
+        \mkdir($dir . '/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        rmdir($dir . '/TmpGlob');
+        \rmdir($dir . '/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        touch($dir . '/TmpGlob');
+        \touch($dir . '/TmpGlob');
         $this->assertFalse($resource->isFresh(0));
-        unlink($dir . '/TmpGlob');
+        \unlink($dir . '/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
     }
     public function testIsFreshNonRecursiveDetectsRemovedFile()
     {
-        $dir = dirname(__DIR__) . '/Fixtures';
-        $resource = new GlobResource($dir, '/*', false);
-        touch($dir . '/TmpGlob');
-        touch($dir . '/.TmpGlob');
+        $dir = \dirname(__DIR__) . '/Fixtures';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
+        \touch($dir . '/TmpGlob');
+        \touch($dir . '/.TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        unlink($dir . '/.TmpGlob');
+        \unlink($dir . '/.TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        unlink($dir . '/TmpGlob');
+        \unlink($dir . '/TmpGlob');
         $this->assertFalse($resource->isFresh(0));
     }
     public function testIsFreshRecursiveDetectsRemovedFile()
     {
-        $dir = dirname(__DIR__) . '/Fixtures';
-        $resource = new GlobResource($dir, '/*', true);
-        touch($dir . '/Resource/TmpGlob');
+        $dir = \dirname(__DIR__) . '/Fixtures';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
+        \touch($dir . '/Resource/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        unlink($dir . '/Resource/TmpGlob');
+        \unlink($dir . '/Resource/TmpGlob');
         $this->assertFalse($resource->isFresh(0));
-        touch($dir . '/Resource/TmpGlob');
+        \touch($dir . '/Resource/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
-        unlink($dir . '/Resource/.hiddenFile');
+        \unlink($dir . '/Resource/.hiddenFile');
         $this->assertTrue($resource->isFresh(0));
     }
     public function testIsFreshRecursiveDetectsNewFile()
     {
-        $dir = dirname(__DIR__) . '/Fixtures';
-        $resource = new GlobResource($dir, '/*', true);
+        $dir = \dirname(__DIR__) . '/Fixtures';
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
         $this->assertTrue($resource->isFresh(0));
-        touch($dir . '/Resource/TmpGlob');
+        \touch($dir . '/Resource/TmpGlob');
         $this->assertFalse($resource->isFresh(0));
     }
 }

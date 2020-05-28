@@ -1,10 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 // Don't redefine the functions if included multiple times.
-use function function_exists;
-
-if (!function_exists('_PhpScoper5ea00cc67502b\\GuzzleHttp\\Promise\\promise_for')) {
+if (!\function_exists('_PhpScoper5ece82d7231e4\\GuzzleHttp\\Promise\\promise_for')) {
     require __DIR__ . '/functions.php';
 }

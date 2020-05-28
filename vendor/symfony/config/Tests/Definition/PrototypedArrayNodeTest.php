@@ -8,26 +8,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\PrototypedArrayNode;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\VariableNode;
-class PrototypedArrayNodeTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\VariableNode;
+class PrototypedArrayNodeTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testGetDefaultValueReturnsAnEmptyArrayForPrototypes()
     {
-        $node = new PrototypedArrayNode('root');
-        $prototype = new ArrayNode(null, $node);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
         $node->setPrototype($prototype);
         $this->assertEmpty($node->getDefaultValue());
     }
     public function testGetDefaultValueReturnsDefaultValueForPrototypes()
     {
-        $node = new PrototypedArrayNode('root');
-        $prototype = new ArrayNode(null, $node);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
         $node->setPrototype($prototype);
         $node->setDefaultValue(['test']);
         $this->assertEquals(['test'], $node->getDefaultValue());
@@ -35,11 +35,11 @@ class PrototypedArrayNodeTest extends TestCase
     // a remapped key (e.g. "mapping" -> "mappings") should be unset after being used
     public function testRemappedKeysAreUnset()
     {
-        $node = new ArrayNode('root');
-        $mappingsNode = new PrototypedArrayNode('mappings');
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode('root');
+        $mappingsNode = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('mappings');
         $node->addChild($mappingsNode);
         // each item under mappings is just a scalar
-        $prototype = new ScalarNode(null, $mappingsNode);
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode(null, $mappingsNode);
         $mappingsNode->setPrototype($prototype);
         $remappings = [];
         $remappings[] = ['mapping', 'mappings'];
@@ -67,11 +67,11 @@ class PrototypedArrayNodeTest extends TestCase
      */
     public function testMappedAttributeKeyIsRemoved()
     {
-        $node = new PrototypedArrayNode('root');
-        $node->setKeyAttribute('id', true);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $node->setKeyAttribute('id', \true);
         // each item under the root is an array, with one scalar item
-        $prototype = new ArrayNode(null, $node);
-        $prototype->addChild(new ScalarNode('foo'));
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
+        $prototype->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('foo'));
         $node->setPrototype($prototype);
         $children = [];
         $children[] = ['id' => 'item_name', 'foo' => 'bar'];
@@ -86,12 +86,12 @@ class PrototypedArrayNodeTest extends TestCase
      */
     public function testMappedAttributeKeyNotRemoved()
     {
-        $node = new PrototypedArrayNode('root');
-        $node->setKeyAttribute('id', false);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $node->setKeyAttribute('id', \false);
         // each item under the root is an array, with two scalar items
-        $prototype = new ArrayNode(null, $node);
-        $prototype->addChild(new ScalarNode('foo'));
-        $prototype->addChild(new ScalarNode('id'));
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
+        $prototype->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('foo'));
+        $prototype->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('id'));
         // the key attribute will remain
         $node->setPrototype($prototype);
         $children = [];
@@ -146,12 +146,12 @@ class PrototypedArrayNodeTest extends TestCase
     }
     protected function getPrototypeNodeWithDefaultChildren()
     {
-        $node = new PrototypedArrayNode('root');
-        $prototype = new ArrayNode(null, $node);
-        $child = new ScalarNode('foo');
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
+        $child = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('foo');
         $child->setDefaultValue('bar');
         $prototype->addChild($child);
-        $prototype->setAddIfNotSet(true);
+        $prototype->setAddIfNotSet(\true);
         $node->setPrototype($prototype);
         return $node;
     }
@@ -241,12 +241,12 @@ class PrototypedArrayNodeTest extends TestCase
      */
     public function testMappedAttributeKeyIsRemovedLeftValueOnly($value, $children, $expected)
     {
-        $node = new PrototypedArrayNode('root');
-        $node->setKeyAttribute('id', true);
+        $node = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\PrototypedArrayNode('root');
+        $node->setKeyAttribute('id', \true);
         // each item under the root is an array, with one scalar item
-        $prototype = new ArrayNode(null, $node);
-        $prototype->addChild(new ScalarNode('id'));
-        $prototype->addChild(new ScalarNode('foo'));
+        $prototype = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode(null, $node);
+        $prototype->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('id'));
+        $prototype->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('foo'));
         $prototype->addChild($value);
         $node->setPrototype($prototype);
         $normalized = $node->normalize($children);
@@ -254,11 +254,11 @@ class PrototypedArrayNodeTest extends TestCase
     }
     public function getDataForKeyRemovedLeftValueOnly()
     {
-        $scalarValue = new ScalarNode('value');
-        $arrayValue = new ArrayNode('value');
-        $arrayValue->addChild(new ScalarNode('foo'));
-        $arrayValue->addChild(new ScalarNode('bar'));
-        $variableValue = new VariableNode('value');
+        $scalarValue = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('value');
+        $arrayValue = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ArrayNode('value');
+        $arrayValue->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('foo'));
+        $arrayValue->addChild(new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\ScalarNode('bar'));
+        $variableValue = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\VariableNode('value');
         return [[$scalarValue, [['id' => 'option1', 'value' => 'value1']], ['option1' => 'value1']], [$scalarValue, [['id' => 'option1', 'value' => 'value1'], ['id' => 'option2', 'value' => 'value2', 'foo' => 'foo2']], ['option1' => 'value1', 'option2' => ['value' => 'value2', 'foo' => 'foo2']]], [$arrayValue, [['id' => 'option1', 'value' => ['foo' => 'foo1', 'bar' => 'bar1']]], ['option1' => ['foo' => 'foo1', 'bar' => 'bar1']]], [$variableValue, [['id' => 'option1', 'value' => ['foo' => 'foo1', 'bar' => 'bar1']], ['id' => 'option2', 'value' => 'value2']], ['option1' => ['foo' => 'foo1', 'bar' => 'bar1'], 'option2' => 'value2']]];
     }
 }

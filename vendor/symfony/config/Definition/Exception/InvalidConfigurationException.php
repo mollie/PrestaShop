@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception;
 
 /**
  * A very general exception which can be thrown whenever non of the more specific
@@ -16,10 +16,10 @@ namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class InvalidConfigurationException extends Exception
+class InvalidConfigurationException extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\Exception
 {
     private $path;
-    private $containsHints = false;
+    private $containsHints = \false;
     public function setPath($path)
     {
         $this->path = $path;
@@ -37,7 +37,7 @@ class InvalidConfigurationException extends Exception
     {
         if (!$this->containsHints) {
             $this->message .= "\nHint: " . $hint;
-            $this->containsHints = true;
+            $this->containsHints = \true;
         } else {
             $this->message .= ', ' . $hint;
         }

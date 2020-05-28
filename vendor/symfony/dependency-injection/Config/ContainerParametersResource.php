@@ -8,20 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
-use Serializable;
-use function md5;
-use function serialize;
-use function unserialize;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ResourceInterface;
 /**
  * Tracks container parameters.
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class ContainerParametersResource implements ResourceInterface, Serializable
+class ContainerParametersResource implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ResourceInterface, \Serializable
 {
     private $parameters;
     /**
@@ -36,21 +31,21 @@ class ContainerParametersResource implements ResourceInterface, Serializable
      */
     public function __toString()
     {
-        return 'container_parameters_' . md5(serialize($this->parameters));
+        return 'container_parameters_' . \md5(\serialize($this->parameters));
     }
     /**
      * @internal
      */
     public function serialize()
     {
-        return serialize($this->parameters);
+        return \serialize($this->parameters);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        $this->parameters = unserialize($serialized);
+        $this->parameters = \unserialize($serialized);
     }
     /**
      * @return array Tracked parameters

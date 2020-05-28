@@ -1,14 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\OrderLineStatus;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\OrderLineType;
-use stdClass;
-use function json_encode;
-
-class OrderLine extends BaseResource
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType;
+class OrderLine extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * Always 'orderline'
@@ -64,19 +61,19 @@ class OrderLine extends BaseResource
     /**
      * The price of a single item in the order line.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $unitPrice;
     /**
      * Any discounts applied to the order line.
      *
-     * @var stdClass|null
+     * @var \stdClass|null
      */
     public $discountAmount;
     /**
      * The total amount of the line, including VAT and discounts.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $totalAmount;
     /**
@@ -91,7 +88,7 @@ class OrderLine extends BaseResource
     /**
      * The amount of value-added tax on the line.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $vatAmount;
     /**
@@ -113,6 +110,13 @@ class OrderLine extends BaseResource
      */
     public $productUrl;
     /**
+     * During creation of the order you can set custom metadata on order lines that is stored with
+     * the order, and given back whenever you retrieve that order line.
+     *
+     * @var \stdClass|mixed|null
+     */
+    public $metadata;
+    /**
      * The order line's date and time of creation, in ISO 8601 format.
      *
      * @example 2018-08-02T09:29:56+00:00
@@ -120,7 +124,7 @@ class OrderLine extends BaseResource
      */
     public $createdAt;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
@@ -130,7 +134,7 @@ class OrderLine extends BaseResource
      */
     public function isCreated()
     {
-        return $this->status === OrderLineStatus::STATUS_CREATED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_CREATED;
     }
     /**
      * Is this order line paid for?
@@ -139,7 +143,7 @@ class OrderLine extends BaseResource
      */
     public function isPaid()
     {
-        return $this->status === OrderLineStatus::STATUS_PAID;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_PAID;
     }
     /**
      * Is this order line authorized?
@@ -148,7 +152,7 @@ class OrderLine extends BaseResource
      */
     public function isAuthorized()
     {
-        return $this->status === OrderLineStatus::STATUS_AUTHORIZED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_AUTHORIZED;
     }
     /**
      * Is this order line canceled?
@@ -157,7 +161,7 @@ class OrderLine extends BaseResource
      */
     public function isCanceled()
     {
-        return $this->status === OrderLineStatus::STATUS_CANCELED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_CANCELED;
     }
     /**
      * (Deprecated) Is this order line refunded?
@@ -167,7 +171,7 @@ class OrderLine extends BaseResource
      */
     public function isRefunded()
     {
-        return $this->status === OrderLineStatus::STATUS_REFUNDED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_REFUNDED;
     }
     /**
      * Is this order line shipping?
@@ -176,7 +180,7 @@ class OrderLine extends BaseResource
      */
     public function isShipping()
     {
-        return $this->status === OrderLineStatus::STATUS_SHIPPING;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_SHIPPING;
     }
     /**
      * Is this order line completed?
@@ -185,7 +189,7 @@ class OrderLine extends BaseResource
      */
     public function isCompleted()
     {
-        return $this->status === OrderLineStatus::STATUS_COMPLETED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineStatus::STATUS_COMPLETED;
     }
     /**
      * Is this order line for a physical product?
@@ -194,7 +198,7 @@ class OrderLine extends BaseResource
      */
     public function isPhysical()
     {
-        return $this->type === OrderLineType::TYPE_PHYSICAL;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_PHYSICAL;
     }
     /**
      * Is this order line for applying a discount?
@@ -203,7 +207,7 @@ class OrderLine extends BaseResource
      */
     public function isDiscount()
     {
-        return $this->type === OrderLineType::TYPE_DISCOUNT;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_DISCOUNT;
     }
     /**
      * Is this order line for a digital product?
@@ -212,7 +216,7 @@ class OrderLine extends BaseResource
      */
     public function isDigital()
     {
-        return $this->type === OrderLineType::TYPE_DIGITAL;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_DIGITAL;
     }
     /**
      * Is this order line for applying a shipping fee?
@@ -221,7 +225,7 @@ class OrderLine extends BaseResource
      */
     public function isShippingFee()
     {
-        return $this->type === OrderLineType::TYPE_SHIPPING_FEE;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_SHIPPING_FEE;
     }
     /**
      * Is this order line for store credit?
@@ -230,7 +234,7 @@ class OrderLine extends BaseResource
      */
     public function isStoreCredit()
     {
-        return $this->type === OrderLineType::TYPE_STORE_CREDIT;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_STORE_CREDIT;
     }
     /**
      * Is this order line for a gift card?
@@ -239,7 +243,7 @@ class OrderLine extends BaseResource
      */
     public function isGiftCard()
     {
-        return $this->type === OrderLineType::TYPE_GIFT_CARD;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_GIFT_CARD;
     }
     /**
      * Is this order line for a surcharge?
@@ -248,13 +252,13 @@ class OrderLine extends BaseResource
      */
     public function isSurcharge()
     {
-        return $this->type === OrderLineType::TYPE_SURCHARGE;
+        return $this->type === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderLineType::TYPE_SURCHARGE;
     }
     public function update()
     {
-        $body = json_encode(array("name" => $this->name, 'imageUrl' => $this->imageUrl, 'productUrl' => $this->productUrl, 'quantity' => $this->quantity, 'unitPrice' => $this->unitPrice, 'discountAmount' => $this->discountAmount, 'totalAmount' => $this->totalAmount, 'vatAmount' => $this->vatAmount, 'vatRate' => $this->vatRate));
+        $body = \json_encode(array("name" => $this->name, 'imageUrl' => $this->imageUrl, 'productUrl' => $this->productUrl, 'quantity' => $this->quantity, 'unitPrice' => $this->unitPrice, 'discountAmount' => $this->discountAmount, 'totalAmount' => $this->totalAmount, 'vatAmount' => $this->vatAmount, 'vatRate' => $this->vatRate));
         $url = "orders/{$this->orderId}/lines/{$this->id}";
-        $result = $this->client->performHttpCall(MollieApiClient::HTTP_PATCH, $url, $body);
-        return ResourceFactory::createFromApiResult($result, new Order($this->client));
+        $result = $this->client->performHttpCall(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_PATCH, $url, $body);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order($this->client));
     }
 }

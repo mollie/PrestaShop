@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\NullAdapter;
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\NullAdapter;
 /**
  * @group time-sensitive
  */
-class NullAdapterTest extends TestCase
+class NullAdapterTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function createCachePool()
     {
-        return new NullAdapter();
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\NullAdapter();
     }
     public function testGetItem()
     {

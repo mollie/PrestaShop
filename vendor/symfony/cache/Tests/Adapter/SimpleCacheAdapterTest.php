@@ -8,24 +8,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\SimpleCacheAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\ArrayCache;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\FilesystemCache;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\SimpleCacheAdapter;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\ArrayCache;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\FilesystemCache;
 /**
  * @group time-sensitive
  */
-class SimpleCacheAdapterTest extends AdapterTestCase
+class SimpleCacheAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testPrune' => 'SimpleCache just proxies'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new SimpleCacheAdapter(new FilesystemCache(), '', $defaultLifetime);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\SimpleCacheAdapter(new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\FilesystemCache(), '', $defaultLifetime);
     }
     public function testValidCacheKeyWithNamespace()
     {
-        $cache = new SimpleCacheAdapter(new ArrayCache(), 'some_namespace', 0);
+        $cache = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\SimpleCacheAdapter(new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\ArrayCache(), 'some_namespace', 0);
         $item = $cache->getItem('my_key');
         $item->set('someValue');
         $cache->save($item);

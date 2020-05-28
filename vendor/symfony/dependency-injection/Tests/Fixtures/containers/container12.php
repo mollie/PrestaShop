@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-$container = new ContainerBuilder();
-$container->register('foo', '_PhpScoper5ea00cc67502b\\FooClass\\Foo')->addArgument('foo<>&bar')->addTag('_PhpScoper5ea00cc67502b\\foo"bar\\bar', ['foo' => 'foo"barřž€'])->setPublic(true);
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+$container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+$container->register('foo', '_PhpScoper5ece82d7231e4\\FooClass\\Foo')->addArgument('foo<>&bar')->addTag('_PhpScoper5ece82d7231e4\\foo"bar\\bar', ['foo' => 'foo"barřž€'])->setPublic(\true);
 return $container;

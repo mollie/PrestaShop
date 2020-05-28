@@ -8,16 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
-
-use function microtime;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
 /**
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-class TraceableTagAwareAdapter extends TraceableAdapter implements TagAwareAdapterInterface
+class TraceableTagAwareAdapter extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\TraceableAdapter implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\TagAwareAdapterInterface
 {
-    public function __construct(TagAwareAdapterInterface $pool)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $pool)
     {
         parent::__construct($pool);
     }
@@ -30,7 +28,7 @@ class TraceableTagAwareAdapter extends TraceableAdapter implements TagAwareAdapt
         try {
             return $event->result = $this->pool->invalidateTags($tags);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
 }

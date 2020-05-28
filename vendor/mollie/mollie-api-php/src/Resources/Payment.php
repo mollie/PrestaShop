@@ -1,18 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\SequenceType;
-use stdClass;
-use function array_merge;
-use function count;
-use function json_encode;
-use function urlencode;
-
-class Payment extends BaseResource
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\SequenceType;
+class Payment extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -34,20 +28,20 @@ class Payment extends BaseResource
     /**
      * Amount object containing the value and currency
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $amount;
     /**
      * The amount that has been settled containing the value and currency
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $settlementAmount;
     /**
      * The amount of the payment that has been refunded to the consumer, in EURO with
      * 2 decimals. This field will be null if the payment can not be refunded.
      *
-     * @var stdClass|null
+     * @var \stdClass|null
      */
     public $amountRefunded;
     /**
@@ -58,7 +52,7 @@ class Payment extends BaseResource
      * This is possible to reimburse the costs for a return shipment to your customer
      * for example.
      *
-     * @var stdClass|null
+     * @var \stdClass|null
      */
     public $amountRemaining;
     /**
@@ -81,7 +75,7 @@ class Payment extends BaseResource
      *
      * @var string
      */
-    public $status = PaymentStatus::STATUS_OPEN;
+    public $status = \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_OPEN;
     /**
      * UTC datetime the payment was created in ISO-8601 format.
      *
@@ -178,14 +172,14 @@ class Payment extends BaseResource
      * During creation of the payment you can set custom metadata that is stored with
      * the payment, and given back whenever you retrieve that payment.
      *
-     * @var stdClass|mixed|null
+     * @var \stdClass|mixed|null
      */
     public $metadata;
     /**
      * Details of a successfully paid payment are set here. For example, the iDEAL
      * payment method will set $details->consumerName and $details->consumerAccount.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $details;
     /**
@@ -195,11 +189,11 @@ class Payment extends BaseResource
      */
     public $restrictPaymentMethodsToCountry;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
-     * @var stdClass[]
+     * @var \stdClass[]
      */
     public $_embedded;
     /**
@@ -212,14 +206,14 @@ class Payment extends BaseResource
      * The total amount that is already captured for this payment. Only available
      * when this payment supports captures.
      *
-     * @var stdClass|null
+     * @var \stdClass|null
      */
     public $amountCaptured;
     /**
      * The application fee, if the payment was created with one. Contains amount
      * (the value and currency) and description.
      *
-     * @var stdClass|null
+     * @var \stdClass|null
      */
     public $applicationFeeAmount;
     /**
@@ -261,7 +255,7 @@ class Payment extends BaseResource
      */
     public function isCanceled()
     {
-        return $this->status === PaymentStatus::STATUS_CANCELED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_CANCELED;
     }
     /**
      * Is this payment expired?
@@ -270,7 +264,7 @@ class Payment extends BaseResource
      */
     public function isExpired()
     {
-        return $this->status === PaymentStatus::STATUS_EXPIRED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_EXPIRED;
     }
     /**
      * Is this payment still open / ongoing?
@@ -279,7 +273,7 @@ class Payment extends BaseResource
      */
     public function isOpen()
     {
-        return $this->status === PaymentStatus::STATUS_OPEN;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_OPEN;
     }
     /**
      * Is this payment pending?
@@ -288,7 +282,7 @@ class Payment extends BaseResource
      */
     public function isPending()
     {
-        return $this->status === PaymentStatus::STATUS_PENDING;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_PENDING;
     }
     /**
      * Is this payment authorized?
@@ -297,7 +291,7 @@ class Payment extends BaseResource
      */
     public function isAuthorized()
     {
-        return $this->status === PaymentStatus::STATUS_AUTHORIZED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED;
     }
     /**
      * Is this payment paid for?
@@ -333,7 +327,7 @@ class Payment extends BaseResource
      */
     public function isFailed()
     {
-        return $this->status === PaymentStatus::STATUS_FAILED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_FAILED;
     }
     /**
      * Check whether 'sequenceType' is set to 'first'. If a 'first' payment has been
@@ -344,7 +338,7 @@ class Payment extends BaseResource
      */
     public function hasSequenceTypeFirst()
     {
-        return $this->sequenceType === SequenceType::SEQUENCETYPE_FIRST;
+        return $this->sequenceType === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST;
     }
     /**
      * Check whether 'sequenceType' is set to 'recurring'. This type of payment is
@@ -355,7 +349,7 @@ class Payment extends BaseResource
      */
     public function hasSequenceTypeRecurring()
     {
-        return $this->sequenceType === SequenceType::SEQUENCETYPE_RECURRING;
+        return $this->sequenceType === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING;
     }
     /**
      * Get the checkout URL where the customer can complete the payment.
@@ -418,10 +412,10 @@ class Payment extends BaseResource
     public function refunds()
     {
         if (!isset($this->_links->refunds->href)) {
-            return new RefundCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->refunds->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, Refund::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->refunds->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund::class, $result->_links);
     }
     /**
      * @param string $refundId
@@ -442,10 +436,10 @@ class Payment extends BaseResource
     public function captures()
     {
         if (!isset($this->_links->captures->href)) {
-            return new CaptureCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CaptureCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->captures->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->captures, Capture::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->captures->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->captures, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Capture::class, $result->_links);
     }
     /**
      * @param string $captureId
@@ -466,10 +460,10 @@ class Payment extends BaseResource
     public function chargebacks()
     {
         if (!isset($this->_links->chargebacks->href)) {
-            return new ChargebackCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ChargebackCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, Chargeback::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->chargebacks->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->chargebacks, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Chargeback::class, $result->_links);
     }
     /**
      * Retrieves a specific chargeback for this payment.
@@ -493,23 +487,23 @@ class Payment extends BaseResource
      */
     public function refund($data)
     {
-        $resource = "payments/" . urlencode($this->id) . "/refunds";
+        $resource = "payments/" . \urlencode($this->id) . "/refunds";
         $data = $this->withPresetOptions($data);
         $body = null;
-        if (count($data) > 0) {
-            $body = json_encode($data);
+        if (\count($data) > 0) {
+            $body = \json_encode($data);
         }
-        $result = $this->client->performHttpCall(MollieApiClient::HTTP_POST, $resource, $body);
-        return ResourceFactory::createFromApiResult($result, new Refund($this->client));
+        $result = $this->client->performHttpCall(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_POST, $resource, $body);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund($this->client));
     }
     public function update()
     {
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = json_encode(["description" => $this->description, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl, "metadata" => $this->metadata, "restrictPaymentMethodsToCountry" => $this->restrictPaymentMethodsToCountry]);
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return ResourceFactory::createFromApiResult($result, new Payment($this->client));
+        $body = \json_encode(["description" => $this->description, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl, "metadata" => $this->metadata, "restrictPaymentMethodsToCountry" => $this->restrictPaymentMethodsToCountry]);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment($this->client));
     }
     /**
      * When accessed by oAuth we want to pass the testmode by default
@@ -520,7 +514,7 @@ class Payment extends BaseResource
     {
         $options = [];
         if ($this->client->usesOAuth()) {
-            $options["testmode"] = $this->mode === "test" ? true : false;
+            $options["testmode"] = $this->mode === "test" ? \true : \false;
         }
         return $options;
     }
@@ -532,7 +526,7 @@ class Payment extends BaseResource
      */
     private function withPresetOptions(array $options)
     {
-        return array_merge($this->getPresetOptions(), $options);
+        return \array_merge($this->getPresetOptions(), $options);
     }
     /**
      * The total amount that is already captured for this payment. Only available

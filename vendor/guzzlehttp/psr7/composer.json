@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\GuzzleHttp\\Psr7\\": "src\/"
+            "_PhpScoper5ece82d7231e4\\GuzzleHttp\\Psr7\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
@@ -49,7 +49,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\GuzzleHttp\\Tests\\Psr7\\": "tests\/"
+            "_PhpScoper5ece82d7231e4\\GuzzleHttp\\Tests\\Psr7\\": "tests\/"
         }
     },
     "extra": {

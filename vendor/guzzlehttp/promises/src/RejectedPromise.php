@@ -1,12 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
-
-use Exception;
-use InvalidArgumentException;
-use LogicException;
-use Throwable;
-use function method_exists;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Promise;
 
 /**
  * A promise that has been rejected.
@@ -14,13 +8,13 @@ use function method_exists;
  * Thenning off of this promise will invoke the onRejected callback
  * immediately and ignore other callbacks.
  */
-class RejectedPromise implements PromiseInterface
+class RejectedPromise implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface
 {
     private $reason;
     public function __construct($reason)
     {
-        if (method_exists($reason, 'then')) {
-            throw new InvalidArgumentException('You cannot create a RejectedPromise with a promise.');
+        if (\method_exists($reason, 'then')) {
+            throw new \InvalidArgumentException('You cannot create a RejectedPromise with a promise.');
         }
         $this->reason = $reason;
     }
@@ -32,16 +26,16 @@ class RejectedPromise implements PromiseInterface
         }
         $queue = queue();
         $reason = $this->reason;
-        $p = new Promise([$queue, 'run']);
+        $p = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\Promise([$queue, 'run']);
         $queue->add(static function () use($p, $reason, $onRejected) {
             if ($p->getState() === self::PENDING) {
                 try {
                     // Return a resolved promise if onRejected does not throw.
                     $p->resolve($onRejected($reason));
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     // onRejected threw, so return a rejected promise.
                     $p->reject($e);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // onRejected threw, so return a rejected promise.
                     $p->reject($e);
                 }
@@ -53,7 +47,7 @@ class RejectedPromise implements PromiseInterface
     {
         return $this->then(null, $onRejected);
     }
-    public function wait($unwrap = true, $defaultDelivery = null)
+    public function wait($unwrap = \true, $defaultDelivery = null)
     {
         if ($unwrap) {
             throw exception_for($this->reason);
@@ -65,12 +59,12 @@ class RejectedPromise implements PromiseInterface
     }
     public function resolve($value)
     {
-        throw new LogicException("Cannot resolve a rejected promise");
+        throw new \LogicException("Cannot resolve a rejected promise");
     }
     public function reject($reason)
     {
         if ($reason !== $this->reason) {
-            throw new LogicException("Cannot reject a rejected promise");
+            throw new \LogicException("Cannot reject a rejected promise");
         }
     }
     public function cancel()

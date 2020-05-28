@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * Handle an order status change using the Mollie API.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -25,7 +21,7 @@ try {
     /*
      * Update the order in the database.
      */
-    database_write($orderId, $order->status);
+    \_PhpScoper5ece82d7231e4\database_write($orderId, $order->status);
     if ($order->isPaid() || $order->isAuthorized()) {
         /*
          * The order is paid or authorized
@@ -48,6 +44,6 @@ try {
          * The order is pending.
          */
     }
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

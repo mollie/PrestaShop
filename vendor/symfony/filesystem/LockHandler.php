@@ -8,31 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception\IOException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Lock\Store\FlockStore;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Lock\Store\SemaphoreStore;
-use function chmod;
-use function fclose;
-use function flock;
-use function fopen;
-use function hash;
-use function is_dir;
-use function is_writable;
-use function preg_replace;
-use function restore_error_handler;
-use function set_error_handler;
-use function sprintf;
-use function sys_get_temp_dir;
-use function trigger_error;
-use function usleep;
-use const E_USER_DEPRECATED;
-use const LOCK_EX;
-use const LOCK_NB;
-use const LOCK_UN;
-
-@trigger_error(sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use %s or %s instead.', LockHandler::class, SemaphoreStore::class, FlockStore::class), E_USER_DEPRECATED);
+use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Lock\Store\FlockStore;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Lock\Store\SemaphoreStore;
+@\trigger_error(\sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use %s or %s instead.', \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler::class, \_PhpScoper5ece82d7231e4\Symfony\Component\Lock\Store\SemaphoreStore::class, \_PhpScoper5ece82d7231e4\Symfony\Component\Lock\Store\FlockStore::class), \E_USER_DEPRECATED);
 /**
  * LockHandler class provides a simple abstraction to lock anything by means of
  * a file lock.
@@ -60,15 +41,15 @@ class LockHandler
      */
     public function __construct($name, $lockPath = null)
     {
-        $lockPath = $lockPath ?: sys_get_temp_dir();
-        if (!is_dir($lockPath)) {
-            $fs = new Filesystem();
+        $lockPath = $lockPath ?: \sys_get_temp_dir();
+        if (!\is_dir($lockPath)) {
+            $fs = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Filesystem();
             $fs->mkdir($lockPath);
         }
-        if (!is_writable($lockPath)) {
-            throw new IOException(sprintf('The directory "%s" is not writable.', $lockPath), 0, null, $lockPath);
+        if (!\is_writable($lockPath)) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException(\sprintf('The directory "%s" is not writable.', $lockPath), 0, null, $lockPath);
         }
-        $this->file = sprintf('%s/sf.%s.%s.lock', $lockPath, preg_replace('/[^a-z0-9\\._-]+/i', '-', $name), hash('sha256', $name));
+        $this->file = \sprintf('%s/sf.%s.%s.lock', $lockPath, \preg_replace('/[^a-z0-9\\._-]+/i', '-', $name), \hash('sha256', $name));
     }
     /**
      * Lock the resource.
@@ -79,37 +60,37 @@ class LockHandler
      *
      * @throws IOException If the lock file could not be created or opened
      */
-    public function lock($blocking = false)
+    public function lock($blocking = \false)
     {
         if ($this->handle) {
-            return true;
+            return \true;
         }
         $error = null;
         // Silence error reporting
-        set_error_handler(function ($errno, $msg) use(&$error) {
+        \set_error_handler(function ($errno, $msg) use(&$error) {
             $error = $msg;
         });
-        if (!($this->handle = fopen($this->file, 'r+') ?: fopen($this->file, 'r'))) {
-            if ($this->handle = fopen($this->file, 'x')) {
-                chmod($this->file, 0666);
-            } elseif (!($this->handle = fopen($this->file, 'r+') ?: fopen($this->file, 'r'))) {
-                usleep(100);
+        if (!($this->handle = \fopen($this->file, 'r+') ?: \fopen($this->file, 'r'))) {
+            if ($this->handle = \fopen($this->file, 'x')) {
+                \chmod($this->file, 0666);
+            } elseif (!($this->handle = \fopen($this->file, 'r+') ?: \fopen($this->file, 'r'))) {
+                \usleep(100);
                 // Give some time for chmod() to complete
-                $this->handle = fopen($this->file, 'r+') ?: fopen($this->file, 'r');
+                $this->handle = \fopen($this->file, 'r+') ?: \fopen($this->file, 'r');
             }
         }
-        restore_error_handler();
+        \restore_error_handler();
         if (!$this->handle) {
-            throw new IOException($error, 0, null, $this->file);
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException($error, 0, null, $this->file);
         }
         // On Windows, even if PHP doc says the contrary, LOCK_NB works, see
         // https://bugs.php.net/54129
-        if (!flock($this->handle, LOCK_EX | ($blocking ? 0 : LOCK_NB))) {
-            fclose($this->handle);
+        if (!\flock($this->handle, \LOCK_EX | ($blocking ? 0 : \LOCK_NB))) {
+            \fclose($this->handle);
             $this->handle = null;
-            return false;
+            return \false;
         }
-        return true;
+        return \true;
     }
     /**
      * Release the resource.
@@ -117,8 +98,8 @@ class LockHandler
     public function release()
     {
         if ($this->handle) {
-            flock($this->handle, LOCK_UN | LOCK_NB);
-            fclose($this->handle);
+            \flock($this->handle, \LOCK_UN | \LOCK_NB);
+            \fclose($this->handle);
             $this->handle = null;
         }
     }

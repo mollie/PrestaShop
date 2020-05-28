@@ -8,25 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Config;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Config;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
-use ReflectionClass;
-use function file_exists;
-use function realpath;
-use function serialize;
-use function sys_get_temp_dir;
-use function time;
-use function touch;
-use function unlink;
-use function unserialize;
-
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
 /**
  * @group legacy
  */
-class AutowireServiceResourceTest extends TestCase
+class AutowireServiceResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     /**
      * @var AutowireServiceResource
@@ -37,11 +27,11 @@ class AutowireServiceResourceTest extends TestCase
     private $time;
     protected function setUp()
     {
-        $this->file = realpath(sys_get_temp_dir()) . '/tmp.php';
-        $this->time = time();
-        touch($this->file, $this->time);
-        $this->class = Foo::class;
-        $this->resource = new AutowireServiceResource($this->class, $this->file, []);
+        $this->file = \realpath(\sys_get_temp_dir()) . '/tmp.php';
+        $this->time = \time();
+        \touch($this->file, $this->time);
+        $this->class = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Config\Foo::class;
+        $this->resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, []);
     }
     public function testToString()
     {
@@ -49,7 +39,7 @@ class AutowireServiceResourceTest extends TestCase
     }
     public function testSerializeUnserialize()
     {
-        $unserialized = unserialize(serialize($this->resource));
+        $unserialized = \unserialize(\serialize($this->resource));
         $this->assertEquals($this->resource, $unserialized);
     }
     public function testIsFresh()
@@ -60,32 +50,32 @@ class AutowireServiceResourceTest extends TestCase
     }
     public function testIsFreshForDeletedResources()
     {
-        unlink($this->file);
+        \unlink($this->file);
         $this->assertFalse($this->resource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the resource does not exist');
     }
     public function testIsNotFreshChangedResource()
     {
-        $oldResource = new AutowireServiceResource($this->class, $this->file, ['will_be_different']);
+        $oldResource = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, ['will_be_different']);
         // test with a stale file *and* a resource that *will* be different than the actual
         $this->assertFalse($oldResource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the constructor arguments have changed');
     }
     public function testIsFreshSameConstructorArgs()
     {
-        $oldResource = AutowirePass::createResourceForClass(new ReflectionClass(Foo::class));
+        $oldResource = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AutowirePass::createResourceForClass(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Config\Foo::class));
         // test with a stale file *but* the resource will not be changed
         $this->assertTrue($oldResource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the constructor arguments have changed');
     }
     public function testNotFreshIfClassNotFound()
     {
-        $resource = new AutowireServiceResource('_PhpScoper5ea00cc67502b\\Some\\Non\\Existent\\Class', $this->file, []);
+        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\AutowireServiceResource('_PhpScoper5ece82d7231e4\\Some\\Non\\Existent\\Class', $this->file, []);
         $this->assertFalse($resource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the class no longer exists');
     }
     protected function tearDown()
     {
-        if (!file_exists($this->file)) {
+        if (!\file_exists($this->file)) {
             return;
         }
-        unlink($this->file);
+        \unlink($this->file);
     }
     private function getStaleFileTime()
     {

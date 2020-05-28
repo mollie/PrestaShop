@@ -8,14 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use function array_pop;
-use function array_search;
-use function array_slice;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 /**
  * Checks your services for circular references.
  *
@@ -26,14 +22,14 @@ use function array_slice;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class CheckCircularReferencesPass implements CompilerPassInterface
+class CheckCircularReferencesPass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     private $currentPath;
     private $checkedNodes;
     /**
      * Checks the ContainerBuilder object for circular references.
      */
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $graph = $container->getCompiler()->getServiceReferenceGraph();
         $this->checkedNodes = [];
@@ -57,15 +53,15 @@ class CheckCircularReferencesPass implements CompilerPassInterface
             if (empty($this->checkedNodes[$id])) {
                 // Don't check circular references for lazy edges
                 if (!$node->getValue() || !$edge->isLazy() && !$edge->isWeak()) {
-                    $searchKey = array_search($id, $this->currentPath);
+                    $searchKey = \array_search($id, $this->currentPath);
                     $this->currentPath[] = $id;
-                    if (false !== $searchKey) {
-                        throw new ServiceCircularReferenceException($id, array_slice($this->currentPath, $searchKey));
+                    if (\false !== $searchKey) {
+                        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, \array_slice($this->currentPath, $searchKey));
                     }
                     $this->checkOutEdges($node->getOutEdges());
                 }
-                $this->checkedNodes[$id] = true;
-                array_pop($this->currentPath);
+                $this->checkedNodes[$id] = \true;
+                \array_pop($this->currentPath);
             }
         }
     }

@@ -8,30 +8,27 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\PhpFilesCache;
-use ReflectionObject;
-use function file_exists;
-
+use _PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\PhpFilesCache;
 /**
  * @group time-sensitive
  */
-class PhpFilesCacheTest extends CacheTestCase
+class PhpFilesCacheTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     protected $skippedTests = ['testDefaultLifeTime' => 'PhpFilesCache does not allow configuring a default lifetime.'];
     public function createSimpleCache()
     {
-        if (!PhpFilesCache::isSupported()) {
+        if (!\_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\PhpFilesCache::isSupported()) {
             $this->markTestSkipped('OPcache extension is not enabled.');
         }
-        return new PhpFilesCache('sf-cache');
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\PhpFilesCache('sf-cache');
     }
-    protected function isPruned(CacheInterface $cache, $name)
+    protected function isPruned(\_PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface $cache, $name)
     {
-        $getFileMethod = (new ReflectionObject($cache))->getMethod('getFile');
-        $getFileMethod->setAccessible(true);
-        return !file_exists($getFileMethod->invoke($cache, $name));
+        $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
+        $getFileMethod->setAccessible(\true);
+        return !\file_exists($getFileMethod->invoke($cache, $name));
     }
 }

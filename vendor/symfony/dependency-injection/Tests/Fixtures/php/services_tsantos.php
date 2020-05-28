@@ -1,62 +1,47 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Stopwatch\Stopwatch;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\Encoder\JsonEncoder;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\EventDispatcher\EventDispatcher;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\EventEmitterSerializer;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\Normalizer\CollectionNormalizer;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\Normalizer\JsonNormalizer;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\Normalizer\ObjectNormalizer;
-use _PhpScoper5ea00cc67502b\TSantos\Serializer\NormalizerRegistry;
-use _PhpScoper5ea00cc67502b\TSantos\SerializerBundle\EventListener\StopwatchListener;
-use _PhpScoper5ea00cc67502b\TSantos\SerializerBundle\Serializer\CircularReferenceHandler;
-use function class_alias;
-use function sprintf;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends Container
+class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
     public function __construct()
     {
         $this->services = [];
-        $this->normalizedIds = ['_PhpScoper5ea00cc67502b\\tsantos\\serializer\\serializerinterface' => '_PhpScoper5ea00cc67502b\\TSantos\\Serializer\\SerializerInterface'];
+        $this->normalizedIds = ['_PhpScoper5ece82d7231e4\\tsantos\\serializer\\serializerinterface' => '_PhpScoper5ece82d7231e4\\TSantos\\Serializer\\SerializerInterface'];
         $this->methodMap = ['tsantos_serializer' => 'getTsantosSerializerService'];
-        $this->aliases = ['_PhpScoper5ea00cc67502b\\TSantos\\Serializer\\SerializerInterface' => 'tsantos_serializer'];
+        $this->aliases = ['_PhpScoper5ece82d7231e4\\TSantos\\Serializer\\SerializerInterface' => 'tsantos_serializer'];
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => true];
+        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
     }
     public function compile()
     {
-        throw new LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
-        return true;
+        return \true;
     }
     public function isFrozen()
     {
-        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
-        return true;
+        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
+        return \true;
     }
     /**
      * Gets the public 'tsantos_serializer' shared service.
@@ -65,15 +50,15 @@ class ProjectServiceContainer extends Container
      */
     protected function getTsantosSerializerService()
     {
-        $a = new NormalizerRegistry();
-        $b = new CollectionNormalizer();
-        $c = new EventDispatcher();
-        $c->addSubscriber(new StopwatchListener(new Stopwatch(true)));
-        $this->services['tsantos_serializer'] = $instance = new EventEmitterSerializer(new JsonEncoder(), $a, $c);
+        $a = new \_PhpScoper5ece82d7231e4\TSantos\Serializer\NormalizerRegistry();
+        $b = new \_PhpScoper5ece82d7231e4\TSantos\Serializer\Normalizer\CollectionNormalizer();
+        $c = new \_PhpScoper5ece82d7231e4\TSantos\Serializer\EventDispatcher\EventDispatcher();
+        $c->addSubscriber(new \_PhpScoper5ece82d7231e4\TSantos\SerializerBundle\EventListener\StopwatchListener(new \_PhpScoper5ece82d7231e4\Symfony\Component\Stopwatch\Stopwatch(\true)));
+        $this->services['tsantos_serializer'] = $instance = new \_PhpScoper5ece82d7231e4\TSantos\Serializer\EventEmitterSerializer(new \_PhpScoper5ece82d7231e4\TSantos\Serializer\Encoder\JsonEncoder(), $a, $c);
         $b->setSerializer($instance);
-        $d = new JsonNormalizer();
+        $d = new \_PhpScoper5ece82d7231e4\TSantos\Serializer\Normalizer\JsonNormalizer();
         $d->setSerializer($instance);
-        $a->add(new ObjectNormalizer(new CircularReferenceHandler()));
+        $a->add(new \_PhpScoper5ece82d7231e4\TSantos\Serializer\Normalizer\ObjectNormalizer(new \_PhpScoper5ece82d7231e4\TSantos\SerializerBundle\Serializer\CircularReferenceHandler()));
         $a->add($b);
         $a->add($d);
         return $instance;
@@ -85,4 +70,4 @@ class ProjectServiceContainer extends Container
  *
  * @final since Symfony 3.3
  */
-class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', false);
+\class_alias('_PhpScoper5ece82d7231e4\\ProjectServiceContainer', 'ProjectServiceContainer', \false);

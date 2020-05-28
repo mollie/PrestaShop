@@ -8,19 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception;
-
-use function sprintf;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception;
 
 /**
  * This exception is thrown when an environment variable is not found.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvNotFoundException extends InvalidArgumentException
+class EnvNotFoundException extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
 {
     public function __construct($name)
     {
-        parent::__construct(sprintf('Environment variable not found: "%s".', $name));
+        parent::__construct(\sprintf('Environment variable not found: "%s".', $name));
     }
 }

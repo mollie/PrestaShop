@@ -1,19 +1,17 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Onboarding;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-use BadMethodCallException;
-
-class OnboardingEndpoint extends EndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Onboarding;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory;
+class OnboardingEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\EndpointAbstract
 {
     protected $resourcePath = "onboarding/me";
     protected function getResourceCollectionObject($count, $links)
     {
-        throw new BadMethodCallException('not implemented');
+        throw new \BadMethodCallException('not implemented');
     }
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
@@ -22,7 +20,7 @@ class OnboardingEndpoint extends EndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Onboarding($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Onboarding($this->client);
     }
     /**
      * Retrieve the organization's onboarding status from Mollie.
@@ -54,7 +52,7 @@ class OnboardingEndpoint extends EndpointAbstract
     protected function rest_read($id, array $filters)
     {
         $result = $this->client->performHttpCall(self::REST_READ, $this->getResourcePath() . $this->buildQueryString($filters));
-        return ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     protected function rest_create(array $body, array $filters)
     {

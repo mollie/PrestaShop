@@ -1,9 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Psr\Http\Message;
-
-use InvalidArgumentException;
-use RuntimeException;
+namespace _PhpScoper5ece82d7231e4\Psr\Http\Message;
 
 /**
  * Value object representing a file uploaded through an HTTP request.
@@ -28,7 +25,7 @@ interface UploadedFileInterface
      * an exception.
      *
      * @return StreamInterface Stream representation of the uploaded file.
-     * @throws RuntimeException in cases when no stream is available or can be
+     * @throws \RuntimeException in cases when no stream is available or can be
      *     created.
      */
     public function getStream();
@@ -60,8 +57,8 @@ interface UploadedFileInterface
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
      * @param string $targetPath Path to which to move the uploaded file.
-     * @throws InvalidArgumentException if the $targetPath specified is invalid.
-     * @throws RuntimeException on any error during the move operation, or on
+     * @throws \InvalidArgumentException if the $targetPath specified is invalid.
+     * @throws \RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
      */
     public function moveTo($targetPath);

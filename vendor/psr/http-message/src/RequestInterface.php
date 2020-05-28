@@ -1,8 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Psr\Http\Message;
-
-use InvalidArgumentException;
+namespace _PhpScoper5ece82d7231e4\Psr\Http\Message;
 
 /**
  * Representation of an outgoing, client-side request.
@@ -23,7 +21,7 @@ use InvalidArgumentException;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-interface RequestInterface extends MessageInterface
+interface RequestInterface extends \_PhpScoper5ece82d7231e4\Psr\Http\Message\MessageInterface
 {
     /**
      * Retrieves the message's request target.
@@ -79,7 +77,7 @@ interface RequestInterface extends MessageInterface
      *
      * @param string $method Case-sensitive method.
      * @return static
-     * @throws InvalidArgumentException for invalid HTTP methods.
+     * @throws \InvalidArgumentException for invalid HTTP methods.
      */
     public function withMethod($method);
     /**
@@ -122,5 +120,5 @@ interface RequestInterface extends MessageInterface
      * @param bool $preserveHost Preserve the original state of the Host header.
      * @return static
      */
-    public function withUri(UriInterface $uri, $preserveHost = false);
+    public function withUri(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, $preserveHost = \false);
 }

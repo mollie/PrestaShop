@@ -8,19 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception;
-
-use Exception;
-use function count;
-use function implode;
-use function sprintf;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception;
 
 /**
  * This exception is thrown when a non-existent parameter is used.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParameterNotFoundException extends InvalidArgumentException
+class ParameterNotFoundException extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
 {
     private $key;
     private $sourceId;
@@ -31,11 +26,11 @@ class ParameterNotFoundException extends InvalidArgumentException
      * @param string      $key                  The requested parameter key
      * @param string      $sourceId             The service id that references the non-existent parameter
      * @param string      $sourceKey            The parameter key that references the non-existent parameter
-     * @param Exception  $previous             The previous exception
+     * @param \Exception  $previous             The previous exception
      * @param string[]    $alternatives         Some parameter name alternatives
      * @param string|null $nonNestedAlternative The alternative parameter name when the user expected dot notation for nested parameters
      */
-    public function __construct($key, $sourceId = null, $sourceKey = null, Exception $previous = null, array $alternatives = [], $nonNestedAlternative = null)
+    public function __construct($key, $sourceId = null, $sourceKey = null, \Exception $previous = null, array $alternatives = [], $nonNestedAlternative = null)
     {
         $this->key = $key;
         $this->sourceId = $sourceId;
@@ -48,19 +43,19 @@ class ParameterNotFoundException extends InvalidArgumentException
     public function updateRepr()
     {
         if (null !== $this->sourceId) {
-            $this->message = sprintf('The service "%s" has a dependency on a non-existent parameter "%s".', $this->sourceId, $this->key);
+            $this->message = \sprintf('The service "%s" has a dependency on a non-existent parameter "%s".', $this->sourceId, $this->key);
         } elseif (null !== $this->sourceKey) {
-            $this->message = sprintf('The parameter "%s" has a dependency on a non-existent parameter "%s".', $this->sourceKey, $this->key);
+            $this->message = \sprintf('The parameter "%s" has a dependency on a non-existent parameter "%s".', $this->sourceKey, $this->key);
         } else {
-            $this->message = sprintf('You have requested a non-existent parameter "%s".', $this->key);
+            $this->message = \sprintf('You have requested a non-existent parameter "%s".', $this->key);
         }
         if ($this->alternatives) {
-            if (1 == count($this->alternatives)) {
+            if (1 == \count($this->alternatives)) {
                 $this->message .= ' Did you mean this: "';
             } else {
                 $this->message .= ' Did you mean one of these: "';
             }
-            $this->message .= implode('", "', $this->alternatives) . '"?';
+            $this->message .= \implode('", "', $this->alternatives) . '"?';
         } elseif (null !== $this->nonNestedAlternative) {
             $this->message .= ' You cannot access nested array items, do you want to inject "' . $this->nonNestedAlternative . '" instead?';
         }

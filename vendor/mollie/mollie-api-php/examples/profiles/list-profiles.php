@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * Using OAuth access token to list profiles of an account.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your OAuth access token.
@@ -20,9 +16,9 @@ try {
     $profiles = $mollie->profiles->page();
     foreach ($profiles as $profile) {
         echo '<div style="line-height:40px; vertical-align:top">';
-        echo htmlspecialchars($profile->name) . ' - ' . htmlspecialchars($profile->website) . ' (' . htmlspecialchars($profile->id) . ')';
+        echo \htmlspecialchars($profile->name) . ' - ' . \htmlspecialchars($profile->website) . ' (' . \htmlspecialchars($profile->id) . ')';
         echo '</div>';
     }
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

@@ -1,15 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\OrderStatus;
-use Mollie\Api\Exceptions\ApiException;
-use stdClass;
-use function array_merge;
-use function json_encode;
-
-class Order extends BaseResource
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus;
+class Order extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -38,19 +33,19 @@ class Order extends BaseResource
     /**
      * Amount object containing the value and currency
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $amount;
     /**
      * The total amount captured, thus far.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $amountCaptured;
     /**
      * The total amount refunded, thus far.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $amountRefunded;
     /**
@@ -62,7 +57,7 @@ class Order extends BaseResource
     /**
      * The person and the address the order is billed to.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $billingAddress;
     /**
@@ -80,7 +75,7 @@ class Order extends BaseResource
     /**
      * The person and the address the order is billed to.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $shippingAddress;
     /**
@@ -100,7 +95,7 @@ class Order extends BaseResource
      * During creation of the order you can set custom metadata that is stored with
      * the order, and given back whenever you retrieve that order.
      *
-     * @var stdClass|mixed|null
+     * @var \stdClass|mixed|null
      */
     public $metadata;
     /**
@@ -137,11 +132,11 @@ class Order extends BaseResource
     /**
      * An object with several URL objects relevant to the customer. Every URL object will contain an href and a type field.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_embedded;
     /**
@@ -151,7 +146,7 @@ class Order extends BaseResource
      */
     public function isCreated()
     {
-        return $this->status === OrderStatus::STATUS_CREATED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_CREATED;
     }
     /**
      * Is this order paid for?
@@ -160,7 +155,7 @@ class Order extends BaseResource
      */
     public function isPaid()
     {
-        return $this->status === OrderStatus::STATUS_PAID;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_PAID;
     }
     /**
      * Is this order authorized?
@@ -169,7 +164,7 @@ class Order extends BaseResource
      */
     public function isAuthorized()
     {
-        return $this->status === OrderStatus::STATUS_AUTHORIZED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_AUTHORIZED;
     }
     /**
      * Is this order canceled?
@@ -178,7 +173,7 @@ class Order extends BaseResource
      */
     public function isCanceled()
     {
-        return $this->status === OrderStatus::STATUS_CANCELED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_CANCELED;
     }
     /**
      * (Deprecated) Is this order refunded?
@@ -188,7 +183,7 @@ class Order extends BaseResource
      */
     public function isRefunded()
     {
-        return $this->status === OrderStatus::STATUS_REFUNDED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_REFUNDED;
     }
     /**
      * Is this order shipping?
@@ -197,7 +192,7 @@ class Order extends BaseResource
      */
     public function isShipping()
     {
-        return $this->status === OrderStatus::STATUS_SHIPPING;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_SHIPPING;
     }
     /**
      * Is this order completed?
@@ -206,7 +201,7 @@ class Order extends BaseResource
      */
     public function isCompleted()
     {
-        return $this->status === OrderStatus::STATUS_COMPLETED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_COMPLETED;
     }
     /**
      * Is this order expired?
@@ -215,7 +210,7 @@ class Order extends BaseResource
      */
     public function isExpired()
     {
-        return $this->status === OrderStatus::STATUS_EXPIRED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_EXPIRED;
     }
     /**
      * Is this order completed?
@@ -224,7 +219,7 @@ class Order extends BaseResource
      */
     public function isPending()
     {
-        return $this->status === OrderStatus::STATUS_PENDING;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OrderStatus::STATUS_PENDING;
     }
     /**
      * Cancels this order.
@@ -234,7 +229,7 @@ class Order extends BaseResource
      * be found.
      *
      * @return Order
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function cancel()
     {
@@ -248,7 +243,7 @@ class Order extends BaseResource
      *
      * @param  array|null $data
      * @return null
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function cancelLines(array $data)
     {
@@ -260,7 +255,7 @@ class Order extends BaseResource
      *
      * @param  array|null $data
      * @return null
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function cancelAllLines($data = [])
     {
@@ -274,7 +269,7 @@ class Order extends BaseResource
      */
     public function lines()
     {
-        return ResourceFactory::createBaseResourceCollection($this->client, OrderLine::class, $this->lines);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\OrderLine::class, $this->lines);
     }
     /**
      * Create a shipment for some order lines. You can provide an empty array for the
@@ -360,30 +355,30 @@ class Order extends BaseResource
      * Retrieves all refunds associated with this order
      *
      * @return RefundCollection
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function refunds()
     {
         if (!isset($this->_links->refunds->href)) {
-            return new RefundCollection($this->client, 0, null);
+            return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection($this->client, 0, null);
         }
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_GET, $this->_links->refunds->href);
-        return ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, Refund::class, $result->_links);
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET, $this->_links->refunds->href);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $result->_embedded->refunds, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund::class, $result->_links);
     }
     /**
      * Saves the order's updated billingAddress and/or shippingAddress.
      *
      * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Order
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function update()
     {
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = json_encode(array("billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber));
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return ResourceFactory::createFromApiResult($result, new Order($this->client));
+        $body = \json_encode(array("billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber));
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order($this->client));
     }
     /**
      * Create a new payment for this Order.
@@ -391,7 +386,7 @@ class Order extends BaseResource
      * @param $data
      * @param array $filters
      * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createPayment($data, $filters = [])
     {
@@ -408,7 +403,7 @@ class Order extends BaseResource
         if (!isset($this->_embedded, $this->_embedded->payments)) {
             return null;
         }
-        return ResourceFactory::createCursorResourceCollection($this->client, $this->_embedded->payments, Payment::class);
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createCursorResourceCollection($this->client, $this->_embedded->payments, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment::class);
     }
     /**
      * When accessed by oAuth we want to pass the testmode by default
@@ -419,7 +414,7 @@ class Order extends BaseResource
     {
         $options = [];
         if ($this->client->usesOAuth()) {
-            $options["testmode"] = $this->mode === "test" ? true : false;
+            $options["testmode"] = $this->mode === "test" ? \true : \false;
         }
         return $options;
     }
@@ -431,6 +426,6 @@ class Order extends BaseResource
      */
     private function withPresetOptions(array $options)
     {
-        return array_merge($this->getPresetOptions(), $options);
+        return \array_merge($this->getPresetOptions(), $options);
     }
 }

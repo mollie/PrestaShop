@@ -8,14 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ea00cc67502b\Psr\Log\LoggerAwareTrait;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use Exception;
-use function time;
-use function unserialize;
-
+use _PhpScoper5ece82d7231e4\Psr\Log\LoggerAwareTrait;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -41,8 +37,8 @@ trait ArrayTrait
      */
     public function hasItem($key)
     {
-        CacheItem::validateKey($key);
-        return isset($this->expiries[$key]) && ($this->expiries[$key] > time() || !$this->deleteItem($key));
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($key);
+        return isset($this->expiries[$key]) && ($this->expiries[$key] > \time() || !$this->deleteItem($key));
     }
     /**
      * {@inheritdoc}
@@ -50,16 +46,16 @@ trait ArrayTrait
     public function clear()
     {
         $this->values = $this->expiries = [];
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
      */
     public function deleteItem($key)
     {
-        CacheItem::validateKey($key);
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($key);
         unset($this->values[$key], $this->expiries[$key]);
-        return true;
+        return \true;
     }
     /**
      * {@inheritdoc}
@@ -77,21 +73,21 @@ trait ArrayTrait
                 } elseif (!$this->storeSerialized) {
                     $value = $this->values[$key];
                 } elseif ('b:0;' === ($value = $this->values[$key])) {
-                    $value = false;
-                } elseif (false === ($value = unserialize($value))) {
+                    $value = \false;
+                } elseif (\false === ($value = \unserialize($value))) {
                     $this->values[$key] = $value = null;
-                    $isHit = false;
+                    $isHit = \false;
                 }
-            } catch (Exception $e) {
-                CacheItem::log($this->logger, 'Failed to unserialize key "{key}"', ['key' => $key, 'exception' => $e]);
+            } catch (\Exception $e) {
+                \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to unserialize key "{key}"', ['key' => $key, 'exception' => $e]);
                 $this->values[$key] = $value = null;
-                $isHit = false;
+                $isHit = \false;
             }
             unset($keys[$i]);
             (yield $key => $f($key, $value, $isHit));
         }
         foreach ($keys as $key) {
-            (yield $key => $f($key, null, false));
+            (yield $key => $f($key, null, \false));
         }
     }
 }

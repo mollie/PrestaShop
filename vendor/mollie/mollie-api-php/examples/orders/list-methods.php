@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * How to get the currently activated payment methods for the Orders API.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key.
@@ -24,10 +20,10 @@ try {
     $methods = $mollie->methods->all(['resource' => 'orders']);
     foreach ($methods as $method) {
         echo '<div style="line-height:40px; vertical-align:top">';
-        echo '<img src="' . htmlspecialchars($method->image->size1x) . '" srcset="' . htmlspecialchars($method->image->size2x) . ' 2x"> ';
-        echo htmlspecialchars($method->description) . ' (' . htmlspecialchars($method->id) . ')';
+        echo '<img src="' . \htmlspecialchars($method->image->size1x) . '" srcset="' . \htmlspecialchars($method->image->size2x) . ' 2x"> ';
+        echo \htmlspecialchars($method->description) . ' (' . \htmlspecialchars($method->id) . ')';
         echo '</div>';
     }
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

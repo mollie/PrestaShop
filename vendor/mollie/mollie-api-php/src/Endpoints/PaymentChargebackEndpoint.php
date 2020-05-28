@@ -1,14 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Chargeback;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ChargebackCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-use Mollie\Api\Exceptions\ApiException;
-use stdClass;
-
-class PaymentChargebackEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Chargeback;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ChargebackCollection;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment;
+class PaymentChargebackEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_chargebacks";
     /**
@@ -18,19 +15,19 @@ class PaymentChargebackEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Chargeback($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Chargeback($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return ChargebackCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new ChargebackCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ChargebackCollection($this->client, $count, $_links);
     }
     /**
      * @param Payment $payment
@@ -38,9 +35,9 @@ class PaymentChargebackEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return Chargeback
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(Payment $payment, $chargebackId, array $parameters = [])
+    public function getFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment $payment, $chargebackId, array $parameters = [])
     {
         return $this->getForId($payment->id, $chargebackId, $parameters);
     }
@@ -50,7 +47,7 @@ class PaymentChargebackEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return Chargeback
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function getForId($paymentId, $chargebackId, array $parameters = [])
     {

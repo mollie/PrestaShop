@@ -8,33 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Loader;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\LoaderResolver;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\DirectoryLoader;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use function realpath;
-
-class DirectoryLoaderTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\LoaderResolver;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\DirectoryLoader;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+class DirectoryLoaderTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     private static $fixturesPath;
     private $container;
     private $loader;
     public static function setUpBeforeClass()
     {
-        self::$fixturesPath = realpath(__DIR__ . '/../Fixtures/');
+        self::$fixturesPath = \realpath(__DIR__ . '/../Fixtures/');
     }
     protected function setUp()
     {
-        $locator = new FileLocator(self::$fixturesPath);
-        $this->container = new ContainerBuilder();
-        $this->loader = new DirectoryLoader($this->container, $locator);
-        $resolver = new LoaderResolver([new PhpFileLoader($this->container, $locator), new IniFileLoader($this->container, $locator), new YamlFileLoader($this->container, $locator), $this->loader]);
+        $locator = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator(self::$fixturesPath);
+        $this->container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $this->loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\DirectoryLoader($this->container, $locator);
+        $resolver = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\LoaderResolver([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader($this->container, $locator), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, $locator), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($this->container, $locator), $this->loader]);
         $this->loader->setResolver($resolver);
     }
     public function testDirectoryCanBeLoadedRecursively()
@@ -55,7 +53,7 @@ class DirectoryLoaderTest extends TestCase
     }
     public function testSupports()
     {
-        $loader = new DirectoryLoader(new ContainerBuilder(), new FileLocator());
+        $loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\DirectoryLoader(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator());
         $this->assertTrue($loader->supports('directory/'), '->supports("directory/") returns true');
         $this->assertTrue($loader->supports('directory/', 'directory'), '->supports("directory/", "directory") returns true');
         $this->assertFalse($loader->supports('directory'), '->supports("directory") returns false');

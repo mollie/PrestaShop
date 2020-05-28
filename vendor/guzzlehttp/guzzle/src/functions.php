@@ -1,43 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp;
 
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Handler\CurlHandler;
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Handler\CurlMultiHandler;
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Handler\Proxy;
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Handler\StreamHandler;
-use RuntimeException;
-use function array_keys;
-use function count;
-use function curl_version;
-use function defined;
-use function explode;
-use function extension_loaded;
-use function file_exists;
-use function fopen;
-use function function_exists;
-use function get_class;
-use function gettype;
-use function ini_get;
-use function is_resource;
-use function json_last_error;
-use function json_last_error_msg;
-use function ltrim;
-use function ob_get_clean;
-use function ob_start;
-use function rtrim;
-use function str_replace;
-use function strlen;
-use function strpos;
-use function strtolower;
-use function substr;
-use function trim;
-use function var_dump;
-use const JSON_ERROR_NONE;
-use const PHP_VERSION;
-use const STDOUT;
-
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlHandler;
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlMultiHandler;
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Handler\Proxy;
+use _PhpScoper5ece82d7231e4\GuzzleHttp\Handler\StreamHandler;
 /**
  * Expands a URI template
  *
@@ -48,14 +16,14 @@ use const STDOUT;
  */
 function uri_template($template, array $variables)
 {
-    if (extension_loaded('uri_template')) {
+    if (\extension_loaded('uri_template')) {
         // @codeCoverageIgnoreStart
-        return \_PhpScoper5ea00cc67502b\uri_template($template, $variables);
+        return \_PhpScoper5ece82d7231e4\uri_template($template, $variables);
         // @codeCoverageIgnoreEnd
     }
     static $uriTemplate;
     if (!$uriTemplate) {
-        $uriTemplate = new UriTemplate();
+        $uriTemplate = new \_PhpScoper5ece82d7231e4\GuzzleHttp\UriTemplate();
     }
     return $uriTemplate->expand($template, $variables);
 }
@@ -69,16 +37,16 @@ function uri_template($template, array $variables)
  */
 function describe_type($input)
 {
-    switch (gettype($input)) {
+    switch (\gettype($input)) {
         case 'object':
-            return 'object(' . get_class($input) . ')';
+            return 'object(' . \get_class($input) . ')';
         case 'array':
-            return 'array(' . count($input) . ')';
+            return 'array(' . \count($input) . ')';
         default:
-            ob_start();
-            var_dump($input);
+            \ob_start();
+            \var_dump($input);
             // normalize float vs double
-            return str_replace('double(', 'float(', rtrim(ob_get_clean()));
+            return \str_replace('double(', 'float(', \rtrim(\ob_get_clean()));
     }
 }
 /**
@@ -92,8 +60,8 @@ function headers_from_lines($lines)
 {
     $headers = [];
     foreach ($lines as $line) {
-        $parts = explode(':', $line, 2);
-        $headers[trim($parts[0])][] = isset($parts[1]) ? trim($parts[1]) : null;
+        $parts = \explode(':', $line, 2);
+        $headers[\trim($parts[0])][] = isset($parts[1]) ? \trim($parts[1]) : null;
     }
     return $headers;
 }
@@ -106,12 +74,12 @@ function headers_from_lines($lines)
  */
 function debug_resource($value = null)
 {
-    if (is_resource($value)) {
+    if (\is_resource($value)) {
         return $value;
-    } elseif (defined('STDOUT')) {
-        return STDOUT;
+    } elseif (\defined('STDOUT')) {
+        return \STDOUT;
     }
-    return fopen('php://output', 'w');
+    return \fopen('php://output', 'w');
 }
 /**
  * Chooses and creates a default handler to use based on the environment.
@@ -119,22 +87,22 @@ function debug_resource($value = null)
  * The returned handler is not wrapped by any default middlewares.
  *
  * @return callable Returns the best handler for the given system.
- * @throws RuntimeException if no viable Handler is available.
+ * @throws \RuntimeException if no viable Handler is available.
  */
 function choose_handler()
 {
     $handler = null;
-    if (function_exists('curl_multi_exec') && function_exists('curl_exec')) {
-        $handler = Proxy::wrapSync(new CurlMultiHandler(), new CurlHandler());
-    } elseif (function_exists('curl_exec')) {
-        $handler = new CurlHandler();
-    } elseif (function_exists('curl_multi_exec')) {
-        $handler = new CurlMultiHandler();
+    if (\function_exists('curl_multi_exec') && \function_exists('curl_exec')) {
+        $handler = \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\Proxy::wrapSync(new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlMultiHandler(), new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlHandler());
+    } elseif (\function_exists('curl_exec')) {
+        $handler = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlHandler();
+    } elseif (\function_exists('curl_multi_exec')) {
+        $handler = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\CurlMultiHandler();
     }
-    if (ini_get('allow_url_fopen')) {
-        $handler = $handler ? Proxy::wrapStreaming($handler, new StreamHandler()) : new StreamHandler();
+    if (\ini_get('allow_url_fopen')) {
+        $handler = $handler ? \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\Proxy::wrapStreaming($handler, new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\StreamHandler()) : new \_PhpScoper5ece82d7231e4\GuzzleHttp\Handler\StreamHandler();
     } elseif (!$handler) {
-        throw new RuntimeException('GuzzleHttp requires cURL, the ' . 'allow_url_fopen ini setting, or a custom HTTP handler.');
+        throw new \RuntimeException('GuzzleHttp requires cURL, the ' . 'allow_url_fopen ini setting, or a custom HTTP handler.');
     }
     return $handler;
 }
@@ -147,11 +115,11 @@ function default_user_agent()
 {
     static $defaultAgent = '';
     if (!$defaultAgent) {
-        $defaultAgent = 'GuzzleHttp/' . Client::VERSION;
-        if (extension_loaded('curl') && function_exists('curl_version')) {
-            $defaultAgent .= ' curl/' . curl_version()['version'];
+        $defaultAgent = 'GuzzleHttp/' . \_PhpScoper5ece82d7231e4\GuzzleHttp\Client::VERSION;
+        if (\extension_loaded('curl') && \function_exists('curl_version')) {
+            $defaultAgent .= ' curl/' . \curl_version()['version'];
         }
-        $defaultAgent .= ' PHP/' . PHP_VERSION;
+        $defaultAgent .= ' PHP/' . \PHP_VERSION;
     }
     return $defaultAgent;
 }
@@ -167,7 +135,7 @@ function default_user_agent()
  * Note: the result of this function is cached for subsequent calls.
  *
  * @return string
- * @throws RuntimeException if no bundle can be found.
+ * @throws \RuntimeException if no bundle can be found.
  */
 function default_ca_bundle()
 {
@@ -192,18 +160,18 @@ function default_ca_bundle()
     if ($cached) {
         return $cached;
     }
-    if ($ca = ini_get('openssl.cafile')) {
+    if ($ca = \ini_get('openssl.cafile')) {
         return $cached = $ca;
     }
-    if ($ca = ini_get('curl.cainfo')) {
+    if ($ca = \ini_get('curl.cainfo')) {
         return $cached = $ca;
     }
     foreach ($cafiles as $filename) {
-        if (file_exists($filename)) {
+        if (\file_exists($filename)) {
             return $cached = $filename;
         }
     }
-    throw new RuntimeException(<<<EOT
+    throw new \RuntimeException(<<<EOT
 No system CA bundle could be found in any of the the common system locations.
 PHP versions earlier than 5.6 are not properly configured to use the system's
 CA bundle by default. In order to verify peer certificates, you will need to
@@ -230,8 +198,8 @@ EOT
 function normalize_header_keys(array $headers)
 {
     $result = [];
-    foreach (array_keys($headers) as $key) {
-        $result[strtolower($key)] = $key;
+    foreach (\array_keys($headers) as $key) {
+        $result[\strtolower($key)] = $key;
     }
     return $result;
 }
@@ -256,33 +224,33 @@ function normalize_header_keys(array $headers)
  */
 function is_host_in_noproxy($host, array $noProxyArray)
 {
-    if (strlen($host) === 0) {
+    if (\strlen($host) === 0) {
         throw new \InvalidArgumentException('Empty host provided');
     }
     // Strip port if present.
-    if (strpos($host, ':')) {
-        $host = explode($host, ':', 2)[0];
+    if (\strpos($host, ':')) {
+        $host = \explode($host, ':', 2)[0];
     }
     foreach ($noProxyArray as $area) {
         // Always match on wildcards.
         if ($area === '*') {
-            return true;
+            return \true;
         } elseif (empty($area)) {
             // Don't match on empty values.
             continue;
         } elseif ($area === $host) {
             // Exact matches.
-            return true;
+            return \true;
         } else {
             // Special match if the area when prefixed with ".". Remove any
             // existing leading "." and add a new leading ".".
-            $area = '.' . ltrim($area, '.');
-            if (substr($host, -strlen($area)) === $area) {
-                return true;
+            $area = '.' . \ltrim($area, '.');
+            if (\substr($host, -\strlen($area)) === $area) {
+                return \true;
             }
         }
     }
-    return false;
+    return \false;
 }
 /**
  * Wrapper for json_decode that throws when an error occurs.
@@ -297,11 +265,11 @@ function is_host_in_noproxy($host, array $noProxyArray)
  * @throws Exception\InvalidArgumentException if the JSON cannot be decoded.
  * @link http://www.php.net/manual/en/function.json-decode.php
  */
-function json_decode($json, $assoc = false, $depth = 512, $options = 0)
+function json_decode($json, $assoc = \false, $depth = 512, $options = 0)
 {
     $data = \json_decode($json, $assoc, $depth, $options);
-    if (JSON_ERROR_NONE !== json_last_error()) {
-        throw new InvalidArgumentException('json_decode error: ' . json_last_error_msg());
+    if (\JSON_ERROR_NONE !== \json_last_error()) {
+        throw new \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\InvalidArgumentException('json_decode error: ' . \json_last_error_msg());
     }
     return $data;
 }
@@ -319,8 +287,8 @@ function json_decode($json, $assoc = false, $depth = 512, $options = 0)
 function json_encode($value, $options = 0, $depth = 512)
 {
     $json = \json_encode($value, $options, $depth);
-    if (JSON_ERROR_NONE !== json_last_error()) {
-        throw new InvalidArgumentException('json_encode error: ' . json_last_error_msg());
+    if (\JSON_ERROR_NONE !== \json_last_error()) {
+        throw new \_PhpScoper5ece82d7231e4\GuzzleHttp\Exception\InvalidArgumentException('json_encode error: ' . \json_last_error_msg());
     }
     return $json;
 }

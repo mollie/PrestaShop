@@ -8,33 +8,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ea00cc67502b\Redis;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\RedisCache;
-use function getenv;
-
-class RedisCacheTest extends AbstractRedisCacheTest
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache;
+class RedisCacheTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\AbstractRedisCacheTest
 {
     public static function setUpBeforeClass()
     {
         parent::setupBeforeClass();
-        self::$redis = RedisCache::createConnection('redis://' . getenv('REDIS_HOST'));
+        self::$redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . \getenv('REDIS_HOST'));
     }
     public function testCreateConnection()
     {
-        $redisHost = getenv('REDIS_HOST');
-        $redis = RedisCache::createConnection('redis://' . $redisHost);
-        $this->assertInstanceOf(Redis::class, $redis);
+        $redisHost = \getenv('REDIS_HOST');
+        $redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . $redisHost);
+        $this->assertInstanceOf(\_PhpScoper5ece82d7231e4\Redis::class, $redis);
         $this->assertTrue($redis->isConnected());
         $this->assertSame(0, $redis->getDbNum());
-        $redis = RedisCache::createConnection('redis://' . $redisHost . '/2');
+        $redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . $redisHost . '/2');
         $this->assertSame(2, $redis->getDbNum());
-        $redis = RedisCache::createConnection('redis://' . $redisHost, ['timeout' => 3]);
+        $redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . $redisHost, ['timeout' => 3]);
         $this->assertEquals(3, $redis->getTimeout());
-        $redis = RedisCache::createConnection('redis://' . $redisHost . '?timeout=4');
+        $redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . $redisHost . '?timeout=4');
         $this->assertEquals(4, $redis->getTimeout());
-        $redis = RedisCache::createConnection('redis://' . $redisHost, ['read_timeout' => 5]);
+        $redis = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection('redis://' . $redisHost, ['read_timeout' => 5]);
         $this->assertEquals(5, $redis->getReadTimeout());
     }
     /**
@@ -42,9 +39,9 @@ class RedisCacheTest extends AbstractRedisCacheTest
      */
     public function testFailedCreateConnection($dsn)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Redis connection failed');
-        RedisCache::createConnection($dsn);
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection($dsn);
     }
     public function provideFailedCreateConnection()
     {
@@ -55,9 +52,9 @@ class RedisCacheTest extends AbstractRedisCacheTest
      */
     public function testInvalidCreateConnection($dsn)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Invalid Redis DSN');
-        RedisCache::createConnection($dsn);
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\RedisCache::createConnection($dsn);
     }
     public function provideInvalidCreateConnection()
     {

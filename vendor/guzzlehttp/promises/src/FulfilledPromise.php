@@ -1,12 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
-
-use Exception;
-use InvalidArgumentException;
-use LogicException;
-use Throwable;
-use function method_exists;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Promise;
 
 /**
  * A promise that has been fulfilled.
@@ -14,13 +8,13 @@ use function method_exists;
  * Thenning off of this promise will invoke the onFulfilled callback
  * immediately and ignore other callbacks.
  */
-class FulfilledPromise implements PromiseInterface
+class FulfilledPromise implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface
 {
     private $value;
     public function __construct($value)
     {
-        if (method_exists($value, 'then')) {
-            throw new InvalidArgumentException('You cannot create a FulfilledPromise with a promise.');
+        if (\method_exists($value, 'then')) {
+            throw new \InvalidArgumentException('You cannot create a FulfilledPromise with a promise.');
         }
         $this->value = $value;
     }
@@ -31,15 +25,15 @@ class FulfilledPromise implements PromiseInterface
             return $this;
         }
         $queue = queue();
-        $p = new Promise([$queue, 'run']);
+        $p = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\Promise([$queue, 'run']);
         $value = $this->value;
         $queue->add(static function () use($p, $value, $onFulfilled) {
             if ($p->getState() === self::PENDING) {
                 try {
                     $p->resolve($onFulfilled($value));
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     $p->reject($e);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $p->reject($e);
                 }
             }
@@ -50,7 +44,7 @@ class FulfilledPromise implements PromiseInterface
     {
         return $this->then(null, $onRejected);
     }
-    public function wait($unwrap = true, $defaultDelivery = null)
+    public function wait($unwrap = \true, $defaultDelivery = null)
     {
         return $unwrap ? $this->value : null;
     }
@@ -61,12 +55,12 @@ class FulfilledPromise implements PromiseInterface
     public function resolve($value)
     {
         if ($value !== $this->value) {
-            throw new LogicException("Cannot resolve a fulfilled promise");
+            throw new \LogicException("Cannot resolve a fulfilled promise");
         }
     }
     public function reject($reason)
     {
-        throw new LogicException("Cannot reject a fulfilled promise");
+        throw new \LogicException("Cannot reject a fulfilled promise");
     }
     public function cancel()
     {

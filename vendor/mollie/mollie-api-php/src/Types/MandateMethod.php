@@ -1,8 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Types;
-
-use function in_array;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Types;
 
 class MandateMethod
 {
@@ -10,7 +8,7 @@ class MandateMethod
     const CREDITCARD = "creditcard";
     public static function getForFirstPaymentMethod($firstPaymentMethod)
     {
-        if (in_array($firstPaymentMethod, [PaymentMethod::APPLEPAY, PaymentMethod::CREDITCARD])) {
+        if (\in_array($firstPaymentMethod, [\_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::APPLEPAY, \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::CREDITCARD])) {
             return static::CREDITCARD;
         }
         return static::DIRECTDEBIT;

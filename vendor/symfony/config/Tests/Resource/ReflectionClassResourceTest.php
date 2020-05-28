@@ -8,61 +8,44 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ReflectionClassResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use ReflectionClass;
-use function define;
-use function explode;
-use function file_put_contents;
-use function filemtime;
-use function implode;
-use function iterator_to_array;
-use function serialize;
-use function sprintf;
-use function str_replace;
-use function sys_get_temp_dir;
-use function time;
-use function uniqid;
-use function unlink;
-use function unserialize;
-use const PHP_VERSION_ID;
-
-class ReflectionClassResourceTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface;
+class ReflectionClassResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testToString()
     {
-        $res = new ReflectionClassResource(new ReflectionClass('ErrorException'));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass('ErrorException'));
         $this->assertSame('reflection.ErrorException', (string) $res);
     }
     public function testSerializeUnserialize()
     {
-        $res = new ReflectionClassResource(new ReflectionClass(DummyInterface::class));
-        $ser = unserialize(serialize($res));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\DummyInterface::class));
+        $ser = \unserialize(\serialize($res));
         $this->assertTrue($res->isFresh(0));
         $this->assertTrue($ser->isFresh(0));
         $this->assertSame((string) $res, (string) $ser);
     }
     public function testIsFresh()
     {
-        $res = new ReflectionClassResource(new ReflectionClass(__CLASS__));
-        $mtime = filemtime(__FILE__);
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(__CLASS__));
+        $mtime = \filemtime(__FILE__);
         $this->assertTrue($res->isFresh($mtime), '->isFresh() returns true if the resource has not changed in same second');
         $this->assertTrue($res->isFresh($mtime + 10), '->isFresh() returns true if the resource has not changed');
         $this->assertTrue($res->isFresh($mtime - 86400), '->isFresh() returns true if the resource has not changed');
     }
     public function testIsFreshForDeletedResources()
     {
-        $now = time();
-        $tmp = sys_get_temp_dir() . '/tmp.php';
-        file_put_contents($tmp, '<?php class ReflectionClassResourceTestClass {}');
+        $now = \time();
+        $tmp = \sys_get_temp_dir() . '/tmp.php';
+        \file_put_contents($tmp, '<?php class ReflectionClassResourceTestClass {}');
         require $tmp;
-        $res = new ReflectionClassResource(new ReflectionClass('ReflectionClassResourceTestClass'));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass('ReflectionClassResourceTestClass'));
         $this->assertTrue($res->isFresh($now));
-        unlink($tmp);
+        \unlink($tmp);
         $this->assertFalse($res->isFresh($now), '->isFresh() returns false if the resource does not exist');
     }
     /**
@@ -96,19 +79,19 @@ class ReflectionClassResourceTest extends TestCase
 EOPHP;
         static $expectedSignature, $generateSignature;
         if (null === $expectedSignature) {
-            eval(sprintf($code, $class = 'Foo' . str_replace('.', '_', uniqid('', true))));
-            $r = new ReflectionClass(ReflectionClassResource::class);
+            eval(\sprintf($code, $class = 'Foo' . \str_replace('.', '_', \uniqid('', \true))));
+            $r = new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource::class);
             $generateSignature = $r->getMethod('generateSignature');
-            $generateSignature->setAccessible(true);
+            $generateSignature->setAccessible(\true);
             $generateSignature = $generateSignature->getClosure($r->newInstanceWithoutConstructor());
-            $expectedSignature = implode("\n", iterator_to_array($generateSignature(new ReflectionClass($class))));
+            $expectedSignature = \implode("\n", \iterator_to_array($generateSignature(new \ReflectionClass($class))));
         }
-        $code = explode("\n", $code);
+        $code = \explode("\n", $code);
         if (null !== $changedCode) {
             $code[$changedLine] = $changedCode;
         }
-        eval(sprintf(implode("\n", $code), $class = 'Foo' . str_replace('.', '_', uniqid('', true))));
-        $signature = implode("\n", iterator_to_array($generateSignature(new ReflectionClass($class))));
+        eval(\sprintf(\implode("\n", $code), $class = 'Foo' . \str_replace('.', '_', \uniqid('', \true))));
+        $signature = \implode("\n", \iterator_to_array($generateSignature(new \ReflectionClass($class))));
         if ($changeExpected) {
             $this->assertNotSame($expectedSignature, $signature);
         } else {
@@ -122,7 +105,7 @@ EOPHP;
         (yield [1, 1, 'abstract class %s']);
         (yield [1, 1, 'final class %s']);
         (yield [1, 1, 'class %s extends Exception']);
-        (yield [1, 1, 'class %s implements ' . DummyInterface::class]);
+        (yield [1, 1, 'class %s implements ' . \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\DummyInterface::class]);
         (yield [1, 3, 'const FOO = 456;']);
         (yield [1, 3, 'const BAR = 123;']);
         (yield [1, 4, '/** pub docblock */']);
@@ -133,10 +116,10 @@ EOPHP;
         (yield [0, 8, '/** priv docblock */']);
         (yield [0, 9, 'private $priv = 123;']);
         (yield [1, 10, '/** pub docblock */']);
-        if (PHP_VERSION_ID >= 50600) {
+        if (\PHP_VERSION_ID >= 50600) {
             (yield [1, 11, 'public function pub(...$arg) {}']);
         }
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             (yield [1, 11, 'public function pub($arg = null): Foo {}']);
         }
         (yield [0, 11, "public function pub(\$arg = null) {\nreturn 123;\n}"]);
@@ -144,7 +127,7 @@ EOPHP;
         (yield [1, 13, 'protected function prot($a = [123]) {}']);
         (yield [0, 14, '/** priv docblock */']);
         (yield [0, 15, '']);
-        if (PHP_VERSION_ID >= 70400) {
+        if (\PHP_VERSION_ID >= 70400) {
             // PHP7.4 typed properties without default value are
             // undefined, make sure this doesn't throw an error
             (yield [1, 5, 'public array $pub;']);
@@ -154,39 +137,39 @@ EOPHP;
         (yield [1, 17, 'public function ccc($bar = 187) {}']);
         (yield [1, 17, 'public function ccc($bar = ANOTHER_ONE_THAT_WILL_NEVER_BE_DEFINED_CCCCCCCCC) {}']);
         (yield [1, 17, null, static function () {
-            define('A_CONSTANT_THAT_FOR_SURE_WILL_NEVER_BE_DEFINED_CCCCCC', 'foo');
+            \define('A_CONSTANT_THAT_FOR_SURE_WILL_NEVER_BE_DEFINED_CCCCCC', 'foo');
         }]);
     }
     public function testEventSubscriber()
     {
-        $res = new ReflectionClassResource(new ReflectionClass(TestEventSubscriber::class));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestEventSubscriber::class));
         $this->assertTrue($res->isFresh(0));
-        TestEventSubscriber::$subscribedEvents = [123];
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestEventSubscriber::$subscribedEvents = [123];
         $this->assertFalse($res->isFresh(0));
-        $res = new ReflectionClassResource(new ReflectionClass(TestEventSubscriber::class));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestEventSubscriber::class));
         $this->assertTrue($res->isFresh(0));
     }
     public function testServiceSubscriber()
     {
-        $res = new ReflectionClassResource(new ReflectionClass(TestServiceSubscriber::class));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceSubscriber::class));
         $this->assertTrue($res->isFresh(0));
-        TestServiceSubscriber::$subscribedServices = [123];
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceSubscriber::$subscribedServices = [123];
         $this->assertFalse($res->isFresh(0));
-        $res = new ReflectionClassResource(new ReflectionClass(TestServiceSubscriber::class));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceSubscriber::class));
         $this->assertTrue($res->isFresh(0));
     }
     public function testIgnoresObjectsInSignature()
     {
-        $res = new ReflectionClassResource(new ReflectionClass(TestServiceWithStaticProperty::class));
+        $res = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ReflectionClassResource(new \ReflectionClass(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceWithStaticProperty::class));
         $this->assertTrue($res->isFresh(0));
-        TestServiceWithStaticProperty::$initializedObject = new TestServiceWithStaticProperty();
+        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceWithStaticProperty::$initializedObject = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource\TestServiceWithStaticProperty();
         $this->assertTrue($res->isFresh(0));
     }
 }
 interface DummyInterface
 {
 }
-class TestEventSubscriber implements EventSubscriberInterface
+class TestEventSubscriber implements \_PhpScoper5ece82d7231e4\Symfony\Component\EventDispatcher\EventSubscriberInterface
 {
     public static $subscribedEvents = [];
     public static function getSubscribedEvents()
@@ -194,7 +177,7 @@ class TestEventSubscriber implements EventSubscriberInterface
         return self::$subscribedEvents;
     }
 }
-class TestServiceSubscriber implements ServiceSubscriberInterface
+class TestServiceSubscriber implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface
 {
     public static $subscribedServices = [];
     public static function getSubscribedServices()

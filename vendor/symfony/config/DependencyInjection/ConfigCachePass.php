@@ -8,17 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\DependencyInjection;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\DependencyInjection;
 
-@trigger_error(sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use tagged iterator arguments instead.', ConfigCachePass::class), E_USER_DEPRECATED);
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use function sprintf;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+@\trigger_error(\sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use tagged iterator arguments instead.', \_PhpScoper5ece82d7231e4\Symfony\Component\Config\DependencyInjection\ConfigCachePass::class), \E_USER_DEPRECATED);
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Adds services tagged config_cache.resource_checker to the config_cache_factory service, ordering them by priority.
  *
@@ -27,7 +23,7 @@ use const E_USER_DEPRECATED;
  *
  * @deprecated since version 3.4, to be removed in 4.0. Use tagged iterator arguments instead.
  */
-class ConfigCachePass implements CompilerPassInterface
+class ConfigCachePass implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
     private $factoryServiceId;
@@ -37,12 +33,12 @@ class ConfigCachePass implements CompilerPassInterface
         $this->factoryServiceId = $factoryServiceId;
         $this->resourceCheckerTag = $resourceCheckerTag;
     }
-    public function process(ContainerBuilder $container)
+    public function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $resourceCheckers = $this->findAndSortTaggedServices($this->resourceCheckerTag, $container);
         if (empty($resourceCheckers)) {
             return;
         }
-        $container->getDefinition($this->factoryServiceId)->replaceArgument(0, new IteratorArgument($resourceCheckers));
+        $container->getDefinition($this->factoryServiceId)->replaceArgument(0, new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\IteratorArgument($resourceCheckers));
     }
 }

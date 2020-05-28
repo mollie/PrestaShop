@@ -1,11 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
-
-use Exception;
-use function base64_decode;
-use function class_exists;
-use function is_callable;
+namespace _PhpScoper5ece82d7231e4;
 
 /**
  * Random_* Compatibility Library
@@ -33,7 +28,7 @@ use function is_callable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-if (!is_callable('random_bytes')) {
+if (!\is_callable('random_bytes')) {
     /**
      * Windows with PHP < 5.3.0 will not have the function
      * openssl_random_pseudo_bytes() available, so let's use
@@ -49,7 +44,7 @@ if (!is_callable('random_bytes')) {
     {
         try {
             /** @var int $bytes */
-            $bytes = RandomCompat_intval($bytes);
+            $bytes = \_PhpScoper5ece82d7231e4\RandomCompat_intval($bytes);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_bytes(): $bytes must be an integer');
         }
@@ -58,29 +53,29 @@ if (!is_callable('random_bytes')) {
         }
         /** @var string $buf */
         $buf = '';
-        if (!class_exists('_PhpScoper5ea00cc67502b\\COM')) {
+        if (!\class_exists('_PhpScoper5ece82d7231e4\\COM')) {
             throw new \Error('COM does not exist');
         }
         /** @var COM $util */
-        $util = new COM('CAPICOM.Utilities.1');
+        $util = new \_PhpScoper5ece82d7231e4\COM('CAPICOM.Utilities.1');
         $execCount = 0;
         /**
          * Let's not let it loop forever. If we run N times and fail to
          * get N bytes of random data, then CAPICOM has failed us.
          */
         do {
-            $buf .= base64_decode((string) $util->GetRandom($bytes, 0));
-            if (RandomCompat_strlen($buf) >= $bytes) {
+            $buf .= \base64_decode((string) $util->GetRandom($bytes, 0));
+            if (\_PhpScoper5ece82d7231e4\RandomCompat_strlen($buf) >= $bytes) {
                 /**
                  * Return our random entropy buffer here:
                  */
-                return (string) RandomCompat_substr($buf, 0, $bytes);
+                return (string) \_PhpScoper5ece82d7231e4\RandomCompat_substr($buf, 0, $bytes);
             }
             ++$execCount;
         } while ($execCount < $bytes);
         /**
          * If we reach here, PHP has failed us.
          */
-        throw new Exception('Could not gather sufficient random data');
+        throw new \Exception('Could not gather sufficient random data');
     }
 }

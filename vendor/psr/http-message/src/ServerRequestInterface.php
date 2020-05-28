@@ -1,8 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Psr\Http\Message;
-
-use InvalidArgumentException;
+namespace _PhpScoper5ece82d7231e4\Psr\Http\Message;
 
 /**
  * Representation of an incoming, server-side HTTP request.
@@ -42,7 +40,7 @@ use InvalidArgumentException;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-interface ServerRequestInterface extends RequestInterface
+interface ServerRequestInterface extends \_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface
 {
     /**
      * Retrieve server parameters.
@@ -141,7 +139,7 @@ interface ServerRequestInterface extends RequestInterface
      *
      * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
      * @return static
-     * @throws InvalidArgumentException if an invalid structure is provided.
+     * @throws \InvalidArgumentException if an invalid structure is provided.
      */
     public function withUploadedFiles(array $uploadedFiles);
     /**
@@ -185,7 +183,7 @@ interface ServerRequestInterface extends RequestInterface
      * @param null|array|object $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
-     * @throws InvalidArgumentException if an unsupported argument type is
+     * @throws \InvalidArgumentException if an unsupported argument type is
      *     provided.
      */
     public function withParsedBody($data);

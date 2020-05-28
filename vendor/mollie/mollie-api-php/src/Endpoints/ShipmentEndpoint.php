@@ -1,16 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Shipment;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ShipmentCollection;
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Resources\BaseCollection;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class ShipmentEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Shipment;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ShipmentCollection;
+class ShipmentEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "orders_shipments";
     /**
@@ -24,20 +19,20 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Shipment($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Shipment($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API
      * endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return ShipmentCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new ShipmentCollection($count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ShipmentCollection($count, $_links);
     }
     /**
      * Create a shipment for some order lines. You can provide an empty array for the
@@ -48,9 +43,9 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param array $filters
      *
      * @return Shipment
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(Order $order, array $options = [], array $filters = [])
+    public function createFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order $order, array $options = [], array $filters = [])
     {
         return $this->createForId($order->id, $options, $filters);
     }
@@ -63,7 +58,7 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param array $filters
      *
      * @return Shipment
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForId($orderId, array $options = [], array $filters = [])
     {
@@ -78,9 +73,9 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return Shipment
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(Order $order, $shipmentId, array $parameters = [])
+    public function getFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order $order, $shipmentId, array $parameters = [])
     {
         return $this->getForId($order->id, $shipmentId, $parameters);
     }
@@ -91,8 +86,8 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param string $shipmentId
      * @param array $parameters
      *
-     * @return BaseResource|\Mollie\Api\Resources\Shipment
-     * @throws ApiException
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Shipment
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function getForId($orderId, $shipmentId, array $parameters = [])
     {
@@ -106,9 +101,9 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return ShipmentCollection
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(Order $order, array $parameters = [])
+    public function listFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order $order, array $parameters = [])
     {
         return $this->listForId($order->id, $parameters);
     }
@@ -118,8 +113,8 @@ class ShipmentEndpoint extends CollectionEndpointAbstract
      * @param string $orderId
      * @param array $parameters
      *
-     * @return BaseCollection|\Mollie\Api\Resources\ShipmentCollection
-     * @throws ApiException
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\ShipmentCollection
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function listForId($orderId, array $parameters = [])
     {

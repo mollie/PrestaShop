@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ResolveInvalidReferencesPass;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
-class ResolveInvalidReferencesPassTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveInvalidReferencesPass;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
+class ResolveInvalidReferencesPassTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testProcess()
     {
-        $container = new ContainerBuilder();
-        $def = $container->register('foo')->setArguments([new Reference('bar', ContainerInterface::NULL_ON_INVALID_REFERENCE), new Reference('baz', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)])->addMethodCall('foo', [new Reference('moo', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $def = $container->register('foo')->setArguments([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('baz', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE)])->addMethodCall('foo', [new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('moo', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
         $this->process($container);
         $arguments = $def->getArguments();
         $this->assertSame([null, null], $arguments);
@@ -29,18 +29,18 @@ class ResolveInvalidReferencesPassTest extends TestCase
     }
     public function testProcessIgnoreInvalidArgumentInCollectionArgument()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('baz');
-        $def = $container->register('foo')->setArguments([[new Reference('bar', ContainerInterface::IGNORE_ON_INVALID_REFERENCE), $baz = new Reference('baz', ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new Reference('moo', ContainerInterface::NULL_ON_INVALID_REFERENCE)]]);
+        $def = $container->register('foo')->setArguments([[new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE), $baz = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('baz', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('moo', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE)]]);
         $this->process($container);
         $arguments = $def->getArguments();
         $this->assertSame([$baz, null], $arguments[0]);
     }
     public function testProcessKeepMethodCallOnInvalidArgumentInCollectionArgument()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('baz');
-        $def = $container->register('foo')->addMethodCall('foo', [[new Reference('bar', ContainerInterface::IGNORE_ON_INVALID_REFERENCE), $baz = new Reference('baz', ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new Reference('moo', ContainerInterface::NULL_ON_INVALID_REFERENCE)]]);
+        $def = $container->register('foo')->addMethodCall('foo', [[new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE), $baz = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('baz', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('moo', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE)]]);
         $this->process($container);
         $calls = $def->getMethodCalls();
         $this->assertCount(1, $def->getMethodCalls());
@@ -48,29 +48,29 @@ class ResolveInvalidReferencesPassTest extends TestCase
     }
     public function testProcessIgnoreNonExistentServices()
     {
-        $container = new ContainerBuilder();
-        $def = $container->register('foo')->setArguments([new Reference('bar')]);
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $def = $container->register('foo')->setArguments([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar')]);
         $this->process($container);
         $arguments = $def->getArguments();
         $this->assertEquals('bar', (string) $arguments[0]);
     }
     public function testProcessRemovesPropertiesOnInvalid()
     {
-        $container = new ContainerBuilder();
-        $def = $container->register('foo')->setProperty('foo', new Reference('bar', ContainerInterface::IGNORE_ON_INVALID_REFERENCE));
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $def = $container->register('foo')->setProperty('foo', new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE));
         $this->process($container);
         $this->assertEquals([], $def->getProperties());
     }
     public function testProcessRemovesArgumentsOnInvalid()
     {
-        $container = new ContainerBuilder();
-        $def = $container->register('foo')->addArgument([[new Reference('bar', ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new ServiceClosureArgument(new Reference('baz', ContainerInterface::IGNORE_ON_INVALID_REFERENCE))]]);
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $def = $container->register('foo')->addArgument([[new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('baz', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE))]]);
         $this->process($container);
         $this->assertSame([[[]]], $def->getArguments());
     }
-    protected function process(ContainerBuilder $container)
+    protected function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
-        $pass = new ResolveInvalidReferencesPass();
+        $pass = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ResolveInvalidReferencesPass();
         $pass->process($container);
     }
 }

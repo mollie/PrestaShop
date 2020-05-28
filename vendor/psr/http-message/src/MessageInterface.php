@@ -1,8 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Psr\Http\Message;
-
-use InvalidArgumentException;
+namespace _PhpScoper5ece82d7231e4\Psr\Http\Message;
 
 /**
  * HTTP messages consist of requests from a client to a server and responses
@@ -123,7 +121,7 @@ interface MessageInterface
      * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withHeader($name, $value);
     /**
@@ -140,7 +138,7 @@ interface MessageInterface
      * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withAddedHeader($name, $value);
     /**
@@ -173,7 +171,7 @@ interface MessageInterface
      *
      * @param StreamInterface $body Body.
      * @return static
-     * @throws InvalidArgumentException When the body is not valid.
+     * @throws \InvalidArgumentException When the body is not valid.
      */
-    public function withBody(StreamInterface $body);
+    public function withBody(\_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface $body);
 }

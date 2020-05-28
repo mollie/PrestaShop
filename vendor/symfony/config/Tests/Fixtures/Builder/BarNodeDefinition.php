@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Builder;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\BarNode;
-class BarNodeDefinition extends NodeDefinition
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\BarNode;
+class BarNodeDefinition extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeDefinition
 {
     protected function createNode()
     {
-        return new BarNode($this->name);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\BarNode($this->name);
     }
 }

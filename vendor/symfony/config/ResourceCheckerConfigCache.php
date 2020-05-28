@@ -8,41 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception\IOException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Filesystem;
-use Countable;
-use Error;
-use Exception;
-use RuntimeException;
-use Traversable;
-use UnexpectedValueException;
-use function count;
-use function file_get_contents;
-use function filemtime;
-use function filter_var;
-use function function_exists;
-use function ini_get;
-use function ini_set;
-use function is_file;
-use function iterator_to_array;
-use function opcache_invalidate;
-use function restore_error_handler;
-use function serialize;
-use function set_error_handler;
-use function umask;
-use function unserialize;
-use const FILTER_VALIDATE_BOOLEAN;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\ResourceInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Filesystem;
 /**
  * ResourceCheckerConfigCache uses instances of ResourceCheckerInterface
  * to check whether cached data is still fresh.
  *
  * @author Matthias Pigulla <mp@webfactory.de>
  */
-class ResourceCheckerConfigCache implements ConfigCacheInterface
+class ResourceCheckerConfigCache implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\ConfigCacheInterface
 {
     /**
      * @var string
@@ -81,25 +58,25 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
      */
     public function isFresh()
     {
-        if (!is_file($this->file)) {
-            return false;
+        if (!\is_file($this->file)) {
+            return \false;
         }
-        if ($this->resourceCheckers instanceof Traversable && !$this->resourceCheckers instanceof Countable) {
-            $this->resourceCheckers = iterator_to_array($this->resourceCheckers);
+        if ($this->resourceCheckers instanceof \Traversable && !$this->resourceCheckers instanceof \Countable) {
+            $this->resourceCheckers = \iterator_to_array($this->resourceCheckers);
         }
-        if (!count($this->resourceCheckers)) {
-            return true;
+        if (!\count($this->resourceCheckers)) {
+            return \true;
             // shortcut - if we don't have any checkers we don't need to bother with the meta file at all
         }
         $metadata = $this->getMetaFile();
-        if (!is_file($metadata)) {
-            return false;
+        if (!\is_file($metadata)) {
+            return \false;
         }
         $meta = $this->safelyUnserialize($metadata);
-        if (false === $meta) {
-            return false;
+        if (\false === $meta) {
+            return \false;
         }
-        $time = filemtime($this->file);
+        $time = \filemtime($this->file);
         foreach ($meta as $resource) {
             /* @var ResourceInterface $resource */
             foreach ($this->resourceCheckers as $checker) {
@@ -111,12 +88,12 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
                     break;
                     // no need to further check this resource
                 }
-                return false;
+                return \false;
                 // cache is stale
             }
             // no suitable checker found, ignore this resource
         }
-        return true;
+        return \true;
     }
     /**
      * Writes cache.
@@ -124,29 +101,29 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
      * @param string              $content  The content to write in the cache
      * @param ResourceInterface[] $metadata An array of metadata
      *
-     * @throws RuntimeException When cache file can't be written
+     * @throws \RuntimeException When cache file can't be written
      */
     public function write($content, array $metadata = null)
     {
         $mode = 0666;
-        $umask = umask();
-        $filesystem = new Filesystem();
+        $umask = \umask();
+        $filesystem = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Filesystem();
         $filesystem->dumpFile($this->file, $content);
         try {
             $filesystem->chmod($this->file, $mode, $umask);
-        } catch (IOException $e) {
+        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException $e) {
             // discard chmod failure (some filesystem may not support it)
         }
         if (null !== $metadata) {
-            $filesystem->dumpFile($this->getMetaFile(), serialize($metadata));
+            $filesystem->dumpFile($this->getMetaFile(), \serialize($metadata));
             try {
                 $filesystem->chmod($this->getMetaFile(), $mode, $umask);
-            } catch (IOException $e) {
+            } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException $e) {
                 // discard chmod failure (some filesystem may not support it)
             }
         }
-        if (function_exists('opcache_invalidate') && filter_var(ini_get('opcache.enable'), FILTER_VALIDATE_BOOLEAN)) {
-            @opcache_invalidate($this->file, true);
+        if (\function_exists('opcache_invalidate') && \filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN)) {
+            @\opcache_invalidate($this->file, \true);
         }
     }
     /**
@@ -161,23 +138,23 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
     private function safelyUnserialize($file)
     {
         $e = null;
-        $meta = false;
-        $content = file_get_contents($file);
-        $signalingException = new UnexpectedValueException();
-        $prevUnserializeHandler = ini_set('unserialize_callback_func', '');
-        $prevErrorHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use(&$prevErrorHandler, $signalingException) {
+        $meta = \false;
+        $content = \file_get_contents($file);
+        $signalingException = new \UnexpectedValueException();
+        $prevUnserializeHandler = \ini_set('unserialize_callback_func', '');
+        $prevErrorHandler = \set_error_handler(function ($type, $msg, $file, $line, $context = []) use(&$prevErrorHandler, $signalingException) {
             if (__FILE__ === $file) {
                 throw $signalingException;
             }
-            return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
+            return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : \false;
         });
         try {
-            $meta = unserialize($content);
-        } catch (Error $e) {
-        } catch (Exception $e) {
+            $meta = \unserialize($content);
+        } catch (\Error $e) {
+        } catch (\Exception $e) {
         }
-        restore_error_handler();
-        ini_set('unserialize_callback_func', $prevUnserializeHandler);
+        \restore_error_handler();
+        \ini_set('unserialize_callback_func', $prevUnserializeHandler);
         if (null !== $e && $e !== $signalingException) {
             throw $e;
         }

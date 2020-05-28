@@ -8,16 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException;
-use function chr;
-use function hexdec;
-use function preg_replace_callback;
-use function sprintf;
-use function str_replace;
-use function substr;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException;
 /**
  * Unescaper encapsulates unescaping rules for single and double-quoted
  * YAML strings.
@@ -41,7 +34,7 @@ class Unescaper
      */
     public function unescapeSingleQuotedString($value)
     {
-        return str_replace('\'\'', '\'', $value);
+        return \str_replace('\'\'', '\'', $value);
     }
     /**
      * Unescapes a double quoted string.
@@ -56,7 +49,7 @@ class Unescaper
             return $this->unescapeCharacter($match[0]);
         };
         // evaluate the string
-        return preg_replace_callback('/' . self::REGEX_ESCAPED_CHARACTER . '/u', $callback, $value);
+        return \preg_replace_callback('/' . self::REGEX_ESCAPED_CHARACTER . '/u', $callback, $value);
     }
     /**
      * Unescapes a character that was found in a double-quoted string.
@@ -109,13 +102,13 @@ class Unescaper
                 // U+2029 PARAGRAPH SEPARATOR
                 return " ";
             case 'x':
-                return self::utf8chr(hexdec(substr($value, 2, 2)));
+                return self::utf8chr(\hexdec(\substr($value, 2, 2)));
             case 'u':
-                return self::utf8chr(hexdec(substr($value, 2, 4)));
+                return self::utf8chr(\hexdec(\substr($value, 2, 4)));
             case 'U':
-                return self::utf8chr(hexdec(substr($value, 2, 8)));
+                return self::utf8chr(\hexdec(\substr($value, 2, 8)));
             default:
-                throw new ParseException(sprintf('Found unknown escape character "%s".', $value));
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Found unknown escape character "%s".', $value));
         }
     }
     /**
@@ -128,14 +121,14 @@ class Unescaper
     private static function utf8chr($c)
     {
         if (0x80 > ($c %= 0x200000)) {
-            return chr($c);
+            return \chr($c);
         }
         if (0x800 > $c) {
-            return chr(0xc0 | $c >> 6) . chr(0x80 | $c & 0x3f);
+            return \chr(0xc0 | $c >> 6) . \chr(0x80 | $c & 0x3f);
         }
         if (0x10000 > $c) {
-            return chr(0xe0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3f) . chr(0x80 | $c & 0x3f);
+            return \chr(0xe0 | $c >> 12) . \chr(0x80 | $c >> 6 & 0x3f) . \chr(0x80 | $c & 0x3f);
         }
-        return chr(0xf0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3f) . chr(0x80 | $c >> 6 & 0x3f) . chr(0x80 | $c & 0x3f);
+        return \chr(0xf0 | $c >> 18) . \chr(0x80 | $c >> 12 & 0x3f) . \chr(0x80 | $c >> 6 & 0x3f) . \chr(0x80 | $c & 0x3f);
     }
 }

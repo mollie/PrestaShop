@@ -8,27 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
-
-use Exception;
-use ReflectionException;
-use ReflectionProperty;
-use Serializable;
-use Throwable;
-use function array_search;
-use function array_slice;
-use function class_exists;
-use function debug_backtrace;
-use function interface_exists;
-use function is_bool;
-use function ltrim;
-use function serialize;
-use function spl_autoload_register;
-use function spl_autoload_unregister;
-use function sprintf;
-use function substr_replace;
-use function trait_exists;
-use function unserialize;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource;
 
 /**
  * ClassExistenceResource represents a class existence.
@@ -38,7 +18,7 @@ use function unserialize;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ClassExistenceResource implements SelfCheckingResourceInterface, Serializable
+class ClassExistenceResource implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $resource;
     private $exists;
@@ -73,41 +53,41 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, Serializa
     /**
      * {@inheritdoc}
      *
-     * @throws ReflectionException when a parent class/interface/trait is not found
+     * @throws \ReflectionException when a parent class/interface/trait is not found
      */
     public function isFresh($timestamp)
     {
-        $loaded = class_exists($this->resource, false) || interface_exists($this->resource, false) || trait_exists($this->resource, false);
+        $loaded = \class_exists($this->resource, \false) || \interface_exists($this->resource, \false) || \trait_exists($this->resource, \false);
         if (null !== ($exists =& self::$existsCache[$this->resource])) {
             if ($loaded) {
-                $exists = [true, null];
+                $exists = [\true, null];
             } elseif (0 >= $timestamp && !$exists[0] && null !== $exists[1]) {
-                throw new ReflectionException($exists[1]);
+                throw new \ReflectionException($exists[1]);
             }
-        } elseif ([false, null] === ($exists = [$loaded, null])) {
+        } elseif ([\false, null] === ($exists = [$loaded, null])) {
             if (!self::$autoloadLevel++) {
-                spl_autoload_register(__CLASS__ . '::throwOnRequiredClass');
+                \spl_autoload_register(__CLASS__ . '::throwOnRequiredClass');
             }
             $autoloadedClass = self::$autoloadedClass;
-            self::$autoloadedClass = ltrim($this->resource, '\\');
+            self::$autoloadedClass = \ltrim($this->resource, '\\');
             try {
-                $exists[0] = class_exists($this->resource) || interface_exists($this->resource, false) || trait_exists($this->resource, false);
-            } catch (Exception $e) {
+                $exists[0] = \class_exists($this->resource) || \interface_exists($this->resource, \false) || \trait_exists($this->resource, \false);
+            } catch (\Exception $e) {
                 $exists[1] = $e->getMessage();
                 try {
                     self::throwOnRequiredClass($this->resource, $e);
-                } catch (ReflectionException $e) {
+                } catch (\ReflectionException $e) {
                     if (0 >= $timestamp) {
                         throw $e;
                     }
                 }
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 $exists[1] = $e->getMessage();
                 throw $e;
             } finally {
                 self::$autoloadedClass = $autoloadedClass;
                 if (!--self::$autoloadLevel) {
-                    spl_autoload_unregister(__CLASS__ . '::throwOnRequiredClass');
+                    \spl_autoload_unregister(__CLASS__ . '::throwOnRequiredClass');
                 }
             }
         }
@@ -124,15 +104,15 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, Serializa
         if (null === $this->exists) {
             $this->isFresh(0);
         }
-        return serialize([$this->resource, $this->exists]);
+        return \serialize([$this->resource, $this->exists]);
     }
     /**
      * @internal
      */
     public function unserialize($serialized)
     {
-        [$this->resource, $this->exists] = unserialize($serialized);
-        if (is_bool($this->exists)) {
+        list($this->resource, $this->exists) = \unserialize($serialized);
+        if (\is_bool($this->exists)) {
             $this->exists = [$this->exists, null];
         }
     }
@@ -148,39 +128,39 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, Serializa
      * required totally, so if it doesn't exist, a reflection exception is always thrown.
      * If it exists, the previous exception is rethrown.
      *
-     * @throws ReflectionException
+     * @throws \ReflectionException
      *
      * @internal
      */
-    public static function throwOnRequiredClass($class, Exception $previous = null)
+    public static function throwOnRequiredClass($class, \Exception $previous = null)
     {
         // If the passed class is the resource being checked, we shouldn't throw.
         if (null === $previous && self::$autoloadedClass === $class) {
             return;
         }
-        if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
+        if (\class_exists($class, \false) || \interface_exists($class, \false) || \trait_exists($class, \false)) {
             if (null !== $previous) {
                 throw $previous;
             }
             return;
         }
-        if ($previous instanceof ReflectionException) {
+        if ($previous instanceof \ReflectionException) {
             throw $previous;
         }
-        $message = sprintf('Class "%s" not found.', $class);
+        $message = \sprintf('Class "%s" not found.', $class);
         if (self::$autoloadedClass !== $class) {
-            $message = substr_replace($message, sprintf(' while loading "%s"', self::$autoloadedClass), -1, 0);
+            $message = \substr_replace($message, \sprintf(' while loading "%s"', self::$autoloadedClass), -1, 0);
         }
         if (null !== $previous) {
             $message = $previous->getMessage();
         }
-        $e = new ReflectionException($message, 0, $previous);
+        $e = new \ReflectionException($message, 0, $previous);
         if (null !== $previous) {
             throw $e;
         }
-        $trace = debug_backtrace();
+        $trace = \debug_backtrace();
         $autoloadFrame = ['function' => 'spl_autoload_call', 'args' => [$class]];
-        if (false === ($i = array_search($autoloadFrame, $trace, true))) {
+        if (\false === ($i = \array_search($autoloadFrame, $trace, \true))) {
             throw $e;
         }
         if (isset($trace[++$i]['function']) && !isset($trace[$i]['class'])) {
@@ -201,11 +181,11 @@ class ClassExistenceResource implements SelfCheckingResourceInterface, Serializa
                 case 'is_callable':
                     return;
             }
-            $props = ['file' => isset($trace[$i]['file']) ? $trace[$i]['file'] : null, 'line' => isset($trace[$i]['line']) ? $trace[$i]['line'] : null, 'trace' => array_slice($trace, 1 + $i)];
+            $props = ['file' => isset($trace[$i]['file']) ? $trace[$i]['file'] : null, 'line' => isset($trace[$i]['line']) ? $trace[$i]['line'] : null, 'trace' => \array_slice($trace, 1 + $i)];
             foreach ($props as $p => $v) {
                 if (null !== $v) {
-                    $r = new ReflectionProperty('Exception', $p);
-                    $r->setAccessible(true);
+                    $r = new \ReflectionProperty('Exception', $p);
+                    $r->setAccessible(\true);
                     $r->setValue($e, $v);
                 }
             }

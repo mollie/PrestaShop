@@ -8,19 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use function is_scalar;
-use function is_string;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @method InstanceofConfigurator instanceof(string $fqcn)
  */
-class DefaultsConfigurator extends AbstractServiceConfigurator
+class DefaultsConfigurator extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator
 {
     const FACTORY = 'defaults';
     use Traits\AutoconfigureTrait;
@@ -39,12 +35,12 @@ class DefaultsConfigurator extends AbstractServiceConfigurator
      */
     public final function tag($name, array $attributes = [])
     {
-        if (!is_string($name) || '' === $name) {
-            throw new InvalidArgumentException('The tag name in "_defaults" must be a non-empty string.');
+        if (!\is_string($name) || '' === $name) {
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('The tag name in "_defaults" must be a non-empty string.');
         }
         foreach ($attributes as $attribute => $value) {
-            if (!is_scalar($value) && null !== $value) {
-                throw new InvalidArgumentException(sprintf('Tag "%s", attribute "%s" in "_defaults" must be of a scalar-type.', $name, $attribute));
+            if (!\is_scalar($value) && null !== $value) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Tag "%s", attribute "%s" in "_defaults" must be of a scalar-type.', $name, $attribute));
             }
         }
         $this->definition->addTag($name, $attributes);

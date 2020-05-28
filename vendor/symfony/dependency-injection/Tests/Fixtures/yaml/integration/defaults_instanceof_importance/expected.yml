@@ -1,7 +1,7 @@
 services:
     # main_service should look like this in the end
     main_service_expected:
-        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         # _instanceof overrides _defaults
         autowire: false
         # inherited from _defaults

@@ -1,18 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
-use function array_pop;
-use function count;
-use function end;
-use function explode;
-use function implode;
-use function str_repeat;
-use function strpos;
-use function strrpos;
-use function substr;
-
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
 /**
  * Resolves a URI reference in the context of a base URI and the opposite way.
  *
@@ -36,15 +26,15 @@ final class UriResolver
             return $path;
         }
         $results = [];
-        $segments = explode('/', $path);
+        $segments = \explode('/', $path);
         foreach ($segments as $segment) {
             if ($segment === '..') {
-                array_pop($results);
+                \array_pop($results);
             } elseif ($segment !== '.') {
                 $results[] = $segment;
             }
         }
-        $newPath = implode('/', $results);
+        $newPath = \implode('/', $results);
         if ($path[0] === '/' && (!isset($newPath[0]) || $newPath[0] !== '/')) {
             // Re-add the leading slash if necessary for cases like "/.."
             $newPath = '/' . $newPath;
@@ -64,7 +54,7 @@ final class UriResolver
      * @return UriInterface
      * @link http://tools.ietf.org/html/rfc3986#section-5.2
      */
-    public static function resolve(UriInterface $base, UriInterface $rel)
+    public static function resolve(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $base, \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $rel)
     {
         if ((string) $rel === '') {
             // we can simply return the same base URI instance for this same-document reference
@@ -89,11 +79,11 @@ final class UriResolver
                     if ($targetAuthority != '' && $base->getPath() === '') {
                         $targetPath = '/' . $rel->getPath();
                     } else {
-                        $lastSlashPos = strrpos($base->getPath(), '/');
-                        if ($lastSlashPos === false) {
+                        $lastSlashPos = \strrpos($base->getPath(), '/');
+                        if ($lastSlashPos === \false) {
                             $targetPath = $rel->getPath();
                         } else {
-                            $targetPath = substr($base->getPath(), 0, $lastSlashPos + 1) . $rel->getPath();
+                            $targetPath = \substr($base->getPath(), 0, $lastSlashPos + 1) . $rel->getPath();
                         }
                     }
                 }
@@ -101,7 +91,7 @@ final class UriResolver
                 $targetQuery = $rel->getQuery();
             }
         }
-        return new Uri(Uri::composeComponents($base->getScheme(), $targetAuthority, $targetPath, $targetQuery, $rel->getFragment()));
+        return new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Uri(\_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Uri::composeComponents($base->getScheme(), $targetAuthority, $targetPath, $targetQuery, $rel->getFragment()));
     }
     /**
      * Returns the target URI as a relative reference from the base URI.
@@ -129,12 +119,12 @@ final class UriResolver
      *
      * @return UriInterface The relative URI reference
      */
-    public static function relativize(UriInterface $base, UriInterface $target)
+    public static function relativize(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $base, \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $target)
     {
         if ($target->getScheme() !== '' && ($base->getScheme() !== $target->getScheme() || $target->getAuthority() === '' && $base->getAuthority() !== '')) {
             return $target;
         }
-        if (Uri::isRelativePathReference($target)) {
+        if (\_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Uri::isRelativePathReference($target)) {
             // As the target is already highly relative we return it as-is. It would be possible to resolve
             // the target with `$target = self::resolve($base, $target);` and then try make it more relative
             // by removing a duplicate query. But let's not do that automatically.
@@ -157,18 +147,18 @@ final class UriResolver
         // If the base URI has a query but the target has none, we cannot return an empty path reference as it would
         // inherit the base query component when resolving.
         if ($target->getQuery() === '') {
-            $segments = explode('/', $target->getPath());
-            $lastSegment = end($segments);
+            $segments = \explode('/', $target->getPath());
+            $lastSegment = \end($segments);
             return $emptyPathUri->withPath($lastSegment === '' ? './' : $lastSegment);
         }
         return $emptyPathUri;
     }
-    private static function getRelativePath(UriInterface $base, UriInterface $target)
+    private static function getRelativePath(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $base, \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $target)
     {
-        $sourceSegments = explode('/', $base->getPath());
-        $targetSegments = explode('/', $target->getPath());
-        array_pop($sourceSegments);
-        $targetLastSegment = array_pop($targetSegments);
+        $sourceSegments = \explode('/', $base->getPath());
+        $targetSegments = \explode('/', $target->getPath());
+        \array_pop($sourceSegments);
+        $targetLastSegment = \array_pop($targetSegments);
         foreach ($sourceSegments as $i => $segment) {
             if (isset($targetSegments[$i]) && $segment === $targetSegments[$i]) {
                 unset($sourceSegments[$i], $targetSegments[$i]);
@@ -177,11 +167,11 @@ final class UriResolver
             }
         }
         $targetSegments[] = $targetLastSegment;
-        $relativePath = str_repeat('../', count($sourceSegments)) . implode('/', $targetSegments);
+        $relativePath = \str_repeat('../', \count($sourceSegments)) . \implode('/', $targetSegments);
         // A reference to am empty last segment or an empty first sub-segment must be prefixed with "./".
         // This also applies to a segment with a colon character (e.g., "file:colon") that cannot be used
         // as the first segment of a relative-path reference, as it would be mistaken for a scheme name.
-        if ('' === $relativePath || false !== strpos(explode('/', $relativePath, 2)[0], ':')) {
+        if ('' === $relativePath || \false !== \strpos(\explode('/', $relativePath, 2)[0], ':')) {
             $relativePath = "./{$relativePath}";
         } elseif ('/' === $relativePath[0]) {
             if ($base->getAuthority() != '' && $base->getPath() === '') {

@@ -1,27 +1,19 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-use InvalidArgumentException;
-use function array_merge;
-use function explode;
-use function http_build_query;
-use function strpos;
-use function strtolower;
-use function urlencode;
-
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseCollection;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory;
 abstract class EndpointAbstract
 {
-    const REST_CREATE = MollieApiClient::HTTP_POST;
-    const REST_UPDATE = MollieApiClient::HTTP_PATCH;
-    const REST_READ = MollieApiClient::HTTP_GET;
-    const REST_LIST = MollieApiClient::HTTP_GET;
-    const REST_DELETE = MollieApiClient::HTTP_DELETE;
+    const REST_CREATE = \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_POST;
+    const REST_UPDATE = \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_PATCH;
+    const REST_READ = \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET;
+    const REST_LIST = \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_GET;
+    const REST_DELETE = \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient::HTTP_DELETE;
     /**
      * @var MollieApiClient
      */
@@ -37,7 +29,7 @@ abstract class EndpointAbstract
     /**
      * @param MollieApiClient $api
      */
-    public function __construct(MollieApiClient $api)
+    public function __construct(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient $api)
     {
         $this->client = $api;
     }
@@ -51,14 +43,14 @@ abstract class EndpointAbstract
             return "";
         }
         foreach ($filters as $key => $value) {
-            if ($value === true) {
+            if ($value === \true) {
                 $filters[$key] = "true";
             }
-            if ($value === false) {
+            if ($value === \false) {
                 $filters[$key] = "false";
             }
         }
-        return "?" . http_build_query($filters, "", "&");
+        return "?" . \http_build_query($filters, "", "&");
     }
     /**
      * @param array $body
@@ -69,7 +61,7 @@ abstract class EndpointAbstract
     protected function rest_create(array $body, array $filters)
     {
         $result = $this->client->performHttpCall(self::REST_CREATE, $this->getResourcePath() . $this->buildQueryString($filters), $this->parseRequestBody($body));
-        return ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Retrieves a single object from the REST API.
@@ -82,11 +74,11 @@ abstract class EndpointAbstract
     protected function rest_read($id, array $filters)
     {
         if (empty($id)) {
-            throw new ApiException("Invalid resource id.");
+            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
         }
-        $id = urlencode($id);
+        $id = \urlencode($id);
         $result = $this->client->performHttpCall(self::REST_READ, "{$this->getResourcePath()}/{$id}" . $this->buildQueryString($filters));
-        return ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Sends a DELETE request to a single Molle API object.
@@ -100,14 +92,14 @@ abstract class EndpointAbstract
     protected function rest_delete($id, array $body = [])
     {
         if (empty($id)) {
-            throw new ApiException("Invalid resource id.");
+            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
         }
-        $id = urlencode($id);
+        $id = \urlencode($id);
         $result = $this->client->performHttpCall(self::REST_DELETE, "{$this->getResourcePath()}/{$id}", $this->parseRequestBody($body));
         if ($result === null) {
             return null;
         }
-        return ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Get a collection of objects from the REST API.
@@ -121,13 +113,13 @@ abstract class EndpointAbstract
      */
     protected function rest_list($from = null, $limit = null, array $filters = [])
     {
-        $filters = array_merge(["from" => $from, "limit" => $limit], $filters);
+        $filters = \array_merge(["from" => $from, "limit" => $limit], $filters);
         $apiPath = $this->getResourcePath() . $this->buildQueryString($filters);
         $result = $this->client->performHttpCall(self::REST_LIST, $apiPath);
         /** @var BaseCollection $collection */
         $collection = $this->getResourceCollectionObject($result->count, $result->_links);
         foreach ($result->_embedded->{$collection->getCollectionResourceName()} as $dataResult) {
-            $collection[] = ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
+            $collection[] = \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
         }
         return $collection;
     }
@@ -142,7 +134,7 @@ abstract class EndpointAbstract
      */
     public function setResourcePath($resourcePath)
     {
-        $this->resourcePath = strtolower($resourcePath);
+        $this->resourcePath = \strtolower($resourcePath);
     }
     /**
      * @return string
@@ -150,10 +142,10 @@ abstract class EndpointAbstract
      */
     public function getResourcePath()
     {
-        if (strpos($this->resourcePath, "_") !== false) {
-            [$parentResource, $childResource] = explode("_", $this->resourcePath, 2);
+        if (\strpos($this->resourcePath, "_") !== \false) {
+            list($parentResource, $childResource) = \explode("_", $this->resourcePath, 2);
             if (empty($this->parentId)) {
-                throw new ApiException("Subresource '{$this->resourcePath}' used without parent '{$parentResource}' ID.");
+                throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("Subresource '{$this->resourcePath}' used without parent '{$parentResource}' ID.");
             }
             return "{$parentResource}/{$this->parentId}/{$childResource}";
         }
@@ -170,9 +162,9 @@ abstract class EndpointAbstract
             return null;
         }
         try {
-            $encoded = \_PhpScoper5ea00cc67502b\GuzzleHttp\json_encode($body);
-        } catch (InvalidArgumentException $e) {
-            throw new ApiException("Error encoding parameters into JSON: '" . $e->getMessage() . "'.");
+            $encoded = \_PhpScoper5ece82d7231e4\GuzzleHttp\json_encode($body);
+        } catch (\InvalidArgumentException $e) {
+            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("Error encoding parameters into JSON: '" . $e->getMessage() . "'.");
         }
         return $encoded;
     }

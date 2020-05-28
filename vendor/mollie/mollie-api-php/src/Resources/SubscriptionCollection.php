@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-class SubscriptionCollection extends CursorCollection
+class SubscriptionCollection extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class SubscriptionCollection extends CursorCollection
      */
     protected function createResourceObject()
     {
-        return new Subscription($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Subscription($this->client);
     }
 }

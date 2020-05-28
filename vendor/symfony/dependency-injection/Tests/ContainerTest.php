@@ -8,26 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Exception;
-use ReflectionClass;
-use ReflectionProperty;
-use stdClass;
-use function sprintf;
-
-class ContainerTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+class ContainerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {
-        $sc = new Container();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
         $this->assertSame($sc, $sc->get('service_container'), '__construct() automatically registers itself as a service');
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $this->assertEquals(['foo' => 'bar'], $sc->getParameterBag()->all(), '__construct() takes an array of parameters as its first argument');
     }
     /**
@@ -35,18 +29,18 @@ class ContainerTest extends TestCase
      */
     public function testCamelize($id, $expected)
     {
-        $this->assertEquals($expected, Container::camelize($id), sprintf('Container::camelize("%s")', $id));
+        $this->assertEquals($expected, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container::camelize($id), \sprintf('Container::camelize("%s")', $id));
     }
     public function dataForTestCamelize()
     {
-        return [['foo_bar', 'FooBar'], ['foo.bar', 'Foo_Bar'], ['foo.bar_baz', 'Foo_BarBaz'], ['foo._bar', 'Foo_Bar'], ['foo_.bar', 'Foo_Bar'], ['_foo', 'Foo'], ['.foo', '_Foo'], ['foo_', 'Foo'], ['foo.', 'Foo_'], ['_PhpScoper5ea00cc67502b\\foo\\bar', 'Foo_Bar']];
+        return [['foo_bar', 'FooBar'], ['foo.bar', 'Foo_Bar'], ['foo.bar_baz', 'Foo_BarBaz'], ['foo._bar', 'Foo_Bar'], ['foo_.bar', 'Foo_Bar'], ['_foo', 'Foo'], ['.foo', '_Foo'], ['foo_', 'Foo'], ['foo.', 'Foo_'], ['_PhpScoper5ece82d7231e4\\foo\\bar', 'Foo_Bar']];
     }
     /**
      * @dataProvider dataForTestUnderscore
      */
     public function testUnderscore($id, $expected)
     {
-        $this->assertEquals($expected, Container::underscore($id), sprintf('Container::underscore("%s")', $id));
+        $this->assertEquals($expected, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container::underscore($id), \sprintf('Container::underscore("%s")', $id));
     }
     public function dataForTestUnderscore()
     {
@@ -54,11 +48,11 @@ class ContainerTest extends TestCase
     }
     public function testCompile()
     {
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $this->assertFalse($sc->getParameterBag()->isResolved(), '->compile() resolves the parameter bag');
         $sc->compile();
         $this->assertTrue($sc->getParameterBag()->isResolved(), '->compile() resolves the parameter bag');
-        $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ParameterBag\\FrozenParameterBag', $sc->getParameterBag(), '->compile() changes the parameter bag to a FrozenParameterBag instance');
+        $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ParameterBag\\FrozenParameterBag', $sc->getParameterBag(), '->compile() changes the parameter bag to a FrozenParameterBag instance');
         $this->assertEquals(['foo' => 'bar'], $sc->getParameterBag()->all(), '->compile() copies the current parameters to the new parameter bag');
     }
     /**
@@ -68,31 +62,31 @@ class ContainerTest extends TestCase
      */
     public function testIsFrozen()
     {
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $this->assertFalse($sc->isFrozen(), '->isFrozen() returns false if the parameters are not frozen');
         $sc->compile();
         $this->assertTrue($sc->isFrozen(), '->isFrozen() returns true if the parameters are frozen');
     }
     public function testIsCompiled()
     {
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $this->assertFalse($sc->isCompiled(), '->isCompiled() returns false if the container is not compiled');
         $sc->compile();
         $this->assertTrue($sc->isCompiled(), '->isCompiled() returns true if the container is compiled');
     }
     public function testIsCompiledWithFrozenParameters()
     {
-        $sc = new Container(new FrozenParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag(['foo' => 'bar']));
         $this->assertFalse($sc->isCompiled(), '->isCompiled() returns false if the container is not compiled but the parameter bag is already frozen');
     }
     public function testGetParameterBag()
     {
-        $sc = new Container();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
         $this->assertEquals([], $sc->getParameterBag()->all(), '->getParameterBag() returns an empty array if no parameter has been defined');
     }
     public function testGetSetParameter()
     {
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $sc->setParameter('bar', 'foo');
         $this->assertEquals('foo', $sc->getParameter('bar'), '->setParameter() sets the value of a new parameter');
         $sc->setParameter('foo', 'baz');
@@ -100,7 +94,7 @@ class ContainerTest extends TestCase
         try {
             $sc->getParameter('baba');
             $this->fail('->getParameter() thrown an \\InvalidArgumentException if the key does not exist');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('\\InvalidArgumentException', $e, '->getParameter() thrown an \\InvalidArgumentException if the key does not exist');
             $this->assertEquals('You have requested a non-existent parameter "baba".', $e->getMessage(), '->getParameter() thrown an \\InvalidArgumentException if the key does not exist');
         }
@@ -112,19 +106,19 @@ class ContainerTest extends TestCase
      */
     public function testGetSetParameterWithMixedCase()
     {
-        $sc = new Container(new ParameterBag(['foo' => 'bar']));
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag(['foo' => 'bar']));
         $sc->setParameter('Foo', 'baz1');
         $this->assertEquals('baz1', $sc->getParameter('foo'), '->setParameter() converts the key to lowercase');
         $this->assertEquals('baz1', $sc->getParameter('FOO'), '->getParameter() converts the key to lowercase');
     }
     public function testGetServiceIds()
     {
-        $sc = new Container();
-        $sc->set('foo', $obj = new stdClass());
-        $sc->set('bar', $obj = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
+        $sc->set('foo', $obj = new \stdClass());
+        $sc->set('bar', $obj = new \stdClass());
         $this->assertEquals(['service_container', 'foo', 'bar'], $sc->getServiceIds(), '->getServiceIds() returns all defined service ids');
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', $obj = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', $obj = new \stdClass());
         $this->assertEquals(['service_container', 'internal', 'bar', 'foo_bar', 'foo.baz', 'circular', 'throw_exception', 'throws_exception_on_service_configuration', 'internal_dependency', 'alias', 'foo'], $sc->getServiceIds(), '->getServiceIds() returns defined service ids by factory methods in the method map, followed by service ids defined by set()');
     }
     /**
@@ -133,26 +127,26 @@ class ContainerTest extends TestCase
      */
     public function testGetLegacyServiceIds()
     {
-        $sc = new LegacyProjectServiceContainer();
-        $sc->set('foo', $obj = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\LegacyProjectServiceContainer();
+        $sc->set('foo', $obj = new \stdClass());
         $this->assertEquals(['internal', 'bar', 'foo_bar', 'foo.baz', 'circular', 'throw_exception', 'throws_exception_on_service_configuration', 'service_container', 'alias', 'foo'], $sc->getServiceIds(), '->getServiceIds() returns defined service ids by getXXXService() methods, followed by service ids defined by set()');
     }
     public function testSet()
     {
-        $sc = new Container();
-        $sc->set('._. \\o/', $foo = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
+        $sc->set('._. \\o/', $foo = new \stdClass());
         $this->assertSame($foo, $sc->get('._. \\o/'), '->set() sets a service');
     }
     public function testSetWithNullResetTheService()
     {
-        $sc = new Container();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
         $sc->set('foo', null);
         $this->assertFalse($sc->has('foo'), '->set() with null service resets the service');
     }
     public function testSetReplacesAlias()
     {
-        $c = new ProjectServiceContainer();
-        $c->set('alias', $foo = new stdClass());
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $c->set('alias', $foo = new \stdClass());
         $this->assertSame($foo, $c->get('alias'), '->set() replaces an existing alias');
     }
     /**
@@ -161,30 +155,30 @@ class ContainerTest extends TestCase
      */
     public function testSetWithNullOnInitializedPredefinedService()
     {
-        $sc = new Container();
-        $sc->set('foo', new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
+        $sc->set('foo', new \stdClass());
         $sc->set('foo', null);
         $this->assertFalse($sc->has('foo'), '->set() with null service resets the service');
-        $sc = new ProjectServiceContainer();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $sc->get('bar');
         $sc->set('bar', null);
         $this->assertTrue($sc->has('bar'), '->set() with null service resets the pre-defined service');
     }
     public function testSetWithNullOnUninitializedPredefinedService()
     {
-        $sc = new Container();
-        $sc->set('foo', new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
+        $sc->set('foo', new \stdClass());
         $sc->get('foo', null);
         $sc->set('foo', null);
         $this->assertFalse($sc->has('foo'), '->set() with null service resets the service');
-        $sc = new ProjectServiceContainer();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $sc->set('bar', null);
         $this->assertTrue($sc->has('bar'), '->set() with null service resets the pre-defined service');
     }
     public function testGet()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', $foo = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', $foo = new \stdClass());
         $this->assertSame($foo, $sc->get('foo'), '->get() returns the service for the given id');
         $this->assertSame($sc->__bar, $sc->get('bar'), '->get() returns the service for the given id');
         $this->assertSame($sc->__foo_bar, $sc->get('foo_bar'), '->get() returns the service if a get*Method() is defined');
@@ -192,10 +186,10 @@ class ContainerTest extends TestCase
         try {
             $sc->get('');
             $this->fail('->get() throws a \\InvalidArgumentException exception if the service is empty');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws a ServiceNotFoundException exception if the service is empty');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws a ServiceNotFoundException exception if the service is empty');
         }
-        $this->assertNull($sc->get('', ContainerInterface::NULL_ON_INVALID_REFERENCE), '->get() returns null if the service is empty');
+        $this->assertNull($sc->get('', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE), '->get() returns null if the service is empty');
     }
     /**
      * @group legacy
@@ -203,8 +197,8 @@ class ContainerTest extends TestCase
      */
     public function testGetInsensitivity()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', $foo = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', $foo = new \stdClass());
         $this->assertSame($foo, $sc->get('Foo'), '->get() returns the service for the given id, and converts id to lowercase');
     }
     /**
@@ -213,8 +207,8 @@ class ContainerTest extends TestCase
      */
     public function testNormalizeIdKeepsCase()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->normalizeId('Foo', true);
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->normalizeId('Foo', \true);
         $this->assertSame('Foo', $sc->normalizeId('foo'));
     }
     /**
@@ -227,75 +221,75 @@ class ContainerTest extends TestCase
      */
     public function testLegacyGet()
     {
-        $sc = new LegacyProjectServiceContainer();
-        $sc->set('foo', $foo = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\LegacyProjectServiceContainer();
+        $sc->set('foo', $foo = new \stdClass());
         $this->assertSame($foo, $sc->get('foo'), '->get() returns the service for the given id');
         $this->assertSame($foo, $sc->get('Foo'), '->get() returns the service for the given id, and converts id to lowercase');
         $this->assertSame($sc->__bar, $sc->get('bar'), '->get() returns the service for the given id');
         $this->assertSame($sc->__foo_bar, $sc->get('foo_bar'), '->get() returns the service if a get*Method() is defined');
         $this->assertSame($sc->__foo_baz, $sc->get('foo.baz'), '->get() returns the service if a get*Method() is defined');
-        $this->assertSame($sc->__foo_baz, $sc->get('_PhpScoper5ea00cc67502b\\foo\\baz'), '->get() returns the service if a get*Method() is defined');
-        $sc->set('bar', $bar = new stdClass());
+        $this->assertSame($sc->__foo_baz, $sc->get('_PhpScoper5ece82d7231e4\\foo\\baz'), '->get() returns the service if a get*Method() is defined');
+        $sc->set('bar', $bar = new \stdClass());
         $this->assertSame($bar, $sc->get('bar'), '->get() prefers to return a service defined with set() than one defined with a getXXXMethod()');
         try {
             $sc->get('');
             $this->fail('->get() throws a \\InvalidArgumentException exception if the service is empty');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws a ServiceNotFoundException exception if the service is empty');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws a ServiceNotFoundException exception if the service is empty');
         }
-        $this->assertNull($sc->get('', ContainerInterface::NULL_ON_INVALID_REFERENCE), '->get() returns null if the service is empty');
+        $this->assertNull($sc->get('', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE), '->get() returns null if the service is empty');
     }
     public function testGetThrowServiceNotFoundException()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', $foo = new stdClass());
-        $sc->set('baz', $foo = new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', $foo = new \stdClass());
+        $sc->set('baz', $foo = new \stdClass());
         try {
             $sc->get('foo1');
             $this->fail('->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
             $this->assertEquals('You have requested a non-existent service "foo1". Did you mean this: "foo"?', $e->getMessage(), '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException with some advices');
         }
         try {
             $sc->get('bag');
             $this->fail('->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException', $e, '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException if the key does not exist');
             $this->assertEquals('You have requested a non-existent service "bag". Did you mean one of these: "bar", "baz"?', $e->getMessage(), '->get() throws an Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException with some advices');
         }
     }
     public function testGetCircularReference()
     {
-        $sc = new ProjectServiceContainer();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         try {
             $sc->get('circular');
             $this->fail('->get() throws a ServiceCircularReferenceException if it contains circular reference');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceCircularReferenceException', $e, '->get() throws a ServiceCircularReferenceException if it contains circular reference');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceCircularReferenceException', $e, '->get() throws a ServiceCircularReferenceException if it contains circular reference');
             $this->assertStringStartsWith('Circular reference detected for service "circular"', $e->getMessage(), '->get() throws a \\LogicException if it contains circular reference');
         }
     }
     public function testGetSyntheticServiceThrows()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
         $this->expectExceptionMessage('The "request" service is synthetic, it needs to be set at boot time before it can be used.');
         require_once __DIR__ . '/Fixtures/php/services9_compiled.php';
-        $container = new \_PhpScoper5ea00cc67502b\ProjectServiceContainer();
+        $container = new \_PhpScoper5ece82d7231e4\ProjectServiceContainer();
         $container->get('request');
     }
     public function testGetRemovedServiceThrows()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
+        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Exception\\ServiceNotFoundException');
         $this->expectExceptionMessage('The "inlined" service or alias has been removed or inlined when the container was compiled. You should either make it public, or stop using the container directly and use dependency injection instead.');
         require_once __DIR__ . '/Fixtures/php/services9_compiled.php';
-        $container = new \_PhpScoper5ea00cc67502b\ProjectServiceContainer();
+        $container = new \_PhpScoper5ece82d7231e4\ProjectServiceContainer();
         $container->get('inlined');
     }
     public function testHas()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', new \stdClass());
         $this->assertFalse($sc->has('foo1'), '->has() returns false if the service does not exist');
         $this->assertTrue($sc->has('foo'), '->has() returns true if the service exists');
         $this->assertTrue($sc->has('bar'), '->has() returns true if a get*Method() is defined');
@@ -311,26 +305,26 @@ class ContainerTest extends TestCase
      */
     public function testLegacyHas()
     {
-        $sc = new LegacyProjectServiceContainer();
-        $sc->set('foo', new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\LegacyProjectServiceContainer();
+        $sc->set('foo', new \stdClass());
         $this->assertFalse($sc->has('foo1'), '->has() returns false if the service does not exist');
         $this->assertTrue($sc->has('foo'), '->has() returns true if the service exists');
         $this->assertTrue($sc->has('bar'), '->has() returns true if a get*Method() is defined');
         $this->assertTrue($sc->has('foo_bar'), '->has() returns true if a get*Method() is defined');
         $this->assertTrue($sc->has('foo.baz'), '->has() returns true if a get*Method() is defined');
-        $this->assertTrue($sc->has('_PhpScoper5ea00cc67502b\\foo\\baz'), '->has() returns true if a get*Method() is defined');
+        $this->assertTrue($sc->has('_PhpScoper5ece82d7231e4\\foo\\baz'), '->has() returns true if a get*Method() is defined');
     }
     public function testScalarService()
     {
-        $c = new Container();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
         $c->set('foo', 'some value');
         $this->assertTrue($c->has('foo'));
         $this->assertSame('some value', $c->get('foo'));
     }
     public function testInitialized()
     {
-        $sc = new ProjectServiceContainer();
-        $sc->set('foo', new stdClass());
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $sc->set('foo', new \stdClass());
         $this->assertTrue($sc->initialized('foo'), '->initialized() returns true if service is loaded');
         $this->assertFalse($sc->initialized('foo1'), '->initialized() returns false if service is not loaded');
         $this->assertFalse($sc->initialized('bar'), '->initialized() returns false if a service is defined, but not currently loaded');
@@ -344,25 +338,25 @@ class ContainerTest extends TestCase
      */
     public function testInitializedWithPrivateService()
     {
-        $sc = new ProjectServiceContainer();
+        $sc = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $sc->get('internal_dependency');
         $this->assertTrue($sc->initialized('internal'));
     }
     public function testReset()
     {
-        $c = new Container();
-        $c->set('bar', new stdClass());
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container();
+        $c->set('bar', new \stdClass());
         $c->reset();
-        $this->assertNull($c->get('bar', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+        $this->assertNull($c->get('bar', \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
     public function testGetThrowsException()
     {
         $this->expectException('Exception');
         $this->expectExceptionMessage('Something went terribly wrong!');
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         try {
             $c->get('throw_exception');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing.
         }
         // Retry, to make sure that get*Service() will be called.
@@ -370,36 +364,36 @@ class ContainerTest extends TestCase
     }
     public function testGetThrowsExceptionOnServiceConfiguration()
     {
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         try {
             $c->get('throws_exception_on_service_configuration');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing.
         }
         $this->assertFalse($c->initialized('throws_exception_on_service_configuration'));
         // Retry, to make sure that get*Service() will be called.
         try {
             $c->get('throws_exception_on_service_configuration');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing.
         }
         $this->assertFalse($c->initialized('throws_exception_on_service_configuration'));
     }
     protected function getField($obj, $field)
     {
-        $reflection = new ReflectionProperty($obj, $field);
-        $reflection->setAccessible(true);
+        $reflection = new \ReflectionProperty($obj, $field);
+        $reflection->setAccessible(\true);
         return $reflection->getValue($obj);
     }
     public function testAlias()
     {
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $this->assertTrue($c->has('alias'));
         $this->assertSame($c->get('alias'), $c->get('bar'));
     }
     public function testThatCloningIsNotSupported()
     {
-        $class = new ReflectionClass('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Container');
+        $class = new \ReflectionClass('_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\Container');
         $clone = $class->getMethod('__clone');
         $this->assertFalse($class->isCloneable());
         $this->assertTrue($clone->isPrivate());
@@ -410,7 +404,7 @@ class ContainerTest extends TestCase
      */
     public function testUnsetInternalPrivateServiceIsDeprecated()
     {
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $c->set('internal', null);
     }
     /**
@@ -419,8 +413,8 @@ class ContainerTest extends TestCase
      */
     public function testChangeInternalPrivateServiceIsDeprecated()
     {
-        $c = new ProjectServiceContainer();
-        $c->set('internal', $internal = new stdClass());
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $c->set('internal', $internal = new \stdClass());
         $this->assertSame($c->get('internal'), $internal);
     }
     /**
@@ -429,7 +423,7 @@ class ContainerTest extends TestCase
      */
     public function testCheckExistenceOfAnInternalPrivateServiceIsDeprecated()
     {
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $c->get('internal_dependency');
         $this->assertTrue($c->has('internal'));
     }
@@ -439,7 +433,7 @@ class ContainerTest extends TestCase
      */
     public function testRequestAnInternalSharedPrivateServiceIsDeprecated()
     {
-        $c = new ProjectServiceContainer();
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
         $c->get('internal_dependency');
         $c->get('internal');
     }
@@ -449,9 +443,9 @@ class ContainerTest extends TestCase
      */
     public function testReplacingAPreDefinedServiceIsDeprecated()
     {
-        $c = new ProjectServiceContainer();
-        $c->set('bar', new stdClass());
-        $c->set('bar', $bar = new stdClass());
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $c->set('bar', new \stdClass());
+        $c->set('bar', $bar = new \stdClass());
         $this->assertSame($bar, $c->get('bar'), '->set() replaces a pre-defined service');
     }
     /**
@@ -460,11 +454,11 @@ class ContainerTest extends TestCase
      */
     public function testSetWithPrivateSyntheticServiceThrowsDeprecation()
     {
-        $c = new ProjectServiceContainer();
-        $c->set('synthetic', new stdClass());
+        $c = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\ProjectServiceContainer();
+        $c->set('synthetic', new \stdClass());
     }
 }
-class ProjectServiceContainer extends Container
+class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
 {
     public $__bar;
     public $__foo_bar;
@@ -475,13 +469,13 @@ class ProjectServiceContainer extends Container
     public function __construct()
     {
         parent::__construct();
-        $this->__bar = new stdClass();
-        $this->__foo_bar = new stdClass();
-        $this->__foo_baz = new stdClass();
-        $this->__internal = new stdClass();
-        $this->privates = ['internal' => true, 'synthetic' => true];
+        $this->__bar = new \stdClass();
+        $this->__foo_bar = new \stdClass();
+        $this->__foo_baz = new \stdClass();
+        $this->__internal = new \stdClass();
+        $this->privates = ['internal' => \true, 'synthetic' => \true];
         $this->aliases = ['alias' => 'bar'];
-        $this->syntheticIds['synthetic'] = true;
+        $this->syntheticIds['synthetic'] = \true;
     }
     protected function getInternalService()
     {
@@ -505,21 +499,21 @@ class ProjectServiceContainer extends Container
     }
     protected function getThrowExceptionService()
     {
-        throw new Exception('Something went terribly wrong!');
+        throw new \Exception('Something went terribly wrong!');
     }
     protected function getThrowsExceptionOnServiceConfigurationService()
     {
-        $this->services['throws_exception_on_service_configuration'] = $instance = new stdClass();
-        throw new Exception('Something was terribly wrong while trying to configure the service!');
+        $this->services['throws_exception_on_service_configuration'] = $instance = new \stdClass();
+        throw new \Exception('Something was terribly wrong while trying to configure the service!');
     }
     protected function getInternalDependencyService()
     {
-        $this->services['internal_dependency'] = $instance = new stdClass();
+        $this->services['internal_dependency'] = $instance = new \stdClass();
         $instance->internal = isset($this->services['internal']) ? $this->services['internal'] : $this->getInternalService();
         return $instance;
     }
 }
-class LegacyProjectServiceContainer extends Container
+class LegacyProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
 {
     public $__bar;
     public $__foo_bar;
@@ -528,11 +522,11 @@ class LegacyProjectServiceContainer extends Container
     public function __construct()
     {
         parent::__construct();
-        $this->__bar = new stdClass();
-        $this->__foo_bar = new stdClass();
-        $this->__foo_baz = new stdClass();
-        $this->__internal = new stdClass();
-        $this->privates = ['internal' => true];
+        $this->__bar = new \stdClass();
+        $this->__foo_bar = new \stdClass();
+        $this->__foo_baz = new \stdClass();
+        $this->__internal = new \stdClass();
+        $this->privates = ['internal' => \true];
         $this->aliases = ['alias' => 'bar'];
     }
     protected function getInternalService()
@@ -557,11 +551,11 @@ class LegacyProjectServiceContainer extends Container
     }
     protected function getThrowExceptionService()
     {
-        throw new Exception('Something went terribly wrong!');
+        throw new \Exception('Something went terribly wrong!');
     }
     protected function getThrowsExceptionOnServiceConfigurationService()
     {
-        $this->services['throws_exception_on_service_configuration'] = $instance = new stdClass();
-        throw new Exception('Something was terribly wrong while trying to configure the service!');
+        $this->services['throws_exception_on_service_configuration'] = $instance = new \stdClass();
+        throw new \Exception('Something was terribly wrong while trying to configure the service!');
     }
 }

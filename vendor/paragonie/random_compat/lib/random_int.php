@@ -1,14 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use Exception;
-use function is_callable;
-use function is_int;
-use function ord;
-use const PHP_INT_SIZE;
-
-if (!is_callable('random_int')) {
+if (!\is_callable('random_int')) {
     /**
      * Random_* Compatibility Library
      * for using the new PHP 7 random_* API in PHP 5 projects
@@ -58,13 +52,13 @@ if (!is_callable('random_int')) {
          */
         try {
             /** @var int $min */
-            $min = RandomCompat_intval($min);
+            $min = \_PhpScoper5ece82d7231e4\RandomCompat_intval($min);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_int(): $min must be an integer');
         }
         try {
             /** @var int $max */
-            $max = RandomCompat_intval($max);
+            $max = \_PhpScoper5ece82d7231e4\RandomCompat_intval($max);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_int(): $max must be an integer');
         }
@@ -104,7 +98,7 @@ if (!is_callable('random_int')) {
         /**
          * Test for integer overflow:
          */
-        if (!is_int($range)) {
+        if (!\is_int($range)) {
             /**
              * Still safely calculate wider ranges.
              * Provided by @CodesInChaos, @oittaa
@@ -116,7 +110,7 @@ if (!is_callable('random_int')) {
              * @ref https://eval.in/400356 (32-bit)
              * @ref http://3v4l.org/XX9r5  (64-bit)
              */
-            $bytes = PHP_INT_SIZE;
+            $bytes = \PHP_INT_SIZE;
             /** @var int $mask */
             $mask = ~0;
         } else {
@@ -148,7 +142,7 @@ if (!is_callable('random_int')) {
              * to a failure probability of 2^-128 for a working RNG
              */
             if ($attempts > 128) {
-                throw new Exception('random_int: RNG is broken - too many rejections');
+                throw new \Exception('random_int: RNG is broken - too many rejections');
             }
             /**
              * Let's grab the necessary number of random bytes
@@ -166,7 +160,7 @@ if (!is_callable('random_int')) {
              */
             $val &= 0;
             for ($i = 0; $i < $bytes; ++$i) {
-                $val |= ord($randomByteString[$i]) << $i * 8;
+                $val |= \ord($randomByteString[$i]) << $i * 8;
             }
             /** @var int $val */
             /**
@@ -181,7 +175,7 @@ if (!is_callable('random_int')) {
              * ... or smaller than $min,
              * then try again.
              */
-        } while (!is_int($val) || $val > $max || $val < $min);
+        } while (!\is_int($val) || $val > $max || $val < $min);
         return (int) $val;
     }
 }

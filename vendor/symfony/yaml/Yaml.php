@@ -8,15 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException;
-use function func_get_arg;
-use function func_num_args;
-use function is_bool;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException;
 /**
  * Yaml offers convenience methods to load and dump YAML.
  *
@@ -58,7 +52,7 @@ class Yaml
      */
     public static function parseFile($filename, $flags = 0)
     {
-        $yaml = new Parser();
+        $yaml = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser();
         return $yaml->parseFile($filename, $flags);
     }
     /**
@@ -79,27 +73,27 @@ class Yaml
      */
     public static function parse($input, $flags = 0)
     {
-        if (is_bool($flags)) {
-            @trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the PARSE_EXCEPTION_ON_INVALID_TYPE flag instead.', E_USER_DEPRECATED);
+        if (\is_bool($flags)) {
+            @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the PARSE_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
                 $flags = self::PARSE_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
         }
-        if (func_num_args() >= 3) {
-            @trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the PARSE_OBJECT flag instead.', E_USER_DEPRECATED);
-            if (func_get_arg(2)) {
+        if (\func_num_args() >= 3) {
+            @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the PARSE_OBJECT flag instead.', \E_USER_DEPRECATED);
+            if (\func_get_arg(2)) {
                 $flags |= self::PARSE_OBJECT;
             }
         }
-        if (func_num_args() >= 4) {
-            @trigger_error('Passing a boolean flag to toggle object for map support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT_FOR_MAP flag instead.', E_USER_DEPRECATED);
-            if (func_get_arg(3)) {
+        if (\func_num_args() >= 4) {
+            @\trigger_error('Passing a boolean flag to toggle object for map support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT_FOR_MAP flag instead.', \E_USER_DEPRECATED);
+            if (\func_get_arg(3)) {
                 $flags |= self::PARSE_OBJECT_FOR_MAP;
             }
         }
-        $yaml = new Parser();
+        $yaml = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser();
         return $yaml->parse($input, $flags);
     }
     /**
@@ -117,21 +111,21 @@ class Yaml
      */
     public static function dump($input, $inline = 2, $indent = 4, $flags = 0)
     {
-        if (is_bool($flags)) {
-            @trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the DUMP_EXCEPTION_ON_INVALID_TYPE flag instead.', E_USER_DEPRECATED);
+        if (\is_bool($flags)) {
+            @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the DUMP_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
                 $flags = self::DUMP_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
         }
-        if (func_num_args() >= 5) {
-            @trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the DUMP_OBJECT flag instead.', E_USER_DEPRECATED);
-            if (func_get_arg(4)) {
+        if (\func_num_args() >= 5) {
+            @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the DUMP_OBJECT flag instead.', \E_USER_DEPRECATED);
+            if (\func_get_arg(4)) {
                 $flags |= self::DUMP_OBJECT;
             }
         }
-        $yaml = new Dumper($indent);
+        $yaml = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Dumper($indent);
         return $yaml->dump($input, $inline, 0, $flags);
     }
 }

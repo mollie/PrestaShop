@@ -8,19 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache;
 
-use _PhpScoper5ea00cc67502b\Doctrine\Common\Cache\CacheProvider;
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use function rawurlencode;
-
+use _PhpScoper5ece82d7231e4\Doctrine\Common\Cache\CacheProvider;
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class DoctrineProvider extends CacheProvider implements PruneableInterface, ResettableInterface
+class DoctrineProvider extends \_PhpScoper5ece82d7231e4\Doctrine\Common\Cache\CacheProvider implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface
 {
     private $pool;
-    public function __construct(CacheItemPoolInterface $pool)
+    public function __construct(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface $pool)
     {
         $this->pool = $pool;
     }
@@ -29,14 +27,14 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
      */
     public function prune()
     {
-        return $this->pool instanceof PruneableInterface && $this->pool->prune();
+        return $this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface && $this->pool->prune();
     }
     /**
      * {@inheritdoc}
      */
     public function reset()
     {
-        if ($this->pool instanceof ResettableInterface) {
+        if ($this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface) {
             $this->pool->reset();
         }
         $this->setNamespace($this->getNamespace());
@@ -46,22 +44,22 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
      */
     protected function doFetch($id)
     {
-        $item = $this->pool->getItem(rawurlencode($id));
-        return $item->isHit() ? $item->get() : false;
+        $item = $this->pool->getItem(\rawurlencode($id));
+        return $item->isHit() ? $item->get() : \false;
     }
     /**
      * {@inheritdoc}
      */
     protected function doContains($id)
     {
-        return $this->pool->hasItem(rawurlencode($id));
+        return $this->pool->hasItem(\rawurlencode($id));
     }
     /**
      * {@inheritdoc}
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $item = $this->pool->getItem(rawurlencode($id));
+        $item = $this->pool->getItem(\rawurlencode($id));
         if (0 < $lifeTime) {
             $item->expiresAfter($lifeTime);
         }
@@ -72,7 +70,7 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
      */
     protected function doDelete($id)
     {
-        return $this->pool->deleteItem(rawurlencode($id));
+        return $this->pool->deleteItem(\rawurlencode($id));
     }
     /**
      * {@inheritdoc}

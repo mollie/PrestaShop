@@ -8,33 +8,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParserCache;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use BadMethodCallException;
-use Closure;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
 /**
  * @author Alexandre GESLIN <alexandre@gesl.in>
  *
  * @internal and will be removed in Symfony 4.0.
  */
-class ParserCacheAdapter implements CacheItemPoolInterface
+class ParserCacheAdapter implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface
 {
     private $pool;
     private $createCacheItem;
-    public function __construct(ParserCacheInterface $pool)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface $pool)
     {
         $this->pool = $pool;
-        $this->createCacheItem = Closure::bind(static function ($key, $value, $isHit) {
-            $item = new CacheItem();
+        $this->createCacheItem = \Closure::bind(static function ($key, $value, $isHit) {
+            $item = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem();
             $item->key = $key;
             $item->value = $value;
             $item->isHit = $isHit;
             return $item;
-        }, null, CacheItem::class);
+        }, null, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::class);
     }
     /**
      * {@inheritdoc}
@@ -48,7 +45,7 @@ class ParserCacheAdapter implements CacheItemPoolInterface
     /**
      * {@inheritdoc}
      */
-    public function save(CacheItemInterface $item)
+    public function save(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
         $this->pool->save($item->getKey(), $item->get());
     }
@@ -57,48 +54,48 @@ class ParserCacheAdapter implements CacheItemPoolInterface
      */
     public function getItems(array $keys = [])
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
     public function hasItem($key)
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
     public function deleteItem($key)
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
     public function deleteItems(array $keys)
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
     /**
      * {@inheritdoc}
      */
     public function commit()
     {
-        throw new BadMethodCallException('Not implemented.');
+        throw new \BadMethodCallException('Not implemented.');
     }
 }

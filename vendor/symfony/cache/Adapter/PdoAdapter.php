@@ -8,15 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Doctrine\DBAL\Connection;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\PdoTrait;
-use PDO;
-
-class PdoAdapter extends AbstractAdapter implements PruneableInterface
+use _PhpScoper5ece82d7231e4\Doctrine\DBAL\Connection;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\PdoTrait;
+class PdoAdapter extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AbstractAdapter implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface
 {
     use PdoTrait;
     protected $maxIdLength = 255;
@@ -35,7 +33,7 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
      *  * db_password: The password when lazy-connect [default: '']
      *  * db_connection_options: An array of driver-specific connection options [default: []]
      *
-     * @param PDO|Connection|string $connOrDsn       A \PDO or Connection instance or DSN string or null
+     * @param \PDO|Connection|string $connOrDsn       A \PDO or Connection instance or DSN string or null
      * @param string                 $namespace
      * @param int                    $defaultLifetime
      * @param array                  $options         An associative array of options

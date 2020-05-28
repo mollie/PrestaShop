@@ -1,26 +1,13 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Cookie;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Cookie;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
-use ArrayIterator;
-use RuntimeException;
-use function array_filter;
-use function array_map;
-use function array_values;
-use function count;
-use function implode;
-use function is_scalar;
-use function strcasecmp;
-use function strpos;
-use function strrpos;
-use function substr;
-
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface;
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface;
 /**
  * Cookie jar that stores cookies as an array
  */
-class CookieJar implements CookieJarInterface
+class CookieJar implements \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\CookieJarInterface
 {
     /** @var SetCookie[] Loaded cookie data */
     private $cookies = [];
@@ -33,12 +20,12 @@ class CookieJar implements CookieJarInterface
      *                           arrays that can be used with the SetCookie
      *                           constructor
      */
-    public function __construct($strictMode = false, $cookieArray = [])
+    public function __construct($strictMode = \false, $cookieArray = [])
     {
         $this->strictMode = $strictMode;
         foreach ($cookieArray as $cookie) {
-            if (!$cookie instanceof SetCookie) {
-                $cookie = new SetCookie($cookie);
+            if (!$cookie instanceof \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie) {
+                $cookie = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie($cookie);
             }
             $this->setCookie($cookie);
         }
@@ -55,7 +42,7 @@ class CookieJar implements CookieJarInterface
     {
         $cookieJar = new self();
         foreach ($cookies as $name => $value) {
-            $cookieJar->setCookie(new SetCookie(['Domain' => $domain, 'Name' => $name, 'Value' => $value, 'Discard' => true]));
+            $cookieJar->setCookie(new \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie(['Domain' => $domain, 'Name' => $name, 'Value' => $value, 'Discard' => \true]));
         }
         return $cookieJar;
     }
@@ -74,14 +61,14 @@ class CookieJar implements CookieJarInterface
      * @param bool $allowSessionCookies If we should persist session cookies
      * @return bool
      */
-    public static function shouldPersist(SetCookie $cookie, $allowSessionCookies = false)
+    public static function shouldPersist(\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie, $allowSessionCookies = \false)
     {
         if ($cookie->getExpires() || $allowSessionCookies) {
             if (!$cookie->getDiscard()) {
-                return true;
+                return \true;
             }
         }
-        return false;
+        return \false;
     }
     /**
      * Finds and returns the cookie based on the name
@@ -92,11 +79,11 @@ class CookieJar implements CookieJarInterface
     public function getCookieByName($name)
     {
         // don't allow a non string name
-        if ($name === null || !is_scalar($name)) {
+        if ($name === null || !\is_scalar($name)) {
             return null;
         }
         foreach ($this->cookies as $cookie) {
-            if ($cookie->getName() !== null && strcasecmp($cookie->getName(), $name) === 0) {
+            if ($cookie->getName() !== null && \strcasecmp($cookie->getName(), $name) === 0) {
                 return $cookie;
             }
         }
@@ -104,7 +91,7 @@ class CookieJar implements CookieJarInterface
     }
     public function toArray()
     {
-        return array_map(function (SetCookie $cookie) {
+        return \array_map(function (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie) {
             return $cookie->toArray();
         }, $this->getIterator()->getArrayCopy());
     }
@@ -114,41 +101,41 @@ class CookieJar implements CookieJarInterface
             $this->cookies = [];
             return;
         } elseif (!$path) {
-            $this->cookies = array_filter($this->cookies, function (SetCookie $cookie) use($domain) {
+            $this->cookies = \array_filter($this->cookies, function (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie) use($domain) {
                 return !$cookie->matchesDomain($domain);
             });
         } elseif (!$name) {
-            $this->cookies = array_filter($this->cookies, function (SetCookie $cookie) use($path, $domain) {
+            $this->cookies = \array_filter($this->cookies, function (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie) use($path, $domain) {
                 return !($cookie->matchesPath($path) && $cookie->matchesDomain($domain));
             });
         } else {
-            $this->cookies = array_filter($this->cookies, function (SetCookie $cookie) use($path, $domain, $name) {
+            $this->cookies = \array_filter($this->cookies, function (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie) use($path, $domain, $name) {
                 return !($cookie->getName() == $name && $cookie->matchesPath($path) && $cookie->matchesDomain($domain));
             });
         }
     }
     public function clearSessionCookies()
     {
-        $this->cookies = array_filter($this->cookies, function (SetCookie $cookie) {
+        $this->cookies = \array_filter($this->cookies, function (\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie) {
             return !$cookie->getDiscard() && $cookie->getExpires();
         });
     }
-    public function setCookie(SetCookie $cookie)
+    public function setCookie(\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie)
     {
         // If the name string is empty (but not 0), ignore the set-cookie
         // string entirely.
         $name = $cookie->getName();
         if (!$name && $name !== '0') {
-            return false;
+            return \false;
         }
         // Only allow cookies with set and valid domain, name, value
         $result = $cookie->validate();
-        if ($result !== true) {
+        if ($result !== \true) {
             if ($this->strictMode) {
-                throw new RuntimeException('Invalid cookie: ' . $result);
+                throw new \RuntimeException('Invalid cookie: ' . $result);
             } else {
                 $this->removeCookieIfEmpty($cookie);
-                return false;
+                return \false;
             }
         }
         // Resolve conflicts with previously set cookies
@@ -176,28 +163,28 @@ class CookieJar implements CookieJarInterface
                 continue;
             }
             // The cookie exists, so no need to continue
-            return false;
+            return \false;
         }
         $this->cookies[] = $cookie;
-        return true;
+        return \true;
     }
     public function count()
     {
-        return count($this->cookies);
+        return \count($this->cookies);
     }
     public function getIterator()
     {
-        return new ArrayIterator(array_values($this->cookies));
+        return new \ArrayIterator(\array_values($this->cookies));
     }
-    public function extractCookies(RequestInterface $request, ResponseInterface $response)
+    public function extractCookies(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, \_PhpScoper5ece82d7231e4\Psr\Http\Message\ResponseInterface $response)
     {
         if ($cookieHeader = $response->getHeader('Set-Cookie')) {
             foreach ($cookieHeader as $cookie) {
-                $sc = SetCookie::fromString($cookie);
+                $sc = \_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie::fromString($cookie);
                 if (!$sc->getDomain()) {
                     $sc->setDomain($request->getUri()->getHost());
                 }
-                if (0 !== strpos($sc->getPath(), '/')) {
+                if (0 !== \strpos($sc->getPath(), '/')) {
                     $sc->setPath($this->getCookiePathFromRequest($request));
                 }
                 $this->setCookie($sc);
@@ -212,24 +199,24 @@ class CookieJar implements CookieJarInterface
      * @param RequestInterface $request
      * @return string
      */
-    private function getCookiePathFromRequest(RequestInterface $request)
+    private function getCookiePathFromRequest(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request)
     {
         $uriPath = $request->getUri()->getPath();
         if ('' === $uriPath) {
             return '/';
         }
-        if (0 !== strpos($uriPath, '/')) {
+        if (0 !== \strpos($uriPath, '/')) {
             return '/';
         }
         if ('/' === $uriPath) {
             return '/';
         }
-        if (0 === ($lastSlashPos = strrpos($uriPath, '/'))) {
+        if (0 === ($lastSlashPos = \strrpos($uriPath, '/'))) {
             return '/';
         }
-        return substr($uriPath, 0, $lastSlashPos);
+        return \substr($uriPath, 0, $lastSlashPos);
     }
-    public function withCookieHeader(RequestInterface $request)
+    public function withCookieHeader(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request)
     {
         $values = [];
         $uri = $request->getUri();
@@ -241,7 +228,7 @@ class CookieJar implements CookieJarInterface
                 $values[] = $cookie->getName() . '=' . $cookie->getValue();
             }
         }
-        return $values ? $request->withHeader('Cookie', implode('; ', $values)) : $request;
+        return $values ? $request->withHeader('Cookie', \implode('; ', $values)) : $request;
     }
     /**
      * If a cookie already exists and the server asks to set it again with a
@@ -249,7 +236,7 @@ class CookieJar implements CookieJarInterface
      *
      * @param SetCookie $cookie
      */
-    private function removeCookieIfEmpty(SetCookie $cookie)
+    private function removeCookieIfEmpty(\_PhpScoper5ece82d7231e4\GuzzleHttp\Cookie\SetCookie $cookie)
     {
         $cookieValue = $cookie->getValue();
         if ($cookieValue === null || $cookieValue === '') {

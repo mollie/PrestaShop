@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-class MandateCollection extends CursorCollection
+class MandateCollection extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,7 +16,7 @@ class MandateCollection extends CursorCollection
      */
     protected function createResourceObject()
     {
-        return new Mandate($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Mandate($this->client);
     }
     /**
      * @param string $status

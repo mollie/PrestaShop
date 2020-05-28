@@ -8,19 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
-use Closure;
-use function count;
-use function get_class;
-use function sprintf;
-
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface;
 /**
  * Chains several adapters together.
  *
@@ -29,7 +24,7 @@ use function sprintf;
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableInterface
+class ChainAdapter implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface
 {
     private $adapters = [];
     private $adapterCount;
@@ -41,20 +36,24 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
     public function __construct(array $adapters, $defaultLifetime = 0)
     {
         if (!$adapters) {
-            throw new InvalidArgumentException('At least one adapter must be specified.');
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException('At least one adapter must be specified.');
         }
         foreach ($adapters as $adapter) {
-            if (!$adapter instanceof CacheItemPoolInterface) {
-                throw new InvalidArgumentException(sprintf('The class "%s" does not implement the "%s" interface.', get_class($adapter), CacheItemPoolInterface::class));
+            if (!$adapter instanceof \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface) {
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', \get_class($adapter), \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface::class));
             }
-            if ($adapter instanceof AdapterInterface) {
+            if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], \true) && $adapter instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ApcuAdapter && !\filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
+                continue;
+                // skip putting APCu in the chain when the backend is disabled
+            }
+            if ($adapter instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AdapterInterface) {
                 $this->adapters[] = $adapter;
             } else {
-                $this->adapters[] = new ProxyAdapter($adapter);
+                $this->adapters[] = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ProxyAdapter($adapter);
             }
         }
-        $this->adapterCount = count($this->adapters);
-        $this->syncItem = Closure::bind(static function ($sourceItem, $item) use($defaultLifetime) {
+        $this->adapterCount = \count($this->adapters);
+        $this->syncItem = \Closure::bind(static function ($sourceItem, $item) use($defaultLifetime) {
             $item->value = $sourceItem->value;
             $item->expiry = $sourceItem->expiry;
             $item->isHit = $sourceItem->isHit;
@@ -65,7 +64,7 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
                 $item->defaultLifetime = $defaultLifetime;
             }
             return $item;
-        }, null, CacheItem::class);
+        }, null, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::class);
     }
     /**
      * {@inheritdoc}
@@ -126,17 +125,17 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
     {
         foreach ($this->adapters as $adapter) {
             if ($adapter->hasItem($key)) {
-                return true;
+                return \true;
             }
         }
-        return false;
+        return \false;
     }
     /**
      * {@inheritdoc}
      */
     public function clear()
     {
-        $cleared = true;
+        $cleared = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $cleared = $this->adapters[$i]->clear() && $cleared;
@@ -148,7 +147,7 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
      */
     public function deleteItem($key)
     {
-        $deleted = true;
+        $deleted = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $deleted = $this->adapters[$i]->deleteItem($key) && $deleted;
@@ -160,7 +159,7 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
      */
     public function deleteItems(array $keys)
     {
-        $deleted = true;
+        $deleted = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $deleted = $this->adapters[$i]->deleteItems($keys) && $deleted;
@@ -170,9 +169,9 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
     /**
      * {@inheritdoc}
      */
-    public function save(CacheItemInterface $item)
+    public function save(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
-        $saved = true;
+        $saved = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $saved = $this->adapters[$i]->save($item) && $saved;
@@ -182,9 +181,9 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface $item)
     {
-        $saved = true;
+        $saved = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $saved = $this->adapters[$i]->saveDeferred($item) && $saved;
@@ -196,7 +195,7 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
      */
     public function commit()
     {
-        $committed = true;
+        $committed = \true;
         $i = $this->adapterCount;
         while ($i--) {
             $committed = $this->adapters[$i]->commit() && $committed;
@@ -208,9 +207,9 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
      */
     public function prune()
     {
-        $pruned = true;
+        $pruned = \true;
         foreach ($this->adapters as $adapter) {
-            if ($adapter instanceof PruneableInterface) {
+            if ($adapter instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface) {
                 $pruned = $adapter->prune() && $pruned;
             }
         }
@@ -222,7 +221,7 @@ class ChainAdapter implements AdapterInterface, PruneableInterface, ResettableIn
     public function reset()
     {
         foreach ($this->adapters as $adapter) {
-            if ($adapter instanceof ResettableInterface) {
+            if ($adapter instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface) {
                 $adapter->reset();
             }
         }

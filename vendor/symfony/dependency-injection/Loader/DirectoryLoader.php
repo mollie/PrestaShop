@@ -8,37 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
-
-use function is_dir;
-use function is_string;
-use function rtrim;
-use function scandir;
-use function substr;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader;
 
 /**
  * DirectoryLoader is a recursive loader to go through directories.
  *
  * @author Sebastien Lavoie <seb@wemakecustom.com>
  */
-class DirectoryLoader extends FileLoader
+class DirectoryLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\FileLoader
 {
     /**
      * {@inheritdoc}
      */
     public function load($file, $type = null)
     {
-        $file = rtrim($file, '/');
+        $file = \rtrim($file, '/');
         $path = $this->locator->locate($file);
-        $this->container->fileExists($path, false);
-        foreach (scandir($path) as $dir) {
+        $this->container->fileExists($path, \false);
+        foreach (\scandir($path) as $dir) {
             if ('.' !== $dir[0]) {
-                if (is_dir($path . '/' . $dir)) {
+                if (\is_dir($path . '/' . $dir)) {
                     $dir .= '/';
                     // append / to allow recursion
                 }
                 $this->setCurrentDir($path);
-                $this->import($dir, null, false, $path);
+                $this->import($dir, null, \false, $path);
             }
         }
     }
@@ -48,8 +42,8 @@ class DirectoryLoader extends FileLoader
     public function supports($resource, $type = null)
     {
         if ('directory' === $type) {
-            return true;
+            return \true;
         }
-        return null === $type && is_string($resource) && '/' === substr($resource, -1);
+        return null === $type && \is_string($resource) && '/' === \substr($resource, -1);
     }
 }

@@ -8,29 +8,29 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @method InstanceofConfigurator instanceof($fqcn)
  */
-class ServicesConfigurator extends AbstractConfigurator
+class ServicesConfigurator extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
 {
     const FACTORY = 'services';
     private $defaults;
     private $container;
     private $loader;
     private $instanceof;
-    public function __construct(ContainerBuilder $container, PhpFileLoader $loader, array &$instanceof)
+    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\PhpFileLoader $loader, array &$instanceof)
     {
-        $this->defaults = new Definition();
+        $this->defaults = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition();
         $this->container = $container;
         $this->loader = $loader;
         $this->instanceof =& $instanceof;
@@ -43,7 +43,7 @@ class ServicesConfigurator extends AbstractConfigurator
      */
     public final function defaults()
     {
-        return new DefaultsConfigurator($this, $this->defaults = new Definition());
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\DefaultsConfigurator($this, $this->defaults = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition());
     }
     /**
      * Defines an instanceof-conditional to be applied to following service definitions.
@@ -54,8 +54,8 @@ class ServicesConfigurator extends AbstractConfigurator
      */
     protected final function setInstanceof($fqcn)
     {
-        $this->instanceof[$fqcn] = $definition = new ChildDefinition('');
-        return new InstanceofConfigurator($this, $definition, $fqcn);
+        $this->instanceof[$fqcn] = $definition = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition('');
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\InstanceofConfigurator($this, $definition, $fqcn);
     }
     /**
      * Registers a service.
@@ -69,13 +69,16 @@ class ServicesConfigurator extends AbstractConfigurator
     {
         $defaults = $this->defaults;
         $allowParent = !$defaults->getChanges() && empty($this->instanceof);
-        $definition = new Definition();
-        $definition->setPublic($defaults->isPublic());
+        $definition = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition();
+        if (!$defaults->isPublic() || !$defaults->isPrivate()) {
+            $definition->setPublic($defaults->isPublic() && !$defaults->isPrivate());
+        }
         $definition->setAutowired($defaults->isAutowired());
         $definition->setAutoconfigured($defaults->isAutoconfigured());
-        $definition->setBindings($defaults->getBindings());
+        // deep clone, to avoid multiple process of the same instance in the passes
+        $definition->setBindings(\unserialize(\serialize($defaults->getBindings())));
         $definition->setChanges([]);
-        $configurator = new ServiceConfigurator($this->container, $this->instanceof, $allowParent, $this, $definition, $id, $defaults->getTags());
+        $configurator = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $this->instanceof, $allowParent, $this, $definition, $id, $defaults->getTags());
         return null !== $class ? $configurator->class($class) : $configurator;
     }
     /**
@@ -88,10 +91,13 @@ class ServicesConfigurator extends AbstractConfigurator
      */
     public final function alias($id, $referencedId)
     {
-        $ref = static::processValue($referencedId, true);
-        $alias = new Alias((string) $ref, $this->defaults->isPublic());
+        $ref = static::processValue($referencedId, \true);
+        $alias = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias((string) $ref);
+        if (!$this->defaults->isPublic() || !$this->defaults->isPrivate()) {
+            $alias->setPublic($this->defaults->isPublic());
+        }
         $this->container->setAlias($id, $alias);
-        return new AliasConfigurator($this, $alias);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\AliasConfigurator($this, $alias);
     }
     /**
      * Registers a PSR-4 namespace using a glob pattern.
@@ -104,7 +110,7 @@ class ServicesConfigurator extends AbstractConfigurator
     public final function load($namespace, $resource)
     {
         $allowParent = !$this->defaults->getChanges() && empty($this->instanceof);
-        return new PrototypeConfigurator($this, $this->loader, $this->defaults, $namespace, $resource, $allowParent);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\PrototypeConfigurator($this, $this->loader, $this->defaults, $namespace, $resource, $allowParent);
     }
     /**
      * Gets an already defined service definition.
@@ -119,7 +125,7 @@ class ServicesConfigurator extends AbstractConfigurator
     {
         $allowParent = !$this->defaults->getChanges() && empty($this->instanceof);
         $definition = $this->container->getDefinition($id);
-        return new ServiceConfigurator($this->container, $definition->getInstanceofConditionals(), $allowParent, $this, $definition, $id, []);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $definition->getInstanceofConditionals(), $allowParent, $this, $definition, $id, []);
     }
     /**
      * Registers a service.

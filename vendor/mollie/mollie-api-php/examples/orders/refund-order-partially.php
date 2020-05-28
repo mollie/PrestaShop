@@ -1,14 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * Refund some items for an order using the Mollie API.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function htmlspecialchars;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -23,6 +19,6 @@ try {
     $refund = $order->refund(['lines' => [['id' => 'odl_dgtxyl', 'quantity' => 1]], "description" => "Required quantity not in stock, refunding one photo book."]);
     echo 'Refund ' . $refund->id . ' was created for part of your order ' . $order->id;
     echo 'You will receive ' . $refund->amount->currency . $refund->amount->value;
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

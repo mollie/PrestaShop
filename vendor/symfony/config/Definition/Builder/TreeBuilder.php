@@ -8,17 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
-use RuntimeException;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NodeInterface;
 /**
  * This is the entry class for building a config tree.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TreeBuilder implements NodeParentInterface
+class TreeBuilder implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeParentInterface
 {
     protected $tree;
     protected $root;
@@ -35,11 +33,11 @@ class TreeBuilder implements NodeParentInterface
      *
      * @return ArrayNodeDefinition|NodeDefinition The root node (as an ArrayNodeDefinition when the type is 'array')
      *
-     * @throws RuntimeException When the node type is not supported
+     * @throws \RuntimeException When the node type is not supported
      */
-    public function root($name, $type = 'array', NodeBuilder $builder = null)
+    public function root($name, $type = 'array', \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder = null)
     {
-        $builder = $builder ?: new NodeBuilder();
+        $builder = $builder ?: new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeBuilder();
         return $this->root = $builder->node($name, $type)->setParent($this);
     }
     /**
@@ -47,16 +45,16 @@ class TreeBuilder implements NodeParentInterface
      *
      * @return NodeInterface
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function buildTree()
     {
         if (null === $this->root) {
-            throw new RuntimeException('The configuration tree has no root node.');
+            throw new \RuntimeException('The configuration tree has no root node.');
         }
         if (null !== $this->tree) {
             return $this->tree;
         }
-        return $this->tree = $this->root->getNode(true);
+        return $this->tree = $this->root->getNode(\true);
     }
 }

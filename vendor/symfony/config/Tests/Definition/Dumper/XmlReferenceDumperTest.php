@@ -8,31 +8,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Dumper;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition\Dumper;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
-use function str_replace;
-use const PHP_EOL;
-
-class XmlReferenceDumperTest extends TestCase
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
+class XmlReferenceDumperTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testDumper()
     {
-        $configuration = new ExampleConfiguration();
-        $dumper = new XmlReferenceDumper();
+        $configuration = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
         $this->assertEquals($this->getConfigurationAsString(), $dumper->dump($configuration));
     }
     public function testNamespaceDumper()
     {
-        $configuration = new ExampleConfiguration();
-        $dumper = new XmlReferenceDumper();
-        $this->assertEquals(str_replace('http://example.org/schema/dic/acme_root', 'http://symfony.com/schema/dic/symfony', $this->getConfigurationAsString()), $dumper->dump($configuration, 'http://symfony.com/schema/dic/symfony'));
+        $configuration = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
+        $this->assertEquals(\str_replace('http://example.org/schema/dic/acme_root', 'http://symfony.com/schema/dic/symfony', $this->getConfigurationAsString()), $dumper->dump($configuration, 'http://symfony.com/schema/dic/symfony'));
     }
     private function getConfigurationAsString()
     {
-        return str_replace("\n", PHP_EOL, <<<'EOL'
+        return \str_replace("\n", \PHP_EOL, <<<'EOL'
 <!-- Namespace: http://example.org/schema/dic/acme_root -->
 <!-- scalar-required: Required -->
 <!-- scalar-deprecated: Deprecated (The child node "scalar_deprecated" at path "acme_root" is deprecated.) -->

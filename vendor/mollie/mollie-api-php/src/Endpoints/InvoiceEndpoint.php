@@ -1,37 +1,33 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Invoice;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\InvoiceCollection;
-use Mollie\Api\Resources\BaseCollection;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class InvoiceEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Invoice;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\InvoiceCollection;
+class InvoiceEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "invoices";
     /**
      * Get the object that is used by this API. Every API uses one type of object.
      *
-     * @return BaseResource
+     * @return \Mollie\Api\Resources\BaseResource
      */
     protected function getResourceObject()
     {
-        return new Invoice($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Invoice($this->client);
     }
     /**
      * Get the collection object that is used by this API. Every API uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
-     * @return BaseCollection
+     * @return \Mollie\Api\Resources\BaseCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new InvoiceCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\InvoiceCollection($this->client, $count, $_links);
     }
     /**
      * Retrieve an Invoice from Mollie.
@@ -67,7 +63,7 @@ class InvoiceEndpoint extends CollectionEndpointAbstract
      *
      * @param array|null $parameters
      *
-     * @return BaseCollection
+     * @return \Mollie\Api\Resources\BaseCollection
      */
     public function all(array $parameters = [])
     {

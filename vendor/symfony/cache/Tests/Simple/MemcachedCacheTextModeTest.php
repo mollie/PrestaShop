@@ -8,18 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\MemcachedCache;
-use function getenv;
-use function str_replace;
-
-class MemcachedCacheTextModeTest extends MemcachedCacheTest
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AbstractAdapter;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\MemcachedCache;
+class MemcachedCacheTextModeTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\MemcachedCacheTest
 {
     public function createSimpleCache($defaultLifetime = 0)
     {
-        $client = AbstractAdapter::createConnection('memcached://' . getenv('MEMCACHED_HOST'), ['binary_protocol' => false]);
-        return new MemcachedCache($client, str_replace('\\', '.', __CLASS__), $defaultLifetime);
+        $client = \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['binary_protocol' => \false]);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\MemcachedCache($client, \str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
 }

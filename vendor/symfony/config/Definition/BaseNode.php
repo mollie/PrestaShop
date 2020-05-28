@@ -8,31 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\Exception;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
-use Closure;
-use InvalidArgumentException;
-use function sprintf;
-use function strpos;
-use function strtr;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\Exception;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 /**
  * The base node class.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class BaseNode implements NodeInterface
+abstract class BaseNode implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NodeInterface
 {
     protected $name;
     protected $parent;
     protected $normalizationClosures = [];
     protected $finalValidationClosures = [];
-    protected $allowOverwrite = true;
-    protected $required = false;
+    protected $allowOverwrite = \true;
+    protected $required = \false;
     protected $deprecationMessage = null;
     protected $equivalentValues = [];
     protected $attributes = [];
@@ -40,12 +34,12 @@ abstract class BaseNode implements NodeInterface
      * @param string|null        $name   The name of the node
      * @param NodeInterface|null $parent The parent of this node
      *
-     * @throws InvalidArgumentException if the name contains a period
+     * @throws \InvalidArgumentException if the name contains a period
      */
-    public function __construct($name, NodeInterface $parent = null)
+    public function __construct($name, \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NodeInterface $parent = null)
     {
-        if (false !== strpos($name = (string) $name, '.')) {
-            throw new InvalidArgumentException('The name must not contain ".".');
+        if (\false !== \strpos($name = (string) $name, '.')) {
+            throw new \InvalidArgumentException('The name must not contain ".".');
         }
         $this->name = $name;
         $this->parent = $parent;
@@ -172,7 +166,7 @@ abstract class BaseNode implements NodeInterface
     /**
      * Sets the closures used for normalization.
      *
-     * @param Closure[] $closures An array of Closures used for normalization
+     * @param \Closure[] $closures An array of Closures used for normalization
      */
     public function setNormalizationClosures(array $closures)
     {
@@ -181,7 +175,7 @@ abstract class BaseNode implements NodeInterface
     /**
      * Sets the closures used for final validation.
      *
-     * @param Closure[] $closures An array of Closures used for final validation
+     * @param \Closure[] $closures An array of Closures used for final validation
      */
     public function setFinalValidationClosures(array $closures)
     {
@@ -213,7 +207,7 @@ abstract class BaseNode implements NodeInterface
      */
     public function getDeprecationMessage($node, $path)
     {
-        return strtr($this->deprecationMessage, ['%node%' => $node, '%path%' => $path]);
+        return \strtr($this->deprecationMessage, ['%node%' => $node, '%path%' => $path]);
     }
     /**
      * {@inheritdoc}
@@ -239,7 +233,7 @@ abstract class BaseNode implements NodeInterface
     public final function merge($leftSide, $rightSide)
     {
         if (!$this->allowOverwrite) {
-            throw new ForbiddenOverwriteException(sprintf('Configuration path "%s" cannot be overwritten. You have to define all options for this path, and any of its sub-paths in one configuration section.', $this->getPath()));
+            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException(\sprintf('Configuration path "%s" cannot be overwritten. You have to define all options for this path, and any of its sub-paths in one configuration section.', $this->getPath()));
         }
         $this->validateType($leftSide);
         $this->validateType($rightSide);
@@ -298,10 +292,10 @@ abstract class BaseNode implements NodeInterface
         foreach ($this->finalValidationClosures as $closure) {
             try {
                 $value = $closure($value);
-            } catch (Exception $e) {
+            } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\Exception $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw new InvalidConfigurationException(sprintf('Invalid configuration for path "%s": %s.', $this->getPath(), $e->getMessage()), $e->getCode(), $e);
+                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('Invalid configuration for path "%s": ' . $e->getMessage(), $this->getPath()), $e->getCode(), $e);
             }
         }
         return $value;

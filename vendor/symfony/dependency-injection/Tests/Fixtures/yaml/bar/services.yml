@@ -1,4 +1,4 @@
 services:
-    _PhpScoper5ea00cc67502b\AppBundle\Foo:
+    _PhpScoper5ece82d7231e4\AppBundle\Foo:
         arguments:
-            - !service {class: _PhpScoper5ea00cc67502b\AppBundle\Bar }
+            - !service {class: _PhpScoper5ece82d7231e4\AppBundle\Bar }

@@ -1,15 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\RefundCollection;
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Resources\BaseResource;
-use stdClass;
-
-class PaymentRefundEndpoint extends CollectionEndpointAbstract
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection;
+class PaymentRefundEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_refunds";
     /**
@@ -19,19 +15,19 @@ class PaymentRefundEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Refund($this->client);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
      * @param int $count
-     * @param stdClass $_links
+     * @param \stdClass $_links
      *
      * @return RefundCollection
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new RefundCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection($this->client, $count, $_links);
     }
     /**
      * @param Payment $payment
@@ -39,9 +35,9 @@ class PaymentRefundEndpoint extends CollectionEndpointAbstract
      * @param array $parameters
      *
      * @return Refund
-     * @throws ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(Payment $payment, $refundId, array $parameters = [])
+    public function getFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment $payment, $refundId, array $parameters = [])
     {
         return $this->getForId($payment->id, $refundId, $parameters);
     }
@@ -50,8 +46,8 @@ class PaymentRefundEndpoint extends CollectionEndpointAbstract
      * @param string $refundId
      * @param array $parameters
      *
-     * @return BaseResource|\Mollie\Api\Resources\Refund
-     * @throws ApiException
+     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Refund
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function getForId($paymentId, $refundId, array $parameters = [])
     {

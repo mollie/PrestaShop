@@ -35,14 +35,14 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
 use ErrorException;
 use Exception;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
+use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;

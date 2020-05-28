@@ -1,11 +1,9 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\OnboardingStatus;
-use stdClass;
-
-class Onboarding extends BaseResource
+use _PhpScoper5ece82d7231e4\Mollie\Api\Types\OnboardingStatus;
+class Onboarding extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -35,7 +33,7 @@ class Onboarding extends BaseResource
      */
     public $canReceiveSettlements;
     /**
-     * @var stdClass
+     * @var \stdClass
      */
     public $_links;
     /**
@@ -43,20 +41,20 @@ class Onboarding extends BaseResource
      */
     public function needsData()
     {
-        return $this->status === OnboardingStatus::NEEDS_DATA;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OnboardingStatus::NEEDS_DATA;
     }
     /**
      * @return bool
      */
     public function isInReview()
     {
-        return $this->status === OnboardingStatus::IN_REVIEW;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OnboardingStatus::IN_REVIEW;
     }
     /**
      * @return bool
      */
     public function isCompleted()
     {
-        return $this->status === OnboardingStatus::COMPLETED;
+        return $this->status === \_PhpScoper5ece82d7231e4\Mollie\Api\Types\OnboardingStatus::COMPLETED;
     }
 }

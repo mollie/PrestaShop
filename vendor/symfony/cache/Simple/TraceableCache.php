@@ -8,45 +8,37 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
-use stdClass;
-use Traversable;
-use function array_keys;
-use function is_array;
-use function is_object;
-use function iterator_to_array;
-use function microtime;
-
+use _PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface;
 /**
  * An adapter that collects data about all cache calls.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TraceableCache implements CacheInterface, PruneableInterface, ResettableInterface
+class TraceableCache implements \_PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface
 {
     private $pool;
     private $miss;
     private $calls = [];
-    public function __construct(CacheInterface $pool)
+    public function __construct(\_PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface $pool)
     {
         $this->pool = $pool;
-        $this->miss = new stdClass();
+        $this->miss = new \stdClass();
     }
     /**
      * {@inheritdoc}
      */
     public function get($key, $default = null)
     {
-        $miss = null !== $default && is_object($default) ? $default : $this->miss;
+        $miss = null !== $default && \is_object($default) ? $default : $this->miss;
         $event = $this->start(__FUNCTION__);
         try {
             $value = $this->pool->get($key, $miss);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
         if ($event->result[$key] = $miss !== $value) {
             ++$event->hits;
@@ -65,7 +57,7 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
         try {
             return $event->result[$key] = $this->pool->has($key);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -77,7 +69,7 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
         try {
             return $event->result[$key] = $this->pool->delete($key);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -89,7 +81,7 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
         try {
             return $event->result[$key] = $this->pool->set($key, $value, $ttl);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -99,7 +91,7 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
     {
         $event = $this->start(__FUNCTION__);
         $event->result['keys'] = [];
-        if ($values instanceof Traversable) {
+        if ($values instanceof \Traversable) {
             $values = function () use($values, $event) {
                 foreach ($values as $k => $v) {
                     $event->result['keys'][] = $k;
@@ -107,13 +99,13 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
                 }
             };
             $values = $values();
-        } elseif (is_array($values)) {
-            $event->result['keys'] = array_keys($values);
+        } elseif (\is_array($values)) {
+            $event->result['keys'] = \array_keys($values);
         }
         try {
             return $event->result['result'] = $this->pool->setMultiple($values, $ttl);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -121,12 +113,12 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
      */
     public function getMultiple($keys, $default = null)
     {
-        $miss = null !== $default && is_object($default) ? $default : $this->miss;
+        $miss = null !== $default && \is_object($default) ? $default : $this->miss;
         $event = $this->start(__FUNCTION__);
         try {
             $result = $this->pool->getMultiple($keys, $miss);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
         $f = function () use($result, $event, $miss, $default) {
             $event->result = [];
@@ -151,7 +143,7 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
         try {
             return $event->result = $this->pool->clear();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -160,15 +152,15 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
     public function deleteMultiple($keys)
     {
         $event = $this->start(__FUNCTION__);
-        if ($keys instanceof Traversable) {
-            $keys = $event->result['keys'] = iterator_to_array($keys, false);
+        if ($keys instanceof \Traversable) {
+            $keys = $event->result['keys'] = \iterator_to_array($keys, \false);
         } else {
             $event->result['keys'] = $keys;
         }
         try {
             return $event->result['result'] = $this->pool->deleteMultiple($keys);
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -176,14 +168,14 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
      */
     public function prune()
     {
-        if (!$this->pool instanceof PruneableInterface) {
-            return false;
+        if (!$this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface) {
+            return \false;
         }
         $event = $this->start(__FUNCTION__);
         try {
             return $event->result = $this->pool->prune();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     /**
@@ -191,14 +183,14 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
      */
     public function reset()
     {
-        if (!$this->pool instanceof ResettableInterface) {
+        if (!$this->pool instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\ResettableInterface) {
             return;
         }
         $event = $this->start(__FUNCTION__);
         try {
             $this->pool->reset();
         } finally {
-            $event->end = microtime(true);
+            $event->end = \microtime(\true);
         }
     }
     public function getCalls()
@@ -211,9 +203,9 @@ class TraceableCache implements CacheInterface, PruneableInterface, ResettableIn
     }
     private function start($name)
     {
-        $this->calls[] = $event = new TraceableCacheEvent();
+        $this->calls[] = $event = new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\TraceableCacheEvent();
         $event->name = $name;
-        $event->start = microtime(true);
+        $event->start = \microtime(\true);
         return $event;
     }
 }

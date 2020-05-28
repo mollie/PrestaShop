@@ -8,20 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
-use function serialize;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ArrayAdapter;
 /**
  * @group time-sensitive
  */
-class ArrayAdapterTest extends AdapterTestCase
+class ArrayAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testDeferredSaveWithoutCommit' => 'Assumes a shared cache which ArrayAdapter is not.', 'testSaveWithoutExpire' => 'Assumes a shared cache which ArrayAdapter is not.'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new ArrayAdapter($defaultLifetime);
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\ArrayAdapter($defaultLifetime);
     }
     public function testGetValuesHitAndMiss()
     {
@@ -39,7 +37,7 @@ class ArrayAdapterTest extends AdapterTestCase
         $values = $cache->getValues();
         $this->assertCount(2, $values);
         $this->assertArrayHasKey('foo', $values);
-        $this->assertSame(serialize('4711'), $values['foo']);
+        $this->assertSame(\serialize('4711'), $values['foo']);
         $this->assertArrayHasKey('bar', $values);
         $this->assertNull($values['bar']);
     }

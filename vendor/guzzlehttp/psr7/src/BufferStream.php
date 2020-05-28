@@ -1,13 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
-use RuntimeException;
-use function strlen;
-use function substr;
-use const SEEK_SET;
-
+use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
 /**
  * Provides a buffer stream that can be written to to fill a buffer, and read
  * from to remove bytes from the buffer.
@@ -16,7 +11,7 @@ use const SEEK_SET;
  * what the configured high water mark of the stream is, or the maximum
  * preferred size of the buffer.
  */
-class BufferStream implements StreamInterface
+class BufferStream implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface
 {
     private $hwm;
     private $buffer = '';
@@ -51,50 +46,50 @@ class BufferStream implements StreamInterface
     }
     public function getSize()
     {
-        return strlen($this->buffer);
+        return \strlen($this->buffer);
     }
     public function isReadable()
     {
-        return true;
+        return \true;
     }
     public function isWritable()
     {
-        return true;
+        return \true;
     }
     public function isSeekable()
     {
-        return false;
+        return \false;
     }
     public function rewind()
     {
         $this->seek(0);
     }
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = \SEEK_SET)
     {
-        throw new RuntimeException('Cannot seek a BufferStream');
+        throw new \RuntimeException('Cannot seek a BufferStream');
     }
     public function eof()
     {
-        return strlen($this->buffer) === 0;
+        return \strlen($this->buffer) === 0;
     }
     public function tell()
     {
-        throw new RuntimeException('Cannot determine the position of a BufferStream');
+        throw new \RuntimeException('Cannot determine the position of a BufferStream');
     }
     /**
      * Reads data from the buffer.
      */
     public function read($length)
     {
-        $currentLength = strlen($this->buffer);
+        $currentLength = \strlen($this->buffer);
         if ($length >= $currentLength) {
             // No need to slice the buffer because we don't have enough data.
             $result = $this->buffer;
             $this->buffer = '';
         } else {
             // Slice up the result to provide a subset of the buffer.
-            $result = substr($this->buffer, 0, $length);
-            $this->buffer = substr($this->buffer, $length);
+            $result = \substr($this->buffer, 0, $length);
+            $this->buffer = \substr($this->buffer, $length);
         }
         return $result;
     }
@@ -105,10 +100,10 @@ class BufferStream implements StreamInterface
     {
         $this->buffer .= $string;
         // TODO: What should happen here?
-        if (strlen($this->buffer) >= $this->hwm) {
-            return false;
+        if (\strlen($this->buffer) >= $this->hwm) {
+            return \false;
         }
-        return strlen($string);
+        return \strlen($string);
     }
     public function getMetadata($key = null)
     {

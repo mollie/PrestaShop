@@ -1,17 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
 /*
  * How to create a regular subscription.
  */
-
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use function dirname;
-use function htmlspecialchars;
-use function strcasecmp;
-use function time;
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.
@@ -20,9 +13,9 @@ try {
     /*
      * Determine the url parts to these example files.
      */
-    $protocol = isset($_SERVER['HTTPS']) && strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
+    $protocol = isset($_SERVER['HTTPS']) && \strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'];
-    $path = dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = \dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
     /*
      * Retrieve the last created customer for this example.
      * If no customers are created yet, run create-customer example.
@@ -32,7 +25,7 @@ try {
      * Generate a unique subscription id for this example. It is important to include this unique attribute
      * in the webhookUrl (below) so new payments can be associated with this subscription.
      */
-    $subscriptionId = time();
+    $subscriptionId = \time();
     /**
      * Customer Subscription creation parameters.
      *
@@ -48,10 +41,10 @@ try {
      * a pending or valid mandate. If the customer has no mandates an error is returned. You
      * should then set up a "first payment" for the customer.
      */
-    echo "<p>The subscription status is '" . htmlspecialchars($subscription->status) . "'.</p>\n";
+    echo "<p>The subscription status is '" . \htmlspecialchars($subscription->status) . "'.</p>\n";
     echo "<p>";
     echo '<a href="' . $protocol . '://' . $hostname . $path . '/17-cancel-subscription.php?subscription_id=' . $subscription->id . '">18-cancel-subscription</a><br>';
     echo "</p>";
-} catch (ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

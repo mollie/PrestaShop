@@ -8,19 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\RedisTrait;
-use Predis\Client;
-use Redis;
-use RedisArray;
-use RedisCluster;
-
-class RedisCache extends AbstractCache
+use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\RedisTrait;
+class RedisCache extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\AbstractCache
 {
     use RedisTrait;
     /**
-     * @param Redis|RedisArray|RedisCluster|Client $redisClient
+     * @param \Redis|\RedisArray|\RedisCluster|\Predis\Client $redisClient
      * @param string                                          $namespace
      * @param int                                             $defaultLifetime
      */

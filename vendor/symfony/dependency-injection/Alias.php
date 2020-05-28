@@ -8,9 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
-
-use function func_num_args;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection;
 
 class Alias
 {
@@ -21,11 +19,11 @@ class Alias
      * @param string $id     Alias identifier
      * @param bool   $public If this alias is public
      */
-    public function __construct($id, $public = true)
+    public function __construct($id, $public = \true)
     {
         $this->id = (string) $id;
         $this->public = $public;
-        $this->private = 2 > func_num_args();
+        $this->private = 2 > \func_num_args();
     }
     /**
      * Checks if this DI Alias should be public or not.
@@ -46,7 +44,7 @@ class Alias
     public function setPublic($boolean)
     {
         $this->public = (bool) $boolean;
-        $this->private = false;
+        $this->private = \false;
         return $this;
     }
     /**

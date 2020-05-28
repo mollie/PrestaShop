@@ -8,21 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Tests\Node;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Tests\Node;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ArrayNode;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
-use function serialize;
-use function unserialize;
-
-class ArrayNodeTest extends AbstractNodeTest
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ArrayNode;
+use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
+class ArrayNodeTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Tests\Node\AbstractNodeTest
 {
     public function testSerialization()
     {
         $node = $this->createArrayNode();
-        $node->addElement(new ConstantNode('foo'));
-        $serializedNode = serialize($node);
-        $unserializedNode = unserialize($serializedNode);
+        $node->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo'));
+        $serializedNode = \serialize($node);
+        $unserializedNode = \unserialize($serializedNode);
         $this->assertEquals($node, $unserializedNode);
         $this->assertNotEquals($this->createArrayNode(), $unserializedNode);
     }
@@ -38,23 +35,23 @@ class ArrayNodeTest extends AbstractNodeTest
     {
         (yield ['{"b": "a", 0: "b"}', $this->getArrayNode()]);
         $array = $this->createArrayNode();
-        $array->addElement(new ConstantNode('c'), new ConstantNode('a"b'));
-        $array->addElement(new ConstantNode('d'), new ConstantNode('_PhpScoper5ea00cc67502b\\a\\b'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('c'), new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('a"b'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('d'), new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('_PhpScoper5ece82d7231e4\\a\\b'));
         (yield ['{"a\\"b": "c", "a\\\\b": "d"}', $array]);
         $array = $this->createArrayNode();
-        $array->addElement(new ConstantNode('c'));
-        $array->addElement(new ConstantNode('d'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('c'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('d'));
         (yield ['["c", "d"]', $array]);
     }
     protected function getArrayNode()
     {
         $array = $this->createArrayNode();
-        $array->addElement(new ConstantNode('a'), new ConstantNode('b'));
-        $array->addElement(new ConstantNode('b'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('a'), new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('b'));
+        $array->addElement(new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode('b'));
         return $array;
     }
     protected function createArrayNode()
     {
-        return new ArrayNode();
+        return new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ArrayNode();
     }
 }

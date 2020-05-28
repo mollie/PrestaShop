@@ -35,6 +35,18 @@
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
+    return;
+}
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
+    return;
+}
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
+    return;
+}
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
+    return;
+}
 /**
  * Class Mollie
  *
@@ -50,7 +62,7 @@ class Mollie extends PaymentModule
     private $moduleContainer;
 
     const DISABLE_CACHE = true;
-    /** @var _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient|null */
+    /** @var _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient|null */
     public $api = null;
     /** @var string $currentOrderReference */
     public $currentOrderReference;
@@ -74,7 +86,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.2';
+        $this->version = '4.0.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -142,20 +154,26 @@ class Mollie extends PaymentModule
     {
         $containerCache = $this->getLocalPath() . 'var/cache/container.php';
 
-        try {
-            $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
-        } catch (Exception $e) {
-            $this->getContainer()->get('prestashop.core.cache.clearer.cache_clearer_chain')->clear();
-            $containerConfigCache = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        if (class_exists(_PhpScoper5ece82d7231e4\Symfony\Component\Config\ConfigCache::class)) {
+            $containerConfigCache = new _PhpScoper5ece82d7231e4\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
+        } else {
+            PrestaShopAutoload::getInstance()->generateIndex();
+            Media::clearCache();
+            Tools::clearSmartyCache();
+            Tools::clearSf2Cache();
+            Tools::clearXMLCache();
+
+            $containerConfigCache = new _PhpScoper5ece82d7231e4\Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
         }
+
         $containerClass = get_class($this) . 'Container';
         if (!$containerConfigCache->isFresh()) {
-            $containerBuilder = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-            $locator = new _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-            $loader = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+            $containerBuilder = new _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+            $locator = new _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
+            $loader = new _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
             $loader->load('config.yml');
             $containerBuilder->compile();
-            $dumper = new _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
+            $dumper = new _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
             $containerConfigCache->write(
                 $dumper->dump(['class' => $containerClass]),
                 $containerBuilder->getResources()
@@ -379,7 +397,7 @@ class Mollie extends PaymentModule
                             'this_version' => $this->version,
                             'release_version' => $latestVersion,
                         ]);
-                        $updateMessage = 'updateAvailable';
+                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/admin/new_release.tpl');
                     }
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
@@ -539,7 +557,7 @@ class Mollie extends PaymentModule
         $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod['id_payment_method'] === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL) {
+            if ($apiMethod['id_payment_method'] === _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
@@ -605,7 +623,7 @@ class Mollie extends PaymentModule
         $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($methods as $apiMethod) {
-            if ($apiMethod['id'] === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL) {
+            if ($apiMethod['id'] === _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
@@ -661,7 +679,7 @@ class Mollie extends PaymentModule
         $issuerList = [];
         foreach ($methodIds as $methodId) {
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-            if ($methodObj->id_method === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL) {
+            if ($methodObj->id_method === _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
@@ -670,8 +688,8 @@ class Mollie extends PaymentModule
         $cart = $context->cart;
 
         $context->smarty->assign([
-            'idealIssuers' => isset($issuerList[_PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL])
-                ? $issuerList[_PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL]
+            'idealIssuers' => isset($issuerList[_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL])
+                ? $issuerList[_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL]
                 : [],
             'link' => $this->context->link,
             'qrCodeEnabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
@@ -693,9 +711,9 @@ class Mollie extends PaymentModule
             $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
 
-            $isIdealMethod = $methodObj->id_method === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL;
+            $isIdealMethod = $methodObj->id_method === _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL;
             $isIssuersOnClick = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS) === Mollie\Config\Config::ISSUERS_ON_CLICK;
-            $isCreditCardMethod = $methodObj->id_method === _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::CREDITCARD;
+            $isCreditCardMethod = $methodObj->id_method === _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::CREDITCARD;
 
             if ($isIdealMethod && $isIssuersOnClick) {
                 $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
@@ -863,7 +881,7 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (int)Tools::getValue('id_cart'));
-        if ($payment && $payment['bank_status'] == _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
+        if ($payment && $payment['bank_status'] == _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
             $this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
             return $this->display(__FILE__, 'ok.tpl');
@@ -888,7 +906,7 @@ class Mollie extends PaymentModule
         try {
 
             $methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
-        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
             return [
                 'success' => false,
                 'methods' => null,
@@ -1061,8 +1079,8 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $length = Tools::strlen(_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
-        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
+        $length = Tools::strlen(_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
+        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
         ) {
             // No need to check regular payments
             return;
@@ -1079,7 +1097,7 @@ class Mollie extends PaymentModule
             }
 
             $apiOrder->shipAll($shipmentInfo);
-        } catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
             return;
         } catch (Exception $e) {
@@ -1154,9 +1172,9 @@ class Mollie extends PaymentModule
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         try {
             $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
-        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+        } catch (_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
-        } catch (_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+        } catch (_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
             $this->warning = $this->l('Payment error:') . $e->getMessage();
             PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
         }

@@ -1,55 +1,47 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5ece82d7231e4;
 
-use _PhpScoper5ea00cc67502b\App\Bar;
-use _PhpScoper5ea00cc67502b\App\Baz;
-use _PhpScoper5ea00cc67502b\App\Foo;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use function class_alias;
-use function sprintf;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class Symfony_DI_PhpDumper_Test_Inline_Self_Ref extends Container
+class Symfony_DI_PhpDumper_Test_Inline_Self_Ref extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
     public function __construct()
     {
         $this->services = [];
-        $this->normalizedIds = ['_PhpScoper5ea00cc67502b\\app\\foo' => '_PhpScoper5ea00cc67502b\\App\\Foo'];
-        $this->methodMap = ['_PhpScoper5ea00cc67502b\\App\\Foo' => 'getFooService'];
+        $this->normalizedIds = ['_PhpScoper5ece82d7231e4\\app\\foo' => '_PhpScoper5ece82d7231e4\\App\\Foo'];
+        $this->methodMap = ['_PhpScoper5ece82d7231e4\\App\\Foo' => 'getFooService'];
         $this->aliases = [];
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => true];
+        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
     }
     public function compile()
     {
-        throw new LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
-        return true;
+        return \true;
     }
     public function isFrozen()
     {
-        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
-        return true;
+        @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
+        return \true;
     }
     /**
      * Gets the public 'App\Foo' shared service.
@@ -58,10 +50,10 @@ class Symfony_DI_PhpDumper_Test_Inline_Self_Ref extends Container
      */
     protected function getFooService()
     {
-        $a = new Bar();
-        $b = new Baz($a);
+        $a = new \_PhpScoper5ece82d7231e4\App\Bar();
+        $b = new \_PhpScoper5ece82d7231e4\App\Baz($a);
         $b->bar = $a;
-        $this->services['App\\Foo'] = $instance = new Foo($b);
+        $this->services['App\\Foo'] = $instance = new \_PhpScoper5ece82d7231e4\App\Foo($b);
         $a->foo = $instance;
         return $instance;
     }
@@ -72,4 +64,4 @@ class Symfony_DI_PhpDumper_Test_Inline_Self_Ref extends Container
  *
  * @final since Symfony 3.3
  */
-class_alias('_PhpScoper5ea00cc67502b\\Symfony_DI_PhpDumper_Test_Inline_Self_Ref', 'Symfony_DI_PhpDumper_Test_Inline_Self_Ref', false);
+\class_alias('_PhpScoper5ece82d7231e4\\Symfony_DI_PhpDumper_Test_Inline_Self_Ref', 'Symfony_DI_PhpDumper_Test_Inline_Self_Ref', \false);

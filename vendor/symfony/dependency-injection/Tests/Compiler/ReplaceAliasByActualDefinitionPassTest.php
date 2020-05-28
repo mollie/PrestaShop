@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ReplaceAliasByActualDefinitionPass;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ReplaceAliasByActualDefinitionPass;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
 require_once __DIR__ . '/../Fixtures/includes/foo.php';
-class ReplaceAliasByActualDefinitionPassTest extends TestCase
+class ReplaceAliasByActualDefinitionPassTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
 {
     public function testProcess()
     {
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $aDefinition = $container->register('a', '\\stdClass');
-        $aDefinition->setFactory([new Reference('b'), 'createA']);
-        $bDefinition = new Definition('\\stdClass');
-        $bDefinition->setPublic(false);
+        $aDefinition->setFactory([new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('b'), 'createA']);
+        $bDefinition = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition('\\stdClass');
+        $bDefinition->setPublic(\false);
         $container->setDefinition('b', $bDefinition);
         $container->setAlias('a_alias', 'a');
         $container->setAlias('b_alias', 'b');
@@ -41,13 +41,13 @@ class ReplaceAliasByActualDefinitionPassTest extends TestCase
     public function testProcessWithInvalidAlias()
     {
         $this->expectException('InvalidArgumentException');
-        $container = new ContainerBuilder();
+        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setAlias('a_alias', 'a');
         $this->process($container);
     }
-    protected function process(ContainerBuilder $container)
+    protected function process(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
-        $pass = new ReplaceAliasByActualDefinitionPass();
+        $pass = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ReplaceAliasByActualDefinitionPass();
         $pass->process($container);
     }
 }
