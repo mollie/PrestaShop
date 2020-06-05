@@ -326,8 +326,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
         $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
