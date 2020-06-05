@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ece82d7231e4\Psr\Log\LoggerAwareTrait;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
+use _PhpScoper5ea00cc67502b\Psr\Log\LoggerAwareTrait;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -37,7 +37,7 @@ trait ArrayTrait
      */
     public function hasItem($key)
     {
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($key);
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
         return isset($this->expiries[$key]) && ($this->expiries[$key] > \time() || !$this->deleteItem($key));
     }
     /**
@@ -53,7 +53,7 @@ trait ArrayTrait
      */
     public function deleteItem($key)
     {
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($key);
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
         unset($this->values[$key], $this->expiries[$key]);
         return \true;
     }
@@ -79,7 +79,7 @@ trait ArrayTrait
                     $isHit = \false;
                 }
             } catch (\Exception $e) {
-                \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to unserialize key "{key}"', ['key' => $key, 'exception' => $e]);
+                \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to unserialize key "{key}"', ['key' => $key, 'exception' => $e]);
                 $this->values[$key] = $value = null;
                 $isHit = \false;
             }

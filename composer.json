@@ -27,7 +27,8 @@
   "config": {
     "platform": {
       "php": "5.6"
-    }
+    },
+    "prepend-autoloader": false
   },
   "type": "prestashop-module"
 }

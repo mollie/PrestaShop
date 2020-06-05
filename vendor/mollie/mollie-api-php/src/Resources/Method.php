@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class Method extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
+class Method extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
 {
     /**
      * Id of the payment method.
@@ -61,7 +61,7 @@ class Method extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
      */
     public function issuers()
     {
-        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Issuer::class, $this->issuers);
+        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Issuer::class, $this->issuers);
     }
     /**
      * Get the method price value objects.
@@ -70,6 +70,6 @@ class Method extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
      */
     public function pricing()
     {
-        return \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\MethodPrice::class, $this->pricing);
+        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\MethodPrice::class, $this->pricing);
     }
 }

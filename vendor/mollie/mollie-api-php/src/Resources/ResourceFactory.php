@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient;
+use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
 class ResourceFactory
 {
     /**
@@ -13,7 +13,7 @@ class ResourceFactory
      *
      * @return BaseResource
      */
-    public static function createFromApiResult($apiResult, \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource $resource)
+    public static function createFromApiResult($apiResult, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource $resource)
     {
         foreach ($apiResult as $property => $value) {
             $resource->{$property} = $value;
@@ -28,7 +28,7 @@ class ResourceFactory
      * @param null $resourceCollectionClass
      * @return mixed
      */
-    public static function createBaseResourceCollection(\_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient $client, $resourceClass, $data, $_links = null, $resourceCollectionClass = null)
+    public static function createBaseResourceCollection(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient $client, $resourceClass, $data, $_links = null, $resourceCollectionClass = null)
     {
         $resourceCollectionClass = $resourceCollectionClass ?: $resourceClass . 'Collection';
         $data = $data ?: [];

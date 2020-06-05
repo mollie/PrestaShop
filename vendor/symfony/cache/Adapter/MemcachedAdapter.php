@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\MemcachedTrait;
-class MemcachedAdapter extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\AbstractAdapter
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\MemcachedTrait;
+class MemcachedAdapter extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AbstractAdapter
 {
     use MemcachedTrait;
     protected $maxIdLength = 250;
@@ -25,7 +25,7 @@ class MemcachedAdapter extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\
      *
      * Using a MemcachedAdapter as a pure items store is fine.
      */
-    public function __construct(\_PhpScoper5ece82d7231e4\Memcached $client, $namespace = '', $defaultLifetime = 0)
+    public function __construct(\_PhpScoper5ea00cc67502b\Memcached $client, $namespace = '', $defaultLifetime = 0)
     {
         $this->init($client, $namespace, $defaultLifetime);
     }

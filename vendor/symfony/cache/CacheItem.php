@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache;
 
-use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ece82d7231e4\Psr\Log\LoggerInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
+use _PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInterface
+final class CacheItem implements \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface
 {
     protected $key;
     protected $value;
@@ -70,7 +70,7 @@ final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInt
         } elseif ($expiration instanceof \DateTimeInterface) {
             $this->expiry = (int) $expiration->format('U');
         } else {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must implement DateTimeInterface or be null, "%s" given.', \is_object($expiration) ? \get_class($expiration) : \gettype($expiration)));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must implement DateTimeInterface or be null, "%s" given.', \is_object($expiration) ? \get_class($expiration) : \gettype($expiration)));
         }
         return $this;
     }
@@ -88,7 +88,7 @@ final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInt
         } elseif (\is_int($time)) {
             $this->expiry = $time + \time();
         } else {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', \is_object($time) ? \get_class($time) : \gettype($time)));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', \is_object($time) ? \get_class($time) : \gettype($time)));
         }
         return $this;
     }
@@ -108,16 +108,16 @@ final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInt
         }
         foreach ($tags as $tag) {
             if (!\is_string($tag)) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache tag must be string, "%s" given.', \is_object($tag) ? \get_class($tag) : \gettype($tag)));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache tag must be string, "%s" given.', \is_object($tag) ? \get_class($tag) : \gettype($tag)));
             }
             if (isset($this->tags[$tag])) {
                 continue;
             }
             if ('' === $tag) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException('Cache tag length must be greater than zero.');
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException('Cache tag length must be greater than zero.');
             }
             if (\false !== \strpbrk($tag, '{}()/\\@:')) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache tag "%s" contains reserved characters {}()/\\@:.', $tag));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache tag "%s" contains reserved characters {}()/\\@:.', $tag));
             }
             $this->tags[$tag] = $tag;
         }
@@ -144,13 +144,13 @@ final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInt
     public static function validateKey($key)
     {
         if (!\is_string($key)) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key must be string, "%s" given.', \is_object($key) ? \get_class($key) : \gettype($key)));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key must be string, "%s" given.', \is_object($key) ? \get_class($key) : \gettype($key)));
         }
         if ('' === $key) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException('Cache key length must be greater than zero.');
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException('Cache key length must be greater than zero.');
         }
         if (\false !== \strpbrk($key, '{}()/\\@:')) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" contains reserved characters {}()/\\@:.', $key));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" contains reserved characters {}()/\\@:.', $key));
         }
         return $key;
     }
@@ -159,7 +159,7 @@ final class CacheItem implements \_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemInt
      *
      * @internal
      */
-    public static function log(\_PhpScoper5ece82d7231e4\Psr\Log\LoggerInterface $logger = null, $message, $context = [])
+    public static function log(\_PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface $logger = null, $message, $context = [])
     {
         if ($logger) {
             $logger->warning($message, $context);

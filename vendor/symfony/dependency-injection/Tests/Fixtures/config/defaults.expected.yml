@@ -1,14 +1,15 @@
 
 services:
     service_container:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    _PhpScoper5ece82d7231e4\App\BarService:
-        class: _PhpScoper5ece82d7231e4\App\BarService
+    _PhpScoper5ea00cc67502b\App\BarService:
+        class: _PhpScoper5ea00cc67502b\App\BarService
+        public: true
         arguments: [!service { class: FooClass }]
-    _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         public: true
         tags:
             - { name: t, a: b }
@@ -16,7 +17,7 @@ services:
         autoconfigure: true
         arguments: ['@bar']
     bar:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         public: false
         tags:
             - { name: t, a: b }

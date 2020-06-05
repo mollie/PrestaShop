@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter;
 /**
  * @group time-sensitive
  */
-class FilesystemAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class FilesystemAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime);
+        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime);
     }
     public static function tearDownAfterClass()
     {
@@ -43,7 +43,7 @@ class FilesystemAdapterTest extends \_PhpScoper5ece82d7231e4\Symfony\Component\C
         }
         \rmdir($dir);
     }
-    protected function isPruned(\_PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface $cache, $name)
+    protected function isPruned(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface $cache, $name)
     {
         $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
         $getFileMethod->setAccessible(\true);

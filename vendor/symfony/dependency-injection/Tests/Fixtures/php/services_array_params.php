@@ -1,21 +1,21 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
+class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -32,11 +32,11 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
+        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -54,7 +54,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getBarService()
     {
-        $this->services['bar'] = $instance = new \_PhpScoper5ece82d7231e4\BarClass();
+        $this->services['bar'] = $instance = new \_PhpScoper5ea00cc67502b\BarClass();
         $instance->setBaz($this->parameters['array_1'], $this->getParameter('array_2'), '%array_1%', $this->parameters['array_1']);
         return $instance;
     }
@@ -64,7 +64,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
         if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
             $name = $this->normalizeParameterName($name);
             if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The parameter "%s" must be defined.', $name));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The parameter "%s" must be defined.', $name));
             }
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -80,7 +80,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     }
     public function setParameter($name, $value)
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('Impossible to call set() on a frozen ParameterBag.');
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('Impossible to call set() on a frozen ParameterBag.');
     }
     public function getParameterBag()
     {
@@ -89,7 +89,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
             foreach ($this->loadedDynamicParameters as $name => $loaded) {
                 $parameters[$name] = $loaded ? $this->dynamicParameters[$name] : $this->getDynamicParameter($name);
             }
-            $this->parameterBag = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
+            $this->parameterBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
         }
         return $this->parameterBag;
     }
@@ -111,7 +111,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
                 $value = [0 => $this->targetDirs[2] . '/Dumper'];
                 break;
             default:
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The dynamic parameter "%s" must be defined.', $name));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The dynamic parameter "%s" must be defined.', $name));
         }
         $this->loadedDynamicParameters[$name] = \true;
         return $this->dynamicParameters[$name] = $value;
@@ -145,4 +145,4 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5ece82d7231e4\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+\class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', \false);

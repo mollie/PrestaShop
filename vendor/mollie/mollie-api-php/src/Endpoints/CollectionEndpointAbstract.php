@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseCollection;
-abstract class CollectionEndpointAbstract extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\EndpointAbstract
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseCollection;
+abstract class CollectionEndpointAbstract extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\EndpointAbstract
 {
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.

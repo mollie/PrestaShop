@@ -8,32 +8,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler;
+use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ArrayNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node
+class ArrayNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
 {
     protected $index;
     public function __construct()
     {
         $this->index = -1;
     }
-    public function addElement(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node $value, \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node $key = null)
+    public function addElement(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $value, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $key = null)
     {
         if (null === $key) {
-            $key = new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode(++$this->index);
+            $key = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode(++$this->index);
         }
         \array_push($this->nodes, $key, $value);
     }
     /**
      * Compiles the node to PHP.
      */
-    public function compile(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
         $compiler->raw('[');
         $this->compileArguments($compiler);
@@ -57,7 +57,7 @@ class ArrayNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLan
         if ($this->isHash($value)) {
             foreach ($value as $k => $v) {
                 $array[] = ', ';
-                $array[] = new \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\ConstantNode($k);
+                $array[] = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\ConstantNode($k);
                 $array[] = ': ';
                 $array[] = $v;
             }
@@ -81,7 +81,7 @@ class ArrayNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLan
         }
         return $pairs;
     }
-    protected function compileArguments(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler, $withKeys = \true)
+    protected function compileArguments(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler, $withKeys = \true)
     {
         $first = \true;
         foreach ($this->getKeyValuePairs() as $pair) {

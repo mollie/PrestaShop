@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler;
+use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class ConstantNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Node\Node
+class ConstantNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
 {
     private $isIdentifier;
     public function __construct($value, $isIdentifier = \false)
@@ -24,7 +24,7 @@ class ConstantNode extends \_PhpScoper5ece82d7231e4\Symfony\Component\Expression
         $this->isIdentifier = $isIdentifier;
         parent::__construct([], ['value' => $value]);
     }
-    public function compile(\_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
         $compiler->repr($this->attributes['value']);
     }

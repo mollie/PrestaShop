@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Config;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Config;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\MockObject\MockObject;
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\ResourceCheckerInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
-class ContainerParametersResourceCheckerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\MockObject\MockObject;
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\ResourceCheckerInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
+class ContainerParametersResourceCheckerTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     /** @var ContainerParametersResource */
     private $resource;
@@ -26,9 +26,9 @@ class ContainerParametersResourceCheckerTest extends \_PhpScoper5ece82d7231e4\PH
     private $container;
     protected function setUp()
     {
-        $this->resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
-        $this->container = $this->getMockBuilder(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface::class)->getMock();
-        $this->resourceChecker = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker($this->container);
+        $this->resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
+        $this->container = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::class)->getMock();
+        $this->resourceChecker = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker($this->container);
     }
     public function testSupports()
     {
@@ -44,13 +44,13 @@ class ContainerParametersResourceCheckerTest extends \_PhpScoper5ece82d7231e4\PH
     }
     public function isFreshProvider()
     {
-        (yield 'not fresh on missing parameter' => [function (\_PhpScoper5ece82d7231e4\PHPUnit\Framework\MockObject\MockObject $container) {
+        (yield 'not fresh on missing parameter' => [function (\_PhpScoper5ea00cc67502b\PHPUnit\Framework\MockObject\MockObject $container) {
             $container->method('hasParameter')->with('locales')->willReturn(\false);
         }, \false]);
-        (yield 'not fresh on different value' => [function (\_PhpScoper5ece82d7231e4\PHPUnit\Framework\MockObject\MockObject $container) {
+        (yield 'not fresh on different value' => [function (\_PhpScoper5ea00cc67502b\PHPUnit\Framework\MockObject\MockObject $container) {
             $container->method('getParameter')->with('locales')->willReturn(['nl', 'es']);
         }, \false]);
-        (yield 'fresh on every identical parameters' => [function (\_PhpScoper5ece82d7231e4\PHPUnit\Framework\MockObject\MockObject $container) {
+        (yield 'fresh on every identical parameters' => [function (\_PhpScoper5ea00cc67502b\PHPUnit\Framework\MockObject\MockObject $container) {
             $container->expects($this->exactly(2))->method('hasParameter')->willReturn(\true);
             $container->expects($this->exactly(2))->method('getParameter')->withConsecutive([$this->equalTo('locales')], [$this->equalTo('default_locale')])->willReturnMap([['locales', ['fr', 'en']], ['default_locale', 'fr']]);
         }, \true]);

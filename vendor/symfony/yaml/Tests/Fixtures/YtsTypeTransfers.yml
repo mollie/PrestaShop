@@ -88,10 +88,10 @@ brief: >
     to use escapings to represent ASCII and
     Unicode characters.
 yaml: |
-    i know where i want my line breaks: "one _PhpScoper5ece82d7231e4\here\nand another _PhpScoper5ece82d7231e4\here\n"
+    i know where i want my line breaks: "one _PhpScoper5ea00cc67502b\here\nand another _PhpScoper5ea00cc67502b\here\n"
 php: |
     [
-      'i know where i want my line breaks' => "one _PhpScoper5ece82d7231e4\here\nand another _PhpScoper5ece82d7231e4\here\n"
+      'i know where i want my line breaks' => "one _PhpScoper5ea00cc67502b\here\nand another _PhpScoper5ea00cc67502b\here\n"
     ]
 ---
 test: Multi-line Quoted Strings

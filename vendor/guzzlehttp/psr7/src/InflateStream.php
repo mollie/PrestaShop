@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
+namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
-use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
+use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
 /**
  * Uses PHP's zlib.inflate filter to inflate deflate or gzipped content.
  *
@@ -14,26 +14,26 @@ use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
  * @link http://tools.ietf.org/html/rfc1952
  * @link http://php.net/manual/en/filters.compression.php
  */
-class InflateStream implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface
+class InflateStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface
 {
     use StreamDecoratorTrait;
-    public function __construct(\_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface $stream)
+    public function __construct(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $stream)
     {
         // read the first 10 bytes, ie. gzip header
         $header = $stream->read(10);
         $filenameHeaderLength = $this->getLengthOfPossibleFilenameHeader($stream, $header);
         // Skip the header, that is 10 + length of filename + 1 (nil) bytes
-        $stream = new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\LimitStream($stream, -1, 10 + $filenameHeaderLength);
-        $resource = \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\StreamWrapper::getResource($stream);
+        $stream = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\LimitStream($stream, -1, 10 + $filenameHeaderLength);
+        $resource = \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\StreamWrapper::getResource($stream);
         \stream_filter_append($resource, 'zlib.inflate', \STREAM_FILTER_READ);
-        $this->stream = $stream->isSeekable() ? new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Stream($resource) : new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\NoSeekStream(new \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\Stream($resource));
+        $this->stream = $stream->isSeekable() ? new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Stream($resource) : new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\NoSeekStream(new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Stream($resource));
     }
     /**
      * @param StreamInterface $stream
      * @param $header
      * @return int
      */
-    private function getLengthOfPossibleFilenameHeader(\_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface $stream, $header)
+    private function getLengthOfPossibleFilenameHeader(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $stream, $header)
     {
         $filename_header_length = 0;
         if (\substr(\bin2hex($header), 6, 2) === '08') {

@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ece82d7231e4\Cache\IntegrationTests\CachePoolTest;
-use _PhpScoper5ece82d7231e4\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
-abstract class AdapterTestCase extends \_PhpScoper5ece82d7231e4\Cache\IntegrationTests\CachePoolTest
+use _PhpScoper5ea00cc67502b\Cache\IntegrationTests\CachePoolTest;
+use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
+abstract class AdapterTestCase extends \_PhpScoper5ea00cc67502b\Cache\IntegrationTests\CachePoolTest
 {
     protected function setUp()
     {
@@ -21,7 +21,7 @@ abstract class AdapterTestCase extends \_PhpScoper5ece82d7231e4\Cache\Integratio
         if (!\array_key_exists('testDeferredSaveWithoutCommit', $this->skippedTests) && \defined('HHVM_VERSION')) {
             $this->skippedTests['testDeferredSaveWithoutCommit'] = 'Destructors are called late on HHVM.';
         }
-        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createCachePool() instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface) {
+        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createCachePool() instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
             $this->skippedTests['testPrune'] = 'Not a pruneable cache pool.';
         }
     }
@@ -64,12 +64,12 @@ abstract class AdapterTestCase extends \_PhpScoper5ece82d7231e4\Cache\Integratio
         }
         $cache = $this->createCachePool();
         $item = $cache->getItem('foo');
-        $cache->save($item->set(new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\NotUnserializable()));
+        $cache->save($item->set(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\NotUnserializable()));
         $item = $cache->getItem('foo');
         $this->assertFalse($item->isHit());
         foreach ($cache->getItems(['foo']) as $item) {
         }
-        $cache->save($item->set(new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Adapter\NotUnserializable()));
+        $cache->save($item->set(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\NotUnserializable()));
         foreach ($cache->getItems(['foo']) as $item) {
         }
         $this->assertFalse($item->isHit());

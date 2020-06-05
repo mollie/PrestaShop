@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\InvoiceStatus;
-class Invoice extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus;
+class Invoice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -79,20 +79,20 @@ class Invoice extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
      */
     public function isPaid()
     {
-        return $this->status == \_PhpScoper5ece82d7231e4\Mollie\Api\Types\InvoiceStatus::STATUS_PAID;
+        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_PAID;
     }
     /**
      * @return bool
      */
     public function isOpen()
     {
-        return $this->status == \_PhpScoper5ece82d7231e4\Mollie\Api\Types\InvoiceStatus::STATUS_OPEN;
+        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_OPEN;
     }
     /**
      * @return bool
      */
     public function isOverdue()
     {
-        return $this->status == \_PhpScoper5ece82d7231e4\Mollie\Api\Types\InvoiceStatus::STATUS_OVERDUE;
+        return $this->status == \_PhpScoper5ea00cc67502b\Mollie\Api\Types\InvoiceStatus::STATUS_OVERDUE;
     }
 }

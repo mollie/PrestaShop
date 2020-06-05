@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection;
-class OrderRefundEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\RefundCollection;
+class OrderRefundEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "orders_refunds";
     /**
@@ -15,7 +15,7 @@ class OrderRefundEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Refund($this->client);
+        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -27,7 +27,7 @@ class OrderRefundEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\RefundCollection($this->client, $count, $_links);
+        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\RefundCollection($this->client, $count, $_links);
     }
     /**
      * Refund some order lines. You can provide an empty array for the
@@ -40,7 +40,7 @@ class OrderRefundEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\
      * @return Refund
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order $order, array $data, array $filters = [])
+    public function createFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order $order, array $data, array $filters = [])
     {
         return $this->createForId($order->id, $data, $filters);
     }

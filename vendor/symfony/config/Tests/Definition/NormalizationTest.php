@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NodeInterface;
-class NormalizationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface;
+class NormalizationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getEncoderTests
      */
     public function testNormalizeEncoders($denormalized)
     {
-        $tb = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         $tree = $tb->root('root_name', 'array')->fixXmlConfig('encoder')->children()->node('encoders', 'array')->useAttributeAsKey('class')->prototype('array')->beforeNormalization()->ifString()->then(function ($v) {
             return ['algorithm' => $v];
         })->end()->children()->node('algorithm', 'scalar')->end()->end()->end()->end()->end()->end()->buildTree();
@@ -49,7 +49,7 @@ class NormalizationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestC
      */
     public function testAnonymousKeysArray($denormalized)
     {
-        $tb = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         $tree = $tb->root('root', 'array')->children()->node('logout', 'array')->fixXmlConfig('handler')->children()->node('handlers', 'array')->prototype('scalar')->end()->end()->end()->end()->end()->end()->buildTree();
         $normalized = ['logout' => ['handlers' => ['a', 'b', 'c']]];
         $this->assertNormalized($tree, $denormalized, $normalized);
@@ -82,25 +82,25 @@ class NormalizationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestC
     }
     public function testNonAssociativeArrayThrowsExceptionIfAttributeNotSet()
     {
-        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
+        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $this->expectExceptionMessage('The attribute "id" must be set for path "root.thing".');
         $denormalized = ['thing' => [['foo', 'bar'], ['baz', 'qux']]];
         $this->assertNormalized($this->getNumericKeysTestTree(), $denormalized, []);
     }
     public function testAssociativeArrayPreserveKeys()
     {
-        $tb = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         $tree = $tb->root('root', 'array')->prototype('array')->children()->node('foo', 'scalar')->end()->end()->end()->end()->buildTree();
         $data = ['first' => ['foo' => 'bar']];
         $this->assertNormalized($tree, $data, $data);
     }
-    public static function assertNormalized(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\NodeInterface $tree, $denormalized, $normalized)
+    public static function assertNormalized(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\NodeInterface $tree, $denormalized, $normalized)
     {
         self::assertSame($normalized, $tree->normalize($denormalized));
     }
     private function getNumericKeysTestTree()
     {
-        $tb = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $tb = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         $tree = $tb->root('root', 'array')->children()->node('thing', 'array')->useAttributeAsKey('id')->prototype('array')->prototype('scalar')->end()->end()->end()->end()->end()->buildTree();
         return $tree;
     }

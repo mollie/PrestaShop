@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class IssuerCollection extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseCollection
+class IssuerCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseCollection
 {
     /**
      * @return string|null

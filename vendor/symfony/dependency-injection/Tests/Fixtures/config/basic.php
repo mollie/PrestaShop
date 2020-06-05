@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5ece82d7231e4\App\BarService;
-return function (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $c) {
+use _PhpScoper5ea00cc67502b\App\BarService;
+return function (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator $c) {
     $s = $c->services();
-    $s->set(\_PhpScoper5ece82d7231e4\App\BarService::class)->args([inline('FooClass')]);
+    $s->set(\_PhpScoper5ea00cc67502b\App\BarService::class)->args([inline('FooClass')]);
 };

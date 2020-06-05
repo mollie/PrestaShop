@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
 /**
  * Holds parameters.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface
+class ParameterBag implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface
 {
     protected $parameters = [];
     protected $resolved = \false;
@@ -63,7 +63,7 @@ class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\Depende
         $name = $this->normalizeName($name);
         if (!\array_key_exists($name, $this->parameters)) {
             if (!$name) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException($name);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException($name);
             }
             $alternatives = [];
             foreach ($this->parameters as $key => $parameterValue) {
@@ -86,7 +86,7 @@ class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\Depende
                     $key = \substr($key, 0, -1 * (1 + \array_pop($namePartsLength)));
                 }
             }
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException($name, null, null, null, $alternatives, $nonNestedAlternative);
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException($name, null, null, null, $alternatives, $nonNestedAlternative);
         }
         return $this->parameters[$name];
     }
@@ -129,7 +129,7 @@ class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\Depende
             try {
                 $value = $this->resolveValue($value);
                 $parameters[$key] = $this->unescapeValue($value);
-            } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException $e) {
+            } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException $e) {
                 $e->setSourceKey($key);
                 throw $e;
             }
@@ -185,7 +185,7 @@ class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\Depende
             $lcKey = \strtolower($key);
             // strtolower() to be removed in 4.0
             if (isset($resolving[$lcKey])) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($resolving));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($resolving));
             }
             $resolving[$lcKey] = \true;
             return $this->resolved ? $this->get($key) : $this->resolveValue($this->get($key), $resolving);
@@ -199,11 +199,11 @@ class ParameterBag implements \_PhpScoper5ece82d7231e4\Symfony\Component\Depende
             $lcKey = \strtolower($key);
             // strtolower() to be removed in 4.0
             if (isset($resolving[$lcKey])) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($resolving));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($resolving));
             }
             $resolved = $this->get($key);
             if (!\is_string($resolved) && !\is_numeric($resolved)) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('A string value must be composed of strings and/or numbers, but found parameter "%s" of type "%s" inside string value "%s".', $key, \gettype($resolved), $value));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('A string value must be composed of strings and/or numbers, but found parameter "%s" of type "%s" inside string value "%s".', $key, \gettype($resolved), $value));
             }
             $resolved = (string) $resolved;
             $resolving[$lcKey] = \true;

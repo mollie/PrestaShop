@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\CacheException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -21,19 +21,19 @@ trait ApcuTrait
 {
     public static function isSupported()
     {
-        return \function_exists('_PhpScoper5ece82d7231e4\\apcu_fetch') && \filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
+        return \function_exists('_PhpScoper5ea00cc67502b\\apcu_fetch') && \filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
     }
     private function init($namespace, $defaultLifetime, $version)
     {
         if (!static::isSupported()) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\CacheException('APCu is not enabled.');
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('APCu is not enabled.');
         }
         if ('cli' === \PHP_SAPI) {
             \ini_set('apc.use_request_time', 0);
         }
         parent::__construct($namespace, $defaultLifetime);
         if (null !== $version) {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($version);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($version);
             if (!apcu_exists($version . '@' . $namespace)) {
                 $this->doClear($namespace);
                 apcu_add($version . '@' . $namespace, null);
@@ -67,7 +67,7 @@ trait ApcuTrait
      */
     protected function doClear($namespace)
     {
-        return isset($namespace[0]) && \class_exists('_PhpScoper5ece82d7231e4\\APCuIterator', \false) && ('cli' !== \PHP_SAPI || \filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) ? apcu_delete(new \_PhpScoper5ece82d7231e4\APCuIterator(\sprintf('/^%s/', \preg_quote($namespace, '/')), APC_ITER_KEY)) : apcu_clear_cache();
+        return isset($namespace[0]) && \class_exists('_PhpScoper5ea00cc67502b\\APCuIterator', \false) && ('cli' !== \PHP_SAPI || \filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) ? apcu_delete(new \_PhpScoper5ea00cc67502b\APCuIterator(\sprintf('/^%s/', \preg_quote($namespace, '/')), APC_ITER_KEY)) : apcu_clear_cache();
     }
     /**
      * {@inheritdoc}

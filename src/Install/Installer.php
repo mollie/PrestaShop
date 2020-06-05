@@ -72,15 +72,9 @@ class Installer
         $context = Context::getContext();
 
         try {
-            $this->partialRefundOrderState($context->language->id);
+            $this->createMollieStatuses($context->language->id);
         } catch (Exception $e) {
-            $this->errors[] = $this->module->l('Unable to install Mollie partially refunded order state');
-            return false;
-        }
-        try {
-            $this->awaitingMollieOrderState($context->language->id);
-        } catch (Exception $e) {
-            $this->errors[] = $this->module->l('Unable to install Mollie awaiting state');
+            $this->errors[] = $this->module->l('Unable to install Mollie statuses');
             return false;
         }
 
@@ -119,7 +113,8 @@ class Installer
             'actionFrontControllerSetMedia',
             'actionEmailSendBefore',
             'actionOrderStatusUpdate',
-            'displayPDFInvoice'
+            'displayPDFInvoice',
+            'actionEmailSendBefore'
         ];
     }
 
@@ -144,29 +139,44 @@ class Installer
                 break;
             }
         }
-        if (!$stateExists) {
-            $orderState = new OrderState();
-            $orderState->send_email = false;
-            $orderState->color = '#6F8C9F';
-            $orderState->hidden = false;
-            $orderState->delivery = false;
-            $orderState->logable = false;
-            $orderState->invoice = false;
-            $orderState->module_name = $this->module->name;
-            $orderState->name = [];
-            $languages = Language::getLanguages(false);
-            foreach ($languages as $language) {
-                $orderState->name[$language['id_lang']] = $this->module->lang('Mollie partially refunded');
-            }
-            if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-                @copy($source, $destination);
-            }
-            Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND, (int)$orderState->id);
+        if ($stateExists) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#6F8C9F';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Mollie partially refunded');
+        }
+        if ($orderState->add()) {
+            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+            @copy($source, $destination);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND, (int)$orderState->id);
+
+
+        return true;
+    }
+
+    public function createMollieStatuses($languageId)
+    {
+        if (!$this->partialRefundOrderState($languageId)) {
+            return false;
+        }
+        if (!$this->awaitingMollieOrderState($languageId)) {
+            return false;
         }
 
         return true;
+
     }
 
     /**

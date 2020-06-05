@@ -24,7 +24,7 @@
  * Originally forked from
  * https://github.com/true/php-punycode/blob/v2.1.1/src/Punycode.php
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Polyfill\Intl\Idn;
+namespace _PhpScoper5ea00cc67502b\Symfony\Polyfill\Intl\Idn;
 
 /**
  * Partial intl implementation in pure PHP.
@@ -90,9 +90,6 @@ final class Idn
     }
     private static function encodePart($input)
     {
-        if (\substr($input, 0, 1) === '-' || \substr($input, -1) === '-') {
-            return \false;
-        }
         $codePoints = self::listCodePoints($input);
         $n = 128;
         $bias = 72;

@@ -1,21 +1,21 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
+class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -30,11 +30,11 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'configurator_service' => \true, 'configurator_service_simple' => \true, 'decorated.pif-pouf' => \true, 'decorator_service.inner' => \true, 'factory_simple' => \true, 'inlined' => \true, 'new_factory' => \true, 'tagged_iterator_foo' => \true];
+        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'configurator_service' => \true, 'configurator_service_simple' => \true, 'decorated.pif-pouf' => \true, 'decorator_service.inner' => \true, 'factory_simple' => \true, 'inlined' => \true, 'new_factory' => \true, 'tagged_iterator_foo' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -53,7 +53,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getBarService()
     {
         $a = ${($_ = isset($this->services['foo.baz']) ? $this->services['foo.baz'] : $this->getFoo_BazService()) && \false ?: '_'};
-        $this->services['bar'] = $instance = new \_PhpScoper5ece82d7231e4\Bar\FooClass('foo', $a, $this->getParameter('foo_bar'));
+        $this->services['bar'] = $instance = new \_PhpScoper5ea00cc67502b\Bar\FooClass('foo', $a, $this->getParameter('foo_bar'));
         $a->configure($instance);
         return $instance;
     }
@@ -64,7 +64,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getBazService()
     {
-        $this->services['baz'] = $instance = new \_PhpScoper5ece82d7231e4\Baz();
+        $this->services['baz'] = $instance = new \_PhpScoper5ea00cc67502b\Baz();
         $instance->setFoo(${($_ = isset($this->services['foo_with_inline']) ? $this->services['foo_with_inline'] : $this->getFooWithInlineService()) && \false ?: '_'});
         return $instance;
     }
@@ -76,7 +76,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getConfiguredServiceService()
     {
         $this->services['configured_service'] = $instance = new \stdClass();
-        $a = new \_PhpScoper5ece82d7231e4\ConfClass();
+        $a = new \_PhpScoper5ea00cc67502b\ConfClass();
         $a->setFoo(${($_ = isset($this->services['baz']) ? $this->services['baz'] : $this->getBazService()) && \false ?: '_'});
         $a->configureStdClass($instance);
         return $instance;
@@ -89,7 +89,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getConfiguredServiceSimpleService()
     {
         $this->services['configured_service_simple'] = $instance = new \stdClass();
-        (new \_PhpScoper5ece82d7231e4\ConfClass('bar'))->configureStdClass($instance);
+        (new \_PhpScoper5ea00cc67502b\ConfClass('bar'))->configureStdClass($instance);
         return $instance;
     }
     /**
@@ -148,13 +148,13 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getFooService()
     {
         $a = ${($_ = isset($this->services['foo.baz']) ? $this->services['foo.baz'] : $this->getFoo_BazService()) && \false ?: '_'};
-        $this->services['foo'] = $instance = \_PhpScoper5ece82d7231e4\Bar\FooClass::getInstance('foo', $a, ['bar' => 'foo is bar', 'foobar' => 'bar'], \true, $this);
+        $this->services['foo'] = $instance = \_PhpScoper5ea00cc67502b\Bar\FooClass::getInstance('foo', $a, ['bar' => 'foo is bar', 'foobar' => 'bar'], \true, $this);
         $instance->foo = 'bar';
         $instance->moo = $a;
         $instance->qux = ['bar' => 'foo is bar', 'foobar' => 'bar'];
         $instance->setBar(${($_ = isset($this->services['bar']) ? $this->services['bar'] : $this->getBarService()) && \false ?: '_'});
         $instance->initialize();
-        \_PhpScoper5ece82d7231e4\sc_configure($instance);
+        \_PhpScoper5ea00cc67502b\sc_configure($instance);
         return $instance;
     }
     /**
@@ -164,8 +164,8 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getFoo_BazService()
     {
-        $this->services['foo.baz'] = $instance = \_PhpScoper5ece82d7231e4\BazClass::getInstance();
-        \_PhpScoper5ece82d7231e4\BazClass::configureStatic1($instance);
+        $this->services['foo.baz'] = $instance = \_PhpScoper5ea00cc67502b\BazClass::getInstance();
+        \_PhpScoper5ea00cc67502b\BazClass::configureStatic1($instance);
         return $instance;
     }
     /**
@@ -175,7 +175,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getFooBarService()
     {
-        return new \_PhpScoper5ece82d7231e4\Bar\FooClass(${($_ = isset($this->services['deprecated_service']) ? $this->services['deprecated_service'] : $this->getDeprecatedServiceService()) && \false ?: '_'});
+        return new \_PhpScoper5ea00cc67502b\Bar\FooClass(${($_ = isset($this->services['deprecated_service']) ? $this->services['deprecated_service'] : $this->getDeprecatedServiceService()) && \false ?: '_'});
     }
     /**
      * Gets the public 'foo_with_inline' shared service.
@@ -184,8 +184,8 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getFooWithInlineService()
     {
-        $this->services['foo_with_inline'] = $instance = new \_PhpScoper5ece82d7231e4\Foo();
-        $a = new \_PhpScoper5ece82d7231e4\Bar();
+        $this->services['foo_with_inline'] = $instance = new \_PhpScoper5ea00cc67502b\Foo();
+        $a = new \_PhpScoper5ea00cc67502b\Bar();
         $a->pub = 'pub';
         $a->setBaz(${($_ = isset($this->services['baz']) ? $this->services['baz'] : $this->getBazService()) && \false ?: '_'});
         $instance->setBar($a);
@@ -198,10 +198,10 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getLazyContextService()
     {
-        return $this->services['lazy_context'] = new \_PhpScoper5ece82d7231e4\LazyContext(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        return $this->services['lazy_context'] = new \_PhpScoper5ea00cc67502b\LazyContext(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 'k1' => ${($_ = isset($this->services['foo.baz']) ? $this->services['foo.baz'] : $this->getFoo_BazService()) && \false ?: '_'});
             (yield 'k2' => $this);
-        }, 2), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        }, 2), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             return new \EmptyIterator();
         }, 0));
     }
@@ -212,9 +212,9 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getLazyContextIgnoreInvalidRefService()
     {
-        return $this->services['lazy_context_ignore_invalid_ref'] = new \_PhpScoper5ece82d7231e4\LazyContext(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        return $this->services['lazy_context_ignore_invalid_ref'] = new \_PhpScoper5ea00cc67502b\LazyContext(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 0 => ${($_ = isset($this->services['foo.baz']) ? $this->services['foo.baz'] : $this->getFoo_BazService()) && \false ?: '_'});
-        }, 1), new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        }, 1), new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             return new \EmptyIterator();
         }, 0));
     }
@@ -226,7 +226,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getMethodCall1Service()
     {
         include_once '%path%foo.php';
-        $this->services['method_call1'] = $instance = new \_PhpScoper5ece82d7231e4\Bar\FooClass();
+        $this->services['method_call1'] = $instance = new \_PhpScoper5ea00cc67502b\Bar\FooClass();
         $instance->setBar(${($_ = isset($this->services['foo']) ? $this->services['foo'] : $this->getFooService()) && \false ?: '_'});
         $instance->setBar(\NULL);
         $instance->setBar(${($_ = isset($this->services['foo']) ? $this->services['foo'] : $this->getFooService()) && \false ?: '_'}->foo() . ($this->hasParameter("foo") ? $this->getParameter("foo") : "default"));
@@ -239,7 +239,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getNewFactoryServiceService()
     {
-        $a = new \_PhpScoper5ece82d7231e4\FactoryClass();
+        $a = new \_PhpScoper5ea00cc67502b\FactoryClass();
         $a->foo = 'bar';
         $this->services['new_factory_service'] = $instance = $a->getInstance();
         $instance->foo = 'bar';
@@ -252,7 +252,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getServiceFromStaticMethodService()
     {
-        return $this->services['service_from_static_method'] = \_PhpScoper5ece82d7231e4\Bar\FooClass::getInstance();
+        return $this->services['service_from_static_method'] = \_PhpScoper5ea00cc67502b\Bar\FooClass::getInstance();
     }
     /**
      * Gets the public 'tagged_iterator' shared service.
@@ -261,9 +261,9 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getTaggedIteratorService()
     {
-        return $this->services['tagged_iterator'] = new \_PhpScoper5ece82d7231e4\Bar(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        return $this->services['tagged_iterator'] = new \_PhpScoper5ea00cc67502b\Bar(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 0 => ${($_ = isset($this->services['foo']) ? $this->services['foo'] : $this->getFooService()) && \false ?: '_'});
-            (yield 1 => ${($_ = isset($this->services['tagged_iterator_foo']) ? $this->services['tagged_iterator_foo'] : ($this->services['tagged_iterator_foo'] = new \_PhpScoper5ece82d7231e4\Bar())) && \false ?: '_'});
+            (yield 1 => ${($_ = isset($this->services['tagged_iterator_foo']) ? $this->services['tagged_iterator_foo'] : ($this->services['tagged_iterator_foo'] = new \_PhpScoper5ea00cc67502b\Bar())) && \false ?: '_'});
         }, 2));
     }
     /**
@@ -276,7 +276,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     protected function getFactorySimpleService()
     {
         @\trigger_error('The "factory_simple" service is deprecated. You should stop using it, as it will soon be removed.', \E_USER_DEPRECATED);
-        return $this->services['factory_simple'] = new \_PhpScoper5ece82d7231e4\SimpleFactoryClass('foo');
+        return $this->services['factory_simple'] = new \_PhpScoper5ea00cc67502b\SimpleFactoryClass('foo');
     }
     /**
      * Gets the private 'tagged_iterator_foo' shared service.
@@ -285,7 +285,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getTaggedIteratorFooService()
     {
-        return $this->services['tagged_iterator_foo'] = new \_PhpScoper5ece82d7231e4\Bar();
+        return $this->services['tagged_iterator_foo'] = new \_PhpScoper5ea00cc67502b\Bar();
     }
     public function getParameter($name)
     {
@@ -293,7 +293,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
         if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
             $name = $this->normalizeParameterName($name);
             if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The parameter "%s" must be defined.', $name));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The parameter "%s" must be defined.', $name));
             }
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -309,7 +309,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     }
     public function setParameter($name, $value)
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('Impossible to call set() on a frozen ParameterBag.');
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('Impossible to call set() on a frozen ParameterBag.');
     }
     public function getParameterBag()
     {
@@ -318,7 +318,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
             foreach ($this->loadedDynamicParameters as $name => $loaded) {
                 $parameters[$name] = $loaded ? $this->dynamicParameters[$name] : $this->getDynamicParameter($name);
             }
-            $this->parameterBag = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
+            $this->parameterBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($parameters);
         }
         return $this->parameterBag;
     }
@@ -335,7 +335,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     private function getDynamicParameter($name)
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The dynamic parameter "%s" must be defined.', $name));
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The dynamic parameter "%s" must be defined.', $name));
     }
     private $normalizedParameterNames = [];
     private function normalizeParameterName($name)
@@ -357,7 +357,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getDefaultParameters()
     {
-        return ['baz_class' => 'BazClass', 'foo_class' => '_PhpScoper5ece82d7231e4\\Bar\\FooClass', 'foo' => 'bar'];
+        return ['baz_class' => 'BazClass', 'foo_class' => '_PhpScoper5ea00cc67502b\\Bar\\FooClass', 'foo' => 'bar'];
     }
 }
 /**
@@ -366,4 +366,4 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5ece82d7231e4\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+\class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', \false);

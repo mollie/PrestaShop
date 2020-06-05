@@ -1,15 +1,15 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
+namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
-use _PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface;
+use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
 /**
  * Compose stream implementations based on a hash of functions.
  *
  * Allows for easy testing and extension of a provided stream without needing
  * to create a concrete class for a simple extension point.
  */
-class FnStream implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface
+class FnStream implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface
 {
     /** @var array */
     private $methods;
@@ -60,7 +60,7 @@ class FnStream implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterf
      *
      * @return FnStream
      */
-    public static function decorate(\_PhpScoper5ece82d7231e4\Psr\Http\Message\StreamInterface $stream, array $methods)
+    public static function decorate(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $stream, array $methods)
     {
         // If any of the required methods were not provided, then simply
         // proxy to the decorated stream.

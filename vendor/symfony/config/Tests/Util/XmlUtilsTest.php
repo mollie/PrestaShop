@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Util;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Util;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils;
-class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils;
+class XmlUtilsTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     public function testLoadFile()
     {
         $fixtures = __DIR__ . '/../Fixtures/Util/';
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures);
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('is not a file', $e->getMessage());
         }
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'non_existing.xml');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'non_existing.xml');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('is not a file', $e->getMessage());
@@ -34,61 +34,61 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
                 $this->markTestSkipped('chmod is not supported on Windows');
             }
             \chmod($fixtures . 'not_readable.xml', 00);
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'not_readable.xml');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'not_readable.xml');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             \chmod($fixtures . 'not_readable.xml', 0644);
             $this->assertStringContainsString('is not readable', $e->getMessage());
         }
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid.xml');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid.xml');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('ERROR ', $e->getMessage());
         }
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'document_type.xml');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'document_type.xml');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('Document types are not allowed', $e->getMessage());
         }
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid_schema.xml', $fixtures . 'schema.xsd');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid_schema.xml', $fixtures . 'schema.xsd');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('ERROR 1845', $e->getMessage());
         }
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid_schema.xml', 'invalid_callback_or_file');
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'invalid_schema.xml', 'invalid_callback_or_file');
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertStringContainsString('XSD file or callable', $e->getMessage());
         }
-        $mock = $this->getMockBuilder(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Util\Validator::class)->getMock();
+        $mock = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Util\Validator::class)->getMock();
         $mock->expects($this->exactly(2))->method('validate')->will($this->onConsecutiveCalls(\false, \true));
         try {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'valid.xml', [$mock, 'validate']);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'valid.xml', [$mock, 'validate']);
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertRegExp('/The XML file ".+" is not valid\\./', $e->getMessage());
         }
-        $this->assertInstanceOf('DOMDocument', \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'valid.xml', [$mock, 'validate']));
+        $this->assertInstanceOf('DOMDocument', \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($fixtures . 'valid.xml', [$mock, 'validate']));
         $this->assertSame([], \libxml_get_errors());
     }
     public function testParseWithInvalidValidatorCallable()
     {
-        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Util\\Exception\\InvalidXmlException');
+        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Util\\Exception\\InvalidXmlException');
         $this->expectExceptionMessage('The XML is not valid');
         $fixtures = __DIR__ . '/../Fixtures/Util/';
-        $mock = $this->getMockBuilder(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Util\Validator::class)->getMock();
+        $mock = $this->getMockBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Util\Validator::class)->getMock();
         $mock->expects($this->once())->method('validate')->willReturn(\false);
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::parse(\file_get_contents($fixtures . 'valid.xml'), [$mock, 'validate']);
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::parse(\file_get_contents($fixtures . 'valid.xml'), [$mock, 'validate']);
     }
     public function testLoadFileWithInternalErrorsEnabled()
     {
         $internalErrors = \libxml_use_internal_errors(\true);
         $this->assertSame([], \libxml_get_errors());
-        $this->assertInstanceOf('DOMDocument', \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile(__DIR__ . '/../Fixtures/Util/invalid_schema.xml'));
+        $this->assertInstanceOf('DOMDocument', \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile(__DIR__ . '/../Fixtures/Util/invalid_schema.xml'));
         $this->assertSame([], \libxml_get_errors());
         \libxml_clear_errors();
         \libxml_use_internal_errors($internalErrors);
@@ -100,7 +100,7 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
     {
         $dom = new \DOMDocument();
         $dom->loadXML($root ? $xml : '<root>' . $xml . '</root>');
-        $this->assertSame($expected, \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::convertDomElementToArray($dom->documentElement, $checkPrefix));
+        $this->assertSame($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::convertDomElementToArray($dom->documentElement, $checkPrefix));
     }
     public function getDataForConvertDomToArray()
     {
@@ -111,7 +111,7 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
      */
     public function testPhpize($expected, $value)
     {
-        $this->assertSame($expected, \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::phpize($value));
+        $this->assertSame($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::phpize($value));
     }
     public function getDataForPhpize()
     {
@@ -122,7 +122,7 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
         $file = __DIR__ . '/../Fixtures/foo.xml';
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage(\sprintf('File "%s" does not contain valid XML, it is empty.', $file));
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($file);
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($file);
     }
     // test for issue https://github.com/symfony/symfony/issues/9731
     public function testLoadWrongEmptyXMLWithErrorHandler()
@@ -135,7 +135,7 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
         $file = __DIR__ . '/../Fixtures/foo.xml';
         try {
             try {
-                \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile($file);
+                \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile($file);
                 $this->fail('An exception should have been raised');
             } catch (\InvalidArgumentException $e) {
                 $this->assertEquals(\sprintf('File "%s" does not contain valid XML, it is empty.', $file), $e->getMessage());
@@ -149,7 +149,7 @@ class XmlUtilsTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
         \libxml_disable_entity_loader($originalDisableEntities);
         $this->assertFalse($disableEntities);
         // should not throw an exception
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Util\XmlUtils::loadFile(__DIR__ . '/../Fixtures/Util/valid.xml', __DIR__ . '/../Fixtures/Util/schema.xsd');
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Util\XmlUtils::loadFile(__DIR__ . '/../Fixtures/Util/valid.xml', __DIR__ . '/../Fixtures/Util/schema.xsd');
     }
 }
 interface Validator

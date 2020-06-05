@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
-class CrossCheckTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+class CrossCheckTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     protected static $fixturesPath;
     public static function setUpBeforeClass()
@@ -31,19 +31,19 @@ class CrossCheckTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
         $dumperClass = 'Symfony\\Component\\DependencyInjection\\Dumper\\' . \ucfirst($type) . 'Dumper';
         $tmp = \tempnam(\sys_get_temp_dir(), 'sf');
         \copy(self::$fixturesPath . '/' . $type . '/' . $fixture, $tmp);
-        $container1 = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader1 = new $loaderClass($container1, new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator());
+        $container1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader1 = new $loaderClass($container1, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator());
         $loader1->load($tmp);
         $dumper = new $dumperClass($container1);
         \file_put_contents($tmp, $dumper->dump());
-        $container2 = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader2 = new $loaderClass($container2, new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator());
+        $container2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader2 = new $loaderClass($container2, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator());
         $loader2->load($tmp);
         \unlink($tmp);
         $this->assertEquals($container2->getAliases(), $container1->getAliases(), 'loading a dump from a previously loaded container returns the same container');
         $this->assertEquals($container2->getDefinitions(), $container1->getDefinitions(), 'loading a dump from a previously loaded container returns the same container');
         $this->assertEquals($container2->getParameterBag()->all(), $container1->getParameterBag()->all(), '->getParameterBag() returns the same value for both containers');
-        $r = new \ReflectionProperty(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder::class, 'normalizedIds');
+        $r = new \ReflectionProperty(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder::class, 'normalizedIds');
         $r->setAccessible(\true);
         $r->setValue($container2, []);
         $r->setValue($container1, []);

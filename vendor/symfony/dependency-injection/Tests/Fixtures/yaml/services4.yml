@@ -2,7 +2,7 @@ imports:
     - services2.yml
     - { resource: services3.yml }
     - { resource: "../php/simple.php" }
-    - { resource: "../ini/parameters.ini", class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\IniFileLoader }
+    - { resource: "../ini/parameters.ini", class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader }
     - { resource: "../ini/parameters2.ini" }
     - { resource: "../xml/services13.xml" }
     - { resource: "../xml/xml_with_wrong_ext.php", type: xml }
