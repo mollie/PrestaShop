@@ -1,13 +1,13 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Endpoints;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\OrderLine;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\OrderLineCollection;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Resources\ResourceFactory;
-class OrderLineEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderLine;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderLineCollection;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
+class OrderLineEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "orders_lines";
     /**
@@ -22,7 +22,7 @@ class OrderLineEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\Co
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\OrderLine($this->client);
+        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderLine($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API
@@ -35,7 +35,7 @@ class OrderLineEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\Co
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\OrderLineCollection($count, $_links);
+        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderLineCollection($count, $_links);
     }
     /**
      * Cancel lines for the provided order.
@@ -49,7 +49,7 @@ class OrderLineEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\Co
      * @return null
      * @throws ApiException
      */
-    public function cancelFor(\_PhpScoper5ece82d7231e4\Mollie\Api\Resources\Order $order, array $data)
+    public function cancelFor(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order $order, array $data)
     {
         return $this->cancelForId($order->id, $data);
     }
@@ -68,7 +68,7 @@ class OrderLineEndpoint extends \_PhpScoper5ece82d7231e4\Mollie\Api\Endpoints\Co
     public function cancelForId($orderId, array $data)
     {
         if (!isset($data['lines']) || !\is_array($data['lines'])) {
-            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException("A lines array is required.");
+            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException("A lines array is required.");
         }
         $this->parentId = $orderId;
         $this->client->performHttpCall(self::REST_DELETE, "{$this->getResourcePath()}", $this->parseRequestBody($data));

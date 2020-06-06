@@ -1,19 +1,21 @@
 
 services:
     service_container:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+        public: true
         tags:
             - { name: foo }
             - { name: baz }
         deprecated: '%service_id%'
         arguments: [1]
         factory: f
-    _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar
+    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar:
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar
+        public: true
         tags:
             - { name: foo }
             - { name: baz }

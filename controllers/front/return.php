@@ -33,8 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -326,8 +326,8 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         }
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
         $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',

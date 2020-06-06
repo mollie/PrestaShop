@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ece82d7231e4\Cache\IntegrationTests\SimpleCacheTest;
-use _PhpScoper5ece82d7231e4\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
-abstract class CacheTestCase extends \_PhpScoper5ece82d7231e4\Cache\IntegrationTests\SimpleCacheTest
+use _PhpScoper5ea00cc67502b\Cache\IntegrationTests\SimpleCacheTest;
+use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
+abstract class CacheTestCase extends \_PhpScoper5ea00cc67502b\Cache\IntegrationTests\SimpleCacheTest
 {
     protected function setUp()
     {
         parent::setUp();
-        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface) {
+        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
             $this->skippedTests['testPrune'] = 'Not a pruneable cache pool.';
         }
     }
@@ -50,9 +50,9 @@ abstract class CacheTestCase extends \_PhpScoper5ece82d7231e4\Cache\IntegrationT
         }
         $cache = $this->createSimpleCache();
         $cache->clear();
-        $cache->set('foo', new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\NotUnserializable());
+        $cache->set('foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\NotUnserializable());
         $this->assertNull($cache->get('foo'));
-        $cache->setMultiple(['foo' => new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple\NotUnserializable()]);
+        $cache->setMultiple(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple\NotUnserializable()]);
         foreach ($cache->getMultiple(['foo']) as $value) {
         }
         $this->assertNull($value);

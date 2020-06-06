@@ -8,34 +8,34 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Tests;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Tests;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Filesystem;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler;
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception\IOException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Filesystem;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler;
 /**
  * @group legacy
  */
-class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+class LockHandlerTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     public function testConstructWhenRepositoryDoesNotExist()
     {
-        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Filesystem\\Exception\\IOException');
-        $this->expectExceptionMessage('Failed to create "/a/b/c/d/e": mkdir(): Permission denied');
+        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
+        $this->expectExceptionMessage('Failed to create "/a/b/c/d/e": mkdir(): Permission denied.');
         if (!\getenv('USER') || 'root' === \getenv('USER')) {
             $this->markTestSkipped('This test will fail if run under superuser');
         }
-        new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler('lock', '/a/b/c/d/e');
+        new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler('lock', '/a/b/c/d/e');
     }
     public function testConstructWhenRepositoryIsNotWriteable()
     {
-        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Filesystem\\Exception\\IOException');
+        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException');
         $this->expectExceptionMessage('The directory "/" is not writable.');
         if (!\getenv('USER') || 'root' === \getenv('USER')) {
             $this->markTestSkipped('This test will fail if run under superuser');
         }
-        new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler('lock', '/');
+        new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler('lock', '/');
     }
     public function testErrorHandlingInLockIfLockPathBecomesUnwritable()
     {
@@ -51,10 +51,10 @@ class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
         $wrongMessage = null;
         try {
             \mkdir($lockPath);
-            $lockHandler = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler('lock', $lockPath);
+            $lockHandler = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler('lock', $lockPath);
             \chmod($lockPath, 0444);
             $lockHandler->lock();
-        } catch (\_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Exception\IOException $e) {
+        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Exception\IOException $e) {
             if (\false === \strpos($e->getMessage(), 'Permission denied')) {
                 $wrongMessage = $e->getMessage();
             } else {
@@ -64,15 +64,15 @@ class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
         } catch (\Throwable $e) {
         }
         if (\is_dir($lockPath)) {
-            $fs = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\Filesystem();
+            $fs = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\Filesystem();
             $fs->remove($lockPath);
         }
-        $this->assertInstanceOf('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Filesystem\\Exception\\IOException', $e, \sprintf('Expected IOException to be thrown, got %s instead.', \get_class($e)));
+        $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Filesystem\\Exception\\IOException', $e, \sprintf('Expected IOException to be thrown, got %s instead.', \get_class($e)));
         $this->assertNull($wrongMessage, \sprintf('Expected exception message to contain "Permission denied", got "%s" instead.', $wrongMessage));
     }
     public function testConstructSanitizeName()
     {
-        $lock = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler('<?php echo "% hello word ! %" ?>');
+        $lock = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler('<?php echo "% hello word ! %" ?>');
         $file = \sprintf('%s/sf.-php-echo-hello-word-.4b3d9d0d27ddef3a78a64685dda3a963e478659a9e5240feaf7b4173a8f28d5f.lock', \sys_get_temp_dir());
         // ensure the file does not exist before the lock
         @\unlink($file);
@@ -83,8 +83,8 @@ class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     public function testLockRelease()
     {
         $name = 'symfony-test-filesystem.lock';
-        $l1 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler($name);
-        $l2 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler($name);
+        $l1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler($name);
+        $l2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler($name);
         $this->assertTrue($l1->lock());
         $this->assertFalse($l2->lock());
         $l1->release();
@@ -94,7 +94,7 @@ class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     public function testLockTwice()
     {
         $name = 'symfony-test-filesystem.lock';
-        $lockHandler = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler($name);
+        $lockHandler = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler($name);
         $this->assertTrue($lockHandler->lock());
         $this->assertTrue($lockHandler->lock());
         $lockHandler->release();
@@ -102,8 +102,8 @@ class LockHandlerTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     public function testLockIsReleased()
     {
         $name = 'symfony-test-filesystem.lock';
-        $l1 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler($name);
-        $l2 = new \_PhpScoper5ece82d7231e4\Symfony\Component\Filesystem\LockHandler($name);
+        $l1 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler($name);
+        $l2 = new \_PhpScoper5ea00cc67502b\Symfony\Component\Filesystem\LockHandler($name);
         $this->assertTrue($l1->lock());
         $this->assertFalse($l2->lock());
         $l1 = null;

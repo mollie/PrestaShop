@@ -8,26 +8,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocatorInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocatorInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 /**
  * FileLoader is the abstract class used by all built-in loaders that are file based.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class FileLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Loader\FileLoader
+abstract class FileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\FileLoader
 {
     protected $container;
     protected $isLoadingInstanceof = \false;
     protected $instanceof = [];
-    public function __construct(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container, \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocatorInterface $locator)
+    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container, \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocatorInterface $locator)
     {
         $this->container = $container;
         parent::__construct($locator);
@@ -40,13 +40,13 @@ abstract class FileLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Con
      * @param string     $resource  The directory to look for classes, glob-patterns allowed
      * @param string     $exclude   A globed path of files to exclude
      */
-    public function registerClasses(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $prototype, $namespace, $resource, $exclude = null)
+    public function registerClasses(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $prototype, $namespace, $resource, $exclude = null)
     {
         if ('\\' !== \substr($namespace, -1)) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Namespace prefix must end with a "\\": "%s".', $namespace));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Namespace prefix must end with a "\\": "%s".', $namespace));
         }
         if (!\preg_match('/^(?:[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*+\\\\)++$/', $namespace)) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Namespace is not a valid PSR-4 prefix: "%s".', $namespace));
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Namespace is not a valid PSR-4 prefix: "%s".', $namespace));
         }
         $classes = $this->findClasses($namespace, $resource, $exclude);
         // prepare for deep cloning
@@ -78,16 +78,16 @@ abstract class FileLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Con
      *
      * @param string $id
      */
-    protected function setDefinition($id, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition $definition)
+    protected function setDefinition($id, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition)
     {
         $this->container->removeBindings($id);
         if ($this->isLoadingInstanceof) {
-            if (!$definition instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid type definition "%s": ChildDefinition expected, "%s" given.', $id, \get_class($definition)));
+            if (!$definition instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition) {
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid type definition "%s": ChildDefinition expected, "%s" given.', $id, \get_class($definition)));
             }
             $this->instanceof[$id] = $definition;
         } else {
-            $this->container->setDefinition($id, $definition instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ChildDefinition ? $definition : $definition->setInstanceofConditionals($this->instanceof));
+            $this->container->setDefinition($id, $definition instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ChildDefinition ? $definition : $definition->setInstanceofConditionals($this->instanceof));
         }
     }
     private function findClasses($namespace, $pattern, $excludePattern)
@@ -113,7 +113,7 @@ abstract class FileLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Con
             if (null === $prefixLen) {
                 $prefixLen = \strlen($resource->getPrefix());
                 if ($excludePrefix && 0 !== \strpos($excludePrefix, $resource->getPrefix())) {
-                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid "exclude" pattern when importing classes for "%s": make sure your "exclude" pattern (%s) is a subset of the "resource" pattern (%s).', $namespace, $excludePattern, $pattern));
+                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid "exclude" pattern when importing classes for "%s": make sure your "exclude" pattern (%s) is a subset of the "resource" pattern (%s).', $namespace, $excludePattern, $pattern));
                 }
             }
             if (isset($excludePaths[\str_replace('\\', '/', $path)])) {
@@ -134,14 +134,14 @@ abstract class FileLoader extends \_PhpScoper5ece82d7231e4\Symfony\Component\Con
             }
             // check to make sure the expected class exists
             if (!$r) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Expected to find class "%s" in file "%s" while importing services from resource "%s", but it was not found! Check the namespace prefix used with the resource.', $class, $path, $pattern));
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Expected to find class "%s" in file "%s" while importing services from resource "%s", but it was not found! Check the namespace prefix used with the resource.', $class, $path, $pattern));
             }
             if ($r->isInstantiable() || $r->isInterface()) {
                 $classes[$class] = null;
             }
         }
         // track only for new & removed files
-        if ($resource instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource) {
+        if ($resource instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource) {
             $this->container->addResource($resource);
         } else {
             foreach ($resource as $path) {

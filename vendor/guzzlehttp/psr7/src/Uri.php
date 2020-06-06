@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
+namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
 
-use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
+use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
 /**
  * PSR-7 URI implementation.
  *
@@ -10,7 +10,7 @@ use _PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface;
  * @author Tobias Schultze
  * @author Matthew Weier O'Phinney
  */
-class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
+class Uri implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface
 {
     /**
      * Absolute http and https URIs require a host per RFC 7230 Section 2.7
@@ -110,7 +110,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      *
      * @return bool
      */
-    public static function isDefaultPort(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
+    public static function isDefaultPort(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri)
     {
         return $uri->getPort() === null || isset(self::$defaultPorts[$uri->getScheme()]) && $uri->getPort() === self::$defaultPorts[$uri->getScheme()];
     }
@@ -132,7 +132,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @see Uri::isRelativePathReference
      * @link https://tools.ietf.org/html/rfc3986#section-4
      */
-    public static function isAbsolute(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
+    public static function isAbsolute(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri)
     {
         return $uri->getScheme() !== '';
     }
@@ -146,7 +146,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isNetworkPathReference(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
+    public static function isNetworkPathReference(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri)
     {
         return $uri->getScheme() === '' && $uri->getAuthority() !== '';
     }
@@ -160,7 +160,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isAbsolutePathReference(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
+    public static function isAbsolutePathReference(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri)
     {
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && isset($uri->getPath()[0]) && $uri->getPath()[0] === '/';
     }
@@ -174,7 +174,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isRelativePathReference(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri)
+    public static function isRelativePathReference(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri)
     {
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && (!isset($uri->getPath()[0]) || $uri->getPath()[0] !== '/');
     }
@@ -191,10 +191,10 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.4
      */
-    public static function isSameDocumentReference(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $base = null)
+    public static function isSameDocumentReference(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $base = null)
     {
         if ($base !== null) {
-            $uri = \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\UriResolver::resolve($base, $uri);
+            $uri = \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\UriResolver::resolve($base, $uri);
             return $uri->getScheme() === $base->getScheme() && $uri->getAuthority() === $base->getAuthority() && $uri->getPath() === $base->getPath() && $uri->getQuery() === $base->getQuery();
         }
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && $uri->getPath() === '' && $uri->getQuery() === '';
@@ -211,7 +211,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      */
     public static function removeDotSegments($path)
     {
-        return \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\UriResolver::removeDotSegments($path);
+        return \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\UriResolver::removeDotSegments($path);
     }
     /**
      * Converts the relative URI into a new URI that is resolved against the base URI.
@@ -224,12 +224,12 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * @deprecated since version 1.4. Use UriResolver::resolve instead.
      * @see UriResolver::resolve
      */
-    public static function resolve(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $base, $rel)
+    public static function resolve(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $base, $rel)
     {
-        if (!$rel instanceof \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface) {
+        if (!$rel instanceof \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface) {
             $rel = new self($rel);
         }
-        return \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\UriResolver::resolve($base, $rel);
+        return \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\UriResolver::resolve($base, $rel);
     }
     /**
      * Creates a new URI with a specific query string value removed.
@@ -242,7 +242,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      *
      * @return UriInterface
      */
-    public static function withoutQueryValue(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, $key)
+    public static function withoutQueryValue(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, $key)
     {
         $result = self::getFilteredQueryString($uri, [$key]);
         return $uri->withQuery(\implode('&', $result));
@@ -262,7 +262,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      *
      * @return UriInterface
      */
-    public static function withQueryValue(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, $key, $value)
+    public static function withQueryValue(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, $key, $value)
     {
         $result = self::getFilteredQueryString($uri, [$key]);
         $result[] = self::generateQueryString($key, $value);
@@ -278,7 +278,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      *
      * @return UriInterface
      */
-    public static function withQueryValues(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, array $keyValueArray)
+    public static function withQueryValues(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, array $keyValueArray)
     {
         $result = self::getFilteredQueryString($uri, \array_keys($keyValueArray));
         foreach ($keyValueArray as $key => $value) {
@@ -507,7 +507,7 @@ class Uri implements \_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface
      * 
      * @return array
      */
-    private static function getFilteredQueryString(\_PhpScoper5ece82d7231e4\Psr\Http\Message\UriInterface $uri, array $keys)
+    private static function getFilteredQueryString(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $uri, array $keys)
     {
         $current = $uri->getQuery();
         if ($current === '') {

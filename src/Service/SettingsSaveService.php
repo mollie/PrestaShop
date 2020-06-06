@@ -35,8 +35,8 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
 use Carrier;
 use Configuration;
 use Context;
@@ -209,6 +209,9 @@ class SettingsSaveService
 
             foreach (array_keys(Config::getStatuses()) as $name) {
                 $name = Tools::strtoupper($name);
+                if (!Tools::getValue("MOLLIE_STATUS_{$name}")) {
+                    continue;
+                }
                 $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
                 Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 Config::getStatuses()[Tools::strtolower($name)] = $new;

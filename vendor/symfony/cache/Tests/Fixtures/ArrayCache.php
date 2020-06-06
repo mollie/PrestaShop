@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Fixtures;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Fixtures;
 
-use _PhpScoper5ece82d7231e4\Doctrine\Common\Cache\CacheProvider;
-class ArrayCache extends \_PhpScoper5ece82d7231e4\Doctrine\Common\Cache\CacheProvider
+use _PhpScoper5ea00cc67502b\Doctrine\Common\Cache\CacheProvider;
+class ArrayCache extends \_PhpScoper5ea00cc67502b\Doctrine\Common\Cache\CacheProvider
 {
     private $data = [];
     protected function doFetch($id)

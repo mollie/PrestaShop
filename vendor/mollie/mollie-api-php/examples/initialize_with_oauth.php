@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * Make sure to disable the display of errors in production code!
@@ -15,5 +15,5 @@ require_once __DIR__ . "/functions.php";
  *
  * See: https://docs.mollie.com/oauth/overview
  */
-$mollie = new \_PhpScoper5ece82d7231e4\Mollie\Api\MollieApiClient();
+$mollie = new \_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient();
 $mollie->setAccessToken("access_Wwvu7egPcJLLJ9Kb7J632x8wJ2zMeJ");

@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * How to show a return page to the customer.
@@ -13,7 +13,7 @@ namespace _PhpScoper5ece82d7231e4;
  * Please use a real database like MySQL in production code.
  */
 require_once "../functions.php";
-$status = \_PhpScoper5ece82d7231e4\database_read($_GET["order_id"]);
+$status = \_PhpScoper5ea00cc67502b\database_read($_GET["order_id"]);
 /*
  * Determine the url parts to these example files.
  */

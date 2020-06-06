@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /**
  * Random_* Compatibility Library
@@ -44,7 +44,7 @@ if (!\is_callable('random_bytes')) {
     {
         try {
             /** @var int $bytes */
-            $bytes = \_PhpScoper5ece82d7231e4\RandomCompat_intval($bytes);
+            $bytes = \_PhpScoper5ea00cc67502b\RandomCompat_intval($bytes);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_bytes(): $bytes must be an integer');
         }
@@ -53,11 +53,11 @@ if (!\is_callable('random_bytes')) {
         }
         /** @var string $buf */
         $buf = '';
-        if (!\class_exists('_PhpScoper5ece82d7231e4\\COM')) {
+        if (!\class_exists('_PhpScoper5ea00cc67502b\\COM')) {
             throw new \Error('COM does not exist');
         }
         /** @var COM $util */
-        $util = new \_PhpScoper5ece82d7231e4\COM('CAPICOM.Utilities.1');
+        $util = new \_PhpScoper5ea00cc67502b\COM('CAPICOM.Utilities.1');
         $execCount = 0;
         /**
          * Let's not let it loop forever. If we run N times and fail to
@@ -65,11 +65,11 @@ if (!\is_callable('random_bytes')) {
          */
         do {
             $buf .= \base64_decode((string) $util->GetRandom($bytes, 0));
-            if (\_PhpScoper5ece82d7231e4\RandomCompat_strlen($buf) >= $bytes) {
+            if (\_PhpScoper5ea00cc67502b\RandomCompat_strlen($buf) >= $bytes) {
                 /**
                  * Return our random entropy buffer here:
                  */
-                return (string) \_PhpScoper5ece82d7231e4\RandomCompat_substr($buf, 0, $bytes);
+                return (string) \_PhpScoper5ea00cc67502b\RandomCompat_substr($buf, 0, $bytes);
             }
             ++$execCount;
         } while ($execCount < $bytes);

@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * How to create a regular subscription.
@@ -45,6 +45,6 @@ try {
     echo "<p>";
     echo '<a href="' . $protocol . '://' . $hostname . $path . '/17-cancel-subscription.php?subscription_id=' . $subscription->id . '">18-cancel-subscription</a><br>';
     echo "</p>";
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

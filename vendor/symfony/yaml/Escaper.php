@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
 
 /**
  * Escaper encapsulates escaping rules for single and double-quoted
@@ -21,13 +21,13 @@ namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml;
 class Escaper
 {
     // Characters that would cause a dumped string to require double quoting.
-    const REGEX_CHARACTER_TO_ESCAPE = "[\\x00-\\x1f]||| | | ";
+    const REGEX_CHARACTER_TO_ESCAPE = "[\\x00-\\x1f]|| | | ";
     // Mapping arrays for escaping a double quoted string. The backslash is
     // first to ensure proper escaping because str_replace operates iteratively
     // on the input arrays. This ordering of the characters avoids the use of strtr,
     // which performs more slowly.
-    private static $escapees = ['\\', '\\\\', '\\"', '"', "\0", "\1", "\2", "\3", "\4", "\5", "\6", "\7", "\10", "\t", "\n", "\v", "\f", "\r", "\16", "\17", "\20", "\21", "\22", "\23", "\24", "\25", "\26", "\27", "\30", "\31", "\32", "\33", "\34", "\35", "\36", "\37", "", "", " ", " ", " "];
-    private static $escaped = ['\\\\', '\\"', '\\\\', '\\"', '\\0', '\\x01', '\\x02', '\\x03', '\\x04', '\\x05', '\\x06', '\\a', '\\b', '\\t', '\\n', '\\v', '\\f', '\\r', '\\x0e', '\\x0f', '\\x10', '\\x11', '\\x12', '\\x13', '\\x14', '\\x15', '\\x16', '\\x17', '\\x18', '\\x19', '\\x1a', '\\e', '\\x1c', '\\x1d', '\\x1e', '\\x1f', '\\x7f', '\\N', '\\_', '\\L', '\\P'];
+    private static $escapees = ['\\', '\\\\', '\\"', '"', "\0", "\1", "\2", "\3", "\4", "\5", "\6", "\7", "\10", "\t", "\n", "\v", "\f", "\r", "\16", "\17", "\20", "\21", "\22", "\23", "\24", "\25", "\26", "\27", "\30", "\31", "\32", "\33", "\34", "\35", "\36", "\37", "", " ", " ", " "];
+    private static $escaped = ['\\\\', '\\"', '\\\\', '\\"', '\\0', '\\x01', '\\x02', '\\x03', '\\x04', '\\x05', '\\x06', '\\a', '\\b', '\\t', '\\n', '\\v', '\\f', '\\r', '\\x0e', '\\x0f', '\\x10', '\\x11', '\\x12', '\\x13', '\\x14', '\\x15', '\\x16', '\\x17', '\\x18', '\\x19', '\\x1a', '\\e', '\\x1c', '\\x1d', '\\x1e', '\\x1f', '\\N', '\\_', '\\L', '\\P'];
     /**
      * Determines if a PHP value would require double quoting in YAML.
      *

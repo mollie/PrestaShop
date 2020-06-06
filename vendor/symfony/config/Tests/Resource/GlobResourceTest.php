@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Resource;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource;
-class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource;
+class GlobResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     protected function tearDown()
     {
@@ -25,13 +25,13 @@ class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCa
     public function testIterator()
     {
         $dir = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . 'Fixtures';
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/Resource', \true);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/Resource', \true);
         $paths = \iterator_to_array($resource);
         $file = $dir . '/Resource' . \DIRECTORY_SEPARATOR . 'ConditionalClass.php';
         $this->assertEquals([$file => new \SplFileInfo($file)], $paths);
         $this->assertInstanceOf('SplFileInfo', \current($paths));
         $this->assertSame($dir, $resource->getPrefix());
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/**/Resource', \true);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/**/Resource', \true);
         $paths = \iterator_to_array($resource);
         $file = $dir . \DIRECTORY_SEPARATOR . 'Resource' . \DIRECTORY_SEPARATOR . 'ConditionalClass.php';
         $this->assertEquals([$file => $file], $paths);
@@ -41,7 +41,7 @@ class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCa
     public function testIsFreshNonRecursiveDetectsNewFile()
     {
         $dir = \dirname(__DIR__) . '/Fixtures';
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
         $this->assertTrue($resource->isFresh(0));
         \mkdir($dir . '/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
@@ -55,7 +55,7 @@ class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCa
     public function testIsFreshNonRecursiveDetectsRemovedFile()
     {
         $dir = \dirname(__DIR__) . '/Fixtures';
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \false);
         \touch($dir . '/TmpGlob');
         \touch($dir . '/.TmpGlob');
         $this->assertTrue($resource->isFresh(0));
@@ -67,7 +67,7 @@ class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCa
     public function testIsFreshRecursiveDetectsRemovedFile()
     {
         $dir = \dirname(__DIR__) . '/Fixtures';
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
         \touch($dir . '/Resource/TmpGlob');
         $this->assertTrue($resource->isFresh(0));
         \unlink($dir . '/Resource/TmpGlob');
@@ -80,7 +80,7 @@ class GlobResourceTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCa
     public function testIsFreshRecursiveDetectsNewFile()
     {
         $dir = \dirname(__DIR__) . '/Fixtures';
-        $resource = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
+        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($dir, '/*', \true);
         $this->assertTrue($resource->isFresh(0));
         \touch($dir . '/Resource/TmpGlob');
         $this->assertFalse($resource->isFresh(0));

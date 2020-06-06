@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * Delete a profile via the Mollie API.
@@ -17,6 +17,6 @@ try {
      */
     $profile = $mollie->profiles->delete("pfl_v9hTwCvYqw");
     echo "<p>Profile deleted</p>";
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "<p>API call failed: " . \htmlspecialchars($e->getMessage()) . "</p>";
 }

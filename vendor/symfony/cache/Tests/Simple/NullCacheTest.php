@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Tests\Simple;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\NullCache;
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\NullCache;
 /**
  * @group time-sensitive
  */
-class NullCacheTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+class NullCacheTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     public function createCachePool()
     {
-        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\NullCache();
+        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\NullCache();
     }
     public function testGetItem()
     {

@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 /**
  * This class tests the integration of the different compiler passes.
  */
-class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+class IntegrationTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     /**
      * This tests that dependencies are correctly processed.
@@ -33,10 +33,10 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
      */
     public function testProcessRemovesAndInlinesRecursively()
     {
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setResourceTracking(\false);
-        $a = $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('c'));
-        $container->register('b', '\\stdClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('c'))->setPublic(\false);
+        $a = $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('c'));
+        $container->register('b', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('c'))->setPublic(\false);
         $c = $container->register('c', '\\stdClass')->setPublic(\false);
         $container->compile();
         $this->assertTrue($container->hasDefinition('a'));
@@ -47,10 +47,10 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     }
     public function testProcessInlinesReferencesToAliases()
     {
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setResourceTracking(\false);
-        $a = $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('b'));
-        $container->setAlias('b', new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Alias('c', \false));
+        $a = $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'));
+        $container->setAlias('b', new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Alias('c', \false));
         $c = $container->register('c', '\\stdClass')->setPublic(\false);
         $container->compile();
         $this->assertTrue($container->hasDefinition('a'));
@@ -61,10 +61,10 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     }
     public function testProcessInlinesWhenThereAreMultipleReferencesButFromTheSameDefinition()
     {
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setResourceTracking(\false);
-        $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('b'))->addMethodCall('setC', [new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('c')]);
-        $container->register('b', '\\stdClass')->addArgument(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Reference('c'))->setPublic(\false);
+        $container->register('a', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('b'))->addMethodCall('setC', [new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('c')]);
+        $container->register('b', '\\stdClass')->addArgument(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference('c'))->setPublic(\false);
         $container->register('c', '\\stdClass')->setPublic(\false);
         $container->compile();
         $this->assertTrue($container->hasDefinition('a'));
@@ -73,28 +73,28 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     }
     public function testCanDecorateServiceSubscriber()
     {
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class)->addTag('container.service_subscriber')->setPublic(\true);
-        $container->register(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\DecoratedServiceSubscriber::class)->setDecoratedService(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class);
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->register(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class)->addTag('container.service_subscriber')->setPublic(\true);
+        $container->register(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\DecoratedServiceSubscriber::class)->setDecoratedService(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class);
         $container->compile();
-        $this->assertInstanceOf(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\DecoratedServiceSubscriber::class, $container->get(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class));
+        $this->assertInstanceOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\DecoratedServiceSubscriber::class, $container->get(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\ServiceSubscriberStub::class));
     }
     /**
      * @dataProvider getYamlCompileTests
      */
-    public function testYamlContainerCompiles($directory, $actualServiceId, $expectedServiceId, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $mainContainer = null)
+    public function testYamlContainerCompiles($directory, $actualServiceId, $expectedServiceId, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $mainContainer = null)
     {
         // allow a container to be passed in, which might have autoconfigure settings
-        $container = $mainContainer ?: new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = $mainContainer ?: new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setResourceTracking(\false);
-        $loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator(__DIR__ . '/../Fixtures/yaml/integration/' . $directory));
+        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(__DIR__ . '/../Fixtures/yaml/integration/' . $directory));
         $loader->load('main.yml');
         $container->compile();
         $actualService = $container->getDefinition($actualServiceId);
         // create a fresh ContainerBuilder, to avoid autoconfigure stuff
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->setResourceTracking(\false);
-        $loader = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\FileLocator(__DIR__ . '/../Fixtures/yaml/integration/' . $directory));
+        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(__DIR__ . '/../Fixtures/yaml/integration/' . $directory));
         $loader->load('expected.yml');
         $container->compile();
         $expectedService = $container->getDefinition($expectedServiceId);
@@ -105,14 +105,14 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
     }
     public function getYamlCompileTests()
     {
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerForAutoconfiguration(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class);
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerForAutoconfiguration(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class);
         (yield ['autoconfigure_child_not_applied', 'child_service', 'child_service_expected', $container]);
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerForAutoconfiguration(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class);
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerForAutoconfiguration(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class);
         (yield ['autoconfigure_parent_child', 'child_service', 'child_service_expected', $container]);
-        $container = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerForAutoconfiguration(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class)->addTag('from_autoconfigure');
+        $container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerForAutoconfiguration(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub::class)->addTag('from_autoconfigure');
         (yield ['autoconfigure_parent_child_tags', 'child_service', 'child_service_expected', $container]);
         (yield ['child_parent', 'child_service', 'child_service_expected']);
         (yield ['defaults_child_tags', 'child_service', 'child_service_expected']);
@@ -121,7 +121,7 @@ class IntegrationTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCas
         (yield ['instanceof_parent_child', 'child_service', 'child_service_expected']);
     }
 }
-class ServiceSubscriberStub implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceSubscriberInterface
+class ServiceSubscriberStub implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface
 {
     public static function getSubscribedServices()
     {
@@ -131,7 +131,7 @@ class ServiceSubscriberStub implements \_PhpScoper5ece82d7231e4\Symfony\Componen
 class DecoratedServiceSubscriber
 {
 }
-class IntegrationTestStub extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStubParent
+class IntegrationTestStub extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStubParent
 {
 }
 class IntegrationTestStubParent

@@ -8,26 +8,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tests\Command;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\Command;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Console\Application;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Console\Output\OutputInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Console\Tester\CommandTester;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Command\LintCommand;
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Console\Application;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Console\Output\OutputInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Console\Tester\CommandTester;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Command\LintCommand;
 /**
  * Tests the YamlLintCommand.
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-class LintCommandTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+class LintCommandTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     private $files;
     public function testLintCorrectFile()
     {
         $tester = $this->createCommandTester();
         $filename = $this->createFile('foo: bar');
-        $ret = $tester->execute(['filename' => $filename], ['verbosity' => \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
+        $ret = $tester->execute(['filename' => $filename], ['verbosity' => \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
         $this->assertEquals(0, $ret, 'Returns 0 in case of success');
         $this->assertRegExp('/^\\/\\/ OK in /', \trim($tester->getDisplay()));
     }
@@ -47,7 +47,7 @@ bar';
         $yaml = <<<YAML
 !php/const 'Symfony\\Component\\Yaml\\Tests\\Command\\Foo::TEST': bar
 YAML;
-        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml)], ['verbosity' => \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
+        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml)], ['verbosity' => \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
         $this->assertSame(0, $ret, 'lint:yaml exits with code 0 in case of success');
     }
     public function testCustomTags()
@@ -55,7 +55,7 @@ YAML;
         $yaml = <<<YAML
 foo: !my_tag {foo: bar}
 YAML;
-        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml), '--parse-tags' => \true], ['verbosity' => \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
+        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml), '--parse-tags' => \true], ['verbosity' => \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
         $this->assertSame(0, $ret, 'lint:yaml exits with code 0 in case of success');
     }
     public function testCustomTagsError()
@@ -63,7 +63,7 @@ YAML;
         $yaml = <<<YAML
 foo: !my_tag {foo: bar}
 YAML;
-        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml)], ['verbosity' => \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
+        $ret = $this->createCommandTester()->execute(['filename' => $this->createFile($yaml)], ['verbosity' => \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE, 'decorated' => \false]);
         $this->assertSame(1, $ret, 'lint:yaml exits with code 1 in case of error');
     }
     public function testLintFileNotReadable()
@@ -89,10 +89,10 @@ YAML;
      */
     protected function createCommandTester()
     {
-        $application = new \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Application();
-        $application->add(new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Command\LintCommand());
+        $application = new \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Application();
+        $application->add(new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Command\LintCommand());
         $command = $application->find('lint:yaml');
-        return new \_PhpScoper5ece82d7231e4\Symfony\Component\Console\Tester\CommandTester($command);
+        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Console\Tester\CommandTester($command);
     }
     protected function setUp()
     {

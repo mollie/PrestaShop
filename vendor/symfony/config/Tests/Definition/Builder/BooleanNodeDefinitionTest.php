@@ -8,22 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Tests\Definition\Builder;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Builder;
 
-use _PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
-class BooleanNodeDefinitionTest extends \_PhpScoper5ece82d7231e4\PHPUnit\Framework\TestCase
+use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
+class BooleanNodeDefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
 {
     public function testCannotBeEmptyThrowsAnException()
     {
-        $this->expectException('_PhpScoper5ece82d7231e4\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidDefinitionException');
+        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidDefinitionException');
         $this->expectExceptionMessage('->cannotBeEmpty() is not applicable to BooleanNodeDefinition.');
-        $def = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition('foo');
+        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition('foo');
         $def->cannotBeEmpty();
     }
     public function testSetDeprecated()
     {
-        $def = new \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition('foo');
+        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition('foo');
         $def->setDeprecated('The "%path%" node is deprecated.');
         $node = $def->getNode();
         $this->assertTrue($node->isDeprecated());

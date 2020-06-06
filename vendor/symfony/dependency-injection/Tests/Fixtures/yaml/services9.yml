@@ -1,15 +1,15 @@
 parameters:
     baz_class: BazClass
-    foo_class: _PhpScoper5ece82d7231e4\Bar\FooClass
+    foo_class: _PhpScoper5ea00cc67502b\Bar\FooClass
     foo: bar
 
 services:
     service_container:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:
-        class: _PhpScoper5ece82d7231e4\Bar\FooClass
+        class: _PhpScoper5ea00cc67502b\Bar\FooClass
         tags:
             - { name: foo, foo: foo }
             - { name: foo, bar: bar, baz: baz }
@@ -19,7 +19,7 @@ services:
             - [setBar, ['@bar']]
             - [initialize, {  }]
 
-        factory: [_PhpScoper5ece82d7231e4\Bar\FooClass, getInstance]
+        factory: [_PhpScoper5ea00cc67502b\Bar\FooClass, getInstance]
         configurator: sc_configure
         public: true
     foo.baz:
@@ -28,7 +28,7 @@ services:
         configurator: ['%baz_class%', configureStatic1]
         public: true
     bar:
-        class: _PhpScoper5ece82d7231e4\Bar\FooClass
+        class: _PhpScoper5ea00cc67502b\Bar\FooClass
         arguments: [foo, '@foo.baz', '%foo_bar%']
         configurator: ['@foo.baz', configure]
         public: true
@@ -38,7 +38,7 @@ services:
         arguments: ['@deprecated_service']
         public: true
     method_call1:
-        class: _PhpScoper5ece82d7231e4\Bar\FooClass
+        class: _PhpScoper5ea00cc67502b\Bar\FooClass
         file: '%path%foo.php'
         calls:
             - [setBar, ['@foo']]
@@ -119,8 +119,8 @@ services:
         factory: ['@new_factory', getInstance]
         public: true
     service_from_static_method:
-        class: _PhpScoper5ece82d7231e4\Bar\FooClass
-        factory: [_PhpScoper5ece82d7231e4\Bar\FooClass, getInstance]
+        class: _PhpScoper5ea00cc67502b\Bar\FooClass
+        factory: [_PhpScoper5ea00cc67502b\Bar\FooClass, getInstance]
         public: true
     factory_simple:
         class: SimpleFactoryClass
@@ -149,10 +149,10 @@ services:
         arguments:
             - !tagged foo
         public: true
-    _PhpScoper5ece82d7231e4\Psr\Container\ContainerInterface:
+    _PhpScoper5ea00cc67502b\Psr\Container\ContainerInterface:
         alias: service_container
         public: false
-    _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface:
+    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface:
         alias: service_container
         public: false
     alias_for_foo:

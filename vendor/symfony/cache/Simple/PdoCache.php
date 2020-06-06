@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\PdoTrait;
-class PdoCache extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\AbstractCache implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\PdoTrait;
+class PdoCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface
 {
     use PdoTrait;
     protected $maxIdLength = 255;

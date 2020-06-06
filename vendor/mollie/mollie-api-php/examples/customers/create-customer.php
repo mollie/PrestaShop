@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * How to create a new customer in the Mollie API.
@@ -17,6 +17,6 @@ try {
      */
     $customer = $mollie->customers->create(["name" => "Luke Skywalker", "email" => "luke@example.org", "metadata" => ["isJedi" => \TRUE]]);
     echo "<p>New customer created " . \htmlspecialchars($customer->id) . " (" . \htmlspecialchars($customer->name) . ").</p>";
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

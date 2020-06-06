@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\CacheException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits\PhpFilesTrait;
-class PhpFilesCache extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Simple\AbstractCache implements \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\PruneableInterface
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits\PhpFilesTrait;
+class PhpFilesCache extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\AbstractCache implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface
 {
     use PhpFilesTrait;
     /**
@@ -26,7 +26,7 @@ class PhpFilesCache extends \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Sim
     public function __construct($namespace = '', $defaultLifetime = 0, $directory = null)
     {
         if (!static::isSupported()) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\Exception\CacheException('OPcache is not enabled.');
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\CacheException('OPcache is not enabled.');
         }
         parent::__construct('', $defaultLifetime);
         $this->init($namespace, $directory);

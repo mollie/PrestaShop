@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * List shipment for an order using the Mollie API.
@@ -24,6 +24,6 @@ try {
             echo $line->name . ' - status: <b>' . $line->status . '</b>.';
         }
     }
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

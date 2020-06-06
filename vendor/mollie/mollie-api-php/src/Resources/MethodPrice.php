@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api\Resources;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
 
-class MethodPrice extends \_PhpScoper5ece82d7231e4\Mollie\Api\Resources\BaseResource
+class MethodPrice extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
 {
     /**
      * The area or product-type where the pricing is applied for, translated in the optional locale passed.
