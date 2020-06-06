@@ -1,21 +1,21 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Container
+class ProjectServiceContainer extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -28,11 +28,11 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5ece82d7231e4\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ece82d7231e4\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'baz_service' => \true, 'translator.loader_1_locator' => \true, 'translator.loader_2_locator' => \true, 'translator.loader_3_locator' => \true];
+        return ['_PhpScoper5ea00cc67502b\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'baz_service' => \true, 'translator.loader_1_locator' => \true, 'translator.loader_2_locator' => \true, 'translator.loader_3_locator' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -59,7 +59,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getFooServiceService()
     {
-        return $this->services['foo_service'] = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceLocator(['bar' => function () {
+        return $this->services['foo_service'] = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['bar' => function () {
             return ${($_ = isset($this->services['bar_service']) ? $this->services['bar_service'] : $this->getBarServiceService()) && \false ?: '_'};
         }, 'baz' => function () {
             $f = function (\stdClass $v) {
@@ -104,7 +104,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getTranslator1Service()
     {
-        return $this->services['translator_1'] = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_1' => function () {
+        return $this->services['translator_1'] = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_1' => function () {
             return ${($_ = isset($this->services['translator.loader_1']) ? $this->services['translator.loader_1'] : ($this->services['translator.loader_1'] = new \stdClass())) && \false ?: '_'};
         }]));
     }
@@ -115,7 +115,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getTranslator2Service()
     {
-        $this->services['translator_2'] = $instance = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_2' => function () {
+        $this->services['translator_2'] = $instance = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_2' => function () {
             return ${($_ = isset($this->services['translator.loader_2']) ? $this->services['translator.loader_2'] : ($this->services['translator.loader_2'] = new \stdClass())) && \false ?: '_'};
         }]));
         $instance->addResource('db', ${($_ = isset($this->services['translator.loader_2']) ? $this->services['translator.loader_2'] : ($this->services['translator.loader_2'] = new \stdClass())) && \false ?: '_'}, 'nl');
@@ -128,7 +128,7 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
      */
     protected function getTranslator3Service()
     {
-        $this->services['translator_3'] = $instance = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_3' => function () {
+        $this->services['translator_3'] = $instance = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\StubbedTranslator(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator(['translator.loader_3' => function () {
             return ${($_ = isset($this->services['translator.loader_3']) ? $this->services['translator.loader_3'] : ($this->services['translator.loader_3'] = new \stdClass())) && \false ?: '_'};
         }]));
         $a = ${($_ = isset($this->services['translator.loader_3']) ? $this->services['translator.loader_3'] : ($this->services['translator.loader_3'] = new \stdClass())) && \false ?: '_'};
@@ -152,4 +152,4 @@ class ProjectServiceContainer extends \_PhpScoper5ece82d7231e4\Symfony\Component
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5ece82d7231e4\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+\class_alias('_PhpScoper5ea00cc67502b\\ProjectServiceContainer', 'ProjectServiceContainer', \false);

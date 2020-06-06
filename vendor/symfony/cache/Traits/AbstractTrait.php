@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ece82d7231e4\Psr\Log\LoggerAwareTrait;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem;
+use _PhpScoper5ea00cc67502b\Psr\Log\LoggerAwareTrait;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
@@ -81,7 +81,7 @@ trait AbstractTrait
         try {
             return $this->doHave($id);
         } catch (\Exception $e) {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to check if key "{key}" is cached', ['key' => $key, 'exception' => $e]);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to check if key "{key}" is cached', ['key' => $key, 'exception' => $e]);
             return \false;
         }
     }
@@ -105,7 +105,7 @@ trait AbstractTrait
         try {
             return $this->doClear($this->namespace) || $cleared;
         } catch (\Exception $e) {
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
             return \false;
         }
     }
@@ -142,7 +142,7 @@ trait AbstractTrait
                 }
             } catch (\Exception $e) {
             }
-            \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to delete key "{key}"', ['key' => $key, 'exception' => $e]);
+            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to delete key "{key}"', ['key' => $key, 'exception' => $e]);
             $ok = \false;
         }
         return $ok;
@@ -204,7 +204,7 @@ trait AbstractTrait
     }
     private function getId($key)
     {
-        \_PhpScoper5ece82d7231e4\Symfony\Component\Cache\CacheItem::validateKey($key);
+        \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey($key);
         if ($this->versioningIsEnabled && '' === $this->namespaceVersion) {
             $this->namespaceVersion = '1' . static::NS_SEPARATOR;
             try {

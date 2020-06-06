@@ -8,16 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParserCache;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache;
 
 @\trigger_error('The ' . __NAMESPACE__ . '\\ArrayParserCache class is deprecated since Symfony 3.2 and will be removed in 4.0. Use the Symfony\\Component\\Cache\\Adapter\\ArrayAdapter class instead.', \E_USER_DEPRECATED);
-use _PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParsedExpression;
+use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression;
 /**
  * @author Adrien Brault <adrien.brault@gmail.com>
  *
  * @deprecated ArrayParserCache class is deprecated since version 3.2 and will be removed in 4.0. Use the Symfony\Component\Cache\Adapter\ArrayAdapter class instead.
  */
-class ArrayParserCache implements \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface
+class ArrayParserCache implements \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface
 {
     private $cache = [];
     /**
@@ -30,7 +30,7 @@ class ArrayParserCache implements \_PhpScoper5ece82d7231e4\Symfony\Component\Exp
     /**
      * {@inheritdoc}
      */
-    public function save($key, \_PhpScoper5ece82d7231e4\Symfony\Component\ExpressionLanguage\ParsedExpression $expression)
+    public function save($key, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression $expression)
     {
         $this->cache[$key] = $expression;
     }

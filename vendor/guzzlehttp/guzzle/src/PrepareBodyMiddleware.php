@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\GuzzleHttp;
+namespace _PhpScoper5ea00cc67502b\GuzzleHttp;
 
-use _PhpScoper5ece82d7231e4\GuzzleHttp\Promise\PromiseInterface;
-use _PhpScoper5ece82d7231e4\GuzzleHttp\Psr7;
-use _PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface;
+use _PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface;
+use _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
 /**
  * Prepares requests that contain a body, adding the Content-Length,
  * Content-Type, and Expect headers.
@@ -26,7 +26,7 @@ class PrepareBodyMiddleware
      *
      * @return PromiseInterface
      */
-    public function __invoke(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, array $options)
+    public function __invoke(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, array $options)
     {
         $fn = $this->nextHandler;
         // Don't do anything if the request has no body.
@@ -37,7 +37,7 @@ class PrepareBodyMiddleware
         // Add a default content-type if possible.
         if (!$request->hasHeader('Content-Type')) {
             if ($uri = $request->getBody()->getMetadata('uri')) {
-                if ($type = \_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\mimetype_from_filename($uri)) {
+                if ($type = \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\mimetype_from_filename($uri)) {
                     $modify['set_headers']['Content-Type'] = $type;
                 }
             }
@@ -53,14 +53,14 @@ class PrepareBodyMiddleware
         }
         // Add the expect header if needed.
         $this->addExpectHeader($request, $options, $modify);
-        return $fn(\_PhpScoper5ece82d7231e4\GuzzleHttp\Psr7\modify_request($request, $modify), $options);
+        return $fn(\_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\modify_request($request, $modify), $options);
     }
     /**
      * Add expect header
      *
      * @return void
      */
-    private function addExpectHeader(\_PhpScoper5ece82d7231e4\Psr\Http\Message\RequestInterface $request, array $options, array &$modify)
+    private function addExpectHeader(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, array $options, array &$modify)
     {
         // Determine if the Expect header should be used
         if ($request->hasHeader('Expect')) {

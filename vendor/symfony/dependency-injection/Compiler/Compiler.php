@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\EnvParameterException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvParameterException;
 /**
  * This class is used to remove circular dependencies between individual passes.
  *
@@ -25,8 +25,8 @@ class Compiler
     private $serviceReferenceGraph;
     public function __construct()
     {
-        $this->passConfig = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PassConfig();
-        $this->serviceReferenceGraph = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraph();
+        $this->passConfig = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PassConfig();
+        $this->serviceReferenceGraph = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraph();
     }
     /**
      * Returns the PassConfig.
@@ -57,7 +57,7 @@ class Compiler
     {
         if (null === $this->loggingFormatter) {
             @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the ContainerBuilder::log() method instead.', __METHOD__), \E_USER_DEPRECATED);
-            $this->loggingFormatter = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\LoggingFormatter();
+            $this->loggingFormatter = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\LoggingFormatter();
         }
         return $this->loggingFormatter;
     }
@@ -67,7 +67,7 @@ class Compiler
      * @param CompilerPassInterface $pass A compiler pass
      * @param string                $type The type of the pass
      */
-    public function addPass(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $type = \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION)
+    public function addPass(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $type = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION)
     {
         if (\func_num_args() >= 3) {
             $priority = \func_get_arg(2);
@@ -97,7 +97,7 @@ class Compiler
     /**
      * @final
      */
-    public function log(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $message)
+    public function log(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface $pass, $message)
     {
         if (\false !== \strpos($message, "\n")) {
             $message = \str_replace("\n", "\n" . \get_class($pass) . ': ', \trim($message));
@@ -116,7 +116,7 @@ class Compiler
     /**
      * Run the Compiler and process all Passes.
      */
-    public function compile(\_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         try {
             foreach ($this->passConfig->getPasses() as $pass) {
@@ -134,7 +134,7 @@ class Compiler
                 }
             } while ($prev = $prev->getPrevious());
             if ($usedEnvs) {
-                $e = new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Exception\EnvParameterException($usedEnvs, $e);
+                $e = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvParameterException($usedEnvs, $e);
             }
             throw $e;
         } finally {

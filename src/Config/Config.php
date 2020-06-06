@@ -35,8 +35,8 @@
 
 namespace Mollie\Config;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5ece82d7231e4\Mollie\Api\Types\RefundStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
 use Configuration;
 
 class Config
@@ -157,6 +157,7 @@ class Config
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
+    const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';

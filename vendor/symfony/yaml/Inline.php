@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Yaml;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\DumpException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException;
-use _PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\DumpException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue;
 /**
  * Inline implements a YAML parser/dumper for the YAML inline syntax.
  *
@@ -36,10 +36,10 @@ class Inline
      */
     public static function initialize($flags, $parsedLineNumber = null, $parsedFilename = null)
     {
-        self::$exceptionOnInvalidType = (bool) (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE & $flags);
-        self::$objectSupport = (bool) (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_OBJECT & $flags);
-        self::$objectForMap = (bool) (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags);
-        self::$constantSupport = (bool) (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT & $flags);
+        self::$exceptionOnInvalidType = (bool) (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE & $flags);
+        self::$objectSupport = (bool) (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT & $flags);
+        self::$objectForMap = (bool) (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags);
+        self::$constantSupport = (bool) (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT & $flags);
         self::$parsedFilename = $parsedFilename;
         if (null !== $parsedLineNumber) {
             self::$parsedLineNumber = $parsedLineNumber;
@@ -61,7 +61,7 @@ class Inline
         if (\is_bool($flags)) {
             @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
-                $flags = \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE;
+                $flags = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
@@ -69,12 +69,12 @@ class Inline
         if (\func_num_args() >= 3 && !\is_array($references)) {
             @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT flag instead.', \E_USER_DEPRECATED);
             if ($references) {
-                $flags |= \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_OBJECT;
+                $flags |= \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT;
             }
             if (\func_num_args() >= 4) {
                 @\trigger_error('Passing a boolean flag to toggle object for map support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT_FOR_MAP flag instead.', \E_USER_DEPRECATED);
                 if (\func_get_arg(3)) {
-                    $flags |= \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
+                    $flags |= \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
                 }
             }
             if (\func_num_args() >= 5) {
@@ -109,10 +109,10 @@ class Inline
             }
             // some comments are allowed at the end
             if (\preg_replace('/\\s+#.*$/A', '', \substr($value, $i))) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected characters near "%s".', \substr($value, $i)), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected characters near "%s".', \substr($value, $i)), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
             }
             if (null !== $tag) {
-                return new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue($tag, $result);
+                return new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue($tag, $result);
             }
             return $result;
         } finally {
@@ -136,7 +136,7 @@ class Inline
         if (\is_bool($flags)) {
             @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
-                $flags = \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE;
+                $flags = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
@@ -144,29 +144,29 @@ class Inline
         if (\func_num_args() >= 3) {
             @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::DUMP_OBJECT flag instead.', \E_USER_DEPRECATED);
             if (\func_get_arg(2)) {
-                $flags |= \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_OBJECT;
+                $flags |= \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT;
             }
         }
         switch (\true) {
             case \is_resource($value):
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE & $flags) {
-                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\DumpException(\sprintf('Unable to dump PHP resources in a YAML file ("%s").', \get_resource_type($value)));
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE & $flags) {
+                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\DumpException(\sprintf('Unable to dump PHP resources in a YAML file ("%s").', \get_resource_type($value)));
                 }
                 return 'null';
             case $value instanceof \DateTimeInterface:
                 return $value->format('c');
             case \is_object($value):
-                if ($value instanceof \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue) {
+                if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue) {
                     return '!' . $value->getTag() . ' ' . self::dump($value->getValue(), $flags);
                 }
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_OBJECT & $flags) {
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT & $flags) {
                     return '!php/object ' . self::dump(\serialize($value));
                 }
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($value instanceof \stdClass || $value instanceof \ArrayObject)) {
-                    return self::dumpArray($value, $flags & ~\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($value instanceof \stdClass || $value instanceof \ArrayObject)) {
+                    return self::dumpArray($value, $flags & ~\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
                 }
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE & $flags) {
-                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\DumpException('Object support when dumping a YAML file has been disabled.');
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE & $flags) {
+                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\DumpException('Object support when dumping a YAML file has been disabled.');
                 }
                 return 'null';
             case \is_array($value):
@@ -203,13 +203,13 @@ class Inline
                 return "''";
             case self::isBinaryString($value):
                 return '!!binary ' . \base64_encode($value);
-            case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Escaper::requiresDoubleQuoting($value):
-                return \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Escaper::escapeWithDoubleQuotes($value);
-            case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Escaper::requiresSingleQuoting($value):
-            case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('{^[0-9]+[_0-9]*$}', $value):
-            case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match(self::getHexRegex(), $value):
-            case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match(self::getTimestampRegex(), $value):
-                return \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Escaper::escapeWithSingleQuotes($value);
+            case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Escaper::requiresDoubleQuoting($value):
+                return \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Escaper::escapeWithDoubleQuotes($value);
+            case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Escaper::requiresSingleQuoting($value):
+            case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('{^[0-9]+[_0-9]*$}', $value):
+            case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match(self::getHexRegex(), $value):
+            case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match(self::getTimestampRegex(), $value):
+                return \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Escaper::escapeWithSingleQuotes($value);
             default:
                 return $value;
         }
@@ -247,7 +247,7 @@ class Inline
     private static function dumpArray($value, $flags)
     {
         // array
-        if (($value || \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE & $flags) && !self::isHash($value)) {
+        if (($value || \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE & $flags) && !self::isHash($value)) {
             $output = [];
             foreach ($value as $val) {
                 $output[] = self::dump($val, $flags);
@@ -285,10 +285,10 @@ class Inline
             if (null !== $delimiters) {
                 $tmp = \ltrim(\substr($scalar, $i), ' ');
                 if ('' === $tmp) {
-                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected end of line, expected one of "%s".', \implode('', $delimiters)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected end of line, expected one of "%s".', \implode('', $delimiters)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                 }
                 if (!\in_array($tmp[0], $delimiters)) {
-                    throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected characters (%s).', \substr($scalar, $i)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Unexpected characters (%s).', \substr($scalar, $i)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                 }
             }
         } else {
@@ -297,18 +297,18 @@ class Inline
                 $output = \substr($scalar, $i);
                 $i += \strlen($output);
                 // remove comments
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('/[ \\t]+#/', $output, $match, \PREG_OFFSET_CAPTURE)) {
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('/[ \\t]+#/', $output, $match, \PREG_OFFSET_CAPTURE)) {
                     $output = \substr($output, 0, $match[0][1]);
                 }
-            } elseif (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('/^(.' . ($legacyOmittedKeySupport ? '+' : '*') . '?)(' . \implode('|', $delimiters) . ')/', \substr($scalar, $i), $match)) {
+            } elseif (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('/^(.' . ($legacyOmittedKeySupport ? '+' : '*') . '?)(' . \implode('|', $delimiters) . ')/', \substr($scalar, $i), $match)) {
                 $output = $match[1];
                 $i += \strlen($output);
             } else {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $scalar), self::$parsedLineNumber + 1, null, self::$parsedFilename);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $scalar), self::$parsedLineNumber + 1, null, self::$parsedFilename);
             }
             // a non-quoted string cannot start with @ or ` (reserved) nor with a scalar indicator (| or >)
             if ($output && ('@' === $output[0] || '`' === $output[0] || '|' === $output[0] || '>' === $output[0])) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The reserved indicator "%s" cannot start a plain scalar; you need to quote the scalar.', $output[0]), self::$parsedLineNumber + 1, $output, self::$parsedFilename);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The reserved indicator "%s" cannot start a plain scalar; you need to quote the scalar.', $output[0]), self::$parsedLineNumber + 1, $output, self::$parsedFilename);
             }
             if ($output && '%' === $output[0]) {
                 @\trigger_error(self::getDeprecationMessage(\sprintf('Not quoting the scalar "%s" starting with the "%%" indicator character is deprecated since Symfony 3.1 and will throw a ParseException in 4.0.', $output)), \E_USER_DEPRECATED);
@@ -331,11 +331,11 @@ class Inline
      */
     private static function parseQuotedScalar($scalar, &$i)
     {
-        if (!\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('/' . self::REGEX_QUOTED_STRING . '/Au', \substr($scalar, $i), $match)) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', \substr($scalar, $i)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+        if (!\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('/' . self::REGEX_QUOTED_STRING . '/Au', \substr($scalar, $i), $match)) {
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', \substr($scalar, $i)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
         $output = \substr($match[0], 1, \strlen($match[0]) - 2);
-        $unescaper = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Unescaper();
+        $unescaper = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Unescaper();
         if ('"' == $scalar[$i]) {
             $output = $unescaper->unescapeDoubleQuotedString($output);
         } else {
@@ -396,12 +396,12 @@ class Inline
                     --$i;
             }
             if (null !== $tag) {
-                $value = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
+                $value = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
             }
             $output[] = $value;
             ++$i;
         }
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $sequence), self::$parsedLineNumber + 1, null, self::$parsedFilename);
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $sequence), self::$parsedLineNumber + 1, null, self::$parsedFilename);
     }
     /**
      * Parses a YAML mapping.
@@ -484,7 +484,7 @@ class Inline
                             }
                         } elseif ($allowOverwrite || !isset($output[$key])) {
                             if (null !== $tag) {
-                                $output[$key] = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
+                                $output[$key] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
                             } else {
                                 $output[$key] = $value;
                             }
@@ -503,7 +503,7 @@ class Inline
                             $output += $value;
                         } elseif ($allowOverwrite || !isset($output[$key])) {
                             if (null !== $tag) {
-                                $output[$key] = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
+                                $output[$key] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
                             } else {
                                 $output[$key] = $value;
                             }
@@ -521,7 +521,7 @@ class Inline
                             $output += $value;
                         } elseif ($allowOverwrite || !isset($output[$key])) {
                             if (null !== $tag) {
-                                $output[$key] = new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
+                                $output[$key] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue($tag, $value);
                             } else {
                                 $output[$key] = $value;
                             }
@@ -534,7 +534,7 @@ class Inline
                 continue 2;
             }
         }
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $mapping), self::$parsedLineNumber + 1, null, self::$parsedFilename);
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Malformed inline YAML string: "%s".', $mapping), self::$parsedLineNumber + 1, null, self::$parsedFilename);
     }
     /**
      * Evaluates scalars and replaces magic values.
@@ -559,10 +559,10 @@ class Inline
             }
             // an unquoted *
             if (\false === $value || '' === $value) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException('A reference must contain at least one character.', self::$parsedLineNumber + 1, $value, self::$parsedFilename);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException('A reference must contain at least one character.', self::$parsedLineNumber + 1, $value, self::$parsedFilename);
             }
             if (!\array_key_exists($value, $references)) {
-                throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $value), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
+                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $value), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
             }
             return $references[$value];
         }
@@ -591,7 +591,7 @@ class Inline
                             return \unserialize(\substr($scalar, 12));
                         }
                         if (self::$exceptionOnInvalidType) {
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         return null;
                     case 0 === \strpos($scalar, '!!php/object:'):
@@ -600,7 +600,7 @@ class Inline
                             return \unserialize(\substr($scalar, 13));
                         }
                         if (self::$exceptionOnInvalidType) {
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         return null;
                     case 0 === \strpos($scalar, '!php/object'):
@@ -611,7 +611,7 @@ class Inline
                             return \unserialize(self::parseScalar(\substr($scalar, 12)));
                         }
                         if (self::$exceptionOnInvalidType) {
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException('Object support when parsing a YAML file has been disabled.', self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         return null;
                     case 0 === \strpos($scalar, '!php/const:'):
@@ -620,10 +620,10 @@ class Inline
                             if (\defined($const = \substr($scalar, 11))) {
                                 return \constant($const);
                             }
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The constant "%s" is not defined.', $const), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The constant "%s" is not defined.', $const), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         if (self::$exceptionOnInvalidType) {
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The string "%s" could not be parsed as a constant. Did you forget to pass the "Yaml::PARSE_CONSTANT" flag to the parser?', $scalar), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The string "%s" could not be parsed as a constant. Have you forgotten to pass the "Yaml::PARSE_CONSTANT" flag to the parser?', $scalar), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         return null;
                     case 0 === \strpos($scalar, '!php/const'):
@@ -635,10 +635,10 @@ class Inline
                             if (\defined($const = self::parseScalar(\substr($scalar, 11), 0, null, $i, \false))) {
                                 return \constant($const);
                             }
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The constant "%s" is not defined.', $const), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The constant "%s" is not defined.', $const), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         if (self::$exceptionOnInvalidType) {
-                            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The string "%s" could not be parsed as a constant. Did you forget to pass the "Yaml::PARSE_CONSTANT" flag to the parser?', $scalar), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+                            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The string "%s" could not be parsed as a constant. Have you forgotten to pass the "Yaml::PARSE_CONSTANT" flag to the parser?', $scalar), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
                         }
                         return null;
                     case 0 === \strpos($scalar, '!!float '):
@@ -651,7 +651,7 @@ class Inline
             // Optimize for returning strings.
             // no break
             case '+' === $scalar[0] || '-' === $scalar[0] || '.' === $scalar[0] || \is_numeric($scalar[0]):
-                if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('{^[+-]?[0-9][0-9_]*$}', $scalar)) {
+                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('{^[+-]?[0-9][0-9_]*$}', $scalar)) {
                     $scalar = \str_replace('_', '', (string) $scalar);
                 }
                 switch (\true) {
@@ -664,7 +664,7 @@ class Inline
                         $cast = (int) $scalar;
                         return '0' == $scalar[1] ? -\octdec(\substr($scalar, 1)) : ($raw === (string) $cast ? $cast : $raw);
                     case \is_numeric($scalar):
-                    case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match(self::getHexRegex(), $scalar):
+                    case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match(self::getHexRegex(), $scalar):
                         $scalar = \str_replace('_', '', $scalar);
                         return '0x' === $scalar[0] . $scalar[1] ? \hexdec($scalar) : (float) $scalar;
                     case '.inf' === $scalarLower:
@@ -672,14 +672,14 @@ class Inline
                         return -\log(0);
                     case '-.inf' === $scalarLower:
                         return \log(0);
-                    case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('/^(-|\\+)?[0-9][0-9,]*(\\.[0-9_]+)?$/', $scalar):
-                    case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('/^(-|\\+)?[0-9][0-9_]*(\\.[0-9_]+)?$/', $scalar):
+                    case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('/^(-|\\+)?[0-9][0-9,]*(\\.[0-9_]+)?$/', $scalar):
+                    case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('/^(-|\\+)?[0-9][0-9_]*(\\.[0-9_]+)?$/', $scalar):
                         if (\false !== \strpos($scalar, ',')) {
                             @\trigger_error(self::getDeprecationMessage('Using the comma as a group separator for floats is deprecated since Symfony 3.2 and will be removed in 4.0.'), \E_USER_DEPRECATED);
                         }
                         return (float) \str_replace([',', '_'], '', $scalar);
-                    case \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match(self::getTimestampRegex(), $scalar):
-                        if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_DATETIME & $flags) {
+                    case \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match(self::getTimestampRegex(), $scalar):
+                        if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_DATETIME & $flags) {
                             // When no timezone is provided in the parsed date, YAML spec says we must assume UTC.
                             return new \DateTime($scalar, new \DateTimeZone('UTC'));
                         }
@@ -715,13 +715,13 @@ class Inline
         }
         // Built-in tags
         if ($tag && '!' === $tag[0]) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The built-in tag "!%s" is not implemented.', $tag), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The built-in tag "!%s" is not implemented.', $tag), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
         }
-        if (\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS & $flags) {
+        if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS & $flags) {
             $i = $nextOffset;
             return $tag;
         }
-        throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Tags support is not enabled. Enable the `Yaml::PARSE_CUSTOM_TAGS` flag to use "!%s".', $tag), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
+        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Tags support is not enabled. Enable the `Yaml::PARSE_CUSTOM_TAGS` flag to use "!%s".', $tag), self::$parsedLineNumber + 1, $value, self::$parsedFilename);
     }
     /**
      * @param string $scalar
@@ -734,10 +734,10 @@ class Inline
     {
         $parsedBinaryData = self::parseScalar(\preg_replace('/\\s/', '', $scalar));
         if (0 !== \strlen($parsedBinaryData) % 4) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The normalized base64 encoded data (data without whitespace characters) length must be a multiple of four (%d bytes given).', \strlen($parsedBinaryData)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The normalized base64 encoded data (data without whitespace characters) length must be a multiple of four (%d bytes given).', \strlen($parsedBinaryData)), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
-        if (!\_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Parser::preg_match('#^[A-Z0-9+/]+={0,2}$#i', $parsedBinaryData)) {
-            throw new \_PhpScoper5ece82d7231e4\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The base64 encoded data (%s) contains invalid characters.', $parsedBinaryData), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
+        if (!\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser::preg_match('#^[A-Z0-9+/]+={0,2}$#i', $parsedBinaryData)) {
+            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The base64 encoded data (%s) contains invalid characters.', $parsedBinaryData), self::$parsedLineNumber + 1, $scalar, self::$parsedFilename);
         }
         return \base64_decode($parsedBinaryData, \true);
     }

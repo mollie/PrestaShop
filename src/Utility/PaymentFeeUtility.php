@@ -35,7 +35,7 @@
 
 namespace Mollie\Utility;
 
-use _PhpScoper5ece82d7231e4\PrestaShop\Decimal\Number;
+use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use MolPaymentMethod;
 

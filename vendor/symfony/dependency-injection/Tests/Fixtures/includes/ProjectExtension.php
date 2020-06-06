@@ -1,13 +1,13 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-class ProjectExtension implements \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Extension\ExtensionInterface
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+class ProjectExtension implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Extension\ExtensionInterface
 {
-    public function load(array $configs, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $configuration)
+    public function load(array $configs, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $configuration)
     {
         $configuration->setParameter('project.configs', $configs);
         $configs = \array_filter($configs);
@@ -16,9 +16,9 @@ class ProjectExtension implements \_PhpScoper5ece82d7231e4\Symfony\Component\Dep
         } else {
             $config = [];
         }
-        $configuration->setDefinition('project.service.bar', new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition('FooClass'));
+        $configuration->setDefinition('project.service.bar', new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('FooClass'));
         $configuration->setParameter('project.parameter.bar', isset($config['foo']) ? $config['foo'] : 'foobar');
-        $configuration->setDefinition('project.service.foo', new \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Definition('FooClass'));
+        $configuration->setDefinition('project.service.foo', new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('FooClass'));
         $configuration->setParameter('project.parameter.foo', isset($config['foo']) ? $config['foo'] : 'foobar');
         return $configuration;
     }
@@ -34,8 +34,8 @@ class ProjectExtension implements \_PhpScoper5ece82d7231e4\Symfony\Component\Dep
     {
         return 'project';
     }
-    public function getConfiguration(array $config, \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function getConfiguration(array $config, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
     }
 }
-\class_alias('_PhpScoper5ece82d7231e4\\ProjectExtension', 'ProjectExtension', \false);
+\class_alias('_PhpScoper5ea00cc67502b\\ProjectExtension', 'ProjectExtension', \false);

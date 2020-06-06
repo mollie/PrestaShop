@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\Mollie\Api;
+namespace _PhpScoper5ea00cc67502b\Mollie\Api;
 
-use _PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform;
+use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform;
 class CompatibilityChecker
 {
     /**
@@ -16,10 +16,10 @@ class CompatibilityChecker
     public function checkCompatibility()
     {
         if (!$this->satisfiesPhpVersion()) {
-            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform("The client requires PHP version >= " . self::MIN_PHP_VERSION . ", you have " . \PHP_VERSION . ".", \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform::INCOMPATIBLE_PHP_VERSION);
+            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform("The client requires PHP version >= " . self::MIN_PHP_VERSION . ", you have " . \PHP_VERSION . ".", \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform::INCOMPATIBLE_PHP_VERSION);
         }
         if (!$this->satisfiesJsonExtension()) {
-            throw new \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform("PHP extension json is not enabled. Please make sure to enable 'json' in your PHP configuration.", \_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\IncompatiblePlatform::INCOMPATIBLE_JSON_EXTENSION);
+            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform("PHP extension json is not enabled. Please make sure to enable 'json' in your PHP configuration.", \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\IncompatiblePlatform::INCOMPATIBLE_JSON_EXTENSION);
         }
     }
     /**

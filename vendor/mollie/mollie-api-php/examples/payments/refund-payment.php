@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * How to refund a payment programmatically
@@ -56,6 +56,6 @@ try {
     echo '<a href="' . $protocol . '://' . $hostname . $path . '/payments/create-ideal-payment.php">Create an iDEAL payment</a><br>';
     echo '<a href="' . $protocol . '://' . $hostname . $path . '/payments/list-payments.php">List payments</a><br>';
     echo "</p>";
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

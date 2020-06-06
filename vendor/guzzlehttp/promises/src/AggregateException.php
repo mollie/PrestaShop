@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4\GuzzleHttp\Promise;
+namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
 
 /**
  * Exception thrown when too many errors occur in the some() or any() methods.
  */
-class AggregateException extends \_PhpScoper5ece82d7231e4\GuzzleHttp\Promise\RejectionException
+class AggregateException extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\RejectionException
 {
     public function __construct($msg, array $reasons)
     {

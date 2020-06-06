@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * How to prepare an iDEAL payment with the Mollie API.
@@ -16,7 +16,7 @@ try {
      * First, let the customer pick the bank in a simple HTML form. This step is actually optional.
      */
     if ($_SERVER["REQUEST_METHOD"] != "POST") {
-        $method = $mollie->methods->get(\_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL, ["include" => "issuers"]);
+        $method = $mollie->methods->get(\_PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL, ["include" => "issuers"]);
         echo '<form method="post">Select your bank: <select name="issuer">';
         foreach ($method->issuers() as $issuer) {
             echo '<option value=' . \htmlspecialchars($issuer->id) . '>' . \htmlspecialchars($issuer->name) . '</option>';
@@ -46,16 +46,16 @@ try {
      *   metadata      Custom metadata that is stored with the payment.
      *   issuer        The customer's bank. If empty the customer can select it later.
      */
-    $payment = $mollie->payments->create(["amount" => ["currency" => "EUR", "value" => "27.50"], "method" => \_PhpScoper5ece82d7231e4\Mollie\Api\Types\PaymentMethod::IDEAL, "description" => "Order #{$orderId}", "redirectUrl" => "{$protocol}://{$hostname}{$path}/payments/return.php?order_id={$orderId}", "webhookUrl" => "{$protocol}://{$hostname}{$path}/payments/webhook.php", "metadata" => ["order_id" => $orderId], "issuer" => !empty($_POST["issuer"]) ? $_POST["issuer"] : null]);
+    $payment = $mollie->payments->create(["amount" => ["currency" => "EUR", "value" => "27.50"], "method" => \_PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod::IDEAL, "description" => "Order #{$orderId}", "redirectUrl" => "{$protocol}://{$hostname}{$path}/payments/return.php?order_id={$orderId}", "webhookUrl" => "{$protocol}://{$hostname}{$path}/payments/webhook.php", "metadata" => ["order_id" => $orderId], "issuer" => !empty($_POST["issuer"]) ? $_POST["issuer"] : null]);
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper5ece82d7231e4\database_write($orderId, $payment->status);
+    \_PhpScoper5ea00cc67502b\database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code
      */
     \header("Location: " . $payment->getCheckoutUrl(), \true, 303);
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

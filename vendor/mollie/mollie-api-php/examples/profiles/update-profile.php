@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ece82d7231e4;
+namespace _PhpScoper5ea00cc67502b;
 
 /*
  * Updating an existing profile via the Mollie API.
@@ -26,6 +26,6 @@ try {
     $profile->categoryCode = 5399;
     $profile->update();
     echo "<p>Profile updated: " . \htmlspecialchars($profile->name) . "</p>";
-} catch (\_PhpScoper5ece82d7231e4\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
     echo "<p>API call failed: " . \htmlspecialchars($e->getMessage()) . "</p>";
 }

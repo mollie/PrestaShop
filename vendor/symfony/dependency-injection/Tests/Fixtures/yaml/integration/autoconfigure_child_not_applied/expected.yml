@@ -1,6 +1,6 @@
 services:
     child_service_expected:
-        class: _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         # the parent has autoconfigure true, but that does not cascade to the child
         autoconfigure: false
         # an autoconfigured "instanceof" is setup for IntegrationTestStub

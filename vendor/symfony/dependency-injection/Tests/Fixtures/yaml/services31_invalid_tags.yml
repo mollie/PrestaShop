@@ -2,5 +2,5 @@ services:
     _defaults:
         tags: ['foo']
 
-    _PhpScoper5ece82d7231e4\Foo\Bar:
+    _PhpScoper5ea00cc67502b\Foo\Bar:
         tags: invalid

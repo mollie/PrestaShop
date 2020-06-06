@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Config;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config;
 
 @\trigger_error('The ' . __NAMESPACE__ . '\\AutowireServiceResource class is deprecated since Symfony 3.3 and will be removed in 4.0. Use ContainerBuilder::getReflectionClass() instead.', \E_USER_DEPRECATED);
-use _PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
-use _PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
+use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
+use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
 /**
  * @deprecated since version 3.3, to be removed in 4.0. Use ContainerBuilder::getReflectionClass() instead.
  */
-class AutowireServiceResource implements \_PhpScoper5ece82d7231e4\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
+class AutowireServiceResource implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $class;
     private $filePath;
@@ -42,7 +42,7 @@ class AutowireServiceResource implements \_PhpScoper5ece82d7231e4\Symfony\Compon
             // the class does not exist anymore!
             return \false;
         }
-        return (array) $this === (array) \_PhpScoper5ece82d7231e4\Symfony\Component\DependencyInjection\Compiler\AutowirePass::createResourceForClass($reflectionClass);
+        return (array) $this === (array) \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AutowirePass::createResourceForClass($reflectionClass);
     }
     public function __toString()
     {

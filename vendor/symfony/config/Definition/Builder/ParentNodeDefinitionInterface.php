@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder;
+namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder;
 
 /**
  * An interface that must be implemented by nodes which can have children.
@@ -38,9 +38,9 @@ interface ParentNodeDefinitionInterface
      *
      * @return $this
      */
-    public function append(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeDefinition $node);
+    public function append(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeDefinition $node);
     /**
      * Sets a custom children builder.
      */
-    public function setBuilder(\_PhpScoper5ece82d7231e4\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder);
+    public function setBuilder(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder);
 }
