@@ -633,22 +633,22 @@ class Mollie extends PaymentModule
         $paymentOptions = [];
 
         foreach ($methods as $method) {
-            if (!isset(Mollie\Config\Config::$methodCurrencies[$method['id']])) {
+            if (!isset(Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
                 continue;
             }
-            if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id']])) {
+            if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
                 continue;
             }
-
+            $images = json_decode($method['images_json'],true);
             $paymentOptions[] = [
-                'cta_text' => $this->lang($method['name']),
+                'cta_text' => $this->lang($method['method_name']),
                 'logo' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES) === Mollie\Config\Config::LOGOS_NORMAL
-                    ? $method['image']['size1x']
-                    : $method['image']['size2x'],
+                    ? $images['size1x']
+                    : $images['size2x'],
                 'action' => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    ['method' => $method['id'], 'rand' => time()],
+                    ['method' => $method['id_method'], 'rand' => time()],
                     true
                 ),
             ];
