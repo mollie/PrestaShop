@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapter;
 /**
  * @group time-sensitive
  */
-class TraceableAdapterTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class TraceableAdapterTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testPrune' => 'TraceableAdapter just proxies'];
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapter(new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime));
+        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapter(new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime));
     }
     public function testGetItemMissTrace()
     {

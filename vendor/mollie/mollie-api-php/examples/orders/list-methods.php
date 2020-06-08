@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * How to get the currently activated payment methods for the Orders API.
@@ -24,6 +24,6 @@ try {
         echo \htmlspecialchars($method->description) . ' (' . \htmlspecialchars($method->id) . ')';
         echo '</div>';
     }
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

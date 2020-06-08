@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
 
-class OrderCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class OrderCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class OrderCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Curs
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Order($this->client);
     }
 }

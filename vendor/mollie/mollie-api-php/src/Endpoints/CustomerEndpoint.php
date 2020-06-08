@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CustomerCollection;
-class CustomerEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\CustomerCollection;
+class CustomerEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "customers";
     /**
@@ -15,7 +15,7 @@ class CustomerEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Col
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Customer($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -27,7 +27,7 @@ class CustomerEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Col
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CustomerCollection($this->client, $count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CustomerCollection($this->client, $count, $_links);
     }
     /**
      * Creates a customer in Mollie.

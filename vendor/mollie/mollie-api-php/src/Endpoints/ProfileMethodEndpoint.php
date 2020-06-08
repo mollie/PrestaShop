@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\MethodCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-class ProfileMethodEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Method;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\MethodCollection;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Profile;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
+class ProfileMethodEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "profiles_methods";
     /**
@@ -16,7 +16,7 @@ class ProfileMethodEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoint
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Method($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -28,7 +28,7 @@ class ProfileMethodEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoint
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\MethodCollection($count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\MethodCollection($count, $_links);
     }
     /**
      * Enable a method for the provided Profile ID.
@@ -48,7 +48,7 @@ class ProfileMethodEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoint
             $body = \json_encode($data);
         }
         $result = $this->client->performHttpCall(self::REST_CREATE, $resource, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Method($this->client));
+        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Method($this->client));
     }
     /**
      * Enable a method for the provided Profile object.

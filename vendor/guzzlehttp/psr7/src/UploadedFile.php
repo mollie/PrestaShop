@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
-class UploadedFile implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface
+class UploadedFile implements \_PhpScoper5eddef0da618a\Psr\Http\Message\UploadedFileInterface
 {
     /**
      * @var int[]
@@ -68,8 +68,8 @@ class UploadedFile implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Uploaded
         if (\is_string($streamOrFile)) {
             $this->file = $streamOrFile;
         } elseif (\is_resource($streamOrFile)) {
-            $this->stream = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Stream($streamOrFile);
-        } elseif ($streamOrFile instanceof \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface) {
+            $this->stream = new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Stream($streamOrFile);
+        } elseif ($streamOrFile instanceof \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface) {
             $this->stream = $streamOrFile;
         } else {
             throw new \InvalidArgumentException('Invalid stream or file provided for UploadedFile');
@@ -84,7 +84,7 @@ class UploadedFile implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Uploaded
         if (\false === \is_int($error)) {
             throw new \InvalidArgumentException('Upload file error status must be an integer');
         }
-        if (\false === \in_array($error, \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\UploadedFile::$errors)) {
+        if (\false === \in_array($error, \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\UploadedFile::$errors)) {
             throw new \InvalidArgumentException('Invalid error status for UploadedFile');
         }
         $this->error = $error;
@@ -173,10 +173,10 @@ class UploadedFile implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Uploaded
     public function getStream()
     {
         $this->validateActive();
-        if ($this->stream instanceof \_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface) {
+        if ($this->stream instanceof \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface) {
             return $this->stream;
         }
-        return new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\LazyOpenStream($this->file, 'r+');
+        return new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\LazyOpenStream($this->file, 'r+');
     }
     /**
      * {@inheritdoc}
@@ -198,7 +198,7 @@ class UploadedFile implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\Uploaded
         if ($this->file) {
             $this->moved = \php_sapi_name() == 'cli' ? \rename($this->file, $targetPath) : \move_uploaded_file($this->file, $targetPath);
         } else {
-            copy_to_stream($this->getStream(), new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\LazyOpenStream($targetPath, 'w'));
+            copy_to_stream($this->getStream(), new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\LazyOpenStream($targetPath, 'w'));
             $this->moved = \true;
         }
         if (\false === $this->moved) {

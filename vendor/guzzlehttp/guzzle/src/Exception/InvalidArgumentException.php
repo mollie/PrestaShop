@@ -1,7 +1,7 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Exception;
 
-final class InvalidArgumentException extends \InvalidArgumentException implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Exception\GuzzleException
+final class InvalidArgumentException extends \InvalidArgumentException implements \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\GuzzleException
 {
 }

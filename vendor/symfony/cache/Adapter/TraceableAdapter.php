@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
+use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
 /**
  * An adapter that collects data about all cache calls.
  *
@@ -20,11 +20,11 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class TraceableAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface
 {
     protected $pool;
     private $calls = [];
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\AdapterInterface $pool)
+    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface $pool)
     {
         $this->pool = $pool;
     }
@@ -73,7 +73,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     /**
      * {@inheritdoc}
      */
-    public function save(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function save(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
@@ -85,7 +85,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(\_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
     {
         $event = $this->start(__FUNCTION__);
         try {
@@ -160,7 +160,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     public function prune()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
+        if (!$this->pool instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface) {
             return \false;
         }
         $event = $this->start(__FUNCTION__);
@@ -175,15 +175,10 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
      */
     public function reset()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface) {
-            return;
-        }
-        $event = $this->start(__FUNCTION__);
-        try {
+        if ($this->pool instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface) {
             $this->pool->reset();
-        } finally {
-            $event->end = \microtime(\true);
         }
+        $this->clearCalls();
     }
     public function getCalls()
     {
@@ -195,7 +190,7 @@ class TraceableAdapter implements \_PhpScoper5ea00cc67502b\Symfony\Component\Cac
     }
     protected function start($name)
     {
-        $this->calls[] = $event = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\TraceableAdapterEvent();
+        $this->calls[] = $event = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapterEvent();
         $event->name = $name;
         $event->start = \microtime(\true);
         return $event;

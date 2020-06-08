@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp;
 
-use _PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\ResponseInterface;
+use _PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface;
 /**
  * Creates a composed Guzzle handler function by stacking middlewares on top of
  * an HTTP handler function.
@@ -37,10 +37,10 @@ class HandlerStack
     public static function create(callable $handler = null)
     {
         $stack = new self($handler ?: choose_handler());
-        $stack->push(\_PhpScoper5ea00cc67502b\GuzzleHttp\Middleware::httpErrors(), 'http_errors');
-        $stack->push(\_PhpScoper5ea00cc67502b\GuzzleHttp\Middleware::redirect(), 'allow_redirects');
-        $stack->push(\_PhpScoper5ea00cc67502b\GuzzleHttp\Middleware::cookies(), 'cookies');
-        $stack->push(\_PhpScoper5ea00cc67502b\GuzzleHttp\Middleware::prepareBody(), 'prepare_body');
+        $stack->push(\_PhpScoper5eddef0da618a\GuzzleHttp\Middleware::httpErrors(), 'http_errors');
+        $stack->push(\_PhpScoper5eddef0da618a\GuzzleHttp\Middleware::redirect(), 'allow_redirects');
+        $stack->push(\_PhpScoper5eddef0da618a\GuzzleHttp\Middleware::cookies(), 'cookies');
+        $stack->push(\_PhpScoper5eddef0da618a\GuzzleHttp\Middleware::prepareBody(), 'prepare_body');
         return $stack;
     }
     /**
@@ -58,7 +58,7 @@ class HandlerStack
      *
      * @return ResponseInterface|PromiseInterface
      */
-    public function __invoke(\_PhpScoper5ea00cc67502b\Psr\Http\Message\RequestInterface $request, array $options)
+    public function __invoke(\_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface $request, array $options)
     {
         $handler = $this->resolve();
         return $handler($request, $options);

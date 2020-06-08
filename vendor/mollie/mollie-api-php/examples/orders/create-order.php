@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * How to create a new order in the Mollie API.
@@ -32,6 +32,6 @@ try {
      * This request should always be a GET, thus we enforce 303 http response code
      */
     \header("Location: " . $order->getCheckoutUrl(), \true, 303);
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

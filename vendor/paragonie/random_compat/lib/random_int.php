@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 if (!\is_callable('random_int')) {
     /**
@@ -52,13 +52,13 @@ if (!\is_callable('random_int')) {
          */
         try {
             /** @var int $min */
-            $min = \_PhpScoper5ea00cc67502b\RandomCompat_intval($min);
+            $min = \_PhpScoper5eddef0da618a\RandomCompat_intval($min);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_int(): $min must be an integer');
         }
         try {
             /** @var int $max */
-            $max = \_PhpScoper5ea00cc67502b\RandomCompat_intval($max);
+            $max = \_PhpScoper5eddef0da618a\RandomCompat_intval($max);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_int(): $max must be an integer');
         }

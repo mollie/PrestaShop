@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Definition;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode;
-class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ArrayNode;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode;
+class ScalarNodeTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getValidValues
      */
     public function testNormalize($value)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
         $this->assertSame($value, $node->normalize($value));
     }
     public function getValidValues()
@@ -29,11 +29,11 @@ class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testSetDeprecated()
     {
-        $childNode = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('foo');
+        $childNode = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('foo');
         $childNode->setDeprecated('"%node%" is deprecated');
         $this->assertTrue($childNode->isDeprecated());
         $this->assertSame('"foo" is deprecated', $childNode->getDeprecationMessage($childNode->getName(), $childNode->getPath()));
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ArrayNode('root');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ArrayNode('root');
         $node->addChild($childNode);
         $deprecationTriggered = 0;
         $deprecationHandler = function ($level, $message, $file, $line) use(&$prevErrorHandler, &$deprecationTriggered) {
@@ -56,8 +56,8 @@ class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testNormalizeThrowsExceptionOnInvalidValues($value)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
         $node->normalize($value);
     }
     public function getInvalidValues()
@@ -66,16 +66,16 @@ class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testNormalizeThrowsExceptionWithoutHint()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
         $this->expectExceptionMessage('Invalid type for path "test". Expected scalar, but got array.');
         $node->normalize([]);
     }
     public function testNormalizeThrowsExceptionWithErrorMessage()
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
         $node->setInfo('"the test value"');
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidTypeException');
         $this->expectExceptionMessage("Invalid type for path \"test\". Expected scalar, but got array.\nHint: \"the test value\"");
         $node->normalize([]);
     }
@@ -86,7 +86,7 @@ class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testValidNonEmptyValues($value)
     {
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
         $node->setAllowEmptyValue(\false);
         $this->assertSame($value, $node->finalize($value));
     }
@@ -101,8 +101,8 @@ class ScalarNodeTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testNotAllowedEmptyValuesThrowException($value)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
-        $node = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\ScalarNode('test');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
+        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode('test');
         $node->setAllowEmptyValue(\false);
         $node->finalize($value);
     }

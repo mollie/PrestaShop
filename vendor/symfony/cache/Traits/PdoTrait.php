@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ea00cc67502b\Doctrine\DBAL\Connection;
-use _PhpScoper5ea00cc67502b\Doctrine\DBAL\DBALException;
-use _PhpScoper5ea00cc67502b\Doctrine\DBAL\Driver\ServerInfoAwareConnection;
-use _PhpScoper5ea00cc67502b\Doctrine\DBAL\Schema\Schema;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use _PhpScoper5eddef0da618a\Doctrine\DBAL\Connection;
+use _PhpScoper5eddef0da618a\Doctrine\DBAL\DBALException;
+use _PhpScoper5eddef0da618a\Doctrine\DBAL\Driver\ServerInfoAwareConnection;
+use _PhpScoper5eddef0da618a\Doctrine\DBAL\Schema\Schema;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
 /**
  * @internal
  */
@@ -36,19 +36,19 @@ trait PdoTrait
     private function init($connOrDsn, $namespace, $defaultLifetime, array $options)
     {
         if (isset($namespace[0]) && \preg_match('#[^-+.A-Za-z0-9]#', $namespace, $match)) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Namespace contains "%s" but only characters in [-+.A-Za-z0-9] are allowed.', $match[0]));
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Namespace contains "%s" but only characters in [-+.A-Za-z0-9] are allowed.', $match[0]));
         }
         if ($connOrDsn instanceof \PDO) {
             if (\PDO::ERRMODE_EXCEPTION !== $connOrDsn->getAttribute(\PDO::ATTR_ERRMODE)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', __CLASS__));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('"%s" requires PDO error mode attribute be set to throw Exceptions (i.e. $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)).', __CLASS__));
             }
             $this->conn = $connOrDsn;
-        } elseif ($connOrDsn instanceof \_PhpScoper5ea00cc67502b\Doctrine\DBAL\Connection) {
+        } elseif ($connOrDsn instanceof \_PhpScoper5eddef0da618a\Doctrine\DBAL\Connection) {
             $this->conn = $connOrDsn;
         } elseif (\is_string($connOrDsn)) {
             $this->dsn = $connOrDsn;
         } else {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('"%s" requires PDO or Doctrine\\DBAL\\Connection instance or DSN string as first argument, "%s" given.', __CLASS__, \is_object($connOrDsn) ? \get_class($connOrDsn) : \gettype($connOrDsn)));
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('"%s" requires PDO or Doctrine\\DBAL\\Connection instance or DSN string as first argument, "%s" given.', __CLASS__, \is_object($connOrDsn) ? \get_class($connOrDsn) : \gettype($connOrDsn)));
         }
         $this->table = isset($options['db_table']) ? $options['db_table'] : $this->table;
         $this->idCol = isset($options['db_id_col']) ? $options['db_id_col'] : $this->idCol;
@@ -75,12 +75,12 @@ trait PdoTrait
     {
         // connect if we are not yet
         $conn = $this->getConnection();
-        if ($conn instanceof \_PhpScoper5ea00cc67502b\Doctrine\DBAL\Connection) {
+        if ($conn instanceof \_PhpScoper5eddef0da618a\Doctrine\DBAL\Connection) {
             $types = ['mysql' => 'binary', 'sqlite' => 'text', 'pgsql' => 'string', 'oci' => 'string', 'sqlsrv' => 'string'];
             if (!isset($types[$this->driver])) {
                 throw new \DomainException(\sprintf('Creating the cache table is currently not implemented for PDO driver "%s".', $this->driver));
             }
-            $schema = new \_PhpScoper5ea00cc67502b\Doctrine\DBAL\Schema\Schema();
+            $schema = new \_PhpScoper5eddef0da618a\Doctrine\DBAL\Schema\Schema();
             $table = $schema->createTable($this->table);
             $table->addColumn($this->idCol, $types[$this->driver], ['length' => 255]);
             $table->addColumn($this->dataCol, 'blob', ['length' => 16777215]);
@@ -149,7 +149,12 @@ trait PdoTrait
             $stmt->bindValue(++$i, $id);
         }
         $stmt->execute();
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        if (\method_exists($stmt, 'iterateNumeric')) {
+            $stmt = $stmt->iterateNumeric();
+        } else {
+            $stmt->setFetchMode(\PDO::FETCH_NUM);
+        }
+        foreach ($stmt as $row) {
             if (null === $row[1]) {
                 $expired[] = $row[0];
             } else {
@@ -282,7 +287,7 @@ trait PdoTrait
             if (null === $driver && !$stmt->rowCount()) {
                 try {
                     $insertStmt->execute();
-                } catch (\_PhpScoper5ea00cc67502b\Doctrine\DBAL\DBALException $e) {
+                } catch (\_PhpScoper5eddef0da618a\Doctrine\DBAL\DBALException $e) {
                 } catch (\PDOException $e) {
                     // A concurrent write won, let it be
                 }
@@ -336,7 +341,7 @@ trait PdoTrait
             $conn = $this->conn instanceof \PDO ? $this->conn : $this->conn->getWrappedConnection();
             if ($conn instanceof \PDO) {
                 $this->serverVersion = $conn->getAttribute(\PDO::ATTR_SERVER_VERSION);
-            } elseif ($conn instanceof \_PhpScoper5ea00cc67502b\Doctrine\DBAL\Driver\ServerInfoAwareConnection) {
+            } elseif ($conn instanceof \_PhpScoper5eddef0da618a\Doctrine\DBAL\Driver\ServerInfoAwareConnection) {
                 $this->serverVersion = $conn->getServerVersion();
             } else {
                 $this->serverVersion = '0';

@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Loader;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Loader;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-class IniFileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+class IniFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     protected $container;
     protected $loader;
     protected function setUp()
     {
-        $this->container = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $this->loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator(\realpath(__DIR__ . '/../Fixtures/') . '/ini'));
+        $this->container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $this->loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(\realpath(__DIR__ . '/../Fixtures/') . '/ini'));
     }
     public function testIniFileCanBeLoaded()
     {
@@ -101,19 +101,19 @@ class IniFileLoaderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestC
     }
     public function testExceptionIsRaisedWhenIniFileCannotBeParsed()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The "nonvalid.ini" file is not valid.');
         @$this->loader->load('nonvalid.ini');
     }
     public function testExceptionIsRaisedWhenIniFileIsAlmostValid()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The "almostvalid.ini" file is not valid.');
         @$this->loader->load('almostvalid.ini');
     }
     public function testSupports()
     {
-        $loader = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Loader\IniFileLoader(new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocator());
+        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator());
         $this->assertTrue($loader->supports('foo.ini'), '->supports() returns true if the resource is loadable');
         $this->assertFalse($loader->supports('foo.foo'), '->supports() returns false if the resource is not loadable');
         $this->assertTrue($loader->supports('with_wrong_ext.yml', 'ini'), '->supports() returns true if the resource with forced type is loadable');

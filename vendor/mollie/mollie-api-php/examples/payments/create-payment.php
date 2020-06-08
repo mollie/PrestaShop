@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * How to prepare a new payment with the Mollie API.
@@ -35,12 +35,12 @@ try {
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper5ea00cc67502b\database_write($orderId, $payment->status);
+    \_PhpScoper5eddef0da618a\database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code
      */
     \header("Location: " . $payment->getCheckoutUrl(), \true, 303);
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

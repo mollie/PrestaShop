@@ -5,7 +5,7 @@ services:
         tags:
             - name: foo
 
-    _PhpScoper5ea00cc67502b\Acme\Foo: ~
+    _PhpScoper5eddef0da618a\Acme\Foo: ~
 
     with_defaults:
         class: Foo
@@ -26,7 +26,7 @@ services:
 
     with_defaults_aliased_short: '@with_defaults'
 
-    _PhpScoper5ea00cc67502b\Acme\WithShortCutArgs: [foo]
+    _PhpScoper5eddef0da618a\Acme\WithShortCutArgs: [foo]
 
     child_def:
         parent: with_defaults

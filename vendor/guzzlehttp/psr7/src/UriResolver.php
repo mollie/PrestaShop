@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface;
 /**
  * Resolves a URI reference in the context of a base URI and the opposite way.
  *
@@ -54,7 +54,7 @@ final class UriResolver
      * @return UriInterface
      * @link http://tools.ietf.org/html/rfc3986#section-5.2
      */
-    public static function resolve(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $base, \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $rel)
+    public static function resolve(\_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $base, \_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $rel)
     {
         if ((string) $rel === '') {
             // we can simply return the same base URI instance for this same-document reference
@@ -91,7 +91,7 @@ final class UriResolver
                 $targetQuery = $rel->getQuery();
             }
         }
-        return new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Uri(\_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Uri::composeComponents($base->getScheme(), $targetAuthority, $targetPath, $targetQuery, $rel->getFragment()));
+        return new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Uri(\_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Uri::composeComponents($base->getScheme(), $targetAuthority, $targetPath, $targetQuery, $rel->getFragment()));
     }
     /**
      * Returns the target URI as a relative reference from the base URI.
@@ -119,12 +119,12 @@ final class UriResolver
      *
      * @return UriInterface The relative URI reference
      */
-    public static function relativize(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $base, \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $target)
+    public static function relativize(\_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $base, \_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $target)
     {
         if ($target->getScheme() !== '' && ($base->getScheme() !== $target->getScheme() || $target->getAuthority() === '' && $base->getAuthority() !== '')) {
             return $target;
         }
-        if (\_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Uri::isRelativePathReference($target)) {
+        if (\_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Uri::isRelativePathReference($target)) {
             // As the target is already highly relative we return it as-is. It would be possible to resolve
             // the target with `$target = self::resolve($base, $target);` and then try make it more relative
             // by removing a duplicate query. But let's not do that automatically.
@@ -153,7 +153,7 @@ final class UriResolver
         }
         return $emptyPathUri;
     }
-    private static function getRelativePath(\_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $base, \_PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface $target)
+    private static function getRelativePath(\_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $base, \_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $target)
     {
         $sourceSegments = \explode('/', $base->getPath());
         $targetSegments = \explode('/', $target->getPath());

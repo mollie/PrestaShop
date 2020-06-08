@@ -33,12 +33,12 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5ea00cc67502b\PrestaShop\Decimal\Number;
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethodService;

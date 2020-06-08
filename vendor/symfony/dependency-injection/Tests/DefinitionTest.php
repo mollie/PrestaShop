@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
+class DefinitionTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEquals('stdClass', $def->getClass(), '__construct() takes the class name as its first argument');
         $this->assertSame(['class' => \true], $def->getChanges());
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass', ['foo']);
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass', ['foo']);
         $this->assertEquals(['foo'], $def->getArguments(), '__construct() takes an optional array of arguments as its second argument');
     }
     public function testSetGetFactory()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition();
         $this->assertSame($def, $def->setFactory('foo'), '->setFactory() implements a fluent interface');
         $this->assertEquals('foo', $def->getFactory(), '->getFactory() returns the factory');
         $def->setFactory('Foo::bar');
@@ -33,37 +33,37 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testSetGetClass()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->setClass('foo'), '->setClass() implements a fluent interface');
         $this->assertEquals('foo', $def->getClass(), '->getClass() returns the class name');
     }
     public function testSetGetDecoratedService()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertNull($def->getDecoratedService());
         $def->setDecoratedService('foo', 'foo.renamed', 5);
         $this->assertEquals(['foo', 'foo.renamed', 5], $def->getDecoratedService());
         $def->setDecoratedService(null);
         $this->assertNull($def->getDecoratedService());
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertNull($def->getDecoratedService());
         $def->setDecoratedService('foo', 'foo.renamed');
         $this->assertEquals(['foo', 'foo.renamed', 0], $def->getDecoratedService());
         $def->setDecoratedService(null);
         $this->assertNull($def->getDecoratedService());
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->setDecoratedService('foo');
         $this->assertEquals(['foo', null, 0], $def->getDecoratedService());
         $def->setDecoratedService(null);
         $this->assertNull($def->getDecoratedService());
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('The decorated service inner name for "foo" must be different than the service name itself.');
         $def->setDecoratedService('foo', 'foo');
     }
     public function testArguments()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->setArguments(['foo']), '->setArguments() implements a fluent interface');
         $this->assertEquals(['foo'], $def->getArguments(), '->getArguments() returns the arguments');
         $this->assertSame($def, $def->addArgument('bar'), '->addArgument() implements a fluent interface');
@@ -71,7 +71,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testMethodCalls()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->setMethodCalls([['foo', ['foo']]]), '->setMethodCalls() implements a fluent interface');
         $this->assertEquals([['foo', ['foo']]], $def->getMethodCalls(), '->getMethodCalls() returns the methods to call');
         $this->assertSame($def, $def->addMethodCall('bar', ['bar']), '->addMethodCall() implements a fluent interface');
@@ -83,55 +83,55 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testExceptionOnEmptyMethodCall()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Method name cannot be empty.');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->addMethodCall('');
     }
     public function testSetGetFile()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->setFile('foo'), '->setFile() implements a fluent interface');
         $this->assertEquals('foo', $def->getFile(), '->getFile() returns the file to include');
     }
     public function testSetIsShared()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertTrue($def->isShared(), '->isShared() returns true by default');
         $this->assertSame($def, $def->setShared(\false), '->setShared() implements a fluent interface');
         $this->assertFalse($def->isShared(), '->isShared() returns false if the instance must not be shared');
     }
     public function testSetIsPublic()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertTrue($def->isPublic(), '->isPublic() returns true by default');
         $this->assertSame($def, $def->setPublic(\false), '->setPublic() implements a fluent interface');
         $this->assertFalse($def->isPublic(), '->isPublic() returns false if the instance must not be public.');
     }
     public function testSetIsSynthetic()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isSynthetic(), '->isSynthetic() returns false by default');
         $this->assertSame($def, $def->setSynthetic(\true), '->setSynthetic() implements a fluent interface');
         $this->assertTrue($def->isSynthetic(), '->isSynthetic() returns true if the service is synthetic.');
     }
     public function testSetIsLazy()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isLazy(), '->isLazy() returns false by default');
         $this->assertSame($def, $def->setLazy(\true), '->setLazy() implements a fluent interface');
         $this->assertTrue($def->isLazy(), '->isLazy() returns true if the service is lazy.');
     }
     public function testSetIsAbstract()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isAbstract(), '->isAbstract() returns false by default');
         $this->assertSame($def, $def->setAbstract(\true), '->setAbstract() implements a fluent interface');
         $this->assertTrue($def->isAbstract(), '->isAbstract() returns true if the instance must not be public.');
     }
     public function testSetIsDeprecated()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isDeprecated(), '->isDeprecated() returns false by default');
         $this->assertSame($def, $def->setDeprecated(\true), '->setDeprecated() implements a fluent interface');
         $this->assertTrue($def->isDeprecated(), '->isDeprecated() returns true if the instance should not be used anymore.');
@@ -142,8 +142,8 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testSetDeprecatedWithInvalidDeprecationTemplate($message)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->setDeprecated(\false, $message);
     }
     public function invalidDeprecationMessageProvider()
@@ -152,13 +152,13 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testSetGetConfigurator()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->setConfigurator('foo'), '->setConfigurator() implements a fluent interface');
         $this->assertEquals('foo', $def->getConfigurator(), '->getConfigurator() returns the configurator');
     }
     public function testClearTags()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->clearTags(), '->clearTags() implements a fluent interface');
         $def->addTag('foo', ['foo' => 'bar']);
         $def->clearTags();
@@ -166,7 +166,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testClearTag()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertSame($def, $def->clearTags(), '->clearTags() implements a fluent interface');
         $def->addTag('1foo1', ['foo1' => 'bar1']);
         $def->addTag('2foo2', ['foo2' => 'bar2']);
@@ -181,7 +181,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testTags()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEquals([], $def->getTag('foo'), '->getTag() returns an empty array if the tag is not defined');
         $this->assertFalse($def->hasTag('foo'));
         $this->assertSame($def, $def->addTag('foo'), '->addTag() implements a fluent interface');
@@ -194,7 +194,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testSetArgument()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->addArgument('foo');
         $this->assertSame(['foo'], $def->getArguments());
         $this->assertSame($def, $def->replaceArgument(0, 'moo'));
@@ -206,7 +206,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     public function testGetArgumentShouldCheckBounds()
     {
         $this->expectException('OutOfBoundsException');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->addArgument('foo');
         $def->getArgument(1);
     }
@@ -214,7 +214,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $this->expectException('OutOfBoundsException');
         $this->expectExceptionMessage('The index "1" is not in the range [0, 0].');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->addArgument('foo');
         $def->replaceArgument(1, 'bar');
     }
@@ -222,26 +222,26 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     {
         $this->expectException('OutOfBoundsException');
         $this->expectExceptionMessage('Cannot replace arguments if none have been configured yet.');
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $def->replaceArgument(0, 'bar');
     }
     public function testSetGetProperties()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEquals([], $def->getProperties());
         $this->assertSame($def, $def->setProperties(['foo' => 'bar']));
         $this->assertEquals(['foo' => 'bar'], $def->getProperties());
     }
     public function testSetProperty()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEquals([], $def->getProperties());
         $this->assertSame($def, $def->setProperty('foo', 'bar'));
         $this->assertEquals(['foo' => 'bar'], $def->getProperties());
     }
     public function testAutowired()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isAutowired());
         $def->setAutowired(\true);
         $this->assertTrue($def->isAutowired());
@@ -250,12 +250,12 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testChangesNoChanges()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition();
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition();
         $this->assertSame([], $def->getChanges());
     }
     public function testGetChangesWithChanges()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass', ['fooarg']);
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass', ['fooarg']);
         $def->setAbstract(\true);
         $def->setAutowired(\true);
         $def->setConfigurator('configuration_func');
@@ -282,7 +282,7 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testTypes()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEquals([], $def->getAutowiringTypes());
         $this->assertSame($def, $def->setAutowiringTypes(['Foo']));
         $this->assertEquals(['Foo'], $def->getAutowiringTypes());
@@ -293,14 +293,14 @@ class DefinitionTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
     }
     public function testShouldAutoconfigure()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertFalse($def->isAutoconfigured());
         $def->setAutoconfigured(\true);
         $this->assertTrue($def->isAutoconfigured());
     }
     public function testAddError()
     {
-        $def = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition('stdClass');
+        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition('stdClass');
         $this->assertEmpty($def->getErrors());
         $def->addError('First error');
         $def->addError('Second error');

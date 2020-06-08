@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpArrayAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 /**
  * @group time-sensitive
  */
-class PhpArrayAdapterWithFallbackTest extends \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class PhpArrayAdapterWithFallbackTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     protected $skippedTests = ['testGetItemInvalidKeys' => 'PhpArrayAdapter does not throw exceptions on invalid key.', 'testGetItemsInvalidKeys' => 'PhpArrayAdapter does not throw exceptions on invalid key.', 'testHasItemInvalidKeys' => 'PhpArrayAdapter does not throw exceptions on invalid key.', 'testDeleteItemInvalidKeys' => 'PhpArrayAdapter does not throw exceptions on invalid key.', 'testDeleteItemsInvalidKeys' => 'PhpArrayAdapter does not throw exceptions on invalid key.', 'testPrune' => 'PhpArrayAdapter just proxies'];
     protected static $file;
@@ -27,11 +27,11 @@ class PhpArrayAdapterWithFallbackTest extends \_PhpScoper5ea00cc67502b\Symfony\C
     {
         $this->createCachePool()->clear();
         if (\file_exists(\sys_get_temp_dir() . '/symfony-cache')) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
+            \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
         }
     }
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\PhpArrayAdapter(self::$file, new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\FilesystemAdapter('php-array-fallback', $defaultLifetime));
+        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\PhpArrayAdapter(self::$file, new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter('php-array-fallback', $defaultLifetime));
     }
 }

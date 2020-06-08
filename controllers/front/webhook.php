@@ -33,14 +33,14 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\RefundStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
 use PrestaShop\PrestaShop\Adapter\CoreException;

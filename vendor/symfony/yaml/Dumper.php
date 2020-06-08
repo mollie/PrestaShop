@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Yaml;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue;
+use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue;
 /**
  * Dumper dumps PHP variables to YAML strings.
  *
@@ -63,7 +63,7 @@ class Dumper
         if (\is_bool($flags)) {
             @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
-                $flags = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE;
+                $flags = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
@@ -71,33 +71,33 @@ class Dumper
         if (\func_num_args() >= 5) {
             @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::DUMP_OBJECT flag instead.', \E_USER_DEPRECATED);
             if (\func_get_arg(4)) {
-                $flags |= \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT;
+                $flags |= \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_OBJECT;
             }
         }
         $output = '';
         $prefix = $indent ? \str_repeat(' ', $indent) : '';
         $dumpObjectAsInlineMap = \true;
-        if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($input instanceof \ArrayObject || $input instanceof \stdClass)) {
+        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($input instanceof \ArrayObject || $input instanceof \stdClass)) {
             $dumpObjectAsInlineMap = empty((array) $input);
         }
-        if ($inline <= 0 || !\is_array($input) && !$input instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue && $dumpObjectAsInlineMap || empty($input)) {
-            $output .= $prefix . \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Inline::dump($input, $flags);
+        if ($inline <= 0 || !\is_array($input) && !$input instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue && $dumpObjectAsInlineMap || empty($input)) {
+            $output .= $prefix . \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::dump($input, $flags);
         } else {
-            $dumpAsMap = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Inline::isHash($input);
+            $dumpAsMap = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::isHash($input);
             foreach ($input as $key => $value) {
-                if ($inline >= 1 && \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value) && \false !== \strpos($value, "\n") && \false === \strpos($value, "\r")) {
+                if ($inline >= 1 && \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value) && \false !== \strpos($value, "\n") && \false === \strpos($value, "\r")) {
                     // If the first line starts with a space character, the spec requires a blockIndicationIndicator
                     // http://www.yaml.org/spec/1.2/spec.html#id2793979
                     $blockIndentationIndicator = ' ' === \substr($value, 0, 1) ? (string) $this->indentation : '';
-                    $output .= \sprintf("%s%s%s |%s\n", $prefix, $dumpAsMap ? \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', '', $blockIndentationIndicator);
+                    $output .= \sprintf("%s%s%s |%s\n", $prefix, $dumpAsMap ? \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', '', $blockIndentationIndicator);
                     foreach (\explode("\n", $value) as $row) {
                         $output .= \sprintf("%s%s%s\n", $prefix, \str_repeat(' ', $this->indentation), $row);
                     }
                     continue;
                 }
-                if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue) {
-                    $output .= \sprintf('%s%s !%s', $prefix, $dumpAsMap ? \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', $value->getTag());
-                    if ($inline >= 1 && \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value->getValue()) && \false !== \strpos($value->getValue(), "\n") && \false === \strpos($value->getValue(), "\r\n")) {
+                if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue) {
+                    $output .= \sprintf('%s%s !%s', $prefix, $dumpAsMap ? \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', $value->getTag());
+                    if ($inline >= 1 && \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value->getValue()) && \false !== \strpos($value->getValue(), "\n") && \false === \strpos($value->getValue(), "\r\n")) {
                         // If the first line starts with a space character, the spec requires a blockIndicationIndicator
                         // http://www.yaml.org/spec/1.2/spec.html#id2793979
                         $blockIndentationIndicator = ' ' === \substr($value->getValue(), 0, 1) ? (string) $this->indentation : '';
@@ -116,11 +116,11 @@ class Dumper
                     continue;
                 }
                 $dumpObjectAsInlineMap = \true;
-                if (\_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($value instanceof \ArrayObject || $value instanceof \stdClass)) {
+                if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::DUMP_OBJECT_AS_MAP & $flags && ($value instanceof \ArrayObject || $value instanceof \stdClass)) {
                     $dumpObjectAsInlineMap = empty((array) $value);
                 }
                 $willBeInlined = $inline - 1 <= 0 || !\is_array($value) && $dumpObjectAsInlineMap || empty($value);
-                $output .= \sprintf('%s%s%s%s', $prefix, $dumpAsMap ? \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', $willBeInlined ? ' ' : "\n", $this->dump($value, $inline - 1, $willBeInlined ? 0 : $indent + $this->indentation, $flags)) . ($willBeInlined ? "\n" : '');
+                $output .= \sprintf('%s%s%s%s', $prefix, $dumpAsMap ? \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::dump($key, $flags) . ':' : '-', $willBeInlined ? ' ' : "\n", $this->dump($value, $inline - 1, $willBeInlined ? 0 : $indent + $this->indentation, $flags)) . ($willBeInlined ? "\n" : '');
             }
         }
         return $output;

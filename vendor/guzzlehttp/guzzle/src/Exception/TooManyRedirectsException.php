@@ -1,7 +1,7 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Exception;
 
-class TooManyRedirectsException extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Exception\RequestException
+class TooManyRedirectsException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException
 {
 }

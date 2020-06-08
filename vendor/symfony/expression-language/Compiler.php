@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage;
 
 /**
  * Compiles a node to PHP code.
@@ -46,12 +46,12 @@ class Compiler
      *
      * @return $this
      */
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $node)
+    public function compile(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node $node)
     {
         $node->compile($this);
         return $this;
     }
-    public function subcompile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $node)
+    public function subcompile(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node $node)
     {
         $current = $this->source;
         $this->source = '';

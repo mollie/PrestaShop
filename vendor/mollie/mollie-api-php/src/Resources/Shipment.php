@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient;
-class Shipment extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
+class Shipment extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -82,7 +82,7 @@ class Shipment extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
      */
     public function lines()
     {
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\OrderLine::class, $this->lines);
+        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \_PhpScoper5eddef0da618a\Mollie\Api\Resources\OrderLine::class, $this->lines);
     }
     /**
      * Get the Order object for this shipment
@@ -106,7 +106,7 @@ class Shipment extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResourc
             return $this;
         }
         $body = \json_encode(["tracking" => $this->tracking]);
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5ea00cc67502b\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Shipment($this->client));
+        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Shipment($this->client));
     }
 }

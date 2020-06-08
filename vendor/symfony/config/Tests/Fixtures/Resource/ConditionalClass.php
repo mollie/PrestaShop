@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Resource;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Resource;
 
-if (!\class_exists(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Fixtures\Resource\MissingClass::class)) {
+if (!\class_exists(\_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Resource\MissingClass::class)) {
     class ConditionalClass
     {
     }

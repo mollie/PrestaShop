@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Promise;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
 
 /**
  * Represents a promise that iterates over many promises and invokes
  * side-effect functions in the process.
  */
-class EachPromise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromisorInterface
+class EachPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromisorInterface
 {
     private $pending = [];
     /** @var \Iterator */
@@ -74,7 +74,7 @@ class EachPromise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promiso
     private function createPromise()
     {
         $this->mutex = \false;
-        $this->aggregate = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promise(function () {
+        $this->aggregate = new \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Promise(function () {
             \reset($this->pending);
             if (empty($this->pending) && !$this->iterable->valid()) {
                 $this->aggregate->resolve(null);
@@ -85,7 +85,7 @@ class EachPromise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promiso
             while ($promise = \current($this->pending)) {
                 \next($this->pending);
                 $promise->wait();
-                if ($this->aggregate->getState() !== \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface::PENDING) {
+                if ($this->aggregate->getState() !== \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface::PENDING) {
                     return;
                 }
             }
@@ -166,7 +166,7 @@ class EachPromise implements \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\Promiso
     private function step($idx)
     {
         // If the promise was already resolved, then ignore this step.
-        if ($this->aggregate->getState() !== \_PhpScoper5ea00cc67502b\GuzzleHttp\Promise\PromiseInterface::PENDING) {
+        if ($this->aggregate->getState() !== \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface::PENDING) {
             return;
         }
         unset($this->pending[$idx]);

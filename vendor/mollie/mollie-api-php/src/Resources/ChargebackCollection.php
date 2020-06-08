@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
 
-class ChargebackCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CursorCollection
+class ChargebackCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class ChargebackCollection extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Chargeback($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Chargeback($this->client);
     }
 }

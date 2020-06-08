@@ -114,7 +114,6 @@ class Installer
             'actionEmailSendBefore',
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
-            'actionEmailSendBefore'
         ];
     }
 

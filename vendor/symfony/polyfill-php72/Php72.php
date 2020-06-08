@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Polyfill\Php72;
+namespace _PhpScoper5eddef0da618a\Symfony\Polyfill\Php72;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -80,7 +80,8 @@ final class Php72
         if (null === ($hash = \spl_object_hash($object))) {
             return;
         }
-        return self::$hashMask ^ \hexdec(\substr($hash, 16 - \PHP_INT_SIZE, \PHP_INT_SIZE));
+        // On 32-bit systems, PHP_INT_SIZE is 4,
+        return self::$hashMask ^ \hexdec(\substr($hash, 16 - (\PHP_INT_SIZE * 2 - 1), \PHP_INT_SIZE * 2 - 1));
     }
     public static function sapi_windows_vt100_support($stream, $enable = null)
     {
@@ -132,7 +133,7 @@ final class Php72
             \debug_zval_dump($obj);
             self::$hashMask = (int) \substr(\ob_get_clean(), 17);
         }
-        self::$hashMask ^= \hexdec(\substr(\spl_object_hash($obj), 16 - \PHP_INT_SIZE, \PHP_INT_SIZE));
+        self::$hashMask ^= \hexdec(\substr(\spl_object_hash($obj), 16 - (\PHP_INT_SIZE * 2 - 1), \PHP_INT_SIZE * 2 - 1));
     }
     public static function mb_chr($code, $encoding = null)
     {

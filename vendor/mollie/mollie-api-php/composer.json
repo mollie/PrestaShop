@@ -66,13 +66,13 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\Mollie\\Api\\": "src\/"
+            "_PhpScoper5eddef0da618a\\Mollie\\Api\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\Tests\\": "tests\/",
-            "_PhpScoper5ea00cc67502b\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
+            "_PhpScoper5eddef0da618a\\Tests\\": "tests\/",
+            "_PhpScoper5eddef0da618a\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
         }
     },
     "scripts": {

@@ -108,8 +108,7 @@ class OrderStatusService
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
-        $shipStatuses = json_decode(Configuration::get(Config::MOLLIE_AUTO_SHIP_STATUSES));
-        if (in_array($statusId, $shipStatuses)) {
+        if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);
         } else {
             $history->add();
