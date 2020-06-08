@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\ServerRequestInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UriInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\ServerRequestInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\UploadedFileInterface;
 /**
  * Server-side HTTP request
  *
@@ -21,7 +21,7 @@ use _PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface;
  * implemented such that they retain the internal state of the current
  * message and return a new instance that contains the changed state.
  */
-class ServerRequest extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Request implements \_PhpScoper5ea00cc67502b\Psr\Http\Message\ServerRequestInterface
+class ServerRequest extends \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Request implements \_PhpScoper5eddef0da618a\Psr\Http\Message\ServerRequestInterface
 {
     /**
      * @var array
@@ -71,7 +71,7 @@ class ServerRequest extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Request imp
     {
         $normalized = [];
         foreach ($files as $key => $value) {
-            if ($value instanceof \_PhpScoper5ea00cc67502b\Psr\Http\Message\UploadedFileInterface) {
+            if ($value instanceof \_PhpScoper5eddef0da618a\Psr\Http\Message\UploadedFileInterface) {
                 $normalized[$key] = $value;
             } elseif (\is_array($value) && isset($value['tmp_name'])) {
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
@@ -98,7 +98,7 @@ class ServerRequest extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Request imp
         if (\is_array($value['tmp_name'])) {
             return self::normalizeNestedFileSpec($value);
         }
-        return new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\UploadedFile($value['tmp_name'], (int) $value['size'], (int) $value['error'], $value['name'], $value['type']);
+        return new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\UploadedFile($value['tmp_name'], (int) $value['size'], (int) $value['error'], $value['name'], $value['type']);
     }
     /**
      * Normalize an array of file specifications.
@@ -133,9 +133,9 @@ class ServerRequest extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Request imp
         $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
         $headers = getallheaders();
         $uri = self::getUriFromGlobals();
-        $body = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\CachingStream(new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\LazyOpenStream('php://input', 'r+'));
+        $body = new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\CachingStream(new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\LazyOpenStream('php://input', 'r+'));
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? \str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
-        $serverRequest = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
+        $serverRequest = new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
         return $serverRequest->withCookieParams($_COOKIE)->withQueryParams($_GET)->withParsedBody($_POST)->withUploadedFiles(self::normalizeFiles($_FILES));
     }
     private static function extractHostAndPortFromAuthority($authority)
@@ -156,7 +156,7 @@ class ServerRequest extends \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Request imp
      */
     public static function getUriFromGlobals()
     {
-        $uri = new \_PhpScoper5ea00cc67502b\GuzzleHttp\Psr7\Uri('');
+        $uri = new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Uri('');
         $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
         $hasPort = \false;
         if (isset($_SERVER['HTTP_HOST'])) {

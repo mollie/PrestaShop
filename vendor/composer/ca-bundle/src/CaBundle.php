@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Composer\CaBundle;
+namespace _PhpScoper5eddef0da618a\Composer\CaBundle;
 
-use _PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Process\PhpProcess;
+use _PhpScoper5eddef0da618a\Psr\Log\LoggerInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Process\PhpProcess;
 /**
  * @author Chris Smith <chris@cs278.org>
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -58,7 +58,7 @@ class CaBundle
      * @param  LoggerInterface $logger optional logger for information about which CA files were loaded
      * @return string          path to a CA bundle file or directory
      */
-    public static function getSystemCaRootBundlePath(\_PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface $logger = null)
+    public static function getSystemCaRootBundlePath(\_PhpScoper5eddef0da618a\Psr\Log\LoggerInterface $logger = null)
     {
         if (self::$caPath !== null) {
             return self::$caPath;
@@ -141,7 +141,7 @@ class CaBundle
      *
      * @return bool
      */
-    public static function validateCaFile($filename, \_PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface $logger = null)
+    public static function validateCaFile($filename, \_PhpScoper5eddef0da618a\Psr\Log\LoggerInterface $logger = null)
     {
         static $warned = \false;
         if (isset(self::$caFileValidity[$filename])) {
@@ -205,7 +205,7 @@ class CaBundle
             return self::$useOpensslParse = \true;
         }
         // Symfony Process component is missing so we assume it is unsafe at this point
-        if (!\class_exists('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Process\\PhpProcess')) {
+        if (!\class_exists('_PhpScoper5eddef0da618a\\Symfony\\Component\\Process\\PhpProcess')) {
             return self::$useOpensslParse = \false;
         }
         // This is where things get crazy, because distros backport security
@@ -226,7 +226,7 @@ var_dump(PHP_VERSION, $info['issuer']['emailAddress'], $info['validFrom_time_t']
 EOT;
         $script = '<' . "?php\n" . \sprintf($script, $cert);
         try {
-            $process = new \_PhpScoper5ea00cc67502b\Symfony\Component\Process\PhpProcess($script);
+            $process = new \_PhpScoper5eddef0da618a\Symfony\Component\Process\PhpProcess($script);
             $process->mustRun();
         } catch (\Exception $e) {
             // In the case of any exceptions just accept it is not possible to
@@ -260,7 +260,7 @@ EOT;
         }
         return \false;
     }
-    private static function caFileUsable($certFile, \_PhpScoper5ea00cc67502b\Psr\Log\LoggerInterface $logger = null)
+    private static function caFileUsable($certFile, \_PhpScoper5eddef0da618a\Psr\Log\LoggerInterface $logger = null)
     {
         return $certFile && @\is_file($certFile) && @\is_readable($certFile) && static::validateCaFile($certFile, $logger);
     }

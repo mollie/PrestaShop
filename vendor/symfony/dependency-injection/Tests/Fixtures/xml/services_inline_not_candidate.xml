@@ -3,9 +3,9 @@
   <services>
     <service id="foo" class="stdClass">
       <argument type="service">
-        <service class="_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\D"/>
+        <service class="_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\D"/>
       </argument>
     </service>
-    <service id="autowired" class="_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\E" autowire="true"/>
+    <service id="autowired" class="_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\E" autowire="true"/>
   </services>
 </container>

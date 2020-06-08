@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Definition\Builder;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Definition\Builder;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder;
-class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\TreeBuilder;
+class ExprBuilderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     public function testAlwaysExpression()
     {
@@ -82,7 +82,7 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
     /**
      * @dataProvider castToArrayValues
      */
-    public function testcastToArrayExpression($configValue, $expectedValue)
+    public function testCastToArrayExpression($configValue, $expectedValue)
     {
         $test = $this->getTestBuilder()->castToArray()->end();
         $this->assertFinalizedValueIs($expectedValue, $test, ['key' => $configValue]);
@@ -96,7 +96,7 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
     }
     public function testThenInvalid()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $test = $this->getTestBuilder()->ifString()->thenInvalid('Invalid value')->end();
         $this->finalizeTestBuilder($test);
     }
@@ -126,7 +126,7 @@ class ExprBuilderTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCas
      */
     protected function getTestBuilder()
     {
-        $builder = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $builder = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         return $builder->root('test')->children()->variableNode('key')->validate();
     }
     /**

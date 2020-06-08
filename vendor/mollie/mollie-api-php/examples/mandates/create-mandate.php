@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * Create a customer mandate via the Mollie API.
@@ -18,8 +18,8 @@ try {
     /*
      * Create a SEPA Direct Debit mandate for the customer
      */
-    $mandate = $customer->createMandate(["method" => \_PhpScoper5ea00cc67502b\Mollie\Api\Types\MandateMethod::DIRECTDEBIT, "consumerAccount" => 'NL34ABNA0243341423', "consumerName" => 'B. A. Example']);
+    $mandate = $customer->createMandate(["method" => \_PhpScoper5eddef0da618a\Mollie\Api\Types\MandateMethod::DIRECTDEBIT, "consumerAccount" => 'NL34ABNA0243341423', "consumerName" => 'B. A. Example']);
     echo "<p>Mandate created with id " . $mandate->id . " for customer " . $customer->name . "</p>";
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

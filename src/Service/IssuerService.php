@@ -37,7 +37,7 @@ namespace Mollie\Service;
 
 use Context;
 use Mollie;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use Mollie\Repository\PaymentMethodRepository;
 
 class IssuerService

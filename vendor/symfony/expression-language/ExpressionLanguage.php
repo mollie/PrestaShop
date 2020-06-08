@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage;
 
-use _PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheAdapter;
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface;
+use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheAdapter;
+use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface;
 /**
  * Allows to compile and evaluate expressions written in your own DSL.
  *
@@ -33,14 +33,14 @@ class ExpressionLanguage
     public function __construct($cache = null, array $providers = [])
     {
         if (null !== $cache) {
-            if ($cache instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface) {
-                @\trigger_error(\sprintf('Passing an instance of %s as constructor argument for %s is deprecated as of 3.2 and will be removed in 4.0. Pass an instance of %s instead.', \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface::class, self::class, \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface::class), \E_USER_DEPRECATED);
-                $cache = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheAdapter($cache);
-            } elseif (!$cache instanceof \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface) {
-                throw new \InvalidArgumentException(\sprintf('Cache argument has to implement "%s".', \_PhpScoper5ea00cc67502b\Psr\Cache\CacheItemPoolInterface::class));
+            if ($cache instanceof \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface) {
+                @\trigger_error(\sprintf('Passing an instance of %s as constructor argument for %s is deprecated as of 3.2 and will be removed in 4.0. Pass an instance of %s instead.', \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface::class, self::class, \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface::class), \E_USER_DEPRECATED);
+                $cache = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheAdapter($cache);
+            } elseif (!$cache instanceof \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface) {
+                throw new \InvalidArgumentException(\sprintf('Cache argument has to implement "%s".', \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface::class));
             }
         }
-        $this->cache = $cache ?: new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $this->cache = $cache ?: new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter();
         $this->registerFunctions();
         foreach ($providers as $provider) {
             $this->registerProvider($provider);
@@ -80,7 +80,7 @@ class ExpressionLanguage
      */
     public function parse($expression, $names)
     {
-        if ($expression instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression) {
+        if ($expression instanceof \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParsedExpression) {
             return $expression;
         }
         \asort($names);
@@ -91,7 +91,7 @@ class ExpressionLanguage
         $cacheItem = $this->cache->getItem(\rawurlencode($expression . '//' . \implode('|', $cacheKeyItems)));
         if (null === ($parsedExpression = $cacheItem->get())) {
             $nodes = $this->getParser()->parse($this->getLexer()->tokenize((string) $expression), $names);
-            $parsedExpression = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ParsedExpression((string) $expression, $nodes);
+            $parsedExpression = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParsedExpression((string) $expression, $nodes);
             $cacheItem->set($parsedExpression);
             $this->cache->save($cacheItem);
         }
@@ -115,11 +115,11 @@ class ExpressionLanguage
         }
         $this->functions[$name] = ['compiler' => $compiler, 'evaluator' => $evaluator];
     }
-    public function addFunction(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction $function)
+    public function addFunction(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ExpressionFunction $function)
     {
         $this->register($function->getName(), $function->getCompiler(), $function->getEvaluator());
     }
-    public function registerProvider(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface $provider)
+    public function registerProvider(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface $provider)
     {
         foreach ($provider->getFunctions() as $function) {
             $this->addFunction($function);
@@ -127,26 +127,26 @@ class ExpressionLanguage
     }
     protected function registerFunctions()
     {
-        $this->addFunction(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp('constant'));
+        $this->addFunction(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp('constant'));
     }
     private function getLexer()
     {
         if (null === $this->lexer) {
-            $this->lexer = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Lexer();
+            $this->lexer = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Lexer();
         }
         return $this->lexer;
     }
     private function getParser()
     {
         if (null === $this->parser) {
-            $this->parser = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Parser($this->functions);
+            $this->parser = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Parser($this->functions);
         }
         return $this->parser;
     }
     private function getCompiler()
     {
         if (null === $this->compiler) {
-            $this->compiler = new \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler($this->functions);
+            $this->compiler = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Compiler($this->functions);
         }
         return $this->compiler->reset();
     }

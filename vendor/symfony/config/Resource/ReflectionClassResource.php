@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ReflectionClassResource implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
+class ReflectionClassResource implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $files = [];
     private $className;
@@ -120,14 +120,18 @@ class ReflectionClassResource implements \_PhpScoper5ea00cc67502b\Symfony\Compon
         if (!$class->isInterface()) {
             $defaults = $class->getDefaultProperties();
             foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $p) {
-                (yield $p->getDocComment() . $p);
+                (yield $p->getDocComment());
+                (yield $p->isDefault() ? '<default>' : '');
+                (yield $p->isPublic() ? 'public' : 'protected');
+                (yield $p->isStatic() ? 'static' : '');
+                (yield '$' . $p->name);
                 (yield \print_r(isset($defaults[$p->name]) && !\is_object($defaults[$p->name]) ? $defaults[$p->name] : null, \true));
             }
         }
         if (\defined('HHVM_VERSION')) {
             foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
                 // workaround HHVM bug with variadics, see https://github.com/facebook/hhvm/issues/5762
-                (yield \preg_replace('/^  @@.*/m', '', new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ReflectionMethodHhvmWrapper($m->class, $m->name)));
+                (yield \preg_replace('/^  @@.*/m', '', new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ReflectionMethodHhvmWrapper($m->class, $m->name)));
             }
         } else {
             foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
@@ -168,12 +172,12 @@ class ReflectionClassResource implements \_PhpScoper5ea00cc67502b\Symfony\Compon
         if ($class->isAbstract() || $class->isInterface() || $class->isTrait()) {
             return;
         }
-        if (\interface_exists(\_PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface::class)) {
-            (yield \_PhpScoper5ea00cc67502b\Symfony\Component\EventDispatcher\EventSubscriberInterface::class);
+        if (\interface_exists(\_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class)) {
+            (yield \_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class);
             (yield \print_r(\call_user_func([$class->name, 'getSubscribedEvents']), \true));
         }
-        if (\interface_exists(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
-            (yield \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class);
+        if (\interface_exists(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
+            (yield \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class);
             (yield \print_r(\call_user_func([$class->name, 'getSubscribedServices']), \true));
         }
     }
@@ -187,7 +191,7 @@ class ReflectionMethodHhvmWrapper extends \ReflectionMethod
     {
         $params = [];
         foreach (parent::getParameters() as $i => $p) {
-            $params[] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
+            $params[] = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
         }
         return $params;
     }

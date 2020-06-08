@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * Revoke a customer mandate
@@ -23,6 +23,6 @@ try {
      */
     $mandate->revoke();
     echo "<p>Mandate has been successfully revoked.</p>";
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

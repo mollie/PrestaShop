@@ -8,32 +8,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
 /**
  * Emulates the invalid behavior if the reference is not found within the
  * container.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ResolveInvalidReferencesPass implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class ResolveInvalidReferencesPass implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     private $container;
     private $signalingException;
     /**
      * Process the ContainerBuilder to resolve invalid references.
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $this->container = $container;
-        $this->signalingException = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException('Invalid reference.');
+        $this->signalingException = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException('Invalid reference.');
         try {
             $this->processValue($container->getDefinitions(), 1);
         } finally {
@@ -47,11 +47,11 @@ class ResolveInvalidReferencesPass implements \_PhpScoper5ea00cc67502b\Symfony\C
      */
     private function processValue($value, $rootLevel = 0, $level = 0)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument) {
+        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument) {
             $value->setValues($this->processValue($value->getValues(), 1, 1));
-        } elseif ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
+        } elseif ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
             $value->setValues($this->processValue($value->getValues(), $rootLevel, 1 + $level));
-        } elseif ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition) {
+        } elseif ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition) {
             if ($value->isSynthetic() || $value->isAbstract()) {
                 return $value;
             }
@@ -68,7 +68,7 @@ class ResolveInvalidReferencesPass implements \_PhpScoper5ea00cc67502b\Symfony\C
                     if ($v !== ($processedValue = $this->processValue($v, $rootLevel, 1 + $level))) {
                         $value[$k] = $processedValue;
                     }
-                } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
+                } catch (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
                     if ($rootLevel < $level || $rootLevel && !$level) {
                         unset($value[$k]);
                     } elseif ($rootLevel) {
@@ -82,15 +82,15 @@ class ResolveInvalidReferencesPass implements \_PhpScoper5ea00cc67502b\Symfony\C
             if (\false !== $i) {
                 $value = \array_values($value);
             }
-        } elseif ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Reference) {
+        } elseif ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference) {
             if ($this->container->has($value)) {
                 return $value;
             }
             $invalidBehavior = $value->getInvalidBehavior();
             // resolve invalid behavior
-            if (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE === $invalidBehavior) {
+            if (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface::NULL_ON_INVALID_REFERENCE === $invalidBehavior) {
                 $value = null;
-            } elseif (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $invalidBehavior) {
+            } elseif (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_INVALID_REFERENCE === $invalidBehavior) {
                 if (0 < $level || $rootLevel) {
                     throw $this->signalingException;
                 }

@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource;
-class DirectoryResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource;
+class DirectoryResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     protected $directory;
     protected function setUp()
@@ -47,53 +47,53 @@ class DirectoryResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\T
     }
     public function testGetResource()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $this->assertSame(\realpath($this->directory), $resource->getResource(), '->getResource() returns the path to the resource');
     }
     public function testGetPattern()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, 'bar');
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, 'bar');
         $this->assertEquals('bar', $resource->getPattern());
     }
     public function testResourceDoesNotExist()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessageRegExp('/The directory ".*" does not exist./');
-        new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource('/____foo/foobar' . \mt_rand(1, 999999));
+        new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource('/____foo/foobar' . \mt_rand(1, 999999));
     }
     public function testIsFresh()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $this->assertTrue($resource->isFresh(\time() + 10), '->isFresh() returns true if the resource has not changed');
         $this->assertFalse($resource->isFresh(\time() - 86400), '->isFresh() returns false if the resource has been updated');
     }
     public function testIsFreshForDeletedResources()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $this->removeDirectory($this->directory);
         $this->assertFalse($resource->isFresh(\time()), '->isFresh() returns false if the resource does not exist');
     }
     public function testIsFreshUpdateFile()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         \touch($this->directory . '/tmp.xml', \time() + 20);
         $this->assertFalse($resource->isFresh(\time() + 10), '->isFresh() returns false if an existing file is modified');
     }
     public function testIsFreshNewFile()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         \touch($this->directory . '/new.xml', \time() + 20);
         $this->assertFalse($resource->isFresh(\time() + 10), '->isFresh() returns false if a new file is added');
     }
     public function testIsFreshNewFileWithDifferentPattern()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.xml$/');
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.xml$/');
         \touch($this->directory . '/new.yaml', \time() + 20);
         $this->assertTrue($resource->isFresh(\time() + 10), '->isFresh() returns true if a new file with a non-matching pattern is added');
     }
     public function testIsFreshDeleteFile()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $time = \time();
         \sleep(1);
         \unlink($this->directory . '/tmp.xml');
@@ -101,7 +101,7 @@ class DirectoryResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\T
     }
     public function testIsFreshDeleteDirectory()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $this->removeDirectory($this->directory);
         $this->assertFalse($resource->isFresh(\time()), '->isFresh() returns false if the whole resource is removed');
     }
@@ -109,14 +109,14 @@ class DirectoryResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\T
     {
         $subdirectory = $this->directory . '/subdirectory';
         \mkdir($subdirectory);
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $this->assertTrue($resource->isFresh(\time() + 10), '->isFresh() returns true if an unmodified subdirectory exists');
         \touch($subdirectory . '/newfile.xml', \time() + 20);
         $this->assertFalse($resource->isFresh(\time() + 10), '->isFresh() returns false if a new file in a subdirectory is added');
     }
     public function testIsFreshModifySubdirectory()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory);
         $subdirectory = $this->directory . '/subdirectory';
         \mkdir($subdirectory);
         \touch($subdirectory, \time() + 20);
@@ -124,27 +124,27 @@ class DirectoryResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\T
     }
     public function testFilterRegexListNoMatch()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
         \touch($this->directory . '/new.bar', \time() + 20);
         $this->assertTrue($resource->isFresh(\time() + 10), '->isFresh() returns true if a new file not matching the filter regex is created');
     }
     public function testFilterRegexListMatch()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
         \touch($this->directory . '/new.xml', \time() + 20);
         $this->assertFalse($resource->isFresh(\time() + 10), '->isFresh() returns false if an new file matching the filter regex is created ');
     }
     public function testSerializeUnserialize()
     {
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/\\.(foo|xml)$/');
         \unserialize(\serialize($resource));
         $this->assertSame(\realpath($this->directory), $resource->getResource());
         $this->assertSame('/\\.(foo|xml)$/', $resource->getPattern());
     }
     public function testResourcesWithDifferentPatternsAreDifferent()
     {
-        $resourceA = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.xml$/');
-        $resourceB = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.yaml$/');
+        $resourceA = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.xml$/');
+        $resourceB = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\DirectoryResource($this->directory, '/.yaml$/');
         $this->assertCount(2, \array_unique([$resourceA, $resourceB]));
     }
 }

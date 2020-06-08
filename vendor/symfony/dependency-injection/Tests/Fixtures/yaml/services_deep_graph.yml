@@ -1,7 +1,7 @@
 
 services:
     foo:
-        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph
+        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph
         public: true
         arguments:
             - '@bar'

@@ -31,16 +31,16 @@
     },
     "require-dev": {
         "cache\/integration-tests": "dev-master",
-        "doctrine\/cache": "~1.6",
-        "doctrine\/dbal": "~2.4",
-        "predis\/predis": "~1.0"
+        "doctrine\/cache": "^1.6",
+        "doctrine\/dbal": "^2.4|^3.0",
+        "predis\/predis": "^1.0"
     },
     "conflict": {
         "symfony\/var-dumper": "<3.3"
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5ea00cc67502b\\Symfony\\Component\\Cache\\": ""
+            "_PhpScoper5eddef0da618a\\Symfony\\Component\\Cache\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

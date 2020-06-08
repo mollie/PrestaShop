@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * NOTE: The examples are using a text file as a database.

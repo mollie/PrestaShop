@@ -33,8 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
 use PrestaShop\PrestaShop\Adapter\CoreException;

@@ -3,5 +3,5 @@ imports:
 
 services:
     parent_service:
-        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         autoconfigure: true

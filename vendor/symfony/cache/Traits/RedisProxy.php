@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -20,7 +20,7 @@ class RedisProxy
     private $redis;
     private $initializer;
     private $ready = \false;
-    public function __construct(\_PhpScoper5ea00cc67502b\Redis $redis, \Closure $initializer)
+    public function __construct(\_PhpScoper5eddef0da618a\Redis $redis, \Closure $initializer)
     {
         $this->redis = $redis;
         $this->initializer = $initializer;

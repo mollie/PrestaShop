@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
 
 /**
  * @method Refund[]|RefundCollection all($from = null, $limit = 50, array $filters = [])
@@ -8,7 +8,7 @@ namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
  * @method Refund create(array $data = [], array $filters = [])
  * @method Refund delete($refundId)
  */
-class Chargeback extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+class Chargeback extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
 {
     /**
      * Id of the payment method.

@@ -35,7 +35,7 @@
 
 namespace Mollie\Repository;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Db;
 use DbQuery;
 use PrestaShopDatabaseException;

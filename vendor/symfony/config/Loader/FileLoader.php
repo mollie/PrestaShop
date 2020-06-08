@@ -8,25 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Loader;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocatorInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderLoadException;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocatorInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\GlobResource;
 /**
  * FileLoader is the abstract class used by all built-in loaders that are file based.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class FileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Loader\Loader
+abstract class FileLoader extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Loader\Loader
 {
     protected static $loading = [];
     protected $locator;
     private $currentDir;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\Config\FileLocatorInterface $locator)
+    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocatorInterface $locator)
     {
         $this->locator = $locator;
     }
@@ -96,17 +96,17 @@ abstract class FileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
         }
         try {
             $prefix = $this->locator->locate($prefix, $this->currentDir, \true);
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException $e) {
+        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLocatorFileNotFoundException $e) {
             if (!$ignoreErrors) {
                 throw $e;
             }
             $resource = [];
             foreach ($e->getPaths() as $path) {
-                $resource[] = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($path);
+                $resource[] = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource($path);
             }
             return;
         }
-        $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\GlobResource($prefix, $pattern, $recursive);
+        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\GlobResource($prefix, $pattern, $recursive);
         foreach ($resource as $path => $info) {
             (yield $path => $info);
         }
@@ -122,7 +122,7 @@ abstract class FileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
             for ($i = 0; $i < ($resourcesCount = \count($resources)); ++$i) {
                 if (isset(self::$loading[$resources[$i]])) {
                     if ($i == $resourcesCount - 1) {
-                        throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException(\array_keys(self::$loading));
+                        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException(\array_keys(self::$loading));
                     }
                 } else {
                     $resource = $resources[$i];
@@ -136,15 +136,15 @@ abstract class FileLoader extends \_PhpScoper5ea00cc67502b\Symfony\Component\Con
                 unset(self::$loading[$resource]);
             }
             return $ret;
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException $e) {
+        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException $e) {
             throw $e;
         } catch (\Exception $e) {
             if (!$ignoreErrors) {
                 // prevent embedded imports from nesting multiple exceptions
-                if ($e instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadException) {
+                if ($e instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderLoadException) {
                     throw $e;
                 }
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Exception\FileLoaderLoadException($resource, $sourceResource, null, $e, $type);
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Exception\FileLoaderLoadException($resource, $sourceResource, null, $e, $type);
             }
         }
         return null;

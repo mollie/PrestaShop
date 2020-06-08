@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Psr7;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
 
-use _PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface;
+use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
 /**
  * Trait implementing functionality common to requests and responses.
  */
@@ -96,7 +96,7 @@ trait MessageTrait
         }
         return $this->stream;
     }
-    public function withBody(\_PhpScoper5ea00cc67502b\Psr\Http\Message\StreamInterface $body)
+    public function withBody(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $body)
     {
         if ($body === $this->stream) {
             return $this;

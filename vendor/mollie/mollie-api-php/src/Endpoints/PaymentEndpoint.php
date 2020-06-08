@@ -1,13 +1,13 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\PaymentCollection;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory;
-class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\PaymentCollection;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Refund;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
+class PaymentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments";
     /**
@@ -19,7 +19,7 @@ class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -31,7 +31,7 @@ class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\PaymentCollection($this->client, $count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\PaymentCollection($this->client, $count, $_links);
     }
     /**
      * Creates a payment in Mollie.
@@ -59,7 +59,7 @@ class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
     public function get($paymentId, array $parameters = [])
     {
         if (empty($paymentId) || \strpos($paymentId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new \_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException("Invalid payment ID: '{$paymentId}'. A payment ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
+            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Invalid payment ID: '{$paymentId}'. A payment ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
         return parent::rest_read($paymentId, $parameters);
     }
@@ -121,7 +121,7 @@ class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      * @return Refund
      * @throws ApiException
      */
-    public function refund(\_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Payment $payment, $data = [])
+    public function refund(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment $payment, $data = [])
     {
         $resource = "{$this->getResourcePath()}/" . \urlencode($payment->id) . "/refunds";
         $body = null;
@@ -129,6 +129,6 @@ class PaymentEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
             $body = \json_encode($data);
         }
         $result = $this->client->performHttpCall(self::REST_CREATE, $resource, $body);
-        return \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Refund($this->client));
+        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Refund($this->client));
     }
 }

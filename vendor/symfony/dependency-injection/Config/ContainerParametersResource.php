@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ResourceInterface;
 /**
  * Tracks container parameters.
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class ContainerParametersResource implements \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ResourceInterface, \Serializable
+class ContainerParametersResource implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ResourceInterface, \Serializable
 {
     private $parameters;
     /**

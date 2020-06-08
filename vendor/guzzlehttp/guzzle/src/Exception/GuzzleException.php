@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\GuzzleHttp\Exception;
+namespace _PhpScoper5eddef0da618a\GuzzleHttp\Exception;
 
 use Throwable;
 if (\interface_exists(\Throwable::class)) {

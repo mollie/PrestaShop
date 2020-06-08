@@ -6,11 +6,11 @@ services:
             $factory: factory
 
     bar:
-        class: _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
         autowire: true
         bind:
-            _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'
+            _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'
             $foo: [ ~ ]
 
-    _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
+    _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar:
         factory: [ ~, 'create' ]

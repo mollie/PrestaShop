@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Settlement;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\SettlementCollection;
-class SettlementsEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Settlement;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\SettlementCollection;
+class SettlementsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "settlements";
     /**
@@ -15,7 +15,7 @@ class SettlementsEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Settlement($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Settlement($this->client);
     }
     /**
      * Get the collection object that is used by this API. Every API uses one type of collection object.
@@ -27,7 +27,7 @@ class SettlementsEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\SettlementCollection($this->client, $count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\SettlementCollection($this->client, $count, $_links);
     }
     /**
      * Retrieve a single settlement from Mollie.

@@ -8,22 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface;
+use _PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
 /**
  * An adapter that collects data about all cache calls.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class TraceableCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface
+class TraceableCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface
 {
     private $pool;
     private $miss;
     private $calls = [];
-    public function __construct(\_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheInterface $pool)
+    public function __construct(\_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface $pool)
     {
         $this->pool = $pool;
         $this->miss = new \stdClass();
@@ -168,7 +168,7 @@ class TraceableCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheIn
      */
     public function prune()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\PruneableInterface) {
+        if (!$this->pool instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface) {
             return \false;
         }
         $event = $this->start(__FUNCTION__);
@@ -183,7 +183,7 @@ class TraceableCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheIn
      */
     public function reset()
     {
-        if (!$this->pool instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\ResettableInterface) {
+        if (!$this->pool instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface) {
             return;
         }
         $event = $this->start(__FUNCTION__);
@@ -203,7 +203,7 @@ class TraceableCache implements \_PhpScoper5ea00cc67502b\Psr\SimpleCache\CacheIn
     }
     private function start($name)
     {
-        $this->calls[] = $event = new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Simple\TraceableCacheEvent();
+        $this->calls[] = $event = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\TraceableCacheEvent();
         $event->name = $name;
         $event->start = \microtime(\true);
         return $event;

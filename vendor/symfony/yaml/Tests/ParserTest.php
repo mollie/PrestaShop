@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tests;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml;
-class ParserTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Parser;
+use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue;
+use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml;
+class ParserTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     /** @var Parser */
     protected $parser;
     protected function setUp()
     {
-        $this->parser = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser();
+        $this->parser = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Parser();
     }
     protected function tearDown()
     {
@@ -61,7 +61,7 @@ class ParserTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
      */
     public function testNonStringMappingKeys($expected, $yaml, $comment)
     {
-        $this->assertSame($expected, \var_export($this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS), \true), $comment);
+        $this->assertSame($expected, \var_export($this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS), \true), $comment);
     }
     public function getNonStringMappingKeysData()
     {
@@ -357,7 +357,7 @@ EOF;
 foo: !php/object O:30:"Symfony\Component\Yaml\Tests\B":1:{s:1:"b";s:3:"foo";}
 bar: 1
 EOF;
-        $this->assertEquals(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($input, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT), '->parse() is able to parse objects');
+        $this->assertEquals(['foo' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($input, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT), '->parse() is able to parse objects');
     }
     /**
      * @group legacy
@@ -368,7 +368,7 @@ EOF;
 foo: !php/object:O:30:"Symfony\Component\Yaml\Tests\B":1:{s:1:"b";s:3:"foo";}
 bar: 1
 EOF;
-        $this->assertEquals(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($input, \false, \true), '->parse() is able to parse objects');
+        $this->assertEquals(['foo' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($input, \false, \true), '->parse() is able to parse objects');
     }
     /**
      * @group legacy
@@ -376,7 +376,7 @@ EOF;
      */
     public function testObjectSupportEnabledWithDeprecatedTag($yaml)
     {
-        $this->assertEquals(['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT), '->parse() is able to parse objects');
+        $this->assertEquals(['foo' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tests\B(), 'bar' => 1], $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT), '->parse() is able to parse objects');
     }
     public function deprecatedObjectValueProvider()
     {
@@ -402,7 +402,7 @@ YAML
      */
     public function testObjectForMap($yaml, $expected)
     {
-        $flags = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
+        $flags = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
         $this->assertEquals($expected, $this->parser->parse($yaml, $flags));
     }
     /**
@@ -473,8 +473,8 @@ YAML;
      */
     public function testObjectsSupportDisabledWithExceptions($yaml)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
-        $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
     public function testCanParseContentWithTrailingSpaces()
     {
@@ -488,7 +488,7 @@ YAML;
      */
     public function testObjectsSupportDisabledWithExceptionsUsingBooleanToggles($yaml)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->parser->parse($yaml, \true);
     }
     public function invalidDumpedObjectProvider()
@@ -514,13 +514,13 @@ EOF;
                 $this->parser->parse($yaml);
                 $this->fail('charsets other than UTF-8 are rejected.');
             } catch (\Exception $e) {
-                $this->assertInstanceOf('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException', $e, 'charsets other than UTF-8 are rejected.');
+                $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException', $e, 'charsets other than UTF-8 are rejected.');
             }
         }
     }
     public function testUnindentedCollectionException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $yaml = <<<'EOF'
 
 collection:
@@ -533,7 +533,7 @@ EOF;
     }
     public function testShortcutKeyUnindentedCollectionException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $yaml = <<<'EOF'
 
 collection:
@@ -545,9 +545,9 @@ EOF;
     }
     public function testMultipleDocumentsNotSupportedException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessageRegExp('/^Multiple documents are not supported.+/');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOL'
+        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOL'
 # Ranking of 1998 home runs
 ---
 - Mark McGwire
@@ -563,8 +563,8 @@ EOL
     }
     public function testSequenceInAMapping()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 yaml:
   hash: me
   - array stuff
@@ -637,7 +637,7 @@ EOT;
      */
     public function testParseExceptionNotAffectedByMultiLineStringLastResortParsing($yaml)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->parser->parse($yaml);
     }
     public function testMultiLineStringLastResortParsing()
@@ -660,8 +660,8 @@ EOT;
     }
     public function testMappingInASequence()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 yaml:
   - array stuff
   hash: me
@@ -670,9 +670,9 @@ EOF
     }
     public function testScalarInSequence()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('missing colon');
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 foo:
     - bar
 "missing colon"
@@ -702,7 +702,7 @@ parent:
     child: duplicate
 EOD;
         $expected = ['parent' => ['child' => 'first']];
-        $this->assertSame($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse($input));
+        $this->assertSame($expected, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse($input));
     }
     /**
      * @group legacy
@@ -714,7 +714,7 @@ parent: { child: first, child: duplicate }
 parent: { child: duplicate, child: duplicate }
 EOD;
         $expected = ['parent' => ['child' => 'first']];
-        $this->assertSame($expected, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse($input));
+        $this->assertSame($expected, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse($input));
     }
     /**
      * @group legacy
@@ -724,7 +724,7 @@ EOD;
      */
     public function testParseExceptionOnDuplicate($input, $duplicateKey, $lineNumber)
     {
-        \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse($input);
+        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse($input);
     }
     public function getParseExceptionOnDuplicateData()
     {
@@ -779,11 +779,11 @@ EOD;
         $input = <<<'EOF'
 hash:
 EOF;
-        $this->assertEquals(['hash' => null], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse($input));
+        $this->assertEquals(['hash' => null], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse($input));
     }
     public function testCommentAtTheRootIndent()
     {
-        $this->assertEquals(['services' => ['app.foo_service' => ['class' => 'Foo'], 'app/bar_service' => ['class' => 'Bar']]], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+        $this->assertEquals(['services' => ['app.foo_service' => ['class' => 'Foo'], 'app/bar_service' => ['class' => 'Bar']]], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 # comment 1
 services:
 # comment 2
@@ -810,7 +810,7 @@ header
 
 footer # comment3
 EOT
-], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 content: |
     # comment 1
     header
@@ -837,7 +837,7 @@ header
 
 footer # comment3
 EOT
-]], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+]], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 -
     content: |
         # comment 1
@@ -865,7 +865,7 @@ header
 
 footer # comment3
 EOT
-]], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+]], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 -
     title: some title
     content: |
@@ -883,7 +883,7 @@ EOF
     }
     public function testReferenceResolvingInInlineStrings()
     {
-        $this->assertEquals(['var' => 'var-value', 'scalar' => 'var-value', 'list' => ['var-value'], 'list_in_list' => [['var-value']], 'map_in_list' => [['key' => 'var-value']], 'embedded_mapping' => [['key' => 'var-value']], 'map' => ['key' => 'var-value'], 'list_in_map' => ['key' => ['var-value']], 'map_in_map' => ['foo' => ['bar' => 'var-value']]], \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
+        $this->assertEquals(['var' => 'var-value', 'scalar' => 'var-value', 'list' => ['var-value'], 'list_in_list' => [['var-value']], 'map_in_list' => [['key' => 'var-value']], 'embedded_mapping' => [['key' => 'var-value']], 'map' => ['key' => 'var-value'], 'list_in_map' => ['key' => ['var-value']], 'map_in_map' => ['foo' => ['bar' => 'var-value']]], \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse(<<<'EOF'
 var:  &var var-value
 scalar: *var
 list: [ *var ]
@@ -950,7 +950,7 @@ EOF;
     }
     public function testColonInMappingValueException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('A colon cannot be used in an unquoted mapping value');
         $yaml = <<<'EOF'
 foo: bar: baz
@@ -1122,7 +1122,7 @@ EOT
      */
     public function testParseInvalidBinaryData($data, $expectedMessage)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessageRegExp($expectedMessage);
         $this->parser->parse($data);
     }
@@ -1155,7 +1155,7 @@ EOT;
         $expectedDate->setTimeZone(new \DateTimeZone('UTC'));
         $expectedDate->setDate(2002, 12, 14);
         $expectedDate->setTime(0, 0, 0);
-        $this->assertEquals(['date' => $expectedDate], $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_DATETIME));
+        $this->assertEquals(['date' => $expectedDate], $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_DATETIME));
     }
     /**
      * @param $lineNumber
@@ -1164,7 +1164,7 @@ EOT;
      */
     public function testParserThrowsExceptionWithCorrectLineNumber($lineNumber, $yaml)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage(\sprintf('Unexpected characters near "," at line %d (near "bar: "123",").', $lineNumber));
         $this->parser->parse($yaml);
     }
@@ -1248,6 +1248,25 @@ YAML;
         $expected = ['foobar' => "foo\nbar"];
         $this->assertSame($expected, $this->parser->parse($yaml));
     }
+    public function testEscapedQuoteInQuotedMultiLineString()
+    {
+        $yaml = <<<YAML
+foobar: "foo
+    \\"bar\\"
+    baz"
+YAML;
+        $expected = ['foobar' => 'foo "bar" baz'];
+        $this->assertSame($expected, $this->parser->parse($yaml));
+    }
+    public function testBackslashInQuotedMultiLineString()
+    {
+        $yaml = <<<YAML
+foobar: "foo
+    bar\\\\"
+YAML;
+        $expected = ['foobar' => 'foo bar\\'];
+        $this->assertSame($expected, $this->parser->parse($yaml));
+    }
     public function testParseMultiLineUnquotedString()
     {
         $yaml = <<<EOT
@@ -1313,29 +1332,29 @@ EOF;
     }
     public function testTaggedInlineMapping()
     {
-        $this->assertEquals(new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo' => 'bar']), $this->parser->parse('!foo {foo: bar}', \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS));
+        $this->assertEquals(new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo' => 'bar']), $this->parser->parse('!foo {foo: bar}', \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS));
     }
     /**
      * @dataProvider taggedValuesProvider
      */
     public function testCustomTagSupport($expected, $yaml)
     {
-        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS));
+        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS));
     }
     public function taggedValuesProvider()
     {
-        return ['sequences' => [[new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['yaml']), new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['bar'])], <<<YAML
+        return ['sequences' => [[new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['yaml']), new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['bar'])], <<<YAML
 - !foo
     - yaml
 - !quz [bar]
 YAML
-], 'mappings' => [new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['bar']), 'quz' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['quz' => 'bar'])]), <<<YAML
+], 'mappings' => [new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['bar']), 'quz' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['quz' => 'bar'])]), <<<YAML
 !foo
 foo: !quz [bar]
 quz: !foo
    quz: bar
 YAML
-], 'inline' => [[new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo', 'bar']), new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['foo' => 'bar', 'quz' => new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Tag\TaggedValue('bar', ['one' => 'bar'])])], <<<YAML
+], 'inline' => [[new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('foo', ['foo', 'bar']), new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('quz', ['foo' => 'bar', 'quz' => new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue('bar', ['one' => 'bar'])])], <<<YAML
 - !foo [foo, bar]
 - !quz {foo: bar, quz: !bar {one: bar}}
 YAML
@@ -1343,7 +1362,7 @@ YAML
     }
     public function testCustomTagsDisabled()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('Tags support is not enabled. Enable the `Yaml::PARSE_CUSTOM_TAGS` flag to use "!iterator" at line 1 (near "!iterator [foo]").');
         $this->parser->parse('!iterator [foo]');
     }
@@ -1357,7 +1376,7 @@ YAML
     }
     public function testExceptionWhenUsingUnsupportedBuiltInTags()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('The built-in tag "!!foo" is not implemented at line 1 (near "!!foo").');
         $this->parser->parse('!!foo');
     }
@@ -1403,7 +1422,7 @@ YAML;
     }
     public function testParsingIniThrowsException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('Unable to parse at line 1 (near "[parameters]").');
         $ini = <<<INI
 [parameters]
@@ -1414,7 +1433,7 @@ INI;
     }
     private function loadTestsFromFixtureFiles($testsFile)
     {
-        $parser = new \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Parser();
+        $parser = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Parser();
         $tests = [];
         $files = $parser->parseFile(__DIR__ . '/Fixtures/' . $testsFile);
         foreach ($files as $file) {
@@ -1439,13 +1458,13 @@ INI;
     {
         $longStringWithSpaces = \str_repeat('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ', 20000);
         $trickyVal = ['x' => $longStringWithSpaces];
-        $yamlString = \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::dump($trickyVal);
+        $yamlString = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::dump($trickyVal);
         $arrayFromYaml = $this->parser->parse($yamlString);
         $this->assertEquals($trickyVal, $arrayFromYaml);
     }
     public function testParserCleansUpReferencesBetweenRuns()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('Reference "foo" does not exist at line 2');
         $yaml = <<<YAML
 foo: &foo
@@ -1470,7 +1489,7 @@ transitions:
         to: !php/const 'Symfony\\Component\\Yaml\\Tests\\B::BAZ'
 YAML;
         $expected = ['transitions' => ['foo' => ['from' => ['bar'], 'to' => 'baz']]];
-        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT));
+        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT));
     }
     /**
      * @group legacy
@@ -1488,7 +1507,7 @@ transitions:
         to: !php/const:Symfony\\Component\\Yaml\\Tests\\B::BAZ
 YAML;
         $expected = ['transitions' => ['foo' => ['from' => ['bar'], 'to' => 'baz']]];
-        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT));
+        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT));
     }
     /**
      * @group legacy
@@ -1504,7 +1523,7 @@ transitions:
         to: !php/const 'Symfony\\Component\\Yaml\\Tests\\B::BAZ'
 YAML;
         $expected = ['transitions' => ['foo' => ['from' => ['bar'], 'to' => 'baz']]];
-        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT | \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS));
+        $this->assertSame($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT | \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS));
     }
     public function testMergeKeysWhenMappingsAreParsedAsObjects()
     {
@@ -1523,7 +1542,7 @@ foobar:
     <<: [*FOO, *BAR]
 YAML;
         $expected = (object) ['foo' => (object) ['bar' => 1], 'bar' => (object) ['baz' => 2, 'bar' => 1], 'baz' => (object) ['baz_foo' => 3, 'baz_bar' => 4], 'foobar' => (object) ['bar' => null, 'baz' => 2]];
-        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP));
+        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP));
     }
     public function testFilenamesAreParsedAsStringsWithoutFlag()
     {
@@ -1536,13 +1555,13 @@ YAML;
     }
     public function testParsingNonExistentFilesThrowsException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessageRegExp('#^File ".+/Fixtures/nonexistent.yml" does not exist\\.$#');
         $this->parser->parseFile(__DIR__ . '/Fixtures/nonexistent.yml');
     }
     public function testParsingNotReadableFilesThrowsException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessageRegExp('#^File ".+/Fixtures/not_readable.yml" cannot be read\\.$#');
         if ('\\' === \DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('chmod is not supported on Windows');
@@ -1582,11 +1601,11 @@ mergekeyderef:
     <<: *quux
 YAML;
         $expected = (object) ['mergekeyrefdef' => (object) ['a' => 'foo', 'b' => 'bar', 'c' => 'baz'], 'mergekeyderef' => (object) ['d' => 'quux', 'b' => 'bar', 'c' => 'baz']];
-        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP));
+        $this->assertEquals($expected, $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP));
     }
     public function testEvalRefException()
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('Reference "foo" does not exist');
         $yaml = <<<EOE
 foo: { &foo { a: Steve, <<: *foo} }
@@ -1598,9 +1617,9 @@ EOE;
      */
     public function testDetectCircularReferences($yaml)
     {
-        $this->expectException('_PhpScoper5ea00cc67502b\\Symfony\\Component\\Yaml\\Exception\\ParseException');
+        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Yaml\\Exception\\ParseException');
         $this->expectExceptionMessage('Circular reference [foo, bar, foo] detected');
-        $this->parser->parse($yaml, \_PhpScoper5ea00cc67502b\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS);
+        $this->parser->parse($yaml, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS);
     }
     public function circularReferenceProvider()
     {

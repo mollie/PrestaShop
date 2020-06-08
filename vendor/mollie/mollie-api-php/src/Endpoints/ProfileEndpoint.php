@@ -1,15 +1,15 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\CurrentProfile;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\ProfileCollection;
-class ProfileEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\CurrentProfile;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Profile;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ProfileCollection;
+class ProfileEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "profiles";
-    protected $resourceClass = \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Profile::class;
+    protected $resourceClass = \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Profile::class;
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *
@@ -29,7 +29,7 @@ class ProfileEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\ProfileCollection($this->client, $count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ProfileCollection($this->client, $count, $_links);
     }
     /**
      * Creates a Profile in Mollie.
@@ -72,7 +72,7 @@ class ProfileEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     public function getCurrent(array $parameters = [])
     {
-        $this->resourceClass = \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\CurrentProfile::class;
+        $this->resourceClass = \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CurrentProfile::class;
         return $this->rest_read('me', $parameters);
     }
     /**

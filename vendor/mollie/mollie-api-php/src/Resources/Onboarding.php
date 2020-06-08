@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Resources;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Types\OnboardingStatus;
-class Onboarding extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResource
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\OnboardingStatus;
+class Onboarding extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -41,20 +41,20 @@ class Onboarding extends \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\BaseResou
      */
     public function needsData()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\OnboardingStatus::NEEDS_DATA;
+        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OnboardingStatus::NEEDS_DATA;
     }
     /**
      * @return bool
      */
     public function isInReview()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\OnboardingStatus::IN_REVIEW;
+        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OnboardingStatus::IN_REVIEW;
     }
     /**
      * @return bool
      */
     public function isCompleted()
     {
-        return $this->status === \_PhpScoper5ea00cc67502b\Mollie\Api\Types\OnboardingStatus::COMPLETED;
+        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OnboardingStatus::COMPLETED;
     }
 }

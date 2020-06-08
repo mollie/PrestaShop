@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Config\Tests\Resource;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource;
-class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framework\TestCase
+use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource;
+class FileExistenceResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
 {
     protected $resource;
     protected $file;
@@ -21,7 +21,7 @@ class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
     {
         $this->file = \realpath(\sys_get_temp_dir()) . '/tmp.xml';
         $this->time = \time();
-        $this->resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file);
+        $this->resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource($this->file);
     }
     protected function tearDown()
     {
@@ -40,7 +40,7 @@ class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
     public function testIsFreshWithExistingResource()
     {
         \touch($this->file, $this->time);
-        $serialized = \serialize(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
+        $serialized = \serialize(new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
         $resource = \unserialize($serialized);
         $this->assertTrue($resource->isFresh($this->time), '->isFresh() returns true if the resource is still present');
         \unlink($this->file);
@@ -49,7 +49,7 @@ class FileExistenceResourceTest extends \_PhpScoper5ea00cc67502b\PHPUnit\Framewo
     }
     public function testIsFreshWithAbsentResource()
     {
-        $serialized = \serialize(new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
+        $serialized = \serialize(new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileExistenceResource($this->file));
         $resource = \unserialize($serialized);
         $this->assertTrue($resource->isFresh($this->time), '->isFresh() returns true if the resource is still absent');
         \touch($this->file, $this->time);

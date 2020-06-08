@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b\Mollie\Api\Endpoints;
+namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
 
-use _PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\Invoice;
-use _PhpScoper5ea00cc67502b\Mollie\Api\Resources\InvoiceCollection;
-class InvoiceEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Invoice;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\InvoiceCollection;
+class InvoiceEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "invoices";
     /**
@@ -15,7 +15,7 @@ class InvoiceEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\Invoice($this->client);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Invoice($this->client);
     }
     /**
      * Get the collection object that is used by this API. Every API uses one type of collection object.
@@ -27,7 +27,7 @@ class InvoiceEndpoint extends \_PhpScoper5ea00cc67502b\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5ea00cc67502b\Mollie\Api\Resources\InvoiceCollection($this->client, $count, $_links);
+        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\InvoiceCollection($this->client, $count, $_links);
     }
     /**
      * Retrieve an Invoice from Mollie.

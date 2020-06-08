@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler;
+use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class BinaryNode extends \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node
+class BinaryNode extends \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node
 {
     private static $operators = ['~' => '.', 'and' => '&&', 'or' => '||'];
     private static $functions = ['**' => 'pow', '..' => 'range', 'in' => 'in_array', 'not in' => '!in_array'];
-    public function __construct($operator, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $left, \_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Node\Node $right)
+    public function __construct($operator, \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node $left, \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node $right)
     {
         parent::__construct(['left' => $left, 'right' => $right], ['operator' => $operator]);
     }
-    public function compile(\_PhpScoper5ea00cc67502b\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
         $operator = $this->attributes['operator'];
         if ('matches' == $operator) {

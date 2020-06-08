@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5ea00cc67502b;
+namespace _PhpScoper5eddef0da618a;
 
 /*
  * Using OAuth access token to list profiles of an account.
@@ -19,6 +19,6 @@ try {
         echo \htmlspecialchars($profile->name) . ' - ' . \htmlspecialchars($profile->website) . ' (' . \htmlspecialchars($profile->id) . ')';
         echo '</div>';
     }
-} catch (\_PhpScoper5ea00cc67502b\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

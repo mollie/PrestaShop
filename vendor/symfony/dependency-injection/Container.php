@@ -8,16 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 /**
  * Container is a dependency injection container.
  *
@@ -35,7 +35,7 @@ use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\P
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ResettableContainerInterface
+class Container implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ResettableContainerInterface
 {
     protected $parameterBag;
     protected $services = [];
@@ -57,9 +57,9 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     private $envCache = [];
     private $compiled = \false;
     private $getEnv;
-    public function __construct(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface $parameterBag = null)
+    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface $parameterBag = null)
     {
-        $this->parameterBag = $parameterBag ?: new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
+        $this->parameterBag = $parameterBag ?: new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag();
     }
     /**
      * Compiles the container.
@@ -72,7 +72,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     public function compile()
     {
         $this->parameterBag->resolve();
-        $this->parameterBag = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($this->parameterBag->all());
+        $this->parameterBag = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag($this->parameterBag->all());
         $this->compiled = \true;
     }
     /**
@@ -94,7 +94,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     public function isFrozen()
     {
         @\trigger_error(\sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), \E_USER_DEPRECATED);
-        return $this->parameterBag instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+        return $this->parameterBag instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
     }
     /**
      * Gets the service container parameter bag.
@@ -158,7 +158,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         }
         $id = $this->normalizeId($id);
         if ('service_container' === $id) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('You cannot set service "service_container".');
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException('You cannot set service "service_container".');
         }
         if (isset($this->privates[$id]) || !(isset($this->fileMap[$id]) || isset($this->methodMap[$id]))) {
             if (!isset($this->privates[$id]) && !isset($this->getRemovedIds()[$id])) {
@@ -216,7 +216,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             }
             // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
             // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
-            if (!$this->methodMap && !$this instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
+            if (!$this->methodMap && !$this instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
                 @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
                 return \true;
             }
@@ -261,7 +261,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                 return $this;
             }
             if (isset($this->loading[$id])) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, \array_merge(\array_keys($this->loading), [$id]));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException($id, \array_merge(\array_keys($this->loading), [$id]));
             }
             $this->loading[$id] = \true;
             try {
@@ -273,7 +273,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                     unset($this->loading[$id]);
                     $id = $normalizedId;
                     continue;
-                } elseif (!$this->methodMap && !$this instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, $method = 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
+                } elseif (!$this->methodMap && !$this instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class && \method_exists($this, $method = 'get' . \strtr($id, $this->underscoreMap) . 'Service')) {
                     // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
                     // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
                     @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
@@ -289,13 +289,13 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         }
         if (1 === $invalidBehavior) {
             if (!$id) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id);
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id);
             }
             if (isset($this->syntheticIds[$id])) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service is synthetic, it needs to be set at boot time before it can be used.', $id));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service is synthetic, it needs to be set at boot time before it can be used.', $id));
             }
             if (isset($this->getRemovedIds()[$id])) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service or alias has been removed or inlined when the container was compiled. You should either make it public, or stop using the container directly and use dependency injection instead.', $id));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, [], \sprintf('The "%s" service or alias has been removed or inlined when the container was compiled. You should either make it public, or stop using the container directly and use dependency injection instead.', $id));
             }
             $alternatives = [];
             foreach ($this->getServiceIds() as $knownId) {
@@ -304,7 +304,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                     $alternatives[] = $knownId;
                 }
             }
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, $alternatives);
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException($id, null, null, $alternatives);
         }
     }
     /**
@@ -343,7 +343,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     public function getServiceIds()
     {
         $ids = [];
-        if (!$this->methodMap && !$this instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class) {
+        if (!$this->methodMap && !$this instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder && __CLASS__ !== static::class) {
             // We only check the convention-based factory in a compiled container (i.e. a child class other than a ContainerBuilder,
             // and only when the dumper has not generated the method map (otherwise the method map is considered to be fully populated by the dumper)
             @\trigger_error('Generating a dumped container without populating the method map is deprecated since Symfony 3.2 and will be unsupported in 4.0. Update your dumper to generate the method map.', \E_USER_DEPRECATED);
@@ -406,13 +406,13 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     protected function getEnv($name)
     {
         if (isset($this->resolving[$envName = "env({$name})"])) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($this->resolving));
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException(\array_keys($this->resolving));
         }
         if (isset($this->envCache[$name]) || \array_key_exists($name, $this->envCache)) {
             return $this->envCache[$name];
         }
         if (!$this->has($id = 'container.env_var_processors_locator')) {
-            $this->set($id, new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ServiceLocator([]));
+            $this->set($id, new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceLocator([]));
         }
         if (!$this->getEnv) {
             $this->getEnv = new \ReflectionMethod($this, __FUNCTION__);
@@ -427,7 +427,7 @@ class Container implements \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             $prefix = 'string';
             $localName = $name;
         }
-        $processor = $processors->has($prefix) ? $processors->get($prefix) : new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\EnvVarProcessor($this);
+        $processor = $processors->has($prefix) ? $processors->get($prefix) : new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\EnvVarProcessor($this);
         $this->resolving[$envName] = \true;
         try {
             return $this->envCache[$name] = $processor->getEnv($prefix, $localName, $this->getEnv);

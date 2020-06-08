@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ClassExistenceResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
-use _PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference;
+use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ClassExistenceResource;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
+use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference;
 /**
  * Inspects existing service definitions and wires the autowired ones using the type hints of their classes.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+class AutowirePass extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
 {
     private $definedTypes = [];
     private $types;
@@ -54,7 +54,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     /**
      * {@inheritdoc}
      */
-    public function process(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         // clear out any possibly stored exceptions from before
         $this->autowiringExceptions = [];
@@ -84,7 +84,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                 $metadata[$reflectionMethod->name] = self::getResourceMetadataForMethod($reflectionMethod);
             }
         }
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($reflectionClass->name, $reflectionClass->getFileName(), $metadata);
+        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($reflectionClass->name, $reflectionClass->getFileName(), $metadata);
     }
     /**
      * {@inheritdoc}
@@ -93,7 +93,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     {
         try {
             return $this->doProcessValue($value, $isRoot);
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException $e) {
+        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException $e) {
             if ($this->throwOnAutowiringException) {
                 throw $e;
             }
@@ -104,14 +104,14 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     }
     private function doProcessValue($value, $isRoot = \false)
     {
-        if ($value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference) {
+        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference) {
             if ($ref = $this->getAutowiredReference($value, $value->getRequiringClass() ? \sprintf('for "%s" in "%s"', $value->getType(), $value->getRequiringClass()) : '')) {
                 return $ref;
             }
             $this->container->log($this, $this->createTypeNotFoundMessage($value, 'it'));
         }
         $value = parent::processValue($value, $isRoot);
-        if (!$value instanceof \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition || !$value->isAutowired() || $value->isAbstract() || !$value->getClass()) {
+        if (!$value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition || !$value->isAutowired() || $value->isAbstract() || !$value->getClass()) {
             return $value;
         }
         if (!($reflectionClass = $this->container->getReflectionClass($value->getClass(), \false))) {
@@ -121,8 +121,8 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         $methodCalls = $value->getMethodCalls();
         try {
             $constructor = $this->getConstructor($value, \false);
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
-            throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, $e->getMessage(), 0, $e);
+        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
+            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, $e->getMessage(), 0, $e);
         }
         if ($constructor) {
             \array_unshift($methodCalls, [$constructor, $value->getArguments()]);
@@ -149,10 +149,10 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             if ($method instanceof \ReflectionFunctionAbstract) {
                 $reflectionMethod = $method;
             } else {
-                $definition = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition($reflectionClass->name);
+                $definition = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition($reflectionClass->name);
                 try {
                     $reflectionMethod = $this->getReflectionMethod($definition, $method);
-                } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
+                } catch (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException $e) {
                     if ($definition->getFactory()) {
                         continue;
                     }
@@ -185,7 +185,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             if (\array_key_exists($index, $arguments) && '' !== $arguments[$index]) {
                 continue;
             }
-            $type = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($reflectionMethod, $parameter, \true);
+            $type = \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($reflectionMethod, $parameter, \true);
             if (!$type) {
                 if (isset($arguments[$index])) {
                     continue;
@@ -198,20 +198,20 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                     if ($parameter->isOptional()) {
                         continue;
                     }
-                    $type = \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($reflectionMethod, $parameter, \false);
+                    $type = \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint($reflectionMethod, $parameter, \false);
                     $type = $type ? \sprintf('is type-hinted "%s"', $type) : 'has no type-hint';
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, \sprintf('Cannot autowire service "%s": argument "$%s" of method "%s()" %s, you should configure its value explicitly.', $this->currentId, $parameter->name, $class !== $this->currentId ? $class . '::' . $method : $method, $type));
+                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, \sprintf('Cannot autowire service "%s": argument "$%s" of method "%s()" %s, you should configure its value explicitly.', $this->currentId, $parameter->name, $class !== $this->currentId ? $class . '::' . $method : $method, $type));
                 }
                 // specifically pass the default value
                 $arguments[$index] = $parameter->getDefaultValue();
                 continue;
             }
-            if (!($value = $this->getAutowiredReference($ref = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference($type, $type, !$parameter->isOptional() ? $class : ''), 'for ' . \sprintf('argument "$%s" of method "%s()"', $parameter->name, $class . '::' . $method)))) {
+            if (!($value = $this->getAutowiredReference($ref = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference($type, $type, !$parameter->isOptional() ? $class : ''), 'for ' . \sprintf('argument "$%s" of method "%s()"', $parameter->name, $class . '::' . $method)))) {
                 $failureMessage = $this->createTypeNotFoundMessage($ref, \sprintf('argument "$%s" of method "%s()"', $parameter->name, $class !== $this->currentId ? $class . '::' . $method : $method));
                 if ($parameter->isDefaultValueAvailable()) {
                     $value = $parameter->getDefaultValue();
                 } elseif (!$parameter->allowsNull()) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, $failureMessage);
+                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException($this->currentId, $failureMessage);
                 }
                 $this->container->log($this, $failureMessage);
             }
@@ -234,7 +234,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
     /**
      * @return TypedReference|null A reference to the service matching the given type, if any
      */
-    private function getAutowiredReference(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference $reference, $deprecationMessage)
+    private function getAutowiredReference(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference $reference, $deprecationMessage)
     {
         $this->lastFailure = null;
         $type = $reference->getType();
@@ -245,7 +245,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             $this->populateAvailableTypes($this->strictMode);
         }
         if (isset($this->definedTypes[$type])) {
-            return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference($this->types[$type], $type);
+            return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference($this->types[$type], $type);
         }
         if (!$this->strictMode && isset($this->types[$type])) {
             $message = 'Autowiring services based on the types they implement is deprecated since Symfony 3.3 and won\'t be supported in version 4.0.';
@@ -255,13 +255,13 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
                 $message .= \sprintf(' You should %s the "%s" service to "%s" instead.', isset($this->types[$this->types[$type]]) ? 'alias' : 'rename (or alias)', $this->types[$type], $type);
             }
             @\trigger_error($message, \E_USER_DEPRECATED);
-            return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference($this->types[$type], $type);
+            return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference($this->types[$type], $type);
         }
         if (!$reference->canBeAutoregistered() || isset($this->types[$type]) || isset($this->ambiguousServiceTypes[$type])) {
             return null;
         }
         if (isset($this->autowired[$type])) {
-            return $this->autowired[$type] ? new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference($this->autowired[$type], $type) : null;
+            return $this->autowired[$type] ? new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference($this->autowired[$type], $type) : null;
         }
         if (!$this->strictMode) {
             return $this->createAutowiredDefinition($type);
@@ -286,7 +286,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
      *
      * @param string $id
      */
-    private function populateAvailableType($id, \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition $definition, $onlyAutowiringTypes)
+    private function populateAvailableType($id, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition $definition, $onlyAutowiringTypes)
     {
         // Never use abstract services
         if ($definition->isAbstract()) {
@@ -353,7 +353,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         $currentId = $this->currentId;
         $this->currentId = $type;
         $this->autowired[$type] = $argumentId = \sprintf('autowired.%s', $type);
-        $argumentDefinition = new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Definition($type);
+        $argumentDefinition = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition($type);
         $argumentDefinition->setPublic(\false);
         $argumentDefinition->setAutowired(\true);
         try {
@@ -361,7 +361,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
             $this->throwOnAutowiringException = \true;
             $this->processValue($argumentDefinition, \true);
             $this->container->setDefinition($argumentId, $argumentDefinition);
-        } catch (\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException $e) {
+        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\AutowiringFailedException $e) {
             $this->autowired[$type] = \false;
             $this->lastFailure = $e->getMessage();
             $this->container->log($this, $this->lastFailure);
@@ -372,9 +372,9 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         }
         @\trigger_error(\sprintf('Relying on service auto-registration for type "%s" is deprecated since Symfony 3.4 and won\'t be supported in 4.0. Create a service named "%s" instead.', $type, $type), \E_USER_DEPRECATED);
         $this->container->log($this, \sprintf('Type "%s" has been auto-registered for service "%s".', $type, $this->currentId));
-        return new \_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference($argumentId, $type);
+        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference($argumentId, $type);
     }
-    private function createTypeNotFoundMessage(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference $reference, $label)
+    private function createTypeNotFoundMessage(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference $reference, $label)
     {
         $trackResources = $this->container->isTrackingResources();
         $this->container->setResourceTracking(\false);
@@ -388,7 +388,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         if (!$r) {
             // either $type does not exist or a parent class does not exist
             try {
-                $resource = new \_PhpScoper5ea00cc67502b\Symfony\Component\Config\Resource\ClassExistenceResource($type, \false);
+                $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ClassExistenceResource($type, \false);
                 // isFresh() will explode ONLY if a parent class/trait does not exist
                 $resource->isFresh(0);
                 $parentMsg = \false;
@@ -410,7 +410,7 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         }
         return $message;
     }
-    private function createTypeAlternatives(\_PhpScoper5ea00cc67502b\Symfony\Component\DependencyInjection\TypedReference $reference)
+    private function createTypeAlternatives(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\TypedReference $reference)
     {
         // try suggesting available aliases first
         if ($message = $this->getAliasesSuggestionForType($type = $reference->getType())) {
@@ -438,7 +438,16 @@ class AutowirePass extends \_PhpScoper5ea00cc67502b\Symfony\Component\Dependency
         $methodArgumentsMetadata = [];
         foreach ($method->getParameters() as $parameter) {
             try {
-                $class = $parameter->getClass();
+                if (\method_exists($parameter, 'getType')) {
+                    $type = $parameter->getType();
+                    if ($type && !$type->isBuiltin()) {
+                        $class = new \ReflectionClass(\method_exists($type, 'getName') ? $type->getName() : (string) $type);
+                    } else {
+                        $class = null;
+                    }
+                } else {
+                    $class = $parameter->getClass();
+                }
             } catch (\ReflectionException $e) {
                 // type-hint is against a non-existent class
                 $class = \false;

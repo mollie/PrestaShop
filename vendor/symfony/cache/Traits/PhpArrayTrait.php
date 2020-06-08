@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Traits;
+namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem;
-use _PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem;
+use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
@@ -34,18 +34,18 @@ trait PhpArrayTrait
     {
         if (\file_exists($this->file)) {
             if (!\is_file($this->file)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache path exists and is not a file: "%s".', $this->file));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache path exists and is not a file: "%s".', $this->file));
             }
             if (!\is_writable($this->file)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache file is not writable: "%s".', $this->file));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache file is not writable: "%s".', $this->file));
             }
         } else {
             $directory = \dirname($this->file);
             if (!\is_dir($directory) && !@\mkdir($directory, 0777, \true)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory does not exist and cannot be created: "%s".', $directory));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory does not exist and cannot be created: "%s".', $directory));
             }
             if (!\is_writable($directory)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory is not writable: "%s".', $directory));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache directory is not writable: "%s".', $directory));
             }
         }
         $dump = <<<'EOF'
@@ -58,19 +58,19 @@ return [
 
 EOF;
         foreach ($values as $key => $value) {
-            \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\CacheItem::validateKey(\is_int($key) ? (string) $key : $key);
+            \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey(\is_int($key) ? (string) $key : $key);
             if (null === $value || \is_object($value)) {
                 try {
                     $value = \serialize($value);
                 } catch (\Exception $e) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \get_class($value)), 0, $e);
+                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \get_class($value)), 0, $e);
                 }
             } elseif (\is_array($value)) {
                 try {
                     $serialized = \serialize($value);
                     $unserialized = \unserialize($serialized);
                 } catch (\Exception $e) {
-                    throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable array value.', $key), 0, $e);
+                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable array value.', $key), 0, $e);
                 }
                 // Store arrays serialized if they contain any objects or references
                 if ($unserialized !== $value || \false !== \strpos($serialized, ';R:') && \preg_match('/;R:[1-9]/', $serialized)) {
@@ -82,7 +82,7 @@ EOF;
                     $value = \serialize($value);
                 }
             } elseif (!\is_scalar($value)) {
-                throw new \_PhpScoper5ea00cc67502b\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \gettype($value)));
+                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \gettype($value)));
             }
             $dump .= \var_export($key, \true) . ' => ' . \var_export($value, \true) . ",\n";
         }
