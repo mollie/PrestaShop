@@ -1087,7 +1087,7 @@ class Mollie extends PaymentModule
     public function hookActionEmailSendBefore($params)
     {
         if($params['template'] === 'order_conf') {
-            if ( Order::getByCartId($params['cart']->id)->module === $this->name) {
+            if (Order::getByCartId($params['cart']->id)->module === $this->name) {
                 return false;
             }
         }
