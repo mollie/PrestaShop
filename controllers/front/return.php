@@ -329,6 +329,14 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
         $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
+        $orderPayments = OrderPayment::getByOrderId($orderId);
+        /** @var OrderPayment $orderPayment */
+        foreach ($orderPayments as $orderPayment) {
+            $orderPayment->transaction_id = $transactionId;
+            $orderPayment->payment_method = $dbPayment['method'];
+            $orderPayment->update();
+        }
+
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
             true,
