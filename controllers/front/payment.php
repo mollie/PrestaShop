@@ -151,6 +151,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
         // Store payment linked to cart
+        //todo: test
         if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(

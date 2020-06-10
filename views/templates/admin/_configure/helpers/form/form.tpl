@@ -102,8 +102,27 @@
                         </label>
                         <div class="col-lg-9">
                             <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id}"
-                                   class="fixed-width-xl" value="{$methodObj->description}"
+                                   class="fixed-width-xl"
+                                    {if !empty($methodObj->description)}
+                                        value="{$methodObj->description}"
+                                    {else}
+                                        value='{literal}{orderNumber}{/literal}'
+                                    {/if}
                                    required="required">
+                            <p class="help-block">
+                                {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{orderNumber}' mod='mollie'}</b>
+                                {l s=': The order number for this transaciton' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{storeName}' mod='mollie'}</b>
+                                {l s=': The name of the store' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group">

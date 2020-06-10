@@ -36,6 +36,7 @@
 namespace Mollie\Utility;
 
 use Cart;
+use Configuration;
 use Customer;
 
 class TextGeneratorUtility
@@ -72,6 +73,8 @@ class TextGeneratorUtility
             '{customer.firstname}' => $buyer == null ? '' : $buyer->firstname,
             '{customer.lastname}' => $buyer == null ? '' : $buyer->lastname,
             '{customer.company}' => $buyer == null ? '' : $buyer->company,
+            '{storeName}' => Configuration::get('PS_SHOP_NAME'),
+            '{orderNumber}' => $orderReference,
         ];
 
         $content = str_ireplace(
