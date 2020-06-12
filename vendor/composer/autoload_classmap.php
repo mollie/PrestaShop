@@ -6,6 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_real.php',
+    'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
+    'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
     'MolCarrierInformation' => $baseDir . '/src/Entity/MolCarrierInformation.php',
     'MolOrderFee' => $baseDir . '/src/Entity/MolOrderFee.php',
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
@@ -21,9 +24,6 @@ return array(
     '_PhpScoper5eddef0da618a\\APCUIterator' => $vendorDir . '/symfony/polyfill-apcu/bootstrap.php',
     '_PhpScoper5eddef0da618a\\ArithmeticError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
     '_PhpScoper5eddef0da618a\\AssertionError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-    '_PhpScoper5eddef0da618a\\ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_real.php',
-    '_PhpScoper5eddef0da618a\\Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
-    '_PhpScoper5eddef0da618a\\Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
     '_PhpScoper5eddef0da618a\\Composer\\CaBundle\\CaBundle' => $vendorDir . '/composer/ca-bundle/src/CaBundle.php',
     '_PhpScoper5eddef0da618a\\DivisionByZeroError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
     '_PhpScoper5eddef0da618a\\Error' => $vendorDir . '/paragonie/random_compat/lib/error_polyfill.php',

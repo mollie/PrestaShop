@@ -153,6 +153,9 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
     );
 
     public static $classMap = array (
+        'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
+        'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolCarrierInformation' => __DIR__ . '/../..' . '/src/Entity/MolCarrierInformation.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
         'MolPaymentMethod' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethod.php',
@@ -168,9 +171,6 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         '_PhpScoper5eddef0da618a\\APCUIterator' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
         '_PhpScoper5eddef0da618a\\ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         '_PhpScoper5eddef0da618a\\AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-        '_PhpScoper5eddef0da618a\\ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_real.php',
-        '_PhpScoper5eddef0da618a\\Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        '_PhpScoper5eddef0da618a\\Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_static.php',
         '_PhpScoper5eddef0da618a\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         '_PhpScoper5eddef0da618a\\DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
         '_PhpScoper5eddef0da618a\\Error' => __DIR__ . '/..' . '/paragonie/random_compat/lib/error_polyfill.php',

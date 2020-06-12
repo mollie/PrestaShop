@@ -151,6 +151,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
         // Store payment linked to cart
+        //todo: test
         if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(
@@ -181,65 +182,65 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
         }
 
-        if ($apiPayment->method === PaymentMethod::BANKTRANSFER) {
-            // Set the `banktransfer` details
-            if ($apiPayment instanceof MollieOrderAlias) {
-                // If this is an order, take the first payment
-                $apiPayment = $apiPayment->payments();
-                $apiPayment = $apiPayment[0];
-            }
-
-            $details = $apiPayment->details->transferReference;
-            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
-
-            $extraVars = array(
-                '{bankwire_owner}'   => 'Stichting Mollie Payments',
-                '{bankwire_details}' => $details,
-                '{bankwire_address}' => $address,
-            );
-
-            $this->module->currentOrderReference = $orderReference;
-            $this->module->validateOrder(
-                (int) $cart->id,
-                $paymentStatus,
-                $originalAmount,
-                isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$apiPayment->method] : $this->module->name,
-                null,
-                $extraVars,
-                null,
-                false,
-                $customer->secure_key
-            );
-
-            $orderId = Order::getOrderByCartId((int) $cart->id);
-
-            try {
-                Db::getInstance()->insert(
-                    'mollie_payments',
-                    array(
-                        'cart_id'         => (int) $cart->id,
-                        'order_id'        => (int) $orderId,
-                        'order_reference' => pSQL($orderReference),
-                        'method'          => pSQL($apiPayment->method),
-                        'transaction_id'  => pSQL($apiPayment->id),
-                        'bank_status'     => PaymentStatus::STATUS_OPEN,
-                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
-                    )
-                );
-            } catch (PrestaShopDatabaseException $e) {
-                $paymentMethodRepo->tryAddOrderReferenceColumn();
-                $redirectLink = $this->context->link->getPageLink(
-                    'order',
-                    true,
-                    null,
-                    [
-                        'step' => 1,
-                    ]
-                );
-                $this->errors[] = $this->l('Failed to validate order', 'payment');
-                $this->redirectWithNotifications($redirectLink);
-            }
-        }
+//        if ($apiPayment->method === PaymentMethod::BANKTRANSFER) {
+//            // Set the `banktransfer` details
+//            if ($apiPayment instanceof MollieOrderAlias) {
+//                // If this is an order, take the first payment
+//                $apiPayment = $apiPayment->payments();
+//                $apiPayment = $apiPayment[0];
+//            }
+//
+//            $details = $apiPayment->details->transferReference;
+//            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
+//
+//            $extraVars = array(
+//                '{bankwire_owner}'   => 'Stichting Mollie Payments',
+//                '{bankwire_details}' => $details,
+//                '{bankwire_address}' => $address,
+//            );
+//
+//            $this->module->currentOrderReference = $orderReference;
+//            $this->module->validateOrder(
+//                (int) $cart->id,
+//                $paymentStatus,
+//                $originalAmount,
+//                isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$apiPayment->method] : $this->module->name,
+//                null,
+//                $extraVars,
+//                null,
+//                false,
+//                $customer->secure_key
+//            );
+//
+//            $orderId = Order::getOrderByCartId((int) $cart->id);
+//
+//            try {
+//                Db::getInstance()->insert(
+//                    'mollie_payments',
+//                    array(
+//                        'cart_id'         => (int) $cart->id,
+//                        'order_id'        => (int) $orderId,
+//                        'order_reference' => pSQL($orderReference),
+//                        'method'          => pSQL($apiPayment->method),
+//                        'transaction_id'  => pSQL($apiPayment->id),
+//                        'bank_status'     => PaymentStatus::STATUS_OPEN,
+//                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
+//                    )
+//                );
+//            } catch (PrestaShopDatabaseException $e) {
+//                $paymentMethodRepo->tryAddOrderReferenceColumn();
+//                $redirectLink = $this->context->link->getPageLink(
+//                    'order',
+//                    true,
+//                    null,
+//                    [
+//                        'step' => 1,
+//                    ]
+//                );
+//                $this->errors[] = $this->l('Failed to validate order', 'payment');
+//                $this->redirectWithNotifications($redirectLink);
+//            }
+//        }
 
 
         // Go to payment url
@@ -333,6 +334,35 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     {
         $extraVars = [];
         if ($method === PaymentMethod::BANKTRANSFER) {
+            try {
+                Db::getInstance()->insert(
+                    'mollie_payments',
+                    array(
+                        'cart_id'         => (int) $cartId,
+                        'method'          => pSQL($apiPayment->method),
+                        'transaction_id'  => pSQL($apiPayment->id),
+                        'order_reference' => pSQL($orderReference),
+                        'bank_status'     => PaymentStatus::STATUS_OPEN,
+                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
+                    )
+                );
+            } catch (PrestaShopDatabaseException $e) {
+                /** @var PaymentMethodRepository $paymentMethodRepo */
+                $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+                $paymentMethodRepo->tryAddOrderReferenceColumn();
+                throw $e;
+            }
+
+        $status = $apiPayment->status;
+        if (!isset(Mollie\Config\Config::getStatuses()[$apiPayment->status])) {
+            $status = 'open';
+        }
+
+        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$status];
+
+        if ($paymentStatus < 1) {
+            $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
+        }
             // Set the `banktransfer` details
             if ($apiPayment instanceof MollieOrderAlias) {
                 // If this is an order, take the first payment
