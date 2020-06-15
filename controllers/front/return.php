@@ -258,7 +258,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $_GET['module'] = $this->module->name;
         }
 
-        if (Tools::substr($transactionId, 0, 3) === 'ord') {
+        $isOrder = Tools::substr($transactionId, 0, 3) === 'ord';
+        if ($isOrder) {
             $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
         } else {
             $transaction = $this->module->api->payments->get($transactionId);
@@ -267,7 +268,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
 
         $orderStatus = $transaction->status;
-        switch ($transaction->status) {
+        if ($orderStatus === 'created' && $isOrder) {
+            foreach ($transaction->payments() as $payment) {
+                $orderStatus = $payment->status;
+            }
+        }
+        switch ($orderStatus) {
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
@@ -280,7 +286,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
                 $cartDuplicationService->restoreCart($order->id_cart);
 
-                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+                $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
+
+            $this->context->cookie->mollie_payment_canceled_error =
+                json_encode($this->warning);
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
@@ -288,8 +297,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                         true,
                         null
                     );
-                    $this->context->cookie->mollie_payment_canceled_error =
-                        json_encode($this->warning);
                 } else {
                     $orderLink = $this->context->link->getPageLink(
                         'cart',

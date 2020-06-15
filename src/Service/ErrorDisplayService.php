@@ -3,6 +3,7 @@
 namespace Mollie\Service;
 
 use Context;
+use Mollie\Config\Config;
 
 class ErrorDisplayService
 {
@@ -10,7 +11,11 @@ class ErrorDisplayService
     {
         $context = Context::getContext();
         if (isset($context->cookie->$id)) {
-            $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+            if (Config::isVersion17()) {
+                $context->controller->warning = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+            } else {
+                $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+            }
             unset($context->cookie->$id);
             unset($_SERVER['HTTP_REFERER']);
         }

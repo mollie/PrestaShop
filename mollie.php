@@ -407,11 +407,13 @@ class Mollie extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
+        /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
+        $errorDisplayService = $this->getContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+
         $isOrderController = $this->context->controller instanceof OrderControllerCore;
         $isOPCController = $this->context->controller instanceof OrderOpcControllerCore;
+        $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isOrderController || $isOPCController) {
-            /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
-            $errorDisplayService = $this->getContainer()->get(\Mollie\Service\ErrorDisplayService::class);
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
 
             Media::addJsDef([
@@ -446,6 +448,10 @@ class Mollie extends PaymentModule
             $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
 
             return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+        }
+
+        if ($isCartController) {
+            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
     }
 
@@ -1117,6 +1123,9 @@ class Mollie extends PaymentModule
                 return;
             }
             $order = Order::getByCartId($params['cart']->id);
+            if (!$order) {
+                return true;
+            }
             $orderFee = new MolOrderFee($order->id);
             if ($orderFee->order_fee) {
                 $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
