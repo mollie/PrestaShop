@@ -35,7 +35,10 @@
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use Mollie\Config\Config;
+use Mollie\Controller\AbstractMollieController;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
@@ -51,7 +54,7 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  * @property Context? $context
  * @property Mollie $module
  */
-class MollieReturnModuleFrontController extends ModuleFrontController
+class MollieReturnModuleFrontController extends AbstractMollieController
 {
     const PENDING = 1;
     const DONE = 2;
@@ -273,23 +276,54 @@ class MollieReturnModuleFrontController extends ModuleFrontController
 
                 $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
-                $failUrl = $this->context->link->getModuleLink(
-                    $this->module->name,
-                    'fail',
-                    [
-                        'cartId' => $cart->id,
-                        'secureKey' => $cart->secure_key,
-                        'orderId' => $orderId,
-                        'moduleId' => $this->module->name,
-                    ],
-                    true
-                );
+                /** @var CartDuplicationService $cartDuplicationService */
+                $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
+                $cartDuplicationService->restoreCart($order->id_cart);
+
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+
+                if (!Config::isVersion17()) {
+                    $orderLink = $this->context->link->getPageLink(
+                        'order',
+                        true,
+                        null
+                    );
+                    $this->context->cookie->mollie_payment_canceled_error =
+                        json_encode($this->warning);
+                } else {
+                    $orderLink = $this->context->link->getPageLink(
+                        'cart',
+                        null,
+                        $this->context->language->id,
+                        [
+                            'action' => 'show',
+                        ],
+                        false,
+                        null,
+                        false
+
+                    );
+                }
+
+
+//                $this->redirectWithNotifications($failUrl);
+//                $failUrl = $this->context->link->getModuleLink(
+//                    $this->module->name,
+//                    'fail',
+//                    [
+//                        'cartId' => $cart->id,
+//                        'secureKey' => $cart->secure_key,
+//                        'orderId' => $orderId,
+//                        'moduleId' => $this->module->name,
+//                    ],
+//                    true
+//                );
 
                 die(json_encode([
                     'success' => true,
                     'status' => static::DONE,
                     'response' => json_encode($transaction),
-                    'href' => $failUrl
+                    'href' => $orderLink
 
                 ]));
             case PaymentStatus::STATUS_AUTHORIZED:
@@ -364,12 +398,12 @@ class MollieReturnModuleFrontController extends ModuleFrontController
         try {
             return Db::getInstance()->update(
                 'mollie_payments',
-                array(
-                    'updated_at'  => array('type' => 'sql', 'value' => 'NOW()'),
+                [
+                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
                     'bank_status' => pSQL($status),
-                    'order_id'    => (int) $orderId,
-                ),
-                '`transaction_id` = \''.pSQL($transactionId).'\''
+                    'order_id' => (int)$orderId,
+                ],
+                '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (Exception $e) {
             /** @var PaymentMethodRepository $paymentMethodRepo */

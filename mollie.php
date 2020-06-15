@@ -86,7 +86,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.5';
+        $this->version = '4.0.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -410,6 +410,9 @@ class Mollie extends PaymentModule
         $isOrderController = $this->context->controller instanceof OrderControllerCore;
         $isOPCController = $this->context->controller instanceof OrderOpcControllerCore;
         if ($isOrderController || $isOPCController) {
+            /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
+            $errorDisplayService = $this->getContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
 
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
