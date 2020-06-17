@@ -309,7 +309,7 @@ class FormBuilder
                 $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
-            'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
+            'name' => Config::MOLLIE_SAND_ORDER_CONFIRMATION,
             'options' => [
                 'query' => [
                     [
@@ -323,6 +323,27 @@ class FormBuilder
                 ],
                 'id' => 'id',
                 'name' => 'name',
+            ],
+        ];
+
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->module->l('Send order confirmation email'),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_SAND_ORDER_CONFIRMATION,
+            'is_bool' => true,
+            'desc' => $this->module->l('Sand order confirmation email before payment is executed'),
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                ],
             ],
         ];
 

@@ -1095,10 +1095,20 @@ class Mollie extends PaymentModule
 
     public function hookActionEmailSendBefore($params)
     {
-        if($params['template'] === 'order_conf') {
-            if (Order::getByCartId($params['cart']->id)->module === $this->name) {
-                return false;
+        if (!isset($params['cart']->id)) {
+            return true;
+        }
+
+        $cart = new Cart($params['cart']->id);
+        if (Order::getByCartId($cart->id)->module !== $this->name) {
+            return true;
+        }
+
+        if ($params['template'] === 'order_conf') {
+            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SAND_ORDER_CONFIRMATION)) {
+                return true;
             }
+            return false;
         }
 
         if ($params['template'] === 'order_conf' ||
@@ -1119,14 +1129,16 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
-            if (!isset($params['cart']->id)) {
-                return;
-            }
-            $order = Order::getByCartId($params['cart']->id);
+            $order = Order::getByCartId($cart->id);
             if (!$order) {
                 return true;
             }
-            $orderFee = new MolOrderFee($order->id);
+            try {
+                $orderFee = new MolOrderFee($order->id);
+            } catch (Exception $e) {
+                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+                return true;
+            }
             if ($orderFee->order_fee) {
                 $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
             } else {
