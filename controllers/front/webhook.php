@@ -243,7 +243,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
                 $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
+                && ($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];

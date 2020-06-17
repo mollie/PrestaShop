@@ -398,7 +398,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
         $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
+        $transactionInfo = [
+            'transactionId' => $transactionId,
+            'paymentMethod' => $paymentMethod,
+        ];
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId, null, [], $transactionInfo);
 
         $orderPayments = OrderPayment::getByOrderId($orderId);
         /** @var OrderPayment $orderPayment */
