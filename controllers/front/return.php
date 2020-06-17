@@ -264,8 +264,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         } else {
             $transaction = $this->module->api->payments->get($transactionId);
         }
-        /** @var OrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
 
         $orderStatus = $transaction->status;
         if ($orderStatus === 'created' && $isOrder) {
@@ -277,8 +275,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
-                $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-
                 /** @var CartDuplicationService $cartDuplicationService */
                 $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
                 $cartDuplicationService->restoreCart($order->id_cart);
@@ -288,8 +284,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->cookie->mollie_payment_canceled_error =
                     json_encode($this->warning);
 
-                $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
-                $orderStatusService->setOrderStatus($orderId, $orderStatusId);
+                $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
+
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
@@ -352,17 +348,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
         }
 
-        $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-        $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
-
-        $orderPayments = OrderPayment::getByOrderId($orderId);
-        /** @var OrderPayment $orderPayment */
-        foreach ($orderPayments as $orderPayment) {
-            $orderPayment->transaction_id = $transactionId;
-            $orderPayment->payment_method = $dbPayment['method'];
-            $orderPayment->update();
-        }
+        $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
@@ -403,6 +389,24 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
+        }
+    }
+
+    protected function updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod)
+    {
+        /** @var OrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+
+        $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
+        $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId);
+
+        $orderPayments = OrderPayment::getByOrderId($orderId);
+        /** @var OrderPayment $orderPayment */
+        foreach ($orderPayments as $orderPayment) {
+            $orderPayment->transaction_id = $transactionId;
+            $orderPayment->payment_method = $paymentMethod;
+            $orderPayment->update();
         }
     }
 }
