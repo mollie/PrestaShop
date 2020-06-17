@@ -277,10 +277,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
-                $orderStatus = $transaction->status;
                 $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-
-                $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
                 /** @var CartDuplicationService $cartDuplicationService */
                 $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
@@ -288,8 +285,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
                 $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
 
-            $this->context->cookie->mollie_payment_canceled_error =
-                json_encode($this->warning);
+                $this->context->cookie->mollie_payment_canceled_error =
+                    json_encode($this->warning);
+
+                $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
+                $orderStatusService->setOrderStatus($orderId, $orderStatusId);
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
@@ -311,20 +311,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
                     );
                 }
-
-
-//                $this->redirectWithNotifications($failUrl);
-//                $failUrl = $this->context->link->getModuleLink(
-//                    $this->module->name,
-//                    'fail',
-//                    [
-//                        'cartId' => $cart->id,
-//                        'secureKey' => $cart->secure_key,
-//                        'orderId' => $orderId,
-//                        'moduleId' => $this->module->name,
-//                    ],
-//                    true
-//                );
 
                 die(json_encode([
                     'success' => true,
