@@ -80,7 +80,7 @@ class OrderStatusService
             }
         }
 
-        if ((int) $statusId === 0) {
+        if ((int)$statusId === 0) {
             return;
         }
 
@@ -92,6 +92,9 @@ class OrderStatusService
             return;
         }
 
+        if ((int)$order->current_state === (int)$statusId) {
+            return;
+        }
         $history = array_map(function ($item) {
             return (int)$item['id_order_state'];
         }, $order->getHistory(Context::getContext()->language->id));

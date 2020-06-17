@@ -285,7 +285,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) == Mollie\Config\Config::DEBUG_LOG_ALL) {
             PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie\Config\Config::NOTICE);
         }
-        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) Mollie\Config\Config::getStatuses()[$apiPayment->status], 'id_order' => (int) $orderId));
+//        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) Mollie\Config\Config::getStatuses()[$apiPayment->status], 'id_order' => (int) $orderId));
+
+        /** @var OrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+        $orderStatusService->setOrderStatus($orderId, (int) Mollie\Config\Config::getStatuses()[$apiPayment->status]);
 
         return $apiPayment;
     }

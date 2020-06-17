@@ -286,7 +286,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
                 $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
-
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
                         'order',
