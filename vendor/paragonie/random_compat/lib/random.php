@@ -156,12 +156,14 @@ if (!\is_callable('random_bytes')) {
          * @throws Exception
          * @return string
          */
-        function random_bytes($length)
-        {
-            unset($length);
-            // Suppress "variable not used" warnings.
-            throw new \Exception('There is no suitable CSPRNG installed on your system');
-            return '';
+        if (!function_exists('_PhpScoper5eddef0da618a\random_bytes')) {
+            function random_bytes($length)
+            {
+                unset($length);
+                // Suppress "variable not used" warnings.
+                throw new \Exception('There is no suitable CSPRNG installed on your system');
+                return '';
+            }
         }
     }
 }
