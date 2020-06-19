@@ -1105,7 +1105,7 @@ class Mollie extends PaymentModule
         }
 
         if ($params['template'] === 'order_conf') {
-            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SAND_ORDER_CONFIRMATION)) {
+            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
                 return true;
             }
             return false;

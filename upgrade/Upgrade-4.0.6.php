@@ -52,7 +52,7 @@ function upgrade_module_4_0_6()
         }
     }
 
-    Configuration::updateValue(Mollie\Config\Config::MOLLIE_SAND_ORDER_CONFIRMATION, false);
+    Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, false);
 
     return true;
 }
