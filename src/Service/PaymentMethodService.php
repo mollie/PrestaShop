@@ -181,6 +181,11 @@ class PaymentMethodService
             }
         }
 
+        foreach ($methods as $key => $method) {
+            $image = json_decode($method['images_json'], true);
+            $methods[$key]['image'] = $image;
+        }
+
         return $methods;
     }
 

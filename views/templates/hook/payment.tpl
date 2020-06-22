@@ -54,11 +54,11 @@
                     {if isset($method['image']) && $images !== 'hide'}
                         {if $images === 'big'}
                             <img class="mollie_image_big"
-                                 src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size2x'])} onerror="this.src = ';;{$method['image']['size2x']|escape:'javascript':'UTF-8'}"{/if}
+                                 src="{$method['image']['size2x']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size2x'])} onerror="this.src = ';;{$method['image']['size2x']|escape:'javascript':'UTF-8'}"{/if}
                                  alt="{$method['method_name']|escape:'htmlall':'UTF-8'}'">
-                        {else}t
+                        {else}
                             <img class="mollie_image"
-                                 src="{$method['image']['svg']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size1x'])} onerror="this.src = '{$method['image']['size2x']|escape:'javascript':'UTF-8'}'"{/if}
+                                 src="{$method['image']['size1x']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size1x'])} onerror="this.src = '{$method['image']['size1x']|escape:'javascript':'UTF-8'}'"{/if}
                                  alt="{$method['method_name']|escape:'htmlall':'UTF-8'}">
                         {/if}
                     {else}
