@@ -35,6 +35,7 @@
 
 NameSpace Mollie\Builder;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
@@ -288,6 +289,10 @@ class FormBuilder
                 'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
                 'countries' => $this->countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
+                'klarnaPayments' => [
+                    PaymentMethod::KLARNA_PAY_LATER,
+                    PaymentMethod::KLARNA_SLICE_IT,
+                    ],
                 'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }

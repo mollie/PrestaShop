@@ -91,7 +91,9 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
-                                <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
+                                {if !in_array($paymentMethod.id, $input.klarnaPayments)}
+                                    <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
+                                {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
                         </div>
