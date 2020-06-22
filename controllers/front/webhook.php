@@ -222,6 +222,17 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         /** @var OrderStatusService $orderStatusService */
         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
         $cart = new Cart($apiPayment->metadata->cart_id);
+
+        Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                'bank_status' => pSQL(Config::getStatuses()[$apiPayment->status]),
+                'order_id' => (int)$orderId,
+            ],
+            '`transaction_id` = \'' . pSQL($transaction->id) . '\''
+        );
+
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
