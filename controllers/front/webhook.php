@@ -227,7 +227,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             'mollie_payments',
             [
                 'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                'bank_status' => pSQL(Config::getStatuses()[$apiPayment->status]),
+                'bank_status' => pSQL(\Mollie\Config\Config::getStatuses()[$apiPayment->status]),
                 'order_id' => (int)$orderId,
             ],
             '`transaction_id` = \'' . pSQL($transaction->id) . '\''
