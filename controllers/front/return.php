@@ -33,6 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
@@ -316,6 +317,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ]));
             case PaymentStatus::STATUS_AUTHORIZED:
             case PaymentStatus::STATUS_PAID:
+            case OrderStatus::STATUS_COMPLETED:
                 $status = static::DONE;
                 $orderDetails = $order->getOrderDetailList();
                 /** @var OrderDetail $detail */
