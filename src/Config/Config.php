@@ -35,6 +35,7 @@
 
 namespace Mollie\Config;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
@@ -133,6 +134,7 @@ class Config
     const MOLLIE_PROFILE_ID = 'MOLLIE_PROFILE_ID';
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
+    const MOLLIE_SEND_ORDER_CONFIRMATION = 'MOLLIE_SEND_ORDER_CONFIRMATION';
     const MOLLIE_IFRAME = 'MOLLIE_IFRAME';
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_ISSUERS = 'MOLLIE_ISSUERS';
@@ -243,6 +245,7 @@ class Config
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
             PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
+            OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_PAID),
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),

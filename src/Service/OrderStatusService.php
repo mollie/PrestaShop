@@ -40,6 +40,7 @@ use Context;
 use Mollie\Config\Config;
 use Order;
 use OrderHistory;
+use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
@@ -62,7 +63,7 @@ class OrderStatusService
      * @since 3.3.2 $useExistingPayment option
      * @since 3.3.4 Accepts template vars for the corresponding email template
      */
-    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [])
+    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [], $transactionInfo = [])
     {
         if (is_string($statusId)) {
             $status = $statusId;
@@ -80,7 +81,7 @@ class OrderStatusService
             }
         }
 
-        if ((int) $statusId === 0) {
+        if ((int)$statusId === 0) {
             return;
         }
 
@@ -92,6 +93,9 @@ class OrderStatusService
             return;
         }
 
+        if ((int)$order->current_state === (int)$statusId) {
+            return;
+        }
         $history = array_map(function ($item) {
             return (int)$item['id_order_state'];
         }, $order->getHistory(Context::getContext()->language->id));
@@ -107,6 +111,16 @@ class OrderStatusService
         $history = new OrderHistory();
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
+
+        $orderPayments = OrderPayment::getByOrderId($order->id);
+        if ($transactionInfo) {
+            /** @var OrderPayment $orderPayment */
+            foreach ($orderPayments as $orderPayment) {
+                $orderPayment->transaction_id = $transactionInfo['transactionId'];
+                $orderPayment->payment_method = $transactionInfo['paymentMethod'];
+                $orderPayment->update();
+            }
+        }
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);

@@ -75,6 +75,7 @@ class Uninstall
         Configuration::deleteByName(Config::MOLLIE_API_KEY);
         Configuration::deleteByName(Config::MOLLIE_PROFILE_ID);
         Configuration::deleteByName(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
+        Configuration::deleteByName(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
         Configuration::deleteByName(Config::MOLLIE_IFRAME);
         Configuration::deleteByName(Config::MOLLIE_IMAGES);
         Configuration::deleteByName(Config::MOLLIE_ISSUERS);

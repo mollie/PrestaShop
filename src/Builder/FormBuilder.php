@@ -35,6 +35,7 @@
 
 NameSpace Mollie\Builder;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
@@ -288,6 +289,10 @@ class FormBuilder
                 'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
                 'countries' => $this->countryService->getActiveCountriesList(),
                 'tab' => $generalSettings,
+                'klarnaPayments' => [
+                    PaymentMethod::KLARNA_PAY_LATER,
+                    PaymentMethod::KLARNA_SLICE_IT,
+                    ],
                 'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }
@@ -301,28 +306,51 @@ class FormBuilder
         $input = [];
         $orderStatuses = [];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
-        $input[] = [
-            'type' => 'select',
-            'label' => $this->module->l('Send locale for payment screen'),
-            'tab' => $advancedSettings,
-            'desc' => TagsUtility::ppTags(
-                $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
-            ),
-            'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
-            'options' => [
-                'query' => [
-                    [
-                        'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                        'name' => $this->module->l('Do not send locale using browser language'),
+        if (Config::isVersion17()) {
+            $input[] = [
+                'type' => 'select',
+                'label' => $this->module->l('Send locale for payment screen'),
+                'tab' => $advancedSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+                ),
+                'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
+                            'name' => $this->module->l('Do not send locale using browser language'),
+                        ],
+                        [
+                            'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+                            'name' => $this->module->l('Send locale for payment screen'),
+                        ],
                     ],
-                    [
-                        'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                        'name' => $this->module->l('Send locale for payment screen'),
-                    ],
+                    'id' => 'id',
+                    'name' => 'name',
                 ],
-                'id' => 'id',
-                'name' => 'name',
+            ];
+        }
+
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->module->l('Send order confirmation email'),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+            'is_bool' => true,
+            'desc' => $this->module->l('Send order confirmation email before payment is executed'),
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                ],
             ],
         ];
 

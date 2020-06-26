@@ -228,6 +228,7 @@ class Installer
     {
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, '');
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PROFILE_ID, '');
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE, Mollie\Config\Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IFRAME, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IMAGES, Mollie\Config\Config::LOGOS_NORMAL);

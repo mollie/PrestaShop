@@ -44,6 +44,8 @@ services:
 
   Mollie\Service\OrderStatusService:
 
+  Mollie\Service\ErrorDisplayService:
+
   Mollie\Service\CountryService:
     arguments:
       - '@mollie'
@@ -83,3 +85,5 @@ services:
   Mollie\Service\LanguageService:
     arguments:
       - '@mollie'
+
+  Mollie\Service\CartDuplicationService:

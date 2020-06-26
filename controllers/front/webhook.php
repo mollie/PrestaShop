@@ -222,6 +222,17 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         /** @var OrderStatusService $orderStatusService */
         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
         $cart = new Cart($apiPayment->metadata->cart_id);
+
+        Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                'bank_status' => pSQL(\Mollie\Config\Config::getStatuses()[$apiPayment->status]),
+                'order_id' => (int)$orderId,
+            ],
+            '`transaction_id` = \'' . pSQL($transaction->id) . '\''
+        );
+
         if ($apiPayment->metadata->cart_id) {
             if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                 if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
@@ -243,29 +254,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
                 $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
             } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                && (empty($psPayment['order_id']) || !Order::getCartIdStatic($psPayment['order_id']))
-                && ($apiPayment->isPaid() || $apiPayment->isAuthorized())
+                && ($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
                 && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
             ) {
                 $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
-                if ($paymentStatus < 1) {
-                    $paymentStatus = Configuration::get('PS_OS_PAYMENT');
-                }
-                $orderReference = isset($apiPayment->metadata->order_reference) ? $apiPayment->metadata->order_reference : '';
-
-//                $this->module->currentOrderReference = $orderReference;
-//                $this->module->validateOrder(
-//                    (int) $apiPayment->metadata->cart_id,
-//                    $paymentStatus,
-//                    $apiPayment->amount->value,
-//                    isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$apiPayment->method] : 'Mollie',
-//                    null,
-//                    array(),
-//                    null,
-//                    false,
-//                    $cart->secure_key
-//                );
+                /** @var OrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                $orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
             }
@@ -285,7 +281,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) == Mollie\Config\Config::DEBUG_LOG_ALL) {
             PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie\Config\Config::NOTICE);
         }
-        Hook::exec('actionOrderStatusUpdate', array('newOrderStatus' => (int) Mollie\Config\Config::getStatuses()[$apiPayment->status], 'id_order' => (int) $orderId));
 
         return $apiPayment;
     }

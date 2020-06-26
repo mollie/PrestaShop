@@ -86,7 +86,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.5';
+        $this->version = '4.0.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -407,9 +407,14 @@ class Mollie extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
+        /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
+        $errorDisplayService = $this->getContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+
         $isOrderController = $this->context->controller instanceof OrderControllerCore;
         $isOPCController = $this->context->controller instanceof OrderOpcControllerCore;
+        $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isOrderController || $isOPCController) {
+            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
 
             Media::addJsDef([
                 'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
@@ -443,6 +448,10 @@ class Mollie extends PaymentModule
             $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
 
             return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+        }
+
+        if ($isCartController) {
+            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
     }
 
@@ -1086,10 +1095,20 @@ class Mollie extends PaymentModule
 
     public function hookActionEmailSendBefore($params)
     {
-        if($params['template'] === 'order_conf') {
-            if (Order::getByCartId($params['cart']->id)->module === $this->name) {
-                return false;
+        if (!isset($params['cart']->id)) {
+            return true;
+        }
+
+        $cart = new Cart($params['cart']->id);
+        if (Order::getByCartId($cart->id)->module !== $this->name) {
+            return true;
+        }
+
+        if ($params['template'] === 'order_conf') {
+            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+                return true;
             }
+            return false;
         }
 
         if ($params['template'] === 'order_conf' ||
@@ -1110,11 +1129,16 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
-            if (!isset($params['cart']->id)) {
-                return;
+            $order = Order::getByCartId($cart->id);
+            if (!$order) {
+                return true;
             }
-            $order = Order::getByCartId($params['cart']->id);
-            $orderFee = new MolOrderFee($order->id);
+            try {
+                $orderFee = new MolOrderFee($order->id);
+            } catch (Exception $e) {
+                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+                return true;
+            }
             if ($orderFee->order_fee) {
                 $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
             } else {
