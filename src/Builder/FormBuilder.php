@@ -339,7 +339,7 @@ class FormBuilder
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             'is_bool' => true,
-            'desc' => $this->module->l('Sand order confirmation email before payment is executed'),
+            'desc' => $this->module->l('Send order confirmation email before payment is executed'),
             'values' => [
                 [
                     'id' => 'active_on',
