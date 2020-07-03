@@ -86,7 +86,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.6';
+        $this->version = '4.0.7';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1176,9 +1176,13 @@ class Mollie extends PaymentModule
 
     private function setApiKey()
     {
+        if ($this->api) {
+            return;
+        }
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         try {
+
             $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
