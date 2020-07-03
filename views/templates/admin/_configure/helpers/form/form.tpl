@@ -64,6 +64,21 @@
                     </svg>
                     {l s=$paymentMethod.name mod='mollie'}
                 </a>
+                <td class="text-center">
+                    {if $methodObj->enabled}
+                        <a href="#"
+                           data-action="deactivate"
+                           onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                            <i class="material-icons">check</i>
+                        </a>
+                    {else}
+                        <a href="#"
+                           data-action="activate"
+                           onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                            <i class="material-icons">clear</i>
+                        </a>
+                    {/if}
+                </td>
                 <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id}">
                     <div class="form-group">
                         <label class="control-label col-lg-3">
@@ -270,11 +285,16 @@
                         <td class="left">{$carrier.name}</td>
                         <td class="left">
                             <select name="MOLLIE_CARRIER_URL_SOURCE_{$carrier.id_carrier}">
-                                <option value="do_not_auto_ship" {if $carrier.source === "do_not_auto_ship"}selected{/if}>{l s='Do not automatically ship' mod='mollie' js=1}</option>
-                                <option value="no_tracking_info" {if $carrier.source === "no_tracking_info"}selected{/if}>{l s='No tracking information' mod='mollie' js=1}</option>
-                                <option value="carrier_url" {if $carrier.source === "carrier_url"}selected{/if}>{l s='Carrier URL' mod='mollie' js=1}</option>
-                                <option value="custom_url" {if $carrier.source === "custom_url"}selected{/if}>{l s='Custom URL' mod='mollie' js=1}</option>
-                                <option value="module" {if $carrier.source === "module"}selected{/if}>{l s='Module' mod='mollie' js=1}</option>
+                                <option value="do_not_auto_ship"
+                                        {if $carrier.source === "do_not_auto_ship"}selected{/if}>{l s='Do not automatically ship' mod='mollie' js=1}</option>
+                                <option value="no_tracking_info"
+                                        {if $carrier.source === "no_tracking_info"}selected{/if}>{l s='No tracking information' mod='mollie' js=1}</option>
+                                <option value="carrier_url"
+                                        {if $carrier.source === "carrier_url"}selected{/if}>{l s='Carrier URL' mod='mollie' js=1}</option>
+                                <option value="custom_url"
+                                        {if $carrier.source === "custom_url"}selected{/if}>{l s='Custom URL' mod='mollie' js=1}</option>
+                                <option value="module"
+                                        {if $carrier.source === "module"}selected{/if}>{l s='Module' mod='mollie' js=1}</option>
                             </select>
                         </td>
                         <td class="left">
@@ -337,6 +357,8 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
 
 
 
