@@ -129,7 +129,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Payment of applicable countries' mod='mollie'}
+                            {l s='Payment applies to ' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id}"
