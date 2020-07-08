@@ -96,4 +96,35 @@ class CountryRepository
 
         return $countryIdsArray;
     }
+
+    public function updatePaymentMethodExcludedCountries($idMethod, $idCountries)
+    {
+
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_country WHERE `id_method` = "' . $idMethod . '"';
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+
+        if ($idCountries == false) {
+            return true;
+        }
+
+        $response = true;
+        foreach ($idCountries as $idCountry) {
+            $allCountries = 0;
+            $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_excluded_country` (id_method, id_country, all_countries) 
+                VALUES (';
+
+            if ($idCountry === '0') {
+                $allCountries = 1;
+            }
+            $sql .= '"' . pSQL($idMethod) . '", ' . (int)$idCountry . ', ' . (int)$allCountries . ')';
+
+            if (!Db::getInstance()->execute($sql)) {
+                $response = false;
+            }
+        }
+
+        return $response;
+    }
 }

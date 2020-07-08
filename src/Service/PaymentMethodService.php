@@ -177,6 +177,10 @@ class PaymentMethodService
                     if (!$this->countryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
                         unset($methods[$index]);
                     }
+                } else {
+                    if ($this->countryRepository->checkIfCountryIsExcluded($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                        unset($methods[$index]);
+                    }
                 }
             }
         }
