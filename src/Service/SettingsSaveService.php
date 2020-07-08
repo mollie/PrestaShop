@@ -144,7 +144,11 @@ class SettingsSaveService
                 }
 
                 $countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
+                $excludedCountries = Tools::getValue(
+                    Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
+                );
                 $this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
+                $this->countryRepository->updatePaymentMethodExcludedCountries($method['id'], $excludedCountries);
             }
         }
 

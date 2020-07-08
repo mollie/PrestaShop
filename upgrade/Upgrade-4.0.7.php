@@ -32,43 +32,26 @@
  * @link       https://www.mollie.nl
  */
 
-namespace Mollie\Service;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-use Cart;
-use CartRule;
-use Context;
-use Db;
-use Order;
-
-class CartDuplicationService
+/**
+ * @param Mollie $module
+ * @return bool
+ */
+function upgrade_module_4_0_7()
 {
-    public function restoreCart($cartId)
-    {
-        $context = Context::getContext();
-        $cart = new Cart($cartId);
-        $duplication = $cart->duplicate();
-        if ($duplication['success']) {
-            /** @var Cart $duplicatedCart */
-            $duplicatedCart = $duplication['cart'];
-            foreach ($cart->getOrderedCartRulesIds() as $cartRuleId) {
-                $duplicatedCart->addCartRule($cartRuleId['id_cart_rule']);
-                $this->restoreCartRuleQuantity($cartId, $cartRuleId['id_cart_rule']);
-            }
-            $context->cookie->id_cart = $duplicatedCart->id;
-            $context->cart = $duplicatedCart;
-            CartRule::autoAddToCart($context);
-            $context->cookie->write();
-        }
+    $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_method`       VARCHAR(64),
+				`id_country`      INT(64),
+				`all_countries` tinyint
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
+    if (Db::getInstance()->execute($sql) == false) {
+        return false;
     }
 
-    private function restoreCartRuleQuantity($cartId, $cartRuleId)
-    {
-        $cartRule = new CartRule($cartRuleId);
-        $cartRule->quantity++;
-        $cartRule->update();
-
-        $orderId = Order::getIdByCartId($cartId);
-        $sql = 'DELETE FROM `ps_order_cart_rule` WHERE id_order = ' . (int) $orderId . ' AND id_cart_rule = ' . (int) $cartRuleId;
-        DB::getInstance()->execute($sql);
-    }
+    return true;
 }

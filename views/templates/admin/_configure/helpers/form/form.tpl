@@ -168,7 +168,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Payment of applicable countries' mod='mollie'}
+                            {l s='Payment applies to ' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id}"
@@ -180,7 +180,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Payment from certain countries' mod='mollie'}
+                            {l s='Payment allowed for certain countries ' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
@@ -188,6 +188,20 @@
                                 {foreach $input.countries as $country}
                                     <option value="{$country.id}"
                                             {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='Payment excluded for certain countries ' mod='mollie'}
+                        </label>
+                        <div class="col-lg-9">
+                            <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
+                                    class="fixed-width-xl chosen" multiple="multiple">
+                                {foreach $input.countries as $excludedCountry}
+                                    <option value="{$excludedCountry.id}"
+                                            {if {$excludedCountry.id|in_array:$paymentMethod.excludedCountries}}selected{/if}>{$excludedCountry.name}</option>
                                 {/foreach}
                             </select>
                         </div>
