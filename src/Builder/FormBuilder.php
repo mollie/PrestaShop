@@ -251,7 +251,7 @@ class FormBuilder
                         'type' => 'mollie-h3',
                         'tab' => $generalSettings,
                         'name' => '',
-                        'title' => $this->module->l('Orders API'),
+                        'title' => '',
                     ],
                     [
                         'type' => 'select',

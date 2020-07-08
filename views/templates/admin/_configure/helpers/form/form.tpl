@@ -123,6 +123,30 @@
                                 {l s=': The name of the store' mod='mollie'}
                             </p>
                             <p class="help-block">
+                                <b>{l s='{cart.id}' mod='mollie'}</b>
+                                {l s=': The id of the cart' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{order.reference}' mod='mollie'}</b>
+                                {l s=': The reference of the order' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{customer.firstname}' mod='mollie'}</b>
+                                {l s=': The firstname of the customer' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{customer.lastname}' mod='mollie'}</b>
+                                {l s=': The lastname of the customer' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{customer.company}' mod='mollie'}</b>
+                                {l s=': The company of the customer' mod='mollie'}
+                            </p>
+                            <p class="help-block">
+                                <b>{l s='{storename}' mod='mollie'}</b>
+                                {l s=': The name of the store' mod='mollie'}
+                            </p>
+                            <p class="help-block">
                                 {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
                             </p>
                         </div>
