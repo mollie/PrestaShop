@@ -31,17 +31,42 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-$(document).ready(function() {
-    $('.js-mollie-amount').keypress(function(event) {
+$(document).ready(function () {
+    $('.js-mollie-amount').keypress(function (event) {
         if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
             event.preventDefault();
         }
     });
     $('select[name^="MOLLIE_CARRIER_URL_SOURCE"]').on('change', function () {
         var customUrlDisabled = true;
-        if($(this).val() === 'custom_url') {
+        if ($(this).val() === 'custom_url') {
             customUrlDisabled = false;
         }
         $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
     })
 });
+
+function togglePaymentMethod($button, paymentId) {
+    var $clickedButton = $($button);
+    $.ajax(ajaxUrl, {
+        method: 'POST',
+        data: {
+            'paymentMethod': paymentId,
+            'status' : $clickedButton.data('action'),
+            'action': 'togglePaymentMethod',
+            'ajax' : 1
+        },
+        success: function (response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                if (response.paymentStatus) {
+                    $clickedButton.data('action', 'deactivate');
+                    $clickedButton.find('i').html('check');
+                } else {
+                    $clickedButton.data('action', 'activate');
+                    $clickedButton.find('i').html('clear');
+                }
+            }
+        }
+    })
+}
