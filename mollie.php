@@ -75,6 +75,10 @@ class Mollie extends PaymentModule
     const ADDONS = false;
 
     const SUPPORTED_PHP_VERSION = '5.6';
+
+    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
+    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
+
     /**
      * Mollie constructor.
      *
@@ -311,6 +315,7 @@ class Mollie extends PaymentModule
             'profile_id_message' => $this->l('Wrong profile ID'),
             'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
             'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
+            'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
         ]);
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
@@ -1100,7 +1105,8 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        if (Order::getByCartId($cart->id)->module !== $this->name) {
+        $order = Order::getByCartId($cart->id);
+        if ($order === null || $order->module !== $this->name) {
             return true;
         }
 
@@ -1172,6 +1178,29 @@ class Mollie extends PaymentModule
             );
         }
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getTabs()
+    {
+        return [
+            [
+                'name' => $this->name,
+                'class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'ParentClassName' => 'AdminParentShipping',
+                'parent' => 'AdminParentShipping'
+            ],
+            [
+                'name' => $this->l('AJAX', __CLASS__),
+                'class_name' => self::ADMIN_MOLLIE_AJAX_CONTROLLER,
+                'ParentClassName' => self::ADMIN_MOLLIE_CONTROLLER,
+                'parent' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+                'visible' => false,
+            ],
+        ];
     }
 
     private function setApiKey()

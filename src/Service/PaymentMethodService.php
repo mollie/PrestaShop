@@ -250,9 +250,6 @@ class PaymentMethodService
                 )
             ),
         ];
-        if ($cardToken) {
-            $paymentData['cardToken'] = $cardToken;
-        }
         if (!EnvironmentUtility::isLocalEnvironment()) {
             $paymentData['webhookUrl'] = $context->link->getModuleLink(
                 'mollie',
@@ -317,6 +314,10 @@ class PaymentMethodService
                 }
             }
 
+            if ($cardToken) {
+                $paymentData['cardToken'] = $cardToken;
+            }
+
             switch ($method) {
                 case PaymentMethod::BANKTRANSFER:
                     $paymentData['billingEmail'] = $customer->email;
@@ -357,6 +358,9 @@ class PaymentMethodService
 
             $paymentData['lines'] = $this->cartLinesService->getCartLines($amount, $paymentFee, $cart);
             $paymentData['payment'] = [];
+            if ($cardToken) {
+                $paymentData['payment']['cardToken'] = $cardToken;
+            }
             if (!EnvironmentUtility::isLocalEnvironment()) {
                 $paymentData['payment']['webhookUrl'] = $context->link->getModuleLink(
                     'mollie',
