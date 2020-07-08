@@ -81,4 +81,19 @@ class CountryRepository
 
         return $response;
     }
+
+    public function getExcludedCountryIds($methodId)
+    {
+        $sql = 'SELECT id_country 
+                    FROM `' . _DB_PREFIX_ . 'mol_excluded_country`
+                    WHERE id_method = "' . pSQL($methodId) . '"';
+
+        $countryIds = Db::getInstance()->executeS($sql);
+        $countryIdsArray = [];
+        foreach ($countryIds as $countryId) {
+            $countryIdsArray[] = $countryId['id_country'];
+        }
+
+        return $countryIdsArray;
+    }
 }
