@@ -2,6 +2,7 @@
 
 namespace Mollie\Service;
 
+use MolPendingOrderCart;
 use Order;
 
 class OrderCartAssociationService
@@ -13,10 +14,23 @@ class OrderCartAssociationService
         $this->cartDuplication = $cartDuplication;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
     public function associateOrderToPendingCart(Order $order)
     {
         // globally restores the cart.
         $newCartId = $this->cartDuplication->restoreCart($order->id_cart);
 
+        $pendingOrderCart = new MolPendingOrderCart();
+        $pendingOrderCart->cart_id = $newCartId;
+        $pendingOrderCart->order_id = $order->id;
+
+        return $pendingOrderCart->add();
     }
 }

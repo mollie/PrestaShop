@@ -87,3 +87,7 @@ services:
       - '@mollie'
 
   Mollie\Service\CartDuplicationService:
+
+  Mollie\Service\OrderCartAssociationService:
+    arguments:
+      - '@Mollie\Service\CartDuplicationService'

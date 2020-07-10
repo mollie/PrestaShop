@@ -12,3 +12,8 @@ services:
   Mollie\Repository\MolCarrierInformationRepository:
 
   Mollie\Repository\ModuleRepository:
+
+  Mollie\Repository\PendingOrderCartReadOnlyRepository:
+    class: Mollie\Repository\PendingOrderCartReadOnlyRepository
+    arguments:
+      - 'MolPendingOrderCart'
