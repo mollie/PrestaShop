@@ -208,6 +208,9 @@ class Config
     const FEE_PERCENTAGE= 2;
     const FEE_FIXED_FEE_AND_PERCENTAGE = 3;
 
+    const MOLLIE_API_STATUS_PAYMENT = "payment";
+    const MOLLIE_API_STATUS_ORDER = "order";
+
     const CARTES_BANCAIRES = 'cartesbancaires';
 
     /** @var array $methods */
