@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Configuration;
 use Context;
 use Mollie\Config\Config;
@@ -120,6 +121,10 @@ class OrderStatusService
                 $orderPayment->payment_method = $transactionInfo['paymentMethod'];
                 $orderPayment->update();
             }
+        }
+
+        if($status === Config::STATUS_PAID_ON_BACKORDER) {
+            $status = PaymentStatus::STATUS_PAID;
         }
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
