@@ -276,10 +276,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
-                /** @var CartDuplicationService $cartDuplicationService */
-                $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
-                $cartDuplicationService->restoreCart($order->id_cart);
-
                 $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
 
                 $this->context->cookie->mollie_payment_canceled_error =
