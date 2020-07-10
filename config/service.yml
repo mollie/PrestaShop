@@ -91,3 +91,12 @@ services:
   Mollie\Service\OrderCartAssociationService:
     arguments:
       - '@Mollie\Service\CartDuplicationService'
+
+  Mollie\Service\RejectPendingOrderService:
+    arguments:
+      - '@Mollie\Repository\PendingOrderCartRepository'
+
+  Mollie\Service\MemorizeCartService:
+    arguments:
+      - '@Mollie\Service\RejectPendingOrderService'
+      - '@Mollie\Service\OrderCartAssociationService'

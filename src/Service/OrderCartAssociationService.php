@@ -22,7 +22,7 @@ class OrderCartAssociationService
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function associateOrderToPendingCart(Order $order)
+    public function createPendingCart(Order $order)
     {
         // globally restores the cart.
         $newCartId = $this->cartDuplication->restoreCart($order->id_cart);

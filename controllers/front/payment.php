@@ -41,7 +41,10 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\MemorizeCartService;
+use Mollie\Service\OrderCartAssociationService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\RejectPendingOrderService;
 use Mollie\Utility\PaymentFeeUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
@@ -429,5 +432,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $order->total_paid = $totalPrice->toPrecision(2);
         $order->reference = $orderReference;
         $order->update();
+
+        /** @var MemorizeCartService $memorizeCart */
+        $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+
+        $memorizeCart->memorizeCart($order);
     }
 }

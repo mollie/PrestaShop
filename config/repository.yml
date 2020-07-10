@@ -13,7 +13,6 @@ services:
 
   Mollie\Repository\ModuleRepository:
 
-  Mollie\Repository\PendingOrderCartReadOnlyRepository:
-    class: Mollie\Repository\PendingOrderCartReadOnlyRepository
+  Mollie\Repository\PendingOrderCartRepository:
     arguments:
       - 'MolPendingOrderCart'
