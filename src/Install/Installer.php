@@ -45,6 +45,7 @@ use Mollie;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Tab;
 
 class Installer
 {
@@ -277,5 +278,27 @@ class Installer
         }
         $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
+    }
+
+    public function installTab($className, $parent, $name, $active = true) {
+
+        $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
+
+        $moduleTab = new Tab();
+        $moduleTab->class_name = $className;
+        $moduleTab->id_parent = $idParent;
+        $moduleTab->module = $this->module->name;
+        $moduleTab->active = $active;
+
+        $languages = Language::getLanguages(true);
+        foreach ($languages as $language) {
+            $moduleTab->name[$language['id_lang']] = $name;
+        }
+
+        if (!$moduleTab->save()) {
+            return false;
+        }
+
+        return true;
     }
 }

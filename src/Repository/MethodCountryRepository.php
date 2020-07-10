@@ -50,4 +50,17 @@ class MethodCountryRepository
 
         return Db::getInstance()->getValue($sql);
     }
+
+    public function checkIfCountryIsExcluded($methodId, $countryId)
+    {
+        $sql = new DbQuery();
+        $sql->select('`id_mol_country`');
+        $sql->from('mol_excluded_country');
+        $sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int)$countryId . ' OR all_countries = 1)');
+
+        $result = Db::getInstance()->getValue($sql);
+
+        return is_numeric($result) && $result > 0;
+
+    }
 }

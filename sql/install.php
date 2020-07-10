@@ -82,6 +82,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_carrier_information` (
 				`custom_url` VARCHAR(255)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_method`       VARCHAR(64),
+				`id_country`      INT(64),
+				`all_countries` tinyint
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;

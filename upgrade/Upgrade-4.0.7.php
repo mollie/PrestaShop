@@ -40,10 +40,32 @@ if (!defined('_PS_VERSION_')) {
  * @param Mollie $module
  * @return bool
  */
-function upgrade_module_4_0_7()
+
+function upgrade_module_4_0_7($module)
 {
     Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get('PS_OS_SHIPPING'));
     Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, true);
+
+    $sql= 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_method`       VARCHAR(64),
+				`id_country`      INT(64),
+				`all_countries` tinyint
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+
+    if (Db::getInstance()->execute($sql) == false) {
+        return false;
+    }
+
+    $installer = new \Mollie\Install\Installer($module);
+    $installed = true;
+
+    $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
+    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
+
+    if(!$installed) {
+        return false;
+    }
 
     return true;
 }
