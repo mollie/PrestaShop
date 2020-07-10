@@ -153,6 +153,8 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
     );
 
     public static $classMap = array (
+        'AdminMollieAjaxController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieAjaxController.php',
+        'AdminMollieModuleController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieModuleController.php',
         'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
         'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_static.php',
@@ -160,6 +162,7 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
         'MolPaymentMethod' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethod.php',
         'MolPaymentMethodIssuer' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethodIssuer.php',
+        'MolPendingOrderCart' => __DIR__ . '/../..' . '/src/Entity/MolPendingOrderCart.php',
         'MollieAjaxModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/ajax.php',
         'MollieFailModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/fail.php',
         'MolliePayScreenModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/payScreen.php',
@@ -173,7 +176,7 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         '_PhpScoper5eddef0da618a\\AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
         '_PhpScoper5eddef0da618a\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         '_PhpScoper5eddef0da618a\\DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
-        '_PhpScoper5eddef0da618a\\Error' => __DIR__ . '/..' . '/paragonie/random_compat/lib/error_polyfill.php',
+        '_PhpScoper5eddef0da618a\\Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
         '_PhpScoper5eddef0da618a\\GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         '_PhpScoper5eddef0da618a\\GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
         '_PhpScoper5eddef0da618a\\GuzzleHttp\\Cookie\\CookieJar' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -712,7 +715,7 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
-        '_PhpScoper5eddef0da618a\\TypeError' => __DIR__ . '/..' . '/paragonie/random_compat/lib/error_polyfill.php',
+        '_PhpScoper5eddef0da618a\\TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

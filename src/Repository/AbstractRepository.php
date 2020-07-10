@@ -1,6 +1,10 @@
 <?php
 
-use Mollie\Repository\ReadOnlyRepositoryInterface;
+namespace Mollie\Repository;
+
+use ObjectModel;
+use PrestaShopCollection;
+use PrestaShopException;
 
 class AbstractRepository implements ReadOnlyRepositoryInterface
 {
