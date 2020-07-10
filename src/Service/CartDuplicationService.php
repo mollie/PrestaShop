@@ -42,6 +42,15 @@ use Order;
 
 class CartDuplicationService
 {
+    /**
+     *
+     *
+     * @param int $cartId
+     *
+     * @return int
+     *
+     * @throws \PrestaShopDatabaseException
+     */
     public function restoreCart($cartId)
     {
         $context = Context::getContext();
@@ -58,7 +67,11 @@ class CartDuplicationService
             $context->cart = $duplicatedCart;
             CartRule::autoAddToCart($context);
             $context->cookie->write();
+
+            return  $duplicatedCart->id;
         }
+
+        return 0;
     }
 
     private function restoreCartRuleQuantity($cartId, $cartRuleId)
