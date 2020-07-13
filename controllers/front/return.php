@@ -318,7 +318,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->cookie->mollie_payment_canceled_error =
                     json_encode($this->warning);
 
-                $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
+                $this->updateTransactions($transactionId, $orderId, $orderStatus, $transaction->method);
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
@@ -350,7 +350,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ]));
         }
 
-        $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
+        $this->updateTransactions($transactionId, $orderId, $orderStatus, $transaction->method);
+        //todo: change order payment method.
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',
@@ -374,7 +375,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         ]));
     }
 
-    protected function savePaymentStatus($transactionId, $status, $orderId)
+    protected function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod)
     {
         try {
             return Db::getInstance()->update(
@@ -383,6 +384,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
                     'bank_status' => pSQL($status),
                     'order_id' => (int)$orderId,
+                    'method' => pSQL($paymentMethod),
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
@@ -400,7 +402,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-        $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
+        $this->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);
         $transactionInfo = [
             'transactionId' => $transactionId,
             'paymentMethod' => $paymentMethod,
