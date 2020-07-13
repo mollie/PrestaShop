@@ -461,6 +461,22 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * Add custom JS && CSS to admin controllers
+     */
+    public function hookActionAdminControllerSetMedia()
+    {
+        $currentController = Tools::getValue('controller');
+
+        if ('AdminOrders' === $currentController) {
+            Media::addJsDef(array(
+                'mollieHookAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+            ));
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
+        }
+    }
+
+    /**
      * @throws PrestaShopException
      * @throws SmartyException
      */
@@ -1201,6 +1217,55 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
         ];
+    }
+
+    public function hookActionAdminOrdersListingFieldsModifier($params)
+    {
+        if (isset($params['select'])) {
+            $params['select'].= ' ,mol.`transaction_id`';
+        }
+        if (isset($params['join'])) {
+            $params['join'].= ' LEFT JOIN `'._DB_PREFIX_.'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
+        }
+        $params['fields']['order_id'] =  [
+            'title' => $this->l('Resend payment link'),
+            'align' => 'text-center',
+            'class' => 'fixed-width-xs',
+            'orderby' => false,
+            'search' => false,
+            'remove_onclick' => true,
+            'callback_object' => 'mollie',
+            'callback' => 'resendOrderPaymentLink'
+        ];
+    }
+
+    /**
+     * Callback function, it has to be static so can't call $this, so have to reload dpdGroup moulde inside the function
+     * @param $idOrder
+     * @return string
+     * @throws Exception
+     */
+    public static function resendOrderPaymentLink($orderId)
+    {
+        $order = new Order($orderId);
+//        if ($order->current_state !== Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING)) {
+//            return false;
+//        }
+
+        $mollie = Module::getInstanceByName('mollie');
+
+        $mollie->smarty->assign('idOrder', $orderId);
+
+        $mollie->smarty->assign('message',
+            $mollie->l('You will resend email with payment link to the customer')
+        );
+        $icon = $mollie->fetch(
+            $mollie->getLocalPath() . 'views/templates/hook/admin/order-list-save-label-icon.tpl');
+
+        $mollie->smarty->assign('icon', $icon);
+
+        return $mollie->fetch(
+            $mollie->getLocalPath() . 'views/templates/hook/admin/order-list-icon-container.tpl');
     }
 
     private function setApiKey()

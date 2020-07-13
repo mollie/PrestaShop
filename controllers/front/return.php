@@ -267,54 +267,100 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $orderStatus = $transaction->status;
-        if ($orderStatus === 'created' && $isOrder) {
-            foreach ($transaction->payments() as $payment) {
-                $orderStatus = $payment->status;
-            }
-        }
-        switch ($orderStatus) {
-            case PaymentStatus::STATUS_EXPIRED:
-            case PaymentStatus::STATUS_FAILED:
-            case PaymentStatus::STATUS_CANCELED:
-                /** @var CartDuplicationService $cartDuplicationService */
-                $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
-                $cartDuplicationService->restoreCart($order->id_cart);
+        switch ($transaction->resource) {
+            case 'order':
+                switch ($orderStatus) {
+                    case OrderStatus::STATUS_CREATED:
+                    case OrderStatus::STATUS_PAID:
+                    case OrderStatus::STATUS_AUTHORIZED:
+                    case OrderStatus::STATUS_CANCELED:
+                    case OrderStatus::STATUS_SHIPPING:
+                    case OrderStatus::STATUS_COMPLETED:
+                    case OrderStatus::STATUS_EXPIRED:
+                    case OrderStatus::STATUS_PENDING:
+                    case OrderStatus::STATUS_REFUNDED:
+                }
+            case 'payment':
+                switch ($orderStatus) {
+                    case PaymentStatus::STATUS_OPEN:
+                    case PaymentStatus::STATUS_PENDING:
+                        $status = static::PENDING;
+                        $orderDetails = $order->getOrderDetailList();
+                        /** @var OrderDetail $detail */
+                        foreach ($orderDetails as $detail) {
+                            $orderDetail = new OrderDetail($detail['id_order_detail']);
+                            if (
+                                Configuration::get('PS_STOCK_MANAGEMENT') &&
+                                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                            ) {
+                                $orderStatus = Mollie\Config\Config::STATUS_PENDING_ON_BACKORDER;
+                                break;
+                            }
+                        }
+                        break;
+                    case PaymentStatus::STATUS_AUTHORIZED:
+                    case PaymentStatus::STATUS_PAID:
+                        $status = static::DONE;
+                        $orderDetails = $order->getOrderDetailList();
+                        /** @var OrderDetail $detail */
+                        foreach ($orderDetails as $detail) {
+                            $orderDetail = new OrderDetail($detail['id_order_detail']);
+                            if (
+                                Configuration::get('PS_STOCK_MANAGEMENT') &&
+                                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                            ) {
+                                $orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+                                break;
+                            }
+                        }
+                        break;
+                    case PaymentStatus::STATUS_EXPIRED:
+                    case PaymentStatus::STATUS_CANCELED:
+                    case PaymentStatus::STATUS_FAILED:
+                        /** @var CartDuplicationService $cartDuplicationService */
+                        $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
+                        $cartDuplicationService->restoreCart($order->id_cart);
 
-                $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
+                        $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
 
-                $this->context->cookie->mollie_payment_canceled_error =
-                    json_encode($this->warning);
+                        $this->context->cookie->mollie_payment_canceled_error =
+                            json_encode($this->warning);
 
-                $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
+                        $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
-                if (!Config::isVersion17()) {
-                    $orderLink = $this->context->link->getPageLink(
-                        'order',
-                        true,
-                        null
-                    );
-                } else {
-                    $orderLink = $this->context->link->getPageLink(
-                        'cart',
-                        null,
-                        $this->context->language->id,
-                        [
-                            'action' => 'show',
-                        ],
-                        false,
-                        null,
-                        false
+                        if (!Config::isVersion17()) {
+                            $orderLink = $this->context->link->getPageLink(
+                                'order',
+                                true,
+                                null
+                            );
+                        } else {
+                            $orderLink = $this->context->link->getPageLink(
+                                'cart',
+                                null,
+                                $this->context->language->id,
+                                [
+                                    'action' => 'show',
+                                ],
+                                false,
+                                null,
+                                false
 
-                    );
+                            );
+                        }
+
+                        die(json_encode([
+                            'success' => true,
+                            'status' => static::DONE,
+                            'response' => json_encode($transaction),
+                            'href' => $orderLink
+
+                        ]));
                 }
 
-                die(json_encode([
-                    'success' => true,
-                    'status' => static::DONE,
-                    'response' => json_encode($transaction),
-                    'href' => $orderLink
+        }
+        switch ($orderStatus) {
 
-                ]));
             case PaymentStatus::STATUS_AUTHORIZED:
             case PaymentStatus::STATUS_PAID:
             case OrderStatus::STATUS_COMPLETED:

@@ -87,3 +87,19 @@ services:
       - '@mollie'
 
   Mollie\Service\CartDuplicationService:
+
+  Mollie\Service\TransactionService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\OrderStatusService'
+
+  Mollie\Service\MolliePaymentMailService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\MailService'
+
+  Mollie\Service\MailService:
+    arguments:
+      - '@mollie'

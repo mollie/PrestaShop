@@ -1,6 +1,10 @@
 <?php
 
+use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\MolliePaymentMailService;
+use Mollie\Service\PaymentMethodService;
+use Mollie\Service\TransactionService;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -31,6 +35,17 @@ class AdminMollieAjaxController extends ModuleAdminController
                     'paymentStatus' => $method->enabled
                 ]
             ));
+        }
+
+        if ($action === 'resendPaymentMail') {
+            $orderId = Tools::getValue('id_order');
+
+            /** @var MolliePaymentMailService $molliePaymentMailService */
+            $molliePaymentMailService = $this->module->getContainer(MolliePaymentMailService::class);
+
+            $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
+
+            $this->ajaxDie(json_encode($response));
         }
 
     }
