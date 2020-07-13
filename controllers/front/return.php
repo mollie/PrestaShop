@@ -350,42 +350,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ]));
         }
 
-//        switch ($orderStatus) {
-//
-//            case PaymentStatus::STATUS_AUTHORIZED:
-//            case PaymentStatus::STATUS_PAID:
-//            case OrderStatus::STATUS_COMPLETED:
-//                $status = static::DONE;
-//                $orderDetails = $order->getOrderDetailList();
-//                /** @var OrderDetail $detail */
-//                foreach ($orderDetails as $detail) {
-//                    $orderDetail = new OrderDetail($detail['id_order_detail']);
-//                    if (
-//                        Configuration::get('PS_STOCK_MANAGEMENT') &&
-//                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-//                    ) {
-//                        $orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-//                        break;
-//                    }
-//                }
-//                break;
-//            default:
-//                $status = static::PENDING;
-//                $orderDetails = $order->getOrderDetailList();
-//                /** @var OrderDetail $detail */
-//                foreach ($orderDetails as $detail) {
-//                    $orderDetail = new OrderDetail($detail['id_order_detail']);
-//                    if (
-//                        Configuration::get('PS_STOCK_MANAGEMENT') &&
-//                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-//                    ) {
-//                        $orderStatus = Mollie\Config\Config::STATUS_PENDING_ON_BACKORDER;
-//                        break;
-//                    }
-//                }
-//                break;
-//        }
-
         $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
         $successUrl = $this->context->link->getPageLink(
