@@ -42,9 +42,8 @@
 .mollie-message-container{
     position: absolute;
     display: none;
-
     width: auto;
-    right: 60px;
+    right: 90px;
     border-radius: 10px;
     padding: 10px;
     color: white;
@@ -73,3 +72,24 @@
     display:block;
 }
 
+
+@media only screen and (max-width: 991px) {
+    .icon-send-mail-mollie::before {
+        left: 0;
+        display: inline-block;
+        position: unset;
+    }
+
+    .mollie-message-container:before {
+        content: none;
+    }
+
+    .mollie-message-container {
+        display: inline-block;
+        position: unset;
+    }
+
+    .mollie-icon-container {
+        display: flex;
+    }
+}
