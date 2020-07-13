@@ -148,4 +148,16 @@ class PaymentMethodRepository
 
         return Db::getInstance()->executeS($sql);
     }
+
+    public function updateTransactionId($oldTransactionId, $newTransactionId)
+    {
+        return Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'transaction_id'  => pSQL($newTransactionId),
+
+            ],
+            '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
+        );
+    }
 }
