@@ -269,7 +269,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderStatus = $transaction->status;
 
         if($transaction->resource === "order") {
-            $payments = $transaction->_embedded->payments[0];
+            $payments = end($transaction->_embedded->payments);
             $orderStatus = $payments->status;
         }
 
