@@ -1247,10 +1247,17 @@ class Mollie extends PaymentModule
      */
     public static function resendOrderPaymentLink($orderId)
     {
-        $order = new Order($orderId);
-//        if ($order->current_state !== Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING)) {
-//            return false;
-//        }
+        $module = Module::getInstanceByName('mollie');
+        /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
+        $molliePaymentRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $molPayment = $molliePaymentRepo->getPaymentBy('order_id', $orderId);
+        if ($molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_COMPLETED ||
+            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_PAID ||
+            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_SHIPPING ||
+            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED ||
+            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
+            return false;
+        }
 
         $mollie = Module::getInstanceByName('mollie');
 

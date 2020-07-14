@@ -129,6 +129,8 @@ class MolliePaymentMailService
         }
         $qrCode = false;
 
+        $cart = new Cart($paymentApi->metadata->cart_id);
+        $customer = new Customer($cart->id_customer);
         $paymentData = [
             'amount' => [
                 'value' => $paymentApi->amount->value,
@@ -144,7 +146,13 @@ class MolliePaymentMailService
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    ['cart_id' => $paymentApi->metadata->cart_id, 'utm_nooverride' => 1, 'rand' => time()],
+                    [
+                        'cart_id' => $paymentApi->metadata->cart_id,
+                        'utm_nooverride' => 1,
+                        'rand' => time(),
+                        'key' => $customer->secure_key,
+                        'customerId' => $customer->id
+                    ],
                     true
                 )
             ),

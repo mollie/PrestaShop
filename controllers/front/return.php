@@ -98,6 +98,22 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
+//        $this->context->customer->secure_key = Tools::getValue('key');
+        $customerId = Tools::getValue('customerId');
+        if (Tools::getValue('customerId')) {
+            $customer = new Customer($customerId);
+            if ($customer->secure_key === Tools::getValue('key')) {
+                $this->context->customer = $customer;
+                $this->context->cookie->id_customer = (int) $customer->id;
+                $this->context->cookie->customer_lastname = $customer->lastname;
+                $this->context->cookie->customer_firstname = $customer->firstname;
+                $this->context->cookie->logged = 1;
+                $this->context->cookie->check_cgv = 1;
+                $this->context->cookie->is_guest = $customer->isGuest();
+                $this->context->cookie->passwd = $customer->passwd;
+                $this->context->cookie->email = $customer->email;
+            }
+        }
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
@@ -161,7 +177,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->link->getModuleLink(
                     $this->module->name,
                     'return',
-                    ['ajax' => 1, 'action' => 'getStatus', 'transaction_id' => $data['mollie_info']['transaction_id']],
+                    [
+                        'ajax' => 1, 'action' => 'getStatus',
+                        'transaction_id' => $data['mollie_info']['transaction_id'],
+                        'key' => $this->context->customer->secure_key,
+                        'customerId' => $this->context->customer->id
+                    ],
                     true
                 )
             );
@@ -403,6 +424,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
         $this->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);
+
+        $order = new Order($orderId);
+        $order->payment = $paymentMethod;
+        $order->update();
+
         $transactionInfo = [
             'transactionId' => $transactionId,
             'paymentMethod' => $paymentMethod,
