@@ -104,3 +104,8 @@ services:
   Mollie\Service\PaymentsTranslationService:
     - '@mollie'
     - '@Mollie\Service\LanguageService'
+
+  Mollie\Service\PaymentReturnService:
+    - '@mollie'
+    - '@Mollie\Service\CartDuplicationService'
+    - '@Mollie\Repository\PaymentMethodRepository'

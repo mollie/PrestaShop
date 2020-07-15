@@ -1248,7 +1248,6 @@ class Mollie extends PaymentModule
         if ($this->context->controller instanceof AdminOrdersControllerCore &&
             $params["orderStatus"]->module_name === $this->name
         ) {
-
             $paymentData = [
                 'amount' => [
                     'value' => strval($params["order"]->total_paid),
@@ -1299,7 +1298,6 @@ class Mollie extends PaymentModule
                 ]
             );
         }
-        return $params;
     }
 
     /**

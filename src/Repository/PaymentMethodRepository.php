@@ -38,6 +38,7 @@ namespace Mollie\Repository;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Db;
 use DbQuery;
+use Exception;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -160,4 +161,24 @@ class PaymentMethodRepository
             '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
         );
     }
+
+    public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod)
+    {
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                [
+                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                    'bank_status' => pSQL($status),
+                    'order_id' => (int)$orderId,
+                    'method' => pSQL($paymentMethod),
+                ],
+                '`transaction_id` = \'' . pSQL($transactionId) . '\''
+            );
+        } catch (Exception $e) {
+            $this->tryAddOrderReferenceColumn();
+            throw $e;
+        }
+    }
+
 }
