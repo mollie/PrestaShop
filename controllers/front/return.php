@@ -42,6 +42,7 @@ use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
+use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ContextUtility;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -284,13 +285,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderStatus = $transaction->status;
 
         if($transaction->resource === "order") {
-            $payments = end($transaction->_embedded->payments);
+            $payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
             $orderStatus = $payments->status;
         }
 
-        $paymentMethod = array_key_exists($transaction->method, Config::$methods)
-            ? Config::$methods[$transaction->method]
-            : $transaction->method;
+        $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
 
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
