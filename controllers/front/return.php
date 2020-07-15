@@ -294,7 +294,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
-        $paymentMethod = Config::$methods[$transaction->method];
+        $paymentMethod = array_key_exists($transaction->method, Config::$methods)
+            ? Config::$methods[$transaction->method]
+            : $transaction->method;
 
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
