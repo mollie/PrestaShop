@@ -160,4 +160,20 @@ class PaymentMethodRepository
             '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
         );
     }
+
+    public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
+    {
+        return  Db::getInstance()->insert(
+            'mollie_payments',
+            [
+                'cart_id' => (int)$cartId,
+                'method' => pSQL($orderPayment),
+                'transaction_id' => pSQL($transactionId),
+                'bank_status' => PaymentStatus::STATUS_OPEN,
+                'order_id' => (int) $orderId,
+                'order_reference' => psql($orderReference),
+                'created_at' => array('type' => 'sql', 'value' => 'NOW()'),
+            ]
+        );
+    }
 }

@@ -1243,69 +1243,46 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if($this->context->controller instanceof AdminOrdersControllerCore &&
-            $params["orderStatus"]->module_name === $this->name
+        if(!($this->context->controller instanceof AdminOrdersControllerCore) &&
+            $params["order"]->module !== $this->name
         ) {
-
-            $qrCode = false;
-            $paymentData = [
-                'amount' => [
-                    'value' => strval($params["order"]->total_paid),
-                    'currency' => $params["currency"]->iso_code,
-                ],
-                'redirectUrl' =>($qrCode
-                    ? $this->context->link->getModuleLink(
-                        'mollie',
-                        'qrcode',
-                        ['cart_id' => $params["cart"]->id, 'done' => 1, 'rand' => time()],
-                        true
-                    )
-                    : $this->context->link->getModuleLink(
-                        'mollie',
-                        'return',
-                        [
-                            'cart_id' => $params["cart"]->id,
-                            'utm_nooverride' => 1,
-                            'rand' => time(),
-                            'key' => $params["customer"]->secure_key,
-                            'customerId' => $params["customer"]->id
-                        ],
-                        true
-                    )
-                ),
-                'description' => $params["order"]->reference,
-                'metadata' => [
-                    'cart_id' => $params["order"]->reference,
-                    'order_reference' => $params["order"]->reference,
-                    'secure_key' => $params["order"]->secure_key
-                ],
-            ];
-
-            if (!Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
-                $paymentData['webhookUrl'] = $this->context->link->getModuleLink(
-                    'mollie',
-                    'webhook',
-                    [],
-                    true
-                );
-            }
-
-            $newPayment = $this->api->payments->create($paymentData);
-
-            Db::getInstance()->insert(
-                'mollie_payments',
-                [
-                    'cart_id'        => (int) $params["cart"]->id,
-                    'method'         => pSQL($params["order"]->payment),
-                    'transaction_id' => $newPayment->id,
-                    'bank_status'    => _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'order_id'       => (int) $params["order"]->id,
-                    'order_reference'=> (int) $params["order"]->reference,
-                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
-                ]
-            );
+            return;
         }
-        return $params;
+
+        $cartId = $params["cart"]->id;
+        $totalPaid = strval($params["order"]->total_paid);
+        $currency = $params["currency"]->iso_code;
+        $customerKey = $params["customer"]->secure_key;
+        $orderReference = $params["order"]->reference;
+        $orderPayment = $params["order"]->payment;
+        $orderId = $params["order"]->id;
+
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+        $paymentMethodObj = new MolPaymentMethod();
+        $paymentData = $paymentMethodService->getPaymentData(
+            $totalPaid,
+            $currency,
+            '',
+            null,
+            $cartId,
+            $customerKey,
+            $paymentMethodObj,
+            false,
+            $orderReference
+        );
+
+        $newPayment = $this->api->payments->create($paymentData);
+
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
+        $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $paymentMethodRepository->addOpenStatusPayment(
+            $cartId,
+            $orderPayment,
+            $newPayment->id,
+            $orderId,
+            $orderReference
+        );
     }
 
     /**

@@ -3,6 +3,7 @@ imports:
   - { resource: service.yml }
   - { resource: repository.yml }
   - { resource: context.yml }
+  - { resource: factory.yml }
 
 services:
   mollie:

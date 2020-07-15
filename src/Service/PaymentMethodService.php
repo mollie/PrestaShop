@@ -293,7 +293,7 @@ class PaymentMethodService
             }
         }
 
-        if ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_PAYMENTS_API) {
+        if ($molPaymentMethod->method !== Mollie\Config\Config::MOLLIE_ORDERS_API) {
             $paymentData['description'] = str_ireplace(
                 ['%'],
                 [$cartId],
