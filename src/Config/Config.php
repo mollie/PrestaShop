@@ -220,7 +220,7 @@ class Config
         'giftcard' => 'Giftcard',
         'giropay' => 'Giropay',
         'ideal' => 'iDEAL',
-        'inghomepay ' => 'ING Homepay',
+        'inghomepay' => 'ING Homepay',
         'kbc' => 'KBC',
         'bancontact' => 'Bancontact',
         'paypal' => 'PayPal',
