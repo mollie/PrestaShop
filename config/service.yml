@@ -19,10 +19,6 @@ services:
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
 
-  Mollie\Service\UrlPathService:
-    arguments:
-      - '@mollie'
-
   Mollie\Service\IssuerService:
     arguments:
       - '@mollie'

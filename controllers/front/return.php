@@ -171,7 +171,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $this->module->name,
                     'return',
                     [
-                        'ajax' => 1, 'action' => 'getStatus',
+                        'ajax' => 1,
+                        'action' => 'getStatus',
                         'transaction_id' => $data['mollie_info']['transaction_id'],
                         'key' => $this->context->customer->secure_key,
                         'customerId' => $this->context->customer->id

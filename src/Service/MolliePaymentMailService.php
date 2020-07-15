@@ -122,12 +122,11 @@ class MolliePaymentMailService
             $checkoutUrl = $paymentApi->getCheckoutUrl();
 
             return [
-            'success' => true,
-            'message' => $this->module->l('Second chance email was successfully send!'),
-            'checkoutUrl' => $checkoutUrl
-        ];
+                'success' => true,
+                'message' => $this->module->l('Second chance email was successfully send!'),
+                'checkoutUrl' => $checkoutUrl
+            ];
         }
-        $qrCode = false;
 
         $cart = new Cart($paymentApi->metadata->cart_id);
         $customer = new Customer($cart->id_customer);
@@ -136,25 +135,18 @@ class MolliePaymentMailService
                 'value' => $paymentApi->amount->value,
                 'currency' => $paymentApi->amount->currency,
             ],
-            'redirectUrl' =>($qrCode
-                ? $context->link->getModuleLink(
-                    'mollie',
-                    'qrcode',
-                    ['cart_id' => $paymentApi->metadata->cart_id, 'done' => 1, 'rand' => time()],
-                    true
-                )
-                : $context->link->getModuleLink(
-                    'mollie',
-                    'return',
-                    [
-                        'cart_id' => $paymentApi->metadata->cart_id,
-                        'utm_nooverride' => 1,
-                        'rand' => time(),
-                        'key' => $customer->secure_key,
-                        'customerId' => $customer->id
-                    ],
-                    true
-                )
+            'redirectUrl' => $context->link->getModuleLink(
+                'mollie',
+                'return',
+                [
+                    'cart_id' => $paymentApi->metadata->cart_id,
+                    'utm_nooverride' => 1,
+                    'rand' => time(),
+                    'key' => $customer->secure_key,
+                    'customerId' => $customer->id
+                ],
+                true
+
             ),
             'description' => $paymentApi->description,
             'metadata' => [
@@ -174,10 +166,10 @@ class MolliePaymentMailService
         }
         $newPayment = $api->payments->create($paymentData);
 
-        if(isset($newPayment)) {
+        if (isset($newPayment)) {
             $updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
 
-            if($updateTransactionId) {
+            if ($updateTransactionId) {
                 $checkoutUrl = $newPayment->getCheckoutUrl();
                 return [
                     'success' => true,

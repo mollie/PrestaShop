@@ -48,6 +48,7 @@ if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions
 if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
     return;
 }
+
 /**
  * Class Mollie
  *
@@ -98,7 +99,7 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -196,6 +197,7 @@ class Mollie extends PaymentModule
     {
         return $this->context;
     }
+
     public function getIdentifier()
     {
         return $this->identifier;
@@ -381,7 +383,7 @@ class Mollie extends PaymentModule
                             'this_version' => $this->version,
                             'release_version' => $latestVersion,
                         ]);
-                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/admin/new_release.tpl');
+                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
                     }
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
@@ -469,9 +471,9 @@ class Mollie extends PaymentModule
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
-            Media::addJsDef(array(
+            Media::addJsDef([
                 'mollieHookAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
-            ));
+            ]);
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
         }
@@ -648,7 +650,7 @@ class Mollie extends PaymentModule
             if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
                 continue;
             }
-            $images = json_decode($method['images_json'],true);
+            $images = json_decode($method['images_json'], true);
             $paymentOptions[] = [
                 'cta_text' => $this->lang($method['method_name']),
                 'logo' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES) === Mollie\Config\Config::LOGOS_NORMAL
@@ -1018,7 +1020,7 @@ class Mollie extends PaymentModule
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
         $adminOrdersController = new AdminOrdersController();
-        return $orderInfoService->displayMollieOrderInfo($input,  $adminOrdersController->id);
+        return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
     }
 
     /**
@@ -1223,12 +1225,12 @@ class Mollie extends PaymentModule
     public function hookActionAdminOrdersListingFieldsModifier($params)
     {
         if (isset($params['select'])) {
-            $params['select'].= ' ,mol.`transaction_id`';
+            $params['select'] .= ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
-            $params['join'].= ' LEFT JOIN `'._DB_PREFIX_.'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
         }
-        $params['fields']['order_id'] =  [
+        $params['fields']['order_id'] = [
             'title' => $this->l('Resend payment link'),
             'align' => 'text-center',
             'class' => 'fixed-width-xs',
@@ -1242,35 +1244,27 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if($this->context->controller instanceof AdminOrdersControllerCore &&
+        if ($this->context->controller instanceof AdminOrdersControllerCore &&
             $params["orderStatus"]->module_name === $this->name
         ) {
 
-            $qrCode = false;
             $paymentData = [
                 'amount' => [
                     'value' => strval($params["order"]->total_paid),
                     'currency' => $params["currency"]->iso_code,
                 ],
-                'redirectUrl' =>($qrCode
-                    ? $this->context->link->getModuleLink(
-                        'mollie',
-                        'qrcode',
-                        ['cart_id' => $params["cart"]->id, 'done' => 1, 'rand' => time()],
-                        true
-                    )
-                    : $this->context->link->getModuleLink(
-                        'mollie',
-                        'return',
-                        [
-                            'cart_id' => $params["cart"]->id,
-                            'utm_nooverride' => 1,
-                            'rand' => time(),
-                            'key' => $params["customer"]->secure_key,
-                            'customerId' => $params["customer"]->id
-                        ],
-                        true
-                    )
+                'redirectUrl' => $this->context->link->getModuleLink(
+                    'mollie',
+                    'return',
+                    [
+                        'cart_id' => $params["cart"]->id,
+                        'utm_nooverride' => 1,
+                        'rand' => time(),
+                        'key' => $params["customer"]->secure_key,
+                        'customerId' => $params["customer"]->id
+                    ],
+                    true
+
                 ),
                 'description' => $params["order"]->reference,
                 'metadata' => [
@@ -1294,13 +1288,13 @@ class Mollie extends PaymentModule
             Db::getInstance()->insert(
                 'mollie_payments',
                 [
-                    'cart_id'        => (int) $params["cart"]->id,
-                    'method'         => pSQL($params["order"]->payment),
+                    'cart_id' => (int)$params["cart"]->id,
+                    'method' => pSQL($params["order"]->payment),
                     'transaction_id' => $newPayment->id,
-                    'bank_status'    => _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
-                    'order_id'       => (int) $params["order"]->id,
-                    'order_reference'=> (int) $params["order"]->reference,
-                    'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),
+                    'bank_status' => _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
+                    'order_id' => (int)$params["order"]->id,
+                    'order_reference' => (int)$params["order"]->reference,
+                    'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
                 ]
             );
         }
