@@ -43,6 +43,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
+use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
@@ -160,7 +161,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             }
         }
 
-        if (!empty($transaction->id) && Tools::substr($transaction->id, 0, 3) === 'ord') {
+        if (!empty($transaction->id) && TransactionUtility::isOrderTransaction(($transaction->id))) {
             $apiPayment = $this->module->api->orders->get($transaction->id, array('embed' => 'payments'));
         }
 
