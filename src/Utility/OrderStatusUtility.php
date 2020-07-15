@@ -36,17 +36,17 @@
 namespace Mollie\Utility;
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use Mollie\Config\Config;
 
 class OrderStatusUtility
 {
     /**
      * @param string $status
+     * @param string $comparedStatus
      * @return string
      */
-    public static function getBackOrderPaidStatus($status)
+    public static function transformPaymentStatusToPaid($status, $comparedStatus)
     {
-        if($status === Config::STATUS_PAID_ON_BACKORDER) {
+        if($status === $comparedStatus) {
             return PaymentStatus::STATUS_PAID;
         }
 

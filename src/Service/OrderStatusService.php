@@ -124,7 +124,7 @@ class OrderStatusService
             }
         }
 
-        $status = OrderStatusUtility::getBackOrderPaidStatus($status);
+        $status = OrderStatusUtility::transformPaymentStatusToPaid($status,  Config::STATUS_PAID_ON_BACKORDER);
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);
