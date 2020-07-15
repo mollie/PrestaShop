@@ -33,9 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use Mollie\Utility\EnvironmentUtility;
-
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
@@ -1283,7 +1280,7 @@ class Mollie extends PaymentModule
                 ],
             ];
 
-            if (!EnvironmentUtility::isLocalEnvironment()) {
+            if (!Mollie\Utility\EnvironmentUtility::isLocalEnvironment()) {
                 $paymentData['webhookUrl'] = $this->context->link->getModuleLink(
                     'mollie',
                     'webhook',
@@ -1300,7 +1297,7 @@ class Mollie extends PaymentModule
                     'cart_id'        => (int) $params["cart"]->id,
                     'method'         => pSQL($params["order"]->payment),
                     'transaction_id' => $newPayment->id,
-                    'bank_status'    => PaymentStatus::STATUS_OPEN,
+                    'bank_status'    => _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_OPEN,
                     'order_id'       => (int) $params["order"]->id,
                     'order_reference'=> (int) $params["order"]->reference,
                     'created_at'     => array('type' => 'sql', 'value' => 'NOW()'),

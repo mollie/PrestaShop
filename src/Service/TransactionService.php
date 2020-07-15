@@ -18,6 +18,7 @@ use Country;
 use Db;
 use Mollie;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\TransactionUtility;
 use Order;
 use OrderPayment;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -82,7 +83,7 @@ class TransactionService
 
         // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
         if ($transaction instanceof MolliePaymentAlias) {
-            if (!empty($transaction->orderId) && Tools::substr($transaction->orderId, 0, 3) === 'ord') {
+            if (!empty($transaction->orderId) && TransactionUtility::isOrderTransaction($transaction->orderId)) {
                 // Part of order
                 $transaction = $this->module->api->orders->get($transaction->orderId, array('embed' => 'payments'));
             } else {

@@ -41,6 +41,8 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
+use Mollie\Utility\ContextUtility;
+use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
@@ -98,20 +100,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-//        $this->context->customer->secure_key = Tools::getValue('key');
         $customerId = Tools::getValue('customerId');
         if (Tools::getValue('customerId')) {
             $customer = new Customer($customerId);
             if ($customer->secure_key === Tools::getValue('key')) {
-                $this->context->customer = $customer;
-                $this->context->cookie->id_customer = (int) $customer->id;
-                $this->context->cookie->customer_lastname = $customer->lastname;
-                $this->context->cookie->customer_firstname = $customer->firstname;
-                $this->context->cookie->logged = 1;
-                $this->context->cookie->check_cgv = 1;
-                $this->context->cookie->is_guest = $customer->isGuest();
-                $this->context->cookie->passwd = $customer->passwd;
-                $this->context->cookie->email = $customer->email;
+                $this->context = ContextUtility::setCustomerToContext($this->context, $customer);
             }
         }
         if (Tools::getValue('ajax')) {
@@ -280,7 +273,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $_GET['module'] = $this->module->name;
         }
 
-        $isOrder = Tools::substr($transactionId, 0, 3) === 'ord';
+        $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
             $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
         } else {
