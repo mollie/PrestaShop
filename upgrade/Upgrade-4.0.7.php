@@ -40,8 +40,12 @@ if (!defined('_PS_VERSION_')) {
  * @param Mollie $module
  * @return bool
  */
+
 function upgrade_module_4_0_7($module)
 {
+    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get('PS_OS_SHIPPING'));
+    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, true);
+
     $sql= 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
 				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`       VARCHAR(64),
