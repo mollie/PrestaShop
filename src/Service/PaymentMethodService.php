@@ -76,23 +76,24 @@ class PaymentMethodService
      */
     private $cartLinesService;
     /**
-     * @var LanguageService
+     * @var aymentsTranslationService
      */
-    private $languageService;
+    private $paymentsTranslationService;
+
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
         MethodCountryRepository  $countryRepository,
         CartLinesService $cartLinesService,
-        LanguageService $languageService
+        PaymentsTranslationService $paymentsTranslationService
     )
     {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
         $this->cartLinesService = $cartLinesService;
-        $this->languageService = $languageService;
+        $this->paymentsTranslationService = $paymentsTranslationService;
     }
 
     public function savePaymentMethod($method)
@@ -147,7 +148,6 @@ class PaymentMethodService
         }
         $countryCode = Tools::strtolower($context->country->iso_code);
         $unavailableMethods = [];
-        $lang = $this->languageService->getLang();
 
         foreach (Mollie\Config\Config::$defaultMethodAvailability as $methodName => $countries) {
             if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
@@ -193,11 +193,7 @@ class PaymentMethodService
             }
         }
 
-        foreach ($methods as $method) {
-            if(isset($lang[$method['method_name']])) {
-                $method['method_name'] = $lang[$method['method_name']];
-            }
-        }
+        $methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
 
         foreach ($methods as $key => $method) {
             $image = json_decode($method['images_json'], true);

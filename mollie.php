@@ -339,6 +339,7 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $str
+     * @deprecated
      *
      * @return string
      */

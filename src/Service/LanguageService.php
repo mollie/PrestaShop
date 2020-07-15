@@ -108,4 +108,14 @@ class LanguageService
             'MyBank' => $this->module->l('MyBank', self::FILE_NAME),
         ];
     }
+
+    public function lang($str)
+    {
+        $lang = $this->getLang();
+        if (array_key_exists($str, $lang)) {
+            return $lang[$str];
+        }
+
+        return $str;
+    }
 }
