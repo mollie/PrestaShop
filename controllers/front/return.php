@@ -294,6 +294,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
+        $paymentMethod = Config::$methods[$transaction->method];
+
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:
@@ -339,7 +341,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->cookie->mollie_payment_canceled_error =
                     json_encode($this->warning);
 
-                $this->updateTransactions($transactionId, $orderId, $orderStatus, $transaction->method);
+                $this->updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod);
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(
@@ -371,7 +373,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ]));
         }
 
-        $this->updateTransactions($transactionId, $orderId, $orderStatus, $transaction->method);
+        $this->updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod);
         //todo: change order payment method.
 
         $successUrl = $this->context->link->getPageLink(
