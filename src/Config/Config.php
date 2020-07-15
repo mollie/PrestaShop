@@ -227,7 +227,7 @@ class Config
         'paysafecard' => 'Paysafecard',
         'sofort' => 'Sofort Banking',
         'klarnapaylater' => 'Pay later.',
-        'klarnaspliceit' => 'Slice it.',
+        'klarnasliceit' => 'Slice it.',
         'applepay' => 'Apple Pay',
         'mybank' => 'MyBank',
     ];
