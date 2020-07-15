@@ -117,6 +117,7 @@ class Installer
             'displayPDFInvoice',
             'actionAdminOrdersListingFieldsModifier',
             'actionAdminControllerSetMedia',
+            'actionValidateOrder',
         ];
     }
 

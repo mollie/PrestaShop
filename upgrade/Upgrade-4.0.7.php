@@ -53,6 +53,8 @@ function upgrade_module_4_0_7($module)
         return false;
     }
 
+    $module->registerHook('actionValidateOrder');
+
     $installer = new \Mollie\Install\Installer($module);
     $installed = true;
 
