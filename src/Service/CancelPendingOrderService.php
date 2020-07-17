@@ -3,16 +3,17 @@
 namespace Mollie\Service;
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use Cart;
-use Configuration;
 use Context;
 use Mollie;
-use Mollie\Config\Config;
 use Mollie\Exception\CancelPendingOrderException;
 use Mollie\Repository\PendingOrderCartRepository;
 use Mollie\Utility\TransactionUtility;
 use Order;
 
+/**
+ * @todo: seems like cancel does not work when payment is in open state or payment becomes paid for instance.
+ * Is it possible to cancel payment somehow?
+ */
 class CancelPendingOrderService
 {
     private $cancelService;

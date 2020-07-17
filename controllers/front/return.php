@@ -261,9 +261,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getContainer(LoggerInterface::class);
-
         if (!Tools::isSubmit('module')) {
             $_GET['module'] = $this->module->name;
         }

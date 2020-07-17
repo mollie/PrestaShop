@@ -20,7 +20,7 @@ class RejectPendingOrderService
         $this->repo = $repo;
     }
 
-    public function markAsRejectedPossiblePendingOrder($transactionId)
+    public function markAsRejectedPossiblePendingOrder()
     {
         $globalCartId = \Context::getContext()->cart->id;
 
