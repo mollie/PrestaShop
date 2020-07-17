@@ -44,6 +44,7 @@ use Mollie\Service\CancelPendingOrderService;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\RepeatOrderLinkFactory;
+use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use Psr\Log\LoggerInterface;
@@ -289,6 +290,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
                 $this->setWarning($notSuccessfulPaymentMessage);
+
+                /** @var RestorePendingCartService $restorePendingCart */
+                $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
+
+                $restorePendingCart->restore($order);
 
                 $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 

@@ -9,22 +9,15 @@ use Order;
  */
 class MemorizeCartService
 {
-    private $rejectPendingOrderService;
     private $orderCartAssociationService;
 
-    public function __construct(
-        RejectPendingOrderService $rejectPendingOrderService,
-        OrderCartAssociationService $orderCartAssociationService
-    ) {
-        $this->rejectPendingOrderService = $rejectPendingOrderService;
+    public function __construct(OrderCartAssociationService $orderCartAssociationService)
+    {
         $this->orderCartAssociationService = $orderCartAssociationService;
     }
 
     public function memorizeCart(Order $toBeProcessedOrder)
     {
-        // lets reject previous order if such exist - at this point user returned to the cart and started new order
-        $this->rejectPendingOrderService->markAsRejectedPossiblePendingOrder();
-
         // create a pending cart so we can repeat the process once again
         $this->orderCartAssociationService->createPendingCart($toBeProcessedOrder);
     }
