@@ -161,54 +161,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             }
         }
 
-        if (!isset($apiPayment)) {
-            $apiPayments = array();
-            /** @var MollieOrderAlias $transaction */
-            foreach ($transaction->_embedded->payments as $embeddedPayment) {
-                $apiPayment = ResourceFactory::createFromApiResult($embeddedPayment, new Payment($this->module->api));
-                $apiPayments[] = $apiPayment;
-                unset($apiPayment);
-            }
-            if (count($apiPayments) === 1) {
-                $apiPayment = $apiPayments[0];
-            } else {
-                // In case of multiple payments, the one with the paid status is leading
-                foreach ($apiPayments as $payment) {
-                    if (in_array($payment->status, array(PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED))) {
-                        $apiPayment = $payment;
-                        break;
-                    }
-                }
-
-                // No paid/authorized payments found, looking for payments with a final status
-                if (!isset($apiPayment)) {
-                    foreach ($apiPayments as $payment) {
-                        if (in_array($payment->status, array(
-                            PaymentStatus::STATUS_CANCELED,
-                            PaymentStatus::STATUS_FAILED,
-                            PaymentStatus::STATUS_EXPIRED,
-                        ))) {
-                            $apiPayment = $payment;
-                            break;
-                        }
-                    }
-                }
-
-                // In case there is no final payments, we are going to look for any pending payments
-                if (!isset($apiPayment)) {
-                    foreach ($apiPayments as $payment) {
-                        if (in_array($payment->status, array(
-                            PaymentStatus::STATUS_PENDING,
-                        ))) {
-                            $apiPayment = $payment;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (isset($apiPayment)) {
-                $apiPayment->metadata = $transaction->metadata;
-            }
+        if (!empty($transaction->id) && TransactionUtility::isOrderTransaction(($transaction->id))) {
+            $apiPayment = $this->module->api->orders->get($transaction->id, array('embed' => 'payments'));
         }
 
         if (!isset($apiPayment)) {
@@ -234,39 +188,67 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             '`transaction_id` = \'' . pSQL($transaction->id) . '\''
         );
 
-        if ($apiPayment->metadata->cart_id) {
-            if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                    && (float) $apiPayment->amountRefunded->value >= (float) $apiPayment->settlementAmount->value
-                ) {
-                    $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
-                } else {
-                    $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
+        switch ($transaction->resource) {
+            case Mollie\Config\Config::MOLLIE_API_STATUS_PAYMENT:
+                if ($apiPayment->metadata->cart_id) {
+                    if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
+                        if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
+                            && (float)$apiPayment->amountRefunded->value >= (float)$apiPayment->settlementAmount->value
+                        ) {
+                            $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
+                        } else {
+                            $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
+                        }
+                    } elseif ($psPayment['method'] === PaymentMethod::BANKTRANSFER
+                    ) {
+                        $order = new Order($orderId);
+                        $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
+                            ? Mollie\Config\Config::$methods[$apiPayment->method]
+                            : $this->module->displayName;
+                        $order->update();
+
+                        $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
+                    } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
+                        && ($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
+                        && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
+                    ) {
+                        $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+
+                        /** @var OrderStatusService $orderStatusService */
+                        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                        $orderStatusService->setOrderStatus($orderId, $paymentStatus);
+
+                        $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                    }
                 }
-            } elseif ($psPayment['method'] === PaymentMethod::BANKTRANSFER
-                && $psPayment['bank_status'] === PaymentStatus::STATUS_OPEN
-                && $apiPayment->status === PaymentStatus::STATUS_PAID
-            ) {
-                $order = new Order($orderId);
-                $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
-                    ? Mollie\Config\Config::$methods[$apiPayment->method]
-                    : $this->module->displayName;
-                $order->update();
+                break;
+            case Mollie\Config\Config::MOLLIE_API_STATUS_ORDER:
+                if ($apiPayment->metadata->cart_id) {
+                    /** todo: investigate if banktransfer logic is needed here */
+                    if ($psPayment['method'] === PaymentMethod::BANKTRANSFER
+                    ) {
+                        $order = new Order($orderId);
+                        $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
+                            ? Mollie\Config\Config::$methods[$apiPayment->method]
+                            : $this->module->displayName;
+                        $order->update();
 
-                $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
-            } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                && ($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
-                && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
-            ) {
-                $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
+                        $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
+                    } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
+                        && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
+                    ) {
+                        $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
-                /** @var OrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getContainer(OrderStatusService::class);
-                $orderStatusService->setOrderStatus($orderId, $paymentStatus);
+                        /** @var OrderStatusService $orderStatusService */
+                        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                        $orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
-                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
-            }
+                        $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                    }
+                }
+                break;
         }
+
 
         // Store status in database
 

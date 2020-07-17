@@ -35,6 +35,7 @@
 
 NameSpace Mollie\Builder;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
@@ -407,6 +408,7 @@ class FormBuilder
                 RefundStatus::STATUS_REFUNDED,
                 PaymentStatus::STATUS_OPEN,
                 Config::PARTIAL_REFUND_CODE,
+                OrderStatus::STATUS_SHIPPING,
             ]);
         }) as $status) {
             if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE])) {

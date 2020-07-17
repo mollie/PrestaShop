@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,43 +32,24 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-$(document).ready(function () {
-    $('.js-mollie-amount').keypress(function (event) {
-        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-            event.preventDefault();
-        }
-    });
-    $('select[name^="MOLLIE_CARRIER_URL_SOURCE"]').on('change', function () {
-        var customUrlDisabled = true;
-        if ($(this).val() === 'custom_url') {
-            customUrlDisabled = false;
-        }
-        $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
-    })
-});
 
-function togglePaymentMethod($button, paymentId) {
-    var $clickedButton = $($button);
-    $.ajax(ajaxUrl, {
-        method: 'POST',
-        data: {
-            'paymentMethod': paymentId,
-            'status' : $clickedButton.data('action'),
-            'action': 'togglePaymentMethod',
-            'ajax' : 1
-        },
-        success: function (response) {
-            response = JSON.parse(response);
-            if (response.success) {
-                if (response.paymentStatus) {
-                    $clickedButton.closest('.payment-method').find('select[name^="MOLLIE_METHOD_ENABLED"] option[value="' + response.paymentStatus +'"]').prop('selected', true);
-                    $clickedButton.data('action', 'deactivate');
-                    $clickedButton.find('i').html('check');
-                } else {
-                    $clickedButton.data('action', 'activate');
-                    $clickedButton.find('i').html('clear');
-                }
-            }
+namespace Mollie\Utility;
+
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+
+class OrderStatusUtility
+{
+    /**
+     * @param string $status
+     * @param string $comparedStatus
+     * @return string
+     */
+    public static function transformPaymentStatusToPaid($status, $comparedStatus)
+    {
+        if($status === $comparedStatus) {
+            return PaymentStatus::STATUS_PAID;
         }
-    })
+
+        return $status;
+    }
 }
