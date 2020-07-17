@@ -24,7 +24,10 @@ class PrestaLogger implements LoggerInterface
 
     public function error($message, array $context = array())
     {
-        // TODO: Implement error() method.
+        \PrestaShopLogger::addLog(
+            $this->getMessageWithContext($message, $context),
+            2
+        );
     }
 
     public function warning($message, array $context = array())

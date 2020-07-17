@@ -20,7 +20,7 @@ class RejectPendingOrderService
         $this->repo = $repo;
     }
 
-    public function markAsRejectedPossiblePendingOrder()
+    public function markAsRejectedPossiblePendingOrder($transactionId)
     {
         $globalCartId = \Context::getContext()->cart->id;
 
@@ -31,7 +31,7 @@ class RejectPendingOrderService
 
         $order = new Order($pendingOrderCart ? $pendingOrderCart->order_id : 0);
 
-        if (!$order) {
+        if (!$order->id) {
             return;
         }
 
@@ -39,7 +39,11 @@ class RejectPendingOrderService
 
         $isPendingOrder = (int) $order->getCurrentState() === $pendingStatusId;
 
-        $pendingOrderCart->should_cancel_order = $isPendingOrder;
+        if (!$isPendingOrder) {
+            return;
+        }
+
+        $pendingOrderCart->should_cancel_order = true;
         $pendingOrderCart->update();
     }
 }

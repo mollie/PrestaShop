@@ -100,11 +100,13 @@ services:
     arguments:
       - '@Mollie\Service\RejectPendingOrderService'
       - '@Mollie\Service\OrderCartAssociationService'
+      - '@Mollie\Service\CancelPendingOrderService'
 
   Mollie\Service\CancelPendingOrderService:
     arguments:
       - '@Mollie\Service\CancelService'
       - '@Mollie\Repository\PendingOrderCartRepository'
+      - '@mollie'
 
   Mollie\Service\RepeatOrderLinkFactory:
 

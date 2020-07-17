@@ -38,11 +38,13 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Exception\CancelPendingOrderException;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CancelPendingOrderService;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\RepeatOrderLinkFactory;
+use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use Psr\Log\LoggerInterface;
 
@@ -266,7 +268,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $_GET['module'] = $this->module->name;
         }
 
-        $isOrder = Tools::substr($transactionId, 0, 3) === 'ord';
+        $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
             $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
         } else {
@@ -283,26 +285,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var RepeatOrderLinkFactory $orderLinkFactory */
         $orderLinkFactory = $this->module->getContainer(RepeatOrderLinkFactory::class);
 
-        /** @var CancelPendingOrderService $cancelPendingOrder */
-        $cancelPendingOrder = $this->module->getContainer(CancelPendingOrderService::class);
-
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-
-        $isPendingOrderCancelled = $cancelPendingOrder->cancelOrder(
-            $transactionId,
-            $order
-        );
-
-        if ($isPendingOrderCancelled) {
-            $logger->info(
-                'cancelled pending order',
-                [
-                    'orderId' => $order->id,
-                ]
-            );
-
-            $orderStatus = PaymentStatus::STATUS_CANCELED;
-        }
 
         switch ($orderStatus) {
             case PaymentStatus::STATUS_EXPIRED:

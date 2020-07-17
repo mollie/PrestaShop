@@ -5,14 +5,14 @@ namespace Mollie\Repository;
 final class PendingOrderCartRepository extends AbstractRepository
 {
     /**
-     * @param int $prestaOrderId
+     * @param int $prestaCartId
      * @return bool
      * @throws \PrestaShopException
      */
-    public function isPendingCancellableOrder($prestaOrderId)
+    public function hasPendingCancellableOrder($prestaCartId)
     {
         return null !== $this->findOneBy([
-            'order_id' => (int) $prestaOrderId,
+            'cart_id' => (int) $prestaCartId,
             'should_cancel_order' => 1,
         ]);
     }

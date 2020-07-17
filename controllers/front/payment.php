@@ -436,6 +436,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /** @var MemorizeCartService $memorizeCart */
         $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
 
-        $memorizeCart->memorizeCart($order);
+        $memorizeCart->memorizeCart("tr_JaanM5C5NH", $order);
     }
 }
