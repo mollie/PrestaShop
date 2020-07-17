@@ -23,7 +23,7 @@ class MemorizeCartService
     public function memorizeCart(Order $toBeProcessedOrder)
     {
         // lets reject previous order if such exist - at this point user returned to the cart and started new order
-        $this->rejectPendingOrderService->rejectPossiblePendingOrder();
+        $this->rejectPendingOrderService->markAsRejectedPossiblePendingOrder();
 
         // create a pending cart so we can repeat the process once again
         $this->orderCartAssociationService->createPendingCart($toBeProcessedOrder);

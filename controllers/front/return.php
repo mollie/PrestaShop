@@ -294,14 +294,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         );
 
         if ($isPendingOrderCancelled) {
-            $this->setWarning($notSuccessfulPaymentMessage);
-
             $logger->info(
                 'cancelled pending order',
                 [
                     'orderId' => $order->id,
                 ]
             );
+
+            $orderStatus = PaymentStatus::STATUS_CANCELED;
         }
 
         switch ($orderStatus) {

@@ -9,10 +9,11 @@ final class PendingOrderCartRepository extends AbstractRepository
      * @return bool
      * @throws \PrestaShopException
      */
-    public function isPendingOrder($prestaOrderId)
+    public function isPendingCancellableOrder($prestaOrderId)
     {
         return null !== $this->findOneBy([
             'order_id' => (int) $prestaOrderId,
+            'should_cancel_order' => 1,
         ]);
     }
 }

@@ -31,16 +31,7 @@ class CancelPendingOrderService
      */
     public function cancelOrder($transactionId, Order $order)
     {
-        if (!$this->pendingOrderCartRepository->isPendingOrder($order->id)) {
-            return false;
-        }
-
-        $prestaOrderStatus = $order->getCurrentOrderState();
-        $cancelledStatusId = Configuration::get(Config::MOLLIE_STATUS_CANCELED);
-
-        $isCancelledInPresta = $prestaOrderStatus && ((int) $prestaOrderStatus->id === (int) $cancelledStatusId);
-
-        if (!$isCancelledInPresta) {
+        if (!$this->pendingOrderCartRepository->isPendingCancellableOrder($order->id)) {
             return false;
         }
 

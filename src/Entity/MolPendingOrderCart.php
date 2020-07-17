@@ -15,15 +15,19 @@ class MolPendingOrderCart extends ObjectModel
      */
     public $cart_id;
 
+    /** @var bool */
+    public $should_cancel_order;
+
     /**
      * @var array
      */
-    public static $definition = array(
+    public static $definition = [
         'table' => 'mol_pending_order_cart',
         'primary' => 'id_mol_pending_order_cart',
-        'fields' => array(
-            'order_id' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
-            'cart_id' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
-        ),
-    );
+        'fields' => [
+            'order_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'cart_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'should_cancel_order' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool']
+        ],
+    ];
 }

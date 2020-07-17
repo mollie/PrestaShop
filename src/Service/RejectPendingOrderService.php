@@ -20,9 +20,16 @@ class RejectPendingOrderService
         $this->repo = $repo;
     }
 
-    public function rejectPossiblePendingOrder()
+    public function markAsRejectedPossiblePendingOrder()
     {
-        $order = $this->getOrder();
+        $globalCartId = \Context::getContext()->cart->id;
+
+        /** @var null|MolPendingOrderCart $pendingOrderCart */
+        $pendingOrderCart = $this->repo->findOneBy([
+            'cart_id' => (int) $globalCartId,
+        ]);
+
+        $order = new Order($pendingOrderCart ? $pendingOrderCart->order_id : 0);
 
         if (!$order) {
             return;
@@ -32,34 +39,7 @@ class RejectPendingOrderService
 
         $isPendingOrder = (int) $order->getCurrentState() === $pendingStatusId;
 
-        if (!$isPendingOrder) {
-            return;
-        }
-
-        $psCancelledStatusId = Configuration::get(Config::MOLLIE_STATUS_CANCELED);
-
-        $order->setCurrentState($psCancelledStatusId);
-    }
-
-    /**
-     * @return Order|null
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    private function getOrder()
-    {
-        $globalCartId = \Context::getContext()->cart->id;
-
-        /** @var null|MolPendingOrderCart $pendingOrderCart */
-        $pendingOrderCart = $this->repo->findOneBy([
-            'cart_id' => (int) $globalCartId,
-        ]);
-
-        if (!$pendingOrderCart) {
-            return null;
-        }
-
-        return new Order($pendingOrderCart->order_id);
+        $pendingOrderCart->should_cancel_order = $isPendingOrder;
+        $pendingOrderCart->update();
     }
 }
