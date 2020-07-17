@@ -42,6 +42,7 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CancelPendingOrderService;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
+use Mollie\Service\RepeatOrderLinkFactory;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
@@ -275,7 +276,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         /** @var CancelPendingOrderService $cancelPendingOrder */
-        $cancelPendingOrder = $this->module->get(CancelPendingOrderService::class);
+        $cancelPendingOrder = $this->module->getContainer(CancelPendingOrderService::class);
         $isPendingOrderCancelled = $cancelPendingOrder->cancelOrder($transactionId, $order);
 
         if ($isPendingOrderCancelled) {
@@ -293,28 +294,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
                 $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
-                if (!Config::isVersion17()) {
-                    $orderLink = $this->context->link->getPageLink(
-                        'order',
-                        true,
-                        null
-                    );
-                } else {
-                    $orderLink = $this->context->link->getPageLink(
-                        'cart',
-                        null,
-                        $this->context->language->id,
-                        [
-                            'action' => 'show',
-                        ],
-                        false,
-                        null,
-                        false
+                /** @var RepeatOrderLinkFactory $orderLinkFactory */
+                $orderLinkFactory = $this->module->getContainer(RepeatOrderLinkFactory::class);
 
-                    );
-                }
-
-                return $this->toJsonResponse(true, static::DONE, $transaction, $orderLink);
+                return $this->toJsonResponse(
+                    true,
+                    static::DONE,
+                    $transaction,
+                    $orderLinkFactory->getLink()
+                );
             case PaymentStatus::STATUS_AUTHORIZED:
             case PaymentStatus::STATUS_PAID:
             case OrderStatus::STATUS_COMPLETED:

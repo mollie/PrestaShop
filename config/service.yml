@@ -105,3 +105,5 @@ services:
     arguments:
       - '@Mollie\Service\CancelService'
       - '@Mollie\Repository\PendingOrderCartRepository'
+
+  Mollie\Service\RepeatOrderLinkFactory:
