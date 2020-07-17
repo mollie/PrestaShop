@@ -62,7 +62,6 @@ class CartDuplicationService
 
             $context->cookie->id_cart = $duplicatedCart->id;
             $context->cart = $duplicatedCart;
-            CartRule::autoAddToCart($context);
             $context->cookie->write();
 
             return  $duplicatedCart->id;

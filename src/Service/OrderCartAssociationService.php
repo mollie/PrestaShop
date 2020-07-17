@@ -30,7 +30,6 @@ class OrderCartAssociationService
         $pendingOrderCart = new MolPendingOrderCart();
         $pendingOrderCart->cart_id = $newCartId;
         $pendingOrderCart->order_id = $order->id;
-        $pendingOrderCart->should_cancel_order = false;
 
         return $pendingOrderCart->add();
     }
