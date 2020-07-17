@@ -15,9 +15,6 @@ class MolPendingOrderCart extends ObjectModel
      */
     public $cart_id;
 
-    /** @var bool */
-    public $should_cancel_order;
-
     /**
      * @var array
      */
@@ -27,7 +24,6 @@ class MolPendingOrderCart extends ObjectModel
         'fields' => [
             'order_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'cart_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'should_cancel_order' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool']
         ],
     ];
 }

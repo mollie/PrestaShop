@@ -53,8 +53,7 @@ function upgrade_module_4_0_7($module)
         CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_pending_order_cart` (
 				`id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`order_id` INT(64) NOT NULL,
-				`cart_id` INT(64) NOT NULL,
-				`should_cancel_order` TINYINT(1) NOT NULL
+				`cart_id` INT(64) NOT NULL
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
     ';
 
