@@ -107,3 +107,7 @@ services:
       - '@Mollie\Repository\PendingOrderCartRepository'
 
   Mollie\Service\RepeatOrderLinkFactory:
+
+  Mollie\Logger\PrestaLogger:
+
+  Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'

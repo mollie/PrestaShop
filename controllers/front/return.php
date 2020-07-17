@@ -44,6 +44,7 @@ use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\RepeatOrderLinkFactory;
 use PrestaShop\PrestaShop\Adapter\CoreException;
+use Psr\Log\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,6 +62,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 {
     const PENDING = 1;
     const DONE = 2;
+
+    const FILE_NAME = 'return';
 
     /** @var bool $ssl */
     public $ssl = true;
@@ -256,6 +259,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getContainer(LoggerInterface::class);
 
         if (!Tools::isSubmit('module')) {
             $_GET['module'] = $this->module->name;
@@ -275,27 +280,37 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
         }
 
+        /** @var RepeatOrderLinkFactory $orderLinkFactory */
+        $orderLinkFactory = $this->module->getContainer(RepeatOrderLinkFactory::class);
+
         /** @var CancelPendingOrderService $cancelPendingOrder */
         $cancelPendingOrder = $this->module->getContainer(CancelPendingOrderService::class);
-        $isPendingOrderCancelled = $cancelPendingOrder->cancelOrder($transactionId, $order);
+
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
+
+        $isPendingOrderCancelled = $cancelPendingOrder->cancelOrder(
+            $transactionId,
+            $order
+        );
 
         if ($isPendingOrderCancelled) {
+            $this->setWarning($notSuccessfulPaymentMessage);
 
+            $logger->info(
+                'cancelled pending order',
+                [
+                    'orderId' => $order->id,
+                ]
+            );
         }
 
         switch ($orderStatus) {
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
             case PaymentStatus::STATUS_CANCELED:
-                $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
-
-                $this->context->cookie->mollie_payment_canceled_error =
-                    json_encode($this->warning);
+                $this->setWarning($notSuccessfulPaymentMessage);
 
                 $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
-
-                /** @var RepeatOrderLinkFactory $orderLinkFactory */
-                $orderLinkFactory = $this->module->getContainer(RepeatOrderLinkFactory::class);
 
                 return $this->toJsonResponse(
                     true,
@@ -406,5 +421,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             'response' => json_encode($response),
             'href' => $successUrl
         ]));
+    }
+
+    private function setWarning($message)
+    {
+        $this->warning[] = $message;
+
+        $this->context->cookie->mollie_payment_canceled_error =
+            json_encode($this->warning);
     }
 }
