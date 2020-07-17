@@ -8,6 +8,9 @@ use Mollie\Repository\PendingOrderCartRepository;
 use MolPendingOrderCart;
 use Order;
 
+/**
+ * Rejects pending order on prestashop side.
+ */
 class RejectPendingOrderService
 {
     private $repo;
@@ -34,9 +37,6 @@ class RejectPendingOrderService
         }
 
         $psCancelledStatusId = Configuration::get(Config::MOLLIE_STATUS_CANCELED);
-
-        //todo: send payment cancel request to mollie
-        //todo: also few things to consider - shall we reject order if cart did changed. FOr instance, client increased quantity +1 in cart - check the voucher case
 
         $order->setCurrentState($psCancelledStatusId);
     }

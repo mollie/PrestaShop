@@ -39,6 +39,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\CancelPendingOrderService;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -272,6 +273,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $orderStatus = $payment->status;
             }
         }
+
+        /** @var CancelPendingOrderService $cancelPendingOrder */
+        $cancelPendingOrder = $this->module->get(CancelPendingOrderService::class);
+        $isPendingOrderCancelled = $cancelPendingOrder->cancelOrder($transactionId, $order);
+
+        if ($isPendingOrderCancelled) {
+
+        }
+
         switch ($orderStatus) {
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_FAILED:
@@ -304,13 +314,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     );
                 }
 
-                die(json_encode([
-                    'success' => true,
-                    'status' => static::DONE,
-                    'response' => json_encode($transaction),
-                    'href' => $orderLink
-
-                ]));
+                return $this->toJsonResponse(true, static::DONE, $transaction, $orderLink);
             case PaymentStatus::STATUS_AUTHORIZED:
             case PaymentStatus::STATUS_PAID:
             case OrderStatus::STATUS_COMPLETED:
@@ -361,12 +365,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]
         );
 
-        die(json_encode([
-            'success' => true,
-            'status' => $status,
-            'response' => json_encode($transaction),
-            'href' => $successUrl
-        ]));
+        return $this->toJsonResponse(true, $status, $transaction, $successUrl);
     }
 
     protected function savePaymentStatus($transactionId, $status, $orderId)
@@ -409,5 +408,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderPayment->payment_method = $paymentMethod;
             $orderPayment->update();
         }
+    }
+
+    private function toJsonResponse($isSuccessful, $status, $response, $successUrl)
+    {
+        die(json_encode([
+            'success' => $isSuccessful,
+            'status' => $status,
+            'response' => json_encode($response),
+            'href' => $successUrl
+        ]));
     }
 }

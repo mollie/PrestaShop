@@ -100,3 +100,8 @@ services:
     arguments:
       - '@Mollie\Service\RejectPendingOrderService'
       - '@Mollie\Service\OrderCartAssociationService'
+
+  Mollie\Service\CancelPendingOrderService:
+    arguments:
+      - '@Mollie\Service\CancelService'
+      - '@Mollie\Repository\PendingOrderCartRepository'
