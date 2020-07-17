@@ -48,6 +48,7 @@ if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions
 if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
     return;
 }
+
 /**
  * Class Mollie
  *
@@ -98,7 +99,7 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -196,6 +197,7 @@ class Mollie extends PaymentModule
     {
         return $this->context;
     }
+
     public function getIdentifier()
     {
         return $this->identifier;
@@ -382,7 +384,7 @@ class Mollie extends PaymentModule
                             'this_version' => $this->version,
                             'release_version' => $latestVersion,
                         ]);
-                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/admin/new_release.tpl');
+                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
                     }
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
@@ -470,9 +472,9 @@ class Mollie extends PaymentModule
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
-            Media::addJsDef(array(
+            Media::addJsDef([
                 'mollieHookAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
-            ));
+            ]);
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
         }
@@ -649,7 +651,7 @@ class Mollie extends PaymentModule
             if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
                 continue;
             }
-            $images = json_decode($method['images_json'],true);
+            $images = json_decode($method['images_json'], true);
             $paymentOptions[] = [
                 'cta_text' => $this->lang($method['method_name']),
                 'logo' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES) === Mollie\Config\Config::LOGOS_NORMAL
@@ -1019,7 +1021,7 @@ class Mollie extends PaymentModule
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
         $adminOrdersController = new AdminOrdersController();
-        return $orderInfoService->displayMollieOrderInfo($input,  $adminOrdersController->id);
+        return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
     }
 
     /**
@@ -1224,12 +1226,12 @@ class Mollie extends PaymentModule
     public function hookActionAdminOrdersListingFieldsModifier($params)
     {
         if (isset($params['select'])) {
-            $params['select'].= ' ,mol.`transaction_id`';
+            $params['select'] .= ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
-            $params['join'].= ' LEFT JOIN `'._DB_PREFIX_.'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
         }
-        $params['fields']['order_id'] =  [
+        $params['fields']['order_id'] = [
             'title' => $this->l('Resend payment link'),
             'align' => 'text-center',
             'class' => 'fixed-width-xs',

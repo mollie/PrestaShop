@@ -259,7 +259,13 @@ class PaymentMethodService
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    ['cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time(), 'key' => $secureKey, 'customerId' => $customer->id],
+                    [
+                        'cart_id' => $cartId,
+                        'utm_nooverride' => 1,
+                        'rand' => time(),
+                        'key' => $secureKey,
+                        'customerId' => $customer->id
+                    ],
                     true
                 )
             ),
