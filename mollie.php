@@ -1245,46 +1245,44 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if(!($this->context->controller instanceof AdminOrdersControllerCore) &&
-            $params["order"]->module !== $this->name
+        if($this->context->controller instanceof AdminOrdersControllerCore &&
+            $params["order"]->module === $this->name
         ) {
-            return;
+            $cartId = $params["cart"]->id;
+            $totalPaid = strval($params["order"]->total_paid);
+            $currency = $params["currency"]->iso_code;
+            $customerKey = $params["customer"]->secure_key;
+            $orderReference = $params["order"]->reference;
+            $orderPayment = $params["order"]->payment;
+            $orderId = $params["order"]->id;
+
+            /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+            $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+            $paymentMethodObj = new MolPaymentMethod();
+            $paymentData = $paymentMethodService->getPaymentData(
+                $totalPaid,
+                $currency,
+                '',
+                null,
+                $cartId,
+                $customerKey,
+                $paymentMethodObj,
+                false,
+                $orderReference
+            );
+
+            $newPayment = $this->api->payments->create($paymentData);
+
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
+            $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepository->addOpenStatusPayment(
+                $cartId,
+                $orderPayment,
+                $newPayment->id,
+                $orderId,
+                $orderReference
+            );
         }
-
-        $cartId = $params["cart"]->id;
-        $totalPaid = strval($params["order"]->total_paid);
-        $currency = $params["currency"]->iso_code;
-        $customerKey = $params["customer"]->secure_key;
-        $orderReference = $params["order"]->reference;
-        $orderPayment = $params["order"]->payment;
-        $orderId = $params["order"]->id;
-
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
-        $paymentMethodObj = new MolPaymentMethod();
-        $paymentData = $paymentMethodService->getPaymentData(
-            $totalPaid,
-            $currency,
-            '',
-            null,
-            $cartId,
-            $customerKey,
-            $paymentMethodObj,
-            false,
-            $orderReference
-        );
-
-        $newPayment = $this->api->payments->create($paymentData);
-
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
-        $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-        $paymentMethodRepository->addOpenStatusPayment(
-            $cartId,
-            $orderPayment,
-            $newPayment->id,
-            $orderId,
-            $orderReference
-        );
     }
 
     /**
