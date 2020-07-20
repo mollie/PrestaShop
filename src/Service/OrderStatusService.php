@@ -35,9 +35,11 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Configuration;
 use Context;
 use Mollie\Config\Config;
+use Mollie\Utility\OrderStatusUtility;
 use Order;
 use OrderHistory;
 use OrderPayment;
@@ -121,6 +123,8 @@ class OrderStatusService
                 $orderPayment->update();
             }
         }
+
+        $status = OrderStatusUtility::transformPaymentStatusToPaid($status,  Config::STATUS_PAID_ON_BACKORDER);
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);

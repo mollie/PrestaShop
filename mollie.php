@@ -32,6 +32,7 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
@@ -47,6 +48,7 @@ if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions
 if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
     return;
 }
+
 /**
  * Class Mollie
  *
@@ -97,7 +99,7 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-        $this->ps_versions_compliancy = array('min' => '1.6.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -195,6 +197,7 @@ class Mollie extends PaymentModule
     {
         return $this->context;
     }
+
     public function getIdentifier()
     {
         return $this->identifier;
@@ -339,6 +342,7 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $str
+     * @deprecated
      *
      * @return string
      */
@@ -380,7 +384,7 @@ class Mollie extends PaymentModule
                             'this_version' => $this->version,
                             'release_version' => $latestVersion,
                         ]);
-                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/admin/new_release.tpl');
+                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
                     }
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
@@ -457,6 +461,22 @@ class Mollie extends PaymentModule
 
         if ($isCartController) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+        }
+    }
+
+    /**
+     * Add custom JS && CSS to admin controllers
+     */
+    public function hookActionAdminControllerSetMedia()
+    {
+        $currentController = Tools::getValue('controller');
+
+        if ('AdminOrders' === $currentController) {
+            Media::addJsDef([
+                'mollieHookAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+            ]);
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
         }
     }
 
@@ -631,7 +651,7 @@ class Mollie extends PaymentModule
             if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
                 continue;
             }
-            $images = json_decode($method['images_json'],true);
+            $images = json_decode($method['images_json'], true);
             $paymentOptions[] = [
                 'cta_text' => $this->lang($method['method_name']),
                 'logo' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES) === Mollie\Config\Config::LOGOS_NORMAL
@@ -1001,7 +1021,7 @@ class Mollie extends PaymentModule
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
         $adminOrdersController = new AdminOrdersController();
-        return $orderInfoService->displayMollieOrderInfo($input,  $adminOrdersController->id);
+        return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
     }
 
     /**
@@ -1201,6 +1221,91 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
         ];
+    }
+
+    public function hookActionAdminOrdersListingFieldsModifier($params)
+    {
+        if (isset($params['select'])) {
+            $params['select'] .= ' ,mol.`transaction_id`';
+        }
+        if (isset($params['join'])) {
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
+        }
+        $params['fields']['order_id'] = [
+            'title' => $this->l('Resend payment link'),
+            'align' => 'text-center',
+            'class' => 'fixed-width-xs',
+            'orderby' => false,
+            'search' => false,
+            'remove_onclick' => true,
+            'callback_object' => 'mollie',
+            'callback' => 'resendOrderPaymentLink'
+        ];
+    }
+
+    public function hookActionValidateOrder($params)
+    {
+        if($this->context->controller instanceof AdminOrdersControllerCore &&
+            $params["order"]->module === $this->name
+        ) {
+            $cartId = $params["cart"]->id;
+            $totalPaid = strval($params["order"]->total_paid);
+            $currency = $params["currency"]->iso_code;
+            $customerKey = $params["customer"]->secure_key;
+            $orderReference = $params["order"]->reference;
+            $orderPayment = $params["order"]->payment;
+            $orderId = $params["order"]->id;
+
+            /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+            $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+            $paymentMethodObj = new MolPaymentMethod();
+            $paymentData = $paymentMethodService->getPaymentData(
+                $totalPaid,
+                $currency,
+                '',
+                null,
+                $cartId,
+                $customerKey,
+                $paymentMethodObj,
+                false,
+                $orderReference
+            );
+
+            $newPayment = $this->api->payments->create($paymentData);
+
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
+            $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepository->addOpenStatusPayment(
+                $cartId,
+                $orderPayment,
+                $newPayment->id,
+                $orderId,
+                $orderReference
+            );
+        }
+    }
+
+    /**
+     * @param $idOrder
+     * @return string
+     * @throws Exception
+     */
+    public static function resendOrderPaymentLink($orderId)
+    {
+        $module = Module::getInstanceByName('mollie');
+        /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
+        $molliePaymentRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $molPayment = $molliePaymentRepo->getPaymentBy('order_id', $orderId);
+        if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
+            return false;
+        }
+
+        $mollie = Module::getInstanceByName('mollie');
+
+        /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
+        $orderListActionBuilder =  $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
+
+        return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
     }
 
     private function setApiKey()

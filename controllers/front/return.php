@@ -39,12 +39,17 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Exception\CancelPendingOrderException;
+use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CancelPendingOrderService;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\RepeatOrderLinkFactory;
 use Mollie\Service\RestorePendingCartService;
+use Mollie\Utility\TransactionUtility;
+use Mollie\Utility\ArrayUtility;
+use Mollie\Service\PaymentReturnService;
+use Mollie\Utility\ContextUtility;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use Psr\Log\LoggerInterface;
@@ -63,17 +68,11 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  */
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
-    const PENDING = 1;
-    const DONE = 2;
 
     const FILE_NAME = 'return';
 
     /** @var bool $ssl */
     public $ssl = true;
-    /** @var bool $display_column_left */
-    public $display_column_left = false;
-    /** @var bool $display_column_left */
-    public $display_column_right = false;
 
     /**
      * Unset the cart id from cookie if the order exists
@@ -106,6 +105,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
+        $customerId = Tools::getValue('customerId');
+        $customerSecureKey =  Tools::getValue('key');
+
+        /** @var CustomerFactory $customerFactory */
+        $customerFactory = $this->module->getContainer(CustomerFactory::class);
+        $this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
@@ -169,7 +174,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->link->getModuleLink(
                     $this->module->name,
                     'return',
-                    ['ajax' => 1, 'action' => 'getStatus', 'transaction_id' => $data['mollie_info']['transaction_id']],
+                    [
+                        'ajax' => 1,
+                        'action' => 'getStatus',
+                        'transaction_id' => $data['mollie_info']['transaction_id'],
+                        'key' => $this->context->customer->secure_key,
+                        'customerId' => $this->context->customer->id
+                    ],
                     true
                 )
             );
@@ -274,10 +285,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $orderStatus = $transaction->status;
-        if ($orderStatus === 'created' && $isOrder) {
-            foreach ($transaction->payments() as $payment) {
-                $orderStatus = $payment->status;
-            }
+
+        if($transaction->resource === "order") {
+            $payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
+            $orderStatus = $payments->status;
         }
 
         /** @var RepeatOrderLinkFactory $orderLinkFactory */
@@ -285,59 +296,54 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
 
+        $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
+
+        /** @var PaymentReturnService $paymentReturnService */
+        $paymentReturnService = $this->module->getContainer(PaymentReturnService::class);
+        $stockManagement = Configuration::get('PS_STOCK_MANAGEMENT');
         switch ($orderStatus) {
-            case PaymentStatus::STATUS_EXPIRED:
-            case PaymentStatus::STATUS_FAILED:
-            case PaymentStatus::STATUS_CANCELED:
-                $this->setWarning($notSuccessfulPaymentMessage);
-
-                /** @var RestorePendingCartService $restorePendingCart */
-                $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
-
-                $restorePendingCart->restore($order);
-
-                $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
-
-                return $this->toJsonResponse(
-                    true,
-                    static::DONE,
+            case PaymentStatus::STATUS_OPEN:
+            case PaymentStatus::STATUS_PENDING:
+                $response = $paymentReturnService->handlePendingStatus(
+                    $order,
                     $transaction,
-                    $orderLinkFactory->getLink()
+                    $orderStatus,
+                    $paymentMethod,
+                    $stockManagement
                 );
+                break;
             case PaymentStatus::STATUS_AUTHORIZED:
             case PaymentStatus::STATUS_PAID:
-            case OrderStatus::STATUS_COMPLETED:
-                $status = static::DONE;
-                $orderDetails = $order->getOrderDetailList();
-                /** @var OrderDetail $detail */
-                foreach ($orderDetails as $detail) {
-                    $orderDetail = new OrderDetail($detail['id_order_detail']);
-                    if (
-                        Configuration::get('PS_STOCK_MANAGEMENT') &&
-                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-                    ) {
-                        $orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                        break;
-                    }
-                }
+                $response = $paymentReturnService->handlePaidStatus(
+                    $order,
+                    $transaction,
+                    $orderStatus,
+                    $paymentMethod,
+                    $stockManagement
+                );
                 break;
-            default:
-                $status = static::PENDING;
-                $orderDetails = $order->getOrderDetailList();
-                /** @var OrderDetail $detail */
-                foreach ($orderDetails as $detail) {
-                    $orderDetail = new OrderDetail($detail['id_order_detail']);
-                    if (
-                        Configuration::get('PS_STOCK_MANAGEMENT') &&
-                        ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-                    ) {
-                        $orderStatus = Mollie\Config\Config::STATUS_PENDING_ON_BACKORDER;
-                        break;
-                    }
-                }
-                break;
-        }
+            case PaymentStatus::STATUS_EXPIRED:
+            case PaymentStatus::STATUS_CANCELED:
+            case PaymentStatus::STATUS_FAILED:
+            $this->setWarning($notSuccessfulPaymentMessage);
 
+            /** @var RestorePendingCartService $restorePendingCart */
+            $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
+
+            $restorePendingCart->restore($order);
+
+            $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
+
+            return $this->toJsonResponse(
+                true,
+                static::DONE,
+                $transaction,
+                $orderLinkFactory->getLink()
+            );
+                $response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
+                break;
+
+        }
         $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
 
         $successUrl = $this->context->link->getPageLink(
@@ -357,46 +363,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         return $this->toJsonResponse(true, $status, $transaction, $successUrl);
     }
 
-    protected function savePaymentStatus($transactionId, $status, $orderId)
-    {
-        try {
-            return Db::getInstance()->update(
-                'mollie_payments',
-                [
-                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                    'bank_status' => pSQL($status),
-                    'order_id' => (int)$orderId,
-                ],
-                '`transaction_id` = \'' . pSQL($transactionId) . '\''
-            );
-        } catch (Exception $e) {
-            /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-            $paymentMethodRepo->tryAddOrderReferenceColumn();
-            throw $e;
-        }
-    }
-
-    protected function updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod)
-    {
-        /** @var OrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
-
-        $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
-        $this->savePaymentStatus($transactionId, $orderStatus, $orderId);
-        $transactionInfo = [
-            'transactionId' => $transactionId,
-            'paymentMethod' => $paymentMethod,
-        ];
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId, null, [], $transactionInfo);
-
-        $orderPayments = OrderPayment::getByOrderId($orderId);
-        /** @var OrderPayment $orderPayment */
-        foreach ($orderPayments as $orderPayment) {
-            $orderPayment->transaction_id = $transactionId;
-            $orderPayment->payment_method = $paymentMethod;
-            $orderPayment->update();
-        }
+        die(json_encode($response));
     }
 
     private function toJsonResponse($isSuccessful, $status, $response, $successUrl)
