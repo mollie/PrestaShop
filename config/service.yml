@@ -127,3 +127,4 @@ services:
     - '@mollie'
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
+    - '@Mollie\Service\RepeatOrderLinkFactory'
