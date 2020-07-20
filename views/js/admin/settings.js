@@ -60,12 +60,16 @@ function togglePaymentMethod($button, paymentId) {
             response = JSON.parse(response);
             if (response.success) {
                 if (response.paymentStatus) {
-                    $clickedButton.closest('.payment-method').find('select[name^="MOLLIE_METHOD_ENABLED"] option[value="' + response.paymentStatus +'"]').prop('selected', true);
                     $clickedButton.data('action', 'deactivate');
                     $clickedButton.find('i').html('check');
                 } else {
-                    $clickedButton.data('action', 'activate');
-                    $clickedButton.find('i').html('clear');
+                  $clickedButton.data('action', 'activate');
+                  $clickedButton.find('i').html('clear');
+                }
+
+                if(response.paymentStatus !== undefined) {
+                  $clickedButton.closest('.payment-method').find('select[name^="MOLLIE_METHOD_ENABLED"] option[value="' + response.paymentStatus +'"]').prop('selected', true);
+
                 }
             }
         }
