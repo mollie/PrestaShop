@@ -79,64 +79,6 @@ class UrlPathUtility
     }
 
     /**
-     * Test if directory is writable
-     *
-     * @param string $dir Directory path, absolute or relative
-     * @param bool $recursive
-     * @param null $fullReport
-     * @param bool $absolute Is absolute path to directory
-     *
-     * @return bool
-     *
-     * @since 3.0.2
-     */
-    public static function testDir($dir, $recursive = false, &$fullReport = null, $absolute = false)
-    {
-        if ($absolute) {
-            $absoluteDir = $dir;
-        } else {
-            $absoluteDir = rtrim(_PS_ROOT_DIR_, '\\/') . DIRECTORY_SEPARATOR . trim($dir, '\\/');
-        }
-
-        if (!file_exists($absoluteDir)) {
-            $fullReport = sprintf('Directory %s does not exist.', $absoluteDir);
-
-            return false;
-        }
-
-        if (!is_writable($absoluteDir)) {
-            $fullReport = sprintf('Directory %s is not writable.', $absoluteDir);
-
-            return false;
-        }
-
-        if ($recursive) {
-            foreach (scandir($absoluteDir, SCANDIR_SORT_NONE) as $item) {
-                $path = $absoluteDir . DIRECTORY_SEPARATOR . $item;
-
-                if (in_array($item, ['.', '..', '.git'])
-                    || is_link($path)) {
-                    continue;
-                }
-
-                if (is_dir($path)) {
-                    if (!static::testDir($path, $recursive, $fullReport, true)) {
-                        return false;
-                    }
-                }
-
-                if (!is_writable($path)) {
-                    $fullReport = sprintf('File %s is not writable.', $path);
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Get the webpack chunks for a given entry name
      *
      * @param string $entry Entry name

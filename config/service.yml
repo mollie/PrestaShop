@@ -7,6 +7,7 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\MethodCountryRepository'
       - '@Mollie\Service\CartLinesService'
+      - '@Mollie\Service\PaymentsTranslationService'
 
   Mollie\Service\ApiService:
     arguments:
@@ -18,10 +19,6 @@ services:
       - '@mollie'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
-
-  Mollie\Service\UrlPathService:
-    arguments:
-      - '@mollie'
 
   Mollie\Service\IssuerService:
     arguments:
@@ -87,3 +84,28 @@ services:
       - '@mollie'
 
   Mollie\Service\CartDuplicationService:
+
+  Mollie\Service\TransactionService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\OrderStatusService'
+
+  Mollie\Service\MolliePaymentMailService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\MailService'
+
+  Mollie\Service\MailService:
+    arguments:
+      - '@mollie'
+
+  Mollie\Service\PaymentsTranslationService:
+    - '@mollie'
+    - '@Mollie\Service\LanguageService'
+
+  Mollie\Service\PaymentReturnService:
+    - '@mollie'
+    - '@Mollie\Service\CartDuplicationService'
+    - '@Mollie\Repository\PaymentMethodRepository'

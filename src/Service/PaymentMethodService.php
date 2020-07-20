@@ -75,18 +75,25 @@ class PaymentMethodService
      * @var CartLinesService
      */
     private $cartLinesService;
+    /**
+     * @var aymentsTranslationService
+     */
+    private $paymentsTranslationService;
+
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
         MethodCountryRepository  $countryRepository,
-        CartLinesService $cartLinesService
+        CartLinesService $cartLinesService,
+        PaymentsTranslationService $paymentsTranslationService
     )
     {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
         $this->cartLinesService = $cartLinesService;
+        $this->paymentsTranslationService = $paymentsTranslationService;
     }
 
     public function savePaymentMethod($method)
@@ -141,6 +148,7 @@ class PaymentMethodService
         }
         $countryCode = Tools::strtolower($context->country->iso_code);
         $unavailableMethods = [];
+
         foreach (Mollie\Config\Config::$defaultMethodAvailability as $methodName => $countries) {
             if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
                 || empty($countries)
@@ -184,6 +192,8 @@ class PaymentMethodService
                 }
             }
         }
+
+        $methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
 
         foreach ($methods as $key => $method) {
             $image = json_decode($method['images_json'], true);
@@ -249,7 +259,13 @@ class PaymentMethodService
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    ['cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time()],
+                    [
+                        'cart_id' => $cartId,
+                        'utm_nooverride' => 1,
+                        'rand' => time(),
+                        'key' => $secureKey,
+                        'customerId' => $customer->id
+                    ],
                     true
                 )
             ),
@@ -283,7 +299,7 @@ class PaymentMethodService
             }
         }
 
-        if ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_PAYMENTS_API) {
+        if ($molPaymentMethod->method !== Mollie\Config\Config::MOLLIE_ORDERS_API) {
             $paymentData['description'] = str_ireplace(
                 ['%'],
                 [$cartId],

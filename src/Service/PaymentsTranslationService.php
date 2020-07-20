@@ -30,46 +30,38 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+namespace Mollie\Service;
 
-/**
- * @param Mollie $module
- * @return bool
- */
+use Mollie;
 
-function upgrade_module_4_0_7($module)
+class PaymentsTranslationService
 {
-    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get('PS_OS_SHIPPING'));
-    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, true);
+    /**
+     * @var Mollie
+     */
+    private $module;
+    /**
+     * @var LanguageService
+     */
+    private $languageService;
 
-    $sql= 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
-				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_method`       VARCHAR(64),
-				`id_country`      INT(64),
-				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+    public function __construct(
+        Mollie $module,
+        LanguageService $languageService
+    ) {
 
-    if (Db::getInstance()->execute($sql) == false) {
-        return false;
+        $this->module = $module;
+        $this->languageService = $languageService;
     }
+    public function getTranslatedPaymentMethods($paymentMethods) {
 
-    $module->registerHook('actionAdminOrdersListingFieldsModifier');
-    $module->registerHook('actionAdminControllerSetMedia');
-    $module->registerHook('actionValidateOrder');
+        foreach ($paymentMethods as $method) {
+            $method['method_name'] = $this->languageService->lang($method['method_name']);
+        }
 
-    $installer = new \Mollie\Install\Installer($module);
-    $installed = true;
-
-    $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
-
-    if(!$installed) {
-        return false;
+        return $paymentMethods;
     }
-
-    return true;
 }

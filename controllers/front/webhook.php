@@ -115,7 +115,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         $transactionId = Tools::getValue('id');
-        if (Tools::substr($transactionId, 0, 3) === 'ord') {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
             $payment = $this->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
         } else {
             $payment = $this->processTransaction($this->module->api->payments->get($transactionId));
@@ -152,7 +152,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
         if ($transaction instanceof MolliePaymentAlias) {
-            if (!empty($transaction->orderId) && Tools::substr($transaction->orderId, 0, 3) === 'ord') {
+            if (!empty($transaction->orderId) && TransactionUtility::isOrderTransaction($transaction->orderId)) {
                 // Part of order
                 $transaction = $this->module->api->orders->get($transaction->orderId, array('embed' => 'payments'));
             } else {

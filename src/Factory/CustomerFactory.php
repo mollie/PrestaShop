@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -30,46 +31,26 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+namespace Mollie\Factory;
 
-/**
- * @param Mollie $module
- * @return bool
- */
+use Customer;
+use Mollie\Utility\ContextUtility;
 
-function upgrade_module_4_0_7($module)
+
+class CustomerFactory
 {
-    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get('PS_OS_SHIPPING'));
-    Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, true);
+    public function recreateFromRequest($customerId, $customerSecureKey, $context)
+    {
+        if ($customerId) {
+            $customer = new Customer($customerId);
+            if ($customer->secure_key === $customerSecureKey) {
+                return ContextUtility::setCustomerToContext($context, $customer);
+            }
+        }
 
-    $sql= 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
-				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_method`       VARCHAR(64),
-				`id_country`      INT(64),
-				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
-
-    if (Db::getInstance()->execute($sql) == false) {
-        return false;
+        return $context;
     }
-
-    $module->registerHook('actionAdminOrdersListingFieldsModifier');
-    $module->registerHook('actionAdminControllerSetMedia');
-    $module->registerHook('actionValidateOrder');
-
-    $installer = new \Mollie\Install\Installer($module);
-    $installed = true;
-
-    $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
-
-    if(!$installed) {
-        return false;
-    }
-
-    return true;
 }

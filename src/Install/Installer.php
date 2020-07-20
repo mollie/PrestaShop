@@ -115,6 +115,9 @@ class Installer
             'actionEmailSendBefore',
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
+            'actionAdminOrdersListingFieldsModifier',
+            'actionAdminControllerSetMedia',
+            'actionValidateOrder',
         ];
     }
 
