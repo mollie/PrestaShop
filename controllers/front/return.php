@@ -38,6 +38,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
@@ -101,12 +102,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public function initContent()
     {
         $customerId = Tools::getValue('customerId');
-        if ($customerId) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === Tools::getValue('key')) {
-                $this->context = ContextUtility::setCustomerToContext($this->context, $customer);
-            }
-        }
+        $customerSecureKey =  Tools::getValue('key');
+
+        /** @var CustomerFactory $customerFactory */
+        $customerFactory = $this->module->getContainer(CustomerFactory::class);
+        $this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
@@ -328,16 +328,18 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
-                /** @var CartDuplicationService $cartDuplicationService */
-                $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
-                $cartDuplicationService->restoreCart($order->id_cart);
+                if($paymentMethod !== null) {
+                    /** @var CartDuplicationService $cartDuplicationService */
+                    $cartDuplicationService = $this->module->getContainer(CartDuplicationService::class);
+                    $cartDuplicationService->restoreCart($order->id_cart);
 
-                $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
+                    $this->warning[] = $this->module->l('Your payment was not successful, please try again.');
 
-                $this->context->cookie->mollie_payment_canceled_error =
-                    json_encode($this->warning);
+                    $this->context->cookie->mollie_payment_canceled_error =
+                        json_encode($this->warning);
 
-                $this->updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod);
+                    $this->updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod);
+                }
 
                 if (!Config::isVersion17()) {
                     $orderLink = $this->context->link->getPageLink(

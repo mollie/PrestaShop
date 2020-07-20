@@ -53,7 +53,7 @@ class TextGeneratorUtility
      * @throws CoreException
      * @since 3.0.0
      */
-    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference = '')
+    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
     {
         if ($cartId instanceof Cart) {
             $cart = $cartId;
@@ -83,7 +83,9 @@ class TextGeneratorUtility
             $methodDescription
         );
 
-        return $content;
+        $description = empty($content) ? $orderReference : $content;
+
+        return $description;
     }
 
 }
