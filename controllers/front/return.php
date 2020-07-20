@@ -45,6 +45,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ContextUtility;
+use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
