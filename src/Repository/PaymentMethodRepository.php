@@ -43,6 +43,10 @@ use PrestaShopException;
 
 class PaymentMethodRepository
 {
+    /**
+     * @param $paymentMethodId
+     * @return false|string|null
+     */
     public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
     {
         $sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
@@ -50,6 +54,10 @@ class PaymentMethodRepository
         return Db::getInstance()->getValue($sql);
     }
 
+    /**
+     * @param $paymentMethodId
+     * @return bool
+     */
     public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
     {
         $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
@@ -57,6 +65,10 @@ class PaymentMethodRepository
         return Db::getInstance()->execute($sql);
     }
 
+    /**
+     * @param $paymentMethodId
+     * @return false|string|null
+     */
     public function getPaymentMethodIdByMethodId($paymentMethodId)
     {
         $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($paymentMethodId) . '"';
@@ -140,6 +152,10 @@ class PaymentMethodRepository
         return true;
     }
 
+    /**
+     * @return array|false|\mysqli_result|\PDOStatement|resource|null
+     * @throws PrestaShopDatabaseException
+     */
     public function getMethodsForCheckout()
     {
         $sql = new DbQuery();
@@ -149,6 +165,11 @@ class PaymentMethodRepository
         return Db::getInstance()->executeS($sql);
     }
 
+    /**
+     * @param $oldTransactionId
+     * @param $newTransactionId
+     * @return bool
+     */
     public function updateTransactionId($oldTransactionId, $newTransactionId)
     {
         return Db::getInstance()->update(

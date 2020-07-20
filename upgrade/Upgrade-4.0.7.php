@@ -53,6 +53,8 @@ function upgrade_module_4_0_7($module)
         return false;
     }
 
+    $module->registerHook('actionAdminOrdersListingFieldsModifier');
+    $module->registerHook('actionAdminControllerSetMedia');
     $module->registerHook('actionValidateOrder');
 
     $installer = new \Mollie\Install\Installer($module);

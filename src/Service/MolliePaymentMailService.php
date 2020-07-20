@@ -22,10 +22,12 @@ class MolliePaymentMailService
      * @var PaymentMethodRepository
      */
     private $paymentMethodRepository;
+
     /**
      * @var Mollie
      */
     private $module;
+
     /**
      * @var MailService
      */
@@ -192,8 +194,10 @@ class MolliePaymentMailService
         $checkoutUrl = '';
         /** @var Payment $molliePayment */
         foreach ($molliePayments as $molliePayment) {
-            if ($molliePayment->status === PaymentStatus::STATUS_OPEN) {
-                $checkoutUrl = $molliePayment->getCheckoutUrl();
+            if ($molliePayment->status === PaymentStatus::STATUS_OPEN ||
+                $molliePayment->status === PaymentStatus::STATUS_PENDING
+            ) {
+                return $molliePayment->getCheckoutUrl();
             }
         }
 
