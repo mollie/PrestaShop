@@ -33,27 +33,17 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
-use Mollie\Exception\CancelPendingOrderException;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\CancelPendingOrderService;
-use Mollie\Service\CartDuplicationService;
-use Mollie\Service\OrderStatusService;
-use Mollie\Service\RepeatOrderLinkFactory;
 use Mollie\Service\RestorePendingCartService;
+use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Service\PaymentReturnService;
-use Mollie\Utility\ContextUtility;
-use Mollie\Utility\PaymentMethodUtility;
-use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
-use Psr\Log\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -107,7 +97,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public function initContent()
     {
         $customerId = Tools::getValue('customerId');
-        $customerSecureKey =  Tools::getValue('key');
+        $customerSecureKey = Tools::getValue('key');
 
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getContainer(CustomerFactory::class);
@@ -287,16 +277,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderStatus = $transaction->status;
 
-        if($transaction->resource === "order") {
+        if ($transaction->resource === "order") {
             $payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
             $orderStatus = $payments->status;
         }
 
-        /** @var RepeatOrderLinkFactory $orderLinkFactory */
-        $orderLinkFactory = $this->module->getContainer(RepeatOrderLinkFactory::class);
-
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-
         $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
 
         /** @var PaymentReturnService $paymentReturnService */
@@ -326,55 +312,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
-            $this->setWarning($notSuccessfulPaymentMessage);
+                $this->setWarning($notSuccessfulPaymentMessage);
+                /** @var RestorePendingCartService $restorePendingCart */
+                $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
+                $restorePendingCart->restore($order);
 
-            /** @var RestorePendingCartService $restorePendingCart */
-            $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
-
-            $restorePendingCart->restore($order);
-
-            $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
-
-            return $this->toJsonResponse(
-                true,
-                static::DONE,
-                $transaction,
-                $orderLinkFactory->getLink()
-            );
                 $response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
                 break;
-
         }
-        $this->updateTransactions($transactionId, $orderId, $orderStatus, $dbPayment['method']);
-
-        $successUrl = $this->context->link->getPageLink(
-            'order-confirmation',
-            true,
-            null,
-            [
-                'id_cart' => (int)$cart->id,
-                'id_module' => (int)$this->module->id,
-                'id_order' => (int)version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-                    ? Order::getIdByCartId((int)$cart->id)
-                    : Order::getOrderByCartId((int)$cart->id),
-                'key' => $cart->secure_key,
-            ]
-        );
-
-        return $this->toJsonResponse(true, $status, $transaction, $successUrl);
-    }
 
         die(json_encode($response));
-    }
-
-    private function toJsonResponse($isSuccessful, $status, $response, $successUrl)
-    {
-        die(json_encode([
-            'success' => $isSuccessful,
-            'status' => $status,
-            'response' => json_encode($response),
-            'href' => $successUrl
-        ]));
     }
 
     private function setWarning($message)

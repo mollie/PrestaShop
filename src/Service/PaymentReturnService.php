@@ -58,25 +58,34 @@ class PaymentReturnService
      * @var Context
      */
     private $context;
+
     /**
      * @var CartDuplicationService
      */
     private $cartDuplicationService;
+
     /**
      * @var PaymentMethodRepository
      */
     private $paymentMethodRepository;
 
+    /**
+     * @var RepeatOrderLinkFactory
+     */
+    private $orderLinkFactory;
+
 
     public function __construct(
         Mollie $module,
         CartDuplicationService $cartDuplicationService,
-        PaymentMethodRepository $paymentMethodRepository
+        PaymentMethodRepository $paymentMethodRepository,
+        RepeatOrderLinkFactory $orderLinkFactory
     ) {
         $this->module = $module;
         $this->context = Context::getContext();
         $this->cartDuplicationService = $cartDuplicationService;
         $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->orderLinkFactory = $orderLinkFactory;
     }
 
     public function handlePendingStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
@@ -134,26 +143,7 @@ class PaymentReturnService
 
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
-        if (!Config::isVersion17()) {
-            $orderLink = $this->context->link->getPageLink(
-                'order',
-                true,
-                null
-            );
-        } else {
-            $orderLink = $this->context->link->getPageLink(
-                'cart',
-                null,
-                $this->context->language->id,
-                [
-                    'action' => 'show',
-                ],
-                false,
-                null,
-                false
-
-            );
-        }
+        $orderLink = $this->orderLinkFactory->getLink();
 
         return [
             'success' => true,
