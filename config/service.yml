@@ -20,10 +20,6 @@ services:
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
 
-  Mollie\Service\UrlPathService:
-    arguments:
-      - '@mollie'
-
   Mollie\Service\IssuerService:
     arguments:
       - '@mollie'
@@ -108,3 +104,8 @@ services:
   Mollie\Service\PaymentsTranslationService:
     - '@mollie'
     - '@Mollie\Service\LanguageService'
+
+  Mollie\Service\PaymentReturnService:
+    - '@mollie'
+    - '@Mollie\Service\CartDuplicationService'
+    - '@Mollie\Repository\PaymentMethodRepository'

@@ -259,7 +259,13 @@ class PaymentMethodService
                 : $context->link->getModuleLink(
                     'mollie',
                     'return',
-                    ['cart_id' => $cartId, 'utm_nooverride' => 1, 'rand' => time(), 'key' => $secureKey, 'customerId' => $customer->id],
+                    [
+                        'cart_id' => $cartId,
+                        'utm_nooverride' => 1,
+                        'rand' => time(),
+                        'key' => $secureKey,
+                        'customerId' => $customer->id
+                    ],
                     true
                 )
             ),
@@ -293,7 +299,7 @@ class PaymentMethodService
             }
         }
 
-        if ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_PAYMENTS_API) {
+        if ($molPaymentMethod->method !== Mollie\Config\Config::MOLLIE_ORDERS_API) {
             $paymentData['description'] = str_ireplace(
                 ['%'],
                 [$cartId],

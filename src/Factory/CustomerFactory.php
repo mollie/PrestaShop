@@ -38,7 +38,7 @@ namespace Mollie\Factory;
 
 use Customer;
 use Mollie\Utility\ContextUtility;
-use Tools;
+
 
 class CustomerFactory
 {
