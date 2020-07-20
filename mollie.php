@@ -1229,7 +1229,7 @@ class Mollie extends PaymentModule
             $params['select'] .= ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
-            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_id` = a.`id_order`';
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference`';
         }
         $params['fields']['order_id'] = [
             'title' => $this->l('Resend payment link'),

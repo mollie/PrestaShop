@@ -85,6 +85,24 @@ services:
 
   Mollie\Service\CartDuplicationService:
 
+  Mollie\Service\OrderCartAssociationService:
+    arguments:
+      - '@Mollie\Service\CartDuplicationService'
+
+  Mollie\Service\MemorizeCartService:
+    arguments:
+      - '@Mollie\Service\OrderCartAssociationService'
+
+  Mollie\Service\RepeatOrderLinkFactory:
+
+  Mollie\Logger\PrestaLogger:
+
+  Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'
+
+  Mollie\Service\RestorePendingCartService:
+    arguments:
+      - '@Mollie\Repository\PendingOrderCartRepository'
+
   Mollie\Service\TransactionService:
     arguments:
       - '@mollie'

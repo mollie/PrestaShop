@@ -41,7 +41,10 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\MemorizeCartService;
+use Mollie\Service\OrderCartAssociationService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\RejectPendingOrderService;
 use Mollie\Utility\PaymentFeeUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
@@ -150,14 +153,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
-        // Store payment linked to cart
-        //todo: test
+        $order = Order::getByCartId($cart->id);
         if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(
                     'mollie_payments',
                     array(
                         'cart_id'         => (int) $cart->id,
+                        'order_id'         => (int) $order->id,
                         'method'          => pSQL($apiPayment->method),
                         'transaction_id'  => pSQL($apiPayment->id),
                         'order_reference' => pSQL($orderReference),
@@ -357,5 +360,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $order->total_paid = $totalPrice->toPrecision(2);
         $order->reference = $orderReference;
         $order->update();
+
+        /** @var MemorizeCartService $memorizeCart */
+        $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+
+        $memorizeCart->memorizeCart($order);
     }
 }

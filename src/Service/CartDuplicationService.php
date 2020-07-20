@@ -42,6 +42,15 @@ use Order;
 
 class CartDuplicationService
 {
+    /**
+     *
+     *
+     * @param int $cartId
+     *
+     * @return int
+     *
+     * @throws \PrestaShopDatabaseException
+     */
     public function restoreCart($cartId)
     {
         $context = Context::getContext();
@@ -50,25 +59,14 @@ class CartDuplicationService
         if ($duplication['success']) {
             /** @var Cart $duplicatedCart */
             $duplicatedCart = $duplication['cart'];
-            foreach ($cart->getOrderedCartRulesIds() as $cartRuleId) {
-                $duplicatedCart->addCartRule($cartRuleId['id_cart_rule']);
-                $this->restoreCartRuleQuantity($cartId, $cartRuleId['id_cart_rule']);
-            }
+
             $context->cookie->id_cart = $duplicatedCart->id;
             $context->cart = $duplicatedCart;
-            CartRule::autoAddToCart($context);
             $context->cookie->write();
+
+            return  $duplicatedCart->id;
         }
-    }
 
-    private function restoreCartRuleQuantity($cartId, $cartRuleId)
-    {
-        $cartRule = new CartRule($cartRuleId);
-        $cartRule->quantity++;
-        $cartRule->update();
-
-        $orderId = Order::getIdByCartId($cartId);
-        $sql = 'DELETE FROM `ps_order_cart_rule` WHERE id_order = ' . (int) $orderId . ' AND id_cart_rule = ' . (int) $cartRuleId;
-        DB::getInstance()->execute($sql);
+        return 0;
     }
 }

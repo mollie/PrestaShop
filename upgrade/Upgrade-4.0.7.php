@@ -53,6 +53,14 @@ function upgrade_module_4_0_7($module)
 				`all_countries` tinyint
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
+    $sql .= '
+        CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_pending_order_cart` (
+				`id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`order_id` INT(64) NOT NULL,
+				`cart_id` INT(64) NOT NULL
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+    ';
+
     if (Db::getInstance()->execute($sql) == false) {
         return false;
     }

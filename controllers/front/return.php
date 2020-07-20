@@ -33,20 +33,16 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\CartDuplicationService;
-use Mollie\Service\OrderStatusService;
-use Mollie\Utility\ArrayUtility;
-use Mollie\Service\PaymentReturnService;
-use Mollie\Utility\ContextUtility;
+use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Utility\ArrayUtility;
+use Mollie\Service\PaymentReturnService;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
@@ -63,6 +59,8 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  */
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
+
+    const FILE_NAME = 'return';
 
     /** @var bool $ssl */
     public $ssl = true;
@@ -99,7 +97,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public function initContent()
     {
         $customerId = Tools::getValue('customerId');
-        $customerSecureKey =  Tools::getValue('key');
+        $customerSecureKey = Tools::getValue('key');
 
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getContainer(CustomerFactory::class);
@@ -266,7 +264,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-
         if (!Tools::isSubmit('module')) {
             $_GET['module'] = $this->module->name;
         }
@@ -280,11 +277,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderStatus = $transaction->status;
 
-        if($transaction->resource === "order") {
+        if ($transaction->resource === "order") {
             $payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
             $orderStatus = $payments->status;
         }
 
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
         $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
 
         /** @var PaymentReturnService $paymentReturnService */
@@ -314,11 +312,23 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
+                $this->setWarning($notSuccessfulPaymentMessage);
+                /** @var RestorePendingCartService $restorePendingCart */
+                $restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
+                $restorePendingCart->restore($order);
+
                 $response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
                 break;
-
         }
 
         die(json_encode($response));
+    }
+
+    private function setWarning($message)
+    {
+        $this->warning[] = $message;
+
+        $this->context->cookie->mollie_payment_canceled_error =
+            json_encode($this->warning);
     }
 }
