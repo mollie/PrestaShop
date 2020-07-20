@@ -66,16 +66,16 @@
                 </a>
                 <td class="text-center">
                     {if $methodObj->enabled}
-                        <a href="#"
+                        <a href="#" class="payment-check-link"
                            data-action="deactivate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-                            <i class="material-icons">check</i>
+                            <i class="material-icons text-success">check</i>
                         </a>
                     {else}
-                        <a href="#"
+                          <a href="#" class="payment-check-link"
                            data-action="activate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-                            <i class="material-icons">clear</i>
+                            <i class="material-icons text-danger">clear</i>
                         </a>
                     {/if}
                 </td>

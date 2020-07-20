@@ -58,13 +58,15 @@ function togglePaymentMethod($button, paymentId) {
         },
         success: function (response) {
             response = JSON.parse(response);
+            var checkInputClass = 'text-success';
+            var clearInputClass = 'text-danger';
             if (response.success) {
                 if (response.paymentStatus) {
                     $clickedButton.data('action', 'deactivate');
-                    $clickedButton.find('i').html('check');
+                    $clickedButton.find('i').html('check').removeClass(clearInputClass).addClass(checkInputClass);
                 } else {
                   $clickedButton.data('action', 'activate');
-                  $clickedButton.find('i').html('clear');
+                  $clickedButton.find('i').html('clear').removeClass(checkInputClass).addClass(clearInputClass);
                 }
 
                 if(response.paymentStatus !== undefined) {
