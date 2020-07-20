@@ -101,7 +101,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public function initContent()
     {
         $customerId = Tools::getValue('customerId');
-        if (Tools::getValue('customerId')) {
+        if ($customerId) {
             $customer = new Customer($customerId);
             if ($customer->secure_key === Tools::getValue('key')) {
                 $this->context = ContextUtility::setCustomerToContext($this->context, $customer);

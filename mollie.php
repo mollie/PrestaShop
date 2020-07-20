@@ -1313,28 +1313,16 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
         $molliePaymentRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $molPayment = $molliePaymentRepo->getPaymentBy('order_id', $orderId);
-        if ($molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_COMPLETED ||
-            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_PAID ||
-            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_SHIPPING ||
-            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED ||
-            $molPayment['bank_status'] === \_PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus::STATUS_PAID) {
+        if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
 
         $mollie = Module::getInstanceByName('mollie');
 
-        $mollie->smarty->assign('idOrder', $orderId);
+        /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
+        $orderListActionBuilder =  $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
 
-        $mollie->smarty->assign('message',
-            $mollie->l('You will resend email with payment link to the customer')
-        );
-        $icon = $mollie->fetch(
-            $mollie->getLocalPath() . 'views/templates/hook/admin/order-list-save-label-icon.tpl');
-
-        $mollie->smarty->assign('icon', $icon);
-
-        return $mollie->fetch(
-            $mollie->getLocalPath() . 'views/templates/hook/admin/order-list-icon-container.tpl');
+        return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
     }
 
     private function setApiKey()
