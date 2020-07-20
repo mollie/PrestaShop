@@ -69,13 +69,13 @@
                         <a href="#" class="payment-check-link"
                            data-action="deactivate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-                            <i class="material-icons text-success">check</i>
+                            <i class="icon-check text-success"></i>
                         </a>
                     {else}
                           <a href="#" class="payment-check-link"
                            data-action="activate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-                            <i class="material-icons text-danger">clear</i>
+                            <i class="icon-remove text-danger"></i>
                         </a>
                     {/if}
                 </td>
