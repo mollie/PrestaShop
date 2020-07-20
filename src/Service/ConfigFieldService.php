@@ -103,6 +103,9 @@ class ConfigFieldService
             Config::MOLLIE_API => Configuration::get(Config::MOLLIE_API),
 
             Config::MOLLIE_AUTO_SHIP_MAIN => Configuration::get(Config::MOLLIE_AUTO_SHIP_MAIN),
+
+            Config::MOLLIE_STATUS_SHIPPING => Configuration::get(Config::MOLLIE_STATUS_SHIPPING),
+            Config::MOLLIE_MAIL_WHEN_SHIPPING => Configuration::get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
         ];
 
         if (Configuration::get(Config::MOLLIE_API_KEY)) {

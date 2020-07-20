@@ -38,6 +38,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\CartDuplicationService;
 use Mollie\Service\OrderStatusService;
@@ -96,12 +97,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public function initContent()
     {
         $customerId = Tools::getValue('customerId');
-        if (Tools::getValue('customerId')) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === Tools::getValue('key')) {
-                $this->context = ContextUtility::setCustomerToContext($this->context, $customer);
-            }
-        }
+        $customerSecureKey =  Tools::getValue('key');
+
+        /** @var CustomerFactory $customerFactory */
+        $customerFactory = $this->module->getContainer(CustomerFactory::class);
+        $this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
@@ -316,6 +316,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_FAILED:
                 $response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
                 break;
+
         }
 
         die(json_encode($response));

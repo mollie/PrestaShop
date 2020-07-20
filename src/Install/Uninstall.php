@@ -89,6 +89,8 @@ class Uninstall
         Configuration::deleteByName(Config::MOLLIE_STATUS_EXPIRED);
         Configuration::deleteByName(Config::MOLLIE_STATUS_PARTIAL_REFUND);
         Configuration::deleteByName(Config::MOLLIE_STATUS_REFUNDED);
+        Configuration::deleteByName(Config::MOLLIE_STATUS_SHIPPING);
+        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_SHIPPING);
         Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_OPEN);
         Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_PAID);
         Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_CANCELED);
