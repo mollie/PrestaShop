@@ -107,7 +107,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getContainer(CustomerFactory::class);
         $this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
-
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
