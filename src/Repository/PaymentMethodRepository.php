@@ -202,8 +202,6 @@ class PaymentMethodRepository
         }
     }
 
-}
-
     public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
     {
         return  Db::getInstance()->insert(
