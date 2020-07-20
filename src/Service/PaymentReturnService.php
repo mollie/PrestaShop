@@ -125,14 +125,17 @@ class PaymentReturnService
 
     public function handleFailedStatus(Order $order, $transaction, $orderStatus, $paymentMethod)
     {
-        $this->cartDuplicationService->restoreCart($order->id_cart);
+        if(null !== $paymentMethod) {
 
-        $warning[] = $this->module->l('Your payment was not successful, please try again.');
+            $this->cartDuplicationService->restoreCart($order->id_cart);
 
-        $this->context->cookie->mollie_payment_canceled_error =
-            json_encode($warning);
+            $warning[] = $this->module->l('Your payment was not successful, please try again.');
 
-        $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+            $this->context->cookie->mollie_payment_canceled_error =
+                json_encode($warning);
+
+            $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+        }
 
         if (!Config::isVersion17()) {
             $orderLink = $this->context->link->getPageLink(
