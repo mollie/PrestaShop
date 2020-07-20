@@ -75,6 +75,9 @@ function upgrade_module_4_0_7($module)
     $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
     $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
 
+    $langId = $module->getContext()->language->id;
+    $installed &= $installer->partialShippedOrderState($langId);
+
     if(!$installed) {
         return false;
     }

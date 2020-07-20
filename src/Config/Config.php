@@ -162,6 +162,7 @@ class Config
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
     const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
+    const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -249,7 +250,7 @@ class Config
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_PENDING => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_PAID),
-            OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
+            OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_PARTIALLY_SHIPPED),
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),
