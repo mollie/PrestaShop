@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+namespace Mollie\Utility;
+
 use Mollie\Config\Config;
 
 class PaymentMethodUtility
