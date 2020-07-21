@@ -35,19 +35,26 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderEndpoint;
 use Address;
 use Carrier;
+use Configuration;
 use Context;
 use Country;
+use Exception;
 use Language;
 use MolCarrierInformation;
+use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\MolCarrierInformationRepository;
 use Mollie\Repository\OrderShipmentRepository;
-use Order;
+use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\TransactionUtility;
+use Order as PrestashopOrder;
 use OrderCarrier;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use PrestaShopLogger;
 use Tools;
 use Validate;
 
@@ -63,13 +70,89 @@ class ShipmentService
      * @var MolCarrierInformationRepository
      */
     private $informationRepository;
+    /**
+     * @var PaymentMethodRepository
+     */
+    private $paymentMethodRepository;
+    /**
+     * @var Mollie
+     */
+    private $module;
 
     public function __construct(
         OrderShipmentRepository $orderShipmentRepository,
-        MolCarrierInformationRepository $informationRepository
+        MolCarrierInformationRepository $informationRepository,
+        PaymentMethodRepository $paymentMethodRepository,
+        Mollie $module
     ) {
         $this->orderShipmentRepository = $orderShipmentRepository;
         $this->informationRepository = $informationRepository;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->module = $module;
+    }
+
+    /**
+     * @param $orderId
+     * @param $orderStatusId
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @return void
+     */
+    public function shipOrder($orderId, $orderStatusId)
+    {
+        $order = new PrestashopOrder($orderId);
+        $checkStatuses = [];
+        if (Configuration::get(Config::MOLLIE_AUTO_SHIP_STATUSES)) {
+            $checkStatuses = @json_decode(Configuration::get(Config::MOLLIE_AUTO_SHIP_STATUSES));
+        }
+        if (!is_array($checkStatuses)) {
+            $checkStatuses = [];
+        }
+        $shipmentInfo = $this->getShipmentInformation($order->reference);
+
+        if (!(Configuration::get(Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusId, $checkStatuses)
+            ) || $shipmentInfo === null
+        ) {
+            return;
+        }
+
+        try {
+            $dbPayment = $this->paymentMethodRepository->getPaymentBy('order_id', (int)$orderId);
+        } catch (PrestaShopDatabaseException $e) {
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        } catch (PrestaShopException $e) {
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+            return;
+        }
+        if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
+            // No transaction found
+            return;
+        }
+
+        if (!TransactionUtility::isOrderTransaction($dbPayment['transaction_id'])
+        ) {
+            // No need to check regular payments
+            return;
+        }
+
+        try {
+            $apiOrder = $this->module->api->orders->get($dbPayment['transaction_id']);
+            $shippableItems = 0;
+            foreach ($apiOrder->lines as $line) {
+                $shippableItems += $line->shippableQuantity;
+            }
+            if ($shippableItems <= 0) {
+                return;
+            }
+
+            $apiOrder->shipAll($shipmentInfo);
+        } catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+        }
     }
 
     /**
@@ -85,7 +168,7 @@ class ShipmentService
      */
     public function getShipmentInformation($orderReference)
     {
-        $order = Order::getByReference($orderReference)[0];
+        $order = PrestashopOrder::getByReference($orderReference)[0];
         if (!Validate::isLoadedObject($order)) {
             return null;
         }

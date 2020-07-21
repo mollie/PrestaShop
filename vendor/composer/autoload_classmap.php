@@ -11,6 +11,7 @@ return array(
     'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_real.php',
     'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
     'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
+    'HTMLTemplatePartialInvoice' => $baseDir . '/src/Pdf/HTMLTemplatePartialInvoice.php',
     'MolCarrierInformation' => $baseDir . '/src/Entity/MolCarrierInformation.php',
     'MolOrderFee' => $baseDir . '/src/Entity/MolOrderFee.php',
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
@@ -29,7 +30,7 @@ return array(
     '_PhpScoper5eddef0da618a\\AssertionError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
     '_PhpScoper5eddef0da618a\\Composer\\CaBundle\\CaBundle' => $vendorDir . '/composer/ca-bundle/src/CaBundle.php',
     '_PhpScoper5eddef0da618a\\DivisionByZeroError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
-    '_PhpScoper5eddef0da618a\\Error' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/Error.php',
+    '_PhpScoper5eddef0da618a\\Error' => $vendorDir . '/paragonie/random_compat/lib/error_polyfill.php',
     '_PhpScoper5eddef0da618a\\GuzzleHttp\\Client' => $vendorDir . '/guzzlehttp/guzzle/src/Client.php',
     '_PhpScoper5eddef0da618a\\GuzzleHttp\\ClientInterface' => $vendorDir . '/guzzlehttp/guzzle/src/ClientInterface.php',
     '_PhpScoper5eddef0da618a\\GuzzleHttp\\Cookie\\CookieJar' => $vendorDir . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -568,5 +569,5 @@ return array(
     '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Mbstring\\Mbstring' => $vendorDir . '/symfony/polyfill-mbstring/Mbstring.php',
     '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Php70\\Php70' => $vendorDir . '/symfony/polyfill-php70/Php70.php',
     '_PhpScoper5eddef0da618a\\Symfony\\Polyfill\\Php72\\Php72' => $vendorDir . '/symfony/polyfill-php72/Php72.php',
-    '_PhpScoper5eddef0da618a\\TypeError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+    '_PhpScoper5eddef0da618a\\TypeError' => $vendorDir . '/paragonie/random_compat/lib/error_polyfill.php',
 );

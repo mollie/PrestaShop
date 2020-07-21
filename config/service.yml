@@ -60,6 +60,8 @@ services:
     arguments:
       - '@Mollie\Repository\OrderShipmentRepository'
       - '@Mollie\Repository\MolCarrierInformationRepository'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@mollie'
 
   Mollie\Service\CartLinesService:
     arguments:

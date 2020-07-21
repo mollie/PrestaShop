@@ -1041,81 +1041,73 @@ class Mollie extends PaymentModule
             return;
         }
 
-        if ($params['newOrderStatus'] instanceof OrderState) {
-            $orderStatus = $params['newOrderStatus'];
-        } elseif (is_int($params['newOrderStatus']) || is_string($params['newOrderStatus'])) {
-            $orderStatus = new OrderState($params['newOrderStatus']);
-        }
-        if (isset($orderStatus)
-            && $orderStatus instanceof OrderState
-            && Validate::isLoadedObject($orderStatus)
-        ) {
-            $orderStatusNumber = $orderStatus->id;
-        } else {
+        $orderStatusId = \Mollie\Utility\OrderStatusUtility::getOrderStatusId($params['newOrderStatus']);
+        if (!$orderStatusId) {
             return;
         }
 
         $idOrder = $params['id_order'];
-        $order = new Order($idOrder);
-        $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
-        }
-        if (!is_array($checkStatuses)) {
-            $checkStatuses = [];
-        }
-
         /** @var \Mollie\Service\ShipmentService $shipmentService */
         $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
-        $shipmentInfo = $shipmentService->getShipmentInformation($order->reference);
 
-        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
-            ) || $shipmentInfo === null
-        ) {
-            return;
+        $shipmentService->shipOrder($idOrder, $orderStatusId);
+
+//        if ((int) Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED) !== (int) $orderStatusId) {
+//            return;
+//        }
+
+
+        $order = new Order($idOrder);
+        $invoiceNumber = $this->createOrderInvoice($order);
+
+        $order_invoice = OrderInvoice::getInvoiceByNumber($invoiceNumber);
+
+        $pdf = new PDF($order_invoice, 'PartialInvoice', Context::getContext()->smarty);
+        $pdf->render();
+    }
+
+    public function createOrderInvoice(Order $order)
+    {
+        $cart = new Cart($order->id_cart);
+//        $transaction = $this->api->orders->get($transactionId, ['embed' => 'payments']);
+
+        $use_taxes = true;
+
+        $total_method = Cart::BOTH;
+        $invoice_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
+        $carrier = new Carrier((int) $order->id_carrier);
+        $tax_calculator = $carrier->getTaxCalculator($invoice_address);
+
+        $order_invoice = new OrderInvoice();
+        $order_invoice->id_order = $order->id;
+        $order_invoice->number = Order::getLastInvoiceNumber() + 1;
+        $order_invoice->total_paid_tax_excl = Tools::ps_round((float) $cart->getOrderTotal(false, $total_method), 2);
+        $order_invoice->total_paid_tax_incl = Tools::ps_round((float) $cart->getOrderTotal($use_taxes, $total_method), 2);
+        $order_invoice->total_products = (float) $cart->getOrderTotal(false, Cart::ONLY_PRODUCTS);
+        $order_invoice->total_products_wt = (float) $cart->getOrderTotal($use_taxes, Cart::ONLY_PRODUCTS);
+        $order_invoice->total_shipping_tax_excl = (float) $cart->getTotalShippingCost(null, false);
+        $order_invoice->total_shipping_tax_incl = (float) $cart->getTotalShippingCost();
+
+        $order_invoice->total_wrapping_tax_excl = abs($cart->getOrderTotal(false, Cart::ONLY_WRAPPING));
+        $order_invoice->total_wrapping_tax_incl = abs($cart->getOrderTotal($use_taxes, Cart::ONLY_WRAPPING));
+        $order_invoice->shipping_tax_computation_method = (int) $tax_calculator->computation_method;
+
+        $order_invoice->add();
+
+        $order_detail = new OrderDetail();
+        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $cart->getProducts(), (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
+
+        foreach ($order->getOrderPayments() as $orderPayment) {
+            Db::getInstance()->execute('
+                            INSERT INTO `' . _DB_PREFIX_ . 'order_invoice_payment`
+                            SET
+                                `id_order_invoice` = ' . (int)$order_invoice->id . ',
+                                `id_order_payment` = ' . (int)$orderPayment->id . ',
+                                `id_order` = ' . (int)$order_invoice->id_order);
         }
 
-        try {
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-            $dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
-        } catch (PrestaShopDatabaseException $e) {
-            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-            return;
-        } catch (PrestaShopException $e) {
-            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-            return;
-        }
-        if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
-            // No transaction found
-            return;
-        }
+        return $order_invoice->number;
 
-        $length = Tools::strlen(_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
-        if (Tools::substr($dbPayment['transaction_id'], 0, $length) !== _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX
-        ) {
-            // No need to check regular payments
-            return;
-        }
-
-        try {
-            $apiOrder = $this->api->orders->get($dbPayment['transaction_id']);
-            $shippableItems = 0;
-            foreach ($apiOrder->lines as $line) {
-                $shippableItems += $line->shippableQuantity;
-            }
-            if ($shippableItems <= 0) {
-                return;
-            }
-
-            $apiOrder->shipAll($shipmentInfo);
-        } catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
-            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-            return;
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-            return;
-        }
     }
 
     public function hookActionEmailSendBefore($params)

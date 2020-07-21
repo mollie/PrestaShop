@@ -21,7 +21,8 @@
     "classmap": [
       "vendor/",
       "controllers/",
-      "src/Entity"
+      "src/Entity",
+      "src/Pdf"
     ]
   },
   "config": {

@@ -237,6 +237,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                     ) {
+//                        if ($apiPayment->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_SHIPPING) {
+//                            foreach ($apiPayment->shipments() as $shipment) {
+//                                $test = $shipment;
+//                            }
+//                        }
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
                         /** @var OrderStatusService $orderStatusService */

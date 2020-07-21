@@ -36,6 +36,8 @@
 namespace Mollie\Utility;
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use OrderState;
+use Validate;
 
 class OrderStatusUtility
 {
@@ -51,5 +53,23 @@ class OrderStatusUtility
         }
 
         return $status;
+    }
+    
+    public static function getOrderStatusId($newOrderStatus)
+    {
+        if ($newOrderStatus instanceof OrderState) {
+            $orderStatus = $newOrderStatus;
+        } elseif (is_int($newOrderStatus) || is_string($newOrderStatus)) {
+            $orderStatus = new OrderState($newOrderStatus);
+        }
+
+        if (isset($orderStatus)
+            && $orderStatus instanceof OrderState
+            && Validate::isLoadedObject($orderStatus)
+        ) {
+            return $orderStatus->id;
+        } else {
+            return null;
+        }
     }
 }
