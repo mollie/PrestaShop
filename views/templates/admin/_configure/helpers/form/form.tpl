@@ -113,7 +113,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group payment-api-description">
                         <label class="control-label col-lg-3 required">
                             {l s='Description' mod='mollie'}
                         </label>
@@ -130,36 +130,14 @@
                                 {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
                             </p>
                             <p class="help-block">
-                                <b>{l s='{orderNumber}' mod='mollie'}</b>
-                                {l s=': The order number for this transaciton' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{storeName}' mod='mollie'}</b>
-                                {l s=': The name of the store' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{cart.id}' mod='mollie'}</b>
-                                {l s=': The id of the cart' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{order.reference}' mod='mollie'}</b>
-                                {l s=': The reference of the order' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{customer.firstname}' mod='mollie'}</b>
-                                {l s=': The firstname of the customer' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{customer.lastname}' mod='mollie'}</b>
-                                {l s=': The lastname of the customer' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{customer.company}' mod='mollie'}</b>
-                                {l s=': The company of the customer' mod='mollie'}
-                            </p>
-                            <p class="help-block">
-                                <b>{l s='{storename}' mod='mollie'}</b>
-                                {l s=': The name of the store' mod='mollie'}
+                              <b>{l s='{orderNumber}' mod='mollie'}</b>,
+                              <b>{l s='{storeName}' mod='mollie'}</b>,
+                              <b>{l s='{cart.id}' mod='mollie'}</b>,
+                              <b>{l s='{order.reference}' mod='mollie'}</b>,
+                              <b>{l s='{customer.firstname}' mod='mollie'}</b>,
+                              <b>{l s='{customer.lastname}' mod='mollie'}</b>,
+                              <b>{l s='{customer.company}' mod='mollie'}</b>,
+                              <b>{l s='{storename}' mod='mollie'}</b>.
                             </p>
                             <p class="help-block">
                                 {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
