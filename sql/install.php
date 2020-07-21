@@ -102,6 +102,7 @@ $sql[] = '
 				`id_mol_shipped_product`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`shipment_id` VARCHAR(64) NOT NULL,
 				`mollie_order_id` VARCHAR(64) NOT NULL,
+				`order_id` int(64) NOT NULL,
 				`product_id` INT(64) NOT NULL,
 				`quantity` INT(64) NOT NULL,
 				`unit_price` decimal(20,2) NOT NULL,

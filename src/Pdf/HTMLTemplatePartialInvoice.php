@@ -133,7 +133,39 @@ class HTMLTemplatePartialInvoice extends HTMLTemplate
         $customer = new Customer((int) $this->order->id_customer);
         $carrier = new Carrier((int) $this->order->id_carrier);
 
+        $module = Module::getInstanceByName('mollie');
+        /** @var \Mollie\Repository\ShippedProductRepository $shippedProductRepo */
+        $shippedProductRepo = $module->getContainer(\Mollie\Repository\ShippedProductRepository::class);
+        $shippedProducts = $shippedProductRepo->findBy(
+            [
+                'order_id' => $this->order->id
+            ]
+        );
         $order_details = $this->order_invoice->getProducts();
+
+        $total_paid_tax_excl = 0;
+        $total_paid_tax_incl = 0;
+        $products = [];
+        /** @var MolShippedProducts $shippedProduct */
+        foreach ($shippedProducts as $shippedProduct) {
+
+            foreach ($order_details as $order_detail) {
+                if ($shippedProduct->product_id === $order_detail['product_id']) {
+                    $order_detail['quantity'] = $shippedProduct->quantity;
+                    $order_detail['product_quantity'] = $shippedProduct->quantity;
+                    $order_detail['tax_rate'] = 21;
+                    $order_detail['order_detail_tax_label'] = 21;
+                    $order_detail['total_price_tax_incl'] = $shippedProduct->total_amount;
+                    $order_detail['total_price_tax_excl'] = $shippedProduct->total_amount;
+                    $order_detail['total_price_tax_excl_including_ecotax'] = $shippedProduct->total_amount;
+                    $products[] = $order_detail;
+                }
+            }
+            $total_paid_tax_excl += $shippedProduct->total_amount;
+            $total_paid_tax_incl += $shippedProduct->total_amount;
+        }
+        $order_details = $products;
+
 
         $has_discount = false;
         foreach ($order_details as $id => &$order_detail) {

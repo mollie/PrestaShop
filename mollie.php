@@ -1052,9 +1052,9 @@ class Mollie extends PaymentModule
 
         $shipmentService->shipOrder($idOrder, $orderStatusId);
 
-//        if ((int) Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED) !== (int) $orderStatusId) {
-//            return;
-//        }
+        if ((int) Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED) !== (int) $orderStatusId) {
+            return;
+        }
 
 
         $order = new Order($idOrder);

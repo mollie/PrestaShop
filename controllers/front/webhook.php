@@ -246,17 +246,18 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                                     $totalAmount = $line->totalAmount;
 
                                     $molShippedProducts = new MolShippedProducts();
-                                    $molShippedProducts->shipment_id = $line->id;
+                                    $molShippedProducts->shipment_id = $shipment->id;
                                     $molShippedProducts->mollie_order_id = $line->orderId;
                                     $molShippedProducts->product_id = $metaData->product_id;
                                     $molShippedProducts->quantity = $quantity;
                                     $molShippedProducts->unit_price = $unitPrice->value;
                                     $molShippedProducts->total_amount = $totalAmount->value;
                                     $molShippedProducts->currency = $totalAmount->currency;
+                                    $molShippedProducts->order_id = $orderId;
 
                                     $molShippedProducts->add();
                                 }
-                                $this->createOrderInvoice($shipment->id);
+                                $this->createOrderInvoice($shipment->id, $orderId);
                             }
                         }
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
@@ -381,45 +382,53 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
     }
 
-    public function createOrderInvoice($shipmentId)
+    public function createOrderInvoice($shipmentId, $orderId)
     {
         /** @var \Mollie\Repository\ShippedProductRepository $shippedProductRepo */
-        $shippedProductRepo = $this->getContainer(\Mollie\Repository\ShippedProductRepository::class);
+        $shippedProductRepo = $this->module->getContainer(\Mollie\Repository\ShippedProductRepository::class);
         $shippedProducts = $shippedProductRepo->findBy(
             [
                 'shipment_id' => $shipmentId
             ]
         );
 
+        $order = new Order($orderId);
+        $cart = new Cart($order->id_cart);
+
         $use_taxes = true;
 
         $total_method = Cart::BOTH;
-        $invoice_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
-        $carrier = new Carrier((int) $order->id_carrier);
-        $tax_calculator = $carrier->getTaxCalculator($invoice_address);
+//        $invoice_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
+//        $carrier = new Carrier((int) $order->id_carrier);
+//        $tax_calculator = $carrier->getTaxCalculator($invoice_address);
 
         $total_paid_tax_excl = 0;
+        $total_paid_tax_incl = 0;
+        $products = [];
+        /** @var MolShippedProducts $shippedProduct */
         foreach ($shippedProducts as $shippedProduct) {
-            $total_paid_tax_excl += $shippedProduct['total_amount'];
+            $cartProduct = $cart->getProducts(false, (int) $shippedProduct->product_id)[0];
+            $cartProduct['quantity'] = $shippedProduct->quantity;
+            $products[] = $cartProduct;
+            $total_paid_tax_excl += $shippedProduct->total_amount;
+            $total_paid_tax_incl += $shippedProduct->total_amount;
         }
+        $total_paid_tax_excl -= $total_paid_tax_excl/100*21;
         $order_invoice = new OrderInvoice();
-        $order_invoice->id_order = $order->id;
+        $order_invoice->id_order = $orderId;
         $order_invoice->number = Order::getLastInvoiceNumber() + 1;
-        $order_invoice->total_paid_tax_excl = Tools::ps_round((float) $cart->getOrderTotal(false, $total_method), 2);
-        $order_invoice->total_paid_tax_incl = Tools::ps_round((float) $cart->getOrderTotal($use_taxes, $total_method), 2);
-        $order_invoice->total_products = (float) $cart->getOrderTotal(false, Cart::ONLY_PRODUCTS);
-        $order_invoice->total_products_wt = (float) $cart->getOrderTotal($use_taxes, Cart::ONLY_PRODUCTS);
-        $order_invoice->total_shipping_tax_excl = (float) $cart->getTotalShippingCost(null, false);
-        $order_invoice->total_shipping_tax_incl = (float) $cart->getTotalShippingCost();
-
-        $order_invoice->total_wrapping_tax_excl = abs($cart->getOrderTotal(false, Cart::ONLY_WRAPPING));
-        $order_invoice->total_wrapping_tax_incl = abs($cart->getOrderTotal($use_taxes, Cart::ONLY_WRAPPING));
-        $order_invoice->shipping_tax_computation_method = (int) $tax_calculator->computation_method;
+        $order_invoice->total_paid_tax_excl = Tools::ps_round((float) $total_paid_tax_excl, 2);
+        $order_invoice->total_paid_tax_incl = Tools::ps_round((float) $total_paid_tax_incl, 2);
+        $order_invoice->total_products = (float) $total_paid_tax_excl;
+        $order_invoice->total_products_wt = (float) $total_paid_tax_incl;
+        $order_invoice->total_shipping_tax_excl = (float) 0;
+        $order_invoice->total_shipping_tax_incl = (float) 0;
 
         $order_invoice->add();
 
         $order_detail = new OrderDetail();
-        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $cart->getProducts(), (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
+
+        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $products, (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
 
         foreach ($order->getOrderPayments() as $orderPayment) {
             Db::getInstance()->execute('

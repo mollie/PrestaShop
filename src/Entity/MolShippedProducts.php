@@ -18,6 +18,11 @@ class MolShippedProducts extends ObjectModel
     /**
      * @var int
      */
+    public $order_id;
+
+    /**
+     * @var int
+     */
     public $product_id;
 
     /**
@@ -49,6 +54,7 @@ class MolShippedProducts extends ObjectModel
         'fields' => [
             'shipment_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'mollie_order_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'order_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'product_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'quantity' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'unit_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
