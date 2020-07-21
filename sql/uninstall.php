@@ -40,6 +40,7 @@ $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mol_order_fee`;';
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mol_carrier_information`;';
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mol_pending_order_cart`;';
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mol_excluded_country`;';
+$sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mol_shipped_product`;';
 
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {

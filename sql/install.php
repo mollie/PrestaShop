@@ -97,6 +97,19 @@ $sql[] = '
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
 ';
 
+$sql[] = '
+    CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_shipped_product` (
+				`id_mol_shipped_product`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`shipment_id` VARCHAR(64) NOT NULL,
+				`mollie_order_id` VARCHAR(64) NOT NULL,
+				`product_id` INT(64) NOT NULL,
+				`quantity` INT(64) NOT NULL,
+				`unit_price` decimal(20,2) NOT NULL,
+				`total_amount` decimal(20,2) NOT NULL,
+				`currency` decimal(20,2) NOT NULL
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+';
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;

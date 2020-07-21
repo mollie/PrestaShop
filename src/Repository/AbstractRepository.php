@@ -40,4 +40,21 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
         return false === $first ? null: $first;
     }
+
+    /**
+     * @param array $keyValueCriteria
+     *
+     * @return array
+     * @throws PrestaShopException
+     */
+    public function findBy(array $keyValueCriteria)
+    {
+        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+
+        foreach ($keyValueCriteria as $field => $value) {
+            $psCollection = $psCollection->where($field, '=', $value);
+        }
+
+        return $psCollection->getResults();
+    }
 }

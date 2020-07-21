@@ -17,6 +17,7 @@ return array(
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
     'MolPaymentMethodIssuer' => $baseDir . '/src/Entity/MolPaymentMethodIssuer.php',
     'MolPendingOrderCart' => $baseDir . '/src/Entity/MolPendingOrderCart.php',
+    'MolShippedProducts' => $baseDir . '/src/Entity/MolShippedProducts.php',
     'MollieAjaxModuleFrontController' => $baseDir . '/controllers/front/ajax.php',
     'MollieFailModuleFrontController' => $baseDir . '/controllers/front/fail.php',
     'MolliePayScreenModuleFrontController' => $baseDir . '/controllers/front/payScreen.php',

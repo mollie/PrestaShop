@@ -104,6 +104,9 @@ class CartLinesService
                     'quantity' => $qty,
                     'unitPrice' => $unitPrice,
                     'totalAmount' => (float)$unitPrice * $qty,
+                    'metadata' => json_encode([
+                        'product_id' => $cartItem['id_product']
+                    ])
                 ];
                 $remaining -= round((float)$unitPrice * $qty, $apiRoundingPrecision);
             }
@@ -176,6 +179,7 @@ class CartLinesService
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
                     'vatRate' => round($actualVatRate, $apiRoundingPrecision),
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'metadata' => $line['metadata'],
                 ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
@@ -258,6 +262,7 @@ class CartLinesService
                     'value' => number_format($item['vatAmount'], $apiRoundingPrecision, '.', ''),
                 ],
                 'vatRate' => number_format($item['vatRate'], $apiRoundingPrecision, '.', ''),
+                'metadata' => isset($item['metadata']) ? $item['metadata'] : null
             ];
         }
 

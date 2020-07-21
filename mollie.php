@@ -1068,6 +1068,13 @@ class Mollie extends PaymentModule
 
     public function createOrderInvoice(Order $order)
     {
+        /** @var \Mollie\Repository\ShippedProductRepository $shippedProductRepo */
+        $shippedProductRepo = $this->getContainer(\Mollie\Repository\ShippedProductRepository::class);
+        $shippedProducts = $shippedProductRepo->findBy(
+            [
+                'order_id' => $order->id
+            ]
+        );
         $cart = new Cart($order->id_cart);
 //        $transaction = $this->api->orders->get($transactionId, ['embed' => 'payments']);
 
@@ -1308,7 +1315,6 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
         try {
-
             $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);

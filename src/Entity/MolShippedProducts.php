@@ -6,14 +6,39 @@
 class MolShippedProducts extends ObjectModel
 {
     /**
-     * @var int
+     * @var string
      */
-    public $order_id;
+    public $shipment_id;
+
+    /**
+     * @var string
+     */
+    public $mollie_order_id;
 
     /**
      * @var int
      */
-    public $cart_id;
+    public $product_id;
+
+    /**
+     * @var int
+     */
+    public $quantity;
+
+    /**
+     * @var float
+     */
+    public $unit_price;
+
+    /**
+     * @var float
+     */
+    public $total_amount;
+
+    /**
+     * @var string
+     */
+    public $currency;
 
     /**
      * @var array
@@ -24,6 +49,11 @@ class MolShippedProducts extends ObjectModel
         'fields' => [
             'shipment_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'mollie_order_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'product_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'quantity' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'unit_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'total_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'currency' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
         ],
     ];
 }
