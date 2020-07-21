@@ -237,7 +237,17 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                     ) {
-                        $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+                        if($transaction->amountRefunded !== null) {
+                            $amountRefunded = (float) $transaction->amountRefunded->value;
+                            $amountPayed = (float) $transaction->amountCaptured->value;
+                            if($amountRefunded < $amountPayed) {
+                                $paymentStatus = (int)Mollie\Config\Config::getStatuses()[Mollie\Config\Config::PARTIAL_REFUND_CODE];
+                            } else {
+                                $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+                            }
+                        } else {
+                            $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+                        }
 
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
