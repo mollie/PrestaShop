@@ -40,7 +40,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
-use NumberUtility;
+
 
 class OrderStatusUtility
 {
