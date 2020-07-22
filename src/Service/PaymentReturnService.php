@@ -126,7 +126,7 @@ class PaymentReturnService
                 break;
             }
         }
-
+        $orderStatus = Mollie\Utility\OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);

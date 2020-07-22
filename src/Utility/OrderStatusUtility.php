@@ -35,7 +35,11 @@
 
 namespace Mollie\Utility;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use Mollie\Config\Config;
 
 class OrderStatusUtility
 {
@@ -51,5 +55,26 @@ class OrderStatusUtility
         }
 
         return $status;
+    }
+
+    /**
+     * @param MolliePaymentAlias|MollieOrderAlias $transaction
+     */
+    public static function transformPaymentStatusToRefunded($transaction)
+    {
+        if ($transaction->amountRefunded === null) {
+            return $transaction->status;
+        }
+
+        $amountRefunded = (float)$transaction->amountRefunded->value;
+        $amountPayed = (float)$transaction->amountCaptured->value;
+
+        if ($amountRefunded < $amountPayed) {
+            return Config::PARTIAL_REFUND_CODE;
+        } elseif ($amountRefunded === $amountPayed) {
+            return RefundStatus::STATUS_REFUNDED;
+        } else {
+            return $transaction->status;
+        }
     }
 }
