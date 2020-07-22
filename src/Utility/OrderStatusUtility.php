@@ -40,6 +40,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use NumberUtility;
 
 class OrderStatusUtility
 {
@@ -66,12 +67,14 @@ class OrderStatusUtility
             return $transaction->status;
         }
 
-        $amountRefunded = (float) $transaction->amountRefunded->value;
-        $amountPayed = (float) $transaction->amountCaptured->value;
+        $amountRefunded = $transaction->amountRefunded->value;
+        $amountPayed = $transaction->amountCaptured->value;
+        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPayed);
+        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPayed);
 
-        if ($amountRefunded < $amountPayed) {
+        if ($isPartiallyRefunded) {
             return Config::PARTIAL_REFUND_CODE;
-        } elseif ($amountRefunded === $amountPayed) {
+        } elseif ($isFullyRefunded) {
             return RefundStatus::STATUS_REFUNDED;
         }
 
