@@ -66,15 +66,15 @@ class OrderStatusUtility
             return $transaction->status;
         }
 
-        $amountRefunded = (float)$transaction->amountRefunded->value;
-        $amountPayed = (float)$transaction->amountCaptured->value;
+        $amountRefunded = (float) $transaction->amountRefunded->value;
+        $amountPayed = (float) $transaction->amountCaptured->value;
 
         if ($amountRefunded < $amountPayed) {
             return Config::PARTIAL_REFUND_CODE;
         } elseif ($amountRefunded === $amountPayed) {
             return RefundStatus::STATUS_REFUNDED;
-        } else {
-            return $transaction->status;
         }
+
+        return $transaction->status;
     }
 }
