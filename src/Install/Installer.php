@@ -94,6 +94,8 @@ class Installer
             return false;
         }
 
+        $this->copyEmailTemplates();
+
         include(dirname(__FILE__) . '/../../sql/install.php');
 
         return true;
