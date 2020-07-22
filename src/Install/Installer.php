@@ -42,10 +42,12 @@ use DbQuery;
 use Exception;
 use Language;
 use Mollie;
+use Mollie\Config\Config;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tab;
+use Tools;
 
 class Installer
 {
@@ -346,6 +348,41 @@ class Installer
 
         if (!$moduleTab->save()) {
             return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Copies module email templates to all languages
+     * Collects error messages if email templates copy process is unsuccessful
+     *
+     * @param Module $module Module object
+     * @return bool Email templates copied successfully or not
+     */
+    public function copyEmailTemplates()
+    {
+        $languages = Language::getLanguages(false);
+
+        foreach ($languages as $language) {
+            if ($language['iso_code'] === Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE) {
+                continue;
+            }
+
+            if (file_exists($this->module->getLocalPath() . 'mails/'.$language['iso_code'])) {
+                continue;
+            }
+
+            try {
+                Tools::recurseCopy(
+                    $this->module->getLocalPath() . 'mails/'.Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE,
+                    $this->module->getLocalPath() . 'mails/'.$language['iso_code']
+                );
+            } catch (PrestaShopException $e) {
+                $this->errors[] = $this->module->l('Could not copy email templates:', __CLASS__).' '.$e->getMessage();
+
+                return false;
+            }
         }
 
         return true;

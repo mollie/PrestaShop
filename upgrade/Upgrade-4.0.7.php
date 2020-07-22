@@ -72,11 +72,12 @@ function upgrade_module_4_0_7($module)
     $installer = new \Mollie\Install\Installer($module);
     $installed = true;
 
-    $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
+//    $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
+//    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
 
     $langId = $module->getContext()->language->id;
     $installed &= $installer->partialShippedOrderState($langId);
+    $installed &= $installer->copyEmailTemplates();
 
     if(!$installed) {
         return false;
