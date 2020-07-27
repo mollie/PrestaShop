@@ -35,7 +35,11 @@
 
 namespace Mollie\Utility;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
+use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use Mollie\Config\Config;
 use OrderState;
 use Validate;
 
@@ -54,7 +58,7 @@ class OrderStatusUtility
 
         return $status;
     }
-    
+
     public static function getOrderStatusId($newOrderStatus)
     {
         if ($newOrderStatus instanceof OrderState) {
@@ -71,5 +75,28 @@ class OrderStatusUtility
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param MolliePaymentAlias|MollieOrderAlias $transaction
+     */
+    public static function transformPaymentStatusToRefunded($transaction)
+    {
+        if ($transaction->amountRefunded === null) {
+            return $transaction->status;
+        }
+
+        $amountRefunded = $transaction->amountRefunded->value;
+        $amountPayed = $transaction->amountCaptured->value;
+        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPayed);
+        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPayed);
+
+        if ($isPartiallyRefunded) {
+            return Config::PARTIAL_REFUND_CODE;
+        } elseif ($isFullyRefunded) {
+            return RefundStatus::STATUS_REFUNDED;
+        }
+
+        return $transaction->status;
     }
 }

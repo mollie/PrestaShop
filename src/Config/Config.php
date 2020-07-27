@@ -117,6 +117,7 @@ class Config
 
     const PAYMENTSCREEN_LOCALE_BROWSER_LOCALE = 'browser_locale';
     const PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE = 'website_locale';
+    const DEFAULT_EMAIL_LANGUAGE_ISO_CODE = 'en';
 
     const LOGOS_BIG = 'big';
     const LOGOS_NORMAL = 'normal';
@@ -250,7 +251,7 @@ class Config
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_PENDING => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_PAID),
-            OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_PARTIALLY_SHIPPED),
+            OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),

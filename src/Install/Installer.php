@@ -42,10 +42,12 @@ use DbQuery;
 use Exception;
 use Language;
 use Mollie;
+use Mollie\Config\Config;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tab;
+use Tools;
 
 class Installer
 {
@@ -91,6 +93,8 @@ class Installer
             $this->errors[] = $this->module->l('Unable to install default carrier statuses');
             return false;
         }
+
+        $this->copyEmailTemplates();
 
         include(dirname(__FILE__) . '/../../sql/install.php');
 
@@ -299,7 +303,7 @@ class Installer
             Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND)
         );
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get('PS_OS_SHIPPING'));
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_PAID, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_CANCELED, true);
@@ -346,6 +350,41 @@ class Installer
 
         if (!$moduleTab->save()) {
             return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Copies module email templates to all languages
+     * Collects error messages if email templates copy process is unsuccessful
+     *
+     * @param Module $module Module object
+     * @return bool Email templates copied successfully or not
+     */
+    public function copyEmailTemplates()
+    {
+        $languages = Language::getLanguages(false);
+
+        foreach ($languages as $language) {
+            if ($language['iso_code'] === Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE) {
+                continue;
+            }
+
+            if (file_exists($this->module->getLocalPath() . 'mails/'.$language['iso_code'])) {
+                continue;
+            }
+
+            try {
+                Tools::recurseCopy(
+                    $this->module->getLocalPath() . 'mails/'.Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE,
+                    $this->module->getLocalPath() . 'mails/'.$language['iso_code']
+                );
+            } catch (PrestaShopException $e) {
+                $this->errors[] = $this->module->l('Could not copy email templates:', __CLASS__).' '.$e->getMessage();
+
+                return false;
+            }
         }
 
         return true;
