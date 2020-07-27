@@ -41,8 +41,10 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
+use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
@@ -253,7 +255,8 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                     ) {
-                        $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+                        $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
+                        $paymentStatus = (int) Config::getStatuses()[$status];
 
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);

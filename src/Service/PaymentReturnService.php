@@ -40,6 +40,7 @@ use Context;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\OrderStatusUtility;
 use Order;
 use OrderDetail;
 use OrderPayment;
@@ -126,7 +127,7 @@ class PaymentReturnService
                 break;
             }
         }
-
+        $orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
