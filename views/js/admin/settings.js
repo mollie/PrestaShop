@@ -44,6 +44,16 @@ $(document).ready(function () {
         }
         $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
     })
+
+  var $apiPaymentMethodSelect = $('select[name^="MOLLIE_METHOD_API"]');
+
+  $apiPaymentMethodSelect.each(function () {
+    togglePaymentMethodDescriptions($(this));
+  });
+
+  $apiPaymentMethodSelect.on('change', function () {
+    togglePaymentMethodDescriptions($(this));
+  });
 });
 
 function togglePaymentMethod($button, paymentId) {
@@ -76,4 +86,12 @@ function togglePaymentMethod($button, paymentId) {
             }
         }
     })
+}
+
+function togglePaymentMethodDescriptions(apiPaymentMethodSelect){
+  if (apiPaymentMethodSelect.val() === 'payments') {
+    apiPaymentMethodSelect.closest('.payment-method').find('.payment-api-description').slideDown();
+  } else {
+    apiPaymentMethodSelect.closest('.payment-method').find('.payment-api-description').slideUp();
+  }
 }
