@@ -117,6 +117,7 @@ class Config
 
     const PAYMENTSCREEN_LOCALE_BROWSER_LOCALE = 'browser_locale';
     const PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE = 'website_locale';
+    const DEFAULT_EMAIL_LANGUAGE_ISO_CODE = 'en';
 
     const LOGOS_BIG = 'big';
     const LOGOS_NORMAL = 'normal';
