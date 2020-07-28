@@ -63,7 +63,8 @@ class OrderStatusUtility
      */
     public static function transformPaymentStatusToRefunded($transaction)
     {
-        if ($transaction->amountRefunded === null) {
+        if ($transaction->amountRefunded === null ||
+            $transaction->amountCaptured === null) {
             return $transaction->status;
         }
 
