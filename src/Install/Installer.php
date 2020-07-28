@@ -216,6 +216,49 @@ class Installer
         return true;
     }
 
+    /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function paymentAcceptedOrderState($languageId)
+    {
+        $stateExists = false;
+        $states = OrderState::getOrderStates((int)$languageId);
+        foreach ($states as $state) {
+            if ($this->module->lang('Mollie payment accepted') === $state['name']) {
+                Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAYMENT_ACCEPTED, (int)$state[OrderState::$definition['primary']]);
+                $stateExists = true;
+                break;
+            }
+        }
+        if ($stateExists) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#8A2BE2';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Partially shipped');
+        }
+        if ($orderState->add()) {
+            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+            @copy($source, $destination);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAYMENT_ACCEPTED, (int)$orderState->id);
+
+        return true;
+    }
+
     public function createMollieStatuses($languageId)
     {
         if (!$this->partialRefundOrderState($languageId)) {

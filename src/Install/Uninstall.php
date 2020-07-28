@@ -105,5 +105,6 @@ class Uninstall
         Configuration::deleteByName(Config::MOLLIE_METHODS_LAST_CHECK);
         Configuration::deleteByName(Config::METHODS_CONFIG);
         Configuration::deleteByName(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED);
+        Configuration::deleteByName(Config::MOLLIE_STATUS_PAYMENT_ACCEPTED);
     }
 }
