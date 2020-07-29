@@ -158,7 +158,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Payment allowed for certain countries ' mod='mollie'}
+                            {l s='Allow payments from selected countries:' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
@@ -172,7 +172,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-lg-3">
-                            {l s='Payment excluded for certain countries ' mod='mollie'}
+                            {l s='Block payments from the following countries:' mod='mollie'}
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
