@@ -477,6 +477,13 @@ class Mollie extends PaymentModule
             ]);
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
+
+            if (Tools::isSubmit('addorder')) {
+                Media::addJsDef([
+                    'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
+                ]);
+                $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
+            }
         }
     }
 
