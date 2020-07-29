@@ -175,11 +175,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         // Go to payment url
-        if(Config::isTestMode() && $apiPayment->getCheckoutUrl() !== null) {
-            Tools::redirect($apiPayment->getCheckoutUrl());
-        } else {
-            Tools::redirect($apiPayment->redirectUrl);
-        }
+        Tools::redirect($apiPayment->getCheckoutUrl());
     }
 
     /**

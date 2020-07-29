@@ -43,7 +43,9 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\ShippedProductRepository;
 use Mollie\Service\OrderStatusService;
+use Mollie\Service\ShippedProductService;
 use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -257,30 +259,22 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     ) {
                         $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
                         $paymentStatus = (int) Config::getStatuses()[$status];
+
                         if ($apiPayment->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_SHIPPING) {
+                            /** @var ShippedProductRepository $shippedProductRepo */
+                            $shippedProductRepo = $this->module->getContainer(ShippedProductRepository::class);
                             foreach ($apiPayment->shipments() as $shipment) {
-                                foreach ($shipment->lines as $line) {
-                                    $metaData = json_decode($line->metadata);
-                                    $quantity = $line->quantity;
-                                    $unitPrice = $line->unitPrice;
-                                    $totalAmount = $line->totalAmount;
-
-                                    $molShippedProducts = new MolShippedProducts();
-                                    $molShippedProducts->shipment_id = $shipment->id;
-                                    $molShippedProducts->mollie_order_id = $line->orderId;
-                                    $molShippedProducts->product_id = $metaData->product_id;
-                                    $molShippedProducts->quantity = $quantity;
-                                    $molShippedProducts->unit_price = $unitPrice->value;
-                                    $molShippedProducts->total_amount = $totalAmount->value;
-                                    $molShippedProducts->currency = $totalAmount->currency;
-                                    $molShippedProducts->order_id = $orderId;
-
-                                    $molShippedProducts->add();
-                                }
-                                $this->createOrderInvoice($shipment->id, $orderId);
+                                $shippedProducts = $shippedProductRepo->findBy([
+                                   'shipment_id' => $shipment->id
+                                ]);
+//                                if ($shippedProducts) {
+//                                    continue;
+//                                }
+                                /** @var ShippedProductService $shippedProductService */
+                                $shippedProductService = $this->module->getContainer(ShippedProductService::class);
+                                $shippedProductService->createShippedProducts($orderId, $shipment);
                             }
                         }
-                        $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
@@ -401,66 +395,4 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             }
         }
     }
-
-    public function createOrderInvoice($shipmentId, $orderId)
-    {
-        /** @var \Mollie\Repository\ShippedProductRepository $shippedProductRepo */
-        $shippedProductRepo = $this->module->getContainer(\Mollie\Repository\ShippedProductRepository::class);
-        $shippedProducts = $shippedProductRepo->findBy(
-            [
-                'shipment_id' => $shipmentId
-            ]
-        );
-
-        $order = new Order($orderId);
-        $cart = new Cart($order->id_cart);
-
-        $use_taxes = true;
-
-        $total_method = Cart::BOTH;
-//        $invoice_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
-//        $carrier = new Carrier((int) $order->id_carrier);
-//        $tax_calculator = $carrier->getTaxCalculator($invoice_address);
-
-        $total_paid_tax_excl = 0;
-        $total_paid_tax_incl = 0;
-        $products = [];
-        /** @var MolShippedProducts $shippedProduct */
-        foreach ($shippedProducts as $shippedProduct) {
-            $cartProduct = $cart->getProducts(false, (int) $shippedProduct->product_id)[0];
-            $cartProduct['quantity'] = $shippedProduct->quantity;
-            $products[] = $cartProduct;
-            $total_paid_tax_excl += $shippedProduct->total_amount;
-            $total_paid_tax_incl += $shippedProduct->total_amount;
-        }
-        $total_paid_tax_excl -= $total_paid_tax_excl/100*21;
-        $order_invoice = new OrderInvoice();
-        $order_invoice->id_order = $orderId;
-        $order_invoice->number = Order::getLastInvoiceNumber() + 1;
-        $order_invoice->total_paid_tax_excl = Tools::ps_round((float) $total_paid_tax_excl, 2);
-        $order_invoice->total_paid_tax_incl = Tools::ps_round((float) $total_paid_tax_incl, 2);
-        $order_invoice->total_products = (float) $total_paid_tax_excl;
-        $order_invoice->total_products_wt = (float) $total_paid_tax_incl;
-        $order_invoice->total_shipping_tax_excl = (float) 0;
-        $order_invoice->total_shipping_tax_incl = (float) 0;
-
-        $order_invoice->add();
-
-        $order_detail = new OrderDetail();
-
-        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $products, (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
-
-        foreach ($order->getOrderPayments() as $orderPayment) {
-            Db::getInstance()->execute('
-                            INSERT INTO `' . _DB_PREFIX_ . 'order_invoice_payment`
-                            SET
-                                `id_order_invoice` = ' . (int)$order_invoice->id . ',
-                                `id_order_payment` = ' . (int)$orderPayment->id . ',
-                                `id_order` = ' . (int)$order_invoice->id_order);
-        }
-
-        return $order_invoice->number;
-
-    }
-
 }

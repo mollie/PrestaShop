@@ -13,6 +13,7 @@ return array(
     'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
     'HTMLTemplatePartialInvoice' => $baseDir . '/src/Pdf/HTMLTemplatePartialInvoice.php',
     'MolCarrierInformation' => $baseDir . '/src/Entity/MolCarrierInformation.php',
+    'MolKlarnaInvoice' => $baseDir . '/src/Entity/MolKlarnaInvoice.php',
     'MolOrderFee' => $baseDir . '/src/Entity/MolOrderFee.php',
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
     'MolPaymentMethodIssuer' => $baseDir . '/src/Entity/MolPaymentMethodIssuer.php',

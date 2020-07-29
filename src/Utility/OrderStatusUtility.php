@@ -52,7 +52,7 @@ class OrderStatusUtility
      */
     public static function transformPaymentStatusToPaid($status, $comparedStatus)
     {
-        if($status === $comparedStatus) {
+        if ($status === $comparedStatus) {
             return PaymentStatus::STATUS_PAID;
         }
 
@@ -82,7 +82,8 @@ class OrderStatusUtility
      */
     public static function transformPaymentStatusToRefunded($transaction)
     {
-        if ($transaction->amountRefunded === null) {
+        if ($transaction->amountRefunded === null ||
+            $transaction->amountCaptured === null) {
             return $transaction->status;
         }
 

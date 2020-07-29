@@ -216,6 +216,98 @@ class Installer
         return true;
     }
 
+    /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function klarnaPaymentAcceptedState($languageId)
+    {
+        $stateExists = false;
+        $states = OrderState::getOrderStates((int)$languageId);
+        foreach ($states as $state) {
+            if ($this->module->lang('Klarna payment accepted') === $state['name']) {
+                Configuration::updateValue(
+                    Mollie\Config\Config::MOLLIE_STATUS_KLARNA_PAYMENT_ACCEPTED,
+                    (int)$state[OrderState::$definition['primary']]
+                );
+                $stateExists = true;
+                break;
+            }
+        }
+        if ($stateExists) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#8A2BE2';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Klarna payment accepted');
+        }
+        if ($orderState->add()) {
+            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+            @copy($source, $destination);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_PAYMENT_ACCEPTED, (int)$orderState->id);
+
+        return true;
+    }
+
+    /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function klarnaShippedState($languageId)
+    {
+        $stateExists = false;
+        $states = OrderState::getOrderStates((int)$languageId);
+        foreach ($states as $state) {
+            if ($this->module->lang('Klarna shipped') === $state['name']) {
+                Configuration::updateValue(
+                    Mollie\Config\Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                    (int)$state[OrderState::$definition['primary']]
+                );
+                $stateExists = true;
+                break;
+            }
+        }
+        if ($stateExists) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#8A2BE2';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Klarna shipped');
+        }
+        if ($orderState->add()) {
+            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+            @copy($source, $destination);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_SHIPPED, (int)$orderState->id);
+
+        return true;
+    }
+
     public function createMollieStatuses($languageId)
     {
         if (!$this->partialRefundOrderState($languageId)) {
@@ -227,9 +319,14 @@ class Installer
         if(!$this->partialShippedOrderState($languageId)) {
             return false;
         }
+        if(!$this->klarnaPaymentAcceptedState($languageId)) {
+            return false;
+        }
+        if(!$this->klarnaShippedState($languageId)) {
+            return false;
+        }
 
         return true;
-
     }
 
     /**
@@ -283,6 +380,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, '');
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PROFILE_ID, '');
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, false);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_KLARNA_INVOICE, 1);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE, Mollie\Config\Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IFRAME, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IMAGES, Mollie\Config\Config::LOGOS_NORMAL);

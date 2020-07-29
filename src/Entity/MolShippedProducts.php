@@ -46,6 +46,11 @@ class MolShippedProducts extends ObjectModel
     public $currency;
 
     /**
+     * @var int
+     */
+    public $invoice_number;
+
+    /**
      * @var array
      */
     public static $definition = [
@@ -60,6 +65,7 @@ class MolShippedProducts extends ObjectModel
             'unit_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'total_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'currency' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'invoice_number' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
         ],
     ];
 }

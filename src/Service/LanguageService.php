@@ -106,6 +106,8 @@ class LanguageService
             'Pay later.' => $this->module->l('Pay later.', self::FILE_NAME),
             'Slice it.' => $this->module->l('Slice it.', self::FILE_NAME),
             'MyBank' => $this->module->l('MyBank', self::FILE_NAME),
+            'Klarna payment accepted' => $this->module->l('Klarna payment accepted', self::FILE_NAME),
+            'Klarna shipped' => $this->module->l('Klarna shipped', self::FILE_NAME),
         ];
     }
 

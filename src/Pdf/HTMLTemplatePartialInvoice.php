@@ -149,16 +149,17 @@ class HTMLTemplatePartialInvoice extends HTMLTemplate
         /** @var MolShippedProducts $shippedProduct */
         foreach ($shippedProducts as $shippedProduct) {
 
-            foreach ($order_details as $order_detail) {
+            foreach ($order_details as $id => $order_detail) {
                 if ($shippedProduct->product_id === $order_detail['product_id']) {
                     $order_detail['quantity'] = $shippedProduct->quantity;
                     $order_detail['product_quantity'] = $shippedProduct->quantity;
-                    $order_detail['tax_rate'] = 21;
-                    $order_detail['order_detail_tax_label'] = 21;
+//                    $order_detail['tax_rate'] = 21;
+//                    $order_detail['order_detail_tax_label'] = 21;
                     $order_detail['total_price_tax_incl'] = $shippedProduct->total_amount;
                     $order_detail['total_price_tax_excl'] = $shippedProduct->total_amount;
-                    $order_detail['total_price_tax_excl_including_ecotax'] = $shippedProduct->total_amount;
-                    $products[] = $order_detail;
+                    $order_detail['total_price_tax_excl_including_ecotax'] =
+                        $order_detail['unit_price_tax_excl'] * $shippedProduct->quantity;
+                    $products[$id] = $order_detail;
                 }
             }
             $total_paid_tax_excl += $shippedProduct->total_amount;

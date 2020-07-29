@@ -111,6 +111,14 @@ $sql[] = '
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
 ';
 
+$sql[] = '
+    CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_klarna_invoice` (
+				`id_mol_klarna_invoice`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`shipment_id` VARCHAR(64) NOT NULL,
+				`is_created` TINYINT(1) NOT NULL
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+';
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;

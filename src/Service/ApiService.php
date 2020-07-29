@@ -132,6 +132,7 @@ class ApiService
             return [];
         }
 
+        //todo: check if db methods are still needed. i think we can remove it
         $dbMethods = @json_decode(Configuration::get(Config::METHODS_CONFIG), true);
         if (!$dbMethods) {
             $dbMethods = [];

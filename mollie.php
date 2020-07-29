@@ -342,9 +342,9 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $str
+     * @return string
      * @deprecated
      *
-     * @return string
      */
     public function lang($str)
     {
@@ -1052,18 +1052,121 @@ class Mollie extends PaymentModule
 
         $shipmentService->shipOrder($idOrder, $orderStatusId);
 
-        if ((int) Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED) !== (int) $orderStatusId) {
+        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $paymentData = $paymentMethodRepo->getPaymentBy('order_id', $idOrder);
+        if (!$paymentData || $paymentData['method'] !== 'Pay later.') {
             return;
         }
 
+//        if ((int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_KLARNA_SHIPPED) !== (int)$orderStatusId) {
+//            return;
+//        }
+//
+//        if (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_KLARNA_INVOICE)) {
+//            return;
+//        }
 
         $order = new Order($idOrder);
-        $invoiceNumber = $this->createOrderInvoice($order);
+//        $invoiceNumber = $this->createOrderInvoice($order);
 
-        $order_invoice = OrderInvoice::getInvoiceByNumber($invoiceNumber);
+//        $order_invoice = OrderInvoice::getInvoiceByNumber($invoiceNumber);
 
-        $pdf = new PDF($order_invoice, 'PartialInvoice', Context::getContext()->smarty);
-        $pdf->render();
+//        $pdf = new PDF($order_invoice, 'PartialInvoice', Context::getContext()->smarty);
+//        $pdf->render();
+        $this->sendKlarnaMail($order);
+    }
+
+    private function sendKlarnaMail(Order $order, $template_vars = false)
+    {
+        /** @var \Mollie\Repository\ShippedProductRepository $shippedProductRepo */
+        $shippedProductRepo = $this->getContainer(\Mollie\Repository\ShippedProductRepository::class);
+
+        $shippedProducts = $shippedProductRepo->getProductsWithoutInvoiceByOrderId($order->id);
+        if (!$shippedProducts) {
+            return;
+        }
+        $invoiceNumber = $shippedProducts[0]['invoice_number'];
+
+        $result = Db::getInstance()->getRow('
+            SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, os.`id_order_state`, os.`pdf_invoice`, os.`pdf_delivery`
+            FROM `' . _DB_PREFIX_ . 'order_history` oh
+                LEFT JOIN `' . _DB_PREFIX_ . 'orders` o ON oh.`id_order` = o.`id_order`
+                LEFT JOIN `' . _DB_PREFIX_ . 'customer` c ON o.`id_customer` = c.`id_customer`
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state` os ON oh.`id_order_state` = os.`id_order_state`
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = o.`id_lang`)
+            WHERE oh.`id_order_history` = ' . (int)$this->id . ' AND os.`send_email` = 1');
+        if (isset($result['template']) && Validate::isEmail($result['email'])) {
+            ShopUrl::cacheMainDomainForShop($order->id_shop);
+
+            $topic = $result['osname'];
+            $data = [
+                '{lastname}' => $result['lastname'],
+                '{firstname}' => $result['firstname'],
+                '{id_order}' => (int)$order->id,
+                '{order_name}' => $order->getUniqReference(),
+            ];
+
+            if ($result['module_name']) {
+                $module = Module::getInstanceByName($result['module_name']);
+                if (Validate::isLoadedObject($module) && isset($module->extra_mail_vars) && is_array($module->extra_mail_vars)) {
+                    $data = array_merge($data, $module->extra_mail_vars);
+                }
+            }
+
+            if (is_array($template_vars)) {
+                $data = array_merge($data, $template_vars);
+            }
+
+            $data['{total_paid}'] = Tools::displayPrice((float)$order->total_paid, new Currency((int)$order->id_currency), false);
+
+            if (Validate::isLoadedObject($order)) {
+                // Attach invoice and / or delivery-slip if they exists and status is set to attach them
+                if (($result['pdf_invoice'] || $result['pdf_delivery'])) {
+                    $context = Context::getContext();
+                    $invoice = $order->getInvoicesCollection();
+                    $file_attachement = [];
+
+                    if ($result['pdf_invoice'] && (int)Configuration::get('PS_INVOICE') && $invoiceNumber) {
+                        Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $invoice]);
+                        $pdf = new PDF($invoice, 'PartialInvoice', $context->smarty);
+                        $file_attachement['invoice']['content'] = $pdf->render(false);
+                        $file_attachement['invoice']['name'] = Configuration::get('PS_INVOICE_PREFIX', (int)$order->id_lang, null, $order->id_shop) . sprintf('%06d', $invoiceNumber) . '.pdf';
+                        $file_attachement['invoice']['mime'] = 'application/pdf';
+                    }
+                    if ($result['pdf_delivery'] && $order->delivery_number) {
+                        $pdf = new PDF($invoice, PDF::TEMPLATE_DELIVERY_SLIP, $context->smarty);
+                        $file_attachement['delivery']['content'] = $pdf->render(false);
+                        $file_attachement['delivery']['name'] = Configuration::get('PS_DELIVERY_PREFIX', Context::getContext()->language->id, null, $order->id_shop) . sprintf('%06d', $order->delivery_number) . '.pdf';
+                        $file_attachement['delivery']['mime'] = 'application/pdf';
+                    }
+                } else {
+                    $file_attachement = null;
+                }
+
+                if (!Mail::Send(
+                    (int)$order->id_lang,
+                    $result['template'],
+                    $topic,
+                    $data,
+                    $result['email'],
+                    $result['firstname'] . ' ' . $result['lastname'],
+                    null,
+                    null,
+                    $file_attachement,
+                    null,
+                    _PS_MAIL_DIR_,
+                    false,
+                    (int)$order->id_shop
+                )) {
+                    return false;
+                }
+            }
+
+            ShopUrl::resetMainDomainCache();
+        }
+
+        return true;
     }
 
     public function createOrderInvoice(Order $order)
@@ -1081,28 +1184,28 @@ class Mollie extends PaymentModule
         $use_taxes = true;
 
         $total_method = Cart::BOTH;
-        $invoice_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
-        $carrier = new Carrier((int) $order->id_carrier);
+        $invoice_address = new Address((int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $order->id_shop)});
+        $carrier = new Carrier((int)$order->id_carrier);
         $tax_calculator = $carrier->getTaxCalculator($invoice_address);
 
         $order_invoice = new OrderInvoice();
         $order_invoice->id_order = $order->id;
         $order_invoice->number = Order::getLastInvoiceNumber() + 1;
-        $order_invoice->total_paid_tax_excl = Tools::ps_round((float) $cart->getOrderTotal(false, $total_method), 2);
-        $order_invoice->total_paid_tax_incl = Tools::ps_round((float) $cart->getOrderTotal($use_taxes, $total_method), 2);
-        $order_invoice->total_products = (float) $cart->getOrderTotal(false, Cart::ONLY_PRODUCTS);
-        $order_invoice->total_products_wt = (float) $cart->getOrderTotal($use_taxes, Cart::ONLY_PRODUCTS);
-        $order_invoice->total_shipping_tax_excl = (float) $cart->getTotalShippingCost(null, false);
-        $order_invoice->total_shipping_tax_incl = (float) $cart->getTotalShippingCost();
+        $order_invoice->total_paid_tax_excl = Tools::ps_round((float)$cart->getOrderTotal(false, $total_method), 2);
+        $order_invoice->total_paid_tax_incl = Tools::ps_round((float)$cart->getOrderTotal($use_taxes, $total_method), 2);
+        $order_invoice->total_products = (float)$cart->getOrderTotal(false, Cart::ONLY_PRODUCTS);
+        $order_invoice->total_products_wt = (float)$cart->getOrderTotal($use_taxes, Cart::ONLY_PRODUCTS);
+        $order_invoice->total_shipping_tax_excl = (float)$cart->getTotalShippingCost(null, false);
+        $order_invoice->total_shipping_tax_incl = (float)$cart->getTotalShippingCost();
 
         $order_invoice->total_wrapping_tax_excl = abs($cart->getOrderTotal(false, Cart::ONLY_WRAPPING));
         $order_invoice->total_wrapping_tax_incl = abs($cart->getOrderTotal($use_taxes, Cart::ONLY_WRAPPING));
-        $order_invoice->shipping_tax_computation_method = (int) $tax_calculator->computation_method;
+        $order_invoice->shipping_tax_computation_method = (int)$tax_calculator->computation_method;
 
         $order_invoice->add();
 
-        $order_detail = new OrderDetail();
-        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $cart->getProducts(), (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
+//        $order_detail = new OrderDetail();
+//        $order_detail->createList($order, $cart, $order->getCurrentOrderState(), $cart->getProducts(), (isset($order_invoice) ? $order_invoice->id : 0), $use_taxes, (int) Tools::getValue('add_product_warehouse'));
 
         foreach ($order->getOrderPayments() as $orderPayment) {
             Db::getInstance()->execute('
@@ -1244,7 +1347,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if($this->context->controller instanceof AdminOrdersControllerCore &&
+        if ($this->context->controller instanceof AdminOrdersControllerCore &&
             $params["order"]->module === $this->name
         ) {
             $cartId = $params["cart"]->id;
@@ -1272,7 +1375,7 @@ class Mollie extends PaymentModule
 
             $newPayment = $this->api->payments->create($paymentData);
 
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
@@ -1302,7 +1405,7 @@ class Mollie extends PaymentModule
         $mollie = Module::getInstanceByName('mollie');
 
         /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
-        $orderListActionBuilder =  $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
+        $orderListActionBuilder = $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
     }

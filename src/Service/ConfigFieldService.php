@@ -75,6 +75,7 @@ class ConfigFieldService
             Config::MOLLIE_PROFILE_ID => Configuration::get(Config::MOLLIE_PROFILE_ID),
             Config::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
             Config::MOLLIE_SEND_ORDER_CONFIRMATION => Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION),
+            Config::MOLLIE_SEND_KLARNA_INVOICE => Configuration::get(Config::MOLLIE_SEND_KLARNA_INVOICE),
             Config::MOLLIE_IFRAME => Configuration::get(Config::MOLLIE_IFRAME),
 
             Config::MOLLIE_CSS => Configuration::get(Config::MOLLIE_CSS),

@@ -58,6 +58,8 @@ use Translate;
 class FormBuilder
 {
 
+    const FILE_NAME = 'FormBuilder';
+
     /**
      * @var Mollie
      */
@@ -121,6 +123,7 @@ class FormBuilder
 
         if ($isApiKeyProvided) {
             $inputs = array_merge($inputs, $this->getAdvancedSettingsSection());
+            $inputs = array_merge($inputs, $this->getNewTab());
         }
 
         $fields = [
@@ -128,7 +131,7 @@ class FormBuilder
                 'tabs' => $this->getSettingTabs($isApiKeyProvided),
                 'input' => $inputs,
                 'submit' => [
-                    'title' => $this->module->l('Save'),
+                    'title' => $this->module->l('Save', self::FILE_NAME),
                     'class' => 'btn btn-default pull-right',
                 ],
             ],
@@ -164,10 +167,10 @@ class FormBuilder
             $input = [
                 [
                     'type' => 'text',
-                    'label' => $this->module->l('API Key'),
+                    'label' => $this->module->l('API Key', self::FILE_NAME, self::FILE_NAME),
                     'tab' => $generalSettings,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
@@ -179,7 +182,7 @@ class FormBuilder
             $input = [
                 [
                     'type' => 'mollie-switch',
-                    'label' => $this->module->l('Do you already have a Mollie account?'),
+                    'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
                     'name' => Config::MOLLIE_ACCOUNT_SWITCH,
                     'tab' => $generalSettings,
                     'is_bool' => true,
@@ -196,15 +199,15 @@ class FormBuilder
                         ],
                     ],
                     'desc' => $this->module->display(
-                        $this->module->getPathUri() , 'views/templates/admin/create_new_account_link.tpl'
+                        $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->module->l('API Key'),
+                    'label' => $this->module->l('API Key', self::FILE_NAME),
                     'tab' => $generalSettings,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
@@ -216,7 +219,7 @@ class FormBuilder
         if ($isApiKeyProvided) {
             $input[] = [
                 'type' => 'switch',
-                'label' => $this->module->l('Use IFrame for credit card'),
+                'label' => $this->module->l('Use IFrame for credit card', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_IFRAME,
                 'is_bool' => true,
@@ -236,10 +239,10 @@ class FormBuilder
 
             $input[] = [
                 'type' => 'text',
-                'label' => $this->module->l('Profile ID'),
+                'label' => $this->module->l('Profile ID', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];'),
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
@@ -256,19 +259,19 @@ class FormBuilder
                     ],
                     [
                         'type' => 'select',
-                        'label' => $this->module->l('Issuer list'),
+                        'label' => $this->module->l('Issuer list', self::FILE_NAME),
                         'tab' => $generalSettings,
-                        'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
+                        'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.', self::FILE_NAME),
                         'name' => Config::MOLLIE_ISSUERS,
                         'options' => [
                             'query' => [
                                 [
                                     'id' => Config::ISSUERS_ON_CLICK,
-                                    'name' => $this->module->l('On click'),
+                                    'name' => $this->module->l('On click', self::FILE_NAME),
                                 ],
                                 [
                                     'id' => Config::ISSUERS_PAYMENT_PAGE,
-                                    'name' => $this->module->l('Payment page'),
+                                    'name' => $this->module->l('Payment page', self::FILE_NAME),
                                 ],
                             ],
                             'id' => 'id',
@@ -281,7 +284,7 @@ class FormBuilder
                 'type' => 'mollie-h2',
                 'tab' => $generalSettings,
                 'name' => '',
-                'title' => $this->module->l('Payment methods'),
+                'title' => $this->module->l('Payment methods', self::FILE_NAME),
             ];
 
             $input[] = [
@@ -293,7 +296,7 @@ class FormBuilder
                 'klarnaPayments' => [
                     PaymentMethod::KLARNA_PAY_LATER,
                     PaymentMethod::KLARNA_SLICE_IT,
-                    ],
+                ],
                 'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }
@@ -310,22 +313,22 @@ class FormBuilder
         if (Config::isVersion17()) {
             $input[] = [
                 'type' => 'select',
-                'label' => $this->module->l('Send locale for payment screen'),
+                'label' => $this->module->l('Send locale for payment screen', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+                    $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl', self::FILE_NAME)]
                 ),
                 'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
                 'options' => [
                     'query' => [
                         [
                             'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                            'name' => $this->module->l('Do not send locale using browser language'),
+                            'name' => $this->module->l('Do not send locale using browser language', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                            'name' => $this->module->l('Send locale for payment screen'),
+                            'name' => $this->module->l('Send locale for payment screen', self::FILE_NAME),
                         ],
                     ],
                     'id' => 'id',
@@ -336,11 +339,11 @@ class FormBuilder
 
         $input[] = [
             'type' => 'switch',
-            'label' => $this->module->l('Send order confirmation email'),
+            'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             'is_bool' => true,
-            'desc' => $this->module->l('Send order confirmation email before payment is executed'),
+            'desc' => $this->module->l('Send order confirmation email before payment is executed', self::FILE_NAME),
             'values' => [
                 [
                     'id' => 'active_on',
@@ -355,10 +358,10 @@ class FormBuilder
             ],
         ];
 
-        $messageStatus = $this->module->l('Status for %s payments');
-        $descriptionStatus = $this->module->l('`%s` payments get status `%s`');
-        $messageMail = $this->module->l('Send mails when %s');
-        $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?');
+        $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
+        $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);
+        $messageMail = $this->module->l('Send mails when %s', self::FILE_NAME);
+        $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?', self::FILE_NAME);
         $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($this->lang->id));
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
@@ -378,7 +381,7 @@ class FormBuilder
                     )
                 );
             } else {
-                $desc = sprintf($this->module->l('`%s` payments do not get a status'), $this->module->lang($name));
+                $desc = sprintf($this->module->l('`%s` payments do not get a status', self::FILE_NAME), $this->module->lang($name));
             }
             $statuses[] = [
                 'name' => $name,
@@ -396,7 +399,7 @@ class FormBuilder
             'type' => 'mollie-h2',
             'name' => '',
             'tab' => $advancedSettings,
-            'title' => $this->module->l('Order statuses'),
+            'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
         foreach (array_filter($statuses, function ($status) {
@@ -450,27 +453,27 @@ class FormBuilder
                 'type' => 'mollie-h2',
                 'name' => '',
                 'tab' => $advancedSettings,
-                'title' => $this->module->l('Visual Settings'),
+                'title' => $this->module->l('Visual Settings', self::FILE_NAME),
             ],
             [
                 'type' => 'select',
-                'label' => $this->module->l('Images'),
+                'label' => $this->module->l('Images', self::FILE_NAME),
                 'tab' => $advancedSettings,
-                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.'),
+                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
                 'name' => Config::MOLLIE_IMAGES,
                 'options' => [
                     'query' => [
                         [
                             'id' => Config::LOGOS_HIDE,
-                            'name' => $this->module->l('hide'),
+                            'name' => $this->module->l('hide', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_NORMAL,
-                            'name' => $this->module->l('normal'),
+                            'name' => $this->module->l('normal', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_BIG,
-                            'name' => $this->module->l('big'),
+                            'name' => $this->module->l('big', self::FILE_NAME),
                         ],
                     ],
                     'id' => 'id',
@@ -480,7 +483,7 @@ class FormBuilder
 
             [
                 'type' => 'text',
-                'label' => $this->module->l('CSS file'),
+                'label' => $this->module->l('CSS file', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'desc' => TagsUtility::ppTags(
                     $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
@@ -624,6 +627,37 @@ class FormBuilder
         return $input;
     }
 
+    protected function getNewTab()
+    {
+        $newTab = 'new_tab';
+        $input = [];
+        $orderStatuses = [];
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+
+        $input[] = [
+            'type' => 'radio',
+            'label' => $this->module->l('Send klarna invoice when:'),
+            'tab' => $newTab,
+            'name' => Config::MOLLIE_SEND_KLARNA_INVOICE,
+            'is_bool' => true,
+            'desc' => $this->module->l('Send invoice mail when payment is accepted or when product is shipped', self::FILE_NAME),
+            'values' => [
+                [
+                    'id' => 'payment_accepted',
+                    'value' => 1,
+                    'label' => $this->module->l('Payment accepted', [], 'Admin.Global')
+                ],
+                [
+                    'id' => 'shipped',
+                    'value' => 0,
+                    'label' => $this->module->l('Shipped', [], 'Admin.Global')
+                ],
+            ]
+        ];
+
+        return $input;
+    }
+
     private function getSettingTabs($isApiKeyProvided)
     {
         $tabs = [
@@ -632,6 +666,7 @@ class FormBuilder
 
         if ($isApiKeyProvided) {
             $tabs['advanced_settings'] = $this->module->l('Advanced settings');
+            $tabs['new_tab'] = $this->module->l('new tab');
         }
 
         return $tabs;
