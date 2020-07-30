@@ -304,7 +304,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $response = $paymentReturnService->handlePaidStatus(
                     $order,
                     $transaction,
-                    $orderStatus,
                     $paymentMethod,
                     $stockManagement
                 );

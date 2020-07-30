@@ -40,6 +40,8 @@ services:
   Mollie\Service\CarrierService:
 
   Mollie\Service\OrderStatusService:
+    arguments:
+      - '@Mollie\Service\MailService'
 
   Mollie\Service\ErrorDisplayService:
 

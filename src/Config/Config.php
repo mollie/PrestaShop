@@ -214,6 +214,10 @@ class Config
     const MOLLIE_API_STATUS_PAYMENT = "payment";
     const MOLLIE_API_STATUS_ORDER = "order";
 
+    const ORDER_CONF_MAIL_SEND_ON_CREATION = 0;
+    const ORDER_CONF_MAIL_SEND_ON_PAID = 1;
+    const ORDER_CONF_MAIL_SEND_ON_NEVER = 2;
+
     const CARTES_BANCAIRES = 'cartesbancaires';
 
     /** @var array $methods */

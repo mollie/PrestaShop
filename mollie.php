@@ -33,6 +33,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Config\Config;
+
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
@@ -342,9 +344,9 @@ class Mollie extends PaymentModule
 
     /**
      * @param string $str
+     * @return string
      * @deprecated
      *
-     * @return string
      */
     public function lang($str)
     {
@@ -1131,10 +1133,14 @@ class Mollie extends PaymentModule
         }
 
         if ($params['template'] === 'order_conf') {
-            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-                return true;
+            switch (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+                case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+                    return true;
+                case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+                    return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$order->current_state;
+                case Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
+                    return false;
             }
-            return false;
         }
 
         if ($params['template'] === 'order_conf' ||
@@ -1245,7 +1251,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if($this->context->controller instanceof AdminOrdersControllerCore &&
+        if ($this->context->controller instanceof AdminOrdersControllerCore &&
             $params["order"]->module === $this->name
         ) {
             $cartId = $params["cart"]->id;
@@ -1273,7 +1279,7 @@ class Mollie extends PaymentModule
 
             $newPayment = $this->api->payments->create($paymentData);
 
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository*/
+            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
@@ -1303,7 +1309,7 @@ class Mollie extends PaymentModule
         $mollie = Module::getInstanceByName('mollie');
 
         /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
-        $orderListActionBuilder =  $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
+        $orderListActionBuilder = $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
     }
