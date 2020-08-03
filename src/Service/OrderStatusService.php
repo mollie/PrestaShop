@@ -108,9 +108,7 @@ class OrderStatusService
         if ((int)$order->current_state === (int)$statusId) {
             return;
         }
-        $history = array_map(function ($item) {
-            return (int)$item['id_order_state'];
-        }, $order->getHistory(Context::getContext()->language->id));
+
         if (!Validate::isLoadedObject($order)
             || !$status
         ) {

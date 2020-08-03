@@ -268,7 +268,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 break;
         }
 
-
         // Store status in database
 
         $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);

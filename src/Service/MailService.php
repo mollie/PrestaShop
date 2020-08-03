@@ -67,7 +67,7 @@ class MailService
 
         $data = $this->getOrderConfData($order, $orderStateId);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
-        
+        $customer = $order->getCustomer();
         Mail::Send(
             (int)$order->id_lang,
             'order_conf',
@@ -78,8 +78,8 @@ class MailService
                 $orderLanguage->locale
             ),
             $data,
-            $this->context->customer->email,
-            $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
+            $customer->email,
+            $customer->firstname . ' ' . $customer->lastname,
             null,
             null,
             $fileAttachment,

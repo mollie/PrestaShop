@@ -343,12 +343,12 @@ class FormBuilder
                 [
                     'id' => 'order-conf-create',
                     'value' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                    'label' => $this->module->l('Send order_conf email when order is created'),
+                    'label' => $this->module->l('When Order is created'),
                 ],
                 [
                     'id' => 'order-conf-paid',
                     'value' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                    'label' => $this->module->l('Send order_conf email when order is paid'),
+                    'label' => $this->module->l('When Order is Paid'),
                 ],
                 [
                     'id' => 'order-conf-never',
