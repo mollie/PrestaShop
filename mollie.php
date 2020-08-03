@@ -33,8 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
@@ -1134,11 +1132,11 @@ class Mollie extends PaymentModule
 
         if ($params['template'] === 'order_conf') {
             switch (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-                case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+                case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
                     return true;
-                case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+                case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_PAID:
                     return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$order->current_state;
-                case Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
+                case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
                     return false;
             }
         }
