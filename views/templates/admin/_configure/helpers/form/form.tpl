@@ -274,25 +274,23 @@
     {elseif $input.type == 'mollie-carriers'}
         <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
             <div class="alert alert-info">
-                {l s='Here you can configure what information about the shipment is sent to
-                Mollie' mod='mollie' js=1}
-                <br>{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}
+                {l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie'}
+                <br>{l s='You can use the following variables for the Carrier URLs' mod='mollie'}
                 <ul>
-                    <li><strong>@ </strong>: Shipping number</li>
-                    <li><strong>%%shipping_number%% </strong>: {l s='Shipping number' mod='mollie' js=1} </li>
-                    <li><strong>%%invoice.country_iso%%</strong>: {l s='Billing country code' mod='mollie' js=1}</li>
-                    <li><strong>%%invoice.postcode%% </strong>: {l s='Billing postcode' mod='mollie' js=1}</li>
-                    <li><strong>%%delivery.country_iso%%</strong>: {l s='Shipping country code' mod='mollie' js=1}</li>
-                    <li><strong>%%delivery.postcode%% </strong>: {l s='Shipping postcode' mod='mollie' js=1}</li>
-                    <li><strong>%%lang_iso%% </strong>: {l s='2-letter language code' mod='mollie' js=1}</li>
+                    <li><strong>%%shipping_number%% </strong>: {l s='Shipping number' mod='mollie'} </li>
+                    <li><strong>%%invoice.country_iso%%</strong>: {l s='Billing country code' mod='mollie'}</li>
+                    <li><strong>%%invoice.postcode%% </strong>: {l s='Billing postcode' mod='mollie'}</li>
+                    <li><strong>%%delivery.country_iso%%</strong>: {l s='Shipping country code' mod='mollie'}</li>
+                    <li><strong>%%delivery.postcode%% </strong>: {l s='Shipping postcode' mod='mollie'}</li>
+                    <li><strong>%%lang_iso%% </strong>: {l s='2-letter language code' mod='mollie'}</li>
                 </ul>
             </div>
             <table class="list form alternate table">
                 <thead>
                 <tr>
-                    <td class="left">Name</td>
-                    <td class="left">URL Source</td>
-                    <td class="left">Custom URL</td>
+                    <td class="left">{l s='Name' mod='mollie'}</td>
+                    <td class="left">{l s='URL Source' mod='mollie'}</td>
+                    <td class="left">{l s='Custom URL' mod='mollie'}</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -302,15 +300,15 @@
                         <td class="left">
                             <select name="MOLLIE_CARRIER_URL_SOURCE_{$carrier.id_carrier}">
                                 <option value="do_not_auto_ship"
-                                        {if $carrier.source === "do_not_auto_ship"}selected{/if}>{l s='Do not automatically ship' mod='mollie' js=1}</option>
+                                        {if $carrier.source === "do_not_auto_ship"}selected{/if}>{l s='Do not automatically ship' mod='mollie'}</option>
                                 <option value="no_tracking_info"
-                                        {if $carrier.source === "no_tracking_info"}selected{/if}>{l s='No tracking information' mod='mollie' js=1}</option>
+                                        {if $carrier.source === "no_tracking_info"}selected{/if}>{l s='No tracking information' mod='mollie'}</option>
                                 <option value="carrier_url"
-                                        {if $carrier.source === "carrier_url"}selected{/if}>{l s='Carrier URL' mod='mollie' js=1}</option>
+                                        {if $carrier.source === "carrier_url"}selected{/if}>{l s='Carrier URL' mod='mollie'}</option>
                                 <option value="custom_url"
-                                        {if $carrier.source === "custom_url"}selected{/if}>{l s='Custom URL' mod='mollie' js=1}</option>
+                                        {if $carrier.source === "custom_url"}selected{/if}>{l s='Custom URL' mod='mollie'}</option>
                                 <option value="module"
-                                        {if $carrier.source === "module"}selected{/if}>{l s='Module' mod='mollie' js=1}</option>
+                                        {if $carrier.source === "module"}selected{/if}>{l s='Module' mod='mollie'}</option>
                             </select>
                         </td>
                         <td class="left">

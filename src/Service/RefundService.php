@@ -49,6 +49,8 @@ use Tools;
 
 class RefundService
 {
+    const FILE_NAME = 'RefundService';
+
     /**
      * @var Mollie
      */
@@ -95,8 +97,8 @@ class RefundService
         } catch (ApiException $e) {
             return [
                 'status' => 'fail',
-                'msg_fail' => $this->module->l('The order could not be refunded!'),
-                'msg_details' => $this->module->l('Reason:') . ' ' . $e->getMessage(),
+                'msg_fail' => $this->module->l('The order could not be refunded!', self::FILE_NAME),
+                'msg_details' => $this->module->l('Reason:', self::FILE_NAME) . ' ' . $e->getMessage(),
             ];
         }
 
@@ -113,8 +115,8 @@ class RefundService
 
         return [
             'status' => 'success',
-            'msg_success' => $this->module->l('The order has been refunded!'),
-            'msg_details' => $this->module->l('Mollie B.V. will transfer the money back to the customer on the next business day.'),
+            'msg_success' => $this->module->l('The order has been refunded!', self::FILE_NAME),
+            'msg_details' => $this->module->l('Mollie B.V. will transfer the money back to the customer on the next business day.', self::FILE_NAME),
         ];
     }
 
@@ -160,7 +162,7 @@ class RefundService
         } catch (ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->module->l('The product(s) could not be refunded!'),
+                'message' => $this->module->l('The product(s) could not be refunded!', self::FILE_NAME),
                 'detailed' => $e->getMessage(),
             ];
         }
