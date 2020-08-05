@@ -196,7 +196,7 @@ class FormBuilder
                         ],
                     ],
                     'desc' => $this->module->display(
-                        $this->module->getPathUri() , 'views/templates/admin/create_new_account_link.tpl'
+                        $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
                     ),
                 ],
                 [
@@ -293,7 +293,7 @@ class FormBuilder
                 'klarnaPayments' => [
                     PaymentMethod::KLARNA_PAY_LATER,
                     PaymentMethod::KLARNA_SLICE_IT,
-                    ],
+                ],
                 'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             ];
         }
@@ -335,22 +335,25 @@ class FormBuilder
         }
 
         $input[] = [
-            'type' => 'switch',
+            'type' => 'radio',
             'label' => $this->module->l('Send order confirmation email'),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-            'is_bool' => true,
-            'desc' => $this->module->l('Send order confirmation email before payment is executed'),
             'values' => [
                 [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    'id' => 'order-conf-create',
+                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
+                    'label' => $this->module->l('When Order is created'),
                 ],
                 [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    'id' => 'order-conf-paid',
+                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
+                    'label' => $this->module->l('When Order is Paid'),
+                ],
+                [
+                    'id' => 'order-conf-never',
+                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
+                    'label' => $this->module->l('Never'),
                 ],
             ],
         ];
