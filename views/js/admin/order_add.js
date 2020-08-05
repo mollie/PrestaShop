@@ -32,22 +32,41 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
+    var $paymentSelector = $('select[name="payment_module_name"]');
+    $paymentSelector.ready(function () {
+        $paymentSelector.closest('div.form-group').after(mollieEmailCheckBoxTpl);
+        isMollie = isMolliePayment($('select[name="payment_module_name"]').val());
+        toggleOrderStatus(isMollie);
+    });
+
     $(document).on('change', 'select[name="payment_module_name"]', function () {
         var selectedPayment = $(this).val();
-        var isMollie = false;
-        if (selectedPayment === 'mollie') {
-            isMollie = true;
-        }
+        var isMollie = isMolliePayment(selectedPayment);
+
         toggleOrderStatus(isMollie);
     });
 
     function toggleOrderStatus(isMolliePayment) {
+        var $molliePaymentCheckboxGroup = $('#mollie-email-send-group');
         var $orderStatusSelector = $('select[name="id_order_state"]');
         if (isMolliePayment) {
             $orderStatusSelector.closest('div.form-group').toggleClass('hidden', true);
+            $('#send_email_to_customer').toggleClass('hidden', true);
+            $molliePaymentCheckboxGroup.toggleClass('hidden', false);
             $orderStatusSelector.val(molliePendingStatus);
         } else {
             $orderStatusSelector.closest('div.form-group').toggleClass('hidden', false);
+            $('#send_email_to_customer').toggleClass('hidden', false);
+            $molliePaymentCheckboxGroup.toggleClass('hidden', true);
         }
+    }
+
+    function isMolliePayment(paymentName) {
+        var isMollie = false;
+        if (paymentName === 'mollie') {
+            isMollie = true;
+        }
+
+        return isMollie;
     }
 });
