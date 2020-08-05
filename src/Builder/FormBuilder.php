@@ -189,12 +189,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                     'desc' => $this->module->display(
@@ -226,12 +226,12 @@ class FormBuilder
                     [
                         'id' => 'active_on',
                         'value' => true,
-                        'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        'label' => $this->module->l('Enabled', self::FILE_NAME),
                     ],
                     [
                         'id' => 'active_off',
                         'value' => false,
-                        'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        'label' => $this->module->l('Disabled', self::FILE_NAME),
                     ],
                 ],
             ];
@@ -427,12 +427,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                 ];
@@ -515,12 +515,12 @@ class FormBuilder
                 [
                     'id' => 'active_on',
                     'value' => true,
-                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    'label' => $this->module->l('Enabled', self::FILE_NAME),
                 ],
                 [
                     'id' => 'active_off',
                     'value' => false,
-                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    'label' => $this->module->l('Disabled', self::FILE_NAME),
                 ],
             ],
             'depends' => Config::MOLLIE_API,
@@ -585,12 +585,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                 ],

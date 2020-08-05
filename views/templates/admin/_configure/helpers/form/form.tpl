@@ -274,11 +274,9 @@
     {elseif $input.type == 'mollie-carriers'}
         <div id="{$input.name|escape:'htmlall':'UTF-8'}_container">
             <div class="alert alert-info">
-                {l s='Here you can configure what information about the shipment is sent to
-                Mollie' mod='mollie' js=1}
+                {l s='Here you can configure what information about the shipment is sent to Mollie' mod='mollie' js=1}
                 <br>{l s='You can use the following variables for the Carrier URLs' mod='mollie' js=1}
                 <ul>
-                    <li><strong>@ </strong>: Shipping number</li>
                     <li><strong>%%shipping_number%% </strong>: {l s='Shipping number' mod='mollie' js=1} </li>
                     <li><strong>%%invoice.country_iso%%</strong>: {l s='Billing country code' mod='mollie' js=1}</li>
                     <li><strong>%%invoice.postcode%% </strong>: {l s='Billing postcode' mod='mollie' js=1}</li>
@@ -290,9 +288,9 @@
             <table class="list form alternate table">
                 <thead>
                 <tr>
-                    <td class="left">Name</td>
-                    <td class="left">URL Source</td>
-                    <td class="left">Custom URL</td>
+                    <td class="left">{l s='Name' mod='mollie' js=1}</td>
+                    <td class="left">{l s='URL Source' mod='mollie' js=1}</td>
+                    <td class="left">{l s='Custom URL' mod='mollie' js=1}</td>
                 </tr>
                 </thead>
                 <tbody>
