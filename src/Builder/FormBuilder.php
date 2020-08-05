@@ -337,26 +337,27 @@ class FormBuilder
         }
 
         $input[] = [
-            'type' => 'radio',
+            'type' => 'select',
             'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-            'values' => [
-                [
-                    'id' => 'order-conf-create',
-                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                    'label' => $this->module->l('When Order is created', self::FILE_NAME),
+            'options' => [
+                'query' => [
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
+                        'name' => $this->module->l('When Order is created', self::FILE_NAME),
+                    ],
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
+                        'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
+                    ],
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
+                        'name' => $this->module->l('Never', self::FILE_NAME),
+                    ],
                 ],
-                [
-                    'id' => 'order-conf-paid',
-                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                    'label' => $this->module->l('When Order is Paid', self::FILE_NAME),
-                ],
-                [
-                    'id' => 'order-conf-never',
-                    'value' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
-                    'label' => $this->module->l('Never', self::FILE_NAME),
-                ],
+                'id' => 'id',
+                'name' => 'name',
             ],
         ];
 

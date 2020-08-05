@@ -481,6 +481,7 @@ class Mollie extends PaymentModule
             if (Tools::isSubmit('addorder')) {
                 Media::addJsDef([
                     'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
+                    'mollieEmailCheckBoxTpl' => $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl')
                 ]);
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
             }
@@ -1290,6 +1291,13 @@ class Mollie extends PaymentModule
                 $orderId,
                 $orderReference
             );
+
+            $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
+            if ($sendMolliePaymentMail === 'on') {
+                /** @var \Mollie\Service\MolliePaymentMailService $molliePaymentMailService */
+                $molliePaymentMailService = $this->getContainer(\Mollie\Service\MolliePaymentMailService::class);
+                $molliePaymentMailService->sendSecondChanceMail($orderId);
+            }
         }
     }
 
