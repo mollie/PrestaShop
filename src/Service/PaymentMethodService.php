@@ -181,7 +181,7 @@ class PaymentMethodService
         if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
             foreach ($methods as $index => $methodId) {
                 $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-                if (!$methodObj->is_countries_applicable) {
+                if ($methodObj->is_countries_applicable) {
                     if (!$this->countryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
                         unset($methods[$index]);
                     }

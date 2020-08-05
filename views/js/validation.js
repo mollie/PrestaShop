@@ -134,7 +134,7 @@ $(document).ready(function () {
         var $countrySelectType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_APPLICABLE_COUNTRIES"]');
         var $countrySelect = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_CERTAIN_COUNTRIES"]');
         var $excludedCountrySelect = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES"]');
-        if ($countrySelectType.val() === "0") {
+        if ($countrySelectType.val() === "1") {
             $countrySelect.closest('.form-group').show();
             $excludedCountrySelect.closest('.form-group').hide();
         } else {
