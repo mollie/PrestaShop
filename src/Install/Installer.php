@@ -51,6 +51,8 @@ use Tools;
 
 class Installer
 {
+    const FILE_NAME = 'Installer';
+
     /**
      * @var array
      */
@@ -77,20 +79,20 @@ class Installer
         try {
             $this->createMollieStatuses($context->language->id);
         } catch (Exception $e) {
-            $this->errors[] = $this->module->l('Unable to install Mollie statuses');
+            $this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
             return false;
         }
 
         try {
             $this->initConfig();
         } catch (Exception $e) {
-            $this->errors[] = $this->module->l('Unable to install config');
+            $this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
             return false;
         }
         try {
             $this->setDefaultCarrierStatuses();
         } catch (Exception $e) {
-            $this->errors[] = $this->module->l('Unable to install default carrier statuses');
+            $this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
             return false;
         }
 
@@ -381,7 +383,7 @@ class Installer
                     $this->module->getLocalPath() . 'mails/'.$language['iso_code']
                 );
             } catch (PrestaShopException $e) {
-                $this->errors[] = $this->module->l('Could not copy email templates:', __CLASS__).' '.$e->getMessage();
+                $this->errors[] = $this->module->l('Could not copy email templates:', self::FILE_NAME).' '.$e->getMessage();
 
                 return false;
             }
