@@ -344,7 +344,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_OPEN, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, _PS_OS_SHIPPING_);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(
