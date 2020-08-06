@@ -34,12 +34,9 @@
  */
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
