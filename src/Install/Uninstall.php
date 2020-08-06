@@ -116,7 +116,8 @@ class Uninstall
 
     private function deleteMollieStatuses()
     {
-        foreach (Config::getMollieOrderStatusIds() as $statusId) {
+        foreach (Config::getMollieOrderStatuses() as $mollieStatus) {
+            $statusId = Configuration::get($mollieStatus);
             $orderState = new OrderState($statusId);
             $orderState->deleted = 1;
             $orderState->update();

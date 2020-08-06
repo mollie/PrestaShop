@@ -283,13 +283,13 @@ class Config
         return false;
     }
 
-    public static function getMollieOrderStatusIds()
+    public static function getMollieOrderStatuses()
     {
         return [
-            Configuration::get(self::MOLLIE_STATUS_PARTIALLY_SHIPPED),
-            Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
-            Configuration::get(self::STATUS_MOLLIE_AWAITING),
-            Configuration::get(self::MOLLIE_STATUS_ORDER_COMPLETED),
+            self::MOLLIE_STATUS_PARTIALLY_SHIPPED,
+            self::MOLLIE_STATUS_PARTIAL_REFUND,
+            self::STATUS_MOLLIE_AWAITING,
+            self::MOLLIE_STATUS_ORDER_COMPLETED,
         ];
     }
 }
