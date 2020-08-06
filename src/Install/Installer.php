@@ -43,6 +43,7 @@ use Exception;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Service\imageService;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -62,10 +63,15 @@ class Installer
      * @var Mollie
      */
     private $module;
+    /**
+     * @var imageService
+     */
+    private $imageService;
 
-    public function __construct(Mollie $module)
+    public function __construct(Mollie $module, imageService $imageService)
     {
         $this->module = $module;
+        $this->imageService = $imageService;
     }
 
     public function install()
@@ -74,10 +80,8 @@ class Installer
             $this->module->registerHook($hook);
         }
 
-        $context = Context::getContext();
-
         try {
-            $this->createMollieStatuses($context->language->id);
+            $this->createMollieStatuses();
         } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
             return false;
@@ -137,20 +141,8 @@ class Installer
      * @since 2.0.0
      *
      */
-    private function partialRefundOrderState($languageId)
+    private function partialRefundOrderState()
     {
-        $stateExists = false;
-        $states = OrderState::getOrderStates((int)$languageId);
-        foreach ($states as $state) {
-            if ($this->module->lang('Mollie partially refunded') === $state['name']) {
-                Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND, (int)$state[OrderState::$definition['primary']]);
-                $stateExists = true;
-                break;
-            }
-        }
-        if ($stateExists) {
-            return true;
-        }
         $orderState = new OrderState();
         $orderState->send_email = false;
         $orderState->color = '#6F8C9F';
@@ -162,12 +154,10 @@ class Installer
         $orderState->name = [];
         $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = $this->module->lang('Mollie partially refunded');
+            $orderState->name[$language['id_lang']] = 'Mollie partially refunded';
         }
         if ($orderState->add()) {
-            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-            @copy($source, $destination);
+            $this->imageService->createOrderStateLogo($orderState->id);
         }
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND, (int)$orderState->id);
 
@@ -181,20 +171,8 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function partialShippedOrderState($languageId)
+    public function partialShippedOrderState()
     {
-        $stateExists = false;
-        $states = OrderState::getOrderStates((int)$languageId);
-        foreach ($states as $state) {
-            if ($this->module->lang('Partially shipped') === $state['name']) {
-                Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED, (int)$state[OrderState::$definition['primary']]);
-                $stateExists = true;
-                break;
-            }
-        }
-        if ($stateExists) {
-            return true;
-        }
         $orderState = new OrderState();
         $orderState->send_email = false;
         $orderState->color = '#8A2BE2';
@@ -206,30 +184,28 @@ class Installer
         $orderState->name = [];
         $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = $this->module->lang('Partially shipped');
+            $orderState->name[$language['id_lang']] ='Partially shipped';
         }
         if ($orderState->add()) {
-            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-            @copy($source, $destination);
+            $this->imageService->createOrderStateLogo($orderState->id);
         }
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED, (int)$orderState->id);
 
         return true;
     }
 
-    public function createMollieStatuses($languageId)
+    public function createMollieStatuses()
     {
-        if (!$this->partialRefundOrderState($languageId)) {
+        if (!$this->partialRefundOrderState()) {
             return false;
         }
-        if (!$this->awaitingMollieOrderState($languageId)) {
+        if (!$this->awaitingMollieOrderState()) {
             return false;
         }
-        if(!$this->partialShippedOrderState($languageId)) {
+        if(!$this->partialShippedOrderState()) {
             return false;
         }
-        if(!$this->orderCompletedOrderState($languageId)) {
+        if(!$this->orderCompletedOrderState()) {
             return false;
         }
 
@@ -243,38 +219,25 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function awaitingMollieOrderState($languageId)
+    private function awaitingMollieOrderState()
     {
-        $stateExists = false;
-        $states = OrderState::getOrderStates((int)$languageId);
-        foreach ($states as $state) {
-            if ($this->module->lang('Awaiting Mollie payment') === $state['name']) {
-                Configuration::updateValue(Mollie\Config\Config::STATUS_MOLLIE_AWAITING, (int)$state[OrderState::$definition['primary']]);
-                $stateExists = true;
-                break;
-            }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#4169E1';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Awaiting Mollie payment');
         }
-        if (!$stateExists) {
-            $orderState = new OrderState();
-            $orderState->send_email = false;
-            $orderState->color = '#4169E1';
-            $orderState->hidden = false;
-            $orderState->delivery = false;
-            $orderState->logable = false;
-            $orderState->invoice = false;
-            $orderState->module_name = $this->module->name;
-            $orderState->name = [];
-            $languages = Language::getLanguages(false);
-            foreach ($languages as $language) {
-                $orderState->name[$language['id_lang']] = $this->module->lang('Awaiting Mollie payment');
-            }
-            if ($orderState->add()) {
-                $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-                @copy($source, $destination);
-            }
-            Configuration::updateValue(Mollie\Config\Config::STATUS_MOLLIE_AWAITING, (int)$orderState->id);
+        if ($orderState->add()) {
+            $this->imageService->createOrderStateLogo($orderState->id);
         }
+        Configuration::updateValue(Mollie\Config\Config::STATUS_MOLLIE_AWAITING, (int)$orderState->id);
 
         return true;
     }
@@ -285,20 +248,8 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function orderCompletedOrderState($languageId)
+    public function orderCompletedOrderState()
     {
-        $stateExists = false;
-        $states = OrderState::getOrderStates((int)$languageId);
-        foreach ($states as $state) {
-            if ($this->module->lang('Completed') === $state['name']) {
-                Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int)$state[OrderState::$definition['primary']]);
-                $stateExists = true;
-                break;
-            }
-        }
-        if ($stateExists) {
-            return true;
-        }
         $orderState = new OrderState();
         $orderState->send_email = false;
         $orderState->color = '#3d7d1c';
@@ -310,12 +261,10 @@ class Installer
         $orderState->name = [];
         $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = $this->module->lang('Completed');
+            $orderState->name[$language['id_lang']] = 'Completed';
         }
         if ($orderState->add()) {
-            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
-            @copy($source, $destination);
+            $this->imageService->createOrderStateLogo($orderState->id);
         }
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int)$orderState->id);
 

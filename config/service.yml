@@ -45,6 +45,8 @@ services:
 
   Mollie\Service\ErrorDisplayService:
 
+  Mollie\Service\imageService:
+
   Mollie\Service\CountryService:
     arguments:
       - '@mollie'
