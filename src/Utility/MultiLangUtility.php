@@ -41,7 +41,7 @@ class MultiLangUtility
 {
     public static function createMultiLangField($field, $languageIds = null)
     {
-        $result = array();
+        $result = [];
 
         if (!$languageIds) {
             $languageIds = Language::getIDs(false);
