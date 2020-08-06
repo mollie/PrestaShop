@@ -44,6 +44,7 @@ use Language;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Service\imageService;
+use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -151,11 +152,7 @@ class Installer
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = [];
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = 'Mollie partially refunded';
-        }
+        $orderState->name = MultiLangUtility::createMultiLangField('Mollie partially refunded');
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
@@ -181,11 +178,8 @@ class Installer
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = [];
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] ='Partially shipped';
-        }
+        $orderState->name = MultiLangUtility::createMultiLangField('Partially shipped');
+
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
@@ -229,11 +223,8 @@ class Installer
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = [];
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = $this->module->lang('Awaiting Mollie payment');
-        }
+        $orderState->name = MultiLangUtility::createMultiLangField('Awaiting Mollie payment');
+
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
@@ -258,11 +249,8 @@ class Installer
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = [];
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $orderState->name[$language['id_lang']] = 'Completed';
-        }
+        $orderState->name = MultiLangUtility::createMultiLangField('Completed');
+
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
