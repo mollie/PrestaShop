@@ -80,7 +80,6 @@ function upgrade_module_4_0_7($module)
 
     $langId = $module->getContext()->language->id;
     $installed &= $installer->partialShippedOrderState($langId);
-    $installed &= $installer->paymentAcceptedOrderState($langId);
     $installed &= $installer->copyEmailTemplates();
 
     if(!$installed) {

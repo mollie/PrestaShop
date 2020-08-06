@@ -307,57 +307,59 @@ class FormBuilder
         $input = [];
         $orderStatuses = [];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
-        if (Config::isVersion17()) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Send locale for payment screen'),
-                'tab' => $advancedSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('Should the plugin send the current webshop [1]locale[/1] to Mollie. Mollie payment screens will be in the same language as your webshop. Mollie can also detect the language based on the user\'s browser language.'),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
-                ),
-                'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                            'name' => $this->module->l('Do not send locale using browser language'),
-                        ],
-                        [
-                            'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                            'name' => $this->module->l('Send locale for payment screen'),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-        }
 
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('Send order confirmation email'),
+            'label' => $this->module->l('Push Locale to Payment Screen'),
             'tab' => $advancedSettings,
-            'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+            'desc' => TagsUtility::ppTags(
+                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.'),
+                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+            ),
+            'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
             'options' => [
                 'query' => [
                     [
-                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                        'name' => $this->module->l('When Order is created'),
+                        'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
+                        'name' => $this->module->l('Yes, push webshop Locale'),
                     ],
                     [
-                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                        'name' => $this->module->l('When Order is Paid'),
+                        'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
+                        'name' => $this->module->l('No, use browser\'s Locale'),
                     ],
-                    [
-                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
-                        'name' => $this->module->l('Never'),
-                    ],
+
                 ],
                 'id' => 'id',
                 'name' => 'name',
             ],
         ];
+
+        if (Config::isVersion17()) {
+            $input[] = [
+                'type' => 'select',
+                'label' => $this->module->l('Send order confirmation email'),
+                'tab' => $advancedSettings,
+                'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
+                            'name' => $this->module->l('When Order is created'),
+                        ],
+                        [
+                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
+                            'name' => $this->module->l('When Order is Paid'),
+                        ],
+                        [
+                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
+                            'name' => $this->module->l('Never'),
+                        ],
+                    ],
+                    'id' => 'id',
+                    'name' => 'name',
+                ],
+            ];;
+        }
 
         $messageStatus = $this->module->l('Status for %s payments');
         $descriptionStatus = $this->module->l('`%s` payments get status `%s`');
