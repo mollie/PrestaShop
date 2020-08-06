@@ -153,7 +153,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
-        $order = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cart->id);
+        $order = new Order($orderId);
         if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(

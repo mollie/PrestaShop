@@ -1135,7 +1135,8 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $order = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cart->id);
+        $order = new Order($orderId);
         if ($order === null || $order->module !== $this->name) {
             return true;
         }
@@ -1166,7 +1167,8 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
-            $order = Order::getOrderByCartId($cart->id);
+            $orderId = Order::getOrderByCartId($cart->id);
+            $order = new Order($orderId);
             if (!$order) {
                 return true;
             }
