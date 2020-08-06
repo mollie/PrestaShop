@@ -39,6 +39,7 @@ use Configuration;
 use Mollie;
 use Mollie\Config\Config;
 use OrderState;
+use Validate;
 
 class Uninstall
 {
@@ -119,6 +120,9 @@ class Uninstall
         foreach (Config::getMollieOrderStatuses() as $mollieStatus) {
             $statusId = Configuration::get($mollieStatus);
             $orderState = new OrderState($statusId);
+            if (!Validate::isLoadedObject($orderState)) {
+                return;
+            }
             $orderState->deleted = 1;
             $orderState->update();
         }

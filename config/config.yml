@@ -17,6 +17,7 @@ services:
   Mollie\Install\Installer:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\imageService'
 
   Mollie\Install\Uninstall:
     arguments:
