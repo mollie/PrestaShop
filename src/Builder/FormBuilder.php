@@ -409,6 +409,7 @@ class FormBuilder
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], [
                 PaymentStatus::STATUS_PAID,
+                OrderStatus::STATUS_COMPLETED,
                 PaymentStatus::STATUS_AUTHORIZED,
                 PaymentStatus::STATUS_CANCELED,
                 PaymentStatus::STATUS_EXPIRED,

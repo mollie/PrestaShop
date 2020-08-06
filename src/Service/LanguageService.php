@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Mollie;
@@ -56,6 +57,7 @@ class LanguageService
     public function getLang() {
         return [
             PaymentStatus::STATUS_PAID => $this->module->l('Paid', self::FILE_NAME),
+            OrderStatus::STATUS_COMPLETED => $this->module->l('Completed', self::FILE_NAME),
             PaymentStatus::STATUS_AUTHORIZED => $this->module->l('Authorized', self::FILE_NAME),
             PaymentStatus::STATUS_CANCELED => $this->module->l('Canceled', self::FILE_NAME),
             PaymentStatus::STATUS_EXPIRED => $this->module->l('Expired', self::FILE_NAME),
@@ -106,6 +108,7 @@ class LanguageService
             'Pay later.' => $this->module->l('Pay later.', self::FILE_NAME),
             'Slice it.' => $this->module->l('Slice it.', self::FILE_NAME),
             'MyBank' => $this->module->l('MyBank', self::FILE_NAME),
+            'Completed' => $this->module->l('Completed', self::FILE_NAME),
         ];
     }
 

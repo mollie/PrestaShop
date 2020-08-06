@@ -229,6 +229,9 @@ class Installer
         if(!$this->partialShippedOrderState($languageId)) {
             return false;
         }
+        if(!$this->orderCompletedOrderState($languageId)) {
+            return false;
+        }
 
         return true;
 
@@ -277,6 +280,49 @@ class Installer
     }
 
     /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function orderCompletedOrderState($languageId)
+    {
+        $stateExists = false;
+        $states = OrderState::getOrderStates((int)$languageId);
+        foreach ($states as $state) {
+            if ($this->module->lang('Completed') === $state['name']) {
+                Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int)$state[OrderState::$definition['primary']]);
+                $stateExists = true;
+                break;
+            }
+        }
+        if ($stateExists) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#3d7d1c';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = [];
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $orderState->name[$language['id_lang']] = $this->module->lang('Completed');
+        }
+        if ($orderState->add()) {
+            $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+            $destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$orderState->id . '.gif';
+            @copy($source, $destination);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int)$orderState->id);
+
+        return true;
+    }
+
+    /**
      * @return void
      *
      */
@@ -298,6 +344,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_OPEN, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, _PS_OS_SHIPPING_);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
         Configuration::updateValue(
@@ -308,6 +355,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_PAID, true);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_COMPLETED, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_CANCELED, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_REFUNDED, true);

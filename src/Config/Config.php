@@ -150,6 +150,7 @@ class Config
     const MOLLIE_AUTO_SHIP_STATUSES = 'MOLLIE_AS_STATUSES';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
+    const MOLLIE_STATUS_COMPLETED = 'MOLLIE_STATUS_COMPLETED';
     const MOLLIE_STATUS_CANCELED = 'MOLLIE_STATUS_CANCELED';
     const MOLLIE_STATUS_EXPIRED = 'MOLLIE_STATUS_EXPIRED';
     const MOLLIE_STATUS_PARTIAL_REFUND = 'MOLLIE_STATUS_PARTIAL_REFUND';
@@ -158,13 +159,14 @@ class Config
     const MOLLIE_MAIL_WHEN_SHIPPING = 'MOLLIE_MAIL_WHEN_SHIPPING';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
+    const MOLLIE_MAIL_WHEN_COMPLETED = 'MOLLIE_MAIL_WHEN_COMPLETED';
     const MOLLIE_MAIL_WHEN_CANCELED = 'MOLLIE_MAIL_WHEN_CANCELED';
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const PARTIAL_REFUND_CODE = 'partial_refund';
     const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
     const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
-    const MOLLIE_STATUS_PAYMENT_ACCEPTED = 'MOLLIE_PAYMENT_ACCEPTED';
+    const MOLLIE_STATUS_ORDER_COMPLETED = 'MOLLIE_STATUS_ORDER_COMPLETED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -248,6 +250,7 @@ class Config
     {
         return [
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
+            OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_PAID),
             PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
             PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_EXPIRED    => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
@@ -255,7 +258,6 @@ class Config
             PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_PENDING => Configuration::get(self::STATUS_MOLLIE_AWAITING),
-            OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
@@ -279,5 +281,15 @@ class Config
         }
 
         return false;
+    }
+
+    public static function getMollieOrderStatusIds()
+    {
+        return [
+            Configuration::get(self::MOLLIE_STATUS_PARTIALLY_SHIPPED),
+            Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
+            Configuration::get(self::STATUS_MOLLIE_AWAITING),
+            Configuration::get(self::MOLLIE_STATUS_ORDER_COMPLETED),
+        ];
     }
 }

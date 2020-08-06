@@ -80,7 +80,13 @@ function upgrade_module_4_0_7($module)
 
     $langId = $module->getContext()->language->id;
     $installed &= $installer->partialShippedOrderState($langId);
+    $installed &= $installer->orderCompletedOrderState($langId);
     $installed &= $installer->copyEmailTemplates();
+
+    Configuration::updateValue(Config::MOLLIE_STATUS_COMPLETED,
+        Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED)
+    );
+    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_COMPLETED, true);
 
     if(!$installed) {
         return false;
