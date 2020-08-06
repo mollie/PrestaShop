@@ -481,7 +481,6 @@ class Mollie extends PaymentModule
             if (Tools::isSubmit('addorder')) {
                 Media::addJsDef([
                     'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
-                    'mollieEmailCheckBoxTpl' => $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl')
                 ]);
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
             }
@@ -502,6 +501,9 @@ class Mollie extends PaymentModule
                 'mollieCheckMethods' => time() > ((int)Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
             ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
+            if (Tools::isSubmit('addorder')) {
+                $html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
+            }
         }
 
         return $html;

@@ -25,12 +25,12 @@ class OrderListActionBuilder
         $smarty->assign('message',
             $this->mollie->l('You will resend email with payment link to the customer', self::FILE_NAME)
         );
-        $icon = $this->mollie->fetch(
-            $this->mollie->getLocalPath() . 'views/templates/hook/admin/order-list-save-label-icon.tpl');
+        $icon = $this->mollie->display(
+            $this->mollie->getLocalPath() , 'views/templates/hook/admin/order-list-save-label-icon.tpl');
 
         $smarty->assign('icon', $icon);
 
-        return $this->mollie->fetch(
-            $this->mollie->getLocalPath() . 'views/templates/hook/admin/order-list-icon-container.tpl');
+        return $this->mollie->display(
+            $this->mollie->getLocalPath(), 'views/templates/hook/admin/order-list-icon-container.tpl');
     }
 }
