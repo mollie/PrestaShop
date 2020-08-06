@@ -58,6 +58,8 @@ use Translate;
 class FormBuilder
 {
 
+    const FILE_NAME = 'FormBuilder';
+
     /**
      * @var Mollie
      */
@@ -164,10 +166,10 @@ class FormBuilder
             $input = [
                 [
                     'type' => 'text',
-                    'label' => $this->module->l('API Key'),
+                    'label' => $this->module->l('API Key', self::FILE_NAME),
                     'tab' => $generalSettings,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
@@ -179,7 +181,7 @@ class FormBuilder
             $input = [
                 [
                     'type' => 'mollie-switch',
-                    'label' => $this->module->l('Do you already have a Mollie account?'),
+                    'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
                     'name' => Config::MOLLIE_ACCOUNT_SWITCH,
                     'tab' => $generalSettings,
                     'is_bool' => true,
@@ -187,12 +189,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                     'desc' => $this->module->display(
@@ -201,10 +203,10 @@ class FormBuilder
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->module->l('API Key'),
+                    'label' => $this->module->l('API Key', self::FILE_NAME),
                     'tab' => $generalSettings,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.'),
+                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                     ),
                     'name' => Config::MOLLIE_API_KEY,
@@ -216,7 +218,7 @@ class FormBuilder
         if ($isApiKeyProvided) {
             $input[] = [
                 'type' => 'switch',
-                'label' => $this->module->l('Use IFrame for credit card'),
+                'label' => $this->module->l('Use IFrame for credit card', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_IFRAME,
                 'is_bool' => true,
@@ -224,22 +226,22 @@ class FormBuilder
                     [
                         'id' => 'active_on',
                         'value' => true,
-                        'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                        'label' => $this->module->l('Enabled', self::FILE_NAME),
                     ],
                     [
                         'id' => 'active_off',
                         'value' => false,
-                        'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                        'label' => $this->module->l('Disabled', self::FILE_NAME),
                     ],
                 ],
             ];
 
             $input[] = [
                 'type' => 'text',
-                'label' => $this->module->l('Profile ID'),
+                'label' => $this->module->l('Profile ID', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];'),
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
@@ -256,19 +258,19 @@ class FormBuilder
                     ],
                     [
                         'type' => 'select',
-                        'label' => $this->module->l('Issuer list'),
+                        'label' => $this->module->l('Issuer list', self::FILE_NAME),
                         'tab' => $generalSettings,
-                        'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.'),
+                        'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.', self::FILE_NAME),
                         'name' => Config::MOLLIE_ISSUERS,
                         'options' => [
                             'query' => [
                                 [
                                     'id' => Config::ISSUERS_ON_CLICK,
-                                    'name' => $this->module->l('On click'),
+                                    'name' => $this->module->l('On click', self::FILE_NAME),
                                 ],
                                 [
                                     'id' => Config::ISSUERS_PAYMENT_PAGE,
-                                    'name' => $this->module->l('Payment page'),
+                                    'name' => $this->module->l('Payment page', self::FILE_NAME),
                                 ],
                             ],
                             'id' => 'id',
@@ -281,7 +283,7 @@ class FormBuilder
                 'type' => 'mollie-h2',
                 'tab' => $generalSettings,
                 'name' => '',
-                'title' => $this->module->l('Payment methods'),
+                'title' => $this->module->l('Payment methods', self::FILE_NAME),
             ];
 
             $input[] = [
@@ -307,13 +309,12 @@ class FormBuilder
         $input = [];
         $orderStatuses = [];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
-
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('Push Locale to Payment Screen'),
+            'label' => $this->module->l('Push Locale to Payment Screen', self::FILE_NAME),
             'tab' => $advancedSettings,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.'),
+                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.',self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
             'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
@@ -321,11 +322,11 @@ class FormBuilder
                 'query' => [
                     [
                         'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                        'name' => $this->module->l('Yes, push webshop Locale'),
+                        'name' => $this->module->l('Yes, push webshop Locale', self::FILE_NAME),
                     ],
                     [
                         'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                        'name' => $this->module->l('No, use browser\'s Locale'),
+                        'name' => $this->module->l('No, use browser\'s Locale', self::FILE_NAME),
                     ],
 
                 ],
@@ -337,22 +338,22 @@ class FormBuilder
         if (Config::isVersion17()) {
             $input[] = [
                 'type' => 'select',
-                'label' => $this->module->l('Send order confirmation email'),
+                'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
                 'options' => [
                     'query' => [
                         [
                             'id' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                            'name' => $this->module->l('When Order is created'),
+                            'name' => $this->module->l('When Order is created', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                            'name' => $this->module->l('When Order is Paid'),
+                            'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
-                            'name' => $this->module->l('Never'),
+                            'name' => $this->module->l('Never', self::FILE_NAME),
                         ],
                     ],
                     'id' => 'id',
@@ -361,11 +362,11 @@ class FormBuilder
             ];;
         }
 
-        $messageStatus = $this->module->l('Status for %s payments');
-        $descriptionStatus = $this->module->l('`%s` payments get status `%s`');
-        $messageMail = $this->module->l('Send mails when %s');
-        $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?');
-        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status'), 'color' => '#565656']], OrderState::getOrderStates($this->lang->id));
+        $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
+        $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);
+        $messageMail = $this->module->l('Send mails when %s', self::FILE_NAME);
+        $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
+        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], OrderState::getOrderStates($this->lang->id));
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
             if ($name === PaymentStatus::STATUS_AUTHORIZED) {
@@ -384,7 +385,7 @@ class FormBuilder
                     )
                 );
             } else {
-                $desc = sprintf($this->module->l('`%s` payments do not get a status'), $this->module->lang($name));
+                $desc = sprintf($this->module->l('`%s` payments do not get a status', self::FILE_NAME), $this->module->lang($name));
             }
             $statuses[] = [
                 'name' => $name,
@@ -402,7 +403,7 @@ class FormBuilder
             'type' => 'mollie-h2',
             'name' => '',
             'tab' => $advancedSettings,
-            'title' => $this->module->l('Order statuses'),
+            'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
         foreach (array_filter($statuses, function ($status) {
@@ -428,12 +429,12 @@ class FormBuilder
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                 ];
@@ -456,27 +457,27 @@ class FormBuilder
                 'type' => 'mollie-h2',
                 'name' => '',
                 'tab' => $advancedSettings,
-                'title' => $this->module->l('Visual Settings'),
+                'title' => $this->module->l('Visual Settings', self::FILE_NAME),
             ],
             [
                 'type' => 'select',
-                'label' => $this->module->l('Images'),
+                'label' => $this->module->l('Images', self::FILE_NAME),
                 'tab' => $advancedSettings,
-                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.'),
+                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
                 'name' => Config::MOLLIE_IMAGES,
                 'options' => [
                     'query' => [
                         [
                             'id' => Config::LOGOS_HIDE,
-                            'name' => $this->module->l('hide'),
+                            'name' => $this->module->l('hide', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_NORMAL,
-                            'name' => $this->module->l('normal'),
+                            'name' => $this->module->l('normal', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_BIG,
-                            'name' => $this->module->l('big'),
+                            'name' => $this->module->l('big', self::FILE_NAME),
                         ],
                     ],
                     'id' => 'id',
@@ -486,10 +487,10 @@ class FormBuilder
 
             [
                 'type' => 'text',
-                'label' => $this->module->l('CSS file'),
+                'label' => $this->module->l('CSS file', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.'),
+                    $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/front/kbd.tpl')]
                 ),
                 'name' => Config::MOLLIE_CSS,
@@ -498,7 +499,7 @@ class FormBuilder
         ]);
         $input[] = [
             'type' => 'mollie-carriers',
-            'label' => $this->module->l('Shipment information'),
+            'label' => $this->module->l('Shipment information', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_TRACKING_URLS,
             'depends' => Config::MOLLIE_API,
@@ -507,21 +508,21 @@ class FormBuilder
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
-            'label' => $this->module->l('Automatically ship on marked statuses'),
+            'label' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_AUTO_SHIP_MAIN,
-            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status'),
+            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status', self::FILE_NAME),
             'is_bool' => true,
             'values' => [
                 [
                     'id' => 'active_on',
                     'value' => true,
-                    'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                    'label' => $this->module->l('Enabled', self::FILE_NAME),
                 ],
                 [
                     'id' => 'active_off',
                     'value' => false,
-                    'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                    'label' => $this->module->l('Disabled', self::FILE_NAME),
                 ],
             ],
             'depends' => Config::MOLLIE_API,
@@ -529,10 +530,10 @@ class FormBuilder
         ];
         $input[] = [
             'type' => 'checkbox',
-            'label' => $this->module->l('Automatically ship when one of these statuses is reached'),
+            'label' => $this->module->l('Automatically ship when one of these statuses is reached', self::FILE_NAME),
             'tab' => $advancedSettings,
             'desc' =>
-                $this->module->l('If an order reaches one of these statuses the module will automatically send shipment information'),
+                $this->module->l('If an order reaches one of these statuses the module will automatically send shipment information', self::FILE_NAME),
             'name' => Config::MOLLIE_AUTO_SHIP_STATUSES,
             'multiple' => true,
             'values' => [
@@ -543,15 +544,15 @@ class FormBuilder
             'expand' => (count($orderStatuses) > 10) ? [
                 'print_total' => count($orderStatuses),
                 'default' => 'show',
-                'show' => ['text' => $this->module->l('Show'), 'icon' => 'plus-sign-alt'],
-                'hide' => ['text' => $this->module->l('Hide'), 'icon' => 'minus-sign-alt'],
+                'show' => ['text' => $this->module->l('Show', self::FILE_NAME), 'icon' => 'plus-sign-alt'],
+                'hide' => ['text' => $this->module->l('Hide', self::FILE_NAME), 'icon' => 'minus-sign-alt'],
             ] : null,
             'depends' => Config::MOLLIE_API,
             'depends_value' => Config::MOLLIE_ORDERS_API,
         ];
         $orderStatuses = [
             [
-                'name' => $this->module->l('Disable this status'),
+                'name' => $this->module->l('Disable this status', self::FILE_NAME),
                 'id_order_state' => '0',
             ],
         ];
@@ -572,35 +573,35 @@ class FormBuilder
                 [
                     'type' => 'mollie-h2',
                     'name' => '',
-                    'title' => $this->module->l('Debug level'),
+                    'title' => $this->module->l('Debug level', self::FILE_NAME),
                     'tab' => $advancedSettings,
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->module->l('Display errors'),
+                    'label' => $this->module->l('Display errors', self::FILE_NAME),
                     'tab' => $advancedSettings,
                     'name' => Config::MOLLIE_DISPLAY_ERRORS,
-                    'desc' => $this->module->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!'),
+                    'desc' => $this->module->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!', self::FILE_NAME),
                     'is_bool' => true,
                     'values' => [
                         [
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => Translate::getAdminTranslation('Enabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Enabled', self::FILE_NAME),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => Translate::getAdminTranslation('Disabled', 'AdminCarriers'),
+                            'label' => $this->module->l('Disabled', self::FILE_NAME),
                         ],
                     ],
                 ],
                 [
                     'type' => 'select',
-                    'label' => $this->module->l('Log level'),
+                    'label' => $this->module->l('Log level', self::FILE_NAME),
                     'tab' => $advancedSettings,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]'),
+                        $this->module->l('Recommended level: Errors. Set to Everything to monitor incoming webhook requests. [1]View logs.[/1]', self::FILE_NAME),
                         [
                             $this->module->display($this->module->getPathUri(), 'views/templates/admin/view_logs.tpl')
                         ]
@@ -610,15 +611,15 @@ class FormBuilder
                         'query' => [
                             [
                                 'id' => Config::DEBUG_LOG_NONE,
-                                'name' => $this->module->l('Nothing'),
+                                'name' => $this->module->l('Nothing', self::FILE_NAME),
                             ],
                             [
                                 'id' => Config::DEBUG_LOG_ERRORS,
-                                'name' => $this->module->l('Errors'),
+                                'name' => $this->module->l('Errors', self::FILE_NAME),
                             ],
                             [
                                 'id' => Config::DEBUG_LOG_ALL,
-                                'name' => $this->module->l('Everything'),
+                                'name' => $this->module->l('Everything', self::FILE_NAME),
                             ],
                         ],
                         'id' => 'id',
@@ -633,11 +634,11 @@ class FormBuilder
     private function getSettingTabs($isApiKeyProvided)
     {
         $tabs = [
-            'general_settings' => $this->module->l('General settings'),
+            'general_settings' => $this->module->l('General settings', self::FILE_NAME),
         ];
 
         if ($isApiKeyProvided) {
-            $tabs['advanced_settings'] = $this->module->l('Advanced settings');
+            $tabs['advanced_settings'] = $this->module->l('Advanced settings', self::FILE_NAME);
         }
 
         return $tabs;
