@@ -34,7 +34,7 @@
 $(document).ready(function () {
     var $paymentSelector = $('select[name="payment_module_name"]');
     $paymentSelector.ready(function () {
-        $paymentSelector.closest('div.form-group').after(mollieEmailCheckBoxTpl);
+        $("#mollie-email-send-group").appendTo($paymentSelector.closest('div.form-group'));
         isMollie = isMolliePayment($('select[name="payment_module_name"]').val());
         toggleOrderStatus(isMollie);
     });
