@@ -87,12 +87,14 @@ class ConfigFieldService
 
             Config::MOLLIE_STATUS_OPEN => Configuration::get(Config::MOLLIE_STATUS_OPEN),
             Config::MOLLIE_STATUS_PAID => Configuration::get(Config::MOLLIE_STATUS_PAID),
+            Config::MOLLIE_STATUS_COMPLETED => Configuration::get(Config::MOLLIE_STATUS_COMPLETED),
             Config::MOLLIE_STATUS_CANCELED => Configuration::get(Config::MOLLIE_STATUS_CANCELED),
             Config::MOLLIE_STATUS_EXPIRED => Configuration::get(Config::MOLLIE_STATUS_EXPIRED),
             Config::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND),
             Config::MOLLIE_STATUS_REFUNDED => Configuration::get(Config::MOLLIE_STATUS_REFUNDED),
             Config::MOLLIE_MAIL_WHEN_OPEN => Configuration::get(Config::MOLLIE_MAIL_WHEN_OPEN),
             Config::MOLLIE_MAIL_WHEN_PAID => Configuration::get(Config::MOLLIE_MAIL_WHEN_PAID),
+            Config::MOLLIE_MAIL_WHEN_COMPLETED => Configuration::get(Config::MOLLIE_MAIL_WHEN_COMPLETED),
             Config::MOLLIE_MAIL_WHEN_CANCELED => Configuration::get(Config::MOLLIE_MAIL_WHEN_CANCELED),
             Config::MOLLIE_MAIL_WHEN_EXPIRED => Configuration::get(Config::MOLLIE_MAIL_WHEN_EXPIRED),
             Config::MOLLIE_MAIL_WHEN_REFUNDED => Configuration::get(Config::MOLLIE_MAIL_WHEN_REFUNDED),
@@ -103,6 +105,9 @@ class ConfigFieldService
             Config::MOLLIE_API => Configuration::get(Config::MOLLIE_API),
 
             Config::MOLLIE_AUTO_SHIP_MAIN => Configuration::get(Config::MOLLIE_AUTO_SHIP_MAIN),
+
+            Config::MOLLIE_STATUS_SHIPPING => Configuration::get(Config::MOLLIE_STATUS_SHIPPING),
+            Config::MOLLIE_MAIL_WHEN_SHIPPING => Configuration::get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
         ];
 
         if (Configuration::get(Config::MOLLIE_API_KEY)) {

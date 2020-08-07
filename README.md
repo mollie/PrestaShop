@@ -27,7 +27,7 @@ Download and install the Mollie PrestaShop payment module and start receiving on
 
 ## Maintained by [Invertus](https://www.invertus.eu/). ##
 
-## Compatible with PrestaShop 1.5 to 1.7 ##
+## Compatible with PrestaShop 1.6 to 1.7 ##
 
 ** Please note: ** FTP access to your web server could be required for the installation of this module.
 If you have no experience with this, then leave the installation of this module to your website developer or server administrator.
@@ -35,17 +35,17 @@ If you have no experience with this, then leave the installation of this module 
 ## Installation PrestaShop 1.7 ##
 
 * Download the latest version of the module (the '.zip' file) via the [Releases page](https://github.com/mollie/Prestashop/releases) which is compatible 
-with PrestaShop 1.5 to 1.7.
+with PrestaShop 1.6 to 1.7.
 * Go to the administration panel of your PrestaShop webshop
 * In your administration panel, select the 'Modules' tab and then choose 'upload a module' at the top right of your screen
 * Select 'select file' and then upload the '.zip' file which you downloaded earlier
 * After the module has been installed, choose 'configure'
 * Enter your _API-key_ and save the data.
 
-## Installation PrestaShop 1.5 and 1.6 ##
+## Installation PrestaShop 1.6 ##
 
 * Download the latest version of the module (the '.zip' file) via the [Releases-page](https://github.com/mollie/Prestashop/releases) which is compatible 
-with PrestaShop 1.5 to 1.7.
+with PrestaShop 1.6 to 1.7.
 * Go to the administration panel of your PrestaShop webshop
 * In your administration panel, select the 'Modules' tab and then choose 'upload a module' at the top right of your screen
 * Select 'select file' and then upload the '.zip' file which you downloaded earlier
@@ -55,7 +55,7 @@ with PrestaShop 1.5 to 1.7.
 ## or ##
 
 * Download the latest version of the module (the '.zip' file) via the [Releases-page](https://github.com/mollie/Prestashop/releases) which is compatible 
-with PrestaShop 1.5 to 1.7.
+with PrestaShop 1.6 to 1.7.
 * Extract the archive
 * Copy the `mollie` folder to the` modules` folder via FTP in your PrestaShop installation
 * Go to the tab 'Modules' in your administration panel and choose 'Payments and Gateways' in the 'Categories' list.

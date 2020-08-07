@@ -105,3 +105,7 @@ svg.mollie-svg {
     height: 1em;
     display: inline;
 }
+
+.payment-method .payment-check-link {
+  vertical-align: middle;
+}

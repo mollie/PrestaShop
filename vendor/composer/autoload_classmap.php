@@ -6,6 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AdminMollieAjaxController' => $baseDir . '/controllers/admin/AdminMollieAjaxController.php',
+    'AdminMollieModuleController' => $baseDir . '/controllers/admin/AdminMollieModuleController.php',
     'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_real.php',
     'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
     'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
@@ -13,6 +15,7 @@ return array(
     'MolOrderFee' => $baseDir . '/src/Entity/MolOrderFee.php',
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
     'MolPaymentMethodIssuer' => $baseDir . '/src/Entity/MolPaymentMethodIssuer.php',
+    'MolPendingOrderCart' => $baseDir . '/src/Entity/MolPendingOrderCart.php',
     'MollieAjaxModuleFrontController' => $baseDir . '/controllers/front/ajax.php',
     'MollieFailModuleFrontController' => $baseDir . '/controllers/front/fail.php',
     'MolliePayScreenModuleFrontController' => $baseDir . '/controllers/front/payScreen.php',

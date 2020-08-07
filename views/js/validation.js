@@ -133,10 +133,13 @@ $(document).ready(function () {
         var $paymentMethodForm = $(method).closest('.payment-method');
         var $countrySelectType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_APPLICABLE_COUNTRIES"]');
         var $countrySelect = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_CERTAIN_COUNTRIES"]');
-        if ($countrySelectType.val() === "0") {
+        var $excludedCountrySelect = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES"]');
+        if ($countrySelectType.val() === "1") {
             $countrySelect.closest('.form-group').show();
+            $excludedCountrySelect.closest('.form-group').hide();
         } else {
             $countrySelect.closest('.form-group').hide();
+            $excludedCountrySelect.closest('.form-group').show();
         }
     }
 

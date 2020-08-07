@@ -132,28 +132,6 @@ class ApiService
             return [];
         }
 
-        $dbMethods = @json_decode(Configuration::get(Config::METHODS_CONFIG), true);
-        if (!$dbMethods) {
-            $dbMethods = [];
-        }
-        $keys = ['id', 'name', 'enabled', 'image', 'issuers', 'position'];
-        foreach ($dbMethods as $index => $dbMethod) {
-            if (count(array_intersect($keys, array_keys($dbMethod))) !== count($keys)) {
-                unset($dbMethods[$index]);
-            }
-        }
-
-        if (!is_array($dbMethods)) {
-            $dbMethods = [];
-            $configMethods = [];
-        } else {
-            $configMethods = [];
-            foreach ($dbMethods as $dbMethod) {
-                $configMethods[$dbMethod['id']] = $dbMethod;
-            }
-        }
-
-        $methodsFromDb = array_keys($configMethods);
         $methods = [];
         $deferredMethods = [];
         $isSSLEnabled = Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
@@ -163,21 +141,11 @@ class ApiService
                 $notAvailable[] = $apiMethod->id;
                 $tipEnableSSL = true;
             }
-            if (!in_array($apiMethod->id, $methodsFromDb) || !isset($configMethods[$apiMethod->id]['position'])) {
+            if (!isset($configMethods[$apiMethod->id]['position'])) {
                 $deferredMethods[] = [
                     'id' => $apiMethod->id,
                     'name' => $apiMethod->description,
                     'enabled' => true,
-                    'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image' => (array)$apiMethod->image,
-                    'issuers' => $apiMethod->issuers,
-                    'tipEnableSSL' => $tipEnableSSL
-                ];
-            } else {
-                $methods[$configMethods[$apiMethod->id]['position']] = [
-                    'id' => $apiMethod->id,
-                    'name' => $apiMethod->description,
-                    'enabled' => $configMethods[$apiMethod->id]['enabled'],
                     'available' => !in_array($apiMethod->id, $notAvailable),
                     'image' => (array)$apiMethod->image,
                     'issuers' => $apiMethod->issuers,
@@ -190,7 +158,6 @@ class ApiService
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
-                if (!in_array($id, array_column($dbMethods, 'id'))) {
                     $deferredMethods[] = [
                         'id' => $id,
                         'name' => $name,
@@ -203,22 +170,6 @@ class ApiService
                         ],
                         'issuers' => null,
                     ];
-                } else {
-                    $cc = $dbMethods[array_search('creditcard', array_column($dbMethods, 'id'))];
-                    $thisMethod = $dbMethods[array_search($id, array_column($dbMethods, 'id'))];
-                    $methods[$configMethods[$id]['position']] = [
-                        'id' => $id,
-                        'name' => $name,
-                        'enabled' => !empty($thisMethod['enabled']) && !empty($cc['enabled']),
-                        'available' => !in_array($id, $notAvailable),
-                        'image' => [
-                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
-                        ],
-                        'issuers' => null,
-                    ];
-                }
             }
         }
         ksort($methods);
@@ -236,6 +187,7 @@ class ApiService
 
         $methods = $this->getMethodsObjForConfig($methods);
         $methods = $this->getMethodsCountriesForConfig($methods);
+        $methods = $this->getExcludedCountriesForConfig($methods);
 
         return $methods;
     }
@@ -295,6 +247,15 @@ class ApiService
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['countries'] = $this->countryRepository->getMethodCountryIds($key);
+        }
+
+        return $methods;
+    }
+
+    private function getExcludedCountriesForConfig(&$methods)
+    {
+        foreach ($methods as $key => $method) {
+            $methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($key);
         }
 
         return $methods;

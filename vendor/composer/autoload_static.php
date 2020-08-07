@@ -153,6 +153,8 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
     );
 
     public static $classMap = array (
+        'AdminMollieAjaxController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieAjaxController.php',
+        'AdminMollieModuleController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieModuleController.php',
         'ComposerAutoloaderInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
         'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_static.php',
@@ -160,6 +162,7 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
         'MolPaymentMethod' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethod.php',
         'MolPaymentMethodIssuer' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethodIssuer.php',
+        'MolPendingOrderCart' => __DIR__ . '/../..' . '/src/Entity/MolPendingOrderCart.php',
         'MollieAjaxModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/ajax.php',
         'MollieFailModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/fail.php',
         'MolliePayScreenModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/payScreen.php',

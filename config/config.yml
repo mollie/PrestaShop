@@ -3,6 +3,9 @@ imports:
   - { resource: service.yml }
   - { resource: repository.yml }
   - { resource: context.yml }
+  - { resource: factory.yml }
+  - { resource: presenter.yml }
+  - { resource: validator.yml }
 
 services:
   mollie:
@@ -14,6 +17,7 @@ services:
   Mollie\Install\Installer:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\imageService'
 
   Mollie\Install\Uninstall:
     arguments:
