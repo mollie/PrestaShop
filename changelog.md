@@ -1,6 +1,8 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.0.8 ##
++ Fixed issue when order confirmation email wasn't when order status was changed to backorder paid
 
 ## Changes in release 2.0.0 ##
 + Compatibility with Prestashop 1.7+
