@@ -97,6 +97,16 @@ $sql[] = '
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
 ';
 
+$sql[] = '
+    CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_customer` (
+				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`customer_id` VARCHAR(64) NOT NULL,
+				`name` VARCHAR(64) NOT NULL,
+				`email` VARCHAR(64) NOT NULL,
+				`created_at` VARCHAR(64) NOT NULL
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+';
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;

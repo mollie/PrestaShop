@@ -159,6 +159,7 @@ class ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
         'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolCarrierInformation' => __DIR__ . '/../..' . '/src/Entity/MolCarrierInformation.php',
+        'MolCustomer' => __DIR__ . '/../..' . '/src/Entity/MolCustomer.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
         'MolPaymentMethod' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethod.php',
         'MolPaymentMethodIssuer' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethodIssuer.php',

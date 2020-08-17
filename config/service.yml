@@ -69,6 +69,11 @@ services:
     arguments:
       - '@mollie'
 
+  Mollie\Service\CustomerService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\MolCustomerRepository'
+
   Mollie\Service\MollieOrderInfoService:
     arguments:
       - '@mollie'
