@@ -162,7 +162,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
-                                    class="fixed-width-xl chosen" multiple="multiple">
+                                    class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                 {foreach $input.countries as $country}
                                     <option value="{$country.id}"
                                             {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
@@ -176,7 +176,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
-                                    class="fixed-width-xl chosen" multiple="multiple">
+                                    class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                 {foreach $input.countries as $excludedCountry}
                                     <option value="{$excludedCountry.id}"
                                             {if {$excludedCountry.id|in_array:$paymentMethod.excludedCountries}}selected{/if}>{$excludedCountry.name}</option>

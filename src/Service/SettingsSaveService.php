@@ -215,7 +215,7 @@ class SettingsSaveService
 
             foreach (array_keys(Config::getStatuses()) as $name) {
                 $name = Tools::strtoupper($name);
-                if (!Tools::getValue("MOLLIE_STATUS_{$name}")) {
+                if (Tools::getValue("MOLLIE_STATUS_{$name}") === false) {
                     continue;
                 }
                 $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
