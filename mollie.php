@@ -469,7 +469,6 @@ class Mollie extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        return;
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
