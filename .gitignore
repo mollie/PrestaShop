@@ -9,3 +9,4 @@ build/
 /translations/
 var/
 config.xml
+mails/

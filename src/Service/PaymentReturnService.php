@@ -111,10 +111,11 @@ class PaymentReturnService
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
     }
 
-    public function handlePaidStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
+    public function handlePaidStatus(Order $order, $transaction, $paymentMethod, $stockManagement)
     {
         $cart = new Cart($order->id_cart);
         $status = static::DONE;
+        $orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
         $orderDetails = $order->getOrderDetailList();
         /** @var OrderDetail $detail */
         foreach ($orderDetails as $detail) {
@@ -127,7 +128,6 @@ class PaymentReturnService
                 break;
             }
         }
-        $orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);

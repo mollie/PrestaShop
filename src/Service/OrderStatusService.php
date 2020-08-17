@@ -51,6 +51,16 @@ use Validate;
 class OrderStatusService
 {
     /**
+     * @var MailService
+     */
+    private $mailService;
+
+    public function __construct(MailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+
+    /**
      * @param int $order
      * @param string|int $statusId
      * @param null $useExistingPayment
@@ -98,9 +108,7 @@ class OrderStatusService
         if ((int)$order->current_state === (int)$statusId) {
             return;
         }
-        $history = array_map(function ($item) {
-            return (int)$item['id_order_state'];
-        }, $order->getHistory(Context::getContext()->language->id));
+
         if (!Validate::isLoadedObject($order)
             || !$status
         ) {
@@ -124,7 +132,11 @@ class OrderStatusService
             }
         }
 
-        $status = OrderStatusUtility::transformPaymentStatusToPaid($status,  Config::STATUS_PAID_ON_BACKORDER);
+        $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
+
+        if ($this->checkIfOrderConfNeedsToBeSend($statusId)) {
+            $this->mailService->sendOrderConfMail($order, $statusId);
+        }
 
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);
@@ -133,4 +145,9 @@ class OrderStatusService
         }
     }
 
+    private function checkIfOrderConfNeedsToBeSend($statusId)
+    {
+        return ((int)$statusId === (int)Configuration::get(Config::MOLLIE_STATUS_PAID) &&
+            (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID);
+    }
 }

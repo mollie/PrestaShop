@@ -153,7 +153,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
         $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
-        $order = Order::getByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cart->id);
+        $order = new Order($orderId);
         if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
             try {
                 Db::getInstance()->insert(
@@ -175,7 +176,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         // Go to payment url
-        Tools::redirect($apiPayment->getCheckoutUrl());
+        if($apiPayment->getCheckoutUrl() !== null){
+            Tools::redirect($apiPayment->getCheckoutUrl());
+        } else {
+            Tools::redirect($apiPayment->redirectUrl);
+        }
     }
 
     /**

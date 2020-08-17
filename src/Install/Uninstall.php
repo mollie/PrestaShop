@@ -38,6 +38,8 @@ namespace Mollie\Install;
 use Configuration;
 use Mollie;
 use Mollie\Config\Config;
+use OrderState;
+use Validate;
 
 class Uninstall
 {
@@ -58,6 +60,8 @@ class Uninstall
 
     public function uninstall()
     {
+        $this->deleteMollieStatuses();
+
         $this->deleteConfig();
 
         include(dirname(__FILE__) . '/../../sql/uninstall.php');
@@ -106,5 +110,22 @@ class Uninstall
         Configuration::deleteByName(Config::MOLLIE_METHODS_LAST_CHECK);
         Configuration::deleteByName(Config::METHODS_CONFIG);
         Configuration::deleteByName(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED);
+        Configuration::deleteByName(Config::MOLLIE_STATUS_COMPLETED);
+        Configuration::deleteByName(Config::MOLLIE_STATUS_ORDER_COMPLETED);
+        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_COMPLETED);
+        Configuration::deleteByName(Config::STATUS_MOLLIE_AWAITING);
+    }
+
+    private function deleteMollieStatuses()
+    {
+        foreach (Config::getMollieOrderStatuses() as $mollieStatus) {
+            $statusId = Configuration::get($mollieStatus);
+            $orderState = new OrderState($statusId);
+            if (!Validate::isLoadedObject($orderState)) {
+                return;
+            }
+            $orderState->deleted = 1;
+            $orderState->update();
+        }
     }
 }

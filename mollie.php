@@ -477,6 +477,13 @@ class Mollie extends PaymentModule
             ]);
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
+
+            if (Tools::isSubmit('addorder')) {
+                Media::addJsDef([
+                    'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
+                ]);
+                $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
+            }
         }
     }
 
@@ -494,6 +501,9 @@ class Mollie extends PaymentModule
                 'mollieCheckMethods' => time() > ((int)Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
             ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
+            if (Tools::isSubmit('addorder')) {
+                $html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
+            }
         }
 
         return $html;
@@ -1227,16 +1237,18 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $order = Order::getByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cart->id);
+        $order = new Order($orderId);
         if ($order === null || $order->module !== $this->name) {
             return true;
         }
 
         if ($params['template'] === 'order_conf') {
-            if (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-                return true;
-            }
-            return false;
+            /** @var \Mollie\Validator\OrderConfMailValidator $orderConfValidator */
+            $orderConfValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
+            $sendOrderConfStatus = Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+
+            return $orderConfValidator->validateOrderConfMailSend($sendOrderConfStatus, $order->current_state);
         }
 
         if ($params['template'] === 'order_conf' ||
@@ -1257,7 +1269,8 @@ class Mollie extends PaymentModule
             $params['template'] === 'outofstock' ||
             $params['template'] === 'bankwire' ||
             $params['template'] === 'refund') {
-            $order = Order::getByCartId($cart->id);
+            $orderId = Order::getOrderByCartId($cart->id);
+            $order = new Order($orderId);
             if (!$order) {
                 return true;
             }
@@ -1384,6 +1397,13 @@ class Mollie extends PaymentModule
                 $orderId,
                 $orderReference
             );
+
+            $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
+            if ($sendMolliePaymentMail === 'on') {
+                /** @var \Mollie\Service\MolliePaymentMailService $molliePaymentMailService */
+                $molliePaymentMailService = $this->getContainer(\Mollie\Service\MolliePaymentMailService::class);
+                $molliePaymentMailService->sendSecondChanceMail($orderId);
+            }
         }
     }
 
