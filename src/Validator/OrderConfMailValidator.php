@@ -45,7 +45,8 @@ class OrderConfMailValidator
             case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
                 return true;
             case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_PAID:
-                return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$orderState;
+                return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$orderState ||
+                    (int)Configuration::get(\Mollie\Config\Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int)$orderState;
             case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
                 return false;
         }

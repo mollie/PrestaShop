@@ -208,6 +208,8 @@ class Config
     const APPLEPAY = 'applepay';
     const MOLLIE_COUNTRIES = 'country_';
 
+    const STATUS_PS_OS_OUTOFSTOCK_PAID = 'PS_OS_OUTOFSTOCK_PAID';
+
     const FEE_NO_FEE = 0;
     const FEE_FIXED_FEE = 1;
     const FEE_PERCENTAGE= 2;
