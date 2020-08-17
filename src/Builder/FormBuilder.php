@@ -162,8 +162,16 @@ class FormBuilder
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
+
+        $input = [
+            [
+                'type' => 'mollie-support',
+                'tab' => $generalSettings,
+                'name' => '',
+            ]
+        ];
         if ($isApiKeyProvided) {
-            $input = [
+            $input[] =
                 [
                     'type' => 'text',
                     'label' => $this->module->l('API Key', self::FILE_NAME),
@@ -175,44 +183,41 @@ class FormBuilder
                     'name' => Config::MOLLIE_API_KEY,
                     'required' => true,
                     'class' => 'fixed-width-xxl',
-                ]
-            ];
+                ];
         } else {
-            $input = [
-                [
-                    'type' => 'mollie-switch',
-                    'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
-                    'name' => Config::MOLLIE_ACCOUNT_SWITCH,
-                    'tab' => $generalSettings,
-                    'is_bool' => true,
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => true,
-                            'label' => $this->module->l('Enabled', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => false,
-                            'label' => $this->module->l('Disabled', self::FILE_NAME),
-                        ],
+            $input[] = [
+                'type' => 'mollie-switch',
+                'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
+                'name' => Config::MOLLIE_ACCOUNT_SWITCH,
+                'tab' => $generalSettings,
+                'is_bool' => true,
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => true,
+                        'label' => $this->module->l('Enabled', self::FILE_NAME),
                     ],
-                    'desc' => $this->module->display(
-                        $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
-                    ),
+                    [
+                        'id' => 'active_off',
+                        'value' => false,
+                        'label' => $this->module->l('Disabled', self::FILE_NAME),
+                    ],
                 ],
-                [
-                    'type' => 'text',
-                    'label' => $this->module->l('API Key', self::FILE_NAME),
-                    'tab' => $generalSettings,
-                    'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
-                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                ]
+                'desc' => $this->module->display(
+                    $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
+                ),
+            ];
+            $input[] = [
+                'type' => 'text',
+                'label' => $this->module->l('API Key', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_API_KEY,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
             ];
         }
         if ($isApiKeyProvided) {
@@ -314,7 +319,7 @@ class FormBuilder
             'label' => $this->module->l('Push Locale to Payment Screen', self::FILE_NAME),
             'tab' => $advancedSettings,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.',self::FILE_NAME),
+                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.', self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
             'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
