@@ -84,5 +84,4 @@ class Amount
     {
         $this->value = $value;
     }
-
 }

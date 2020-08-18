@@ -62,10 +62,12 @@ class OrderData implements JsonSerializable
      * @var string
      */
     private $method;
+
     /**
      * @var array
      */
     private $metadata;
+
     /**
      * @var string
      */
@@ -80,10 +82,12 @@ class OrderData implements JsonSerializable
      * @var string
      */
     private $customerId;
+
     /**
      * @var Address
      */
     private $billingAddress;
+
     /**
      * @var Address
      */

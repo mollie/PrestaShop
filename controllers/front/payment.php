@@ -254,6 +254,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         } catch (Exception $e) {
             throw new ApiException($e->getMessage());
         }
+
         return $payment;
     }
 

@@ -1,4 +1,36 @@
 <?php
+/**
+ * Copyright (c) 2012-2020, Mollie B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
+ */
 
 namespace Mollie\DTO;
 
@@ -51,21 +83,24 @@ class Line implements JsonSerializable
      * @var Amount
      */
     private $unitPrice;
+
     /**
      * @var Amount
      */
     private $totalPrice;
+
     /**
      * @var Amount
      */
     private $discountAmount;
+
     /**
      * @var Amount
      */
     private $vatAmount;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
@@ -73,7 +108,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $type
+     * @param string $type
      */
     public function setType($type)
     {
@@ -81,7 +116,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSku()
     {
@@ -89,7 +124,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $sku
+     * @param string $sku
      */
     public function setSku($sku)
     {
@@ -97,7 +132,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
@@ -105,7 +140,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
     public function setName($name)
     {
@@ -113,7 +148,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getProductUrl()
     {
@@ -121,7 +156,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $productUrl
+     * @param string $productUrl
      */
     public function setProductUrl($productUrl)
     {
@@ -129,7 +164,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getImageUrl()
     {
@@ -137,7 +172,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $imageUrl
+     * @param string $imageUrl
      */
     public function setImageUrl($imageUrl)
     {
@@ -145,7 +180,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getMetaData()
     {
@@ -153,7 +188,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $metaData
+     * @param array $metaData
      */
     public function setMetaData($metaData)
     {
@@ -161,7 +196,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getQuantity()
     {
@@ -169,7 +204,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $quantity
+     * @param int $quantity
      */
     public function setQuantity($quantity)
     {
@@ -177,7 +212,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVatRate()
     {
@@ -185,7 +220,7 @@ class Line implements JsonSerializable
     }
 
     /**
-     * @param mixed $vatRate
+     * @param string $vatRate
      */
     public function setVatRate($vatRate)
     {
@@ -287,4 +322,5 @@ class Line implements JsonSerializable
             ]
         ];
     }
+
 }
