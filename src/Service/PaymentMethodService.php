@@ -79,24 +79,29 @@ class PaymentMethodService
      */
     private $cartLinesService;
     /**
-     * @var aymentsTranslationService
+     * @var PaymentsTranslationService
      */
     private $paymentsTranslationService;
+    /**
+     * @var CustomerService
+     */
+    private $customerService;
 
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
-        MethodCountryRepository  $countryRepository,
+        MethodCountryRepository $countryRepository,
         CartLinesService $cartLinesService,
-        PaymentsTranslationService $paymentsTranslationService
-    )
-    {
+        PaymentsTranslationService $paymentsTranslationService,
+        CustomerService $customerService
+    ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
+        $this->customerService = $customerService;
     }
 
     public function savePaymentMethod($method)
@@ -310,9 +315,15 @@ class PaymentMethodService
                 $paymentData->setLocale(LocaleUtility::getWebshopLocale());
             }
 
+            $isCreditCardPayment = $molPaymentMethod->id_method === PaymentMethod::CREDITCARD;
+            if ($isCreditCardPayment && $this->isCustomerSaveEnabled()) {
+                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
+                $paymentData->setCustomerId($apiCustomer->id);
+            }
+
             return $paymentData;
         } elseif ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API) {
-            $orderData = new OrderData($amountObj, $description, $redirectUrl, $webhookUrl);
+            $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int)$cart->id_address_invoice);
@@ -324,6 +335,9 @@ class PaymentMethodService
             }
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
+            $orderData->setEmail($customer->email);
+            $orderData->setMethod($molPaymentMethod->id_method);
+            $orderData->setMetadata($metaData);
 
             $orderData->setLines($this->cartLinesService->getCartLines($amount, $paymentFee, $cart));
             $payment = [];
@@ -341,6 +355,13 @@ class PaymentMethodService
             if ($issuer) {
                 $payment['issuer'] = $issuer;
             }
+
+            $isCreditCardPayment = $molPaymentMethod->id_method === PaymentMethod::CREDITCARD;
+            if ($isCreditCardPayment && $this->isCustomerSaveEnabled()) {
+                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
+                $payment['customerId'] = $apiCustomer->id;
+            }
+
             $orderData->setPayment($payment);
 
             return $orderData;
@@ -362,5 +383,13 @@ class PaymentMethodService
                 return $locale;
             }
         }
+    }
+
+    private function isCustomerSaveEnabled()
+    {
+        $isComponentsEnabled = Configuration::get(Config::MOLLIE_IFRAME);
+        $isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+
+        return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
     }
 }

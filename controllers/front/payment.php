@@ -117,8 +117,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
         /** @var PaymentMethodService $paymentMethodService */
         $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
-        /** @var CustomerService $customerService */
-        $customerService = $this->module->getContainer(CustomerService::class);
 
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
@@ -139,8 +137,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('cardToken')
         );
         try {
-            $apiCustomer = $customerService->processCustomerCreation($cart, $method);
-            $paymentData->setCustomerId($apiCustomer->id);
             $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');

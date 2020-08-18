@@ -36,6 +36,7 @@
 NameSpace Mollie\DTO;
 
 use Address;
+use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
@@ -46,11 +47,6 @@ class OrderData implements JsonSerializable
      * @var Amount
      */
     private $amount;
-
-    /**
-     * @var
-     */
-    private $description;
 
     /**
      * @var
@@ -74,11 +70,6 @@ class OrderData implements JsonSerializable
      * @var string
      */
     private $locale;
-
-    /**
-     * @var string
-     */
-    private $issuer;
 
     /**
      * @var string
@@ -120,12 +111,10 @@ class OrderData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-        $description,
         $redirectUrl,
         $webhookUrl
     ) {
         $this->amount = $amount;
-        $this->description = $description;
         $this->redirectUrl = $redirectUrl;
         $this->webhookUrl = $webhookUrl;
     }
@@ -144,22 +133,6 @@ class OrderData implements JsonSerializable
     public function setAmount($amount)
     {
         $this->amount = $amount;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
     }
 
     /**
@@ -240,22 +213,6 @@ class OrderData implements JsonSerializable
     public function setLocale($locale)
     {
         $this->locale = $locale;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIssuer()
-    {
-        return $this->issuer;
-    }
-
-    /**
-     * @param mixed $issuer
-     */
-    public function setIssuer($issuer)
-    {
-        $this->issuer = $issuer;
     }
 
     /**
@@ -402,7 +359,7 @@ class OrderData implements JsonSerializable
                 "streetAndNumber" => $this->getBillingAddress()->address1,
                 "city" => $this->getBillingAddress()->city,
                 "postalCode" => $this->getBillingAddress()->postcode,
-                "country" => $this->getBillingAddress()->country,
+                "country" => (string)Country::getIsoById($this->getBillingAddress()->id_country),
                 "givenName" => $this->getBillingAddress()->firstname,
                 "familyName" => $this->getBillingAddress()->lastname,
                 "email" => $this->getEmail(),
@@ -413,21 +370,17 @@ class OrderData implements JsonSerializable
                 "streetAndNumber" => $this->getShippingAddress()->address1,
                 "city" => $this->getShippingAddress()->city,
                 "postalCode" => $this->getShippingAddress()->postcode,
-                "country" => $this->getShippingAddress()->country,
+                "country" => (string)Country::getIsoById($this->getShippingAddress()->id_country),
                 "givenName" => $this->getShippingAddress()->firstname,
                 "familyName" => $this->getShippingAddress()->lastname,
                 "email" => $this->getEmail(),
                 "phone" => $this->getShippingAddress()->phone,
             ],
-            'description' => $this->getDescription(),
             'redirectUrl' => $this->getRedirectUrl(),
             'webhookUrl' => $this->getWebhookUrl(),
             'method' => $this->getMethod(),
             'metadata' => $this->getMetadata(),
             'locale' => $this->getLocale(),
-            'issuer' => $this->getIssuer(),
-            'cardToken' => $this->getCardToken(),
-            'customerId' => $this->getCustomerId(),
             'orderNumber' => $this->getOrderNumber(),
             'lines' => $lines,
             'payment' => $this->getPayment()
