@@ -48,6 +48,7 @@ class CustomerService
      * @var Mollie
      */
     private $mollie;
+
     /**
      * @var MolCustomerRepository
      */

@@ -35,6 +35,8 @@
 
 NameSpace Mollie\DTO;
 
+use Address;
+use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
@@ -65,14 +67,17 @@ class PaymentData implements JsonSerializable
      * @var string
      */
     private $method;
+
     /**
      * @var array
      */
     private $metadata;
+
     /**
      * @var string
      */
     private $locale;
+
 
     /**
      * @var string
@@ -88,6 +93,16 @@ class PaymentData implements JsonSerializable
      * @var string
      */
     private $customerId;
+
+    /**
+     * @var Address
+     */
+    private $billingAddress;
+
+    /**
+     * @var Address
+     */
+    private $shippingAddress;
 
     public function __construct(
         Amount $amount,
@@ -261,12 +276,56 @@ class PaymentData implements JsonSerializable
         $this->customerId = $customerId;
     }
 
+    /**
+     * @return Address
+     */
+    public function getBillingAddress()
+    {
+        return $this->billingAddress;
+    }
+
+    /**
+     * @param Address $billingAddress
+     */
+    public function setBillingAddress($billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param Address $shippingAddress
+     */
+    public function setShippingAddress($shippingAddress)
+    {
+        $this->shippingAddress = $shippingAddress;
+    }
+
     public function jsonSerialize()
     {
         return [
             'amount' => [
                 'currency' => $this->getAmount()->getCurrency(),
                 'value' => (string)$this->getAmount()->getValue(),
+            ],
+            'billingAddress' => [
+                "streetAndNumber" => $this->getBillingAddress()->address1,
+                "city" => $this->getBillingAddress()->city,
+                "postalCode" => $this->getBillingAddress()->postcode,
+                "country" => (string)Country::getIsoById($this->getBillingAddress()->id_country),
+            ],
+            'shippingAddress' => [
+                "streetAndNumber" => $this->getShippingAddress()->address1,
+                "city" => $this->getShippingAddress()->city,
+                "postalCode" => $this->getShippingAddress()->postcode,
+                "country" => (string)Country::getIsoById($this->getShippingAddress()->id_country),
             ],
             'description' => $this->getDescription(),
             'redirectUrl' => $this->getRedirectUrl(),

@@ -66,27 +66,31 @@ class PaymentMethodService
      * @var Mollie
      */
     private $module;
+
     /**
      * @var PaymentMethodRepository
      */
     private $methodRepository;
+
     /**
      * @var MethodCountryRepository
      */
     private $countryRepository;
+
     /**
      * @var CartLinesService
      */
     private $cartLinesService;
+
     /**
      * @var PaymentsTranslationService
      */
     private $paymentsTranslationService;
+
     /**
      * @var CustomerService
      */
     private $customerService;
-
 
     public function __construct(
         Mollie $module,
@@ -307,6 +311,15 @@ class PaymentMethodService
             $paymentData->setDescription($description);
             $paymentData->setIssuer($issuer);
 
+            if (isset($cart->id_address_invoice)) {
+                $billing = new Address((int)$cart->id_address_invoice);
+                $paymentData->setBillingAddress($billing);
+            }
+            if (isset($cart->id_address_delivery)) {
+                $shipping = new Address((int)$cart->id_address_delivery);
+                $paymentData->setShippingAddress($shipping);
+            }
+
             if ($cardToken) {
                 $paymentData->setCardToken($cardToken);
             }
@@ -322,7 +335,9 @@ class PaymentMethodService
             }
 
             return $paymentData;
-        } elseif ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API) {
+        }
+
+        if ($molPaymentMethod->method === Mollie\Config\Config::MOLLIE_ORDERS_API) {
             $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {

@@ -7,14 +7,46 @@ use Mollie\DTO\Object\Amount;
 
 class Line implements JsonSerializable
 {
+    /**
+     * @var string
+     */
     private $type;
+
+    /**
+     * @var string
+     */
     private $sku;
+
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $productUrl;
+
+    /**
+     * @var string
+     */
     private $imageUrl;
+
+    /**
+     * @var array
+     */
     private $metaData;
+
+    /**
+     * @var int
+     */
     private $quantity;
+
+    /**
+     * @var string
+     */
     private $vatRate;
+
     /**
      * @var Amount
      */
