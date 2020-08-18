@@ -67,7 +67,7 @@ class PaymentMethodRepository
     }
 
     /**
-     * @param $paymentMethodId
+     * @param $paymentMethodId string
      * @return false|string|null
      */
     public function getPaymentMethodIdByMethodId($paymentMethodId)
@@ -76,7 +76,6 @@ class PaymentMethodRepository
 
         return Db::getInstance()->getValue($sql);
     }
-
 
     /**
      * @param string $column
