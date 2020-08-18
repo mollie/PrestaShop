@@ -118,11 +118,11 @@ class ApiService
      *
      * @public ✓ This method is part of the public API
      */
-    public function getMethodsForConfig($api, $path, $active = false)
+    public function getMethodsForConfig(MollieApiClient $api, $path, $active = false)
     {
         $notAvailable = [];
         try {
-            $apiMethods = $api->methods->all(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
+            $apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
             return [];
