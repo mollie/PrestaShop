@@ -53,7 +53,7 @@
                     </td>
                     <td>
                         <div class="icon3"></div>
-                        <a href="https://www.mollie.com/en/contact" target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
+                        <a href="https://www.invertus.eu/contacts/" target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
                     </td>
                 </tr>
                 </tbody>
@@ -129,6 +129,9 @@
                                 {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
+                            <p class="help-block">
+                                {$input.methodDescription}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group payment-api-description">

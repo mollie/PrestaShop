@@ -333,6 +333,12 @@ class FormBuilder
                     PaymentMethod::KLARNA_SLICE_IT,
                 ],
                 'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+                'methodDescription' => TagsUtility::ppTags(
+                    $this->module->l('Click [1]here[/1] to read more about the differences between the Payment and Orders API.', self::FILE_NAME),
+                    [
+                        $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl')
+                    ]
+                )
             ];
         }
 
