@@ -37,8 +37,8 @@
         <div class="mm-block-mollie">
             <a class="helpbutton" href="https://www.mollie.com/dashboard/settings/profiles" target="_blank"></a>
             <p>
-                <strong>{l s='Developed by Invertus.' mod='mollie'}</strong>
-                {l s='A Invertus only eCommerce Agency located in the Lithuania.' mod='mollie'}
+                <strong>{l s='Developed by Invertus' mod='mollie'}</strong>
+                {l s=' - the most technically advanced agency in the PrestaShop ecosystem.' mod='mollie'}
             </p>
             <table>
                 <tbody>
