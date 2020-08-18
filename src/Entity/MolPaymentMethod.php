@@ -106,6 +106,11 @@ class MolPaymentMethod extends ObjectModel
     public $images_json;
 
     /**
+     * @var bool
+     */
+    public $live_environment;
+
+    /**
      * @var array
      */
     public static $definition = array(
@@ -126,6 +131,7 @@ class MolPaymentMethod extends ObjectModel
             'surcharge_percentage' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'surcharge_limit' => array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
             'images_json' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
+            'live_environment' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
         ),
     );
 }

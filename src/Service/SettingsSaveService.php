@@ -105,6 +105,7 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
+        $oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $environment = Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
@@ -124,7 +125,7 @@ class SettingsSaveService
             );
         }
 
-        if ($this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
+        if ($oldEnvironment === $environment && $this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);

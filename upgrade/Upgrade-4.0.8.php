@@ -56,6 +56,10 @@ function upgrade_module_4_0_8($module)
 				`created_at` VARCHAR(64) NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
 ';
+    $sql .= '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+        ADD COLUMN live_environment TINYINT(1) DEFAULT 1;
+     ';
 
     if (Db::getInstance()->execute($sql) == false) {
         return false;

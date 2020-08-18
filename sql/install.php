@@ -60,7 +60,8 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
 				`surcharge_fixed_amount` decimal(20,6),
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),
-				`images_json` TEXT
+				`images_json` TEXT,
+				`live_environment` TINYINT(1)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_issuer` (

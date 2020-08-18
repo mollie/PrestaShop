@@ -927,7 +927,6 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\CountryService $countryService */
         $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
         try {
-
             $methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
             return [
