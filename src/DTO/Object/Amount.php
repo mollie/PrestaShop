@@ -30,11 +30,58 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Exception;
+NameSpace Mollie\DTO\Object;
 
-class MollieException extends \Exception
+class Amount
 {
-    const CUSTOMER_EXCEPTION = 1;
+    /**
+     * @var string
+     */
+    private $currency;
+
+    /**
+     * @var float
+     */
+    private $value;
+
+    public function __construct($currency, $value)
+    {
+        $this->currency = $currency;
+        $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param float $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }

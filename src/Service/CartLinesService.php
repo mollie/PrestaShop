@@ -39,7 +39,10 @@ use Cart;
 use Configuration;
 use Currency;
 use Mollie;
+use Mollie\DTO\Line;
+use Mollie\DTO\Object\Amount;
 use Mollie\Utility\CartPriceUtility;
+use Mollie\Utility\TextFormatUtility;
 use Tools;
 
 class CartLinesService
@@ -241,24 +244,39 @@ class CartLinesService
 
         // Convert floats to strings for the Mollie API and add additional info
         foreach ($newItems as $index => $item) {
-            $newItems[$index] = [
-                'name' => (string)$item['name'],
-                'quantity' => (int)$item['quantity'],
-                'sku' => (string)(isset($item['sku']) ? $item['sku'] : ''),
-                'unitPrice' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['unitPrice'], $apiRoundingPrecision, '.', ''),
-                ],
-                'totalAmount' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['totalAmount'], $apiRoundingPrecision, '.', ''),
-                ],
-                'vatAmount' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['vatAmount'], $apiRoundingPrecision, '.', ''),
-                ],
-                'vatRate' => number_format($item['vatRate'], $apiRoundingPrecision, '.', ''),
-            ];
+            $line = new Line();
+            $line->setName($item['name']);
+            $line->setQuantity((int)$item['quantity']);
+            $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+
+            $currency = Tools::strtoupper($oCurrency->iso_code);
+
+            if (isset($item['discount'])) {
+                $line->setDiscountAmount(new Amount(
+                        $currency,
+                        TextFormatUtility::formatNumber($item['discount'], $apiRoundingPrecision, '.', '')
+                    )
+                );
+            }
+
+            $line->setUnitPrice(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['unitPrice'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setTotalPrice(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['totalAmount'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setVatAmount(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
+
+            $newItems[$index] = $line;
         }
 
         return $newItems;

@@ -41,6 +41,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\CustomerService;
 use Mollie\Service\MemorizeCartService;
 use Mollie\Service\OrderCartAssociationService;
 use Mollie\Service\PaymentMethodService;
@@ -136,7 +137,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('cardToken')
         );
         try {
-            $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
+            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
@@ -243,6 +244,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         } catch (Exception $e) {
             throw new ApiException($e->getMessage());
         }
+        return $payment;
+    }
+
+    protected function createCustomer($data, $selectedApi)
+    {
+        try {
+            $payment = $this->module->api->customers->create($data, array('embed' => 'payments'));
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+
         return $payment;
     }
 

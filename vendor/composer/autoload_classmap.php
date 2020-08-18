@@ -12,6 +12,7 @@ return array(
     'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
     'Composer\\Autoload\\ComposerStaticInit34e52f1f61572eebb98aa73f5240c82d' => $vendorDir . '/composer/autoload_static.php',
     'MolCarrierInformation' => $baseDir . '/src/Entity/MolCarrierInformation.php',
+    'MolCustomer' => $baseDir . '/src/Entity/MolCustomer.php',
     'MolOrderFee' => $baseDir . '/src/Entity/MolOrderFee.php',
     'MolPaymentMethod' => $baseDir . '/src/Entity/MolPaymentMethod.php',
     'MolPaymentMethodIssuer' => $baseDir . '/src/Entity/MolPaymentMethodIssuer.php',

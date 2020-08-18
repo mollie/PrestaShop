@@ -32,9 +32,33 @@
  * @link       https://www.mollie.nl
  */
 
-namespace Mollie\Exception;
+use Mollie\Config\Config;
 
-class MollieException extends \Exception
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * @param Mollie $module
+ * @return bool
+ */
+
+function upgrade_module_4_0_8($module)
 {
-    const CUSTOMER_EXCEPTION = 1;
+    Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
+
+    $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_customer` (
+				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`customer_id` VARCHAR(64) NOT NULL,
+				`name` VARCHAR(64) NOT NULL,
+				`email` VARCHAR(64) NOT NULL,
+				`created_at` VARCHAR(64) NOT NULL
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
+';
+
+    if (Db::getInstance()->execute($sql) == false) {
+        return false;
+    }
+
+    return true;
 }

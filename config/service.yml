@@ -8,6 +8,7 @@ services:
       - '@Mollie\Repository\MethodCountryRepository'
       - '@Mollie\Service\CartLinesService'
       - '@Mollie\Service\PaymentsTranslationService'
+      - '@Mollie\Service\CustomerService'
 
   Mollie\Service\ApiService:
     arguments:
@@ -68,6 +69,11 @@ services:
   Mollie\Service\CartLinesService:
     arguments:
       - '@mollie'
+
+  Mollie\Service\CustomerService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\MolCustomerRepository'
 
   Mollie\Service\MollieOrderInfoService:
     arguments:

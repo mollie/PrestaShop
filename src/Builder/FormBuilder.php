@@ -218,9 +218,14 @@ class FormBuilder
         if ($isApiKeyProvided) {
             $input[] = [
                 'type' => 'switch',
-                'label' => $this->module->l('Use IFrame for credit card', self::FILE_NAME),
+                'label' => $this->module->l('Use Mollie Components for CreditCards', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_IFRAME,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_components_info.tpl')]
+                ),
+                $this->module->l('Read more about Mollie Components and how it improves your conversion', self::FILE_NAME),
                 'is_bool' => true,
                 'values' => [
                     [
@@ -241,12 +246,38 @@ class FormBuilder
                 'label' => $this->module->l('Profile ID', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];', self::FILE_NAME),
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
                 'required' => true,
                 'class' => 'fixed-width-xxl',
+            ];
+
+            $input[] = [
+                'type' => 'switch',
+                'label' => $this->module->l('Use Single Click Payments for CreditCards', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion', self::FILE_NAME),
+                    [
+                        $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_single_click_payment_info.tpl')
+                    ]
+                ),
+                'is_bool' => true,
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => true,
+                        'label' => $this->module->l('Enabled', self::FILE_NAME),
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => false,
+                        'label' => $this->module->l('Disabled', self::FILE_NAME),
+                    ],
+                ],
             ];
 
             $input = array_merge($input, [
