@@ -32,9 +32,12 @@
  * @link       https://www.mollie.nl
  */
 
-namespace Mollie\Exception;
+namespace Mollie\Utility;
 
-class MollieException extends \Exception
+class TextFormatUtility
 {
-    const CUSTOMER_EXCEPTION = 1;
+    public static function formatNumber($unitPrice, $apiRoundingPrecision, $docPoint = '.', $thousandSep = '')
+    {
+        return number_format($unitPrice, $apiRoundingPrecision, $docPoint, $thousandSep);
+    }
 }

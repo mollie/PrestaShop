@@ -16,3 +16,7 @@ services:
   Mollie\Repository\PendingOrderCartRepository:
     arguments:
       - 'MolPendingOrderCart'
+
+  Mollie\Repository\MolCustomerRepository:
+    arguments:
+      - 'MolCustomer'
