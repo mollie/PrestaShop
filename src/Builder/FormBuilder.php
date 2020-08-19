@@ -178,7 +178,7 @@ class FormBuilder
             ]
         ];
         if ($isApiKeyProvided) {
-            $input[] = array_merge($input,
+            $input[] =
                 [
                     'type' => 'select',
                     'label' => $this->module->l('Environment', self::FILE_NAME),
@@ -198,30 +198,29 @@ class FormBuilder
                         'id' => 'id',
                         'name' => 'name',
                     ],
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->module->l('API Key Test', self::FILE_NAME),
-                    'tab' => $generalSettings,
-                    'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
-                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Config::MOLLIE_API_KEY_TEST,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                    'form_group_class' => 'js-test-api-group'
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->module->l('API Key Live', self::FILE_NAME),
-                    'tab' => $generalSettings,
-                    'name' => Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                    'form_group_class' => 'js-live-api-group'
-                ]
-            );
+                ];
+            $input[] = [
+                'type' => 'text',
+                'label' => $this->module->l('API Key Test', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_API_KEY_TEST,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-test-api-group'
+            ];
+            $input[] = [
+                'type' => 'text',
+                'label' => $this->module->l('API Key Live', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_API_KEY,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-live-api-group'
+            ];
         } else {
             $input = [
                 [
