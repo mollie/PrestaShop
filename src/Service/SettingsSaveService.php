@@ -105,10 +105,16 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
+        $oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $environment = Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
+        $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
         $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
 
-        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
+        $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ? $mollieApiKey : $mollieApiKeyTest;
+        $isApiKeyIncorrect = strpos($apiKey, 'live') !== 0 && strpos($apiKey, 'test') !== 0;
+
+        if ($isApiKeyIncorrect) {
             $errors[] = $this->module->l('The API key needs to start with test or live.');
         }
 
@@ -119,7 +125,7 @@ class SettingsSaveService
             );
         }
 
-        if ($this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
+        if ($oldEnvironment === $environment && $this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
@@ -178,6 +184,8 @@ class SettingsSaveService
 
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
             Configuration::updateValue(Config::MOLLIE_PROFILE_ID, $mollieProfileId);
             Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
@@ -232,9 +240,12 @@ class SettingsSaveService
                 }
             }
 
-            if ($mollieApiKey) {
+            $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ?
+                $mollieApiKey : $mollieApiKeyTest;
+
+            if ($apiKey) {
                 try {
-                    $this->module->api->setApiKey($mollieApiKey);
+                    $this->module->api->setApiKey($apiKey);
                 } catch (Exception $e) {
                     $errors[] = $e->getMessage();
                     Configuration::updateValue(Config::MOLLIE_API_KEY, null);

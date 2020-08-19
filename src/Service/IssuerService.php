@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Configuration;
 use Context;
 use Mollie;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
@@ -59,7 +60,9 @@ class IssuerService
 
     public function getIdealIssuers()
     {
-        $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL);
+        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+
+        $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
         $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
         $issuers = json_decode($issuersJson, true);
         $issuerList[PaymentMethod::IDEAL] = [];

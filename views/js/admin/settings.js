@@ -43,7 +43,13 @@ $(document).ready(function () {
             customUrlDisabled = false;
         }
         $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
-    })
+    });
+
+    toggleRequiredApiKey($('select[name^="MOLLIE_ENVIRONMENT"]').val());
+    $('select[name^="MOLLIE_ENVIRONMENT"]').on('change', function () {
+        var selectedEnvironment = $(this).val();
+        toggleRequiredApiKey(selectedEnvironment);
+    });
 
   var $apiPaymentMethodSelect = $('select[name^="MOLLIE_METHOD_API"]');
 
@@ -94,4 +100,13 @@ function togglePaymentMethodDescriptions(apiPaymentMethodSelect){
   } else {
     apiPaymentMethodSelect.closest('.payment-method').find('.payment-api-description').slideUp();
   }
+}
+
+function toggleRequiredApiKey(selectedEnvironment) {
+    var isLive = false;
+    if (selectedEnvironment === "1") {
+        isLive = true;
+    }
+    $('.js-test-api-group').find('label.control-label').toggleClass('required', !isLive);
+    $('.js-live-api-group').find('label.control-label').toggleClass('required', isLive);
 }

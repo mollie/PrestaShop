@@ -323,6 +323,7 @@ class Mollie extends PaymentModule
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
@@ -926,7 +927,6 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\CountryService $countryService */
         $countryService = $this->getContainer(\Mollie\Service\CountryService::class);
         try {
-
             $methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
             return [
@@ -1335,9 +1335,13 @@ class Mollie extends PaymentModule
         }
         /** @var \Mollie\Service\ApiService $apiService */
         $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
-        try {
 
-            $this->api = $apiService->setApiKey(Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY), $this->version);
+        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $apiKeyConfig = (int)$environment === \Mollie\Config\Config::ENVIRONMENT_LIVE ?
+            Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
+
+        try {
+            $this->api = $apiService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
         } catch (_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
