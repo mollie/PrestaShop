@@ -64,6 +64,7 @@ class Installer
      * @var Mollie
      */
     private $module;
+
     /**
      * @var imageService
      */
