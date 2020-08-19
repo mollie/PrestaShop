@@ -33,14 +33,32 @@
 {extends file="helpers/form/form.tpl"}
 
 {block name="input"}
-    {if $input.type === 'mollie-br'}
-        <br>
-    {elseif $input.type === 'mollie-warning'}
-        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-            <div class="warn">{$input.message|escape:'htmlall':'UTF-8'}</div>
-        {else}
-            <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
-        {/if}
+    {if $input.type === 'mollie-support'}
+        <div class="mm-block-mollie">
+            <a class="helpbutton" href="https://www.mollie.com/dashboard/settings/profiles" target="_blank"></a>
+            <p>
+                <strong>{l s='Developed by Invertus' mod='mollie'}</strong>
+                {l s=' - the most technically advanced agency in the PrestaShop ecosystem.' mod='mollie'}
+            </p>
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        <div class="icon1"></div>
+                        <a href="https://help.mollie.com/hc/en-us" target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
+                    </td>
+                    <td>
+                        <div class="icon2"></div>
+                        <a href="https://www.mollie.com/en/contact" target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
+                    </td>
+                    <td>
+                        <div class="icon3"></div>
+                        <a href="https://www.invertus.eu/contacts/" target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     {elseif $input.type === 'mollie-methods'}
         <script type="text/javascript">
             (function () {
@@ -72,7 +90,7 @@
                             <i class="icon-check text-success"></i>
                         </a>
                     {else}
-                          <a href="#" class="payment-check-link"
+                        <a href="#" class="payment-check-link"
                            data-action="activate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
                             <i class="icon-remove text-danger"></i>
@@ -111,6 +129,9 @@
                                 {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
+                            <p class="help-block">
+                                {$input.methodDescription}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group payment-api-description">
@@ -184,24 +205,6 @@
                             </select>
                         </div>
                     </div>
-                    {*                    <div class="form-group">*}
-                    {*                        <label class="control-label col-lg-3">*}
-                    {*                            {l s='Minimum order value' mod='mollie'}*}
-                    {*                        </label>*}
-                    {*                        <div class="col-lg-9">*}
-                    {*                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"*}
-                    {*                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">*}
-                    {*                        </div>*}
-                    {*                    </div>*}
-                    {*                    <div class="form-group">*}
-                    {*                        <label class="control-label col-lg-3">*}
-                    {*                            {l s='Maximum order value' mod='mollie'}*}
-                    {*                        </label>*}
-                    {*                        <div class="col-lg-9">*}
-                    {*                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"*}
-                    {*                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">*}
-                    {*                        </div>*}
-                    {*                    </div>*}
                     <div class="form-group">
                         <label class="control-label col-lg-3">
                             {l s='Payment Surcharge' mod='mollie'}
@@ -371,36 +374,6 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {strip}
               <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
             {if $value.value == 1}

@@ -79,7 +79,6 @@ class PaymentMethodRepository
         return Db::getInstance()->getValue($sql);
     }
 
-
     /**
      * @param string $column
      * @param int $id
