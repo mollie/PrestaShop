@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-NameSpace Mollie\Builder;
+namespace Mollie\Builder;
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
@@ -65,30 +65,36 @@ class FormBuilder
      * @var Mollie
      */
     private $module;
+
     /**
      * @var ApiService
      */
     private $apiService;
+
     /**
      * @var CountryService
      */
     private $countryService;
 
     private $lang;
+
     /**
      * @var Smarty
      */
     private $smarty;
 
     private $link;
+
     /**
      * @var CountryRepository
      */
     private $countryRepository;
+
     /**
      * @var ConfigFieldService
      */
     private $configFieldService;
+
     /**
      * @var MolCarrierInformationService
      */
@@ -172,7 +178,7 @@ class FormBuilder
             ]
         ];
         if ($isApiKeyProvided) {
-            $input[] =
+            $input[] = array_merge($input,
                 [
                     'type' => 'select',
                     'label' => $this->module->l('Environment', self::FILE_NAME),
@@ -215,7 +221,7 @@ class FormBuilder
                     'class' => 'fixed-width-xxl',
                     'form_group_class' => 'js-live-api-group'
                 ]
-            ];
+            );
         } else {
             $input = [
                 [
