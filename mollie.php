@@ -64,12 +64,16 @@ class Mollie extends PaymentModule
     private $moduleContainer;
 
     const DISABLE_CACHE = true;
+
     /** @var _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient|null */
     public $api = null;
+
     /** @var string $currentOrderReference */
     public $currentOrderReference;
+
     /** @var string $selectedApi */
     public static $selectedApi;
+
     /** @var bool $cacheCleared Indicates whether the Smarty cache has been cleared during updates */
     public static $cacheCleared;
 
@@ -120,6 +124,7 @@ class Mollie extends PaymentModule
     {
         if (version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION) === -1) {
             $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 5.6 and higher versions.');
+
             return false;
         }
 
@@ -133,6 +138,7 @@ class Mollie extends PaymentModule
         $installer = $this->getContainer(\Mollie\Install\Installer::class);
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
+
             return false;
         }
 
@@ -150,6 +156,7 @@ class Mollie extends PaymentModule
         $uninstall = $this->getContainer(\Mollie\Install\Uninstall::class);
         if (!$uninstall->uninstall()) {
             $this->_errors[] = $uninstall->getErrors();
+
             return false;
         }
 
@@ -228,6 +235,7 @@ class Mollie extends PaymentModule
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
         if ($moduleDatabaseVersion < $this->version) {
             $this->context->controller->errors[] = $this->l('Please upgrade Mollie module.');
+
             return;
         }
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
@@ -264,7 +272,9 @@ class Mollie extends PaymentModule
         ]);
 
         $updateMessage = '';
-        if (!static::ADDONS) {
+        /** @var \Mollie\Service\UpgradeNoticeService $upgradeNoticeService */
+        $upgradeNoticeService = $this->getContainer(\Mollie\Service\UpgradeNoticeService::class);
+        if (!static::ADDONS && !$upgradeNoticeService->isUpgradeNoticeClosed(time())) {
             $updateMessage = defined('_TB_VERSION_')
                 ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
                 : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
@@ -323,15 +333,15 @@ class Mollie extends PaymentModule
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);
 
         $html = '';
-//        $html .= $updateMessage;
         $html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-
+        $html .= $updateMessage;
 
         try {
             $html .= $settingsFormBuilder->buildSettingsForm();
@@ -385,8 +395,18 @@ class Mollie extends PaymentModule
                         $this->context->smarty->assign([
                             'this_version' => $this->version,
                             'release_version' => $latestVersion,
+                            'github_url' => \Mollie\Utility\TagsUtility::ppTags(
+                                sprintf(
+                                    $this->l('You are currently using version \'%s\' of this plugin. The latest version is \'%s\'. We advice you to [1]update[/1] to enjoy the latest features. '),
+                                    $this->version,
+                                    $latestVersion
+                                ),
+                                [
+                                    $this->display($this->getPathUri(), 'views/templates/admin/github_redirect.tpl')
+                                ]
+                            )
                         ]);
-                        $updateMessage = $this->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
+                        $updateMessage = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
                     }
                 } else {
                     $updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
@@ -620,6 +640,7 @@ class Mollie extends PaymentModule
         if (!\Mollie\Config\Config::isVersion17() && $isIFrameEnabled) {
             $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
         }
+
         return $this->display(__FILE__, 'addjsdef.tpl') . $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
     }
 
@@ -1032,6 +1053,7 @@ class Mollie extends PaymentModule
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
         $adminOrdersController = new AdminOrdersController();
+
         return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
     }
 
@@ -1092,9 +1114,11 @@ class Mollie extends PaymentModule
             $dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
         } catch (PrestaShopDatabaseException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+
             return;
         } catch (PrestaShopException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+
             return;
         }
         if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
@@ -1122,9 +1146,11 @@ class Mollie extends PaymentModule
             $apiOrder->shipAll($shipmentInfo);
         } catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+
             return;
         } catch (Exception $e) {
             PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+
             return;
         }
     }
@@ -1177,6 +1203,7 @@ class Mollie extends PaymentModule
                 $orderFee = new MolOrderFee($order->id);
             } catch (Exception $e) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+
                 return true;
             }
             if ($orderFee->order_fee) {

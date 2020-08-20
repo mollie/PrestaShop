@@ -138,3 +138,5 @@ services:
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
+
+  Mollie\Service\UpgradeNoticeService:

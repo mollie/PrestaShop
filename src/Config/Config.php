@@ -231,6 +231,9 @@ class Config
 
     const CARTES_BANCAIRES = 'cartesbancaires';
 
+    const MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MODULE_UPGRADE_NOTICE_CLOSE_DATE';
+    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = '28 days';
+
     /** @var array $methods */
     public static $methods = [
         'banktransfer' => 'Bank',
