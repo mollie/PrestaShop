@@ -33,12 +33,11 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service;
+namespace Mollie\Builder;
 
-use Mollie;
-use Smarty;
+use Mollie\Service\ApiService;
 
-class ApiTestService
+class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 {
     /**
      * @var ApiService
@@ -46,15 +45,67 @@ class ApiTestService
     private $apiService;
 
     /**
-     * @var Smarty
+     * @var string
      */
-    private $smarty;
+    private $moduleVersion;
 
-    public function __construct(Mollie $module, ApiService $apiService, Smarty $smarty)
+    /**
+     * @var string
+     */
+    private $testKey;
+
+    /**
+     * @var string
+     */
+    private $liveKey;
+
+    public function __construct($moduleVersion, ApiService $apiService)
     {
-        $this->module = $module;
         $this->apiService = $apiService;
-        $this->smarty = $smarty;
+        $this->moduleVersion = $moduleVersion;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestKey()
+    {
+        return $this->testKey;
+    }
+
+    /**
+     * @param string $testKey
+     */
+    public function setTestKey($testKey)
+    {
+        $this->testKey = $testKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLiveKey()
+    {
+        return $this->liveKey;
+    }
+
+    /**
+     * @param string $liveKey
+     */
+    public function setLiveKey($liveKey)
+    {
+        $this->liveKey = $liveKey;
+    }
+
+    public function buildParams()
+    {
+        $testKeyInfo = $this->getApiKeyInfo($this->testKey);
+        $liveKeyInfo = $this->getApiKeyInfo($this->liveKey);
+
+        return [
+            'testKeyInfo' => $testKeyInfo,
+            'liveKeyInfo' => $liveKeyInfo
+        ];
     }
 
     public function getApiKeysTestResult($testKey, $liveKey)
@@ -62,14 +113,10 @@ class ApiTestService
         $testKeyInfo = $this->getApiKeyInfo($testKey);
         $liveKeyInfo = $this->getApiKeyInfo($liveKey);
 
-        $this->smarty->assign(
-            [
-                'testKeyInfo' => $testKeyInfo,
-                'liveKeyInfo' => $liveKeyInfo
-            ]
-        );
-
-        return $this->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl');
+        return  [
+            'testKeyInfo' => $testKeyInfo,
+            'liveKeyInfo' => $liveKeyInfo
+        ];
     }
 
     public function getApiKeyInfo($apiKey)
@@ -79,17 +126,19 @@ class ApiTestService
                 'status' => false
             ];
         }
-        $api = $this->apiService->setApiKey($apiKey, $this->module->version);
+        $api = $this->apiService->setApiKey($apiKey, $this->moduleVersion);
         if (!$api) {
             return [
                 'status' => false
             ];
         }
-        $methods = $api->methods->allAvailable()->getArrayCopy();
+        /** @var  $methods */
+        $methods = $api->methods->allAvailable();
+        $methodsASArray = $methods->getArrayCopy();
 
         return [
             'status' => true,
-            'methods' => $this->getPaymentMethodsAsArray($methods)
+            'methods' => $this->getPaymentMethodsAsArray($methodsASArray)
         ];
     }
 

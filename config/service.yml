@@ -138,8 +138,3 @@ services:
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
-
-  Mollie\Service\ApiTestService:
-    - '@mollie'
-    - '@Mollie\Service\ApiService'
-    - '@smarty'

@@ -13,6 +13,7 @@
             <div class="clearfix"></div>
             <div>
                 <p>
+                    <i class="icon-gear text-success"></i>
                     <strong>{l s='Enabled Methods: ' mod='mollie'}</strong>
                     {', '|implode:$testKeyInfo.methods}
 
@@ -44,6 +45,7 @@
             <div class="clearfix"></div>
             <div>
                 <p>
+                    <i class="icon-gear text-success"></i>
                     <strong>{l s='Enabled Methods: ' mod='mollie'}</strong>
                     {', '|implode:$liveKeyInfo.methods}
 

@@ -1,11 +1,8 @@
 <?php
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
+use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\ApiTestService;
 use Mollie\Service\MolliePaymentMailService;
-use Mollie\Service\PaymentMethodService;
-use Mollie\Service\TransactionService;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -72,13 +69,17 @@ class AdminMollieAjaxController extends ModuleAdminController
         $testKey = Tools::getValue('testKey');
         $liveKey = Tools::getValue('liveKey');
 
-        /** @var ApiTestService $apiTestService */
-        $apiTestService = $this->module->getContainer(ApiTestService::class);
-        $apiKeysTestInfo = $apiTestService->getApiKeysTestResult($testKey, $liveKey);
+        /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
+        $apiTestFeedbackBuilder = $this->module->getContainer(ApiTestFeedbackBuilder::class);
+        $apiTestFeedbackBuilder->setTestKey($testKey);
+        $apiTestFeedbackBuilder->setLiveKey($liveKey);
+        $apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
 
+        $this->context->smarty->assign($apiKeysTestInfo);
         $this->ajaxDie(json_encode(
             [
-                'template' => $apiKeysTestInfo
+                'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl')
+
             ]
         ));
     }
