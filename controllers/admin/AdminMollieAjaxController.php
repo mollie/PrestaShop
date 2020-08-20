@@ -24,6 +24,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         }
     }
 
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
     private function togglePaymentMethod()
     {
         $paymentMethod = Tools::getValue('paymentMethod');
@@ -52,6 +56,9 @@ class AdminMollieAjaxController extends ModuleAdminController
         ));
     }
 
+    /**
+     * @throws PrestaShopException
+     */
     private function resendPaymentMail()
     {
         $orderId = Tools::getValue('id_order');
@@ -64,6 +71,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $this->ajaxDie(json_encode($response));
     }
 
+    /**
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
     private function testApiKeys()
     {
         $testKey = Tools::getValue('testKey');

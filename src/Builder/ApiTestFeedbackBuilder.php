@@ -97,6 +97,9 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
         $this->liveKey = $liveKey;
     }
 
+    /**
+     * @return array
+     */
     public function buildParams()
     {
         $testKeyInfo = $this->getApiKeyInfo($this->testKey);
@@ -108,6 +111,11 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
         ];
     }
 
+    /**
+     * @param $testKey string
+     * @param $liveKey string
+     * @return array
+     */
     public function getApiKeysTestResult($testKey, $liveKey)
     {
         $testKeyInfo = $this->getApiKeyInfo($testKey);
@@ -119,6 +127,10 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
         ];
     }
 
+    /**
+     * @param $apiKey string
+     * @return array
+     */
     public function getApiKeyInfo($apiKey)
     {
         if (!$apiKey) {
@@ -142,6 +154,10 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
         ];
     }
 
+    /**
+     * @param $methods
+     * @return array
+     */
     private function getPaymentMethodsAsArray($methods)
     {
         $methodNameArray = [];
