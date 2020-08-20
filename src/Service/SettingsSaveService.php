@@ -182,6 +182,23 @@ class SettingsSaveService
             $mollieErrors = ($mollieErrors == 1);
         }
 
+        $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ?
+            $mollieApiKey : $mollieApiKeyTest;
+
+        if ($apiKey) {
+            try {
+                $api = $this->apiService->setApiKey($apiKey, $this->module->version);
+                if ($api === null) {
+                    throw new Exception('Failed to connect to mollie API');
+                }
+                $this->module->api = $api;
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
+                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+                return $this->module->l('Wrong API Key!');
+            }
+        }
+
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
@@ -237,19 +254,6 @@ class SettingsSaveService
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
                     );
-                }
-            }
-
-            $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ?
-                $mollieApiKey : $mollieApiKeyTest;
-
-            if ($apiKey) {
-                try {
-                    $this->module->api->setApiKey($apiKey);
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                    Configuration::updateValue(Config::MOLLIE_API_KEY, null);
-                    return $this->module->l('Wrong API Key!');
                 }
             }
 
