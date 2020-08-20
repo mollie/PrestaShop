@@ -200,7 +200,7 @@ class FormBuilder
                     ],
                 ];
             $input[] = [
-                'type' => 'text',
+                'type' => 'mollie-password',
                 'label' => $this->module->l('API Key Test', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
@@ -213,7 +213,7 @@ class FormBuilder
                 'form_group_class' => 'js-test-api-group'
             ];
             $input[] = [
-                'type' => 'text',
+                'type' => 'mollie-password',
                 'label' => $this->module->l('API Key Live', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_API_KEY,
@@ -276,6 +276,7 @@ class FormBuilder
                     'name' => Config::MOLLIE_API_KEY_TEST,
                     'required' => true,
                     'class' => 'fixed-width-xxl',
+                    'form_group_class' => 'js-test-api-group'
                 ],
                 [
                     'type' => 'text',
@@ -284,6 +285,7 @@ class FormBuilder
                     'name' => Config::MOLLIE_API_KEY,
                     'required' => true,
                     'class' => 'fixed-width-xxl',
+                    'form_group_class' => 'js-live-api-group'
                 ]
             ];
         }
