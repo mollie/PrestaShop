@@ -323,6 +323,7 @@ class Mollie extends PaymentModule
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
         $this->context->smarty->assign($data);

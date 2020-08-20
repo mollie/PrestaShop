@@ -612,6 +612,8 @@
                 {l s='Show' d='Shop.Theme.Actions'}
               </button>
         </div>
+    {elseif $input.type === 'mollie-button'}
+        <button type="button" class="btn btn-default {if isset($input.class)}{$input.class}{/if}">{$input.text}</button>
     {else}
         {$smarty.block.parent}
     {/if}

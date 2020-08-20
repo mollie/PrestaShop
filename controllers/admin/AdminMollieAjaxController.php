@@ -2,6 +2,7 @@
 
 use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\ApiTestService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
@@ -17,6 +18,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'resendPaymentMail':
                 $this->resendPaymentMail();
+                break;
+            case 'testApiKeys':
+                $this->testApiKeys();
                 break;
             default:
                 break;
@@ -61,5 +65,21 @@ class AdminMollieAjaxController extends ModuleAdminController
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
         $this->ajaxDie(json_encode($response));
+    }
+
+    private function testApiKeys()
+    {
+        $testKey = Tools::getValue('testKey');
+        $liveKey = Tools::getValue('liveKey');
+
+        /** @var ApiTestService $apiTestService */
+        $apiTestService = $this->module->getContainer(ApiTestService::class);
+        $apiKeysTestInfo = $apiTestService->getApiKeysTestResult($testKey, $liveKey);
+
+        $this->ajaxDie(json_encode(
+            [
+                'template' => $apiKeysTestInfo
+            ]
+        ));
     }
 }
