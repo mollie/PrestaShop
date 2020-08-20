@@ -45,15 +45,18 @@
                 <tr>
                     <td>
                         <div class="icon1"></div>
-                        <a href="https://help.mollie.com/hc/en-us" target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
+                        <a href="https://help.mollie.com/hc/en-us"
+                           target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
                     </td>
                     <td>
                         <div class="icon2"></div>
-                        <a href="https://www.mollie.com/en/contact" target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
+                        <a href="https://www.mollie.com/en/contact"
+                           target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
                     </td>
                     <td>
                         <div class="icon3"></div>
-                        <a href="https://www.invertus.eu/contacts/" target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
+                        <a href="https://www.invertus.eu/contacts/"
+                           target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
                     </td>
                 </tr>
                 </tbody>
@@ -151,14 +154,14 @@
                                 {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
                             </p>
                             <p class="help-block">
-                              <b>{l s='{orderNumber}' mod='mollie'}</b>,
-                              <b>{l s='{storeName}' mod='mollie'}</b>,
-                              <b>{l s='{cart.id}' mod='mollie'}</b>,
-                              <b>{l s='{order.reference}' mod='mollie'}</b>,
-                              <b>{l s='{customer.firstname}' mod='mollie'}</b>,
-                              <b>{l s='{customer.lastname}' mod='mollie'}</b>,
-                              <b>{l s='{customer.company}' mod='mollie'}</b>,
-                              <b>{l s='{storename}' mod='mollie'}</b>.
+                                <b>{l s='{orderNumber}' mod='mollie'}</b>,
+                                <b>{l s='{storeName}' mod='mollie'}</b>,
+                                <b>{l s='{cart.id}' mod='mollie'}</b>,
+                                <b>{l s='{order.reference}' mod='mollie'}</b>,
+                                <b>{l s='{customer.firstname}' mod='mollie'}</b>,
+                                <b>{l s='{customer.lastname}' mod='mollie'}</b>,
+                                <b>{l s='{customer.company}' mod='mollie'}</b>,
+                                <b>{l s='{storename}' mod='mollie'}</b>.
                             </p>
                             <p class="help-block">
                                 {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
@@ -374,6 +377,9 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
 {strip}
               <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
             {if $value.value == 1}
@@ -581,6 +587,30 @@
           <a class="slide-button btn"></a>
         </span>
             {/if}
+        </div>
+    {elseif $input.type === 'mollie-password'}
+        <div class="input-group fixed-width-lg">
+            <span class="input-group-addon">
+                <i class="icon-key"></i>
+            </span>
+            <input type="password"
+                   id="{if isset($input.id)}{$input.id}{else}{$input.name}{/if}"
+                   name="{$input.name}"
+                   class="{if isset($input.class)}{$input.class}{/if} js-visible-password"
+                   value="{$fields_value[$input.name]|escape:'html':'UTF-8'}"
+                   {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if}
+                    {if isset($input.required) && $input.required } required="required" {/if}
+            />
+            <span class="input-group-btn">
+              <button
+                      class="btn"
+                      type="button"
+                      data-action="show-password"
+                      data-text-show="{l s='Show' mod='mollie'}"
+                      data-text-hide="{l s='Hide' mod='mollie'}"
+              >
+                {l s='Show' d='Shop.Theme.Actions'}
+              </button>
         </div>
     {else}
         {$smarty.block.parent}
