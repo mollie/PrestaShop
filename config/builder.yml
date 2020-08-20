@@ -10,3 +10,8 @@ services:
       - '@language'
       - '@smarty'
       - '@link'
+
+  Mollie\Builder\ApiTestFeedbackBuilder:
+    arguments:
+      - '@=service("mollie.factory.module_factory").getModuleVersion()'
+      - '@Mollie\Service\ApiService'

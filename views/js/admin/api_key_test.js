@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -32,23 +31,27 @@
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+$(document).ready(function () {
+    $('button.js-test-api-keys').on('click', testApiKeys);
 
-namespace Mollie\Factory;
-
-use Customer;
-use Mollie\Utility\ContextUtility;
-
-class CustomerFactory
-{
-    public function recreateFromRequest($customerId, $customerSecureKey, $context)
-    {
-        if ($customerId) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === $customerSecureKey) {
-                return ContextUtility::setCustomerToContext($context, $customer);
+    function testApiKeys() {
+        var testKey = $('#MOLLIE_API_KEY_TEST').val();
+        var liveKey = $('#MOLLIE_API_KEY').val();
+        $.ajax(ajaxUrl, {
+                method: 'POST',
+                data: {
+                    'testKey': testKey,
+                    'liveKey': liveKey,
+                    'action': 'testApiKeys',
+                    'ajax': 1
+                },
+                success: function (response) {
+                    response = JSON.parse(response);
+                    var $apiKeyTestButtonGroup = $('.js-api-key-test');
+                    $('.js-api-test-results').remove();
+                    $apiKeyTestButtonGroup.after(response.template);
+                }
             }
-        }
-
-        return $context;
+        )
     }
-}
+});

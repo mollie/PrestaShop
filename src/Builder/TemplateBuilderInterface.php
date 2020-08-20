@@ -33,22 +33,12 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Factory;
+namespace Mollie\Builder;
 
-use Customer;
-use Mollie\Utility\ContextUtility;
-
-class CustomerFactory
+interface TemplateBuilderInterface
 {
-    public function recreateFromRequest($customerId, $customerSecureKey, $context)
-    {
-        if ($customerId) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === $customerSecureKey) {
-                return ContextUtility::setCustomerToContext($context, $customer);
-            }
-        }
-
-        return $context;
-    }
+    /**
+     * @return array
+     */
+    public function buildParams();
 }

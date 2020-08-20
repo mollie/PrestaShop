@@ -35,20 +35,12 @@
 
 namespace Mollie\Factory;
 
-use Customer;
-use Mollie\Utility\ContextUtility;
+use Module;
 
-class CustomerFactory
+class ModuleFactory
 {
-    public function recreateFromRequest($customerId, $customerSecureKey, $context)
+    public function getModuleVersion()
     {
-        if ($customerId) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === $customerSecureKey) {
-                return ContextUtility::setCustomerToContext($context, $customer);
-            }
-        }
-
-        return $context;
+        return Module::getInstanceByName('mollie')->version;
     }
 }
