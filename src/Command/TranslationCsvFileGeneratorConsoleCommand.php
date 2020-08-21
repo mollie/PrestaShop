@@ -85,12 +85,11 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
             }
             fclose($fp);
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
             $output->writeln("<error>{$e->getMessage()}</error>");
 
             return 0;
         }
-        $output->writeln('<info>Product synchronization finished</info>');
+        $output->writeln('<info>Translation export to CSV finished</info>');
 
         return 0;
     }
