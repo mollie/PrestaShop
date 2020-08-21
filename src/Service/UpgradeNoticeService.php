@@ -6,11 +6,10 @@ use Mollie\Config\Config;
 
 class UpgradeNoticeService
 {
-    public function isUpgradeNoticeClosed($timeStamp)
+    public function isUpgradeNoticeClosed($currentTimeStamp, $noticeCloseTimeStamp)
     {
-        $closedTimeStamp = \Configuration::get(Config::MODULE_UPGRADE_NOTICE_CLOSE_DATE);
-        $closeDuration = strtotime(Config::MODULE_UPGRADE_NOTICE_CLOSE_DURATION) - time();
-        if ($closedTimeStamp + $closeDuration > $timeStamp) {
+        $closeDuration = strtotime(Config::MODULE_UPGRADE_NOTICE_CLOSE_DURATION) - $currentTimeStamp;
+        if ($noticeCloseTimeStamp + $closeDuration > $currentTimeStamp) {
             return true;
         }
 

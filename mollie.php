@@ -274,7 +274,8 @@ class Mollie extends PaymentModule
         $updateMessage = '';
         /** @var \Mollie\Service\UpgradeNoticeService $upgradeNoticeService */
         $upgradeNoticeService = $this->getContainer(\Mollie\Service\UpgradeNoticeService::class);
-        if (!static::ADDONS && !$upgradeNoticeService->isUpgradeNoticeClosed(time())) {
+        $noticeCloseTimeStamp = \Configuration::get(Mollie\Config\Config::MODULE_UPGRADE_NOTICE_CLOSE_DATE);
+        if (!static::ADDONS && !$upgradeNoticeService->isUpgradeNoticeClosed(\Mollie\Utility\TimeUtility::getNowTs(), $noticeCloseTimeStamp)) {
             $updateMessage = defined('_TB_VERSION_')
                 ? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
                 : $this->getUpdateMessage('https://github.com/mollie/PrestaShop');

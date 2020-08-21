@@ -605,7 +605,31 @@ class FormBuilder
                     'name' => 'name',
                 ],
             ],
-
+            [
+                'type' => 'select',
+                'label' => $this->module->l('Use Custom Logo', self::FILE_NAME),
+                'tab' => $advancedSettings,
+                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
+                'name' => Config::MOLLIE_IMAGES,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => Config::LOGOS_HIDE,
+                            'name' => $this->module->l('hide', self::FILE_NAME),
+                        ],
+                        [
+                            'id' => Config::LOGOS_NORMAL,
+                            'name' => $this->module->l('normal', self::FILE_NAME),
+                        ],
+                        [
+                            'id' => Config::LOGOS_BIG,
+                            'name' => $this->module->l('big', self::FILE_NAME),
+                        ],
+                    ],
+                    'id' => 'id',
+                    'name' => 'name',
+                ],
+            ],
             [
                 'type' => 'text',
                 'label' => $this->module->l('CSS file', self::FILE_NAME),
