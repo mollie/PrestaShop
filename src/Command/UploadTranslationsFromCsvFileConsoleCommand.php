@@ -41,14 +41,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-    class UploadTranslationsFromCsvFileConsoleCommand extends Command
+class UploadTranslationsFromCsvFileConsoleCommand extends Command
 {
-
     const CSV_POSITION_ID = 0;
     const CSV_POSITION_EN = 1;
     const CSV_POSITION_NL = 2;
     const CSV_POSITION_DE = 3;
     const CSV_POSITION_FR = 4;
+
     /**
      * @var Mollie
      */
@@ -65,8 +65,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         $this
             ->setName('mollie:upload-translation-csv')
             ->setAliases(['m:g:t:c'])
-            ->setDescription('Upload translation csv')
-        ;
+            ->setDescription('Upload translation csv');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -121,8 +120,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         $translatedText = str_replace("'", "\'", $values[$position]);
 
         $translationLine =
-            '$_MODULE[\'' . $values[self::CSV_POSITION_ID] . '\'] = \'' . $translatedText . "';\n"
-        ;
+            '$_MODULE[\'' . $values[self::CSV_POSITION_ID] . '\'] = \'' . $translatedText . "';\n";
 
         file_put_contents($file, $translationLine, FILE_APPEND);
     }
