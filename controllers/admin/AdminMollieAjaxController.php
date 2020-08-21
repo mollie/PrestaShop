@@ -1,8 +1,10 @@
 <?php
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -18,6 +20,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'testApiKeys':
                 $this->testApiKeys();
+                break;
+            case 'closeUpgradeNotice':
+                $this->closeUpgradeNotice();
                 break;
             default:
                 break;
@@ -93,5 +98,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             ]
         ));
+    }
+
+    private function closeUpgradeNotice()
+    {
+        Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
     }
 }

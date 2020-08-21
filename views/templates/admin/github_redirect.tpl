@@ -30,13 +30,4 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-{if isset($this_version) && isset($release_version)}
-    <div class="bootstrap">
-        <div class="alert alert-warning">
-            <button type="button" class="close js-mollie-upgrade-tip-close" data-dismiss="alert">×</button>
-            <ul class="list-unstyled">
-                {$github_url}
-            </ul>
-        </div>
-    </div>
-{/if}
+<a href='https://github.com/mollie/PrestaShop/releases' target="_blank">
