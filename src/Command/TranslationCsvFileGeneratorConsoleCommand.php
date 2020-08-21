@@ -39,7 +39,6 @@ use Mollie;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TranslationCsvFileGeneratorConsoleCommand extends Command
 {
@@ -60,8 +59,7 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
         $this
             ->setName('mollie:generate-translation-csv')
             ->setAliases(['m:g:t:c'])
-            ->setDescription('Generate translation csv')
-        ;
+            ->setDescription('Generate translation csv');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -92,13 +90,5 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
         $output->writeln('<info>Translation export to CSV finished</info>');
 
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }
