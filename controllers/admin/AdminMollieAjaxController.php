@@ -102,6 +102,6 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function closeUpgradeNotice()
     {
-        Configuration::updateValue(Config::MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
+        Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
     }
 }

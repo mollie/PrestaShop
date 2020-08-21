@@ -231,8 +231,8 @@ class Config
 
     const CARTES_BANCAIRES = 'cartesbancaires';
 
-    const MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MODULE_UPGRADE_NOTICE_CLOSE_DATE';
-    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = '28 days';
+    const MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE';
+    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
 
     /** @var array $methods */
     public static $methods = [

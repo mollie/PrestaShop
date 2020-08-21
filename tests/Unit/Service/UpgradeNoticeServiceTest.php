@@ -1,18 +1,23 @@
 <?php
 
-
 use Mollie\Service\UpgradeNoticeService;
+use PHPUnit\Framework\TestCase;
 
-class UpgradeNoticeServiceTest extends PHPUnit_Framework_TestCase
+class UpgradeNoticeServiceTest extends TestCase
 {
 
     /**
      * @dataProvider dataProvider
+     * @param $currentTimeStamp
+     * @param $noticeCloseTimeStamp
+     * @param $result
      */
-    public function testIsUpgradeNoticeClosed($timeStamp)
+    public function testIsUpgradeNoticeClosed($currentTimeStamp, $noticeCloseTimeStamp, $result)
     {
-       $upgradeNoticeService = new UpgradeNoticeService();
-       $result = $upgradeNoticeService->isUpgradeNoticeClosed();
+        $upgradeNoticeService = new UpgradeNoticeService();
+
+        $isClosed = $upgradeNoticeService->isUpgradeNoticeClosed($currentTimeStamp, $noticeCloseTimeStamp);
+        $this->assertEquals($result, $isClosed);
     }
 
     public function dataProvider()
@@ -20,14 +25,23 @@ class UpgradeNoticeServiceTest extends PHPUnit_Framework_TestCase
         return [
             'case1' =>
                 [
-                    'request' => 'https://lv.integration.dpd.eo.pl/ws-mapper-rest/createShipment_?username=test1234&password=%24this-%3Epassword&name1=tes&street=belgie&city=Jonava&country=LT&pcode=50186&num_of_parcel=1&parcel_type=PS-COD&phone=%2B370123&fetchGsPUDOpoint=1&parcelshop_id=LT10096&name2&weight=10.000000&idm_sms_number=123&email=marius.gudauskis%40invertus.eu&order_number=97&order_number1=&order_number2=&order_number3=&parcel_number&remark&cod_amount=35.090000&cod_purpose&id_check_id&id_check_name&dnote_reference&predict&timeframe_from&timeframe_to&shipment_id ',
-                    'result' => 'https://lv.integration.dpd.eo.pl/ws-mapper-rest/createShipment_?username=&password=&name1=tes&street=belgie&city=Jonava&country=LT&pcode=50186&num_of_parcel=1&parcel_type=PS-COD&phone=%2B370123&fetchGsPUDOpoint=1&parcelshop_id=LT10096&name2&weight=10.000000&idm_sms_number=123&email=marius.gudauskis%40invertus.eu&order_number=97&order_number1=&order_number2=&order_number3=&parcel_number&remark&cod_amount=35.090000&cod_purpose&id_check_id&id_check_name&dnote_reference&predict&timeframe_from&timeframe_to&shipment_id ',
+                    'currentTimeStamp' => strtotime('2020-05-01 00:00:00'),
+                    'noticeCloseTimeStamp' =>strtotime('-29 days', strtotime('2020-05-01 00:00:00')),
+                    'result' => false
                 ],
             'case2' =>
                 [
-                    'request' => 'https://lv.integration.dpd.eo.pl/ws-mapper-rest/createShipment_?username=test1234&password=qwerty12&name1=tes&street=belgie&city=Jonava&country=%24this-%3Ecountry&pcode=50186&num_of_parcel=1&parcel_type=PS-COD&phone=%2B370123&fetchGsPUDOpoint=1&parcelshop_id=LT10096&name2&weight=10.000000&idm_sms_number=123&email=marius.gudauskis%40invertus.eu&order_number=97&order_number1=&order_number2=&order_number3=&parcel_number&remark&cod_amount=35.090000&cod_purpose&id_check_id&id_check_name&dnote_reference&predict&timeframe_from&timeframe_to&shipment_id ',
-                    'result' => 'https://lv.integration.dpd.eo.pl/ws-mapper-rest/createShipment_?username=&password=&name1=tes&street=belgie&city=Jonava&country=%24this-%3Ecountry&pcode=50186&num_of_parcel=1&parcel_type=PS-COD&phone=%2B370123&fetchGsPUDOpoint=1&parcelshop_id=LT10096&name2&weight=10.000000&idm_sms_number=123&email=marius.gudauskis%40invertus.eu&order_number=97&order_number1=&order_number2=&order_number3=&parcel_number&remark&cod_amount=35.090000&cod_purpose&id_check_id&id_check_name&dnote_reference&predict&timeframe_from&timeframe_to&shipment_id ',
+                    'currentTimeStamp' => strtotime('2020-05-01 00:00:00'),
+                    'noticeCloseTimeStamp' =>strtotime('-28 days', strtotime('2020-05-01 00:00:00')),
+                    'result' => true
+                ],
+            'case3' =>
+                [
+                    'currentTimeStamp' => strtotime('2020-05-01 00:00:00'),
+                    'noticeCloseTimeStamp' =>strtotime('-27 days', strtotime('2020-05-01 00:00:00')),
+                    'result' => true
                 ]
         ];
     }
+
 }

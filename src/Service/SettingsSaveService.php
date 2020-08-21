@@ -43,6 +43,7 @@ use Context;
 use Exception;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Exception\MollieException;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethodIssuer;
@@ -189,7 +190,7 @@ class SettingsSaveService
             try {
                 $api = $this->apiService->setApiKey($apiKey, $this->module->version);
                 if ($api === null) {
-                    throw new Exception('Failed to connect to mollie API');
+                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
                 $this->module->api = $api;
             } catch (Exception $e) {
