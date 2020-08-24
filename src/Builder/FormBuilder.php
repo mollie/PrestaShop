@@ -222,6 +222,19 @@ class FormBuilder
                 'form_group_class' => 'js-live-api-group'
             ];
             $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('Profile ID', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1].', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_PROFILE_ID,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-api-profile-id'
+            ];
+            $input[] = [
                 'type' => 'mollie-button',
                 'label' => '',
                 'tab' => $generalSettings,
@@ -306,7 +319,7 @@ class FormBuilder
             'tab' => $generalSettings,
             'name' => Config::MOLLIE_IFRAME,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion', self::FILE_NAME),
+                $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion.', self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_components_info.tpl')]
             ),
             $this->module->l('Read more about Mollie Components and how it improves your conversion', self::FILE_NAME),
@@ -326,25 +339,12 @@ class FormBuilder
         ];
 
         $input[] = [
-            'type' => 'text',
-            'label' => $this->module->l('Profile ID', self::FILE_NAME),
-            'tab' => $generalSettings,
-            'desc' => TagsUtility::ppTags(
-                $this->module->l('You can find your API key in your [1]Mollie Profile[/1]', self::FILE_NAME),
-                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-            ),
-            'name' => Config::MOLLIE_PROFILE_ID,
-            'required' => true,
-            'class' => 'fixed-width-xxl',
-        ];
-
-        $input[] = [
             'type' => 'switch',
             'label' => $this->module->l('Use Single Click Payments for CreditCards', self::FILE_NAME),
             'tab' => $generalSettings,
             'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion', self::FILE_NAME),
+                $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_single_click_payment_info.tpl')
                 ]
@@ -656,7 +656,7 @@ class FormBuilder
             'label' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_AUTO_SHIP_MAIN,
-            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status', self::FILE_NAME),
+            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status.', self::FILE_NAME),
             'is_bool' => true,
             'values' => [
                 [

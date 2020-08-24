@@ -231,7 +231,7 @@
                             <p class="help-block">
                                 {l s='You can display payment fee in your email template by adding "{payment_fee}" in email translations. For more information visit: ' mod='mollie'}
                                 <a href='http://doc.prestashop.com/display/PS17/Translations#Translations-Emailtemplates'
-                                   target="_blank">{l s='Translations' mod='mollie'}</a>
+                                   target="_blank">{l s='Translations.' mod='mollie'}</a>
                             </p>
                         </div>
                     </div>

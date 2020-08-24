@@ -35,6 +35,7 @@ $(document).ready(function () {
     disableCharactersInAmountInput();
     handleDisableForCustomUrl();
     handleRequiredApiKey();
+    handleRequiredProfileId();
     handlePaymentMethodDescriptions();
     handleApiKeyVisibility();
 
@@ -61,6 +62,17 @@ $(document).ready(function () {
         $('select[name^="MOLLIE_ENVIRONMENT"]').on('change', function () {
             var selectedEnvironment = $(this).val();
             toggleRequiredApiKey(selectedEnvironment);
+        });
+    }
+
+    function handleRequiredProfileId() {
+        var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
+        var isProfileIdRequired = $profileSwitch.prop('checked');
+        $('.js-api-profile-id').find('label.control-label').toggleClass('required', isProfileIdRequired);
+
+        $profileSwitch.on('change', function () {
+            var isProfileIdRequired = $profileSwitch.prop('checked');
+            $('.js-api-profile-id').find('label.control-label').toggleClass('required', isProfileIdRequired);
         });
     }
 
