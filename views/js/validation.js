@@ -71,13 +71,10 @@ $(document).ready(function () {
     });
 
     var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
-    var $profileId = $('#MOLLIE_PROFILE_ID');
     var $singleClickPayment = $('input[name="MOLLIE_SINGLE_CLICK_PAYMENT"]');
 
-    hideElementIfNotChecked($profileSwitch, $profileId);
     hideElementIfChecked($profileSwitch, $singleClickPayment);
     $profileSwitch.on('change', function () {
-        hideElementIfNotChecked($profileSwitch, $profileId);
         hideElementIfChecked($profileSwitch, $singleClickPayment);
     });
 
