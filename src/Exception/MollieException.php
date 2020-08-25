@@ -30,6 +30,7 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Exception;

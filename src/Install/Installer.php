@@ -43,7 +43,7 @@ use Exception;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
-use Mollie\Service\imageService;
+use Mollie\Service\ImageService;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -66,11 +66,11 @@ class Installer
     private $module;
 
     /**
-     * @var imageService
+     * @var ImageService
      */
     private $imageService;
 
-    public function __construct(Mollie $module, imageService $imageService)
+    public function __construct(Mollie $module, ImageService $imageService)
     {
         $this->module = $module;
         $this->imageService = $imageService;
