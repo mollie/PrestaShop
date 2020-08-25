@@ -31,9 +31,12 @@
 * @link       https://www.mollie.nl
 *}
 {if isset($this_version) && isset($release_version)}
-  <div class="mollie_update_msg col-md-12">
-    <span id="mollie_update_msg">
-  {l s='You are currently using version %s. We strongly recommend you to upgrade to the new version %s!' mod='mollie' sprintf=[$this_version, $release_version]}
-    </span>
-  </div>
+    <div class="bootstrap">
+        <div class="alert alert-warning">
+            <button type="button" class="close js-mollie-upgrade-tip-close" data-dismiss="alert">×</button>
+            <ul class="list-unstyled">
+                {$github_url}
+            </ul>
+        </div>
+    </div>
 {/if}

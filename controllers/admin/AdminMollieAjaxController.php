@@ -33,11 +33,11 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
+use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
-use Mollie\Service\PaymentMethodService;
-use Mollie\Service\TransactionService;
+use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -51,11 +51,21 @@ class AdminMollieAjaxController extends ModuleAdminController
             case 'resendPaymentMail':
                 $this->resendPaymentMail();
                 break;
+            case 'testApiKeys':
+                $this->testApiKeys();
+                break;
+            case 'closeUpgradeNotice':
+                $this->closeUpgradeNotice();
+                break;
             default:
                 break;
         }
     }
 
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
     private function togglePaymentMethod()
     {
         $paymentMethod = Tools::getValue('paymentMethod');
@@ -63,7 +73,8 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        $methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod);
+        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod, $environment);
         $method = new MolPaymentMethod($methodId);
         switch ($paymentStatus) {
             case 'deactivate':
@@ -83,6 +94,9 @@ class AdminMollieAjaxController extends ModuleAdminController
         ));
     }
 
+    /**
+     * @throws PrestaShopException
+     */
     private function resendPaymentMail()
     {
         $orderId = Tools::getValue('id_order');
@@ -93,5 +107,34 @@ class AdminMollieAjaxController extends ModuleAdminController
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
         $this->ajaxDie(json_encode($response));
+    }
+
+    /**
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
+    private function testApiKeys()
+    {
+        $testKey = Tools::getValue('testKey');
+        $liveKey = Tools::getValue('liveKey');
+
+        /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
+        $apiTestFeedbackBuilder = $this->module->getContainer(ApiTestFeedbackBuilder::class);
+        $apiTestFeedbackBuilder->setTestKey($testKey);
+        $apiTestFeedbackBuilder->setLiveKey($liveKey);
+        $apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
+
+        $this->context->smarty->assign($apiKeysTestInfo);
+        $this->ajaxDie(json_encode(
+            [
+                'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl')
+
+            ]
+        ));
+    }
+
+    private function closeUpgradeNotice()
+    {
+        Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
     }
 }

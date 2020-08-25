@@ -68,15 +68,16 @@ class PaymentMethodRepository
 
     /**
      * @param $paymentMethodId
+     * @param $environment
      * @return false|string|null
      */
-    public function getPaymentMethodIdByMethodId($paymentMethodId)
+    public function getPaymentMethodIdByMethodId($paymentMethodId, $environment)
     {
-        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($paymentMethodId) . '"';
+        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` 
+        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int)$environment . '"';
 
         return Db::getInstance()->getValue($sql);
     }
-
 
     /**
      * @param string $column
@@ -157,11 +158,12 @@ class PaymentMethodRepository
      * @return array|false|\mysqli_result|\PDOStatement|resource|null
      * @throws PrestaShopDatabaseException
      */
-    public function getMethodsForCheckout()
+    public function getMethodsForCheckout($environment)
     {
         $sql = new DbQuery();
         $sql->select('*');
         $sql->from('mol_payment_method');
+        $sql->where('live_environment = ' . pSQL($environment));
 
         return Db::getInstance()->executeS($sql);
     }

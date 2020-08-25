@@ -38,7 +38,6 @@ namespace Mollie\Factory;
 use Customer;
 use Mollie\Utility\ContextUtility;
 
-
 class CustomerFactory
 {
     public function recreateFromRequest($customerId, $customerSecureKey, $context)

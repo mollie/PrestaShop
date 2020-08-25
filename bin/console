@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * @author    INVERTUS, UAB www.invertus.eu <support@invertus.eu>
+ * @copyright Copyright (c) permanent, INVERTUS, UAB
+ * @license   Addons PrestaShop license limitation
+ * @see       /LICENSE
+ *
+ * International Registered Trademark & Property of INVERTUS, UAB
+ */
+
+use Mollie\Command\TranslationCsvFileGeneratorConsoleCommand;
+use Mollie\Command\UploadTranslationsFromCsvFileConsoleCommand;
+use Symfony\Component\Console\Application;
+
+require_once dirname(__FILE__).'/../../../config/config.inc.php';
+require dirname(__FILE__).'/../vendor/autoload.php';
+
+$application = new Application();
+$module = Module::getInstanceByName('mollie');
+$application->add(new TranslationCsvFileGeneratorConsoleCommand($module));
+$application->add(new UploadTranslationsFromCsvFileConsoleCommand($module));
+$application->run();

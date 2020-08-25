@@ -41,6 +41,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\CustomerService;
 use Mollie\Service\MemorizeCartService;
 use Mollie\Service\OrderCartAssociationService;
 use Mollie\Service\PaymentMethodService;
@@ -117,7 +118,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /** @var PaymentMethodService $paymentMethodService */
         $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
-        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
+        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
         $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
         // Prepare payment
         do {
@@ -136,7 +138,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('cardToken')
         );
         try {
-            $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
+            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
@@ -246,6 +248,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         return $payment;
     }
 
+    protected function createCustomer($data, $selectedApi)
+    {
+        try {
+            $payment = $this->module->api->customers->create($data, array('embed' => 'payments'));
+        } catch (Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
+
+        return $payment;
+    }
+
     /**
      * Prepend module path if PS version >= 1.7
      *
@@ -317,9 +330,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
         $orderFee = PaymentFeeUtility::getPaymentFee(
-            new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
+            new MolPaymentMethod(
+                $paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
+            ),
             $this->context->cart->getOrderTotal()
         );
 
@@ -329,8 +345,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if ($orderFee) {
             $orderFeeObj = new MolOrderFee();
             $orderFeeObj->id_cart = (int) $cartId;
+            $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
             $orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
-                new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
+                new MolPaymentMethod(
+                    $paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
+                ),
                 $this->context->cart->getOrderTotal()
             );
             try {

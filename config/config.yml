@@ -6,6 +6,7 @@ imports:
   - { resource: factory.yml }
   - { resource: presenter.yml }
   - { resource: validator.yml }
+  - { resource: command.yml }
 
 services:
   mollie:

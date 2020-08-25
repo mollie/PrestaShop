@@ -148,6 +148,8 @@ class OrderStatusService
     private function checkIfOrderConfNeedsToBeSend($statusId)
     {
         return ((int)$statusId === (int)Configuration::get(Config::MOLLIE_STATUS_PAID) &&
-            (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID);
+            (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID) ||
+            ((int)$statusId === (int)Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) &&
+                (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID);
     }
 }

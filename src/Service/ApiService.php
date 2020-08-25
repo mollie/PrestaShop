@@ -118,11 +118,11 @@ class ApiService
      *
      * @public ✓ This method is part of the public API
      */
-    public function getMethodsForConfig($api, $path, $active = false)
+    public function getMethodsForConfig(MollieApiClient $api, $path, $active = false)
     {
         $notAvailable = [];
         try {
-            $apiMethods = $api->methods->all(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
+            $apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
             return [];
@@ -192,7 +192,6 @@ class ApiService
         return $methods;
     }
 
-
     private function getMethodsObjForConfig($apiMethods)
     {
         $methods = [];
@@ -209,8 +208,9 @@ class ApiService
         $defaultPaymentMethod->surcharge_percentage = '';
         $defaultPaymentMethod->surcharge_limit = '';
 
+        $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         foreach ($apiMethods as $apiMethod) {
-            $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id']);
+            $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $environment);
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
                 $methods[$apiMethod['id']] = $apiMethod;
@@ -228,7 +228,7 @@ class ApiService
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
-                $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value);
+                $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value, $environment);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
                     $methods[$value]['obj'] = $paymentMethod;

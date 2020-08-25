@@ -33,6 +33,8 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Install\Installer;
+use Mollie\Service\imageService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,8 +74,8 @@ function upgrade_module_4_0_7($module)
     $module->registerHook('actionAdminControllerSetMedia');
     $module->registerHook('actionValidateOrder');
 
-    /** @var \Mollie\Install\Installer $installer */
-    $installer = $module->getContainer(\Mollie\Install\Installer::class);
+    /** @var Installer $installer */
+    $installer = $module->getContainer(Installer::class);
     $installed = true;
 
     $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
