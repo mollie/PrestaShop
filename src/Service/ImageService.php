@@ -34,7 +34,7 @@
 
 namespace Mollie\Service;
 
-class imageService
+class ImageService
 {
     public function createOrderStateLogo($orderStateId)
     {
