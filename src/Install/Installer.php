@@ -59,7 +59,7 @@ class Installer
      * @var array
      */
     private $errors = [];
-    
+
     /**
      * @var Mollie
      */
@@ -101,6 +101,14 @@ class Installer
             return false;
         }
 
+        try {
+            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
+            $this->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
+        } catch (Exception $e) {
+            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
+            return false;
+        }
+
         $this->copyEmailTemplates();
 
         include(dirname(__FILE__) . '/../../sql/install.php');
@@ -112,7 +120,7 @@ class Installer
     {
         return $this->errors;
     }
- 
+
     public static function getHooks()
     {
         return [
