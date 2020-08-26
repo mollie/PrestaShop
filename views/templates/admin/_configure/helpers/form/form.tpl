@@ -316,7 +316,7 @@
                                     type="text"
                                     {if $carrier.source !== "custom_url"}disabled=""{/if}
                                     name="MOLLIE_CARRIER_CUSTOM_URL_{$carrier.id_carrier}"
-                                    value=""
+                                    value="{$carrier.custom_url}"
                             >
                         </td>
                     </tr>
