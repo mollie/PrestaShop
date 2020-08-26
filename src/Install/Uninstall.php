@@ -39,6 +39,7 @@ use Configuration;
 use Mollie;
 use Mollie\Config\Config;
 use OrderState;
+use Tab;
 use Validate;
 
 class Uninstall
@@ -63,6 +64,8 @@ class Uninstall
         $this->deleteMollieStatuses();
 
         $this->deleteConfig();
+
+        $this->uninstallTabs();
 
         include(dirname(__FILE__) . '/../../sql/uninstall.php');
 
@@ -125,6 +128,27 @@ class Uninstall
             }
             $orderState->deleted = 1;
             $orderState->update();
+        }
+    }
+
+    private function uninstallTabs()
+    {
+        $tabs = [
+            'AdminMollieAjax',
+            'AdminMollieModule'
+        ];
+
+        foreach ($tabs as $tab) {
+            $idTab = Tab::getIdFromClassName($tab);
+
+            if (!$idTab) {
+                continue;
+            }
+
+            $tab = new Tab($idTab);
+            if (!$tab->delete()) {
+                return false;
+            }
         }
     }
 }
