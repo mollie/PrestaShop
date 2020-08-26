@@ -34,33 +34,35 @@
 
 {block name="input"}
     {if $input.type === 'mollie-support'}
-        <div class="mm-block-mollie">
-            <a class="helpbutton" href="https://www.mollie.com/dashboard/settings/profiles" target="_blank"></a>
-            <p>
-                <strong>{l s='Developed by Invertus' mod='mollie'}</strong>
-                {l s=' - the most technically advanced agency in the PrestaShop ecosystem.' mod='mollie'}
-            </p>
-            <table>
-                <tbody>
-                <tr>
-                    <td>
-                        <div class="icon1"></div>
-                        <a href="https://help.mollie.com/hc/en-us"
-                           target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
-                    </td>
-                    <td>
-                        <div class="icon2"></div>
-                        <a href="https://www.mollie.com/en/contact"
-                           target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
-                    </td>
-                    <td>
-                        <div class="icon3"></div>
-                        <a href="https://www.invertus.eu/contacts/"
-                           target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div data-tab-id="general_settings">
+            <div class="mm-block-mollie">
+                <a class="helpbutton" href="https://www.mollie.com/dashboard/settings/profiles" target="_blank"></a>
+                <p>
+                    <strong>{l s='Developed by Invertus' mod='mollie'}</strong>
+                    {l s=' - the most technically advanced agency in the PrestaShop ecosystem.' mod='mollie'}
+                </p>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="icon1"></div>
+                            <a href="https://help.mollie.com/hc/en-us"
+                               target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
+                        </td>
+                        <td>
+                            <div class="icon3"></div>
+                            <a href="https://www.mollie.com/en/contact"
+                               target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
+                        </td>
+                        <td>
+                            <div class="icon2"></div>
+                            <a href="https://www.invertus.eu/contacts/"
+                               target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     {elseif $input.type === 'mollie-methods'}
         <script type="text/javascript">
@@ -377,6 +379,7 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
 
 
 
