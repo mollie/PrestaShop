@@ -331,13 +331,22 @@ class Mollie extends PaymentModule
             'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
             'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
         ]);
+
+        /** Custom logo JS vars*/
+        Media::addJsDef([
+            'image_size_message' => $this->l('Image size must be %s%x%s1%'),
+            'not_valid_file_message' => $this->l('not a valid file: %s%'),
+        ]);
+
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
         $this->context->smarty->assign($data);
 
         $html = '';
@@ -718,13 +727,15 @@ class Mollie extends PaymentModule
         }
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
+        /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+        $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
 
-        $methodIds = $paymentMethodService->getMethodsForCheckout();
+        $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
-        foreach ($methodIds as $methodId) {
-            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+        foreach ($methods as $method) {
+            $methodObj = new MolPaymentMethod($method['id_payment_method']);
             if ($methodObj->id_method === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
@@ -746,7 +757,7 @@ class Mollie extends PaymentModule
 
         $iso = Tools::strtolower($context->currency->iso_code);
         $paymentOptions = [];
-        foreach ($methodIds as $methodId) {
+        foreach ($methods as $method) {
             if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])) {
                 continue;
             }
@@ -754,7 +765,7 @@ class Mollie extends PaymentModule
                 continue;
             }
 
-            $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+            $methodObj = new MolPaymentMethod($method['id_payment_method']);
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
 
             $isIdealMethod = $methodObj->id_method === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL;
@@ -781,9 +792,7 @@ class Mollie extends PaymentModule
                     ])
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
-                $imageConfig = Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES);
-                $image = json_decode($methodObj->images_json, true);
-                $image = \Mollie\Utility\ImageUtility::setOptionImage($image, $imageConfig);
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {
@@ -835,9 +844,7 @@ class Mollie extends PaymentModule
                         true
                     ));
 
-                $imageConfig = Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES);
-                $image = json_decode($methodObj->images_json, true);
-                $image = \Mollie\Utility\ImageUtility::setOptionImage($image, $imageConfig);
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {
@@ -885,9 +892,7 @@ class Mollie extends PaymentModule
                         true
                     ));
 
-                $imageConfig = Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES);
-                $image = json_decode($methodObj->images_json, true);
-                $image = \Mollie\Utility\ImageUtility::setOptionImage($image, $imageConfig);
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {

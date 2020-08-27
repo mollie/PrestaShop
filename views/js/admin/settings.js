@@ -105,8 +105,7 @@ $(document).ready(function () {
         $('.js-live-api-group').find('label.control-label').toggleClass('required', isLive);
     }
 
-    function handleApiKeyVisibility()
-    {
+    function handleApiKeyVisibility() {
         $('button[data-action="show-password"]').on('click', function () {
             var elm = $(this).closest('.input-group').children('input.js-visible-password');
             if (elm.attr('type') === 'password') {

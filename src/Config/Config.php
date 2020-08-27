@@ -234,6 +234,8 @@ class Config
     const MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE';
     const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
 
+    const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
+
     /** @var array $methods */
     public static $methods = [
         'banktransfer' => 'Bank',

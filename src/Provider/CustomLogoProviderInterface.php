@@ -33,23 +33,45 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Factory;
+namespace Mollie\Provider;
 
-use Module;
+use MolPaymentMethod;
 
-class ModuleFactory
+interface CustomLogoProviderInterface
 {
-    public function getModuleVersion()
-    {
-        return Module::getInstanceByName('mollie')->version;
-    }
+    /**
+     * @return string
+     */
+    public function getName();
 
-    public function getLocalPath()
-    {
-        return Module::getInstanceByName('mollie')->getLocalPath();
-    }
-    public function getPathUri()
-    {
-        return Module::getInstanceByName('mollie')->getPathUri();
-    }
+    /**
+     * @return string
+     */
+    public function getLocalPath();
+
+    /**
+     * @return string
+     */
+    public function getPathUri();
+
+    /**
+     * @return string
+     */
+    public function getLocalLogoPath();
+
+    /**
+     * @return string
+     */
+    public function getLogoPathUri();
+
+    /**
+     * @return bool
+     */
+    public function logoExists();
+
+    /**
+     * @param MolPaymentMethod $methodObj
+     * @return string
+     */
+    public function getMethodOptionLogo(MolPaymentMethod $methodObj);
 }

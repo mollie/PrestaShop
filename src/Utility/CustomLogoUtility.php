@@ -33,23 +33,24 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Factory;
+namespace Mollie\Utility;
 
-use Module;
+use Configuration;
+use Mollie\Config\Config;
 
-class ModuleFactory
+class CustomLogoUtility
 {
-    public function getModuleVersion()
+    /**
+     * @param $methodName
+     * @return bool
+     */
+    public static function isCustomLogoEnabled($methodName)
     {
-        return Module::getInstanceByName('mollie')->version;
-    }
-
-    public function getLocalPath()
-    {
-        return Module::getInstanceByName('mollie')->getLocalPath();
-    }
-    public function getPathUri()
-    {
-        return Module::getInstanceByName('mollie')->getPathUri();
+        switch ($methodName) {
+            case 'creditcard':
+                return (bool)Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+            default:
+                return false;
+        }
     }
 }

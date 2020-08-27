@@ -10,6 +10,7 @@ services:
       - '@language'
       - '@smarty'
       - '@link'
+      - '@Mollie\Provider\CreditCardLogoProvider'
 
   Mollie\Builder\ApiTestFeedbackBuilder:
     arguments:

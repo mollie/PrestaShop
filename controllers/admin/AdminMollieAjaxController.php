@@ -35,6 +35,7 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
+use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TimeUtility;
@@ -56,6 +57,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'closeUpgradeNotice':
                 $this->closeUpgradeNotice();
+                break;
+            case 'validateLogo':
+                $this->validateLogo();
                 break;
             default:
                 break;
@@ -136,5 +140,32 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function closeUpgradeNotice()
     {
         Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
+    }
+
+    private function validateLogo()
+    {
+        /** @var CreditCardLogoProvider $creditCardLogoProvider */
+        $creditCardLogoProvider = $this->module->getContainer(CreditCardLogoProvider::class);
+        $target_file = $creditCardLogoProvider->getLocalLogoPath();
+        $isUploaded = 1;
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+        $returnText = '';
+        // Check image format
+        if ($imageFileType !== "jpg" && $imageFileType !== "png") {
+            $returnText = $this->l('Sorry, only JPG, PNG files are allowed.');
+            $isUploaded = 0;
+        }
+
+        if ($isUploaded === 1) {
+            //  if everything is ok, try to upload file
+            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                $returnText = basename($_FILES["fileToUpload"]["name"]);
+            } else {
+                $isUploaded = 0;
+                $returnText = $this->l("Sorry, there was an error uploading your logo.");
+            }
+        }
+
+        echo json_encode(["status" => $isUploaded, "message" => $returnText]);
     }
 }

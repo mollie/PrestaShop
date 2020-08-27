@@ -159,6 +159,12 @@ class SettingsSaveService
             }
         }
 
+        $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+        Configuration::updateValue(
+            Config::MOLLIE_SHOW_CUSTOM_LOGO,
+            $useCustomLogo
+        );
+
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
         $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);

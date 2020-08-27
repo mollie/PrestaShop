@@ -33,23 +33,31 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Factory;
+namespace Mollie\Provider;
 
-use Module;
-
-class ModuleFactory
+abstract class AbstractCustomLogoProvider implements CustomLogoProviderInterface
 {
-    public function getModuleVersion()
+    /**
+     * @return string
+     */
+    public function getLocalLogoPath()
     {
-        return Module::getInstanceByName('mollie')->version;
+        return "{$this->getLocalPath()}views/img/customLogo/{$this->getName()}.jpg" ;
     }
 
-    public function getLocalPath()
+    /**
+     * @return string
+     */
+    public function getLogoPathUri()
     {
-        return Module::getInstanceByName('mollie')->getLocalPath();
+        return "{$this->getPathUri()}views/img/customLogo/{$this->getName()}.jpg" ;
     }
-    public function getPathUri()
+
+    /**
+     * @return bool
+     */
+    public function logoExists()
     {
-        return Module::getInstanceByName('mollie')->getPathUri();
+        return file_exists($this->getLocalLogoPath());
     }
 }

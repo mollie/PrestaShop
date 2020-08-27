@@ -47,8 +47,10 @@ use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
@@ -57,7 +59,6 @@ use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use State;
 use Tools;
 
 class PaymentMethodService
@@ -92,13 +93,19 @@ class PaymentMethodService
      */
     private $customerService;
 
+    /**
+     * @var CreditCardLogoProvider
+     */
+    private $creditCardLogoProvider;
+
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
         MethodCountryRepository $countryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        CreditCardLogoProvider $creditCardLogoProvider
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -106,6 +113,7 @@ class PaymentMethodService
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
+        $this->creditCardLogoProvider = $creditCardLogoProvider;
     }
 
     public function savePaymentMethod($method)
@@ -213,6 +221,11 @@ class PaymentMethodService
         foreach ($methods as $key => $method) {
             $image = json_decode($method['images_json'], true);
             $methods[$key]['image'] = $image;
+            if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
+                if ($this->creditCardLogoProvider->logoExists()) {
+                    $methods[$key]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
+                }
+            }
         }
 
         return $methods;

@@ -52,7 +52,11 @@
                     {/if}
 
                     {if isset($method['image']) && $images !== 'hide'}
-                        {if $images === 'big'}
+                        {if isset($method['image']['custom_logo'])}
+                            <img class="mollie_image_custom"
+                                 src="{$method['image']['custom_logo']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['custom_logo'])} onerror="this.src = ';;{$method['image']['custom_logo']|escape:'javascript':'UTF-8'}"{/if}
+                                 alt="{$method['method_name']|escape:'htmlall':'UTF-8'}'">
+                        {elseif $images === 'big'}
                             <img class="mollie_image_big"
                                  src="{$method['image']['size2x']|escape:'htmlall':'UTF-8'}"{if !empty($method['image']['size2x'])} onerror="this.src = ';;{$method['image']['size2x']|escape:'javascript':'UTF-8'}"{/if}
                                  alt="{$method['method_name']|escape:'htmlall':'UTF-8'}'">

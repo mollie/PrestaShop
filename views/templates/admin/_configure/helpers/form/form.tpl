@@ -264,6 +264,63 @@
                                    class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit}">
                         </div>
                     </div>
+                    {if $paymentMethod.id === 'creditcard'}
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Use Custom Logo' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_SHOW_CUSTOM_LOGO"
+                                        class="fixed-width-xl">
+                                    <option value="0" {if $input.showCustomLogo === '0'} selected {/if}>
+                                        {l s='No' mod='mollie'}
+                                    </option>
+                                    <option value="1" {if $input.showCustomLogo === '1'} selected {/if}>
+                                        {l s='Yes, Upload custom logo' mod='mollie'}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group js-form-group-custom-logo">
+                            <label class="control-label col-lg-3">
+                            </label>
+                            <div class="col-lg-4">
+                                <input id="MOLLIE_CUSTOM_LOGO"
+                                       type="file"
+                                       name="MOLLIE_CUSTOM_LOGO"
+                                       class="hide"
+                                       accept=".png, .jpg"
+                                >
+                                <div class="dummyfile input-group">
+                                    <span class="input-group-addon"><i class="icon-file"></i></span>
+                                    <input id="MOLLIE_CUSTOM_LOGO-name"
+                                           type="text"
+                                           name="MOLLIE_CUSTOM_LOGO"
+                                           readonly=""
+                                    >
+                                    <span class="input-group-btn">
+                                        <button id="MOLLIE_CUSTOM_LOGO-selectbutton" type="button"
+                                                name="submitAddAttachments"
+                                                class="btn btn-default">
+                                            <i class="icon-folder-open"></i>
+                                            {l s='Add file' mod='mollie'}
+                                        </button>
+						        	</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group js-form-group-custom-logo">
+                            <label class="control-label col-lg-3">
+                                {l s='Your custom logo' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <img src="{$input.customLogoUrl}"
+                                     class="js-mollie-credit-card-custom-logo
+                                     {if $input.customLogoExist === false}hidden{/if}
+                                ">
+                            </div>
+                        </div>
+                    {/if}
                 </div>
             </div>
         {/foreach}
@@ -379,6 +436,15 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
+
+
+
+
+
+
 
 
 

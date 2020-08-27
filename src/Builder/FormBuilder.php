@@ -43,6 +43,8 @@ use Configuration;
 use HelperForm;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
@@ -54,7 +56,6 @@ use Mollie\Utility\TagsUtility;
 use OrderState;
 use Smarty;
 use Tools;
-use Translate;
 
 class FormBuilder
 {
@@ -100,6 +101,11 @@ class FormBuilder
      */
     private $carrierInformationService;
 
+    /**
+     * @var CustomLogoProviderInterface
+     */
+    private $creditCardLogoProvider;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
@@ -109,7 +115,8 @@ class FormBuilder
         MolCarrierInformationService $carrierInformationService,
         $lang,
         Smarty $smarty,
-        $link
+        $link,
+        CustomLogoProviderInterface $creditCardLogoProvider
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -120,6 +127,7 @@ class FormBuilder
         $this->countryRepository = $countryRepository;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
+        $this->creditCardLogoProvider = $creditCardLogoProvider;
     }
 
     public function buildSettingsForm()
@@ -417,7 +425,10 @@ class FormBuilder
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl')
                 ]
-            )
+            ),
+            'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri(),
+            'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
         ];
 
         return $input;
@@ -583,31 +594,6 @@ class FormBuilder
             [
                 'type' => 'select',
                 'label' => $this->module->l('Images', self::FILE_NAME),
-                'tab' => $advancedSettings,
-                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
-                'name' => Config::MOLLIE_IMAGES,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::LOGOS_HIDE,
-                            'name' => $this->module->l('hide', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::LOGOS_NORMAL,
-                            'name' => $this->module->l('normal', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::LOGOS_BIG,
-                            'name' => $this->module->l('big', self::FILE_NAME),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ],
-            [
-                'type' => 'select',
-                'label' => $this->module->l('Use Custom Logo', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
                 'name' => Config::MOLLIE_IMAGES,
