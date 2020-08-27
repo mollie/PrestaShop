@@ -501,6 +501,8 @@ class Mollie extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
+        $this->context->controller->addCSS($this->getPathUri().'views/css/admin/menu.css');
+
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
