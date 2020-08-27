@@ -1,4 +1,7 @@
 <?php
+
+use Mollie\Config\Config;
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -37,15 +40,21 @@ class AdminMollieModuleController extends ModuleAdminController
 {
     public function postProcess()
     {
+        if (Config::isVersion17()) {
+            Tools::redirectAdmin(
+                $this->context->link->getAdminLink(
+                    'AdminModules',
+                    true,
+                    [],
+                    [
+                        'configure' => 'mollie'
+                    ]
+                )
+            );
+        };
+
         Tools::redirectAdmin(
-            $this->context->link->getAdminLink(
-                'AdminModules',
-                true,
-                [],
-                [
-                    'configure' => 'mollie'
-                ]
-            )
+            $this->context->link->getAdminLink('AdminModules') . '&configure=mollie'
         );
     }
 }
