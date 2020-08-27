@@ -51,6 +51,7 @@ use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
+use Mollie\Utility\LogoUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
@@ -213,6 +214,11 @@ class PaymentMethodService
         foreach ($methods as $key => $method) {
             $image = json_decode($method['images_json'], true);
             $methods[$key]['image'] = $image;
+            if ($method['id_method'] === 'creditcard' && Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO)) {
+                if (LogoUtility::creditCardLogoExists($this->module->getLocalPath())) {
+                    $methods[$key]['image']['custom_logo'] = LogoUtility::getCreditCardLogoPath($this->module->getPathUri());
+                }
+            }
         }
 
         return $methods;
