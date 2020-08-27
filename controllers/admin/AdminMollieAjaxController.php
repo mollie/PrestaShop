@@ -35,6 +35,7 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
+use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TimeUtility;
@@ -143,26 +144,28 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function validateLogo()
     {
-        $target_file = $this->module->getLocalPath() . 'views/img/customLogo/' . Config::MOLLIE_CUSTOM_CREDIT_CARD_LOGO_NAME;
-        $uploadOk = 1;
+        /** @var CreditCardLogoProvider $creditCardLogoProvider */
+        $creditCardLogoProvider = $this->module->getContainer(CreditCardLogoProvider::class);
+        $target_file = $creditCardLogoProvider->getLocalLogoPath();
+        $isUploaded = 1;
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
         $returnText = '';
         // Check image format
         if ($imageFileType !== "jpg" && $imageFileType !== "png") {
-            $returnText = "Sorry, only JPG, PNG files are allowed.";
-            $uploadOk = 0;
+            $returnText = $this->l('Sorry, only JPG, PNG files are allowed.');
+            $isUploaded = 0;
         }
 
-        if ($uploadOk === 1) {
+        if ($isUploaded === 1) {
             //  if everything is ok, try to upload file
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
                 $returnText = basename($_FILES["fileToUpload"]["name"]);
             } else {
-                $uploadOk = 0;
-                $returnText = "Sorry, there was an error uploading your logo.";
+                $isUploaded = 0;
+                $returnText = $this->l("Sorry, there was an error uploading your logo.");
             }
         }
 
-        echo json_encode(["status" => $uploadOk, "message" => $returnText]);
+        echo json_encode(["status" => $isUploaded, "message" => $returnText]);
     }
 }
