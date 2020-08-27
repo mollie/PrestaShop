@@ -33,6 +33,7 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Utility\MultiLangUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -64,6 +65,11 @@ function upgrade_module_4_0_8($module)
     if (Db::getInstance()->execute($sql) == false) {
         return false;
     }
+    $tabId = Tab::getIdFromClassName('AdminMollieModule');
+    $tab = new Tab($tabId);
+    $tab->name = MultiLangUtility::createMultiLangField('Mollie');
+    $tab->icon = 'mollie';
+    $tab->update();
 
     return true;
 }

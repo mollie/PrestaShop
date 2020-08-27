@@ -104,7 +104,7 @@ class Installer
 
         try {
             $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-            $this->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
+            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', false, 'mollie');
         } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
             return false;
@@ -331,7 +331,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
     }
 
-    public function installTab($className, $parent, $name, $active = true) {
+    public function installTab($className, $parent, $name, $active = true, $icon = '') {
 
         $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
 
@@ -340,6 +340,7 @@ class Installer
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
         $moduleTab->active = $active;
+        $moduleTab->icon = $icon;
 
         $languages = Language::getLanguages(true);
         foreach ($languages as $language) {
