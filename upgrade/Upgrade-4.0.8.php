@@ -69,6 +69,7 @@ function upgrade_module_4_0_8($module)
     $tab = new Tab($tabId);
     $tab->name = MultiLangUtility::createMultiLangField('Mollie');
     $tab->icon = 'mollie';
+    $tab->active = true;
     $tab->update();
 
     return true;

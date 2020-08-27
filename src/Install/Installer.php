@@ -104,7 +104,7 @@ class Installer
 
         try {
             $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', false, 'mollie');
+            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
         } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
             return false;
