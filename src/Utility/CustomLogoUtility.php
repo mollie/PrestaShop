@@ -33,58 +33,24 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Provider;
+namespace Mollie\Utility;
 
 use Configuration;
 use Mollie\Config\Config;
-use Mollie\Utility\CustomLogoUtility;
-use Mollie\Utility\ImageUtility;
-use MolPaymentMethod;
 
-final class CreditCardLogoProvider extends AbstractCustomLogoProvider
+class CustomLogoUtility
 {
     /**
-     * @var string
+     * @param $methodName
+     * @return bool
      */
-    private $localPath;
-
-    /**
-     * @var string
-     */
-    private $pathUri;
-
-    public function __construct($localPath, $pathUri)
+    public static function isCustomLogoEnabled($methodName)
     {
-        $this->localPath = $localPath;
-        $this->pathUri = $pathUri;
-    }
-
-    public function getName()
-    {
-        return 'customCreditCardLogo';
-    }
-
-    public function getLocalPath()
-    {
-        return $this->localPath;
-    }
-
-    public function getPathUri()
-    {
-        return $this->pathUri;
-    }
-
-    public function getMethodOptionLogo(MolPaymentMethod $methodObj)
-    {
-        $isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
-
-        if ($isCustomLogoEnabled && $this->logoExists()) {
-            return $this->getLogoPathUri();
+        switch ($methodName) {
+            case 'creditcard':
+                return (bool)Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+            default:
+                return false;
         }
-
-        $image = json_decode($methodObj->images_json, true);
-        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
-
-        return ImageUtility::setOptionImage($image, $imageConfig);
     }
 }
