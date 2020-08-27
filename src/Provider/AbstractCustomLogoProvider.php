@@ -40,30 +40,6 @@ abstract class AbstractCustomLogoProvider implements CustomLogoProviderInterface
     /**
      * @return string
      */
-    public function getName()
-    {
-        return '';
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocalPath()
-    {
-        return '';
-    }
-
-    /**
-     * @return string
-     */
-    public function getPathUri()
-    {
-        return '';
-    }
-
-    /**
-     * @return string
-     */
     public function getLocalLogoPath()
     {
         return "{$this->getLocalPath()}views/img/customLogo/{$this->getName()}.jpg" ;
@@ -82,8 +58,6 @@ abstract class AbstractCustomLogoProvider implements CustomLogoProviderInterface
      */
     public function logoExists()
     {
-        $creditCardLogoPath = $this->getLocalLogoPath();
-
-        return file_exists($creditCardLogoPath);
+        return file_exists($this->getLocalLogoPath());
     }
 }

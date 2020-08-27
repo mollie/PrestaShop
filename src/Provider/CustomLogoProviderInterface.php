@@ -35,6 +35,8 @@
 
 namespace Mollie\Provider;
 
+use MolPaymentMethod;
+
 interface CustomLogoProviderInterface
 {
     /**
@@ -66,4 +68,10 @@ interface CustomLogoProviderInterface
      * @return bool
      */
     public function logoExists();
+
+    /**
+     * @param MolPaymentMethod $methodObj
+     * @return string
+     */
+    public function getMethodOptionLogo(MolPaymentMethod $methodObj);
 }

@@ -44,6 +44,7 @@ use HelperForm;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
@@ -101,7 +102,7 @@ class FormBuilder
     private $carrierInformationService;
 
     /**
-     * @var CreditCardLogoProvider
+     * @var CustomLogoProviderInterface
      */
     private $creditCardLogoProvider;
 
@@ -115,7 +116,7 @@ class FormBuilder
         $lang,
         Smarty $smarty,
         $link,
-        CreditCardLogoProvider $creditCardLogoProvider
+        CustomLogoProviderInterface $creditCardLogoProvider
     ) {
         $this->module = $module;
         $this->apiService = $apiService;

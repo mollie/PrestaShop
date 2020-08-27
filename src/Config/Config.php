@@ -235,7 +235,6 @@ class Config
     const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
 
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
-    const MOLLIE_CUSTOM_CREDIT_CARD_LOGO_NAME = 'customCreditCardLogo.jpg';
 
     /** @var array $methods */
     public static $methods = [
