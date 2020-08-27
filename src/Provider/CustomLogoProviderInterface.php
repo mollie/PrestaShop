@@ -33,41 +33,37 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Utility;
+namespace Mollie\Provider;
 
-use Configuration;
-use Mollie\Config\Config;
-use MolPaymentMethod;
-
-class LogoUtility
+interface CustomLogoProviderInterface
 {
-    public static function getCreditCardLogoPath($pathUrl)
-    {
-        return $pathUrl . 'views/img/customLogo/' . Config::MOLLIE_CUSTOM_CREDIT_CARD_LOGO_NAME;
-    }
+    /**
+     * @return string
+     */
+    public function getName();
 
-    public static function getMethodOptionLogo(MolPaymentMethod $methodObj, $localPath, $pathUrl)
-    {
-        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
-        if ($methodObj->id_method === 'creditcard' && Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO)) {
-            if (self::creditCardLogoExists($localPath)) {
-                return self::getCreditCardLogoPath($pathUrl);
-            }
-        }
-        $image = json_decode($methodObj->images_json, true);
+    /**
+     * @return string
+     */
+    public function getLocalPath();
 
-        return ImageUtility::setOptionImage($image, $imageConfig);
-    }
+    /**
+     * @return string
+     */
+    public function getPathUri();
 
-    public static function fileExists($path)
-    {
-        return file_exists($path) ? true : false;
-    }
+    /**
+     * @return string
+     */
+    public function getLocalLogoPath();
 
-    public static function creditCardLogoExists($localPath)
-    {
-        $creditCardLogoPath = self::getCreditCardLogoPath($localPath);
+    /**
+     * @return string
+     */
+    public function getLogoPathUri();
 
-        return self::fileExists($creditCardLogoPath);
-    }
+    /**
+     * @return bool
+     */
+    public function logoExists();
 }

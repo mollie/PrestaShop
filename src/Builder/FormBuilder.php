@@ -43,6 +43,7 @@ use Configuration;
 use HelperForm;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
@@ -50,12 +51,10 @@ use Mollie\Service\CountryService;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
-use Mollie\Utility\LogoUtility;
 use Mollie\Utility\TagsUtility;
 use OrderState;
 use Smarty;
 use Tools;
-use Translate;
 
 class FormBuilder
 {
@@ -101,6 +100,11 @@ class FormBuilder
      */
     private $carrierInformationService;
 
+    /**
+     * @var CreditCardLogoProvider
+     */
+    private $creditCardLogoProvider;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
@@ -110,7 +114,8 @@ class FormBuilder
         MolCarrierInformationService $carrierInformationService,
         $lang,
         Smarty $smarty,
-        $link
+        $link,
+        CreditCardLogoProvider $creditCardLogoProvider
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -121,6 +126,7 @@ class FormBuilder
         $this->countryRepository = $countryRepository;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
+        $this->creditCardLogoProvider = $creditCardLogoProvider;
     }
 
     public function buildSettingsForm()
@@ -420,8 +426,8 @@ class FormBuilder
                 ]
             ),
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-            'customLogoUrl' => $this->module->getPathUri() . 'views/img/customLogo/' . Config::MOLLIE_CUSTOM_CREDIT_CARD_LOGO_NAME,
-            'customLogoExist' => LogoUtility::creditCardLogoExists($this->module->getLocalPath()),
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri(),
+            'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
         ];
 
         return $input;

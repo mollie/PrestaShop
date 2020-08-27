@@ -727,8 +727,10 @@ class Mollie extends PaymentModule
         }
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
+        /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+        $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
@@ -790,7 +792,7 @@ class Mollie extends PaymentModule
                     ])
                     ->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
-                $image = \Mollie\Utility\LogoUtility::getMethodOptionLogo($methodObj, $this->getLocalPath(), $this->getPathUri());
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {
@@ -842,7 +844,7 @@ class Mollie extends PaymentModule
                         true
                     ));
 
-                $image = \Mollie\Utility\LogoUtility::getMethodOptionLogo($methodObj, $this->getLocalPath(), $this->getPathUri());
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {
@@ -890,7 +892,7 @@ class Mollie extends PaymentModule
                         true
                     ));
 
-                $image = \Mollie\Utility\LogoUtility::getMethodOptionLogo($methodObj, $this->getLocalPath(), $this->getPathUri());
+                $image = $creditCardProvider->getMethodOptionLogo($methodObj);
                 $newOption->setLogo($image);
 
                 if ($paymentFee) {
