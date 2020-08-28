@@ -41,6 +41,7 @@ use Currency;
 use Mollie;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
+use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
@@ -70,24 +71,18 @@ class CartLinesService
     {
         $oCurrency = new Currency($cart->id_currency);
         $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
+        $vatRatePrecision = Mollie\Config\Config::VAT_RATE_ROUNDING_PRECISION;
 
-        $remaining = round($amount, $apiRoundingPrecision);
+        $totalPrice = round($amount, $apiRoundingPrecision);
         $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
         $cartSummary = $cart->getSummaryDetails();
         $cartItems = $cart->getProductsWithSeparatedGifts();
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
         $totalDiscounts = $cart->getDiscountSubtotalWithoutGifts();
         $remaining = round(
-            NumberUtility::minus(
-                NumberUtility::plus(
-                    NumberUtility::plus($remaining, $shipping),
-                    $wrapping
-                ),
-                $totalDiscounts
-            ),
+            CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
             $apiRoundingPrecision
         );
-        round($remaining + $shipping + $wrapping - $totalDiscounts, $apiRoundingPrecision);
 
         $aItems = [];
         /* Item */
@@ -172,24 +167,24 @@ class CartLinesService
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         foreach ($aItems as $productHash => $aItem) {
-            $aItems[$productHash] = array_map(function ($line) use ($apiRoundingPrecision, $oCurrency) {
+            $aItems[$productHash] = array_map(function ($line) use ($apiRoundingPrecision, $vatRatePrecision) {
                 $quantity = (int)$line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
-                $unitPriceNoTax = round($line['unitPrice'] / (1 + ($targetVat / 100)), $apiRoundingPrecision);
+                $unitPriceNoTax = round(CalculationUtility::getUnitPriceNoTax(
+                    $line['unitPrice'],
+                    $targetVat
+                ),
+                    $apiRoundingPrecision
+                );
 
                 // Calculate VAT
                 $totalAmount = round(NumberUtility::times($unitPrice, $quantity), $apiRoundingPrecision);
-                $actualVatRate = 0;
+                $actualVatRate = 0;//
                 if ($unitPriceNoTax > 0) {
-                    $totalPrice = NumberUtility::times($unitPrice, $quantity);
-                    $totalPriceNoTax = NumberUtility::times($unitPriceNoTax, $quantity);
-                    $vatPrice = NumberUtility::minus($totalPrice, $totalPriceNoTax);
-                    $vatPriceDividedByTotalPriceNoTax = NumberUtility::divide($vatPrice, $totalPriceNoTax);
-
                     $actualVatRate = round(
-                        NumberUtility::times($vatPriceDividedByTotalPriceNoTax, 100),
-                        $apiRoundingPrecision
+                        $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
+                        $vatRatePrecision
                     );
                 }
                 $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
@@ -232,7 +227,13 @@ class CartLinesService
 
         // Add wrapping
         if (round($wrapping, 2) > 0) {
-            $wrappingVatRate = round(($cartSummary['total_wrapping'] - $cartSummary['total_wrapping_tax_exc']) / $cartSummary['total_wrapping_tax_exc'] * 100, $apiRoundingPrecision);
+            $wrappingVatRate = round(
+                CalculationUtility::getActualVatRate(
+                    $cartSummary['total_wrapping'],
+                    $cartSummary['total_wrapping_tax_exc']
+                ),
+                $vatRatePrecision
+            );
 
             $aItems['wrapping'] = [
                 [

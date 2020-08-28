@@ -205,6 +205,7 @@ class Config
     const MOLLIE_METHODS_CHECK_INTERVAL = 86400; //daily check
 
     const API_ROUNDING_PRECISION = 2;
+    const VAT_RATE_ROUNDING_PRECISION = 0;
 
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
