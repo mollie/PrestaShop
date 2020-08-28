@@ -73,10 +73,10 @@ class CartLinesService
         $remaining = round($amount, $apiRoundingPrecision);
         $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
         $cartSummary = $cart->getSummaryDetails();
-        $cartItems = $cart->getProducts();
+        $cartItems = $cart->getProductsWithSeparatedGifts();
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
-        $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
-        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
+        $totalDiscounts = $cart->getDiscountSubtotalWithoutGifts();
+        $remaining = round($remaining + $shipping + $wrapping - $totalDiscounts, $apiRoundingPrecision);
 
         $aItems = [];
         /* Item */
@@ -84,6 +84,9 @@ class CartLinesService
             // Get the rounded total w/ tax
             $roundedTotalWithTax = round($cartItem['total_wt'], $apiRoundingPrecision);
 
+            if ($cartItem['is_gift']) {
+                $roundedTotalWithTax = 0;
+            }
             // Skip if no qty
             $quantity = (int)$cartItem['cart_quantity'];
             if ($quantity <= 0 || $cartItem['price_wt'] <= 0) {
@@ -114,9 +117,6 @@ class CartLinesService
 
         // Add discount if applicable
         if ($totalDiscounts >= 0.01) {
-            $totalDiscountsNoTax = round($cartSummary['total_discounts_tax_exc'], $apiRoundingPrecision);
-            $vatRate = round((($totalDiscounts - $totalDiscountsNoTax) / $totalDiscountsNoTax) * 100, $apiRoundingPrecision);
-
             $aItems['discount'] = [
                 [
                     'name' => 'Discount',
@@ -124,10 +124,10 @@ class CartLinesService
                     'quantity' => 1,
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
                     'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
-                    'targetVat' => $vatRate,
+                    'targetVat' => 0,
                 ],
             ];
-            $remaining += $totalDiscounts;
+            $remaining -= $totalDiscounts;
         }
 
         // Compensate for order total rounding inaccuracies
@@ -169,7 +169,10 @@ class CartLinesService
 
                 // Calculate VAT
                 $totalAmount = round($unitPrice * $quantity, $apiRoundingPrecision);
-                $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
+                $actualVatRate = 0;
+                if ($unitPriceNoTax > 0) {
+                    $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
+                }
                 $vatAmount = $totalAmount * ($actualVatRate / ($actualVatRate + 100));
 
                 $newItem = [
@@ -308,7 +311,7 @@ class CartLinesService
                 'quantity' => $qty,
                 'unitPrice' => (float)$unitPrice,
                 'totalAmount' => (float)$unitPrice * $qty,
-                'sku' => $cartLineGroup[0]['sku'],
+                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
             ];
         }
