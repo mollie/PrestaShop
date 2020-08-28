@@ -77,7 +77,17 @@ class CartLinesService
         $cartItems = $cart->getProductsWithSeparatedGifts();
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
         $totalDiscounts = $cart->getDiscountSubtotalWithoutGifts();
-        $remaining = round($remaining + $shipping + $wrapping - $totalDiscounts, $apiRoundingPrecision);
+        $remaining = round(
+            NumberUtility::minus(
+                NumberUtility::plus(
+                    NumberUtility::plus($remaining, $shipping),
+                    $wrapping
+                ),
+                $totalDiscounts
+            ),
+            $apiRoundingPrecision
+        );
+        round($remaining + $shipping + $wrapping - $totalDiscounts, $apiRoundingPrecision);
 
         $aItems = [];
         /* Item */
@@ -324,7 +334,7 @@ class CartLinesService
                 'quantity' => $qty,
                 'unitPrice' => (float)$unitPrice,
                 'totalAmount' => (float)$unitPrice * $qty,
-                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
+                'sku' => $cartLineGroup[0]['sku'] ?: '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
             ];
         }
