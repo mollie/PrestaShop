@@ -159,7 +159,8 @@ class PaymentMethodService
      */
     public function getMethodsForCheckout()
     {
-        if (!Configuration::get(Config::MOLLIE_API_KEY)) {
+        $apiKey = EnvironmentUtility::getApiKey();
+        if (!$apiKey) {
             return [];
         }
         $context = Context::getContext();
