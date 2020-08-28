@@ -126,7 +126,7 @@ class SettingsSaveService
             );
         }
 
-        if ($oldEnvironment === $environment && $this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
+        if ($oldEnvironment === $environment && $this->module->api->methods !== null && $apiKey) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
