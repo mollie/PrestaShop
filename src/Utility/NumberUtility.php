@@ -89,6 +89,24 @@ class NumberUtility
         return (float)$result;
     }
 
+
+    /**
+     * ($a*$b)
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return float
+     */
+    public static function times($a, $b)
+    {
+        $firstNumber = self::toObject($a);
+        $secondNumber = self::toObject($b);
+        $result = (string)$firstNumber->times($secondNumber);
+
+        return (float)$result;
+    }
+
     /**
      * ($a/$b)
      *

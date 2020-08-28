@@ -42,6 +42,7 @@ use Mollie;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\CartPriceUtility;
+use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
 use Tools;
 
@@ -168,12 +169,24 @@ class CartLinesService
                 $unitPriceNoTax = round($line['unitPrice'] / (1 + ($targetVat / 100)), $apiRoundingPrecision);
 
                 // Calculate VAT
-                $totalAmount = round($unitPrice * $quantity, $apiRoundingPrecision);
+                $totalAmount = round(NumberUtility::times($unitPrice, $quantity), $apiRoundingPrecision);
                 $actualVatRate = 0;
                 if ($unitPriceNoTax > 0) {
-                    $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
+                    $totalPrice = NumberUtility::times($unitPrice, $quantity);
+                    $totalPriceNoTax = NumberUtility::times($unitPriceNoTax, $quantity);
+                    $vatPrice = NumberUtility::minus($totalPrice, $totalPriceNoTax);
+                    $vatPriceDividedByTotalPriceNoTax = NumberUtility::divide($vatPrice, $totalPriceNoTax);
+
+                    $actualVatRate = round(
+                        NumberUtility::times($vatPriceDividedByTotalPriceNoTax, 100),
+                        $apiRoundingPrecision
+                    );
                 }
-                $vatAmount = $totalAmount * ($actualVatRate / ($actualVatRate + 100));
+                $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
+                $vatAmount = NumberUtility::times(
+                    $totalAmount,
+                    NumberUtility::divide($actualVatRate, $vatRateWithPercentages)
+                );
 
                 $newItem = [
                     'name' => $line['name'],
