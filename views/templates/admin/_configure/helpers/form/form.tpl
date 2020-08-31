@@ -235,6 +235,9 @@
                                 <a href='http://doc.prestashop.com/display/PS17/Translations#Translations-Emailtemplates'
                                    target="_blank">{l s='Translations.' mod='mollie'}</a>
                             </p>
+                            <p class="help-block">
+                                {l s="The total surcharge fee should have taxes included." mod='mollie'}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group">

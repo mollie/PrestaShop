@@ -1175,13 +1175,17 @@ class Mollie extends PaymentModule
         if ($order === null || $order->module !== $this->name) {
             return true;
         }
+        /** @var \Mollie\Validator\OrderMailValidator $orderMailValidator */
+        $orderMailValidator = $this->getContainer(\Mollie\Validator\OrderMailValidator::class);
 
         if ($params['template'] === 'order_conf') {
-            /** @var \Mollie\Validator\OrderConfMailValidator $orderConfValidator */
-            $orderConfValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
             $sendOrderConfStatus = Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+            return $orderMailValidator->validateOrderConfMailSend($sendOrderConfStatus, $order->current_state);
+        }
 
-            return $orderConfValidator->validateOrderConfMailSend($sendOrderConfStatus, $order->current_state);
+        if ($params['template'] === 'new_order') {
+            $sendNewOrderMailStatus = Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_NEW_ORDER);
+            return $orderMailValidator->validateNewOrderMailSend($sendNewOrderMailStatus, $order->current_state);
         }
 
         if ($params['template'] === 'order_conf' ||
