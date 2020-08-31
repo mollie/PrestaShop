@@ -48,6 +48,7 @@ use Language;
 use Mail;
 use Module;
 use Mollie;
+use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
@@ -135,11 +136,11 @@ class MailService
      */
     public function sendNewOrderMail(Order $order, $orderStateId)
     {
-        if (!Module::isEnabled('ps_emailalerts')) {
+        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
             return;
         }
         /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName('ps_emailalerts');
+        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
 
         $emailAlertsModule->hookActionValidateOrder(
             [

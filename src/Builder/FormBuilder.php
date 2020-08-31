@@ -41,6 +41,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
 use HelperForm;
+use Module;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -492,34 +493,36 @@ class FormBuilder
                 ],
             ];
 
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Send new order email to merchant', self::FILE_NAME),
-                'tab' => $advancedSettings,
-                'name' => Config::MOLLIE_SEND_NEW_ORDER,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('Change when new order mail to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
-                ),
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
-                            'name' => $this->module->l('When Order is created', self::FILE_NAME),
+            if (Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
+                $input[] = [
+                    'type' => 'select',
+                    'label' => $this->module->l('Send new order email to merchant', self::FILE_NAME),
+                    'tab' => $advancedSettings,
+                    'name' => Config::MOLLIE_SEND_NEW_ORDER,
+                    'desc' => TagsUtility::ppTags(
+                        $this->module->l('Change when new order mail to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
+                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+                    ),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
+                                'name' => $this->module->l('When Order is created', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                                'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
+                                'name' => $this->module->l('Never', self::FILE_NAME),
+                            ],
                         ],
-                        [
-                            'id' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
-                            'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
-                            'name' => $this->module->l('Never', self::FILE_NAME),
-                        ],
+                        'id' => 'id',
+                        'name' => 'name',
                     ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
+                ];
+            }
         }
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);

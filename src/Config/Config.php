@@ -242,6 +242,8 @@ class Config
 
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
 
+    const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
+
     /** @var array $methods */
     public static $methods = [
         'banktransfer' => 'Bank',
