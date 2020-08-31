@@ -38,7 +38,7 @@ namespace Mollie\Validator;
 use Configuration;
 use Mollie\Config\Config;
 
-class OrderConfMailValidator implements MailValidatorInterface
+class NewOrderMailValidator implements MailValidatorInterface
 {
     /**
      * @param $orderState int
@@ -46,10 +46,10 @@ class OrderConfMailValidator implements MailValidatorInterface
      */
     public function validate($orderState)
     {
-        switch ((int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-            case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+        switch (Configuration::get(Config::MOLLIE_SEND_NEW_ORDER)) {
+            case Config::NEW_ORDER_MAIL_SEND_ON_CREATION:
                 return true;
-            case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+            case Config::NEW_ORDER_MAIL_SEND_ON_PAID:
                 return $this->validateOrderState($orderState);
             case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
                 return false;

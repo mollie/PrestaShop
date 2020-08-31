@@ -1,2 +1,4 @@
 services:
   Mollie\Validator\OrderConfMailValidator:
+
+  Mollie\Validator\NewOrderMailValidator:

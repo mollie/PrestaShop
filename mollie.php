@@ -501,7 +501,7 @@ class Mollie extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        $this->context->controller->addCSS($this->getPathUri().'views/css/admin/menu.css');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
         $currentController = Tools::getValue('controller');
 
@@ -1175,13 +1175,17 @@ class Mollie extends PaymentModule
         if ($order === null || $order->module !== $this->name) {
             return true;
         }
+        /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
+        /** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
+        $orderConfMailValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
+        $newOrderMailValidator = $this->getContainer(\Mollie\Validator\NewOrderMailValidator::class);
 
         if ($params['template'] === 'order_conf') {
-            /** @var \Mollie\Validator\OrderConfMailValidator $orderConfValidator */
-            $orderConfValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
-            $sendOrderConfStatus = Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+            return $orderConfMailValidator->validate((int)$order->current_state);
+        }
 
-            return $orderConfValidator->validateOrderConfMailSend($sendOrderConfStatus, $order->current_state);
+        if ($params['template'] === 'new_order') {
+            return $newOrderMailValidator->validate((int)$order->current_state);
         }
 
         if ($params['template'] === 'order_conf' ||

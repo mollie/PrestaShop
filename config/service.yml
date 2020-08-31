@@ -44,6 +44,8 @@ services:
   Mollie\Service\OrderStatusService:
     arguments:
       - '@Mollie\Service\MailService'
+      - '@Mollie\Validator\OrderConfMailValidator'
+      - '@Mollie\Validator\NewOrderMailValidator'
 
   Mollie\Service\ErrorDisplayService:
 

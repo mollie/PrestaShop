@@ -167,6 +167,7 @@ class SettingsSaveService
 
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+        $mollieNewOrderSand = Tools::getValue(Config::MOLLIE_SEND_NEW_ORDER);
         $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
         $mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         $mollieImages = Tools::getValue(Config::MOLLIE_IMAGES);
@@ -213,6 +214,7 @@ class SettingsSaveService
             Configuration::updateValue(Config::MOLLIE_PROFILE_ID, $mollieProfileId);
             Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
+            Configuration::updateValue(Config::MOLLIE_SEND_NEW_ORDER, $mollieNewOrderSand);
             Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
             Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
             Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
