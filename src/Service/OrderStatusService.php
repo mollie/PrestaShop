@@ -40,6 +40,7 @@ use Configuration;
 use Context;
 use Mollie\Config\Config;
 use Mollie\Utility\OrderStatusUtility;
+use Mollie\Validator\MailValidatorInterface;
 use Order;
 use OrderHistory;
 use OrderPayment;
@@ -55,9 +56,25 @@ class OrderStatusService
      */
     private $mailService;
 
-    public function __construct(MailService $mailService)
+    /**
+     * @var MailValidatorInterface
+     */
+    private $orderConfMailValidator;
+
+    /**
+     * @var MailValidatorInterface
+     */
+    private $newOrderMailValidator;
+
+    public function __construct(
+        MailService $mailService,
+        MailValidatorInterface $orderConfMailValidator,
+        MailValidatorInterface $newOrderMailValidator
+    )
     {
         $this->mailService = $mailService;
+        $this->orderConfMailValidator = $orderConfMailValidator;
+        $this->newOrderMailValidator = $newOrderMailValidator;
     }
 
     /**
@@ -134,11 +151,11 @@ class OrderStatusService
 
         $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 
-        if ($this->checkIfOrderConfNeedsToBeSend($statusId)) {
+        if ($this->orderConfMailValidator->isNeedToBeSent($statusId)) {
             $this->mailService->sendOrderConfMail($order, $statusId);
         }
 
-        if ($this->checkIfNewOrderMailNeedsToBeSend($statusId)) {
+        if ($this->newOrderMailValidator->isNeedToBeSent($statusId)) {
             $this->mailService->sendNewOrderMail($order, $statusId);
         }
 
@@ -147,21 +164,5 @@ class OrderStatusService
         } else {
             $history->add();
         }
-    }
-
-    private function checkIfOrderConfNeedsToBeSend($statusId)
-    {
-        return ((int)$statusId === (int)Configuration::get(Config::MOLLIE_STATUS_PAID) &&
-                (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID) ||
-            ((int)$statusId === (int)Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) &&
-                (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID);
-    }
-
-    private function checkIfNewOrderMailNeedsToBeSend($statusId)
-    {
-        return ((int)$statusId === (int)Configuration::get(Config::MOLLIE_STATUS_PAID) &&
-                (int)Configuration::get(Config::MOLLIE_SEND_NEW_ORDER) === Config::NEW_ORDER_MAIL_SEND_ON_PAID) ||
-            ((int)$statusId === (int)Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) &&
-                (int)Configuration::get(Config::MOLLIE_SEND_NEW_ORDER) === Config::NEW_ORDER_MAIL_SEND_ON_PAID);
     }
 }

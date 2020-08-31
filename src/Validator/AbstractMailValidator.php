@@ -35,32 +35,20 @@
 
 namespace Mollie\Validator;
 
-use Configuration;
-
-class OrderMailValidator
+abstract class AbstractMailValidator implements MailValidatorInterface
 {
-    public function validateOrderConfMailSend($orderConfSendStatus, $orderState)
+    /**
+     * @param $orderState int
+     * @return bool
+     */
+    public function validate($orderState)
     {
-        switch ($orderConfSendStatus) {
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+        switch ($this->getSendStatus()) {
+            case $this->getSendWhenCreatedStatus():
                 return true;
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_PAID:
-                return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$orderState ||
-                    (int)Configuration::get(\Mollie\Config\Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int)$orderState;
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
-                return false;
-        }
-    }
-
-    public function validateNewOrderMailSend($newOrderSendStatus, $orderState)
-    {
-        switch ($newOrderSendStatus) {
-            case \Mollie\Config\Config::NEW_ORDER_MAIL_SEND_ON_CREATION:
-                return true;
-            case \Mollie\Config\Config::NEW_ORDER_MAIL_SEND_ON_PAID:
-                return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$orderState ||
-                    (int)Configuration::get(\Mollie\Config\Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int)$orderState;
-            case \Mollie\Config\Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
+            case $this->getSendWhenPaidStatus():
+                return $this->validateOrderState($orderState);
+            case $this->getNeverSendStatus():
                 return false;
         }
     }
