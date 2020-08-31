@@ -42,36 +42,4 @@ interface MailValidatorInterface
      * @return bool
      */
     public function validate($orderState);
-
-    /**
-     * @return int
-     */
-    public function getSendStatus();
-
-    /**
-     * @return int
-     */
-    public function getSendWhenCreatedStatus();
-
-    /**
-     * @return int
-     */
-    public function getSendWhenPaidStatus();
-
-    /**
-     * @return int
-     */
-    public function getNeverSendStatus();
-
-    /**
-     * @param $orderState int
-     * @return bool
-     */
-    public function validateOrderState($orderState);
-
-    /**
-     * @param $orderState int
-     * @return bool
-     */
-    public function isNeedToBeSent($orderState);
 }

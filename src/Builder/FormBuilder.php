@@ -500,7 +500,7 @@ class FormBuilder
                     'tab' => $advancedSettings,
                     'name' => Config::MOLLIE_SEND_NEW_ORDER,
                     'desc' => TagsUtility::ppTags(
-                        $this->module->l('Change when new order mail to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
+                        $this->module->l('Change when \'new_order\' email to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
                         [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
                     ),
                     'options' => [

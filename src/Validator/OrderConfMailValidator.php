@@ -38,60 +38,32 @@ namespace Mollie\Validator;
 use Configuration;
 use Mollie\Config\Config;
 
-class OrderConfMailValidator extends AbstractMailValidator
+class OrderConfMailValidator implements MailValidatorInterface
 {
     /**
-     * @return int
+     * @param $orderState int
+     * @return bool
      */
-    public function getSendStatus()
+    public function validate($orderState)
     {
-        return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION);
-    }
-
-    /**
-     * @return int
-     */
-    public function getSendWhenCreatedStatus()
-    {
-        return \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_CREATION;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSendWhenPaidStatus()
-    {
-        return \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_PAID;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNeverSendStatus()
-    {
-        return \Mollie\Config\Config::NEW_ORDER_MAIL_SEND_ON_NEVER;
+        switch ((int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+            case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+                return true;
+            case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+                return $this->validateOrderState($orderState);
+            case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
+                return false;
+        }
     }
 
     /**
      * @param int $orderState
      * @return bool
      */
-    public function validateOrderState($orderState)
+    private function validateOrderState($orderState)
     {
-        return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === $orderState ||
-            (int)Configuration::get(\Mollie\Config\Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
+        return (int) Configuration::get(Config::MOLLIE_STATUS_PAID) === $orderState ||
+            (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
     }
 
-    /**
-     * @param $orderState
-     * @return bool
-     */
-    public function isNeedToBeSent($orderState)
-    {
-        if ($this->getSendStatus() !== $this->getSendWhenPaidStatus()) {
-            return false;
-        }
-
-        return $this->validateOrderState($orderState);
-    }
 }
