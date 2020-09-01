@@ -35,7 +35,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mollie_payments` (
 				`bank_status`     VARCHAR(64)  NOT NULL,
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
-				 INDEX (cart_id)
+				 INDEX (cart_id, order_reference)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_country` (

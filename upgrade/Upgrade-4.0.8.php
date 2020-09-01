@@ -62,6 +62,10 @@ function upgrade_module_4_0_8($module)
         ADD COLUMN live_environment TINYINT(1) DEFAULT 1;
      ';
 
+    $sql .= '
+        ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD INDEX(`order_reference`);
+     ';
+
     if (Db::getInstance()->execute($sql) == false) {
         return false;
     }
