@@ -307,6 +307,9 @@
                                         </button>
 						        	</span>
                                 </div>
+                                <p class="help-block">
+                                    {l s='Please use .png/.jpg logo with max size of 256x64.' mod='mollie'}
+                                </p>
                             </div>
                         </div>
                         <div class="form-group js-form-group-custom-logo">
