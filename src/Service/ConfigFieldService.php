@@ -113,7 +113,7 @@ class ConfigFieldService
             Config::MOLLIE_MAIL_WHEN_SHIPPING => Configuration::get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
         ];
 
-        if (Configuration::get(Config::MOLLIE_API_KEY)) {
+        if (Mollie\Utility\EnvironmentUtility::getApiKey()) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 $countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
                 if ($countryIds) {

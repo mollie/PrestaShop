@@ -308,7 +308,6 @@ class Mollie extends PaymentModule
             'msg_result' => $resultMessage,
             'msg_warning' => $warningMessage,
             'path' => $this->_path,
-            'val_api_key' => Configuration::get(Mollie\Config\Config::MOLLIE_API_KEY),
             'payscreen_locale_value' => Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE),
             'val_images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
             'val_issuers' => Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS),
