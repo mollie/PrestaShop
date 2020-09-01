@@ -79,7 +79,8 @@ final class CreditCardLogoProvider extends AbstractCustomLogoProvider
         $isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
 
         if ($isCustomLogoEnabled && $this->logoExists()) {
-            return $this->getLogoPathUri();
+            $dateStamp = time();
+            return $this->getLogoPathUri() . "?{$dateStamp}";
         }
 
         $image = json_decode($methodObj->images_json, true);
