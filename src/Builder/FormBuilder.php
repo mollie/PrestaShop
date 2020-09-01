@@ -409,6 +409,7 @@ class FormBuilder
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
 
+        $dateStamp = time();
         $input[] = [
             'type' => 'mollie-methods',
             'name' => Config::METHODS_CONFIG,
@@ -427,7 +428,7 @@ class FormBuilder
                 ]
             ),
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri(),
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?$dateStamp",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
         ];
 

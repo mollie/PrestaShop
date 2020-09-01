@@ -82,7 +82,7 @@ $(document).ready(function () {
                                 showSuccessMessage(response.message);
                                 var $logo = $(".js-mollie-credit-card-custom-logo");
                                 var logoUrl = $logo.attr('src');
-                                $logo.attr('src', logoUrl + '?' + Math.random());
+                                $logo.attr('src', logoUrl + '?' + $.now());
                                 $logo.toggleClass('hidden', false);
                             } else {
                                 showErrorMessage(response.message);
