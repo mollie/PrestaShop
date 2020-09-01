@@ -428,7 +428,7 @@ class FormBuilder
                 ]
             ),
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?$dateStamp",
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
         ];
 
