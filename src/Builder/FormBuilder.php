@@ -251,6 +251,13 @@ class FormBuilder
                 'class' => 'js-test-api-keys',
                 'form_group_class' => 'js-api-key-test'
             ];
+            $input[] =
+                [
+                    'type' => 'mollie-h3',
+                    'tab' => $generalSettings,
+                    'name' => '',
+                    'title' => '',
+                ];
         } else {
             $input[] =
                 [
@@ -373,12 +380,6 @@ class FormBuilder
         ];
 
         $input = array_merge($input, [
-                [
-                    'type' => 'mollie-h3',
-                    'tab' => $generalSettings,
-                    'name' => '',
-                    'title' => '',
-                ],
                 [
                     'type' => 'select',
                     'label' => $this->module->l('Issuer list', self::FILE_NAME),
@@ -505,7 +506,7 @@ class FormBuilder
                 continue;
             }
 
-            $val = (int)$val;
+            $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
                 $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
