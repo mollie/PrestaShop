@@ -39,6 +39,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
+use Mollie\Utility\EnvironmentUtility;
 
 class Config
 {
@@ -297,7 +298,7 @@ class Config
 
     public static function isTestMode()
     {
-        $apiKey = Configuration::get(self::MOLLIE_API_KEY);
+        $apiKey = EnvironmentUtility::getApiKey();
         if (strpos($apiKey, 'test') === 0) {
             return true;
         }
