@@ -70,11 +70,11 @@ class Amount
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getValue()
     {
-        return $this->value;
+        return number_format($this->value, 2, '.', '');
     }
 
     /**
