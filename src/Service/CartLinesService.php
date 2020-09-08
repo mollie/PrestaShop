@@ -90,7 +90,7 @@ class CartLinesService
             // Get the rounded total w/ tax
             $roundedTotalWithTax = round($cartItem['total_wt'], $apiRoundingPrecision);
 
-            if ($cartItem['is_gift']) {
+            if (isset($cartItem['is_gift']) && $cartItem['is_gift']) {
                 $roundedTotalWithTax = 0;
             }
             // Skip if no qty
