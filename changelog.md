@@ -1,6 +1,23 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.0.8 ##
++ Fixed issue where backorder paid status didn't send order_conf mail.
++ Fixed issue where order status that ended with id 0 would not get saved in mollie settings.
++ Fixed custom shipment information .
++ Refactored payment data creation to use objects instead of arrays.
++ Added single click payment.
++ Added descriptions of API methods.
++ Added API key test button.
++ Improved UX of Payments from visual side.
++ Improved UX of API from visual side.
++ Added module upgrade notice.
++ Added Mollie tab in main tabs.
++ Added custom logo for credit card payment.
++ Improved calculation logic to use Number class.
++ Added selector to control when email alert module can send new_order mail.
++ Fixed issues with refunded orders where sometimes refunded order would have partially refunded status.
++ Fixed issue with gifts and wrapping.
 
 ## Changes in release 4.0.7 ##
 + Added new order status “Completed” which is set when Mollie order is finished.
