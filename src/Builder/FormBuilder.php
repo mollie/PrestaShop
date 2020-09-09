@@ -41,6 +41,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
 use HelperForm;
+use Module;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -251,6 +252,13 @@ class FormBuilder
                 'class' => 'js-test-api-keys',
                 'form_group_class' => 'js-api-key-test'
             ];
+            $input[] =
+                [
+                    'type' => 'mollie-h3',
+                    'tab' => $generalSettings,
+                    'name' => '',
+                    'title' => '',
+                ];
         } else {
             $input[] =
                 [
@@ -374,12 +382,6 @@ class FormBuilder
 
         $input = array_merge($input, [
                 [
-                    'type' => 'mollie-h3',
-                    'tab' => $generalSettings,
-                    'name' => '',
-                    'title' => '',
-                ],
-                [
                     'type' => 'select',
                     'label' => $this->module->l('Issuer list', self::FILE_NAME),
                     'tab' => $generalSettings,
@@ -409,6 +411,7 @@ class FormBuilder
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
 
+        $dateStamp = time();
         $input[] = [
             'type' => 'mollie-methods',
             'name' => Config::METHODS_CONFIG,
@@ -427,7 +430,7 @@ class FormBuilder
                 ]
             ),
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri(),
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
         ];
 
@@ -490,7 +493,38 @@ class FormBuilder
                     'id' => 'id',
                     'name' => 'name',
                 ],
-            ];;
+            ];
+
+            if (Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
+                $input[] = [
+                    'type' => 'select',
+                    'label' => $this->module->l('Send new order email to merchant', self::FILE_NAME),
+                    'tab' => $advancedSettings,
+                    'name' => Config::MOLLIE_SEND_NEW_ORDER,
+                    'desc' => TagsUtility::ppTags(
+                        $this->module->l('Change when \'new_order\' email to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
+                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+                    ),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
+                                'name' => $this->module->l('When Order is created', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                                'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
+                                'name' => $this->module->l('Never', self::FILE_NAME),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ];
+            }
         }
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
@@ -504,7 +538,7 @@ class FormBuilder
                 continue;
             }
 
-            $val = (int)$val;
+            $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
                 $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);

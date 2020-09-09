@@ -77,6 +77,7 @@ class ConfigFieldService
             Config::MOLLIE_PROFILE_ID => Configuration::get(Config::MOLLIE_PROFILE_ID),
             Config::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
             Config::MOLLIE_SEND_ORDER_CONFIRMATION => Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION),
+            Config::MOLLIE_SEND_NEW_ORDER => Configuration::get(Config::MOLLIE_SEND_NEW_ORDER),
             Config::MOLLIE_IFRAME => Configuration::get(Config::MOLLIE_IFRAME),
             Config::MOLLIE_SINGLE_CLICK_PAYMENT => Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
 
@@ -113,7 +114,7 @@ class ConfigFieldService
             Config::MOLLIE_MAIL_WHEN_SHIPPING => Configuration::get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
         ];
 
-        if (Configuration::get(Config::MOLLIE_API_KEY)) {
+        if (Mollie\Utility\EnvironmentUtility::getApiKey()) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 $countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
                 if ($countryIds) {

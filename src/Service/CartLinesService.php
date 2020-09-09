@@ -39,6 +39,7 @@ use Cart;
 use Configuration;
 use Currency;
 use Mollie;
+use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\CalculationUtility;
@@ -74,11 +75,18 @@ class CartLinesService
         $vatRatePrecision = Mollie\Config\Config::VAT_RATE_ROUNDING_PRECISION;
 
         $totalPrice = round($amount, $apiRoundingPrecision);
-        $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
         $cartSummary = $cart->getSummaryDetails();
-        $cartItems = $cart->getProductsWithSeparatedGifts();
+        $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
+        foreach ($cartSummary['discounts'] as $discount) {
+            if ($discount['free_shipping']) {
+                $shipping = 0;
+            }
+        }
+
+        $cartItems = $cart->getProducts();
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
-        $totalDiscounts = $cart->getDiscountSubtotalWithoutGifts();
+//        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
+        $totalDiscounts = 0;
         $remaining = round(
             CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
             $apiRoundingPrecision
@@ -90,9 +98,6 @@ class CartLinesService
             // Get the rounded total w/ tax
             $roundedTotalWithTax = round($cartItem['total_wt'], $apiRoundingPrecision);
 
-            if ($cartItem['is_gift']) {
-                $roundedTotalWithTax = 0;
-            }
             // Skip if no qty
             $quantity = (int)$cartItem['cart_quantity'];
             if ($quantity <= 0 || $cartItem['price_wt'] <= 0) {
@@ -107,6 +112,27 @@ class CartLinesService
             $productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
             $aItems[$productHash] = [];
 
+            foreach ($cartSummary['gift_products'] as $gift_product) {
+                if ($gift_product['id_product'] === $cartItem['id_product']) {
+                    $roundedTotalWithTax = NumberUtility::minus(
+                        $roundedTotalWithTax,
+                        NumberUtility::times($gift_product['cart_quantity'], $gift_product['price_with_reduction'])
+                    );
+                    $quantity = NumberUtility::minus($quantity, $gift_product['cart_quantity']);
+
+                    $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
+                    $aItems[$productHashGift][] = [
+                        'name' => $cartItem['name'],
+                        'sku' => $productHashGift,
+                        'targetVat' => (float)$cartItem['rate'],
+                        'quantity' => $gift_product['cart_quantity'],
+                        'unitPrice' => 0,
+                        'totalAmount' => 0,
+                    ];
+                    break;
+                }
+            }
+
             // Try to spread this product evenly and account for rounding differences on the order line
             foreach (CartPriceUtility::spreadAmountEvenly($roundedTotalWithTax, $quantity) as $unitPrice => $qty) {
                 $aItems[$productHash][] = [
@@ -115,9 +141,9 @@ class CartLinesService
                     'targetVat' => (float)$cartItem['rate'],
                     'quantity' => $qty,
                     'unitPrice' => $unitPrice,
-                    'totalAmount' => (float)$unitPrice * $qty,
+                    'totalAmount' => (float)NumberUtility::times($unitPrice, $qty),
                 ];
-                $remaining -= round((float)$unitPrice * $qty, $apiRoundingPrecision);
+                $remaining -= round((float)NumberUtility::times($unitPrice, $qty), $apiRoundingPrecision);
             }
         }
 
@@ -335,7 +361,7 @@ class CartLinesService
                 'quantity' => $qty,
                 'unitPrice' => (float)$unitPrice,
                 'totalAmount' => (float)$unitPrice * $qty,
-                'sku' => $cartLineGroup[0]['sku'] ?: '',
+                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
             ];
         }

@@ -30,51 +30,40 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
+namespace Mollie\Validator;
+
+use Configuration;
 use Mollie\Config\Config;
-use Mollie\Utility\MultiLangUtility;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * @param Mollie $module
- * @return bool
- */
-
-function upgrade_module_4_0_8($module)
+class NewOrderMailValidator implements MailValidatorInterface
 {
-    Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
-    Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);
-
-    $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_customer` (
-				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`customer_id` VARCHAR(64) NOT NULL,
-				`name` VARCHAR(64) NOT NULL,
-				`email` VARCHAR(64) NOT NULL,
-				`created_at` VARCHAR(64) NOT NULL
-			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
-';
-    $sql .= '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        ADD COLUMN live_environment TINYINT(1) DEFAULT 1;
-     ';
-
-    $sql .= '
-        ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD INDEX(`order_reference`);
-     ';
-
-    if (Db::getInstance()->execute($sql) == false) {
-        return false;
+    /**
+     * @param $orderState int
+     * @return bool
+     */
+    public function validate($orderState)
+    {
+        switch (Configuration::get(Config::MOLLIE_SEND_NEW_ORDER)) {
+            case Config::NEW_ORDER_MAIL_SEND_ON_CREATION:
+                return true;
+            case Config::NEW_ORDER_MAIL_SEND_ON_PAID:
+                return $this->validateOrderState($orderState);
+            case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
+                return false;
+        }
     }
-    $tabId = Tab::getIdFromClassName('AdminMollieModule');
-    $tab = new Tab($tabId);
-    $tab->name = MultiLangUtility::createMultiLangField('Mollie');
-    $tab->icon = 'mollie';
-    $tab->active = true;
-    $tab->update();
 
-    return true;
+    /**
+     * @param int $orderState
+     * @return bool
+     */
+    private function validateOrderState($orderState)
+    {
+        return (int) Configuration::get(Config::MOLLIE_STATUS_PAID) === $orderState ||
+            (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
+    }
+
 }

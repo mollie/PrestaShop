@@ -77,13 +77,14 @@ final class CreditCardLogoProvider extends AbstractCustomLogoProvider
     public function getMethodOptionLogo(MolPaymentMethod $methodObj)
     {
         $isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
+        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
 
-        if ($isCustomLogoEnabled && $this->logoExists()) {
-            return $this->getLogoPathUri();
+        if ($imageConfig !== Config::LOGOS_HIDE && $isCustomLogoEnabled && $this->logoExists()) {
+            $dateStamp = time();
+            return $this->getLogoPathUri() . "?{$dateStamp}";
         }
 
         $image = json_decode($methodObj->images_json, true);
-        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
 
         return ImageUtility::setOptionImage($image, $imageConfig);
     }

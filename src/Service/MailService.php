@@ -46,7 +46,9 @@ use Customer;
 use Hook;
 use Language;
 use Mail;
+use Module;
 use Mollie;
+use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
@@ -94,6 +96,12 @@ class MailService
         );
     }
 
+    /**
+     * @param Order $order
+     * @param $orderStateId
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
     public function sendOrderConfMail(Order $order, $orderStateId)
     {
         $orderLanguage = new Language((int)$order->id_lang);
@@ -117,6 +125,31 @@ class MailService
             null,
             $fileAttachment,
             null, _PS_MAIL_DIR_, false, (int)$order->id_shop
+        );
+    }
+
+    /**
+     * @param Order $order
+     * @param $orderStateId
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function sendNewOrderMail(Order $order, $orderStateId)
+    {
+        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
+            return;
+        }
+        /** @var \Ps_EmailAlerts $emailAlertsModule */
+        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
+
+        $emailAlertsModule->hookActionValidateOrder(
+            [
+                'currency' => $this->context->currency,
+                'order' => $order,
+                'customer' => $this->context->customer,
+                'cart' => $this->context->cart,
+                'orderStatus' => new OrderState($orderStateId),
+            ]
         );
     }
 
@@ -389,7 +422,7 @@ class MailService
 
     private function getFileAttachment($orderStatusId, Order $order)
     {
-        $order_status = new OrderState((int) $orderStatusId, (int) $this->context->language->id);
+        $order_status = new OrderState((int)$orderStatusId, (int)$this->context->language->id);
 
         // Join PDF invoice
         if ((int)Configuration::get('PS_INVOICE') && $order_status->invoice && $order->invoice_number) {
