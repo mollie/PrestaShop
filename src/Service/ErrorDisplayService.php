@@ -36,6 +36,7 @@ namespace Mollie\Service;
 
 use Context;
 use Mollie\Config\Config;
+use Tools;
 
 class ErrorDisplayService
 {

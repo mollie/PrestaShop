@@ -45,7 +45,7 @@ $(document).ready(function() {
     jQuery('.chosen').chosen("destroy");
     jQuery('.chosen').chosen({inherit_select_classes: true});
 
-    $('select').on('change', function () {
+    $('select.mollie-chosen').on('change', function () {
         var selectedValues = $(this).val();
         if (jQuery.inArray('0', selectedValues) !== -1) {
             $(this).val('0');

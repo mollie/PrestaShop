@@ -39,7 +39,13 @@ use Cart;
 use Configuration;
 use Currency;
 use Mollie;
+use Mollie\Config\Config;
+use Mollie\DTO\Line;
+use Mollie\DTO\Object\Amount;
+use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
+use Mollie\Utility\NumberUtility;
+use Mollie\Utility\TextFormatUtility;
 use Tools;
 
 class CartLinesService
@@ -66,14 +72,25 @@ class CartLinesService
     {
         $oCurrency = new Currency($cart->id_currency);
         $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
+        $vatRatePrecision = Mollie\Config\Config::VAT_RATE_ROUNDING_PRECISION;
 
-        $remaining = round($amount, $apiRoundingPrecision);
-        $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
+        $totalPrice = round($amount, $apiRoundingPrecision);
         $cartSummary = $cart->getSummaryDetails();
+        $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
+        foreach ($cartSummary['discounts'] as $discount) {
+            if ($discount['free_shipping']) {
+                $shipping = 0;
+            }
+        }
+
         $cartItems = $cart->getProducts();
         $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
-        $remaining = round($remaining - $shipping - $wrapping, $apiRoundingPrecision);
-        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
+//        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
+        $totalDiscounts = 0;
+        $remaining = round(
+            CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
+            $apiRoundingPrecision
+        );
 
         $aItems = [];
         /* Item */
@@ -95,6 +112,27 @@ class CartLinesService
             $productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
             $aItems[$productHash] = [];
 
+            foreach ($cartSummary['gift_products'] as $gift_product) {
+                if ($gift_product['id_product'] === $cartItem['id_product']) {
+                    $roundedTotalWithTax = NumberUtility::minus(
+                        $roundedTotalWithTax,
+                        NumberUtility::times($gift_product['cart_quantity'], $gift_product['price_with_reduction'])
+                    );
+                    $quantity = NumberUtility::minus($quantity, $gift_product['cart_quantity']);
+
+                    $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
+                    $aItems[$productHashGift][] = [
+                        'name' => $cartItem['name'],
+                        'sku' => $productHashGift,
+                        'targetVat' => (float)$cartItem['rate'],
+                        'quantity' => $gift_product['cart_quantity'],
+                        'unitPrice' => 0,
+                        'totalAmount' => 0,
+                    ];
+                    break;
+                }
+            }
+
             // Try to spread this product evenly and account for rounding differences on the order line
             foreach (CartPriceUtility::spreadAmountEvenly($roundedTotalWithTax, $quantity) as $unitPrice => $qty) {
                 $aItems[$productHash][] = [
@@ -103,17 +141,14 @@ class CartLinesService
                     'targetVat' => (float)$cartItem['rate'],
                     'quantity' => $qty,
                     'unitPrice' => $unitPrice,
-                    'totalAmount' => (float)$unitPrice * $qty,
+                    'totalAmount' => (float)NumberUtility::times($unitPrice, $qty),
                 ];
-                $remaining -= round((float)$unitPrice * $qty, $apiRoundingPrecision);
+                $remaining -= round((float)NumberUtility::times($unitPrice, $qty), $apiRoundingPrecision);
             }
         }
 
         // Add discount if applicable
         if ($totalDiscounts >= 0.01) {
-            $totalDiscountsNoTax = round($cartSummary['total_discounts_tax_exc'], $apiRoundingPrecision);
-            $vatRate = round((($totalDiscounts - $totalDiscountsNoTax) / $totalDiscountsNoTax) * 100, $apiRoundingPrecision);
-
             $aItems['discount'] = [
                 [
                     'name' => 'Discount',
@@ -121,10 +156,10 @@ class CartLinesService
                     'quantity' => 1,
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
                     'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
-                    'targetVat' => $vatRate,
+                    'targetVat' => 0,
                 ],
             ];
-            $remaining += $totalDiscounts;
+            $remaining -= $totalDiscounts;
         }
 
         // Compensate for order total rounding inaccuracies
@@ -158,16 +193,31 @@ class CartLinesService
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         foreach ($aItems as $productHash => $aItem) {
-            $aItems[$productHash] = array_map(function ($line) use ($apiRoundingPrecision, $oCurrency) {
+            $aItems[$productHash] = array_map(function ($line) use ($apiRoundingPrecision, $vatRatePrecision) {
                 $quantity = (int)$line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
-                $unitPriceNoTax = round($line['unitPrice'] / (1 + ($targetVat / 100)), $apiRoundingPrecision);
+                $unitPriceNoTax = round(CalculationUtility::getUnitPriceNoTax(
+                    $line['unitPrice'],
+                    $targetVat
+                ),
+                    $apiRoundingPrecision
+                );
 
                 // Calculate VAT
-                $totalAmount = round($unitPrice * $quantity, $apiRoundingPrecision);
-                $actualVatRate = round(($unitPrice * $quantity - $unitPriceNoTax * $quantity) / ($unitPriceNoTax * $quantity) * 100, $apiRoundingPrecision);
-                $vatAmount = $totalAmount * ($actualVatRate / ($actualVatRate + 100));
+                $totalAmount = round(NumberUtility::times($unitPrice, $quantity), $apiRoundingPrecision);
+                $actualVatRate = 0;//
+                if ($unitPriceNoTax > 0) {
+                    $actualVatRate = round(
+                        $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
+                        $vatRatePrecision
+                    );
+                }
+                $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
+                $vatAmount = NumberUtility::times(
+                    $totalAmount,
+                    NumberUtility::divide($actualVatRate, $vatRateWithPercentages)
+                );
 
                 $newItem = [
                     'name' => $line['name'],
@@ -203,7 +253,13 @@ class CartLinesService
 
         // Add wrapping
         if (round($wrapping, 2) > 0) {
-            $wrappingVatRate = round(($cartSummary['total_wrapping'] - $cartSummary['total_wrapping_tax_exc']) / $cartSummary['total_wrapping_tax_exc'] * 100, $apiRoundingPrecision);
+            $wrappingVatRate = round(
+                CalculationUtility::getActualVatRate(
+                    $cartSummary['total_wrapping'],
+                    $cartSummary['total_wrapping_tax_exc']
+                ),
+                $vatRatePrecision
+            );
 
             $aItems['wrapping'] = [
                 [
@@ -241,24 +297,39 @@ class CartLinesService
 
         // Convert floats to strings for the Mollie API and add additional info
         foreach ($newItems as $index => $item) {
-            $newItems[$index] = [
-                'name' => (string)$item['name'],
-                'quantity' => (int)$item['quantity'],
-                'sku' => (string)(isset($item['sku']) ? $item['sku'] : ''),
-                'unitPrice' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['unitPrice'], $apiRoundingPrecision, '.', ''),
-                ],
-                'totalAmount' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['totalAmount'], $apiRoundingPrecision, '.', ''),
-                ],
-                'vatAmount' => [
-                    'currency' => Tools::strtoupper($oCurrency->iso_code),
-                    'value' => number_format($item['vatAmount'], $apiRoundingPrecision, '.', ''),
-                ],
-                'vatRate' => number_format($item['vatRate'], $apiRoundingPrecision, '.', ''),
-            ];
+            $line = new Line();
+            $line->setName($item['name']);
+            $line->setQuantity((int)$item['quantity']);
+            $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+
+            $currency = Tools::strtoupper($oCurrency->iso_code);
+
+            if (isset($item['discount'])) {
+                $line->setDiscountAmount(new Amount(
+                        $currency,
+                        TextFormatUtility::formatNumber($item['discount'], $apiRoundingPrecision, '.', '')
+                    )
+                );
+            }
+
+            $line->setUnitPrice(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['unitPrice'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setTotalPrice(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['totalAmount'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setVatAmount(new Amount(
+                $currency,
+                TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
+            ));
+
+            $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
+
+            $newItems[$index] = $line;
         }
 
         return $newItems;
@@ -290,7 +361,7 @@ class CartLinesService
                 'quantity' => $qty,
                 'unitPrice' => (float)$unitPrice,
                 'totalAmount' => (float)$unitPrice * $qty,
-                'sku' => $cartLineGroup[0]['sku'],
+                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
             ];
         }

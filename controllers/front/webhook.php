@@ -192,7 +192,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 if ($apiPayment->metadata->cart_id) {
                     if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                         if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                            && (float)$apiPayment->amountRefunded->value >= (float)$apiPayment->settlementAmount->value
+                            && \Mollie\Utility\NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                         ) {
                             $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
                         } else {

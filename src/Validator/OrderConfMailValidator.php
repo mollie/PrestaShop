@@ -36,18 +36,34 @@
 namespace Mollie\Validator;
 
 use Configuration;
+use Mollie\Config\Config;
 
-class OrderConfMailValidator
+class OrderConfMailValidator implements MailValidatorInterface
 {
-    public function validateOrderConfMailSend($orderConfSendStatus, $orderState)
+    /**
+     * @param $orderState int
+     * @return bool
+     */
+    public function validate($orderState)
     {
-        switch (Configuration::get(\Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+        switch ((int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+            case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
                 return true;
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_PAID:
-                return (int)Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_PAID) === (int)$orderState;
-            case \Mollie\Config\Config::ORDER_CONF_MAIL_SEND_ON_NEVER:
+            case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+                return $this->validateOrderState($orderState);
+            case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
                 return false;
         }
     }
+
+    /**
+     * @param int $orderState
+     * @return bool
+     */
+    private function validateOrderState($orderState)
+    {
+        return (int) Configuration::get(Config::MOLLIE_STATUS_PAID) === $orderState ||
+            (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
+    }
+
 }

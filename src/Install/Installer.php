@@ -43,7 +43,7 @@ use Exception;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
-use Mollie\Service\imageService;
+use Mollie\Service\ImageService;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -59,17 +59,18 @@ class Installer
      * @var array
      */
     private $errors = [];
-    
+
     /**
      * @var Mollie
      */
     private $module;
+
     /**
-     * @var imageService
+     * @var ImageService
      */
     private $imageService;
 
-    public function __construct(Mollie $module, imageService $imageService)
+    public function __construct(Mollie $module, ImageService $imageService)
     {
         $this->module = $module;
         $this->imageService = $imageService;
@@ -101,6 +102,14 @@ class Installer
             return false;
         }
 
+        try {
+            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
+            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
+        } catch (Exception $e) {
+            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
+            return false;
+        }
+
         $this->copyEmailTemplates();
 
         include(dirname(__FILE__) . '/../../sql/install.php');
@@ -112,7 +121,7 @@ class Installer
     {
         return $this->errors;
     }
- 
+
     public static function getHooks()
     {
         return [
@@ -266,8 +275,11 @@ class Installer
     protected function initConfig()
     {
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, '');
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY_TEST, '');
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_TEST);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PROFILE_ID, '');
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, false);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, 0);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_NEW_ORDER, 0);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE, Mollie\Config\Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IFRAME, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_IMAGES, Mollie\Config\Config::LOGOS_NORMAL);
@@ -320,7 +332,7 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
     }
 
-    public function installTab($className, $parent, $name, $active = true) {
+    public function installTab($className, $parent, $name, $active = true, $icon = '') {
 
         $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
 
@@ -329,6 +341,7 @@ class Installer
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
         $moduleTab->active = $active;
+        $moduleTab->icon = $icon;
 
         $languages = Language::getLanguages(true);
         foreach ($languages as $language) {

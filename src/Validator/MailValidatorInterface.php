@@ -30,16 +30,16 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service;
+namespace Mollie\Validator;
 
-class imageService
+interface MailValidatorInterface
 {
-    public function createOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
-        @copy($source, $destination);
-    }
+    /**
+     * @param $orderState int
+     * @return bool
+     */
+    public function validate($orderState);
 }

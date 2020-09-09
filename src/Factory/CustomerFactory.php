@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -38,7 +37,6 @@ namespace Mollie\Factory;
 
 use Customer;
 use Mollie\Utility\ContextUtility;
-
 
 class CustomerFactory
 {

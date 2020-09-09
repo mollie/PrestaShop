@@ -35,7 +35,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mollie_payments` (
 				`bank_status`     VARCHAR(64)  NOT NULL,
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
-				 INDEX (cart_id)
+				 INDEX (cart_id, order_reference)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_country` (
@@ -60,7 +60,8 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
 				`surcharge_fixed_amount` decimal(20,6),
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),
-				`images_json` TEXT
+				`images_json` TEXT,
+				`live_environment` TINYINT(1)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_issuer` (
@@ -94,6 +95,16 @@ $sql[] = '
 				`id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`order_id` INT(64) NOT NULL,
 				`cart_id` INT(64) NOT NULL
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+';
+
+$sql[] = '
+    CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_customer` (
+				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`customer_id` VARCHAR(64) NOT NULL,
+				`name` VARCHAR(64) NOT NULL,
+				`email` VARCHAR(64) NOT NULL,
+				`created_at` VARCHAR(64) NOT NULL
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
 ';
 

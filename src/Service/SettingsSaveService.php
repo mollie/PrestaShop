@@ -43,6 +43,7 @@ use Context;
 use Exception;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Exception\MollieException;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethodIssuer;
@@ -105,10 +106,16 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
+        $oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $environment = Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
+        $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
         $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
 
-        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
+        $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ? $mollieApiKey : $mollieApiKeyTest;
+        $isApiKeyIncorrect = strpos($apiKey, 'live') !== 0 && strpos($apiKey, 'test') !== 0;
+
+        if ($isApiKeyIncorrect) {
             $errors[] = $this->module->l('The API key needs to start with test or live.');
         }
 
@@ -119,7 +126,7 @@ class SettingsSaveService
             );
         }
 
-        if ($this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
+        if ($oldEnvironment === $environment && $this->module->api->methods !== null && $apiKey) {
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
@@ -152,9 +159,17 @@ class SettingsSaveService
             }
         }
 
+        $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+        Configuration::updateValue(
+            Config::MOLLIE_SHOW_CUSTOM_LOGO,
+            $useCustomLogo
+        );
+
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+        $mollieNewOrderSand = Tools::getValue(Config::MOLLIE_SEND_NEW_ORDER);
         $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
+        $mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         $mollieImages = Tools::getValue(Config::MOLLIE_IMAGES);
         $mollieIssuers = Tools::getValue(Config::MOLLIE_ISSUERS);
         $mollieCss = Tools::getValue(Config::MOLLIE_CSS);
@@ -175,12 +190,33 @@ class SettingsSaveService
             $mollieErrors = ($mollieErrors == 1);
         }
 
+        $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ?
+            $mollieApiKey : $mollieApiKeyTest;
+
+        if ($apiKey) {
+            try {
+                $api = $this->apiService->setApiKey($apiKey, $this->module->version);
+                if ($api === null) {
+                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
+                }
+                $this->module->api = $api;
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
+                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+                return $this->module->l('Wrong API Key!');
+            }
+        }
+
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
             Configuration::updateValue(Config::MOLLIE_PROFILE_ID, $mollieProfileId);
             Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
+            Configuration::updateValue(Config::MOLLIE_SEND_NEW_ORDER, $mollieNewOrderSand);
             Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
+            Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
             Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
             Configuration::updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
             Configuration::updateValue(Config::MOLLIE_QRENABLED, (bool)$mollieQrEnabled);
@@ -215,7 +251,7 @@ class SettingsSaveService
 
             foreach (array_keys(Config::getStatuses()) as $name) {
                 $name = Tools::strtoupper($name);
-                if (!Tools::getValue("MOLLIE_STATUS_{$name}")) {
+                if (Tools::getValue("MOLLIE_STATUS_{$name}") === false) {
                     continue;
                 }
                 $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
@@ -227,16 +263,6 @@ class SettingsSaveService
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
                     );
-                }
-            }
-
-            if ($mollieApiKey) {
-                try {
-                    $this->module->api->setApiKey($mollieApiKey);
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                    Configuration::updateValue(Config::MOLLIE_API_KEY, null);
-                    return $this->module->l('Wrong API Key!');
                 }
             }
 

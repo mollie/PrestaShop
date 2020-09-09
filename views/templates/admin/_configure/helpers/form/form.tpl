@@ -33,14 +33,37 @@
 {extends file="helpers/form/form.tpl"}
 
 {block name="input"}
-    {if $input.type === 'mollie-br'}
-        <br>
-    {elseif $input.type === 'mollie-warning'}
-        {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}
-            <div class="warn">{$input.message|escape:'htmlall':'UTF-8'}</div>
-        {else}
-            <div class="alert alert-warning">{$input.message|escape:'htmlall':'UTF-8'}</div>
-        {/if}
+    {if $input.type === 'mollie-support'}
+        <div data-tab-id="general_settings">
+            <div class="mm-block-mollie">
+                <a class="helpbutton" href="https://www.mollie.com/dashboard/settings/profiles" target="_blank"></a>
+                <p>
+                    <strong>{l s='Developed by Invertus' mod='mollie'}</strong>
+                    {l s=' - the most technically advanced agency in the PrestaShop ecosystem.' mod='mollie'}
+                </p>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="icon1"></div>
+                            <a href="https://help.mollie.com/hc/en-us"
+                               target="_blank">{l s='More info on Mollie' mod='mollie'}</a>
+                        </td>
+                        <td>
+                            <div class="icon3"></div>
+                            <a href="https://www.mollie.com/en/contact"
+                               target="_blank">{l s='Contact Mollie' mod='mollie'}</a>
+                        </td>
+                        <td>
+                            <div class="icon2"></div>
+                            <a href="https://www.invertus.eu/contacts/"
+                               target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     {elseif $input.type === 'mollie-methods'}
         <script type="text/javascript">
             (function () {
@@ -72,7 +95,7 @@
                             <i class="icon-check text-success"></i>
                         </a>
                     {else}
-                          <a href="#" class="payment-check-link"
+                        <a href="#" class="payment-check-link"
                            data-action="activate"
                            onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
                             <i class="icon-remove text-danger"></i>
@@ -111,6 +134,9 @@
                                 {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
                             </select>
+                            <p class="help-block">
+                                {$input.methodDescription}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group payment-api-description">
@@ -130,14 +156,14 @@
                                 {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
                             </p>
                             <p class="help-block">
-                              <b>{l s='{orderNumber}' mod='mollie'}</b>,
-                              <b>{l s='{storeName}' mod='mollie'}</b>,
-                              <b>{l s='{cart.id}' mod='mollie'}</b>,
-                              <b>{l s='{order.reference}' mod='mollie'}</b>,
-                              <b>{l s='{customer.firstname}' mod='mollie'}</b>,
-                              <b>{l s='{customer.lastname}' mod='mollie'}</b>,
-                              <b>{l s='{customer.company}' mod='mollie'}</b>,
-                              <b>{l s='{storename}' mod='mollie'}</b>.
+                                <b>{l s='{orderNumber}' mod='mollie'}</b>,
+                                <b>{l s='{storeName}' mod='mollie'}</b>,
+                                <b>{l s='{cart.id}' mod='mollie'}</b>,
+                                <b>{l s='{order.reference}' mod='mollie'}</b>,
+                                <b>{l s='{customer.firstname}' mod='mollie'}</b>,
+                                <b>{l s='{customer.lastname}' mod='mollie'}</b>,
+                                <b>{l s='{customer.company}' mod='mollie'}</b>,
+                                <b>{l s='{storename}' mod='mollie'}</b>.
                             </p>
                             <p class="help-block">
                                 {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
@@ -162,7 +188,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
-                                    class="fixed-width-xl chosen" multiple="multiple">
+                                    class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                 {foreach $input.countries as $country}
                                     <option value="{$country.id}"
                                             {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
@@ -176,7 +202,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
-                                    class="fixed-width-xl chosen" multiple="multiple">
+                                    class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                 {foreach $input.countries as $excludedCountry}
                                     <option value="{$excludedCountry.id}"
                                             {if {$excludedCountry.id|in_array:$paymentMethod.excludedCountries}}selected{/if}>{$excludedCountry.name}</option>
@@ -184,24 +210,6 @@
                             </select>
                         </div>
                     </div>
-                    {*                    <div class="form-group">*}
-                    {*                        <label class="control-label col-lg-3">*}
-                    {*                            {l s='Minimum order value' mod='mollie'}*}
-                    {*                        </label>*}
-                    {*                        <div class="col-lg-9">*}
-                    {*                            <input type="text" name="MOLLIE_METHOD_MINIMUM_ORDER_VALUE_{$paymentMethod.id}"*}
-                    {*                                   class="fixed-width-xl js-mollie-amount" value="{$methodObj->minimal_order_value}">*}
-                    {*                        </div>*}
-                    {*                    </div>*}
-                    {*                    <div class="form-group">*}
-                    {*                        <label class="control-label col-lg-3">*}
-                    {*                            {l s='Maximum order value' mod='mollie'}*}
-                    {*                        </label>*}
-                    {*                        <div class="col-lg-9">*}
-                    {*                            <input type="text" name="MOLLIE_METHOD_MAX_ORDER_VALUE_{$paymentMethod.id}"*}
-                    {*                                   class="fixed-width-xl  js-mollie-amount" value="{$methodObj->max_order_value}">*}
-                    {*                        </div>*}
-                    {*                    </div>*}
                     <div class="form-group">
                         <label class="control-label col-lg-3">
                             {l s='Payment Surcharge' mod='mollie'}
@@ -225,7 +233,10 @@
                             <p class="help-block">
                                 {l s='You can display payment fee in your email template by adding "{payment_fee}" in email translations. For more information visit: ' mod='mollie'}
                                 <a href='http://doc.prestashop.com/display/PS17/Translations#Translations-Emailtemplates'
-                                   target="_blank">{l s='Translations' mod='mollie'}</a>
+                                   target="_blank">{l s='Translations.' mod='mollie'}</a>
+                            </p>
+                            <p class="help-block">
+                                {l s="The total surcharge fee should have taxes included." mod='mollie'}
                             </p>
                         </div>
                     </div>
@@ -256,6 +267,66 @@
                                    class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit}">
                         </div>
                     </div>
+                    {if $paymentMethod.id === 'creditcard'}
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Use Custom Logo' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_SHOW_CUSTOM_LOGO"
+                                        class="fixed-width-xl">
+                                    <option value="0" {if $input.showCustomLogo === '0'} selected {/if}>
+                                        {l s='No' mod='mollie'}
+                                    </option>
+                                    <option value="1" {if $input.showCustomLogo === '1'} selected {/if}>
+                                        {l s='Yes, Upload custom logo' mod='mollie'}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group js-form-group-custom-logo">
+                            <label class="control-label col-lg-3">
+                            </label>
+                            <div class="col-lg-4">
+                                <input id="MOLLIE_CUSTOM_LOGO"
+                                       type="file"
+                                       name="MOLLIE_CUSTOM_LOGO"
+                                       class="hide"
+                                       accept=".png, .jpg"
+                                >
+                                <div class="dummyfile input-group">
+                                    <span class="input-group-addon"><i class="icon-file"></i></span>
+                                    <input id="MOLLIE_CUSTOM_LOGO-name"
+                                           type="text"
+                                           name="MOLLIE_CUSTOM_LOGO"
+                                           readonly=""
+                                    >
+                                    <span class="input-group-btn">
+                                        <button id="MOLLIE_CUSTOM_LOGO-selectbutton" type="button"
+                                                name="submitAddAttachments"
+                                                class="btn btn-default">
+                                            <i class="icon-folder-open"></i>
+                                            {l s='Add file' mod='mollie'}
+                                        </button>
+						        	</span>
+                                </div>
+                                <p class="help-block">
+                                    {l s='Please use .png/.jpg logo with max size of 256x64.' mod='mollie'}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group js-form-group-custom-logo">
+                            <label class="control-label col-lg-3">
+                                {l s='Your custom logo' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <img src="{$input.customLogoUrl}"
+                                     class="js-mollie-credit-card-custom-logo
+                                     {if $input.customLogoExist === false}hidden{/if}
+                                ">
+                            </div>
+                        </div>
+                    {/if}
                 </div>
             </div>
         {/foreach}
@@ -316,7 +387,7 @@
                                     type="text"
                                     {if $carrier.source !== "custom_url"}disabled=""{/if}
                                     name="MOLLIE_CARRIER_CUSTOM_URL_{$carrier.id_carrier}"
-                                    value=""
+                                    value="{$carrier.custom_url}"
                             >
                         </td>
                     </tr>
@@ -371,23 +442,6 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -609,33 +663,32 @@
         </span>
             {/if}
         </div>
-        <script type="text/javascript">
-            (function () {
-                function initMollieAccount() {
-                    var source = $('input[name="MOLLIE_ACCOUNT_SWITCH"]');
-
-                    function checkInput(e) {
-                        if ($('input[name="MOLLIE_ACCOUNT_SWITCH"]:checked').val() == '0') {
-                            e.closest('.form-group').next('.form-group').hide();
-                            e.closest('.form-group').find('.help-block').show();
-                        } else {
-                            e.closest('.form-group').next('.form-group').show();
-                            e.closest('.form-group').find('.help-block').hide();
-                        }
-                    }
-
-                    setTimeout(function () {
-                        checkInput(source);
-                    }, 100);
-
-                    $(source).on('change', function () {
-                        checkInput(source);
-                    });
-                }
-
-                initMollieAccount();
-            }());
-        </script>
+    {elseif $input.type === 'mollie-password'}
+        <div class="input-group fixed-width-lg">
+            <span class="input-group-addon">
+                <i class="icon-key"></i>
+            </span>
+            <input type="password"
+                   id="{if isset($input.id)}{$input.id}{else}{$input.name}{/if}"
+                   name="{$input.name}"
+                   class="{if isset($input.class)}{$input.class}{/if} js-visible-password"
+                   value="{$fields_value[$input.name]|escape:'html':'UTF-8'}"
+                   {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if}
+                    {if isset($input.required) && $input.required } required="required" {/if}
+            />
+            <span class="input-group-btn">
+              <button
+                      class="btn"
+                      type="button"
+                      data-action="show-password"
+                      data-text-show="{l s='Show' mod='mollie'}"
+                      data-text-hide="{l s='Hide' mod='mollie'}"
+              >
+                {l s='Show' d='Shop.Theme.Actions'}
+              </button>
+        </div>
+    {elseif $input.type === 'mollie-button'}
+        <button type="button" class="btn btn-default {if isset($input.class)}{$input.class}{/if}">{$input.text}</button>
     {else}
         {$smarty.block.parent}
     {/if}

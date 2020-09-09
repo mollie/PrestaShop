@@ -82,30 +82,30 @@ class OrderStatusService
             if (empty(Config::getStatuses()[$statusId])) {
                 return;
             }
-            $statusId = (int)Config::getStatuses()[$statusId];
+            $statusId = (int) Config::getStatuses()[$statusId];
         } else {
             $status = '';
             foreach (Config::getStatuses() as $mollieStatus => $prestaShopStatusId) {
-                if ((int)$prestaShopStatusId === $statusId) {
+                if ((int) $prestaShopStatusId === $statusId) {
                     $status = $mollieStatus;
                     break;
                 }
             }
         }
 
-        if ((int)$statusId === 0) {
+        if ((int) $statusId === 0) {
             return;
         }
 
         if (!$order instanceof Order) {
-            $order = new Order((int)$order);
+            $order = new Order((int) $order);
         }
 
         if (!Validate::isLoadedObject($order)) {
             return;
         }
 
-        if ((int)$order->current_state === (int)$statusId) {
+        if ((int) $order->current_state === (int) $statusId) {
             return;
         }
 
@@ -138,6 +138,10 @@ class OrderStatusService
             $this->mailService->sendOrderConfMail($order, $statusId);
         }
 
+        if ($this->checkIfNewOrderMailNeedsToBeSend($statusId)) {
+            $this->mailService->sendNewOrderMail($order, $statusId);
+        }
+
         if (Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
             $history->addWithemail(true, $templateVars);
         } else {
@@ -147,7 +151,21 @@ class OrderStatusService
 
     private function checkIfOrderConfNeedsToBeSend($statusId)
     {
-        return ((int)$statusId === (int)Configuration::get(Config::MOLLIE_STATUS_PAID) &&
-            (int)Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION) === Config::ORDER_CONF_MAIL_SEND_ON_PAID);
+        if ((int) Configuration::get(Config::MOLLIE_SEND_NEW_ORDER) !== Config::NEW_ORDER_MAIL_SEND_ON_PAID) {
+            return false;
+        }
+
+        return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
+            ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID));
+    }
+
+    private function checkIfNewOrderMailNeedsToBeSend($statusId)
+    {
+        if ((int) Configuration::get(Config::MOLLIE_SEND_NEW_ORDER) !== Config::NEW_ORDER_MAIL_SEND_ON_PAID) {
+            return false;
+        }
+
+        return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
+            ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID));
     }
 }

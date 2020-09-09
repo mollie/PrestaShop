@@ -33,6 +33,8 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Install\Installer;
+use Mollie\Service\imageService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -49,19 +51,19 @@ function upgrade_module_4_0_7($module)
     Configuration::updateValue(Config::MOLLIE_STATUS_SHIPPING, true);
     Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, Config::ORDER_CONF_MAIL_SEND_ON_NEVER);
 
-    $sql= 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+    $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_country` (
 				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`       VARCHAR(64),
 				`id_country`      INT(64),
 				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
     $sql .= '
-        CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_pending_order_cart` (
+        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart` (
 				`id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`order_id` INT(64) NOT NULL,
 				`cart_id` INT(64) NOT NULL
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
     ';
 
     if (Db::getInstance()->execute($sql) == false) {
@@ -72,23 +74,24 @@ function upgrade_module_4_0_7($module)
     $module->registerHook('actionAdminControllerSetMedia');
     $module->registerHook('actionValidateOrder');
 
-    /** @var \Mollie\Install\Installer $installer */
-    $installer = $module->getContainer(\Mollie\Install\Installer::class);
+    /** @var Installer $installer */
+    $installer = $module->getContainer(Installer::class);
     $installed = true;
 
     $installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-    $installed &= $installer->installTab('AdminMollieModule', 0, 'AdminMollieModule', false);
+    $installed &= $installer->installTab('AdminMollieModule', 0, 'Mollie', false, 'mollie');
 
     $installed &= $installer->partialShippedOrderState();
     $installed &= $installer->orderCompletedOrderState();
     $installed &= $installer->copyEmailTemplates();
 
-    Configuration::updateValue(Config::MOLLIE_STATUS_COMPLETED,
+    Configuration::updateValue(
+        Config::MOLLIE_STATUS_COMPLETED,
         Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED)
     );
     Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_COMPLETED, true);
 
-    if(!$installed) {
+    if (!$installed) {
         return false;
     }
 

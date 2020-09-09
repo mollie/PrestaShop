@@ -1,0 +1,14 @@
+services:
+  Mollie\Command\TranslationCsvFileGeneratorConsoleCommand:
+    class: Mollie\Command\TranslationCsvFileGeneratorConsoleCommand
+    arguments:
+      - '@mollie'
+    tags:
+      - { name: 'console.command' }
+
+  Mollie\Command\UploadTranslationsFromCsvFileConsoleCommand:
+    class: Mollie\Command\UploadTranslationsFromCsvFileConsoleCommand
+    arguments:
+      - '@mollie'
+    tags:
+      - { name: 'console.command' }

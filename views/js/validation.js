@@ -71,10 +71,11 @@ $(document).ready(function () {
     });
 
     var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
-    var $profileId = $('#MOLLIE_PROFILE_ID');
-    hideElementIfNotChecked($profileSwitch, $profileId);
+    var $singleClickPayment = $('input[name="MOLLIE_SINGLE_CLICK_PAYMENT"]');
+
+    hideElementIfChecked($profileSwitch, $singleClickPayment);
     $profileSwitch.on('change', function () {
-        hideElementIfNotChecked($profileSwitch, $profileId);
+        hideElementIfChecked($profileSwitch, $singleClickPayment);
     });
 
     var $automaticallyShipSwitch = $('input[name="MOLLIE_AS_MAIN"]');
@@ -96,6 +97,13 @@ $(document).ready(function () {
             $elementToHide.closest('.form-group').show();
         } else {
             $elementToHide.closest('.form-group').hide();
+        }
+    }
+    function hideElementIfChecked($switch, $elementToHide) {
+        if ($switch.prop('checked')) {
+            $elementToHide.closest('.form-group').hide();
+        } else {
+            $elementToHide.closest('.form-group').show();
         }
     }
 

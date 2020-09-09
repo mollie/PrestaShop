@@ -8,6 +8,8 @@ services:
       - '@Mollie\Repository\MethodCountryRepository'
       - '@Mollie\Service\CartLinesService'
       - '@Mollie\Service\PaymentsTranslationService'
+      - '@Mollie\Service\CustomerService'
+      - '@Mollie\Provider\CreditCardLogoProvider'
 
   Mollie\Service\ApiService:
     arguments:
@@ -42,10 +44,12 @@ services:
   Mollie\Service\OrderStatusService:
     arguments:
       - '@Mollie\Service\MailService'
+      - '@Mollie\Validator\OrderConfMailValidator'
+      - '@Mollie\Validator\NewOrderMailValidator'
 
   Mollie\Service\ErrorDisplayService:
 
-  Mollie\Service\imageService:
+  Mollie\Service\ImageService:
 
   Mollie\Service\CountryService:
     arguments:
@@ -68,6 +72,11 @@ services:
   Mollie\Service\CartLinesService:
     arguments:
       - '@mollie'
+
+  Mollie\Service\CustomerService:
+    arguments:
+      - '@mollie'
+      - '@Mollie\Repository\MolCustomerRepository'
 
   Mollie\Service\MollieOrderInfoService:
     arguments:
@@ -132,3 +141,5 @@ services:
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
+
+  Mollie\Service\UpgradeNoticeService:

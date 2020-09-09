@@ -187,7 +187,7 @@ class ShipmentService
                     'url' => str_ireplace(
                         array_keys($info),
                         array_values($info),
-                        $carrierInformation->url_source
+                        $carrierInformation->custom_url
                     ),
                 ],
             ];

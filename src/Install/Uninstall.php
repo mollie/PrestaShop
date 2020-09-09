@@ -39,6 +39,7 @@ use Configuration;
 use Mollie;
 use Mollie\Config\Config;
 use OrderState;
+use Tab;
 use Validate;
 
 class Uninstall
@@ -64,6 +65,8 @@ class Uninstall
 
         $this->deleteConfig();
 
+        $this->uninstallTabs();
+
         include(dirname(__FILE__) . '/../../sql/uninstall.php');
 
         return true;
@@ -76,43 +79,58 @@ class Uninstall
 
     private function deleteConfig()
     {
-        Configuration::deleteByName(Config::MOLLIE_API_KEY);
-        Configuration::deleteByName(Config::MOLLIE_PROFILE_ID);
-        Configuration::deleteByName(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
-        Configuration::deleteByName(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
-        Configuration::deleteByName(Config::MOLLIE_IFRAME);
-        Configuration::deleteByName(Config::MOLLIE_IMAGES);
-        Configuration::deleteByName(Config::MOLLIE_ISSUERS);
-        Configuration::deleteByName(Config::MOLLIE_CSS);
-        Configuration::deleteByName(Config::MOLLIE_DEBUG_LOG);
-        Configuration::deleteByName(Config::MOLLIE_QRENABLED);
-        Configuration::deleteByName(Config::MOLLIE_DISPLAY_ERRORS);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_OPEN);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_PAID);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_CANCELED);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_EXPIRED);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_PARTIAL_REFUND);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_REFUNDED);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_SHIPPING);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_SHIPPING);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_OPEN);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_PAID);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_CANCELED);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_EXPIRED);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_REFUNDED);
-        Configuration::deleteByName(Config::MOLLIE_ACCOUNT_SWITCH);
-        Configuration::deleteByName(Config::MOLLIE_METHOD_COUNTRIES);
-        Configuration::deleteByName(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
-        Configuration::deleteByName(Config::MOLLIE_API);
-        Configuration::deleteByName(Config::MOLLIE_AUTO_SHIP_STATUSES);
-        Configuration::deleteByName(Config::MOLLIE_TRACKING_URLS);
-        Configuration::deleteByName(Config::MOLLIE_METHODS_LAST_CHECK);
-        Configuration::deleteByName(Config::METHODS_CONFIG);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_COMPLETED);
-        Configuration::deleteByName(Config::MOLLIE_STATUS_ORDER_COMPLETED);
-        Configuration::deleteByName(Config::MOLLIE_MAIL_WHEN_COMPLETED);
-        Configuration::deleteByName(Config::STATUS_MOLLIE_AWAITING);
+        $configurations = [
+            Config::MOLLIE_API_KEY,
+            Config::MOLLIE_PROFILE_ID,
+            Config::MOLLIE_PAYMENTSCREEN_LOCALE,
+            Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+            Config::MOLLIE_SEND_NEW_ORDER,
+            Config::MOLLIE_IFRAME,
+            Config::MOLLIE_IMAGES,
+            Config::MOLLIE_ISSUERS,
+            Config::MOLLIE_CSS,
+            Config::MOLLIE_DEBUG_LOG,
+            Config::MOLLIE_QRENABLED,
+            Config::MOLLIE_DISPLAY_ERRORS,
+            Config::MOLLIE_STATUS_OPEN,
+            Config::MOLLIE_STATUS_PAID,
+            Config::MOLLIE_STATUS_CANCELED,
+            Config::MOLLIE_STATUS_EXPIRED,
+            Config::MOLLIE_STATUS_PARTIAL_REFUND,
+            Config::MOLLIE_STATUS_REFUNDED,
+            Config::MOLLIE_STATUS_SHIPPING,
+            Config::MOLLIE_MAIL_WHEN_SHIPPING,
+            Config::MOLLIE_MAIL_WHEN_OPEN,
+            Config::MOLLIE_MAIL_WHEN_PAID,
+            Config::MOLLIE_MAIL_WHEN_CANCELED,
+            Config::MOLLIE_MAIL_WHEN_EXPIRED,
+            Config::MOLLIE_MAIL_WHEN_REFUNDED,
+            Config::MOLLIE_ACCOUNT_SWITCH,
+            Config::MOLLIE_METHOD_COUNTRIES,
+            Config::MOLLIE_METHOD_COUNTRIES_DISPLAY,
+            Config::MOLLIE_API,
+            Config::MOLLIE_AUTO_SHIP_STATUSES,
+            Config::MOLLIE_TRACKING_URLS,
+            Config::MOLLIE_METHODS_LAST_CHECK,
+            Config::METHODS_CONFIG,
+            Config::MOLLIE_STATUS_PARTIALLY_SHIPPED,
+            Config::MOLLIE_STATUS_COMPLETED,
+            Config::MOLLIE_STATUS_ORDER_COMPLETED,
+            Config::MOLLIE_MAIL_WHEN_COMPLETED,
+            Config::STATUS_MOLLIE_AWAITING,
+        ];
+
+        $this->deleteConfigurations($configurations);
+    }
+
+    /**
+     * @param array $configurations
+     */
+    private function deleteConfigurations(array $configurations)
+    {
+        foreach ($configurations as $configuration) {
+            Configuration::deleteByName($configuration);
+        }
     }
 
     private function deleteMollieStatuses()
@@ -125,6 +143,27 @@ class Uninstall
             }
             $orderState->deleted = 1;
             $orderState->update();
+        }
+    }
+
+    private function uninstallTabs()
+    {
+        $tabs = [
+            'AdminMollieAjax',
+            'AdminMollieModule'
+        ];
+
+        foreach ($tabs as $tab) {
+            $idTab = Tab::getIdFromClassName($tab);
+
+            if (!$idTab) {
+                continue;
+            }
+
+            $tab = new Tab($idTab);
+            if (!$tab->delete()) {
+                return false;
+            }
         }
     }
 }

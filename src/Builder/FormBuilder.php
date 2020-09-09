@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-NameSpace Mollie\Builder;
+namespace Mollie\Builder;
 
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
@@ -41,19 +41,22 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
 use HelperForm;
+use Module;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Utility\AssortUtility;
+use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use OrderState;
 use Smarty;
 use Tools;
-use Translate;
 
 class FormBuilder
 {
@@ -64,34 +67,45 @@ class FormBuilder
      * @var Mollie
      */
     private $module;
+
     /**
      * @var ApiService
      */
     private $apiService;
+
     /**
      * @var CountryService
      */
     private $countryService;
 
     private $lang;
+
     /**
      * @var Smarty
      */
     private $smarty;
 
     private $link;
+
     /**
      * @var CountryRepository
      */
     private $countryRepository;
+
     /**
      * @var ConfigFieldService
      */
     private $configFieldService;
+
     /**
      * @var MolCarrierInformationService
      */
     private $carrierInformationService;
+
+    /**
+     * @var CustomLogoProviderInterface
+     */
+    private $creditCardLogoProvider;
 
     public function __construct(
         Mollie $module,
@@ -102,7 +116,8 @@ class FormBuilder
         MolCarrierInformationService $carrierInformationService,
         $lang,
         Smarty $smarty,
-        $link
+        $link,
+        CustomLogoProviderInterface $creditCardLogoProvider
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -113,11 +128,12 @@ class FormBuilder
         $this->countryRepository = $countryRepository;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
+        $this->creditCardLogoProvider = $creditCardLogoProvider;
     }
 
     public function buildSettingsForm()
     {
-        $isApiKeyProvided = Configuration::get(Config::MOLLIE_API_KEY);
+        $isApiKeyProvided = EnvironmentUtility::getApiKey();
 
         $inputs = $this->getAccountSettingsSection($isApiKeyProvided);
 
@@ -162,23 +178,89 @@ class FormBuilder
     protected function getAccountSettingsSection($isApiKeyProvided)
     {
         $generalSettings = 'general_settings';
+
+        $input = [
+            [
+                'type' => 'mollie-support',
+                'tab' => $generalSettings,
+                'name' => '',
+            ]
+        ];
         if ($isApiKeyProvided) {
-            $input = [
+            $input[] =
                 [
-                    'type' => 'text',
-                    'label' => $this->module->l('API Key', self::FILE_NAME),
+                    'type' => 'select',
+                    'label' => $this->module->l('Environment', self::FILE_NAME),
                     'tab' => $generalSettings,
-                    'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
-                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                ]
+                    'name' => Config::MOLLIE_ENVIRONMENT,
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => Config::ENVIRONMENT_TEST,
+                                'name' => $this->module->l('Test', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::ENVIRONMENT_LIVE,
+                                'name' => $this->module->l('Live', self::FILE_NAME),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ];
+            $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('API Key Test', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_API_KEY_TEST,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-test-api-group'
             ];
+            $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('API Key Live', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_API_KEY,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-live-api-group'
+            ];
+            $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('Profile ID', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1].', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_PROFILE_ID,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-api-profile-id'
+            ];
+            $input[] = [
+                'type' => 'mollie-button',
+                'label' => '',
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_API_KEY_TESTING_BUTTON,
+                'text' => $this->module->l('Test ApiKey', self::FILE_NAME),
+                'class' => 'js-test-api-keys',
+                'form_group_class' => 'js-api-key-test'
+            ];
+            $input[] =
+                [
+                    'type' => 'mollie-h3',
+                    'tab' => $generalSettings,
+                    'name' => '',
+                    'title' => '',
+                ];
         } else {
-            $input = [
+            $input[] =
                 [
                     'type' => 'mollie-switch',
                     'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
@@ -200,105 +282,157 @@ class FormBuilder
                     'desc' => $this->module->display(
                         $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
                     ),
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->module->l('API Key', self::FILE_NAME),
-                    'tab' => $generalSettings,
-                    'desc' => TagsUtility::ppTags(
-                        $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
-                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                    ),
-                    'name' => Config::MOLLIE_API_KEY,
-                    'required' => true,
-                    'class' => 'fixed-width-xxl',
-                ]
-            ];
-        }
-        if ($isApiKeyProvided) {
+                ];
             $input[] = [
-                'type' => 'switch',
-                'label' => $this->module->l('Use IFrame for credit card', self::FILE_NAME),
+                'type' => 'select',
+                'label' => $this->module->l('Environment', self::FILE_NAME),
                 'tab' => $generalSettings,
-                'name' => Config::MOLLIE_IFRAME,
-                'is_bool' => true,
-                'values' => [
-                    [
-                        'id' => 'active_on',
-                        'value' => true,
-                        'label' => $this->module->l('Enabled', self::FILE_NAME),
-                    ],
-                    [
-                        'id' => 'active_off',
-                        'value' => false,
-                        'label' => $this->module->l('Disabled', self::FILE_NAME),
-                    ],
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'text',
-                'label' => $this->module->l('Profile ID', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1];', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_PROFILE_ID,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-            ];
-
-            $input = array_merge($input, [
-                    [
-                        'type' => 'mollie-h3',
-                        'tab' => $generalSettings,
-                        'name' => '',
-                        'title' => '',
-                    ],
-                    [
-                        'type' => 'select',
-                        'label' => $this->module->l('Issuer list', self::FILE_NAME),
-                        'tab' => $generalSettings,
-                        'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.', self::FILE_NAME),
-                        'name' => Config::MOLLIE_ISSUERS,
-                        'options' => [
-                            'query' => [
-                                [
-                                    'id' => Config::ISSUERS_ON_CLICK,
-                                    'name' => $this->module->l('On click', self::FILE_NAME),
-                                ],
-                                [
-                                    'id' => Config::ISSUERS_PAYMENT_PAGE,
-                                    'name' => $this->module->l('Payment page', self::FILE_NAME),
-                                ],
-                            ],
-                            'id' => 'id',
-                            'name' => 'name',
+                'name' => Config::MOLLIE_ENVIRONMENT,
+                'options' => [
+                    'query' => [
+                        [
+                            'id' => Config::ENVIRONMENT_TEST,
+                            'name' => $this->module->l('Test', self::FILE_NAME),
+                        ],
+                        [
+                            'id' => Config::ENVIRONMENT_LIVE,
+                            'name' => $this->module->l('Live', self::FILE_NAME),
                         ],
                     ],
-                ]
-            );
-            $input[] = [
-                'type' => 'mollie-h2',
-                'tab' => $generalSettings,
-                'name' => '',
-                'title' => $this->module->l('Payment methods', self::FILE_NAME),
-            ];
-
-            $input[] = [
-                'type' => 'mollie-methods',
-                'name' => Config::METHODS_CONFIG,
-                'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
-                'countries' => $this->countryService->getActiveCountriesList(),
-                'tab' => $generalSettings,
-                'klarnaPayments' => [
-                    PaymentMethod::KLARNA_PAY_LATER,
-                    PaymentMethod::KLARNA_SLICE_IT,
+                    'id' => 'id',
+                    'name' => 'name',
                 ],
-                'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+            ];
+            $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('API Key Test', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'desc' => TagsUtility::ppTags(
+                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
+                ),
+                'name' => Config::MOLLIE_API_KEY_TEST,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-test-api-group'
+            ];
+            $input[] = [
+                'type' => 'mollie-password',
+                'label' => $this->module->l('API Key Live', self::FILE_NAME),
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_API_KEY,
+                'required' => true,
+                'class' => 'fixed-width-xxl',
+                'form_group_class' => 'js-live-api-group'
             ];
         }
+        if (!$isApiKeyProvided) {
+            return $input;
+        }
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->module->l('Use Mollie Components for CreditCards', self::FILE_NAME),
+            'tab' => $generalSettings,
+            'name' => Config::MOLLIE_IFRAME,
+            'desc' => TagsUtility::ppTags(
+                $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion.', self::FILE_NAME),
+                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_components_info.tpl')]
+            ),
+            $this->module->l('Read more about Mollie Components and how it improves your conversion', self::FILE_NAME),
+            'is_bool' => true,
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => $this->module->l('Enabled', self::FILE_NAME),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => $this->module->l('Disabled', self::FILE_NAME),
+                ],
+            ],
+        ];
+
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->module->l('Use Single Click Payments for CreditCards', self::FILE_NAME),
+            'tab' => $generalSettings,
+            'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT,
+            'desc' => TagsUtility::ppTags(
+                $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion.', self::FILE_NAME),
+                [
+                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_single_click_payment_info.tpl')
+                ]
+            ),
+            'is_bool' => true,
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => $this->module->l('Enabled', self::FILE_NAME),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => $this->module->l('Disabled', self::FILE_NAME),
+                ],
+            ],
+        ];
+
+        $input = array_merge($input, [
+                [
+                    'type' => 'select',
+                    'label' => $this->module->l('Issuer list', self::FILE_NAME),
+                    'tab' => $generalSettings,
+                    'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.', self::FILE_NAME),
+                    'name' => Config::MOLLIE_ISSUERS,
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => Config::ISSUERS_ON_CLICK,
+                                'name' => $this->module->l('On click', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::ISSUERS_PAYMENT_PAGE,
+                                'name' => $this->module->l('Payment page', self::FILE_NAME),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+            ]
+        );
+        $input[] = [
+            'type' => 'mollie-h2',
+            'tab' => $generalSettings,
+            'name' => '',
+            'title' => $this->module->l('Payment methods', self::FILE_NAME),
+        ];
+
+        $dateStamp = time();
+        $input[] = [
+            'type' => 'mollie-methods',
+            'name' => Config::METHODS_CONFIG,
+            'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
+            'countries' => $this->countryService->getActiveCountriesList(),
+            'tab' => $generalSettings,
+            'klarnaPayments' => [
+                PaymentMethod::KLARNA_PAY_LATER,
+                PaymentMethod::KLARNA_SLICE_IT,
+            ],
+            'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+            'methodDescription' => TagsUtility::ppTags(
+                $this->module->l('Click [1]here[/1] to read more about the differences between the Payment and Orders API.', self::FILE_NAME),
+                [
+                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl')
+                ]
+            ),
+            'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
+            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
+            'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
+        ];
 
         return $input;
     }
@@ -314,7 +448,7 @@ class FormBuilder
             'label' => $this->module->l('Push Locale to Payment Screen', self::FILE_NAME),
             'tab' => $advancedSettings,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.',self::FILE_NAME),
+                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.', self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
             'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
@@ -359,7 +493,38 @@ class FormBuilder
                     'id' => 'id',
                     'name' => 'name',
                 ],
-            ];;
+            ];
+
+            if (Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
+                $input[] = [
+                    'type' => 'select',
+                    'label' => $this->module->l('Send new order email to merchant', self::FILE_NAME),
+                    'tab' => $advancedSettings,
+                    'name' => Config::MOLLIE_SEND_NEW_ORDER,
+                    'desc' => TagsUtility::ppTags(
+                        $this->module->l('Change when \'new_order\' email to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
+                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
+                    ),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
+                                'name' => $this->module->l('When Order is created', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                                'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
+                            ],
+                            [
+                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
+                                'name' => $this->module->l('Never', self::FILE_NAME),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ];
+            }
         }
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
@@ -373,7 +538,7 @@ class FormBuilder
                 continue;
             }
 
-            $val = (int)$val;
+            $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
                 $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
@@ -485,7 +650,6 @@ class FormBuilder
                     'name' => 'name',
                 ],
             ],
-
             [
                 'type' => 'text',
                 'label' => $this->module->l('CSS file', self::FILE_NAME),
@@ -512,7 +676,7 @@ class FormBuilder
             'label' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_AUTO_SHIP_MAIN,
-            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status', self::FILE_NAME),
+            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status.', self::FILE_NAME),
             'is_bool' => true,
             'values' => [
                 [
@@ -558,8 +722,8 @@ class FormBuilder
             ],
         ];
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
-
-        for ($i = 0; $i < count($orderStatuses); $i++) {
+        $orderStatusesCount = count($orderStatuses);
+        for ($i = 0; $i < $orderStatusesCount; $i++) {
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
@@ -629,6 +793,7 @@ class FormBuilder
                 ],
             ]
         );
+
         return $input;
     }
 

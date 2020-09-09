@@ -1,4 +1,37 @@
 <?php
+/**
+ * Copyright (c) 2012-2020, Mollie B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ *
+ * @author     Mollie B.V. <info@mollie.nl>
+ * @copyright  Mollie B.V.
+ * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ * @category   Mollie
+ * @package    Mollie
+ * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Service;
 
@@ -13,7 +46,9 @@ use Customer;
 use Hook;
 use Language;
 use Mail;
+use Module;
 use Mollie;
+use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
@@ -61,6 +96,12 @@ class MailService
         );
     }
 
+    /**
+     * @param Order $order
+     * @param $orderStateId
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
     public function sendOrderConfMail(Order $order, $orderStateId)
     {
         $orderLanguage = new Language((int)$order->id_lang);
@@ -87,6 +128,31 @@ class MailService
         );
     }
 
+    /**
+     * @param Order $order
+     * @param $orderStateId
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function sendNewOrderMail(Order $order, $orderStateId)
+    {
+        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
+            return;
+        }
+        /** @var \Ps_EmailAlerts $emailAlertsModule */
+        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
+
+        $emailAlertsModule->hookActionValidateOrder(
+            [
+                'currency' => $this->context->currency,
+                'order' => $order,
+                'customer' => $this->context->customer,
+                'cart' => $this->context->cart,
+                'orderStatus' => new OrderState($orderStateId),
+            ]
+        );
+    }
+
     private function getOrderConfData(Order $order, $orderStateId)
     {
         $virtual_product = true;
@@ -94,6 +160,7 @@ class MailService
 
         $product_var_tpl_list = [];
         foreach ($order->getProducts() as $product) {
+            $specific_price = null;
             $price = Product::getPriceStatic((int)$product['id_product'], false, ($product['product_attribute_id'] ? (int)$product['product_attribute_id'] : null), 6, null, false, true, $product['product_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
             $price_wt = Product::getPriceStatic((int)$product['id_product'], true, ($product['product_attribute_id'] ? (int)$product['product_attribute_id'] : null), 2, null, false, true, $product['product_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
 
@@ -226,6 +293,7 @@ class MailService
 
     private function getCartRuleList(Order $order, $orderStateId)
     {
+        $order_list = [];
         $cart_rules = $this->context->cart->getCartRules();
         $order_list[] = $order;
         $cart_rule_used = [];
@@ -354,10 +422,11 @@ class MailService
 
     private function getFileAttachment($orderStatusId, Order $order)
     {
-        $order_status = new OrderState((int) $orderStatusId, (int) $this->context->language->id);
+        $order_status = new OrderState((int)$orderStatusId, (int)$this->context->language->id);
 
         // Join PDF invoice
         if ((int)Configuration::get('PS_INVOICE') && $order_status->invoice && $order->invoice_number) {
+            $fileAttachment = [];
             $order_invoice_list = $order->getInvoicesCollection();
             Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $order_invoice_list]);
             $pdf = new PDF($order_invoice_list, PDF::TEMPLATE_INVOICE, $this->context->smarty);

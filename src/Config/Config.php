@@ -39,6 +39,7 @@ use _PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
 use Configuration;
+use Mollie\Utility\EnvironmentUtility;
 
 class Config
 {
@@ -127,16 +128,24 @@ class Config
     const ISSUERS_PAYMENT_PAGE = 'payment-page';
     const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
+    const ENVIRONMENT_TEST = 0;
+    const ENVIRONMENT_LIVE = 1;
+
     const DEBUG_LOG_NONE = 0;
     const DEBUG_LOG_ERRORS = 1;
     const DEBUG_LOG_ALL = 2;
 
+    const MOLLIE_ENVIRONMENT = 'MOLLIE_ENVIRONMENT';
     const MOLLIE_API_KEY = 'MOLLIE_API_KEY';
+    const MOLLIE_API_KEY_TEST = 'MOLLIE_API_KEY_TEST';
+    const MOLLIE_API_KEY_TESTING_BUTTON = 'MOLLIE_API_KEY_TESTING_BUTTON';
     const MOLLIE_PROFILE_ID = 'MOLLIE_PROFILE_ID';
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
     const MOLLIE_SEND_ORDER_CONFIRMATION = 'MOLLIE_SEND_ORDER_CONFIRMATION';
+    const MOLLIE_SEND_NEW_ORDER = 'MOLLIE_SEND_NEW_ORDER';
     const MOLLIE_IFRAME = 'MOLLIE_IFRAME';
+    const MOLLIE_SINGLE_CLICK_PAYMENT = 'MOLLIE_SINGLE_CLICK_PAYMENT';
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_ISSUERS = 'MOLLIE_ISSUERS';
     const MOLLIE_CSS = 'MOLLIE_CSS';
@@ -198,6 +207,7 @@ class Config
     const MOLLIE_METHODS_CHECK_INTERVAL = 86400; //daily check
 
     const API_ROUNDING_PRECISION = 2;
+    const VAT_RATE_ROUNDING_PRECISION = 0;
 
     const STATUS_PAID_ON_BACKORDER = "paid_backorder";
     const STATUS_PENDING_ON_BACKORDER = "pending_backorder";
@@ -207,6 +217,8 @@ class Config
     const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
     const APPLEPAY = 'applepay';
     const MOLLIE_COUNTRIES = 'country_';
+
+    const STATUS_PS_OS_OUTOFSTOCK_PAID = 'PS_OS_OUTOFSTOCK_PAID';
 
     const FEE_NO_FEE = 0;
     const FEE_FIXED_FEE = 1;
@@ -220,7 +232,18 @@ class Config
     const ORDER_CONF_MAIL_SEND_ON_PAID = 1;
     const ORDER_CONF_MAIL_SEND_ON_NEVER = 2;
 
+    const NEW_ORDER_MAIL_SEND_ON_CREATION = 0;
+    const NEW_ORDER_MAIL_SEND_ON_PAID = 1;
+    const NEW_ORDER_MAIL_SEND_ON_NEVER = 2;
+
     const CARTES_BANCAIRES = 'cartesbancaires';
+
+    const MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE';
+    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
+
+    const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
+
+    const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
 
     /** @var array $methods */
     public static $methods = [
@@ -275,7 +298,7 @@ class Config
 
     public static function isTestMode()
     {
-        $apiKey = Configuration::get(self::MOLLIE_API_KEY);
+        $apiKey = EnvironmentUtility::getApiKey();
         if (strpos($apiKey, 'test') === 0) {
             return true;
         }
