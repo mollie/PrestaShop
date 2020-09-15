@@ -72,6 +72,7 @@ services:
   Mollie\Service\CartLinesService:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\VoucherService'
 
   Mollie\Service\CustomerService:
     arguments:
@@ -143,3 +144,7 @@ services:
     - '@Mollie\Service\RepeatOrderLinkFactory'
 
   Mollie\Service\UpgradeNoticeService:
+
+  Mollie\Service\VoucherService:
+    - '@Mollie\Validator\VoucherCategoryValidator'
+    - '@Mollie\Repository\AttributeRepository'

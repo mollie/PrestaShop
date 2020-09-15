@@ -46,6 +46,7 @@ use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
+use Mollie\Validator\VoucherCategoryValidator;
 use Tools;
 
 class CartLinesService
@@ -56,9 +57,15 @@ class CartLinesService
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    /**
+     * @var VoucherService
+     */
+    private $voucherService;
+
+    public function __construct(Mollie $module, VoucherService $voucherService)
     {
         $this->module = $module;
+        $this->voucherService = $voucherService;
     }
 
     /**
@@ -142,6 +149,7 @@ class CartLinesService
                     'quantity' => $qty,
                     'unitPrice' => $unitPrice,
                     'totalAmount' => (float)NumberUtility::times($unitPrice, $qty),
+                    'category' => $this->voucherService->getVoucherCategory($cartItem),
                 ];
                 $remaining -= round((float)NumberUtility::times($unitPrice, $qty), $apiRoundingPrecision);
             }
@@ -221,6 +229,7 @@ class CartLinesService
 
                 $newItem = [
                     'name' => $line['name'],
+                    'category' => $line['category'],
                     'quantity' => (int)$quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
@@ -326,6 +335,10 @@ class CartLinesService
                 $currency,
                 TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
             ));
+
+            if (isset($item['category'])) {
+                $line->setCategory($item['category']);
+            }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
 

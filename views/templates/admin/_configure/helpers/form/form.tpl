@@ -327,6 +327,63 @@
                             </div>
                         </div>
                     {/if}
+                    {if $paymentMethod.id === 'voucher'}
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Category' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_VOUCHER_CATEGORY"
+                                        class="fixed-width-xl">
+                                    <option value="null" {if $input.voucherCategory === 'null'} selected {/if}>
+                                        {l s='None' mod='mollie'}
+                                    </option>
+                                    <option value="meal" {if $input.voucherCategory === 'meal'} selected {/if}>
+                                        {l s='Food and drinks' mod='mollie'}
+                                    </option>
+                                    <option value="gift" {if $input.voucherCategory === 'gift'} selected {/if}>
+                                        {l s='Gifts and flowers' mod='mollie'}
+                                    </option>
+                                    <option value="eco" {if $input.voucherCategory === 'eco'} selected {/if}>
+                                        {l s='Home and garden' mod='mollie'}
+                                    </option>
+                                    <option value="custom" {if $input.voucherCategory === 'custom'} selected {/if}>
+                                        {l s='Custom attribute' mod='mollie'}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Prestashop category' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_VOUCHER_PRESTASHOP_CATEGORY"
+                                        class="fixed-width-xl">
+                                    {foreach $input.categoryList as $category}
+                                        <option value="{$category['id_category']}" {if $input.voucherPrestashopCategory === {$category['id_category']}} selected {/if}>
+                                            {$category['name']}
+                                        </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Product attribute' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE"
+                                        class="fixed-width-xl">
+                                    {foreach $input.productAttributes as $attribute}
+                                        <option value="{$attribute['id_attribute']}" {if $input.voucherPrestashopAttribute === {$attribute['id_attribute']}} selected {/if}>
+                                            {$attribute['name']}
+                                        </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
             </div>
         {/foreach}
@@ -442,6 +499,9 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
 
 
 

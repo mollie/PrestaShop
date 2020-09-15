@@ -182,6 +182,9 @@ class SettingsSaveService
         $mollieMethodCountriesEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES);
         $mollieMethodCountriesDisplayEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
         $mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
+        $voucherCategory = Tools::getValue(Config::MOLLIE_VOUCHER_CATEGORY);
+        $voucherPrestashopCategory = Tools::getValue(Config::MOLLIE_VOUCHER_PRESTASHOP_CATEGORY);
+        $voucherPrestashopCustomAttribute = Tools::getValue(Config::MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE);
 
         $mollieShipMain = Tools::getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
@@ -226,6 +229,9 @@ class SettingsSaveService
             Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int)$mollieErrors);
             Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, (int)$mollieLogger);
             Configuration::updateValue(Config::MOLLIE_API, $mollieApi);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_PRESTASHOP_CATEGORY, $voucherPrestashopCategory);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE, $voucherPrestashopCustomAttribute);
             Configuration::updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))

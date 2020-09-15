@@ -69,7 +69,7 @@ class Config
         'klarnapaylater' => ['eur'],
         'klarnasliceit' => ['eur'],
         'mybank' => ['eur'],
-
+        'voucher' => ['eur'],
     ];
 
 
@@ -244,6 +244,16 @@ class Config
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
 
     const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
+
+    const MOLLIE_VOUCHER_CATEGORY = 'MOLLIE_VOUCHER_CATEGORY';
+    const MOLLIE_VOUCHER_PRESTASHOP_CATEGORY = 'MOLLIE_VOUCHER_PRESTASHOP_CATEGORY';
+    const MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE = 'MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE';
+
+    const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
+    const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
+    const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
+    const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+    const MOLLIE_VOUCHER_CATEGORY_CUSTOM = 'custom';
 
     /** @var array $methods */
     public static $methods = [

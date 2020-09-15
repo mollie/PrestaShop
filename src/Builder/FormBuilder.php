@@ -432,6 +432,11 @@ class FormBuilder
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
+            'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+            'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
+            'voucherPrestashopCategory' => Configuration::get(Config::MOLLIE_VOUCHER_PRESTASHOP_CATEGORY),
+            'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
+            'voucherPrestashopAttribute' => Configuration::get(Config::MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE),
         ];
 
         return $input;

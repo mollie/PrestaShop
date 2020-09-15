@@ -100,6 +100,11 @@ class Line implements JsonSerializable
     private $vatAmount;
 
     /**
+     * @var string
+     */
+    private $category;
+
+    /**
      * @return string
      */
     public function getType()
@@ -291,6 +296,23 @@ class Line implements JsonSerializable
         $this->vatAmount = $vatAmount;
     }
 
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Line
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -301,6 +323,7 @@ class Line implements JsonSerializable
             "metadata" => $this->getMetaData(),
             "quantity" => $this->getQuantity(),
             "vatRate" => $this->getVatRate(),
+            "category" => $this->getCategory(),
             "unitPrice" => [
                 "currency" => $this->getUnitPrice()->getCurrency(),
                 "value" => $this->getUnitPrice()->getValue()
