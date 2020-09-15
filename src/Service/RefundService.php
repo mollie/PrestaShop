@@ -40,6 +40,7 @@ use Mollie;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\TextFormatUtility;
 use MollieWebhookModuleFrontController;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
@@ -83,14 +84,17 @@ class RefundService
                 $payment->refund([
                     'amount' => [
                         'currency' => (string)$payment->amount->currency,
-                        'value' => (string)number_format($amount, 2, '.', ''),
+                        'value' => (string)TextFormatUtility::formatNumber($amount, 2),
                     ],
                 ]);
             } elseif ((float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value > 0) {
                 $payment->refund([
                     'amount' => [
                         'currency' => (string)$payment->amount->currency,
-                        'value' => (string)number_format(((float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value), 2, '.', ''),
+                        'value' => (string)TextFormatUtility::formatNumber(
+                            (float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value,
+                            2
+                        ),
                     ],
                 ]);
             }
