@@ -67,6 +67,20 @@ class PaymentMethodRepository
     }
 
     /**
+     * @param array $savedPaymentMethods
+     * @param $environment
+     * @return bool
+     */
+    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
+    {
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+         WHERE id_method NOT IN ("' . pSQL(implode('"," ', $savedPaymentMethods)) . '") 
+         AND `live_environment` = ' . (int)$environment;
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    /**
      * @param $paymentMethodId
      * @param $environment
      * @return false|string|null
@@ -178,7 +192,7 @@ class PaymentMethodRepository
         return Db::getInstance()->update(
             'mollie_payments',
             [
-                'transaction_id'  => pSQL($newTransactionId),
+                'transaction_id' => pSQL($newTransactionId),
 
             ],
             '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
@@ -206,16 +220,16 @@ class PaymentMethodRepository
 
     public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
     {
-        return  Db::getInstance()->insert(
+        return Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int)$cartId,
                 'method' => pSQL($orderPayment),
                 'transaction_id' => pSQL($transactionId),
                 'bank_status' => PaymentStatus::STATUS_OPEN,
-                'order_id' => (int) $orderId,
+                'order_id' => (int)$orderId,
                 'order_reference' => psql($orderReference),
-                'created_at' => array('type' => 'sql', 'value' => 'NOW()'),
+                'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ]
         );
     }
