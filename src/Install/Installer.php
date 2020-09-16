@@ -401,7 +401,7 @@ class Installer
     }
 
     public function installVoucherFeatures()
-
+    {
         $feature = new Feature();
         $feature->name = MultiLangUtility::createMultiLangField('Voucher');
         $feature->add();
