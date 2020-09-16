@@ -136,7 +136,6 @@ class SettingsSaveService
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods');
                 }
 
-
                 if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
                 }

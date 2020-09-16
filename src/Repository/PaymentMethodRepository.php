@@ -79,6 +79,7 @@ class PaymentMethodRepository
 
         return Db::getInstance()->execute($sql);
     }
+
     /**
      * @param $paymentMethodId
      * @param $environment
@@ -191,7 +192,7 @@ class PaymentMethodRepository
         return Db::getInstance()->update(
             'mollie_payments',
             [
-                'transaction_id'  => pSQL($newTransactionId),
+                'transaction_id' => pSQL($newTransactionId),
 
             ],
             '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
@@ -219,16 +220,16 @@ class PaymentMethodRepository
 
     public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
     {
-        return  Db::getInstance()->insert(
+        return Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int)$cartId,
                 'method' => pSQL($orderPayment),
                 'transaction_id' => pSQL($transactionId),
                 'bank_status' => PaymentStatus::STATUS_OPEN,
-                'order_id' => (int) $orderId,
+                'order_id' => (int)$orderId,
                 'order_reference' => psql($orderReference),
-                'created_at' => array('type' => 'sql', 'value' => 'NOW()'),
+                'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ]
         );
     }

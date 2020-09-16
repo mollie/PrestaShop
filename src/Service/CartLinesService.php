@@ -110,9 +110,9 @@ class CartLinesService
             }
 
             // Generate the product hash
-            $idProduct = number_format($cartItem['id_product']);
-            $idProductAttribute = number_format($cartItem['id_product_attribute']);
-            $idCustomization = number_format($cartItem['id_customization']);
+            $idProduct = TextFormatUtility::formatNumber($cartItem['id_product'], 0);
+            $idProductAttribute = TextFormatUtility::formatNumber($cartItem['id_product_attribute'], 0);
+            $idCustomization = TextFormatUtility::formatNumber($cartItem['id_customization'], 0);
 
             $productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
             $aItems[$productHash] = [];
