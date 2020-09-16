@@ -39,14 +39,12 @@ use Cart;
 use Configuration;
 use Currency;
 use Mollie;
-use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
-use Mollie\Validator\VoucherCategoryValidator;
 use Tools;
 
 class CartLinesService

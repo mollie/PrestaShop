@@ -40,6 +40,9 @@ use Context;
 use Db;
 use DbQuery;
 use Exception;
+use Feature;
+use FeatureValue;
+use FeatureValueLang;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
@@ -107,6 +110,13 @@ class Installer
             $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
         } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
+            return false;
+        }
+
+        try {
+            $this->installVoucherFeatures();
+        } catch (Exception $e) {
+            $this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
             return false;
         }
 
@@ -388,5 +398,23 @@ class Installer
         }
 
         return true;
+    }
+
+    public function installVoucherFeatures()
+
+        $feature = new Feature();
+        $feature->name = MultiLangUtility::createMultiLangField('Voucher');
+        $feature->add();
+
+        foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
+            if (Configuration::get(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key)) {
+                continue;
+            }
+            $featureValue = new FeatureValue();
+            $featureValue->id_feature = $feature->id;
+            $featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
+            $featureValue->add();
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key, $featureValue->id);
+        }
     }
 }

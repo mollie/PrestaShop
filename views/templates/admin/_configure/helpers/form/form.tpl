@@ -129,7 +129,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
-                                {if !in_array($paymentMethod.id, $input.klarnaPayments)}
+                                {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                     <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                 {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
@@ -153,7 +153,7 @@
                                     {/if}
                                    required="required">
                             <p class="help-block">
-                                {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
+                                {l s='The description to be used for this transaction. These variables are available:' mod='mollie'}
                             </p>
                             <p class="help-block">
                                 <b>{l s='{orderNumber}' mod='mollie'}</b>,
@@ -347,39 +347,6 @@
                                     <option value="eco" {if $input.voucherCategory === 'eco'} selected {/if}>
                                         {l s='Home and garden' mod='mollie'}
                                     </option>
-                                    <option value="custom" {if $input.voucherCategory === 'custom'} selected {/if}>
-                                        {l s='Custom attribute' mod='mollie'}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-lg-3">
-                                {l s='Prestashop category' mod='mollie'}
-                            </label>
-                            <div class="col-lg-9">
-                                <select name="MOLLIE_VOUCHER_PRESTASHOP_CATEGORY"
-                                        class="fixed-width-xl">
-                                    {foreach $input.categoryList as $category}
-                                        <option value="{$category['id_category']}" {if $input.voucherPrestashopCategory === {$category['id_category']}} selected {/if}>
-                                            {$category['name']}
-                                        </option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-lg-3">
-                                {l s='Product attribute' mod='mollie'}
-                            </label>
-                            <div class="col-lg-9">
-                                <select name="MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE"
-                                        class="fixed-width-xl">
-                                    {foreach $input.productAttributes as $attribute}
-                                        <option value="{$attribute['id_attribute']}" {if $input.voucherPrestashopAttribute === {$attribute['id_attribute']}} selected {/if}>
-                                            {$attribute['name']}
-                                        </option>
-                                    {/foreach}
                                 </select>
                             </div>
                         </div>

@@ -67,6 +67,19 @@ class PaymentMethodRepository
     }
 
     /**
+     * @param array $savedPaymentMethods
+     * @param $environment
+     * @return bool
+     */
+    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
+    {
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+         WHERE id_method NOT IN ("' . implode('", "', $savedPaymentMethods) . '") 
+         AND `live_environment` = ' . (int)$environment;
+
+        return Db::getInstance()->execute($sql);
+    }
+    /**
      * @param $paymentMethodId
      * @param $environment
      * @return false|string|null

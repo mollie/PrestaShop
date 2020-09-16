@@ -146,5 +146,4 @@ services:
   Mollie\Service\UpgradeNoticeService:
 
   Mollie\Service\VoucherService:
-    - '@Mollie\Validator\VoucherCategoryValidator'
     - '@Mollie\Repository\AttributeRepository'

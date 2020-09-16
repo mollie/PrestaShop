@@ -36,17 +36,12 @@
 namespace Mollie\Service;
 
 use Configuration;
+use Feature;
 use Mollie\Config\Config;
 use Mollie\Repository\AttributeRepository;
-use Mollie\Validator\VoucherCategoryValidator;
-use Product;
 
 class VoucherService
 {
-    /**
-     * @var VoucherCategoryValidator
-     */
-    private $voucherCategoryValidator;
 
     /**
      * @var AttributeRepository
@@ -54,11 +49,8 @@ class VoucherService
     private $attributeRepository;
 
     public function __construct(
-        VoucherCategoryValidator $voucherCategoryValidator,
         AttributeRepository $attributeRepository
-    )
-    {
-        $this->voucherCategoryValidator = $voucherCategoryValidator;
+    ) {
         $this->attributeRepository = $attributeRepository;
     }
 
@@ -69,37 +61,15 @@ class VoucherService
             case Config::MOLLIE_VOUCHER_CATEGORY_MEAL:
             case Config::MOLLIE_VOUCHER_CATEGORY_GIFT:
             case Config::MOLLIE_VOUCHER_CATEGORY_ECO:
-                return $this->isInSelectedCategory($cartItem) ? $selectedCategory : '';
-            case Config::MOLLIE_VOUCHER_CATEGORY_CUSTOM:
-                $selectedCustomAttribute = Configuration::get(Config::MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE);
-                $hasCustomAttribute = $this->attributeRepository->hasAttributeInCombination(
-                    $cartItem['id_product_attribute'],
-                    $selectedCustomAttribute
-                );
-                return $hasCustomAttribute ? $selectedCategory : '';
+                return Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
             case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
             default:
-                return '';
+                return $this->getProductCategory($cartItem);
         }
     }
 
-    private function isInSelectedCategory(array $cartItem)
+    private function getProductCategory(array $cartItem)
     {
-        $isVoucherCategory = false;
-        if (isset($cartItem['id_category_default'])) {
-            /** @var VoucherCategoryValidator $voucherCategoryValidator */
-            $isVoucherCategory = $this->voucherCategoryValidator->validate($cartItem['id_category_default']);
-        }
-        if ($isVoucherCategory) {
-            return true;
-        }
-
-        $categories = Product::getProductCategories($cartItem['id_product']);
-        $selectedPsCategory = Configuration::get(Config::MOLLIE_VOUCHER_PRESTASHOP_CATEGORY);
-        if (in_array($selectedPsCategory, $categories, false)) {
-            return true;
-        }
-
         return false;
     }
 }

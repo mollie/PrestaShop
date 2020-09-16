@@ -2,5 +2,3 @@ services:
   Mollie\Validator\OrderConfMailValidator:
 
   Mollie\Validator\NewOrderMailValidator:
-
-  Mollie\Validator\VoucherCategoryValidator:

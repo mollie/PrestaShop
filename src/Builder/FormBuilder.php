@@ -418,9 +418,10 @@ class FormBuilder
             'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
-            'klarnaPayments' => [
+            'onlyOrderMethods' => [
                 PaymentMethod::KLARNA_PAY_LATER,
                 PaymentMethod::KLARNA_SLICE_IT,
+                'voucher',
             ],
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
@@ -434,9 +435,7 @@ class FormBuilder
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
             'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-            'voucherPrestashopCategory' => Configuration::get(Config::MOLLIE_VOUCHER_PRESTASHOP_CATEGORY),
             'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
-            'voucherPrestashopAttribute' => Configuration::get(Config::MOLLIE_VOUCHER_CUSTOM_ATTRIBUTE),
         ];
 
         return $input;
