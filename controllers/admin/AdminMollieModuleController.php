@@ -1,7 +1,4 @@
 <?php
-
-use Mollie\Config\Config;
-
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -35,6 +32,8 @@ use Mollie\Config\Config;
  * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Config\Config;
 
 class AdminMollieModuleController extends ModuleAdminController
 {
