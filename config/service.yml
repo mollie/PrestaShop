@@ -71,7 +71,8 @@ services:
 
   Mollie\Service\CartLinesService:
     arguments:
-      - '@mollie'
+      - '@Mollie\Service\LanguageService'
+      - '@Mollie\Service\VoucherService'
 
   Mollie\Service\CustomerService:
     arguments:
@@ -143,3 +144,7 @@ services:
     - '@Mollie\Service\RepeatOrderLinkFactory'
 
   Mollie\Service\UpgradeNoticeService:
+
+  Mollie\Service\VoucherService:
+    - '@Mollie\Repository\AttributeRepository'
+    - '@Mollie\Adapter\ConfigurationAdapter'

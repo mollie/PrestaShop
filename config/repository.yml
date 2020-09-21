@@ -20,3 +20,5 @@ services:
   Mollie\Repository\MolCustomerRepository:
     arguments:
       - 'MolCustomer'
+
+  Mollie\Repository\AttributeRepository:
