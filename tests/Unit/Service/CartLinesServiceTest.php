@@ -3,6 +3,7 @@
 namespace Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
@@ -27,6 +28,8 @@ class CartLinesServiceTest extends TestCase
      * @param $cartItems
      * @param $psGiftWrapping
      * @param $selectedVoucherCategory
+     * @param $translationMocks
+     * @param $toolsMocks
      * @param $mocks
      * @param $result
      */
@@ -40,6 +43,7 @@ class CartLinesServiceTest extends TestCase
         $psGiftWrapping,
         $selectedVoucherCategory,
         $translationMocks,
+        $toolsMocks,
         $mocks,
         $result
     ) {
@@ -54,10 +58,16 @@ class CartLinesServiceTest extends TestCase
         foreach ($translationMocks as $mock) {
             $languageService->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
-
+        
+        /** @var ToolsAdapter $toolsAdapter */
+        $toolsAdapter = $this->getMockBuilder(ToolsAdapter::class)->getMock();
+        foreach ($toolsMocks as $mock) {
+            $toolsAdapter->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
+        }
+        
         $voucherService = new VoucherService(new AttributeRepository(), $configurationAdapter);
 
-        $cartLineService = new CartLinesService($languageService, $voucherService);
+        $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter);
         $cartLines = $cartLineService->getCartLines(
             $amount,
             $paymentFee,
@@ -79,12 +89,13 @@ class CartLinesServiceTest extends TestCase
         $productName_3 = 'The best is yet to come\' Framed poster';
         $shipping = 'Shipping';
         $giftWrapping = 'Gift wrapping';
+        $currencyIsoCode = 'EUR';
 
         return [
             'one product with default no voucher category' => [
                 'amount' => 104.84,
                 'paymentFee' => false,
-                'currencyId' => 'EUR',
+                'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
 
                     'gift_products' =>
@@ -126,6 +137,14 @@ class CartLinesServiceTest extends TestCase
                         'return' => $shipping,
                         'at' => 0
                     ]
+                ],      
+                'toolsMocks' => [
+                    0 => [
+                        'function' => 'strtoupper',
+                        'expects' => $currencyIsoCode,
+                        'return' => $currencyIsoCode,
+                        'at' => 0
+                    ]
                 ],
                 'mocks' => [],
                 'result' => [
@@ -135,9 +154,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '100.00'))
-                            ->setTotalPrice(new Amount('EUR', '100.00'))
-                            ->setVatAmount(new Amount('EUR', '17.36'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory(null)
                             ->setVatRate('21.00'),
                     1 =>
@@ -146,9 +165,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '4.84'))
-                            ->setTotalPrice(new Amount('EUR', '4.84'))
-                            ->setVatAmount(new Amount('EUR', '0.84'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
                             ->setCategory(null)
                             ->setVatRate('21.00'),
                 ]
@@ -156,7 +175,7 @@ class CartLinesServiceTest extends TestCase
             'one product with default meal category' => [
                 'amount' => 104.84,
                 'paymentFee' => false,
-                'currencyId' => 'EUR',
+                'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
 
                     'gift_products' =>
@@ -198,6 +217,14 @@ class CartLinesServiceTest extends TestCase
                         'at' => 0
                     ]
                 ],
+                'toolsMocks' => [
+                    0 => [
+                        'function' => 'strtoupper',
+                        'expects' => $currencyIsoCode,
+                        'return' => $currencyIsoCode,
+                        'at' => 0
+                    ]
+                ],
                 'mocks' => [],
                 'result' => [
                     0 =>
@@ -206,9 +233,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '100.00'))
-                            ->setTotalPrice(new Amount('EUR', '100.00'))
-                            ->setVatAmount(new Amount('EUR', '17.36'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('meal')
                             ->setVatRate('21.00'),
                     1 =>
@@ -217,9 +244,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '4.84'))
-                            ->setTotalPrice(new Amount('EUR', '4.84'))
-                            ->setVatAmount(new Amount('EUR', '0.84'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
                             ->setCategory(null)
                             ->setVatRate('21.00'),
                 ]
@@ -227,7 +254,7 @@ class CartLinesServiceTest extends TestCase
             'three products with meal, eco and null category' => [
                 'amount' => 138.59,
                 'paymentFee' => false,
-                'currencyId' => 'EUR',
+                'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
 
                     'gift_products' =>
@@ -312,6 +339,14 @@ class CartLinesServiceTest extends TestCase
                         'at' => 1
                     ],
                 ],
+                'toolsMocks' => [
+                    0 => [
+                        'function' => 'strtoupper',
+                        'expects' => $currencyIsoCode,
+                        'return' => $currencyIsoCode,
+                        'at' => 0
+                    ]
+                ],
                 'mocks' => [
                     0 => [
                         'function' => 'get',
@@ -351,9 +386,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '100.00'))
-                            ->setTotalPrice(new Amount('EUR', '100.00'))
-                            ->setVatAmount(new Amount('EUR', '17.36'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('meal')
                             ->setVatRate('21.00'),
                     1 =>
@@ -362,9 +397,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('2¤1¤0')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '19.12'))
-                            ->setTotalPrice(new Amount('EUR', '19.12'))
-                            ->setVatAmount(new Amount('EUR', '3.32'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '19.12'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '19.12'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '3.32'))
                             ->setCategory('gift')
                             ->setVatRate('21.00'),
                     2 =>
@@ -373,9 +408,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('2¤13¤0')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '4.03'))
-                            ->setTotalPrice(new Amount('EUR', '4.03'))
-                            ->setVatAmount(new Amount('EUR', '0.70'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.03'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.03'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.70'))
                             ->setCategory('')
                             ->setVatRate('21.00'),
                     3 =>
@@ -384,9 +419,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '4.84'))
-                            ->setTotalPrice(new Amount('EUR', '4.84'))
-                            ->setVatAmount(new Amount('EUR', '0.84'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
                             ->setCategory(null)
                             ->setVatRate('21.00'),
                     4 =>
@@ -395,9 +430,9 @@ class CartLinesServiceTest extends TestCase
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
-                            ->setUnitPrice(new Amount('EUR', '10.60'))
-                            ->setTotalPrice(new Amount('EUR', '10.60'))
-                            ->setVatAmount(new Amount('EUR', '0.60'))
+                            ->setUnitPrice(new Amount($currencyIsoCode, '10.60'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '10.60'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.60'))
                             ->setCategory(null)
                             ->setVatRate('6.00'),
                 ]

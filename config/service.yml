@@ -73,6 +73,7 @@ services:
     arguments:
       - '@Mollie\Service\LanguageService'
       - '@Mollie\Service\VoucherService'
+      - '@Mollie\Adapter\ToolsAdapter'
 
   Mollie\Service\CustomerService:
     arguments:
