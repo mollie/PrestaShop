@@ -2,13 +2,13 @@
 
 namespace Service;
 
-use Module;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Repository\AttributeRepository;
 use Mollie\Service\CartLinesService;
+use Mollie\Service\LanguageService;
 use Mollie\Service\VoucherService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -39,17 +39,25 @@ class CartLinesServiceTest extends TestCase
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory,
+        $translationMocks,
         $mocks,
         $result
     ) {
-        $mollieModule = Module::getInstanceByName('mollie');
         /** @var MockObject $configurationAdapter */
         $configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)->getMock();
         foreach ($mocks as $mock) {
             $configurationAdapter->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
+
+        /** @var MockObject $languageService */
+        $languageService = $this->getMockBuilder(LanguageService::class)->disableOriginalConstructor()->getMock();
+        foreach ($translationMocks as $mock) {
+            $languageService->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
+        }
+
         $voucherService = new VoucherService(new AttributeRepository(), $configurationAdapter);
-        $cartLineService = new CartLinesService($mollieModule, $voucherService);
+
+        $cartLineService = new CartLinesService($languageService, $voucherService);
         $cartLines = $cartLineService->getCartLines(
             $amount,
             $paymentFee,
@@ -61,11 +69,17 @@ class CartLinesServiceTest extends TestCase
             $selectedVoucherCategory
         );
 
-        $this->assertEquals($result, $cartLines);
+        self::assertEquals($result, $cartLines);
     }
 
     public function cartLinesProvider()
     {
+        $productName_1 = 'Hummingbird printed sweater';
+        $productName_2 = 'Hummingbird printed t-shirt';
+        $productName_3 = 'The best is yet to come\' Framed poster';
+        $shipping = 'Shipping';
+        $giftWrapping = 'Gift wrapping';
+
         return [
             'one product with default no voucher category' => [
                 'amount' => 104.84,
@@ -96,7 +110,7 @@ class CartLinesServiceTest extends TestCase
                             'cart_quantity' => '1',
                             'price_wt' => 100,
                             'id_product' => '2',
-                            'name' => 'Hummingbird printed sweater',
+                            'name' => $productName_1,
                             'rate' => 21,
                             'id_product_attribute' => '9',
                             'id_customization' => NULL,
@@ -105,11 +119,19 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'psGiftWrapping' => '1',
                 'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0
+                    ]
+                ],
                 'mocks' => [],
                 'result' => [
                     0 =>
                         (new Line())
-                            ->setName('Hummingbird printed sweater')
+                            ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
@@ -120,7 +142,7 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('21.00'),
                     1 =>
                         (new Line())
-                            ->setName('Shipping')
+                            ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
@@ -160,7 +182,7 @@ class CartLinesServiceTest extends TestCase
                             'cart_quantity' => '1',
                             'price_wt' => 100,
                             'id_product' => '2',
-                            'name' => 'Hummingbird printed sweater',
+                            'name' => $productName_1,
                             'rate' => 21,
                             'id_product_attribute' => '9',
                             'id_customization' => NULL,
@@ -168,11 +190,19 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'psGiftWrapping' => '1',
                 'selectedVoucherCategory' => 'meal',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0
+                    ]
+                ],
                 'mocks' => [],
                 'result' => [
                     0 =>
                         (new Line())
-                            ->setName('Hummingbird printed sweater')
+                            ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
@@ -223,7 +253,7 @@ class CartLinesServiceTest extends TestCase
                             'cart_quantity' => '1',
                             'price_wt' => 100,
                             'id_product' => '2',
-                            'name' => 'Hummingbird printed sweater',
+                            'name' => $productName_1,
                             'rate' => 21,
                             'id_product_attribute' => '9',
                             'id_customization' => NULL,
@@ -241,7 +271,7 @@ class CartLinesServiceTest extends TestCase
                             'cart_quantity' => '1',
                             'price_wt' => 23.1352,
                             'id_product' => '2',
-                            'name' => 'Hummingbird printed t-shirt',
+                            'name' => $productName_2,
                             'rate' => 21,
                             'id_product_attribute' => '1',
                             'id_customization' => NULL,
@@ -259,7 +289,7 @@ class CartLinesServiceTest extends TestCase
                             'cart_quantity' => '1',
                             'price_wt' => 0.0121,
                             'id_product' => '2',
-                            'name' => 'The best is yet to come\' Framed poster',
+                            'name' => $productName_3,
                             'rate' => 21,
                             'id_product_attribute' => '13',
                             'id_customization' => NULL,
@@ -268,34 +298,48 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'psGiftWrapping' => '1',
                 'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0
+                    ],
+                    1 => [
+                        'function' => 'lang',
+                        'expects' => $giftWrapping,
+                        'return' => $giftWrapping,
+                        'at' => 1
+                    ],
+                ],
                 'mocks' => [
                     0 => [
                         'function' => 'get',
-                        'expects' => Config::MOLLIE_VOUCHER_ATTRIBUTE_ID,
+                        'expects' => Config::MOLLIE_VOUCHER_FEATURE_ID,
                         'return' => '15',
                         'at' => 0
                     ],
                     1 => [
                         'function' => 'get',
-                        'expects' => Config::MOLLIE_VOUCHER_ATTRIBUTE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
+                        'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
                         'return' => '31',
                         'at' => 1
                     ],
                     2 => [
                         'function' => 'get',
-                        'expects' => Config::MOLLIE_VOUCHER_ATTRIBUTE_ID,
+                        'expects' => Config::MOLLIE_VOUCHER_FEATURE_ID,
                         'return' => '15',
                         'at' => 2
                     ],
                     3 => [
                         'function' => 'get',
-                        'expects' => Config::MOLLIE_VOUCHER_ATTRIBUTE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
+                        'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
                         'return' => '31',
                         'at' => 3
                     ],
                     4 => [
                         'function' => 'get',
-                        'expects' => Config::MOLLIE_VOUCHER_ATTRIBUTE . Config::MOLLIE_VOUCHER_CATEGORY_GIFT,
+                        'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_GIFT,
                         'return' => '32',
                         'at' => 4
                     ],
@@ -303,7 +347,7 @@ class CartLinesServiceTest extends TestCase
                 'result' => [
                     0 =>
                         (new Line())
-                            ->setName('Hummingbird printed sweater')
+                            ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
@@ -314,7 +358,7 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('21.00'),
                     1 =>
                         (new Line())
-                            ->setName('Hummingbird printed t-shirt')
+                            ->setName($productName_2)
                             ->setQuantity(1)
                             ->setSku('2¤1¤0')
                             ->setDiscountAmount(null)
@@ -325,7 +369,7 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('21.00'),
                     2 =>
                         (new Line())
-                            ->setName('The best is yet to come\' Framed poster')
+                            ->setName($productName_3)
                             ->setQuantity(1)
                             ->setSku('2¤13¤0')
                             ->setDiscountAmount(null)
@@ -336,7 +380,7 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('21.00'),
                     3 =>
                         (new Line())
-                            ->setName('Shipping')
+                            ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)
@@ -347,7 +391,7 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('21.00'),
                     4 =>
                         (new Line())
-                            ->setName('Gift wrapping')
+                            ->setName($giftWrapping)
                             ->setQuantity(1)
                             ->setSku('')
                             ->setDiscountAmount(null)

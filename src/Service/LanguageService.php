@@ -109,6 +109,9 @@ class LanguageService
             'Slice it.' => $this->module->l('Slice it.', self::FILE_NAME),
             'MyBank' => $this->module->l('MyBank', self::FILE_NAME),
             'Completed' => $this->module->l('Completed', self::FILE_NAME),
+            'Payment Fee' => $this->module->l('Payment Fee', self::FILE_NAME),
+            'Shipping' => $this->module->l('Shipping', self::FILE_NAME),
+            'Gift wrapping' => $this->module->l('Gift wrapping', self::FILE_NAME),
         ];
     }
 

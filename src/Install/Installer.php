@@ -402,7 +402,7 @@ class Installer
 
     public function installVoucherFeatures()
     {
-        if (Configuration::get(Config::MOLLIE_VOUCHER_ATTRIBUTE_ID)) {
+        if (Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID)) {
             return;
         }
         $feature = new Feature();
@@ -414,9 +414,9 @@ class Installer
             $featureValue->id_feature = $feature->id;
             $featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
             $featureValue->add();
-            Configuration::updateValue(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key, $featureValue->id);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE . $key, $featureValue->id);
         }
 
-        Configuration::updateValue(Config::MOLLIE_VOUCHER_ATTRIBUTE_ID, $feature->id);
+        Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
     }
 }

@@ -51,19 +51,19 @@ class CartLinesService
 {
 
     /**
-     * @var Mollie
-     */
-    private $module;
-
-    /**
      * @var VoucherService
      */
     private $voucherService;
 
-    public function __construct(Mollie $module, VoucherService $voucherService)
+    /**
+     * @var LanguageService
+     */
+    private $languageService;
+
+    public function __construct(LanguageService $languageService, VoucherService $voucherService)
     {
-        $this->module = $module;
         $this->voucherService = $voucherService;
+        $this->languageService = $languageService;
     }
 
     /**
@@ -254,7 +254,7 @@ class CartLinesService
 
             $aItems['shipping'] = [
                 [
-                    'name' => $this->module->l('Shipping'),
+                    'name' => $this->languageService->lang('Shipping'),
                     'quantity' => 1,
                     'unitPrice' => round($shipping, $apiRoundingPrecision),
                     'totalAmount' => round($shipping, $apiRoundingPrecision),
@@ -276,7 +276,7 @@ class CartLinesService
 
             $aItems['wrapping'] = [
                 [
-                    'name' => $this->module->l('Gift wrapping'),
+                    'name' => $this->languageService->lang('Gift wrapping'),
                     'quantity' => 1,
                     'unitPrice' => round($wrapping, $apiRoundingPrecision),
                     'totalAmount' => round($wrapping, $apiRoundingPrecision),
@@ -290,7 +290,7 @@ class CartLinesService
         if ($paymentFee) {
             $aItems['surcharge'] = [
                 [
-                    'name' => $this->module->l('Payment Fee'),
+                    'name' => $this->languageService->lang('Payment Fee'),
                     'quantity' => 1,
                     'unitPrice' => round($paymentFee, $apiRoundingPrecision),
                     'totalAmount' => round($paymentFee, $apiRoundingPrecision),
