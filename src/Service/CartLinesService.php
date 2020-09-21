@@ -36,16 +36,14 @@
 namespace Mollie\Service;
 
 use Cart;
-use Configuration;
-use Currency;
-use Mollie;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
-use Tools;
 
 class CartLinesService
 {
@@ -60,10 +58,16 @@ class CartLinesService
      */
     private $languageService;
 
-    public function __construct(LanguageService $languageService, VoucherService $voucherService)
+    /**
+     * @var ToolsAdapter
+     */
+    private $tools;
+
+    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools)
     {
         $this->voucherService = $voucherService;
         $this->languageService = $languageService;
+        $this->tools = $tools;
     }
 
     /**
@@ -84,8 +88,8 @@ class CartLinesService
         $selectedVoucherCategory
     )
     {
-        $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
-        $vatRatePrecision = Mollie\Config\Config::VAT_RATE_ROUNDING_PRECISION;
+        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
+        $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
         $totalPrice = round($amount, $apiRoundingPrecision);
         $shipping = round($shippingCost, $apiRoundingPrecision);
@@ -315,7 +319,7 @@ class CartLinesService
             $line->setQuantity((int)$item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 
-            $currency = Tools::strtoupper($currencyIsoCode);
+            $currency = $this->tools->strtoupper($currencyIsoCode);
 
             if (isset($item['discount'])) {
                 $line->setDiscountAmount(new Amount(
@@ -367,7 +371,7 @@ class CartLinesService
      */
     public static function spreadCartLineGroup($cartLineGroup, $newTotal)
     {
-        $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
+        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
         $newTotal = round($newTotal, $apiRoundingPrecision);
         $quantity = array_sum(array_column($cartLineGroup, 'quantity'));
         $newCartLineGroup = [];
