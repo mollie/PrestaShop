@@ -729,9 +729,11 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
         /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
+        /** @var \Mollie\Validator\VoucherValidator $voucherValidator */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
         $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
+        $voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
@@ -767,6 +769,11 @@ class Mollie extends PaymentModule
             }
 
             $methodObj = new MolPaymentMethod($method['id_payment_method']);
+
+            $isVoucherMethod = $methodObj->id_method === \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID;
+            if ($isVoucherMethod && !$voucherValidator->validate($cart->getProducts())) {
+                continue;
+            }
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
 
             $isIdealMethod = $methodObj->id_method === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL;
