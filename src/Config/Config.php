@@ -247,6 +247,8 @@ class Config
 
     const MOLLIE_VOUCHER_CATEGORY = 'MOLLIE_VOUCHER_CATEGORY';
 
+    const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
+
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';

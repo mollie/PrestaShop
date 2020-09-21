@@ -2,3 +2,8 @@ services:
   Mollie\Validator\OrderConfMailValidator:
 
   Mollie\Validator\NewOrderMailValidator:
+
+  Mollie\Validator\VoucherValidator:
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Service\VoucherService'
