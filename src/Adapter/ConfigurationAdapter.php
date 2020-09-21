@@ -33,60 +33,12 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service;
+namespace Mollie\Adapter;
 
-use Configuration;
-use Feature;
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
-use Mollie\Repository\AttributeRepository;
-
-class VoucherService
+class ConfigurationAdapter
 {
-
-    /**
-     * @var AttributeRepository
-     */
-    private $attributeRepository;
-
-    /**
-     * @var ConfigurationAdapter
-     */
-    private $configuration;
-
-    public function __construct(
-        AttributeRepository $attributeRepository,
-        ConfigurationAdapter $configuration
-    ) {
-        $this->attributeRepository = $attributeRepository;
-        $this->configuration = $configuration;
-    }
-
-    public function getVoucherCategory(array $cartItem, $selectedVoucherCategory)
+    public function get($id)
     {
-        switch ($selectedVoucherCategory) {
-            case Config::MOLLIE_VOUCHER_CATEGORY_MEAL:
-            case Config::MOLLIE_VOUCHER_CATEGORY_GIFT:
-            case Config::MOLLIE_VOUCHER_CATEGORY_ECO:
-                return $selectedVoucherCategory;
-            case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
-            default:
-                return $this->getProductCategory($cartItem);
-        }
-    }
-
-    private function getProductCategory(array $cartItem)
-    {
-        foreach ($cartItem['features'] as $feature) {
-            if ((int)$this->configuration->get(Config::MOLLIE_VOUCHER_ATTRIBUTE_ID) === (int)$feature['id_feature']) {
-                foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
-                    if ($this->configuration->get(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key) === $feature['id_feature_value']) {
-                        return $key;
-                    }
-                }
-            }
-        }
-
-        return '';
+        return \Configuration::get($id);
     }
 }

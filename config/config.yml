@@ -8,6 +8,7 @@ imports:
   - { resource: validator.yml }
   - { resource: command.yml }
   - { resource: provider.yml }
+  - { resource: adapter.yml }
 
 services:
   mollie:

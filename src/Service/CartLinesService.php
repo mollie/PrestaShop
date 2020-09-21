@@ -73,23 +73,29 @@ class CartLinesService
      * @param Cart $cart
      * @return array
      */
-    public function getCartLines($amount, $paymentFee, Cart $cart)
+    public function getCartLines(
+        $amount,
+        $paymentFee,
+        $currencyIsoCode,
+        $cartSummary,
+        $shippingCost,
+        $cartItems,
+        $psGiftWrapping,
+        $selectedVoucherCategory
+    )
     {
-        $oCurrency = new Currency($cart->id_currency);
         $apiRoundingPrecision = Mollie\Config\Config::API_ROUNDING_PRECISION;
         $vatRatePrecision = Mollie\Config\Config::VAT_RATE_ROUNDING_PRECISION;
 
         $totalPrice = round($amount, $apiRoundingPrecision);
-        $cartSummary = $cart->getSummaryDetails();
-        $shipping = round($cart->getTotalShippingCost(null, true), $apiRoundingPrecision);
+        $shipping = round($shippingCost, $apiRoundingPrecision);
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
                 $shipping = 0;
             }
         }
 
-        $cartItems = $cart->getProducts();
-        $wrapping = Configuration::get('PS_GIFT_WRAPPING') ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+        $wrapping = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
 //        $totalDiscounts = isset($cartSummary['total_discounts']) ? round($cartSummary['total_discounts'], $apiRoundingPrecision) : 0;
         $totalDiscounts = 0;
         $remaining = round(
@@ -147,7 +153,7 @@ class CartLinesService
                     'quantity' => $qty,
                     'unitPrice' => $unitPrice,
                     'totalAmount' => (float)NumberUtility::times($unitPrice, $qty),
-                    'category' => $this->voucherService->getVoucherCategory($cartItem),
+                    'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 ];
                 $remaining -= round((float)NumberUtility::times($unitPrice, $qty), $apiRoundingPrecision);
             }
@@ -309,7 +315,7 @@ class CartLinesService
             $line->setQuantity((int)$item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 
-            $currency = Tools::strtoupper($oCurrency->iso_code);
+            $currency = Tools::strtoupper($currencyIsoCode);
 
             if (isset($item['discount'])) {
                 $line->setDiscountAmount(new Amount(
@@ -374,6 +380,7 @@ class CartLinesService
                 'totalAmount' => (float)$unitPrice * $qty,
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
+                'category' => $cartLineGroup[0]['category']
             ];
         }
 

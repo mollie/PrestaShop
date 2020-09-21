@@ -147,3 +147,4 @@ services:
 
   Mollie\Service\VoucherService:
     - '@Mollie\Repository\AttributeRepository'
+    - '@Mollie\Adapter\ConfigurationAdapter'

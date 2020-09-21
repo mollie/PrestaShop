@@ -402,19 +402,21 @@ class Installer
 
     public function installVoucherFeatures()
     {
+        if (Configuration::get(Config::MOLLIE_VOUCHER_ATTRIBUTE_ID)) {
+            return;
+        }
         $feature = new Feature();
         $feature->name = MultiLangUtility::createMultiLangField('Voucher');
         $feature->add();
 
         foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
-            if (Configuration::get(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key)) {
-                continue;
-            }
             $featureValue = new FeatureValue();
             $featureValue->id_feature = $feature->id;
             $featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
             $featureValue->add();
             Configuration::updateValue(Config::MOLLIE_VOUCHER_ATTRIBUTE . $key, $featureValue->id);
         }
+
+        Configuration::updateValue(Config::MOLLIE_VOUCHER_ATTRIBUTE_ID, $feature->id);
     }
 }

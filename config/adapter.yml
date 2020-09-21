@@ -1,0 +1,2 @@
+services:
+  Mollie\Adapter\ConfigurationAdapter:
