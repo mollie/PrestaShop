@@ -48,4 +48,6 @@ function upgrade_module_4_0_9($module)
     /** @var Installer $installer */
     $installer = $module->getContainer(Installer::class);
     $installer->installVoucherFeatures();
+
+    return true;
 }
