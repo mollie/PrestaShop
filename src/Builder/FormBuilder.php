@@ -421,7 +421,7 @@ class FormBuilder
             'onlyOrderMethods' => [
                 PaymentMethod::KLARNA_PAY_LATER,
                 PaymentMethod::KLARNA_SLICE_IT,
-                'voucher',
+                'voucher', //todo: change with static when mollie vendor will be updated
             ],
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
