@@ -4,10 +4,9 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
         php-versions: ['5.6', '7.0', '7,1', '7.2', '7.3']
 
     steps:
