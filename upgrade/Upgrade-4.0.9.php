@@ -49,5 +49,7 @@ function upgrade_module_4_0_9($module)
     $installer = $module->getContainer(Installer::class);
     $installer->installVoucherFeatures();
 
+    $module->registerHook('actionAdminStatusesListingFieldsModifier');
+
     return true;
 }

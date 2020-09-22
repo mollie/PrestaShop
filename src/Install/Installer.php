@@ -146,6 +146,7 @@ class Installer
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
             'actionAdminOrdersListingFieldsModifier',
+            'actionAdminStatusesListingFieldsModifier',
             'actionAdminControllerSetMedia',
             'actionValidateOrder',
         ];

@@ -1374,6 +1374,18 @@ class Mollie extends PaymentModule
         return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
     }
 
+    public function hookActionAdminStatusesListingFieldsModifier($params)
+    {
+        if (Tools::getValue('controller') === 'AdminStatuses' && isset($params['fields']['id_order_state'])) {
+            $params['where'] = " AND (a.`module_name` = '{$this->name}' AND a.`deleted` = 0) OR a.`module_name` NOT LIKE '{$this->name}'";
+
+        }
+
+        if (Tools::getValue('controller') === 'AdminStatuses' && isset($params['fields']['id_order_return_state'])) {
+            $params['where'] = null;
+        }
+    }
+
     private function setApiKey()
     {
         if ($this->api) {
