@@ -232,9 +232,14 @@ class Installer implements InstallerInterface
         if(!$this->createOrderCompletedOrderState()) {
             return false;
         }
+        if(!$this->klarnaPaymentAcceptedState()) {
+            return false;
+        }
+        if(!$this->klarnaPaymentShippedState()) {
+            return false;
+        }
 
         return true;
-
     }
 
     /**
@@ -285,6 +290,58 @@ class Installer implements InstallerInterface
             $this->imageService->createOrderStateLogo($orderState->id);
         }
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int)$orderState->id);
+
+        return true;
+    }
+
+    /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function klarnaPaymentAcceptedState()
+    {
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#8A2BE2';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = MultiLangUtility::createMultiLangField('Klarna payment accepted');
+
+        if ($orderState->add()) {
+            $this->imageService->createOrderStateLogo($orderState->id);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_ACCEPTED, (int)$orderState->id);
+
+        return true;
+    }
+
+    /**
+     * @param $languageId
+     * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function klarnaPaymentShippedState()
+    {
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#8A2BE2';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = MultiLangUtility::createMultiLangField('Klarna payment shipped');
+
+        if ($orderState->add()) {
+            $this->imageService->createOrderStateLogo($orderState->id);
+        }
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_SHIPPED, (int)$orderState->id);
 
         return true;
     }
