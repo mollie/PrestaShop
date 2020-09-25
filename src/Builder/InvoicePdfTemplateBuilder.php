@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
  *
@@ -29,23 +30,54 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
-*}
-<table width="100%" id="body" border="0" cellpadding="0" cellspacing="0" style="margin:0;">
-    <tr>
-        <td colspan="6" class="left">
-        </td>
+ * @codingStandardsIgnoreStart
+ */
 
-        <td colspan="6" rowspan="6" class="right">
-            <table id="payment-tab" width="100%" class="right">
-                <tr class="bold">
-                    <td class="grey" width="50%">
-                        {l s='Payment Fee' mod='mollie'}
-                    </td>
-                    <td class="white" width="50%">
-                        {$orderFeeAmountDisplay}
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+namespace Mollie\Builder;
+
+use Cart;
+use Currency;
+use Mollie\Repository\OrderFeeRepository;
+use MolOrderFee;
+use Order;
+use Tools;
+
+final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
+{
+    private $orderFeeRepository;
+
+    /**
+     * @var Order
+     */
+    private $order;
+
+    public function __construct(OrderFeeRepository $orderFeeRepository)
+    {
+        $this->orderFeeRepository = $orderFeeRepository;
+    }
+
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    public function buildParams()
+    {
+        $orderFeeId = $this->orderFeeRepository->getOrderFeeIdByCartId(Cart::getCartIdByOrderId($this->order->id));
+
+        $orderFee = new MolOrderFee($orderFeeId);
+
+        if (!$orderFee->order_fee) {
+            return [];
+        }
+
+        return [
+            'orderFeeAmountDisplay' => Tools::displayPrice(
+                $orderFee->order_fee,
+                new Currency($this->order->id_currency)
+            )
+        ];
+    }
+}
