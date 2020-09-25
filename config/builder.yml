@@ -16,3 +16,7 @@ services:
     arguments:
       - '@=service("mollie.factory.module_factory").getModuleVersion()'
       - '@Mollie\Service\ApiService'
+
+  Mollie\Builder\InvoicePdfTemplateBuilder:
+    arguments:
+      - '@Mollie\Repository\OrderFeeRepository'
