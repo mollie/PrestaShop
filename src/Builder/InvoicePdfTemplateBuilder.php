@@ -42,7 +42,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         return [
             'orderFeeAmountDisplay' => Tools::displayPrice(
                 $orderFee->order_fee,
-                $this->order->id_currency
+                new \Currency($this->order->id_currency)
             )
         ];
     }
