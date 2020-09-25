@@ -288,6 +288,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
               {viewportWidth >= 1390 && <td>{line.quantityShipped}</td>}
               {viewportWidth >= 1390 && <td>{line.quantityCanceled}</td>}
               {viewportWidth >= 1390 && <td>{line.quantityRefunded}</td>}
+              <td>put remaining amount here</td>
               <td>{formatCurrency(parseFloat(line.unitPrice.value), get(currencies, line.unitPrice.currency))}</td>
               <td>{formatCurrency(parseFloat(line.vatAmount.value), get(currencies, line.vatAmount.currency))} ({line.vatRate}%)</td>
               <td>{formatCurrency(parseFloat(line.totalAmount.value), get(currencies, line.totalAmount.currency))}</td>
