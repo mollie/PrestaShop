@@ -3,6 +3,7 @@
 namespace Mollie\Builder;
 
 use Cart;
+use Currency;
 use Mollie\Repository\OrderFeeRepository;
 use MolOrderFee;
 use Order;
@@ -42,7 +43,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         return [
             'orderFeeAmountDisplay' => Tools::displayPrice(
                 $orderFee->order_fee,
-                new \Currency($this->order->id_currency)
+                new Currency($this->order->id_currency)
             )
         ];
     }
