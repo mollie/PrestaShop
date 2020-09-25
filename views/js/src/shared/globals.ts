@@ -143,6 +143,7 @@ export interface IMollieApiOrder {
   createdAt: string;
   lines: Array<IMollieOrderLine>;
   refunds: Array<IMollieApiRefund>;
+  availableRefundAmount: IMollieAmount;
 }
 
 export interface IMollieOrderLine {

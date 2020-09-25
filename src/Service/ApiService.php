@@ -394,7 +394,7 @@ class ApiService
         }
 
         foreach ($mollieOrder->payments() as $payment) {
-            $order['remainingAmount'] = $payment->amountRemaining;
+            $order['availableRefundAmount'] = $payment->amountRemaining;
         }
 
         return $order;
