@@ -79,11 +79,6 @@ export default function OrderLinesTableHeader(): ReactElement<{}> {
           </>
         )}
         <th>
-          <span className="title_box">
-            {translations.remainingRefund}
-          </span>
-        </th>
-        <th>
           <span className="title_box">{translations.unitPrice}</span>
         </th>
         <th>
