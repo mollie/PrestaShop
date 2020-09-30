@@ -33,8 +33,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Builder\InvoicePdfTemplateBuilder;
-
 if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
@@ -1233,8 +1231,8 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
-        $invoiceTemplateBuilder = $this->getContainer(InvoicePdfTemplateBuilder::class);
+        /** @var Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
+        $invoiceTemplateBuilder = $this->getContainer(Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
