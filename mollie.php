@@ -1232,7 +1232,7 @@ class Mollie extends PaymentModule
         }
 
         /** @var Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
-        $invoiceTemplateBuilder = $this->getContainer('Mollie\Builder\InvoicePdfTemplateBuilder');
+        $invoiceTemplateBuilder = $this->getContainer(Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
