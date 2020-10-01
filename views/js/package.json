@@ -6,7 +6,9 @@
   "scripts": {
     "test": "exit 0",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src",
-    "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src --fix"
+    "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src --fix",
+    "watch": "./node_modules/.bin/webpack -w --mode=development",
+    "build": "./node_modules/.bin/webpack"
   },
   "authors": "Martijn Diederiks <info@trendweb.io> (https://trendweb.io)",
   "maintainers": [

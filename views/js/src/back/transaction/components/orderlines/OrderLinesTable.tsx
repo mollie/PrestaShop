@@ -183,7 +183,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
     if (input) {
       try {
         setLoading(true);
-        const { success, order: newOrder } = await refundOrder(order.id, lines);
+        const { success, order: newOrder } = await refundOrder(order, lines);
         if (success) {
           dispatch(updateWarning('refunded'));
           dispatch(updateOrder(newOrder));
