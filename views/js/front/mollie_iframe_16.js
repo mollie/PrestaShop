@@ -32,6 +32,39 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
+    var creditCardFactoryCached = null
+
+    var creditCardFactory = function () {
+        var options = {
+            styles: {
+                base: {
+                    color: "#222",
+                    fontSize: "15px;",
+                    padding: "15px"
+                }
+            }
+        };
+
+        var mollie = Mollie(profileId, {locale: isoCode, testMode: isTestMode});
+        var cardHolder = mollie.createComponent('cardHolder', options);
+        var cardNumber = mollie.createComponent('cardNumber', options);
+        var expiryDate = mollie.createComponent('expiryDate', options);
+        var verificationCode = mollie.createComponent('verificationCode', options);
+
+        creditCardFactoryCached = {
+            mollie: mollie,
+            cardHolder: cardHolder,
+            cardNumber: cardNumber,
+            expiryDate: expiryDate,
+            verificationCode: verificationCode,
+            fieldMap: fieldMap,
+            fieldErrors: fieldErrors
+        }
+
+        return creditCardFactoryCached
+    }
+
+
     $('.mollie_method.js_call_iframe').on('click', function () {
         event.preventDefault();
         $.fancybox({
@@ -45,33 +78,10 @@ $(document).ready(function () {
             'content': $('#mollie-iframe-container').html()
         });
         fieldErrors = {};
+        var creditCardDataProvider = null !== creditCardFactoryCached ? creditCardFactoryCached : creditCardFactory()
         handleErrors();
-        mountMollieComponents();
+        mountMollieComponents(creditCardDataProvider);
     });
-
-    var $mollieContainers = $('.mollie-iframe-container');
-    if (!$mollieContainers.length) {
-        return;
-    }
-    var options = {
-        styles: {
-            base: {
-                color: "#222",
-                fontSize: "15px;",
-                padding: "15px"
-            }
-        }
-    };
-    var mollie = Mollie(profileId, {locale: isoCode, testMode: isTestMode});
-    var cardHolder = mollie.createComponent('cardHolder', options);
-    var cardNumber = mollie.createComponent('cardNumber', options);
-    var expiryDate = mollie.createComponent('expiryDate', options);
-    var verificationCode = mollie.createComponent('verificationCode', options);
-
-    var cardHolderInput;
-    var carNumberInput;
-    var expiryDateInput;
-    var verificationCodeInput;
 
     var fieldMap = {
         'card-holder': 0,
@@ -81,11 +91,11 @@ $(document).ready(function () {
     };
     var fieldErrors = {};
 
-    function mountMollieComponents() {
-        cardHolderInput = mountMollieField(this, '.fancybox-outer #card-holder', cardHolder, 'card-holder');
-        carNumberInput = mountMollieField(this, '.fancybox-outer #card-number', cardNumber, 'card-number');
-        expiryDateInput = mountMollieField(this, '.fancybox-outer #expiry-date', expiryDate, 'expiry-date');
-        verificationCodeInput = mountMollieField(this, '.fancybox-outer #verification-code', verificationCode, 'verification-code');
+    function mountMollieComponents(creditCardDataProvider) {
+        creditCardDataProvider.cardHolderInput = mountMollieField(this, '.fancybox-outer #card-holder', creditCardDataProvider.cardHolder, 'card-holder');
+        creditCardDataProvider.carNumberInput = mountMollieField(this, '.fancybox-outer #card-number', creditCardDataProvider.cardNumber, 'card-number');
+        creditCardDataProvider.expiryDateInput = mountMollieField(this, '.fancybox-outer #expiry-date', creditCardDataProvider.expiryDate, 'expiry-date');
+        creditCardDataProvider.verificationCodeInput = mountMollieField(this, '.fancybox-outer #verification-code', creditCardDataProvider.verificationCode, 'verification-code');
 
         var $mollieCardToken = $('input[name="mollieCardToken"]');
         var isResubmit = false;
@@ -95,7 +105,7 @@ $(document).ready(function () {
                 return;
             }
             event.preventDefault();
-            mollie.createToken().then(function (token) {
+            creditCardDataProvider.mollie.createToken().then(function (token) {
                 if (token.error) {
                     var $mollieAlert = $('.js-mollie-alert');
                     $mollieAlert.closest('article').show();
