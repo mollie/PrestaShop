@@ -111,9 +111,9 @@ export const refundPayment = async (transactionId: string, amount?: number): Pro
   }
 };
 
-export const refundOrder = async (transactionId: string, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
+export const refundOrder = async (order: IMollieApiOrder, orderLines?: Array<IMollieOrderLine>): Promise<any> => {
   const [
-    { default: store },
+    { default: store},
   ] = await Promise.all([
     import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
   ]);
@@ -123,8 +123,8 @@ export const refundOrder = async (transactionId: string, orderLines?: Array<IMol
     const { data } = await axios.post(ajaxEndpoint, {
       resource: 'orders',
       action: 'refund',
-      transactionId,
       orderLines,
+      order
     });
     if (!data.success && typeof data.message === 'string') {
       throw data.detailed ? data.detailed : data.message;

@@ -87,7 +87,6 @@
                 canceled: '{l s='Canceled' mod='mollie' js=1}',
                 refunded: '{l s='Refunded' mod='mollie' js=1}',
                 unitPrice: '{l s='Unit Price' mod='mollie' js=1}',
-                remainingRefund: '{l s='Remaining refund' mod='mollie' js=1}',
                 vatAmount: '{l s='VAT Amount' mod='mollie' js=1}',
                 totalAmount: '{l s='Total amount' mod='mollie' js=1}',
                 ship: '{l s='Ship' mod='mollie' js=1}',

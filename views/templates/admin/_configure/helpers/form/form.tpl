@@ -339,15 +339,18 @@
                                         {l s='None' mod='mollie'}
                                     </option>
                                     <option value="meal" {if $input.voucherCategory === 'meal'} selected {/if}>
-                                        {l s='Food and drinks' mod='mollie'}
+                                        {l s='meal' mod='mollie'}
                                     </option>
                                     <option value="gift" {if $input.voucherCategory === 'gift'} selected {/if}>
-                                        {l s='Gifts and flowers' mod='mollie'}
+                                        {l s='gift' mod='mollie'}
                                     </option>
                                     <option value="eco" {if $input.voucherCategory === 'eco'} selected {/if}>
-                                        {l s='Home and garden' mod='mollie'}
+                                        {l s='eco' mod='mollie'}
                                     </option>
                                 </select>
+                                <p class="help-block">
+                                    {l s="The category selected here will be used for all products in your webshop." mod='mollie'}
+                                </p>
                             </div>
                         </div>
                     {/if}

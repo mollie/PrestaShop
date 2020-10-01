@@ -40,6 +40,7 @@ use Mollie;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
 use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
 use MollieWebhookModuleFrontController;
 use PrestaShop\PrestaShop\Adapter\CoreException;
@@ -136,21 +137,13 @@ class RefundService
      * @throws SmartyException
      * @since 3.3.0
      */
-    public function doRefundOrderLines($transactionId, $lines = [])
+    public function doRefundOrderLines(array $orderData, $lines = [])
     {
+        $transactionId = $orderData['id'];
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-            $refund = [
-                'lines' => array_map(function ($line) {
-                    return array_intersect_key(
-                        (array)$line,
-                        array_flip([
-                            'id',
-                            'quantity',
-                        ]));
-                }, $lines),
-            ];
+            $refund = RefundUtility::getRefundLines($lines, $orderData['availableRefundAmount']);
             $order->refund($refund);
 
             if (EnvironmentUtility::isLocalEnvironment()) {

@@ -91,16 +91,6 @@ export default function OrderLinesTableFooter({ loading, ship, cancel, refund }:
 
   return (
     <tfoot>
-      {"availableRefundAmount" in order &&
-        <tr>
-          <td colSpan={10}>
-            <div>
-              {translations.remainingRefund} : {formatCurrency(parseFloat(order.availableRefundAmount.value), get(currencies, order.availableRefundAmount.currency))}
-            </div>
-          </td>
-        </tr>
-      }
-
       <tr>
         <td colSpan={10}>
           <div className="btn-group" role="group">
