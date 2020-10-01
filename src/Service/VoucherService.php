@@ -68,6 +68,10 @@ class VoucherService
             case Config::MOLLIE_VOUCHER_CATEGORY_MEAL:
             case Config::MOLLIE_VOUCHER_CATEGORY_GIFT:
             case Config::MOLLIE_VOUCHER_CATEGORY_ECO:
+                $productCategory = $this->getProductCategory($cartItem);
+                if ($productCategory) {
+                    return $productCategory;
+                }
                 return $selectedVoucherCategory;
             case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
             default:
@@ -80,7 +84,7 @@ class VoucherService
         $idFeatureValue = false;
         foreach ($cartItem['features'] as $feature) {
             if (!$this->isVoucherFeature($feature['id_feature'])) {
-               continue;
+                continue;
             }
             $idFeatureValue = $feature['id_feature_value'];
         }
