@@ -52,10 +52,6 @@ $(document).ready(function () {
         var verificationCode = mollie.createComponent('verificationCode', options);
 
         creditCardFactoryCached = {
-            cardHolder: 'hello world!'
-        }
-
-        creditCardFactoryCached = {
             mollie: mollie,
             cardHolder: cardHolder,
             cardNumber: cardNumber,
