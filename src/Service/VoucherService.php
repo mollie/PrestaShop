@@ -81,6 +81,10 @@ class VoucherService
 
     public function getProductCategory(array $cartItem)
     {
+        if (!isset($cartItem['features']))
+        {
+            return '';
+        }
         $idFeatureValue = false;
         foreach ($cartItem['features'] as $feature) {
             if (!$this->isVoucherFeature($feature['id_feature'])) {

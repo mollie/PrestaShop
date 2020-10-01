@@ -12,6 +12,7 @@ class RefundUtilityTest extends TestCase
      *
      * @param $lines
      * @param $remainingAmount
+     * @param $result
      */
     public function testGetRefundLines($lines, $remainingAmount, $result)
     {
