@@ -35,19 +35,19 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
 use Context;
 use ErrorException;
 use Exception;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\Payment;
 use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\UrlPathUtility;
+use MolliePrefix\Mollie\Api\MollieApiClient;
 use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;

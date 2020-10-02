@@ -1,4 +1,0 @@
-services:
-    _PhpScoper5eddef0da618a\AppBundle\Hello:
-        arguments:
-            - !service {class: _PhpScoper5eddef0da618a\AppBundle\World}

@@ -35,7 +35,7 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use Address;
 use Cart;
 use Configuration;

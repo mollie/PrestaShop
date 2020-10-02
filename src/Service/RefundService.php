@@ -35,10 +35,10 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use Mollie;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;

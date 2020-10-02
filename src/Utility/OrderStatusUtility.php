@@ -35,10 +35,10 @@
 
 namespace Mollie\Utility;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 
 

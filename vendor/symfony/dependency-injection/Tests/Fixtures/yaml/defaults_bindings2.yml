@@ -1,7 +1,0 @@
-services:
-    _defaults:
-        bind:
-            $quz: overridden
-
-    bar:
-        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar

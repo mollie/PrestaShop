@@ -35,10 +35,10 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Order;
 use Mollie;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use MollieWebhookModuleFrontController;
 use PrestaShop\PrestaShop\Adapter\CoreException;
