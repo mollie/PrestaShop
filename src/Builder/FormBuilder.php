@@ -235,7 +235,7 @@ class FormBuilder
                 'label' => $this->module->l('Profile ID', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1].', self::FILE_NAME),
+                    $this->module->l('You can find your Profile ID in your [1]Mollie Profile[/1]', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
