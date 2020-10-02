@@ -127,11 +127,7 @@ class CartLinesService
             $aItems[$productHash] = [];
 
             foreach ($cartSummary['gift_products'] as $gift_product) {
-                if ($gift_product['id_product'] === $cartItem['id_product'] && $gift_product['cart_quantity'] < 1) {
-                    $roundedTotalWithTax = NumberUtility::minus(
-                        $roundedTotalWithTax,
-                        NumberUtility::times($gift_product['cart_quantity'], $gift_product['price_with_reduction'])
-                    );
+                if ($gift_product['id_product'] === $cartItem['id_product']) {
 
                     $quantity = NumberUtility::minus($quantity, $gift_product['cart_quantity']);
 
