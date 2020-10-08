@@ -1,0 +1,18 @@
+{
+    "license": "MIT",
+    "require": {
+        "phpstan\/phpstan": "^0.12",
+        "prestashop\/php-dev-tools": "@dev"
+    },
+    "autoload": {
+        "classmap": [
+            "constant_check.php"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "..\/..\/.."
+        }
+    ]
+}

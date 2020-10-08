@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/autoload.php')) {
+if (!include_once(dirname(__FILE__) . '/vendorBuilder/prefixedVendor/vendor/autoload.php')) {
     return;
 }
 if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/guzzlehttp/guzzle/src/functions_include.php')) {

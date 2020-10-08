@@ -1,0 +1,11 @@
+services:
+    _instanceof:
+        MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
+            autowire: true
+            lazy: true
+            tags:
+                - { name: foo }
+                - { name: bar }
+
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar: ~
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'

@@ -1,0 +1,15 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Mollie\\": "../../src/"
+    },
+    "classmap": [
+      "vendor/",
+      "../../controllers/",
+      "../../src/Entity"
+    ]
+  },
+  "config": {
+    "prepend-autoloader": false
+  }
+}

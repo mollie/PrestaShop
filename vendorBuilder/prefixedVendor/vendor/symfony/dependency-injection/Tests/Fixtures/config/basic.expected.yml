@@ -1,0 +1,9 @@
+
+services:
+    service_container:
+        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        public: true
+        synthetic: true
+    MolliePrefix\App\BarService:
+        class: MolliePrefix\App\BarService
+        arguments: [!service { class: FooClass }]

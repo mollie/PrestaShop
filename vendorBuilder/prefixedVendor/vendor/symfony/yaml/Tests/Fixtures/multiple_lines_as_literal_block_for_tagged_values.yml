@@ -1,0 +1,2 @@
+data:
+    foo: !bar "MolliePrefix\foo\r\nline with trailing spaces:\n  \MolliePrefix\nbar\ninteger like line:\MolliePrefix\n123456789\nempty line:\MolliePrefix\n\nbaz"

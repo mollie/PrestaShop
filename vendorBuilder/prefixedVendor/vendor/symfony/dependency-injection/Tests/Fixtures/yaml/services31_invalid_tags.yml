@@ -1,0 +1,6 @@
+services:
+    _defaults:
+        tags: ['foo']
+
+    MolliePrefix\Foo\Bar:
+        tags: invalid
