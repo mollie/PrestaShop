@@ -45,10 +45,6 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_0_9($module)
 {
-    /** @var Installer $installer */
-    $installer = $module->getContainer(Installer::class);
-    $installer->installVoucherFeatures();
-
     $module->registerHook('actionAdminStatusesListingFieldsModifier');
 
     return true;
