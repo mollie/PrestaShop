@@ -128,10 +128,7 @@ class CartLinesService
 
             foreach ($cartSummary['gift_products'] as $gift_product) {
                 if ($gift_product['id_product'] === $cartItem['id_product']) {
-                    $roundedTotalWithTax = NumberUtility::minus(
-                        $roundedTotalWithTax,
-                        NumberUtility::times($gift_product['cart_quantity'], $gift_product['price_with_reduction'])
-                    );
+
                     $quantity = NumberUtility::minus($quantity, $gift_product['cart_quantity']);
 
                     $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
@@ -142,6 +139,7 @@ class CartLinesService
                         'quantity' => $gift_product['cart_quantity'],
                         'unitPrice' => 0,
                         'totalAmount' => 0,
+                        'category' => '',
                     ];
                     break;
                 }
@@ -193,6 +191,7 @@ class CartLinesService
                 }
 
                 // Otherwise spread the cart line again with the updated total
+                //TODO: check why remaining comes -100 when testing and new total becomes different
                 $aItems[$hash] = static::spreadCartLineGroup($items, $totalAmount - $remaining);
                 break;
             }

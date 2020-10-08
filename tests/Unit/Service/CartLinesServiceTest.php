@@ -58,13 +58,13 @@ class CartLinesServiceTest extends TestCase
         foreach ($translationMocks as $mock) {
             $languageService->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
-        
+
         /** @var ToolsAdapter $toolsAdapter */
         $toolsAdapter = $this->getMockBuilder(ToolsAdapter::class)->getMock();
         foreach ($toolsMocks as $mock) {
             $toolsAdapter->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
-        
+
         $voucherService = new VoucherService(new AttributeRepository(), $configurationAdapter);
 
         $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter);
@@ -137,7 +137,7 @@ class CartLinesServiceTest extends TestCase
                         'return' => $shipping,
                         'at' => 0
                     ]
-                ],      
+                ],
                 'toolsMocks' => [
                     0 => [
                         'function' => 'strtoupper',
@@ -436,7 +436,232 @@ class CartLinesServiceTest extends TestCase
                             ->setCategory(null)
                             ->setVatRate('6.00'),
                 ]
-            ]
+            ],
+            'two products with a gift which is the same as one product' => [
+                'amount' => 204.84,
+                'paymentFee' => false,
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' =>
+                        [
+                            0 => [
+                                'id_product' => '1',
+                                'cart_quantity' => 1,
+                                'price_with_reduction' => 100,
+                            ],
+                        ],
+                    'discounts' =>
+                        [
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 4.84,
+                    'total_shipping_tax_exc' => 4,
+                    'total_products_wt' => 100,
+                    'total_products' => 82.64,
+                    'total_price' => 104.84,
+                    'free_ship' => false,
+                ],
+                4.84,
+                'cartItems' => [
+                    0 =>
+                        [
+                            'total_wt' => 100,
+                            'cart_quantity' => '1',
+                            'price_wt' => 100,
+                            'id_product' => '2',
+                            'name' => $productName_1,
+                            'rate' => 21,
+                            'id_product_attribute' => '9',
+                            'id_customization' => NULL,
+                            'features' => []
+                        ],
+                    1 =>
+                        [
+                            'total_wt' => 100,
+                            'cart_quantity' => '2',
+                            'price_wt' => 100,
+                            'id_product' => '1',
+                            'name' => $productName_2,
+                            'rate' => 21,
+                            'id_product_attribute' => '9',
+                            'id_customization' => NULL,
+                            'features' => []
+                        ],
+                ],
+                'psGiftWrapping' => '1',
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0
+                    ]
+                ],
+                'toolsMocks' => [
+                    0 => [
+                        'function' => 'strtoupper',
+                        'expects' => $currencyIsoCode,
+                        'return' => $currencyIsoCode,
+                        'at' => 0
+                    ]
+                ],
+                'mocks' => [],
+                'result' => [
+                    0 =>
+                        (new Line())
+                            ->setName($productName_1)
+                            ->setQuantity(1)
+                            ->setSku('2¤9¤0')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
+                            ->setCategory('')
+                            ->setVatRate('21.00'),
+                    1 =>
+                        (new Line())
+                            ->setName($productName_2)
+                            ->setQuantity(1)
+                            ->setSku('1¤9¤0')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
+                            ->setCategory('')
+                            ->setVatRate('21.00'),
+                    2 =>
+                        (new Line())
+                            ->setName($productName_2)
+                            ->setQuantity(1)
+                            ->setSku('1¤9¤0gift')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '0'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '0'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0'))
+                            ->setCategory('')
+                            ->setVatRate('0'),
+                    3 =>
+                        (new Line())
+                            ->setName($shipping)
+                            ->setQuantity(1)
+                            ->setSku('')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
+                            ->setCategory(null)
+                            ->setVatRate('21.00'),
+                ]
+            ],
+            'one products with a gift' => [
+                'amount' => 104.84,
+                'paymentFee' => false,
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' =>
+                        [
+                            0 => [
+                                'id_product' => '2',
+                                'cart_quantity' => 1,
+                                'price_with_reduction' => 100,
+                            ],
+                        ],
+                    'discounts' =>
+                        [
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 4.84,
+                    'total_shipping_tax_exc' => 4,
+                    'total_products_wt' => 100,
+                    'total_products' => 82.64,
+                    'total_price' => 104.84,
+                    'free_ship' => false,
+                ],
+                4.84,
+                'cartItems' => [
+                    0 =>
+                        [
+                            'total_wt' => 100,
+                            'cart_quantity' => '1',
+                            'price_wt' => 100,
+                            'id_product' => '1',
+                            'name' => $productName_1,
+                            'rate' => 21,
+                            'id_product_attribute' => '9',
+                            'id_customization' => NULL,
+                            'features' => []
+                        ],
+                    1 =>
+                        [
+                            'total_wt' => 100,
+                            'cart_quantity' => '1',
+                            'price_wt' => 100,
+                            'id_product' => '2',
+                            'name' => $productName_2,
+                            'rate' => 21,
+                            'id_product_attribute' => '9',
+                            'id_customization' => NULL,
+                            'features' => []
+                        ],
+                ],
+                'psGiftWrapping' => '1',
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0
+                    ]
+                ],
+                'toolsMocks' => [
+                    0 => [
+                        'function' => 'strtoupper',
+                        'expects' => $currencyIsoCode,
+                        'return' => $currencyIsoCode,
+                        'at' => 0
+                    ]
+                ],
+                'mocks' => [],
+                'result' => [
+                    0 =>
+                        (new Line())
+                            ->setName($productName_1)
+                            ->setQuantity(1)
+                            ->setSku('1¤9¤0')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
+                            ->setCategory('')
+                            ->setVatRate('21.00'),
+                    1 =>
+                        (new Line())
+                            ->setName($productName_2)
+                            ->setQuantity(1)
+                            ->setSku('2¤9¤0gift')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '0'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '0'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0'))
+                            ->setCategory('')
+                            ->setVatRate('0'),
+                    2 =>
+                        (new Line())
+                            ->setName($shipping)
+                            ->setQuantity(1)
+                            ->setSku('')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
+                            ->setCategory(null)
+                            ->setVatRate('21.00'),
+                ]
+            ],
         ];
     }
 }
