@@ -75,6 +75,7 @@
         </script>
         {foreach $input.paymentMethods as $paymentMethod}
             {assign var = 'methodObj' value=$paymentMethod.obj}
+            {if $paymentMethod.id === 'voucher'}{continue}{/if}
             <div data-tab-id="general_settings" class="payment-method border border-bottom">
                 <a class="text collapsed" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
                    role="button"
@@ -129,7 +130,7 @@
                         </label>
                         <div class="col-lg-9">
                             <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
-                                {if !in_array($paymentMethod.id, $input.klarnaPayments)}
+                                {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                     <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                 {/if}
                                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
@@ -153,7 +154,7 @@
                                     {/if}
                                    required="required">
                             <p class="help-block">
-                                {l s='The description to be used for this transaction. These variables ara available:' mod='mollie'}
+                                {l s='The description to be used for this transaction. These variables are available:' mod='mollie'}
                             </p>
                             <p class="help-block">
                                 <b>{l s='{orderNumber}' mod='mollie'}</b>,
@@ -327,6 +328,33 @@
                             </div>
                         </div>
                     {/if}
+                    {if $paymentMethod.id === 'voucher'}
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Category' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_VOUCHER_CATEGORY"
+                                        class="fixed-width-xl">
+                                    <option value="null" {if $input.voucherCategory === 'null'} selected {/if}>
+                                        {l s='None' mod='mollie'}
+                                    </option>
+                                    <option value="meal" {if $input.voucherCategory === 'meal'} selected {/if}>
+                                        {l s='meal' mod='mollie'}
+                                    </option>
+                                    <option value="gift" {if $input.voucherCategory === 'gift'} selected {/if}>
+                                        {l s='gift' mod='mollie'}
+                                    </option>
+                                    <option value="eco" {if $input.voucherCategory === 'eco'} selected {/if}>
+                                        {l s='eco' mod='mollie'}
+                                    </option>
+                                </select>
+                                <p class="help-block">
+                                    {l s="The category selected here will be used for all products in your webshop." mod='mollie'}
+                                </p>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
             </div>
         {/foreach}
@@ -442,6 +470,9 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
 
 
 

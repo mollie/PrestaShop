@@ -40,6 +40,9 @@ use Context;
 use Db;
 use DbQuery;
 use Exception;
+use Feature;
+use FeatureValue;
+use FeatureValueLang;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
@@ -136,6 +139,7 @@ class Installer
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
             'actionAdminOrdersListingFieldsModifier',
+            'actionAdminStatusesListingFieldsModifier',
             'actionAdminControllerSetMedia',
             'actionValidateOrder',
         ];

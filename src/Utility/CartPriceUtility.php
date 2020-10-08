@@ -53,6 +53,9 @@ class CartPriceUtility
      */
     public static function spreadAmountEvenly($amount, $qty)
     {
+        if ((int)$qty <= 0) {
+            return [];
+        }
         // Start with a freshly rounded amount
         $amount = (float)round($amount, Config::API_ROUNDING_PRECISION);
         // Estimate a target spread amount to begin with

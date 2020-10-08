@@ -100,6 +100,11 @@ class Line implements JsonSerializable
     private $vatAmount;
 
     /**
+     * @var string
+     */
+    private $category;
+
+    /**
      * @return string
      */
     public function getType()
@@ -109,10 +114,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $type
+     * @return Line
      */
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -125,10 +133,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $sku
+     * @return Line
      */
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
@@ -141,10 +152,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $name
+     * @return Line
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -157,10 +171,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $productUrl
+     * @return Line
      */
     public function setProductUrl($productUrl)
     {
         $this->productUrl = $productUrl;
+
+        return $this;
     }
 
     /**
@@ -173,10 +190,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $imageUrl
+     * @return Line
      */
     public function setImageUrl($imageUrl)
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
     }
 
     /**
@@ -189,10 +209,13 @@ class Line implements JsonSerializable
 
     /**
      * @param array $metaData
+     * @return Line
      */
     public function setMetaData($metaData)
     {
         $this->metaData = $metaData;
+
+        return $this;
     }
 
     /**
@@ -205,10 +228,13 @@ class Line implements JsonSerializable
 
     /**
      * @param int $quantity
+     * @return Line
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -221,10 +247,13 @@ class Line implements JsonSerializable
 
     /**
      * @param string $vatRate
+     * @return Line
      */
     public function setVatRate($vatRate)
     {
         $this->vatRate = $vatRate;
+
+        return $this;
     }
 
     /**
@@ -237,10 +266,13 @@ class Line implements JsonSerializable
 
     /**
      * @param Amount $unitPrice
+     * @return Line
      */
     public function setUnitPrice($unitPrice)
     {
         $this->unitPrice = $unitPrice;
+
+        return $this;
     }
 
     /**
@@ -253,10 +285,13 @@ class Line implements JsonSerializable
 
     /**
      * @param Amount $totalPrice
+     * @return Line
      */
     public function setTotalPrice($totalPrice)
     {
         $this->totalPrice = $totalPrice;
+
+        return $this;
     }
 
     /**
@@ -269,10 +304,13 @@ class Line implements JsonSerializable
 
     /**
      * @param Amount $discountAmount
+     * @return Line
      */
     public function setDiscountAmount($discountAmount)
     {
         $this->discountAmount = $discountAmount;
+
+        return $this;
     }
 
     /**
@@ -285,10 +323,32 @@ class Line implements JsonSerializable
 
     /**
      * @param Amount $vatAmount
+     * @return Line
      */
     public function setVatAmount($vatAmount)
     {
         $this->vatAmount = $vatAmount;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Line
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
     }
 
     public function jsonSerialize()
@@ -301,6 +361,7 @@ class Line implements JsonSerializable
             "metadata" => $this->getMetaData(),
             "quantity" => $this->getQuantity(),
             "vatRate" => $this->getVatRate(),
+            "category" => $this->getCategory(),
             "unitPrice" => [
                 "currency" => $this->getUnitPrice()->getCurrency(),
                 "value" => $this->getUnitPrice()->getValue()

@@ -33,10 +33,11 @@
 import React, { ReactElement, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTimes, faTruck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
-import { compact } from 'lodash';
+import { compact, get } from 'lodash';
 
 import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
 import { useMappedState } from 'redux-react-hook';
+import { formatCurrency } from "@shared/tools";
 
 interface IProps {
   loading: boolean;
@@ -51,8 +52,9 @@ interface IProps {
 }
 
 export default function OrderLinesTableFooter({ loading, ship, cancel, refund }: IProps): ReactElement<{}> {
-  const { translations, order, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
+  const { translations, order, currencies, config: { legacy } }: Partial<IMollieOrderState> = useMappedState((state: IMollieOrderState): any => ({
     translations: state.translations,
+    currencies: state.currencies,
     order: state.order,
     config: state.config,
   }));

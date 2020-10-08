@@ -60,10 +60,12 @@ class ApiService
 {
 
     private $errors = [];
+
     /**
      * @var PaymentMethodRepository
      */
     private $methodRepository;
+
     /**
      * @var CountryRepository
      */
@@ -125,6 +127,7 @@ class ApiService
             $apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
+
             return [];
         }
 
@@ -158,18 +161,18 @@ class ApiService
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
-                    $deferredMethods[] = [
-                        'id' => $id,
-                        'name' => $name,
-                        'enabled' => true,
-                        'available' => !in_array($id, $notAvailable),
-                        'image' => [
-                            'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-                            'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-                            'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
-                        ],
-                        'issuers' => null,
-                    ];
+                $deferredMethods[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'enabled' => true,
+                    'available' => !in_array($id, $notAvailable),
+                    'image' => [
+                        'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
+                        'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
+                        'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
+                    ],
+                    'issuers' => null,
+                ];
             }
         }
         ksort($methods);
@@ -214,7 +217,7 @@ class ApiService
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
                 $methods[$apiMethod['id']] = $apiMethod;
-                $methods[$apiMethod['id']]['obj']  = $paymentMethod;
+                $methods[$apiMethod['id']]['obj'] = $paymentMethod;
                 continue;
             }
             $defaultPaymentMethod->id_method = $apiMethod['id'];
@@ -342,10 +345,19 @@ class ApiService
     public function getFilteredApiOrder($api, $transactionId)
     {
         /** @var MollieOrderAlias $order */
-        $order = $api->orders->get($transactionId, ['embed' => 'payments']);
+        $mollieOrder = $api->orders->get(
+            $transactionId,
+            [
+                'embed' => 'payments',
+                'include' =>
+                    [
+                        'details' => 'remainderDetails'
+                    ]
+            ]
+        );
 
-        if ($order && method_exists($order, 'refunds')) {
-            $refunds = $order->refunds();
+        if ($mollieOrder && method_exists($mollieOrder, 'refunds')) {
+            $refunds = $mollieOrder->refunds();
             if (empty($refunds)) {
                 $refunds = [];
             }
@@ -360,7 +372,7 @@ class ApiService
                     ]));
             }, (array)$refunds);
             $order = array_intersect_key(
-                (array)$order,
+                (array)$mollieOrder,
                 array_flip([
                     'resource',
                     'id',
@@ -379,6 +391,10 @@ class ApiService
             $order['refunds'] = (array)$refunds;
         } else {
             $order = null;
+        }
+
+        foreach ($mollieOrder->payments() as $payment) {
+            $order['availableRefundAmount'] = $payment->amountRemaining;
         }
 
         return $order;

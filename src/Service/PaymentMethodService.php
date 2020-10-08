@@ -54,6 +54,7 @@ use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
@@ -260,7 +261,7 @@ class PaymentMethodService
         $orderReference = '',
         $cardToken = false
     ) {
-        $amount = number_format($amount, 2);
+        $totalAmount = TextFormatUtility::formatNumber($amount, 2);
         if (!$orderReference) {
             $this->module->currentOrderReference = $orderReference = Order::generateReference();
         }
@@ -269,12 +270,11 @@ class PaymentMethodService
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentFee = PaymentFeeUtility::getPaymentFee($molPaymentMethod, $amount);
-        $totalAmount = (number_format(str_replace(',', '.', $amount), 2, '.', ''));
+        $paymentFee = PaymentFeeUtility::getPaymentFee($molPaymentMethod, $totalAmount);
         $totalAmount += $paymentFee;
 
         $currency = (string)($currency ? Tools::strtoupper($currency) : 'EUR');
-        $value = (float)number_format($totalAmount, 2, '.', '');
+        $value = (float)TextFormatUtility::formatNumber($totalAmount, 2);
         $amountObj = new Amount($currency, $value);
 
         $redirectUrl = ($qrCode
@@ -372,7 +372,19 @@ class PaymentMethodService
             $orderData->setMethod($molPaymentMethod->id_method);
             $orderData->setMetadata($metaData);
 
-            $orderData->setLines($this->cartLinesService->getCartLines($amount, $paymentFee, $cart));
+            $currency = new \Currency($cart->id_currency);
+            $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
+            $orderData->setLines(
+                $this->cartLinesService->getCartLines(
+                    $amount,
+                    $paymentFee,
+                    $currency->iso_code,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    Configuration::get('PS_GIFT_WRAPPING'),
+                    $selectedVoucherCategory
+                ));
             $payment = [];
             if ($cardToken) {
                 $payment['cardToken'] = $cardToken;

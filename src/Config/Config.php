@@ -69,7 +69,7 @@ class Config
         'klarnapaylater' => ['eur'],
         'klarnasliceit' => ['eur'],
         'mybank' => ['eur'],
-
+        'voucher' => ['eur'],
     ];
 
 
@@ -222,7 +222,7 @@ class Config
 
     const FEE_NO_FEE = 0;
     const FEE_FIXED_FEE = 1;
-    const FEE_PERCENTAGE= 2;
+    const FEE_PERCENTAGE = 2;
     const FEE_FIXED_FEE_AND_PERCENTAGE = 3;
 
     const MOLLIE_API_STATUS_PAYMENT = "payment";
@@ -244,6 +244,23 @@ class Config
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
 
     const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
+
+    const MOLLIE_VOUCHER_CATEGORY = 'MOLLIE_VOUCHER_CATEGORY';
+
+    const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
+
+    const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
+    const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
+    const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
+    const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+
+    const MOLLIE_VOUCHER_FEATURE_ID = 'MOLLIE_VOUCHER_FEATURE_ID';
+    const MOLLIE_VOUCHER_FEATURE = 'MOLLIE_VOUCHER_FEATURE_';
+    const MOLLIE_VOUCHER_CATEGORIES = [
+        self::MOLLIE_VOUCHER_CATEGORY_MEAL => 'meal',
+        self::MOLLIE_VOUCHER_CATEGORY_GIFT => 'gift',
+        self::MOLLIE_VOUCHER_CATEGORY_ECO => 'eco'
+    ];
 
     /** @var array $methods */
     public static $methods = [
@@ -276,7 +293,7 @@ class Config
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
             PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
             PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
-            PaymentStatus::STATUS_EXPIRED    => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
+            PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
             PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),

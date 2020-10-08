@@ -40,11 +40,12 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * @param Mollie $module
  * @return bool
+ * @throws PrestaShopDatabaseException
+ * @throws PrestaShopException
  */
 
-function upgrade_module_4_0_8($module)
+function upgrade_module_4_0_8()
 {
     Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
     Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);

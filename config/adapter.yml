@@ -1,0 +1,4 @@
+services:
+  Mollie\Adapter\ConfigurationAdapter:
+
+  Mollie\Adapter\ToolsAdapter:

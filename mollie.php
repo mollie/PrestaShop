@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.8';
+        $this->version = '4.0.9';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -141,7 +141,6 @@ class Mollie extends PaymentModule
 
             return false;
         }
-
 
         return true;
     }
@@ -500,8 +499,6 @@ class Mollie extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
-
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
@@ -526,8 +523,9 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayBackOfficeHeader()
     {
-        $html = '';
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
+        $html = '';
         if ($this->context->controller instanceof AdminOrdersController) {
             $this->context->smarty->assign([
                 'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
@@ -729,9 +727,11 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
         /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
+        /** @var \Mollie\Validator\VoucherValidator $voucherValidator */
         $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
         $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
         $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
+        $voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
@@ -767,6 +767,11 @@ class Mollie extends PaymentModule
             }
 
             $methodObj = new MolPaymentMethod($method['id_payment_method']);
+
+            $isVoucherMethod = $methodObj->id_method === \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID;
+            if ($isVoucherMethod && !$voucherValidator->validate($cart->getProducts())) {
+                continue;
+            }
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
 
             $isIdealMethod = $methodObj->id_method === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL;
@@ -1363,6 +1368,18 @@ class Mollie extends PaymentModule
         $orderListActionBuilder = $mollie->getContainer(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($mollie->smarty, $orderId);
+    }
+
+    public function hookActionAdminStatusesListingFieldsModifier($params)
+    {
+        if (Tools::getValue('controller') === 'AdminStatuses' && isset($params['fields']['id_order_state'])) {
+            $params['where'] = " AND (a.`module_name` = '{$this->name}' AND a.`deleted` = 0) OR a.`module_name` NOT LIKE '{$this->name}'";
+
+        }
+
+        if (Tools::getValue('controller') === 'AdminStatuses' && isset($params['fields']['id_order_return_state'])) {
+            $params['where'] = null;
+        }
     }
 
     private function setApiKey()

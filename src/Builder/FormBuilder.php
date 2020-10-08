@@ -235,7 +235,7 @@ class FormBuilder
                 'label' => $this->module->l('Profile ID', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1].', self::FILE_NAME),
+                    $this->module->l('You can find your Profile ID in your [1]Mollie Profile[/1]', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_PROFILE_ID,
@@ -418,9 +418,10 @@ class FormBuilder
             'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
-            'klarnaPayments' => [
+            'onlyOrderMethods' => [
                 PaymentMethod::KLARNA_PAY_LATER,
                 PaymentMethod::KLARNA_SLICE_IT,
+                'voucher', //todo: change with static when mollie vendor will get updated
             ],
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
@@ -432,6 +433,9 @@ class FormBuilder
             'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
+            'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+            'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
+            'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
         ];
 
         return $input;

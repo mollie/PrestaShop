@@ -127,13 +127,14 @@ class SettingsSaveService
         }
 
         if ($oldEnvironment === $environment && $this->module->api->methods !== null && $apiKey) {
+            $savedPaymentMethods = [];
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
+                    $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods');
                 }
-
 
                 if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
@@ -157,6 +158,7 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($method['id'], $excludedCountries);
             }
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
         }
 
         $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
@@ -182,6 +184,7 @@ class SettingsSaveService
         $mollieMethodCountriesEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES);
         $mollieMethodCountriesDisplayEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
         $mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
+        $voucherCategory = Tools::getValue(Config::MOLLIE_VOUCHER_CATEGORY);
 
         $mollieShipMain = Tools::getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
@@ -226,6 +229,7 @@ class SettingsSaveService
             Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int)$mollieErrors);
             Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, (int)$mollieLogger);
             Configuration::updateValue(Config::MOLLIE_API, $mollieApi);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
             Configuration::updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))
