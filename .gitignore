@@ -11,4 +11,3 @@ var/
 config.xml
 mails/
 views/img/customLogo/*.jpg
-/vendor

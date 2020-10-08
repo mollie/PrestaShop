@@ -33,19 +33,19 @@
  * @codingStandardsIgnoreStart
  */
 
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/prefixedVendor/vendor/autoload.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
     return;
 }
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
     return;
 }
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/guzzlehttp/promises/src/functions_include.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
     return;
 }
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/guzzlehttp/promises/src/functions_include.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
     return;
 }
-if (!include_once(dirname(__FILE__) . '/vendorBuilder/build/vendor/guzzlehttp/psr7/src/functions_include.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
     return;
 }
 
