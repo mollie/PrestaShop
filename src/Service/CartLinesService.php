@@ -72,9 +72,14 @@ class CartLinesService
 
     /**
      * @param float $amount
+     * @param float $paymentFee
+     * @param string $currencyIsoCode
+     * @param array $cartSummary
+     * @param float $shippingCost
+     * @param array $cartItems
+     * @param bool $psGiftWrapping
+     * @param string $selectedVoucherCategory
      *
-     * @param $paymentFee
-     * @param Cart $cart
      * @return array
      */
     public function getCartLines(

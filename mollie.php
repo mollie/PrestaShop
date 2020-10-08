@@ -144,7 +144,6 @@ class Mollie extends PaymentModule
             return false;
         }
 
-
         return true;
     }
 
