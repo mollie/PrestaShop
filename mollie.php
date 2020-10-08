@@ -501,8 +501,6 @@ class Mollie extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
-
         $currentController = Tools::getValue('controller');
 
         if ('AdminOrders' === $currentController) {
@@ -527,8 +525,9 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayBackOfficeHeader()
     {
-        $html = '';
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
+        $html = '';
         if ($this->context->controller instanceof AdminOrdersController) {
             $this->context->smarty->assign([
                 'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
