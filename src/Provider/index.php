@@ -30,52 +30,15 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Utility\MultiLangUtility;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-/**
- * @return bool
- * @throws PrestaShopDatabaseException
- * @throws PrestaShopException
- */
-
-function upgrade_module_4_0_8()
-{
-    Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
-    Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);
-
-    $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_customer` (
-				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`customer_id` VARCHAR(64) NOT NULL,
-				`name` VARCHAR(64) NOT NULL,
-				`email` VARCHAR(64) NOT NULL,
-				`created_at` VARCHAR(64) NOT NULL
-			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
-';
-    $sql .= '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        ADD COLUMN live_environment TINYINT(1) DEFAULT 1;
-     ';
-
-    $sql .= '
-        ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD INDEX(`order_reference`);
-     ';
-
-    if (Db::getInstance()->execute($sql) == false) {
-        return false;
-    }
-    $tabId = Tab::getIdFromClassName('AdminMollieModule');
-    $tab = new Tab($tabId);
-    $tab->name = MultiLangUtility::createMultiLangField('Mollie');
-    $tab->icon = 'mollie';
-    $tab->active = true;
-    $tab->update();
-
-    return true;
-}
+header("Location: ../");
+exit;
