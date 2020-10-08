@@ -142,6 +142,7 @@ class Installer
             'actionAdminStatusesListingFieldsModifier',
             'actionAdminControllerSetMedia',
             'actionValidateOrder',
+            'backOfficeHeader',
         ];
     }
 
