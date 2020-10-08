@@ -1,6 +1,16 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.0.9 ##
++ Improved payment settings UI. Now test and live API has separated payment settings so that you can more easily swap between test and live API.
++ Added order status field modifier that hides deleted mollie statuses in Back-office order status tab.
++ New Mollie tab logo in side bar.
++ Improved descriptions in Module configuration tab.
++ Fixed issue with order amount bigger then 1000. Mollie wouldn’t accept amount if it was displayed like 1,000.00. Now we send amount like 1000.00.
++ Fixed issue with one page checkout in PS1.6 where payments are rendered after carrier is selected.
++ Fixed issues with order API when cart has free product as gift.
++ Fixed issue where Module tab in side bar would have no style and logo if module is disabled.
+
 ## Changes in release 4.0.8 ##
 + Fixed issue where backorder paid status didn't send order_conf mail.
 + Fixed issue where order status that ended with id 0 would not get saved in mollie settings.
