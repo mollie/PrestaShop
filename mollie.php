@@ -612,7 +612,7 @@ class Mollie extends PaymentModule
         $apiMethods = $paymentMethodService->getMethodsForCheckout();
         $issuerList = [];
         foreach ($apiMethods as $apiMethod) {
-            if ($apiMethod['id_payment_method'] === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL) {
+            if ($apiMethod['id_method'] === _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod::IDEAL) {
                 $issuerList = $issuerService->getIdealIssuers();
             }
         }
