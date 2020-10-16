@@ -472,6 +472,7 @@ class Mollie extends PaymentModule
             } else {
                 $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
                 $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
+                $this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
             }
             Media::addJsDef([
                 'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
