@@ -191,3 +191,15 @@ Copyright (c) 2013-2019, Mollie B.V.
 
 Do you have problems with the installation or do you think the module contains a bug? Send an email
 to info@mollie.com with a accurate description of the problem.
+
+# release preparation #
+
+Before creating release zip make sure to delete:
+/nod_module
+/view/js/node_module
+/view/js/ignoreme
+/test/
+/.github
+/.git
+/gitignore
+/vendorBuilder
