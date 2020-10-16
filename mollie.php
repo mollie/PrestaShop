@@ -1329,7 +1329,7 @@ class Mollie extends PaymentModule
                 $orderReference
             );
 
-            $newPayment = $this->api->payments->create($paymentData);
+            $newPayment = $this->api->payments->create($paymentData->jsonSerialize());
 
             /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);

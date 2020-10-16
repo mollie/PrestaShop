@@ -3,6 +3,7 @@
 # Changelog #
 ## Changes in release 4.1.0 ##
 + PS1.7 - Credit card components are now indexed with tabbable feature meaning that clicking TAB in keyboard will point to next credit card input option.
++ Fixed Order creation in BO crashed page error.
 
 
 ## Changes in release 4.0.9 Hotfix-1 ##
