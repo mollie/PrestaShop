@@ -1,13 +1,13 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator that begins dropping data once the size of the underlying
  * stream becomes too full.
  */
-class DroppingStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface
+class DroppingStream implements \MolliePrefix\Psr\Http\Message\StreamInterface
 {
     use StreamDecoratorTrait;
     private $maxLength;
@@ -15,7 +15,7 @@ class DroppingStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\Stream
      * @param StreamInterface $stream    Underlying stream to decorate.
      * @param int             $maxLength Maximum size before dropping data.
      */
-    public function __construct(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $stream, $maxLength)
+    public function __construct(\MolliePrefix\Psr\Http\Message\StreamInterface $stream, $maxLength)
     {
         $this->stream = $stream;
         $this->maxLength = $maxLength;

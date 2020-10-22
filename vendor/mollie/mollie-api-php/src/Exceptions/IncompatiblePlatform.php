@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Exceptions;
+namespace MolliePrefix\Mollie\Api\Exceptions;
 
-class IncompatiblePlatform extends \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException
+class IncompatiblePlatform extends \MolliePrefix\Mollie\Api\Exceptions\ApiException
 {
     const INCOMPATIBLE_PHP_VERSION = 1000;
     const INCOMPATIBLE_CURL_EXTENSION = 2000;

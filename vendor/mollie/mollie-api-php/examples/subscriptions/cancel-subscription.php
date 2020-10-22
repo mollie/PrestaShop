@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * How to cancel a subscription.
@@ -29,6 +29,6 @@ try {
      * The subscription status should now be canceled
      */
     echo "<p>The subscription status is now: '" . \htmlspecialchars($canceledSubscription->status) . "'.</p>\n";
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

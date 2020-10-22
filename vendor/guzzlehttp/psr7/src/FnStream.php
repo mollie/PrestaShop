@@ -1,15 +1,15 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Compose stream implementations based on a hash of functions.
  *
  * Allows for easy testing and extension of a provided stream without needing
  * to create a concrete class for a simple extension point.
  */
-class FnStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface
+class FnStream implements \MolliePrefix\Psr\Http\Message\StreamInterface
 {
     /** @var array */
     private $methods;
@@ -28,6 +28,7 @@ class FnStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterf
     }
     /**
      * Lazily determine which methods are not implemented.
+     *
      * @throws \BadMethodCallException
      */
     public function __get($name)
@@ -60,7 +61,7 @@ class FnStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterf
      *
      * @return FnStream
      */
-    public static function decorate(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $stream, array $methods)
+    public static function decorate(\MolliePrefix\Psr\Http\Message\StreamInterface $stream, array $methods)
     {
         // If any of the required methods were not provided, then simply
         // proxy to the decorated stream.

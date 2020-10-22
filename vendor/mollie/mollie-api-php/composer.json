@@ -52,7 +52,7 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "composer\/ca-bundle": "^1.1",
-        "guzzlehttp\/guzzle": "^6.3"
+        "guzzlehttp\/guzzle": "^6.3 || ^7.0"
     },
     "require-dev": {
         "eloquent\/liberator": "^2.0",
@@ -66,13 +66,13 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\Mollie\\Api\\": "src\/"
+            "MolliePrefix\\Mollie\\Api\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\Tests\\": "tests\/",
-            "_PhpScoper5eddef0da618a\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
+            "MolliePrefix\\Tests\\": "tests\/",
+            "MolliePrefix\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
         }
     },
     "scripts": {

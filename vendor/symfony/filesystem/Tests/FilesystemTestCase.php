@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Tests;
+namespace MolliePrefix\Symfony\Component\Filesystem\Tests;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Filesystem;
-class FilesystemTestCase extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Filesystem\Filesystem;
+class FilesystemTestCase extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     private $umask;
     protected $longPathNamesWindows = [];
@@ -62,7 +62,7 @@ class FilesystemTestCase extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\Test
     protected function setUp()
     {
         $this->umask = \umask(0);
-        $this->filesystem = new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Filesystem();
+        $this->filesystem = new \MolliePrefix\Symfony\Component\Filesystem\Filesystem();
         $this->workspace = \sys_get_temp_dir() . '/' . \microtime(\true) . '.' . \mt_rand();
         \mkdir($this->workspace, 0777, \true);
         $this->workspace = \realpath($this->workspace);

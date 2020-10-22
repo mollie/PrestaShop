@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Shipment;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ShipmentCollection;
-class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Resources\Order;
+use MolliePrefix\Mollie\Api\Resources\Shipment;
+use MolliePrefix\Mollie\Api\Resources\ShipmentCollection;
+class ShipmentEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "orders_shipments";
     /**
@@ -19,7 +19,7 @@ class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Col
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Shipment($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Shipment($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API
@@ -32,7 +32,7 @@ class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Col
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ShipmentCollection($count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\ShipmentCollection($count, $_links);
     }
     /**
      * Create a shipment for some order lines. You can provide an empty array for the
@@ -45,7 +45,7 @@ class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Col
      * @return Shipment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Order $order, array $options = [], array $filters = [])
+    public function createFor(\MolliePrefix\Mollie\Api\Resources\Order $order, array $options = [], array $filters = [])
     {
         return $this->createForId($order->id, $options, $filters);
     }
@@ -75,7 +75,7 @@ class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Col
      * @return Shipment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Order $order, $shipmentId, array $parameters = [])
+    public function getFor(\MolliePrefix\Mollie\Api\Resources\Order $order, $shipmentId, array $parameters = [])
     {
         return $this->getForId($order->id, $shipmentId, $parameters);
     }
@@ -103,7 +103,7 @@ class ShipmentEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Col
      * @return ShipmentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Order $order, array $parameters = [])
+    public function listFor(\MolliePrefix\Mollie\Api\Resources\Order $order, array $parameters = [])
     {
         return $this->listForId($order->id, $parameters);
     }

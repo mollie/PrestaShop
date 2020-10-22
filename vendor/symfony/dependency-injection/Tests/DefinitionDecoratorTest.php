@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator;
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator;
 /**
  * @group legacy
  */
-class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+class DefinitionDecoratorTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $this->assertEquals('foo', $def->getParent());
         $this->assertEquals([], $def->getChanges());
     }
@@ -28,7 +28,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
      */
     public function testSetProperty($property, $changeKey)
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $getter = 'get' . \ucfirst($property);
         $setter = 'set' . \ucfirst($property);
         $this->assertNull($def->{$getter}());
@@ -42,7 +42,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     }
     public function testSetPublic()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $this->assertTrue($def->isPublic());
         $this->assertSame($def, $def->setPublic(\false));
         $this->assertFalse($def->isPublic());
@@ -50,7 +50,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     }
     public function testSetLazy()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $this->assertFalse($def->isLazy());
         $this->assertSame($def, $def->setLazy(\false));
         $this->assertFalse($def->isLazy());
@@ -58,7 +58,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     }
     public function testSetAutowired()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $this->assertFalse($def->isAutowired());
         $this->assertSame($def, $def->setAutowired(\true));
         $this->assertTrue($def->isAutowired());
@@ -66,7 +66,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     }
     public function testSetArgument()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $this->assertEquals([], $def->getArguments());
         $this->assertSame($def, $def->replaceArgument(0, 'foo'));
         $this->assertEquals(['index_0' => 'foo'], $def->getArguments());
@@ -74,12 +74,12 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     public function testReplaceArgumentShouldRequireIntegerIndex()
     {
         $this->expectException('InvalidArgumentException');
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $def->replaceArgument('0', 'foo');
     }
     public function testReplaceArgument()
     {
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $def->setArguments([0 => 'foo', 1 => 'bar']);
         $this->assertEquals('foo', $def->getArgument(0));
         $this->assertEquals('bar', $def->getArgument(1));
@@ -91,7 +91,7 @@ class DefinitionDecoratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     public function testGetArgumentShouldCheckBounds()
     {
         $this->expectException('OutOfBoundsException');
-        $def = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
+        $def = new \MolliePrefix\Symfony\Component\DependencyInjection\DefinitionDecorator('foo');
         $def->setArguments([0 => 'foo']);
         $def->replaceArgument(0, 'foo');
         $def->getArgument(1);

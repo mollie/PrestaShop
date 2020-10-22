@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Onboarding;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
-class OnboardingEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\EndpointAbstract
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\BaseResource;
+use MolliePrefix\Mollie\Api\Resources\Onboarding;
+use MolliePrefix\Mollie\Api\Resources\ResourceFactory;
+class OnboardingEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\EndpointAbstract
 {
     protected $resourcePath = "onboarding/me";
     protected function getResourceCollectionObject($count, $links)
@@ -20,7 +20,7 @@ class OnboardingEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\E
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Onboarding($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Onboarding($this->client);
     }
     /**
      * Retrieve the organization's onboarding status from Mollie.
@@ -52,7 +52,7 @@ class OnboardingEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\E
     protected function rest_read($id, array $filters)
     {
         $result = $this->client->performHttpCall(self::REST_READ, $this->getResourcePath() . $this->buildQueryString($filters));
-        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     protected function rest_create(array $body, array $filters)
     {

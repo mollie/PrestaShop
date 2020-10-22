@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator that prevents a stream from being seeked
  */
-class NoSeekStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface
+class NoSeekStream implements \MolliePrefix\Psr\Http\Message\StreamInterface
 {
     use StreamDecoratorTrait;
     public function seek($offset, $whence = \SEEK_SET)

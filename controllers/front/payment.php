@@ -33,19 +33,16 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\PrestaShop\Decimal\Number;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\CustomerService;
 use Mollie\Service\MemorizeCartService;
-use Mollie\Service\OrderCartAssociationService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Service\RejectPendingOrderService;
 use Mollie\Utility\PaymentFeeUtility;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 

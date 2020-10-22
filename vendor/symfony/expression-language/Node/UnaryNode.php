@@ -8,22 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node;
+namespace MolliePrefix\Symfony\Component\ExpressionLanguage\Node;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Compiler;
+use MolliePrefix\Symfony\Component\ExpressionLanguage\Compiler;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
  */
-class UnaryNode extends \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node
+class UnaryNode extends \MolliePrefix\Symfony\Component\ExpressionLanguage\Node\Node
 {
     private static $operators = ['!' => '!', 'not' => '!', '+' => '+', '-' => '-'];
-    public function __construct($operator, \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node $node)
+    public function __construct($operator, \MolliePrefix\Symfony\Component\ExpressionLanguage\Node\Node $node)
     {
         parent::__construct(['node' => $node], ['operator' => $operator]);
     }
-    public function compile(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Compiler $compiler)
+    public function compile(\MolliePrefix\Symfony\Component\ExpressionLanguage\Compiler $compiler)
     {
         $compiler->raw('(')->raw(self::$operators[$this->attributes['operator']])->compile($this->nodes['node'])->raw(')');
     }

@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Definition;
+use MolliePrefix\Symfony\Component\DependencyInjection\Reference;
 /**
  * @author Guilhem N. <egetick@gmail.com>
  *
  * @deprecated since version 3.3, to be removed in 4.0.
  */
-class FactoryReturnTypePass implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+class FactoryReturnTypePass implements \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
 {
     private $resolveClassPass;
-    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveClassPass $resolveClassPass = null)
+    public function __construct(\MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveClassPass $resolveClassPass = null)
     {
         if (null === $resolveClassPass) {
             @\trigger_error('The ' . __CLASS__ . ' class is deprecated since Symfony 3.3 and will be removed in 4.0.', \E_USER_DEPRECATED);
@@ -31,7 +31,7 @@ class FactoryReturnTypePass implements \_PhpScoper5eddef0da618a\Symfony\Componen
     /**
      * {@inheritdoc}
      */
-    public function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         // works only since php 7.0 and hhvm 3.11
         if (!\method_exists(\ReflectionMethod::class, 'getReturnType')) {
@@ -42,7 +42,7 @@ class FactoryReturnTypePass implements \_PhpScoper5eddef0da618a\Symfony\Componen
             $this->updateDefinition($container, $id, $definition, $resolveClassPassChanges);
         }
     }
-    private function updateDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container, $id, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition $definition, array $resolveClassPassChanges, array $previous = [])
+    private function updateDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container, $id, \MolliePrefix\Symfony\Component\DependencyInjection\Definition $definition, array $resolveClassPassChanges, array $previous = [])
     {
         // circular reference
         if (isset($previous[$id])) {
@@ -63,7 +63,7 @@ class FactoryReturnTypePass implements \_PhpScoper5eddef0da618a\Symfony\Componen
                 return;
             }
         } else {
-            if ($factory[0] instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference) {
+            if ($factory[0] instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Reference) {
                 $previous[$id] = \true;
                 $factoryId = $container->normalizeId($factory[0]);
                 $factoryDefinition = $container->findDefinition($factoryId);
@@ -83,7 +83,7 @@ class FactoryReturnTypePass implements \_PhpScoper5eddef0da618a\Symfony\Componen
         }
         $returnType = $m->getReturnType();
         if (null !== $returnType && !$returnType->isBuiltin()) {
-            $returnType = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : $returnType->__toString();
+            $returnType = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : (string) $returnType;
             if (null !== $class) {
                 $declaringClass = $m->getDeclaringClass()->getName();
                 if ('self' === \strtolower($returnType)) {

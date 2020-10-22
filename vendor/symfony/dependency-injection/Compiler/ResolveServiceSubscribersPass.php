@@ -8,25 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5eddef0da618a\Psr\Container\ContainerInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
+use MolliePrefix\Psr\Container\ContainerInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Definition;
+use MolliePrefix\Symfony\Component\DependencyInjection\Reference;
 /**
  * Compiler pass to inject their service locator to service subscribers.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ResolveServiceSubscribersPass extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
+class ResolveServiceSubscribersPass extends \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass
 {
     private $serviceLocator;
     protected function processValue($value, $isRoot = \false)
     {
-        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference && $this->serviceLocator && \_PhpScoper5eddef0da618a\Psr\Container\ContainerInterface::class === $this->container->normalizeId($value)) {
-            return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference($this->serviceLocator);
+        if ($value instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Reference && $this->serviceLocator && \MolliePrefix\Psr\Container\ContainerInterface::class === $this->container->normalizeId($value)) {
+            return new \MolliePrefix\Symfony\Component\DependencyInjection\Reference($this->serviceLocator);
         }
-        if (!$value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition) {
+        if (!$value instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         $serviceLocator = $this->serviceLocator;

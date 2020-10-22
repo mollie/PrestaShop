@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Alias;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\DecoratorServicePass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Alias;
+use MolliePrefix\Symfony\Component\DependencyInjection\Compiler\DecoratorServicePass;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+class DecoratorServicePassTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testProcessWithoutAlias()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $fooDefinition = $container->register('foo')->setPublic(\false);
         $fooExtendedDefinition = $container->register('foo.extended')->setPublic(\true)->setDecoratedService('foo');
         $barDefinition = $container->register('bar')->setPublic(\true);
@@ -37,9 +37,9 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
     }
     public function testProcessWithAlias()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('foo')->setPublic(\true);
-        $container->setAlias('foo.alias', new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Alias('foo', \false));
+        $container->setAlias('foo.alias', new \MolliePrefix\Symfony\Component\DependencyInjection\Alias('foo', \false));
         $fooExtendedDefinition = $container->register('foo.extended')->setPublic(\true)->setDecoratedService('foo.alias');
         $this->process($container);
         $this->assertEquals('foo.extended', $container->getAlias('foo.alias'));
@@ -50,7 +50,7 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
     }
     public function testProcessWithPriority()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $fooDefinition = $container->register('foo')->setPublic(\false);
         $barDefinition = $container->register('bar')->setPublic(\true)->setDecoratedService('foo');
         $bazDefinition = $container->register('baz')->setPublic(\true)->setDecoratedService('foo', null, 5);
@@ -70,7 +70,7 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
     }
     public function testProcessMovesTagsFromDecoratedDefinitionToDecoratingDefinition()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('foo')->setTags(['bar' => ['attr' => 'baz']]);
         $container->register('baz')->setTags(['foobar' => ['attr' => 'bar']])->setDecoratedService('foo');
         $this->process($container);
@@ -82,7 +82,7 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
      */
     public function testProcessMergesAutowiringTypesInDecoratingDefinitionAndRemoveThemFromDecoratedDefinition()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('parent')->addAutowiringType('Bar');
         $container->register('child')->setDecoratedService('parent')->addAutowiringType('Foo');
         $this->process($container);
@@ -91,7 +91,7 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
     }
     public function testProcessMovesTagsFromDecoratedDefinitionToDecoratingDefinitionMultipleTimes()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $container->register('foo')->setPublic(\true)->setTags(['bar' => ['attr' => 'baz']]);
         $container->register('deco1')->setDecoratedService('foo', null, 50);
         $container->register('deco2')->setDecoratedService('foo', null, 2);
@@ -99,9 +99,9 @@ class DecoratorServicePassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framewor
         $this->assertEmpty($container->getDefinition('deco1')->getTags());
         $this->assertEquals(['bar' => ['attr' => 'baz']], $container->getDefinition('deco2')->getTags());
     }
-    protected function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function process(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
-        $repeatedPass = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\DecoratorServicePass();
+        $repeatedPass = new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\DecoratorServicePass();
         $repeatedPass->process($container);
     }
 }

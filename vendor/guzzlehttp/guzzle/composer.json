@@ -23,7 +23,7 @@
     "require": {
         "php": ">=5.5",
         "ext-json": "*",
-        "symfony\/polyfill-intl-idn": "1.17.0",
+        "symfony\/polyfill-intl-idn": "^1.17.0",
         "guzzlehttp\/promises": "^1.0",
         "guzzlehttp\/psr7": "^1.6.1"
     },
@@ -45,7 +45,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\GuzzleHttp\\": "src\/"
+            "MolliePrefix\\GuzzleHttp\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
@@ -53,7 +53,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\GuzzleHttp\\Tests\\": "tests\/"
+            "MolliePrefix\\GuzzleHttp\\Tests\\": "tests\/"
         }
     }
 }

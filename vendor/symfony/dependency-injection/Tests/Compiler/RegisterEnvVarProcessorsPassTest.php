@@ -8,40 +8,40 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\EnvVarProcessorInterface;
-class RegisterEnvVarProcessorsPassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\EnvVarProcessorInterface;
+class RegisterEnvVarProcessorsPassTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testSimpleProcessor()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo', \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor::class)->addTag('container.env_var_processor');
-        (new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->register('foo', \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor::class)->addTag('container.env_var_processor');
+        (new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
         $this->assertTrue($container->has('container.env_var_processors_locator'));
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor::class, $container->get('container.env_var_processors_locator')->get('foo'));
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor::class, $container->get('container.env_var_processors_locator')->get('foo'));
         $expected = ['foo' => ['string'], 'base64' => ['string'], 'bool' => ['bool'], 'const' => ['bool', 'int', 'float', 'string', 'array'], 'file' => ['string'], 'float' => ['float'], 'int' => ['int'], 'json' => ['array'], 'resolve' => ['string'], 'string' => ['string']];
         $this->assertSame($expected, $container->getParameterBag()->getProvidedTypes());
     }
     public function testNoProcessor()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        (new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        (new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
         $this->assertFalse($container->has('container.env_var_processors_locator'));
     }
     public function testBadProcessor()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type "foo" returned by "Symfony\\Component\\DependencyInjection\\Tests\\Compiler\\BadProcessor::getProvidedTypes()", expected one of "array", "bool", "float", "int", "string".');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->register('foo', \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\BadProcessor::class)->addTag('container.env_var_processor');
-        (new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->register('foo', \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\BadProcessor::class)->addTag('container.env_var_processor');
+        (new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RegisterEnvVarProcessorsPass())->process($container);
     }
 }
-class SimpleProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\EnvVarProcessorInterface
+class SimpleProcessor implements \MolliePrefix\Symfony\Component\DependencyInjection\EnvVarProcessorInterface
 {
     public function getEnv($prefix, $name, \Closure $getEnv)
     {
@@ -52,7 +52,7 @@ class SimpleProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
         return ['foo' => 'string'];
     }
 }
-class BadProcessor extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor
+class BadProcessor extends \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\SimpleProcessor
 {
     public static function getProvidedTypes()
     {

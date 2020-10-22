@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Method;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Organization;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\OrganizationCollection;
-class OrganizationEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Method;
+use MolliePrefix\Mollie\Api\Resources\Organization;
+use MolliePrefix\Mollie\Api\Resources\OrganizationCollection;
+class OrganizationEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "organizations";
     /**
@@ -14,7 +14,7 @@ class OrganizationEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Organization($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Organization($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -26,7 +26,7 @@ class OrganizationEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\OrganizationCollection($this->client, $count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\OrganizationCollection($this->client, $count, $_links);
     }
     /**
      * Retrieve an organization from Mollie.
@@ -41,7 +41,7 @@ class OrganizationEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints
     public function get($organizationId, array $parameters = [])
     {
         if (empty($organizationId)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Organization ID is empty.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Organization ID is empty.");
         }
         return parent::rest_read($organizationId, $parameters);
     }

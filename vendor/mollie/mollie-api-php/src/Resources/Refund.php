@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
-class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Types\RefundStatus;
+class Refund extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -78,7 +78,7 @@ class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function isQueued()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus::STATUS_QUEUED;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_QUEUED;
     }
     /**
      * Is this refund pending?
@@ -87,7 +87,7 @@ class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function isPending()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus::STATUS_PENDING;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_PENDING;
     }
     /**
      * Is this refund processing?
@@ -96,7 +96,7 @@ class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function isProcessing()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus::STATUS_PROCESSING;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_PROCESSING;
     }
     /**
      * Is this refund transferred to consumer?
@@ -105,7 +105,7 @@ class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function isTransferred()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED;
     }
     /**
      * Cancel the refund.
@@ -116,7 +116,7 @@ class Refund extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function cancel()
     {
-        $this->client->performHttpCallToFullUrl(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href);
+        $this->client->performHttpCallToFullUrl(\MolliePrefix\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href);
         return null;
     }
 }

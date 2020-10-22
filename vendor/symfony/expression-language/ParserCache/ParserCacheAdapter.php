@@ -8,30 +8,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache;
+namespace MolliePrefix\Symfony\Component\ExpressionLanguage\ParserCache;
 
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface;
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem;
+use MolliePrefix\Psr\Cache\CacheItemInterface;
+use MolliePrefix\Psr\Cache\CacheItemPoolInterface;
+use MolliePrefix\Symfony\Component\Cache\CacheItem;
 /**
  * @author Alexandre GESLIN <alexandre@gesl.in>
  *
  * @internal and will be removed in Symfony 4.0.
  */
-class ParserCacheAdapter implements \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface
+class ParserCacheAdapter implements \MolliePrefix\Psr\Cache\CacheItemPoolInterface
 {
     private $pool;
     private $createCacheItem;
-    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface $pool)
+    public function __construct(\MolliePrefix\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface $pool)
     {
         $this->pool = $pool;
         $this->createCacheItem = \Closure::bind(static function ($key, $value, $isHit) {
-            $item = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem();
+            $item = new \MolliePrefix\Symfony\Component\Cache\CacheItem();
             $item->key = $key;
             $item->value = $value;
             $item->isHit = $isHit;
             return $item;
-        }, null, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::class);
+        }, null, \MolliePrefix\Symfony\Component\Cache\CacheItem::class);
     }
     /**
      * {@inheritdoc}
@@ -45,7 +45,7 @@ class ParserCacheAdapter implements \_PhpScoper5eddef0da618a\Psr\Cache\CacheItem
     /**
      * {@inheritdoc}
      */
-    public function save(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function save(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         $this->pool->save($item->getKey(), $item->get());
     }
@@ -87,7 +87,7 @@ class ParserCacheAdapter implements \_PhpScoper5eddef0da618a\Psr\Cache\CacheItem
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         throw new \BadMethodCallException('Not implemented.');
     }

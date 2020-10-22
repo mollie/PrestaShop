@@ -8,46 +8,46 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AbstractAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache;
-class MemcachedCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+use MolliePrefix\Symfony\Component\Cache\Adapter\AbstractAdapter;
+use MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache;
+class MemcachedCacheTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     protected $skippedTests = ['testSetTtl' => 'Testing expiration slows down the test suite', 'testSetMultipleTtl' => 'Testing expiration slows down the test suite', 'testDefaultLifeTime' => 'Testing expiration slows down the test suite'];
     protected static $client;
     public static function setUpBeforeClass()
     {
-        if (!\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::isSupported()) {
+        if (!\MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::isSupported()) {
             self::markTestSkipped('Extension memcached >=2.2.0 required.');
         }
-        self::$client = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'));
+        self::$client = \MolliePrefix\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'));
         self::$client->get('foo');
         $code = self::$client->getResultCode();
-        if (\_PhpScoper5eddef0da618a\Memcached::RES_SUCCESS !== $code && \_PhpScoper5eddef0da618a\Memcached::RES_NOTFOUND !== $code) {
+        if (\MolliePrefix\Memcached::RES_SUCCESS !== $code && \MolliePrefix\Memcached::RES_NOTFOUND !== $code) {
             self::markTestSkipped('Memcached error: ' . \strtolower(self::$client->getResultMessage()));
         }
     }
     public function createSimpleCache($defaultLifetime = 0)
     {
-        $client = $defaultLifetime ? \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['binary_protocol' => \false]) : self::$client;
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache($client, \str_replace('\\', '.', __CLASS__), $defaultLifetime);
+        $client = $defaultLifetime ? \MolliePrefix\Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['binary_protocol' => \false]) : self::$client;
+        return new \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache($client, \str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
     public function testCreatePersistentConnectionShouldNotDupServerList()
     {
-        $instance = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['persistent_id' => 'persistent']);
+        $instance = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['persistent_id' => 'persistent']);
         $this->assertCount(1, $instance->getServerList());
-        $instance = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['persistent_id' => 'persistent']);
+        $instance = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection('memcached://' . \getenv('MEMCACHED_HOST'), ['persistent_id' => 'persistent']);
         $this->assertCount(1, $instance->getServerList());
     }
     public function testOptions()
     {
-        $client = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], ['libketama_compatible' => \false, 'distribution' => 'modula', 'compression' => \true, 'serializer' => 'php', 'hash' => 'md5']);
-        $this->assertSame(\_PhpScoper5eddef0da618a\Memcached::SERIALIZER_PHP, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_SERIALIZER));
-        $this->assertSame(\_PhpScoper5eddef0da618a\Memcached::HASH_MD5, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_HASH));
-        $this->assertTrue($client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_COMPRESSION));
-        $this->assertSame(0, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_LIBKETAMA_COMPATIBLE));
-        $this->assertSame(\_PhpScoper5eddef0da618a\Memcached::DISTRIBUTION_MODULA, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_DISTRIBUTION));
+        $client = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], ['libketama_compatible' => \false, 'distribution' => 'modula', 'compression' => \true, 'serializer' => 'php', 'hash' => 'md5']);
+        $this->assertSame(\MolliePrefix\Memcached::SERIALIZER_PHP, $client->getOption(\MolliePrefix\Memcached::OPT_SERIALIZER));
+        $this->assertSame(\MolliePrefix\Memcached::HASH_MD5, $client->getOption(\MolliePrefix\Memcached::OPT_HASH));
+        $this->assertTrue($client->getOption(\MolliePrefix\Memcached::OPT_COMPRESSION));
+        $this->assertSame(0, $client->getOption(\MolliePrefix\Memcached::OPT_LIBKETAMA_COMPATIBLE));
+        $this->assertSame(\MolliePrefix\Memcached::DISTRIBUTION_MODULA, $client->getOption(\MolliePrefix\Memcached::OPT_DISTRIBUTION));
     }
     /**
      * @dataProvider provideBadOptions
@@ -59,9 +59,9 @@ class MemcachedCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cach
             $this->expectExceptionMessage('constant(): Couldn\'t find constant Memcached::');
         } else {
             $this->expectException('Error');
-            $this->expectExceptionMessage('Undefined class constant \'Memcached::');
+            $this->expectExceptionMessage('Undefined constant Memcached::');
         }
-        \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], [$name => $value]);
+        \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], [$name => $value]);
     }
     public function provideBadOptions()
     {
@@ -69,29 +69,29 @@ class MemcachedCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cach
     }
     public function testDefaultOptions()
     {
-        $this->assertTrue(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::isSupported());
-        $client = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([]);
-        $this->assertTrue($client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_COMPRESSION));
-        $this->assertSame(1, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_BINARY_PROTOCOL));
-        $this->assertSame(1, $client->getOption(\_PhpScoper5eddef0da618a\Memcached::OPT_LIBKETAMA_COMPATIBLE));
+        $this->assertTrue(\MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::isSupported());
+        $client = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([]);
+        $this->assertTrue($client->getOption(\MolliePrefix\Memcached::OPT_COMPRESSION));
+        $this->assertSame(1, $client->getOption(\MolliePrefix\Memcached::OPT_BINARY_PROTOCOL));
+        $this->assertSame(1, $client->getOption(\MolliePrefix\Memcached::OPT_LIBKETAMA_COMPATIBLE));
     }
     public function testOptionSerializer()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Cache\\Exception\\CacheException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Cache\\Exception\\CacheException');
         $this->expectExceptionMessage('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
-        if (!\_PhpScoper5eddef0da618a\Memcached::HAVE_JSON) {
+        if (!\MolliePrefix\Memcached::HAVE_JSON) {
             $this->markTestSkipped('Memcached::HAVE_JSON required');
         }
-        new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], ['serializer' => 'json']));
+        new \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache(\MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([], ['serializer' => 'json']));
     }
     /**
      * @dataProvider provideServersSetting
      */
     public function testServersSetting($dsn, $host, $port)
     {
-        $client1 = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection($dsn);
-        $client2 = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([$dsn]);
-        $client3 = \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([[$host, $port]]);
+        $client1 = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection($dsn);
+        $client2 = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([$dsn]);
+        $client3 = \MolliePrefix\Symfony\Component\Cache\Simple\MemcachedCache::createConnection([[$host, $port]]);
         $expect = ['host' => $host, 'port' => $port];
         $f = function ($s) {
             return ['host' => $s['host'], 'port' => $s['port']];

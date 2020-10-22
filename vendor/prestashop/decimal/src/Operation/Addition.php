@@ -6,9 +6,9 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @license   https://opensource.org/licenses/MIT MIT License
  */
-namespace _PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation;
+namespace MolliePrefix\PrestaShop\Decimal\Operation;
 
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number as DecimalNumber;
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
 /**
  * Computes the addition of two decimal numbers
  */
@@ -35,9 +35,9 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function compute(\_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $a, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $b)
+    public function compute(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        if (\function_exists('_PhpScoper5eddef0da618a\\bcadd')) {
+        if (\function_exists('MolliePrefix\\bcadd')) {
             return $this->computeUsingBcMath($a, $b);
         }
         return $this->computeWithoutBcMath($a, $b);
@@ -50,11 +50,11 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function computeUsingBcMath(\_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $a, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $b)
+    public function computeUsingBcMath(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
         $precision1 = $a->getPrecision();
         $precision2 = $b->getPrecision();
-        return new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number((string) bcadd($a, $b, \max($precision1, $precision2)));
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) bcadd($a, $b, \max($precision1, $precision2)));
     }
     /**
      * Performs the addition without BC Math
@@ -64,7 +64,7 @@ class Addition
      *
      * @return DecimalNumber Result of the addition
      */
-    public function computeWithoutBcMath(\_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $a, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $b)
+    public function computeWithoutBcMath(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
         if ($a->isNegative()) {
             if ($b->isNegative()) {
@@ -108,7 +108,7 @@ class Addition
         $sign = $a->getSign();
         // keep the bigger exponent
         $exponent = \max($a->getExponent(), $b->getExponent());
-        return new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number($sign . $sum, $exponent);
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber($sign . $sum, $exponent);
     }
     /**
      * Normalizes coefficients by adding leading or trailing zeroes as needed so that both are the same length
@@ -118,7 +118,7 @@ class Addition
      *
      * @return array An array containing the normalized coefficients
      */
-    private function normalizeCoefficients(\_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $a, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number $b)
+    private function normalizeCoefficients(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
         $exp1 = $a->getExponent();
         $exp2 = $b->getExponent();

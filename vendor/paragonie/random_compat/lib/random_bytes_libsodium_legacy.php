@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /**
  * Random_* Compatibility Library
@@ -46,7 +46,7 @@ if (!\is_callable('random_bytes')) {
     {
         try {
             /** @var int $bytes */
-            $bytes = \_PhpScoper5eddef0da618a\RandomCompat_intval($bytes);
+            $bytes = \MolliePrefix\RandomCompat_intval($bytes);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_bytes(): $bytes must be an integer');
         }
@@ -64,13 +64,13 @@ if (!\is_callable('random_bytes')) {
         if ($bytes > 2147483647) {
             for ($i = 0; $i < $bytes; $i += 1073741824) {
                 $n = $bytes - $i > 1073741824 ? 1073741824 : $bytes - $i;
-                $buf .= \_PhpScoper5eddef0da618a\Sodium::randombytes_buf((int) $n);
+                $buf .= \MolliePrefix\Sodium::randombytes_buf((int) $n);
             }
         } else {
-            $buf .= \_PhpScoper5eddef0da618a\Sodium::randombytes_buf((int) $bytes);
+            $buf .= \MolliePrefix\Sodium::randombytes_buf((int) $bytes);
         }
         if (\is_string($buf)) {
-            if (\_PhpScoper5eddef0da618a\RandomCompat_strlen($buf) === $bytes) {
+            if (\MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
                 return $buf;
             }
         }

@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5eddef0da618a\Cache\IntegrationTests\SimpleCacheTest;
-use _PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
-abstract class CacheTestCase extends \_PhpScoper5eddef0da618a\Cache\IntegrationTests\SimpleCacheTest
+use MolliePrefix\Cache\IntegrationTests\SimpleCacheTest;
+use MolliePrefix\Psr\SimpleCache\CacheInterface;
+use MolliePrefix\Symfony\Component\Cache\PruneableInterface;
+abstract class CacheTestCase extends \MolliePrefix\Cache\IntegrationTests\SimpleCacheTest
 {
     protected function setUp()
     {
         parent::setUp();
-        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface) {
+        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof \MolliePrefix\Symfony\Component\Cache\PruneableInterface) {
             $this->skippedTests['testPrune'] = 'Not a pruneable cache pool.';
         }
     }
@@ -50,9 +50,9 @@ abstract class CacheTestCase extends \_PhpScoper5eddef0da618a\Cache\IntegrationT
         }
         $cache = $this->createSimpleCache();
         $cache->clear();
-        $cache->set('foo', new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\NotUnserializable());
+        $cache->set('foo', new \MolliePrefix\Symfony\Component\Cache\Tests\Simple\NotUnserializable());
         $this->assertNull($cache->get('foo'));
-        $cache->setMultiple(['foo' => new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\NotUnserializable()]);
+        $cache->setMultiple(['foo' => new \MolliePrefix\Symfony\Component\Cache\Tests\Simple\NotUnserializable()]);
         foreach ($cache->getMultiple(['foo']) as $value) {
         }
         $this->assertNull($value);

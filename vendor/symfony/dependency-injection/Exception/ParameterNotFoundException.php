@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Exception;
 
 /**
  * This exception is thrown when a non-existent parameter is used.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParameterNotFoundException extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+class ParameterNotFoundException extends \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
 {
     private $key;
     private $sourceId;

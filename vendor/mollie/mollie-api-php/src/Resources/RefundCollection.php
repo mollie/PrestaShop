@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class RefundCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CursorCollection
+class RefundCollection extends \MolliePrefix\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class RefundCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Cur
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Refund($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Refund($this->client);
     }
 }

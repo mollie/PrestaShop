@@ -1,5 +1,5 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 $container->setParameter('foo', 'foo');

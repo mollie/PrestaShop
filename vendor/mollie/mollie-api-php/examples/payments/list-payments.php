@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * How to list your payments.
@@ -66,6 +66,6 @@ try {
         }
         echo "</ul>";
     }
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

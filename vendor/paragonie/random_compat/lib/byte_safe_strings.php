@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /**
  * Random_* Compatibility Library
@@ -100,15 +100,15 @@ if (!\is_callable('RandomCompat_substr')) {
                  * PHP 5.3, so we have to find the length ourselves.
                  */
                 /** @var int $length */
-                $length = \_PhpScoper5eddef0da618a\RandomCompat_strlen($binary_string) - $start;
+                $length = \MolliePrefix\RandomCompat_strlen($binary_string) - $start;
             } elseif (!\is_int($length)) {
                 throw new \TypeError('RandomCompat_substr(): Third argument should be an integer, or omitted');
             }
             // Consistency with PHP's behavior
-            if ($start === \_PhpScoper5eddef0da618a\RandomCompat_strlen($binary_string) && $length === 0) {
+            if ($start === \MolliePrefix\RandomCompat_strlen($binary_string) && $length === 0) {
                 return '';
             }
-            if ($start > \_PhpScoper5eddef0da618a\RandomCompat_strlen($binary_string)) {
+            if ($start > \MolliePrefix\RandomCompat_strlen($binary_string)) {
                 return '';
             }
             return (string) \mb_substr((string) $binary_string, (int) $start, (int) $length, '8bit');

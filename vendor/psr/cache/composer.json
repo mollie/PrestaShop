@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\Psr\\Cache\\": "src\/"
+            "MolliePrefix\\Psr\\Cache\\": "src\/"
         }
     },
     "extra": {

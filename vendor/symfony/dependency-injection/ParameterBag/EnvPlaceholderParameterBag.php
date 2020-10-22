@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvPlaceholderParameterBag extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag
+class EnvPlaceholderParameterBag extends \MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag\ParameterBag
 {
     private $envPlaceholders = [];
     private $providedTypes = [];
@@ -33,12 +33,12 @@ class EnvPlaceholderParameterBag extends \_PhpScoper5eddef0da618a\Symfony\Compon
                 }
             }
             if (!\preg_match('/^(?:\\w++:)*+\\w++$/', $env)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid "%s" name: only "word" characters are allowed.', $name));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('Invalid "%s" name: only "word" characters are allowed.', $name));
             }
             if ($this->has($name)) {
                 $defaultValue = parent::get($name);
                 if (null !== $defaultValue && !\is_scalar($defaultValue)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of an env() parameter must be scalar or null, but "%s" given to "%s".', \gettype($defaultValue), $name));
+                    throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of an env() parameter must be scalar or null, but "%s" given to "%s".', \gettype($defaultValue), $name));
                 }
             }
             $uniqueName = \md5($name . \uniqid(\mt_rand(), \true));
@@ -101,7 +101,7 @@ class EnvPlaceholderParameterBag extends \_PhpScoper5eddef0da618a\Symfony\Compon
             if (\is_numeric($default = $this->parameters[$name])) {
                 $this->parameters[$name] = (string) $default;
             } elseif (null !== $default && !\is_scalar($default)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of env parameter "%s" must be scalar or null, "%s" given.', $env, \gettype($default)));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('The default value of env parameter "%s" must be scalar or null, "%s" given.', $env, \gettype($default)));
             }
         }
     }

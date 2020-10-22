@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\FilesystemCache;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\PhpArrayCache;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
+use MolliePrefix\Symfony\Component\Cache\Simple\FilesystemCache;
+use MolliePrefix\Symfony\Component\Cache\Simple\PhpArrayCache;
+use MolliePrefix\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 /**
  * @group time-sensitive
  */
-class PhpArrayCacheWithFallbackTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class PhpArrayCacheWithFallbackTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     protected $skippedTests = [
         'testGetInvalidKeys' => 'PhpArrayCache does no validation',
@@ -40,11 +40,11 @@ class PhpArrayCacheWithFallbackTest extends \_PhpScoper5eddef0da618a\Symfony\Com
     {
         $this->createSimpleCache()->clear();
         if (\file_exists(\sys_get_temp_dir() . '/symfony-cache')) {
-            \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
+            \MolliePrefix\Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest::rmdir(\sys_get_temp_dir() . '/symfony-cache');
         }
     }
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\PhpArrayCache(self::$file, new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\FilesystemCache('php-array-fallback', $defaultLifetime));
+        return new \MolliePrefix\Symfony\Component\Cache\Simple\PhpArrayCache(self::$file, new \MolliePrefix\Symfony\Component\Cache\Simple\FilesystemCache('php-array-fallback', $defaultLifetime));
     }
 }

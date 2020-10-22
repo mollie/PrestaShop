@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Provides a buffer stream that can be written to to fill a buffer, and read
  * from to remove bytes from the buffer.
@@ -11,7 +11,7 @@ use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
  * what the configured high water mark of the stream is, or the maximum
  * preferred size of the buffer.
  */
-class BufferStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface
+class BufferStream implements \MolliePrefix\Psr\Http\Message\StreamInterface
 {
     private $hwm;
     private $buffer = '';
@@ -43,6 +43,7 @@ class BufferStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamIn
     public function detach()
     {
         $this->close();
+        return null;
     }
     public function getSize()
     {

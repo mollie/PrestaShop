@@ -6,11 +6,11 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @license   https://opensource.org/licenses/MIT MIT License
  */
-namespace _PhpScoper5eddef0da618a\PrestaShop\Decimal\Test\Operation;
+namespace MolliePrefix\PrestaShop\Decimal\Test\Operation;
 
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding;
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
-class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
+use MolliePrefix\PrestaShop\Decimal\Operation\Rounding;
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
+class RoundingTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * Given decimal number
@@ -21,8 +21,8 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItThrowsExceptionIfRoundingModeIsInvalid()
     {
-        $decimalNumber = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number('1.2345');
-        $rounding = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding();
+        $decimalNumber = new \MolliePrefix\PrestaShop\Decimal\DecimalNumber('1.2345');
+        $rounding = new \MolliePrefix\PrestaShop\Decimal\Operation\Rounding();
         $rounding->compute($decimalNumber, 2, 'foobar');
     }
     /**
@@ -38,9 +38,9 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItThrowsExceptionIfPrecisionIsInvalid($precision)
     {
-        $decimalNumber = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number('1.2345');
-        $rounding = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding();
-        $rounding->compute($decimalNumber, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_FLOOR);
+        $decimalNumber = new \MolliePrefix\PrestaShop\Decimal\DecimalNumber('1.2345');
+        $rounding = new \MolliePrefix\PrestaShop\Decimal\Operation\Rounding();
+        $rounding->compute($decimalNumber, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_FLOOR);
     }
     /**
      * Given a decimal number
@@ -55,7 +55,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItTruncatesNumbers($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_TRUNCATE, $expected);
     }
     /**
      * Given a decimal number
@@ -71,7 +71,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItPerformsCeilRounding($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_CEIL, $expected);
     }
     /**
      * Given a decimal number
@@ -87,7 +87,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItPerformsFloorRounding($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_FLOOR, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_FLOOR, $expected);
     }
     /**
      * Given a decimal number
@@ -106,7 +106,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItPerformsHalfUpRounding($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_UP, $expected);
     }
     /**
      * Given a decimal number
@@ -125,7 +125,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItPerformsHalfDownRounding($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_DOWN, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_DOWN, $expected);
     }
     /**
      * Given a decimal number
@@ -148,7 +148,7 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItPerformsHalfEvenRounding($number, $precision, $expected)
     {
-        $this->roundNumber($number, $precision, \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN, $expected);
+        $this->roundNumber($number, $precision, \MolliePrefix\PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN, $expected);
     }
     /**
      * Test rounding a number to a target precision using a specific rounding mode.
@@ -169,8 +169,8 @@ class RoundingTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function roundNumber($number, $precision, $mode, $expected)
     {
-        $decimalNumber = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number($number);
-        $rounding = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Rounding();
+        $decimalNumber = new \MolliePrefix\PrestaShop\Decimal\DecimalNumber($number);
+        $rounding = new \MolliePrefix\PrestaShop\Decimal\Operation\Rounding();
         $result = $rounding->compute($decimalNumber, $precision, $mode);
         $this->assertSame($expected, (string) $result);
     }

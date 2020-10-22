@@ -35,8 +35,8 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Carrier;
 use Configuration;
 use Context;

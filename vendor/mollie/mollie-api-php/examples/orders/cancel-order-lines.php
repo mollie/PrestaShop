@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * Cancel order lines using the Mollie API.
@@ -29,6 +29,6 @@ try {
     } else {
         echo "Unable to cancel line " . $lineId . " for your order " . $orderId . ".";
     }
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

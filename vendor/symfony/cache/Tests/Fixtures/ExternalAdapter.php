@@ -8,22 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Fixtures;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Fixtures;
 
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface;
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter;
+use MolliePrefix\Psr\Cache\CacheItemInterface;
+use MolliePrefix\Psr\Cache\CacheItemPoolInterface;
+use MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter;
 /**
  * Adapter not implementing the {@see \Symfony\Component\Cache\Adapter\AdapterInterface}.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
-class ExternalAdapter implements \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface
+class ExternalAdapter implements \MolliePrefix\Psr\Cache\CacheItemPoolInterface
 {
     private $cache;
-    public function __construct()
+    public function __construct($defaultLifetime = 0)
     {
-        $this->cache = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $this->cache = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter($defaultLifetime);
     }
     public function getItem($key)
     {
@@ -49,11 +49,11 @@ class ExternalAdapter implements \_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoo
     {
         return $this->cache->deleteItems($keys);
     }
-    public function save(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function save(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         return $this->cache->save($item);
     }
-    public function saveDeferred(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         return $this->cache->saveDeferred($item);
     }

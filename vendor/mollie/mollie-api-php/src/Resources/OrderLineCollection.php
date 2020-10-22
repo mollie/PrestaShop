@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class OrderLineCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseCollection
+class OrderLineCollection extends \MolliePrefix\Mollie\Api\Resources\BaseCollection
 {
     /**
      * @return string|null

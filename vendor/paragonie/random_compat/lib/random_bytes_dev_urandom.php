@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /**
  * Random_* Compatibility Library
@@ -102,7 +102,7 @@ if (!\is_callable('random_bytes')) {
         }
         try {
             /** @var int $bytes */
-            $bytes = \_PhpScoper5eddef0da618a\RandomCompat_intval($bytes);
+            $bytes = \MolliePrefix\RandomCompat_intval($bytes);
         } catch (\TypeError $ex) {
             throw new \TypeError('random_bytes(): $bytes must be an integer');
         }
@@ -146,7 +146,7 @@ if (!\is_callable('random_bytes')) {
                 /**
                  * Decrease the number of bytes returned from remaining
                  */
-                $remaining -= \_PhpScoper5eddef0da618a\RandomCompat_strlen($read);
+                $remaining -= \MolliePrefix\RandomCompat_strlen($read);
                 /**
                  * @var string $buf
                  */
@@ -157,7 +157,7 @@ if (!\is_callable('random_bytes')) {
              * @var string|bool $buf
              */
             if (\is_string($buf)) {
-                if (\_PhpScoper5eddef0da618a\RandomCompat_strlen($buf) === $bytes) {
+                if (\MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
                     /**
                      * Return our random entropy buffer here:
                      */

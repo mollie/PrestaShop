@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 class AssertionError extends \Error
 {
 }
-\class_alias('_PhpScoper5eddef0da618a\\AssertionError', 'AssertionError', \false);
+\class_alias('MolliePrefix\\AssertionError', 'AssertionError', \false);
