@@ -20,14 +20,5 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
     - run: composer require --dev phpunit/phpunit ^5
     - run: ./vendor/bin/phpunit tests/Unit
