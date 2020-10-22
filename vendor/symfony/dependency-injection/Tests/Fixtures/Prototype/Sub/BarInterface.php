@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub;
 
 interface BarInterface
 {

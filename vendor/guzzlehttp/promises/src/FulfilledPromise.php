@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
+namespace MolliePrefix\GuzzleHttp\Promise;
 
 /**
  * A promise that has been fulfilled.
@@ -8,12 +8,12 @@ namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
  * Thenning off of this promise will invoke the onFulfilled callback
  * immediately and ignore other callbacks.
  */
-class FulfilledPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface
+class FulfilledPromise implements \MolliePrefix\GuzzleHttp\Promise\PromiseInterface
 {
     private $value;
     public function __construct($value)
     {
-        if (\method_exists($value, 'then')) {
+        if (\is_object($value) && \method_exists($value, 'then')) {
             throw new \InvalidArgumentException('You cannot create a FulfilledPromise with a promise.');
         }
         $this->value = $value;
@@ -24,11 +24,11 @@ class FulfilledPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Pr
         if (!$onFulfilled) {
             return $this;
         }
-        $queue = queue();
-        $p = new \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Promise([$queue, 'run']);
+        $queue = \MolliePrefix\GuzzleHttp\Promise\Utils::queue();
+        $p = new \MolliePrefix\GuzzleHttp\Promise\Promise([$queue, 'run']);
         $value = $this->value;
         $queue->add(static function () use($p, $value, $onFulfilled) {
-            if ($p->getState() === self::PENDING) {
+            if (\MolliePrefix\GuzzleHttp\Promise\Is::pending($p)) {
                 try {
                     $p->resolve($onFulfilled($value));
                 } catch (\Throwable $e) {

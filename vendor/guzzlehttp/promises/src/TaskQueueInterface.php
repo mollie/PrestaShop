@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
+namespace MolliePrefix\GuzzleHttp\Promise;
 
 interface TaskQueueInterface
 {
@@ -13,8 +13,6 @@ interface TaskQueueInterface
     /**
      * Adds a task to the queue that will be executed the next time run is
      * called.
-     *
-     * @param callable $task
      */
     public function add(callable $task);
     /**

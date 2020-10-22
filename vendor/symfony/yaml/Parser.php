@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Yaml;
+namespace MolliePrefix\Symfony\Component\Yaml;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue;
+use MolliePrefix\Symfony\Component\Yaml\Exception\ParseException;
+use MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue;
 /**
  * Parser parses YAML strings to convert them to PHP arrays.
  *
@@ -59,10 +59,10 @@ class Parser
     public function parseFile($filename, $flags = 0)
     {
         if (!\is_file($filename)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('File "%s" does not exist.', $filename));
+            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('File "%s" does not exist.', $filename));
         }
         if (!\is_readable($filename)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('File "%s" cannot be read.', $filename));
+            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('File "%s" cannot be read.', $filename));
         }
         $this->filename = $filename;
         try {
@@ -86,7 +86,7 @@ class Parser
         if (\is_bool($flags)) {
             @\trigger_error('Passing a boolean flag to toggle exception handling is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE flag instead.', \E_USER_DEPRECATED);
             if ($flags) {
-                $flags = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE;
+                $flags = \MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE;
             } else {
                 $flags = 0;
             }
@@ -94,20 +94,20 @@ class Parser
         if (\func_num_args() >= 3) {
             @\trigger_error('Passing a boolean flag to toggle object support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT flag instead.', \E_USER_DEPRECATED);
             if (\func_get_arg(2)) {
-                $flags |= \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT;
+                $flags |= \MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT;
             }
         }
         if (\func_num_args() >= 4) {
             @\trigger_error('Passing a boolean flag to toggle object for map support is deprecated since Symfony 3.1 and will be removed in 4.0. Use the Yaml::PARSE_OBJECT_FOR_MAP flag instead.', \E_USER_DEPRECATED);
             if (\func_get_arg(3)) {
-                $flags |= \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
+                $flags |= \MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP;
             }
         }
-        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS & $flags) {
+        if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS & $flags) {
             @\trigger_error('Using the Yaml::PARSE_KEYS_AS_STRINGS flag is deprecated since Symfony 3.4 as it will be removed in 4.0. Quote your keys when they are evaluable instead.', \E_USER_DEPRECATED);
         }
         if (\false === \preg_match('//u', $value)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('The YAML value does not appear to be valid UTF-8.', -1, null, $this->filename);
+            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('The YAML value does not appear to be valid UTF-8.', -1, null, $this->filename);
         }
         $this->refs = [];
         $mbEncoding = null;
@@ -130,6 +130,7 @@ class Parser
         $this->refs = [];
         $this->skippedLineNumbers = [];
         $this->locallySkippedLineNumbers = [];
+        $this->totalNumberOfLines = null;
         if (null !== $e) {
             throw $e;
         }
@@ -158,7 +159,7 @@ class Parser
         }
         // Resolves the tag and returns if end of the document
         if (null !== ($tag = $this->getLineTag($this->currentLine, $flags, \false)) && !$this->moveToNextLine()) {
-            return new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue($tag, '');
+            return new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue($tag, '');
         }
         do {
             if ($this->isCurrentLineEmpty()) {
@@ -166,13 +167,13 @@ class Parser
             }
             // tab?
             if ("\t" === $this->currentLine[0]) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('A YAML file cannot contain tabs as indentation.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('A YAML file cannot contain tabs as indentation.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
             }
-            \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::initialize($flags, $this->getRealCurrentLineNb(), $this->filename);
+            \MolliePrefix\Symfony\Component\Yaml\Inline::initialize($flags, $this->getRealCurrentLineNb(), $this->filename);
             $isRef = $mergeNode = \false;
             if (self::preg_match('#^\\-((?P<leadspaces>\\s+)(?P<value>.+))?$#u', \rtrim($this->currentLine), $values)) {
                 if ($context && 'mapping' == $context) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('You cannot define a sequence item when in a mapping.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                    throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('You cannot define a sequence item when in a mapping.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
                 }
                 $context = 'sequence';
                 if (isset($values['value']) && self::preg_match('#^&(?P<ref>[^ ]+) *(?P<value>.*)#u', $values['value'], $matches)) {
@@ -187,9 +188,9 @@ class Parser
                 if (!isset($values['value']) || '' == \trim($values['value'], ' ') || 0 === \strpos(\ltrim($values['value'], ' '), '#')) {
                     $data[] = $this->parseBlock($this->getRealCurrentLineNb() + 1, $this->getNextEmbedBlock(null, \true), $flags);
                 } elseif (null !== ($subTag = $this->getLineTag(\ltrim($values['value'], ' '), $flags))) {
-                    $data[] = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue($subTag, $this->parseBlock($this->getRealCurrentLineNb() + 1, $this->getNextEmbedBlock(null, \true), $flags));
+                    $data[] = new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue($subTag, $this->parseBlock($this->getRealCurrentLineNb() + 1, $this->getNextEmbedBlock(null, \true), $flags));
                 } else {
-                    if (isset($values['leadspaces']) && self::preg_match('#^(?P<key>' . \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::REGEX_QUOTED_STRING . '|[^ \'"\\{\\[].*?) *\\:(\\s+(?P<value>.+?))?\\s*$#u', $this->trimTag($values['value']), $matches)) {
+                    if (isset($values['leadspaces']) && ('!' === $values['value'][0] || self::preg_match('#^(?P<key>' . \MolliePrefix\Symfony\Component\Yaml\Inline::REGEX_QUOTED_STRING . '|[^ \'"\\{\\[].*?) *\\:(\\s+(?P<value>.+?))?\\s*$#u', $this->trimTag($values['value']), $matches))) {
                         // this is a compact notation element, add to next block and parse
                         $block = $values['value'];
                         if ($this->isNextLineIndented()) {
@@ -204,20 +205,20 @@ class Parser
                     $this->refs[$isRef] = \end($data);
                     \array_pop($this->refsBeingParsed);
                 }
-            } elseif (self::preg_match('#^(?P<key>(?:![^\\s]++\\s++)?(?:' . \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::REGEX_QUOTED_STRING . '|(?:!?!php/const:)?[^ \'"\\[\\{!].*?)) *\\:(\\s++(?P<value>.+))?$#u', \rtrim($this->currentLine), $values) && (\false === \strpos($values['key'], ' #') || \in_array($values['key'][0], ['"', "'"]))) {
+            } elseif (self::preg_match('#^(?P<key>(?:![^\\s]++\\s++)?(?:' . \MolliePrefix\Symfony\Component\Yaml\Inline::REGEX_QUOTED_STRING . '|(?:!?!php/const:)?[^ \'"\\[\\{!].*?)) *\\:(\\s++(?P<value>.+))?$#u', \rtrim($this->currentLine), $values) && (\false === \strpos($values['key'], ' #') || \in_array($values['key'][0], ['"', "'"]))) {
                 if ($context && 'sequence' == $context) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('You cannot define a mapping item when in a sequence.', $this->currentLineNb + 1, $this->currentLine, $this->filename);
+                    throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('You cannot define a mapping item when in a sequence.', $this->currentLineNb + 1, $this->currentLine, $this->filename);
                 }
                 $context = 'mapping';
                 try {
                     $i = 0;
-                    $evaluateKey = !(\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS & $flags);
+                    $evaluateKey = !(\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_KEYS_AS_STRINGS & $flags);
                     // constants in key will be evaluated anyway
-                    if (isset($values['key'][0]) && '!' === $values['key'][0] && \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT & $flags) {
+                    if (isset($values['key'][0]) && '!' === $values['key'][0] && \MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_CONSTANT & $flags) {
                         $evaluateKey = \true;
                     }
-                    $key = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::parseScalar($values['key'], 0, null, $i, $evaluateKey);
-                } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException $e) {
+                    $key = \MolliePrefix\Symfony\Component\Yaml\Inline::parseScalar($values['key'], 0, null, $i, $evaluateKey);
+                } catch (\MolliePrefix\Symfony\Component\Yaml\Exception\ParseException $e) {
                     $e->setParsedLine($this->getRealCurrentLineNb() + 1);
                     $e->setSnippet($this->currentLine);
                     throw $e;
@@ -237,16 +238,16 @@ class Parser
                         $refName = \substr(\rtrim($values['value']), 1);
                         if (!\array_key_exists($refName, $this->refs)) {
                             if (\false !== ($pos = \array_search($refName, $this->refsBeingParsed, \true))) {
-                                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Circular reference [%s, %s] detected for reference "%s".', \implode(', ', \array_slice($this->refsBeingParsed, $pos)), $refName, $refName), $this->currentLineNb + 1, $this->currentLine, $this->filename);
+                                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Circular reference [%s, %s] detected for reference "%s".', \implode(', ', \array_slice($this->refsBeingParsed, $pos)), $refName, $refName), $this->currentLineNb + 1, $this->currentLine, $this->filename);
                             }
-                            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $refName), $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $refName), $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
                         }
                         $refValue = $this->refs[$refName];
-                        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $refValue instanceof \stdClass) {
+                        if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $refValue instanceof \stdClass) {
                             $refValue = (array) $refValue;
                         }
                         if (!\is_array($refValue)) {
-                            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('YAML merge keys used with a scalar value instead of an array.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('YAML merge keys used with a scalar value instead of an array.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
                         }
                         $data += $refValue;
                         // array union
@@ -257,22 +258,22 @@ class Parser
                             $value = $this->getNextEmbedBlock();
                         }
                         $parsed = $this->parseBlock($this->getRealCurrentLineNb() + 1, $value, $flags);
-                        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $parsed instanceof \stdClass) {
+                        if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $parsed instanceof \stdClass) {
                             $parsed = (array) $parsed;
                         }
                         if (!\is_array($parsed)) {
-                            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('YAML merge keys used with a scalar value instead of an array.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('YAML merge keys used with a scalar value instead of an array.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
                         }
                         if (isset($parsed[0])) {
                             // If the value associated with the merge key is a sequence, then this sequence is expected to contain mapping nodes
                             // and each of these nodes is merged in turn according to its order in the sequence. Keys in mapping nodes earlier
                             // in the sequence override keys specified in later mapping nodes.
                             foreach ($parsed as $parsedItem) {
-                                if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $parsedItem instanceof \stdClass) {
+                                if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $parsedItem instanceof \stdClass) {
                                     $parsedItem = (array) $parsedItem;
                                 }
                                 if (!\is_array($parsedItem)) {
-                                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Merge items must be arrays.', $this->getRealCurrentLineNb() + 1, $parsedItem, $this->filename);
+                                    throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Merge items must be arrays.', $this->getRealCurrentLineNb() + 1, $parsedItem, $this->filename);
                                 }
                                 $data += $parsedItem;
                                 // array union
@@ -300,7 +301,7 @@ class Parser
                         // But overwriting is allowed when a merge node is used in current block.
                         if ($allowOverwrite || !isset($data[$key])) {
                             if (null !== $subTag) {
-                                $data[$key] = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue($subTag, '');
+                                $data[$key] = new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue($subTag, '');
                             } else {
                                 $data[$key] = null;
                             }
@@ -311,7 +312,7 @@ class Parser
                         $value = $this->parseBlock($this->getRealCurrentLineNb() + 1, $this->getNextEmbedBlock(), $flags);
                         if ('<<' === $key) {
                             $this->refs[$refMatches['ref']] = $value;
-                            if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $value instanceof \stdClass) {
+                            if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && $value instanceof \stdClass) {
                                 $value = (array) $value;
                             }
                             $data += $value;
@@ -319,7 +320,7 @@ class Parser
                             // Spec: Keys MUST be unique; first one wins.
                             // But overwriting is allowed when a merge node is used in current block.
                             if (null !== $subTag) {
-                                $data[$key] = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue($subTag, $value);
+                                $data[$key] = new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue($subTag, $value);
                             } else {
                                 $data[$key] = $value;
                             }
@@ -344,7 +345,7 @@ class Parser
             } else {
                 // multiple documents are not supported
                 if ('---' === $this->currentLine) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Multiple documents are not supported.', $this->currentLineNb + 1, $this->currentLine, $this->filename);
+                    throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Multiple documents are not supported.', $this->currentLineNb + 1, $this->currentLine, $this->filename);
                 }
                 if ($deprecatedUsage = isset($this->currentLine[1]) && '?' === $this->currentLine[0] && ' ' === $this->currentLine[1]) {
                     @\trigger_error($this->getDeprecationMessage('Starting an unquoted string with a question mark followed by a space is deprecated since Symfony 3.3 and will throw \\Symfony\\Component\\Yaml\\Exception\\ParseException in 4.0.'), \E_USER_DEPRECATED);
@@ -352,8 +353,8 @@ class Parser
                 // 1-liner optionally followed by newline(s)
                 if (\is_string($value) && $this->lines[0] === \trim($value)) {
                     try {
-                        $value = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::parse($this->lines[0], $flags, $this->refs);
-                    } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException $e) {
+                        $value = \MolliePrefix\Symfony\Component\Yaml\Inline::parse($this->lines[0], $flags, $this->refs);
+                    } catch (\MolliePrefix\Symfony\Component\Yaml\Exception\ParseException $e) {
                         $e->setParsedLine($this->getRealCurrentLineNb() + 1);
                         $e->setSnippet($this->currentLine);
                         throw $e;
@@ -371,7 +372,7 @@ class Parser
                         }
                         // If the indentation is not consistent at offset 0, it is to be considered as a ParseError
                         if (0 === $this->offset && !$deprecatedUsage && isset($line[0]) && ' ' === $line[0]) {
-                            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Unable to parse.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Unable to parse.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
                         }
                         if ('' === \trim($line)) {
                             $value .= "\n";
@@ -395,18 +396,18 @@ class Parser
                         }
                     }
                     try {
-                        return \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::parse(\trim($value));
-                    } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException $e) {
+                        return \MolliePrefix\Symfony\Component\Yaml\Inline::parse(\trim($value));
+                    } catch (\MolliePrefix\Symfony\Component\Yaml\Exception\ParseException $e) {
                         // fall-through to the ParseException thrown below
                     }
                 }
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Unable to parse.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Unable to parse.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
             }
         } while ($this->moveToNextLine());
         if (null !== $tag) {
-            $data = new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue($tag, $data);
+            $data = new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue($tag, $data);
         }
-        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && !\is_object($data) && 'mapping' === $context) {
+        if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_OBJECT_FOR_MAP & $flags && !\is_object($data) && 'mapping' === $context) {
             $object = new \stdClass();
             foreach ($data as $key => $value) {
                 $object->{$key} = $value;
@@ -495,7 +496,7 @@ class Parser
             }
             $unindentedEmbedBlock = $this->isStringUnIndentedCollectionItem();
             if (!$this->isCurrentLineEmpty() && 0 === $newIndent && !$unindentedEmbedBlock) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Indentation problem.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Indentation problem.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
             }
         } else {
             $newIndent = $indentation;
@@ -539,7 +540,7 @@ class Parser
                 $this->moveToPreviousLine();
                 break;
             } else {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('Indentation problem.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('Indentation problem.', $this->getRealCurrentLineNb() + 1, $this->currentLine, $this->filename);
             }
         }
         return \implode("\n", $data);
@@ -591,22 +592,22 @@ class Parser
             }
             if (!\array_key_exists($value, $this->refs)) {
                 if (\false !== ($pos = \array_search($value, $this->refsBeingParsed, \true))) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Circular reference [%s, %s] detected for reference "%s".', \implode(', ', \array_slice($this->refsBeingParsed, $pos)), $value, $value), $this->currentLineNb + 1, $this->currentLine, $this->filename);
+                    throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Circular reference [%s, %s] detected for reference "%s".', \implode(', ', \array_slice($this->refsBeingParsed, $pos)), $value, $value), $this->currentLineNb + 1, $this->currentLine, $this->filename);
                 }
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $value), $this->currentLineNb + 1, $this->currentLine, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Reference "%s" does not exist.', $value), $this->currentLineNb + 1, $this->currentLine, $this->filename);
             }
             return $this->refs[$value];
         }
         if (self::preg_match('/^(?:' . self::TAG_PATTERN . ' +)?' . self::BLOCK_SCALAR_HEADER_PATTERN . '$/', $value, $matches)) {
             $modifiers = isset($matches['modifiers']) ? $matches['modifiers'] : '';
-            $data = $this->parseBlockScalar($matches['separator'], \preg_replace('#\\d+#', '', $modifiers), (int) \abs((int) $modifiers));
+            $data = $this->parseBlockScalar($matches['separator'], \preg_replace('#\\d+#', '', $modifiers), \abs((int) $modifiers));
             if ('' !== $matches['tag']) {
                 if ('!!binary' === $matches['tag']) {
-                    return \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::evaluateBinaryScalar($data);
+                    return \MolliePrefix\Symfony\Component\Yaml\Inline::evaluateBinaryScalar($data);
                 } elseif ('tagged' === $matches['tag']) {
-                    return new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue(\substr($matches['tag'], 1), $data);
+                    return new \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue(\substr($matches['tag'], 1), $data);
                 } elseif ('!' !== $matches['tag']) {
-                    @\trigger_error($this->getDeprecationMessage(\sprintf('Using the custom tag "%s" for the value "%s" is deprecated since Symfony 3.3. It will be replaced by an instance of %s in 4.0.', $matches['tag'], $data, \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tag\TaggedValue::class)), \E_USER_DEPRECATED);
+                    @\trigger_error($this->getDeprecationMessage(\sprintf('Using the custom tag "%s" for the value "%s" is deprecated since Symfony 3.3. It will be replaced by an instance of %s in 4.0.', $matches['tag'], $data, \MolliePrefix\Symfony\Component\Yaml\Tag\TaggedValue::class)), \E_USER_DEPRECATED);
                 }
             }
             return $data;
@@ -615,7 +616,7 @@ class Parser
             $quotation = '' !== $value && ('"' === $value[0] || "'" === $value[0]) ? $value[0] : null;
             // do not take following lines into account when the current line is a quoted single line value
             if (null !== $quotation && self::preg_match('/^' . $quotation . '.*' . $quotation . '(\\s*#.*)?$/', $value)) {
-                return \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::parse($value, $flags, $this->refs);
+                return \MolliePrefix\Symfony\Component\Yaml\Inline::parse($value, $flags, $this->refs);
             }
             $lines = [];
             while ($this->moveToNextLine()) {
@@ -643,13 +644,13 @@ class Parser
                     $previousLineBlank = \false;
                 }
             }
-            \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::$parsedLineNumber = $this->getRealCurrentLineNb();
-            $parsedValue = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Inline::parse($value, $flags, $this->refs);
+            \MolliePrefix\Symfony\Component\Yaml\Inline::$parsedLineNumber = $this->getRealCurrentLineNb();
+            $parsedValue = \MolliePrefix\Symfony\Component\Yaml\Inline::parse($value, $flags, $this->refs);
             if ('mapping' === $context && \is_string($parsedValue) && '"' !== $value[0] && "'" !== $value[0] && '[' !== $value[0] && '{' !== $value[0] && '!' !== $value[0] && \false !== \strpos($parsedValue, ': ')) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException('A colon cannot be used in an unquoted mapping value.', $this->getRealCurrentLineNb() + 1, $value, $this->filename);
+                throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException('A colon cannot be used in an unquoted mapping value.', $this->getRealCurrentLineNb() + 1, $value, $this->filename);
             }
             return $parsedValue;
-        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException $e) {
+        } catch (\MolliePrefix\Symfony\Component\Yaml\Exception\ParseException $e) {
             $e->setParsedLine($this->getRealCurrentLineNb() + 1);
             $e->setSnippet($this->currentLine);
             throw $e;
@@ -906,7 +907,7 @@ class Parser
                 default:
                     $error = 'Error.';
             }
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException($error);
+            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException($error);
         }
         return $ret;
     }
@@ -937,12 +938,12 @@ class Parser
         $tag = \substr($matches['tag'], 1);
         // Built-in tags
         if ($tag && '!' === $tag[0]) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The built-in tag "!%s" is not implemented.', $tag), $this->getRealCurrentLineNb() + 1, $value, $this->filename);
+            throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('The built-in tag "!%s" is not implemented.', $tag), $this->getRealCurrentLineNb() + 1, $value, $this->filename);
         }
-        if (\_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS & $flags) {
+        if (\MolliePrefix\Symfony\Component\Yaml\Yaml::PARSE_CUSTOM_TAGS & $flags) {
             return $tag;
         }
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Tags support is not enabled. You must use the flag `Yaml::PARSE_CUSTOM_TAGS` to use "%s".', $matches['tag']), $this->getRealCurrentLineNb() + 1, $value, $this->filename);
+        throw new \MolliePrefix\Symfony\Component\Yaml\Exception\ParseException(\sprintf('Tags support is not enabled. You must use the flag `Yaml::PARSE_CUSTOM_TAGS` to use "%s".', $matches['tag']), $this->getRealCurrentLineNb() + 1, $value, $this->filename);
     }
     private function getDeprecationMessage($message)
     {

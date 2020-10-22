@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures;
 
-class FactoryDummy extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent
+class FactoryDummy extends \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryParent
 {
-    public static function createFactory() : \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
+    public static function createFactory() : \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
     {
     }
     public function create() : \stdClass
@@ -25,13 +25,13 @@ class FactoryDummy extends \_PhpScoper5eddef0da618a\Symfony\Component\Dependency
     public static function createSelf() : self
     {
     }
-    public static function createParent() : \_PhpScoper5eddef0da618a\parent
+    public static function createParent() : \MolliePrefix\parent
     {
     }
 }
 class FactoryParent
 {
 }
-function factoryFunction() : \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
+function factoryFunction() : \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\FactoryDummy
 {
 }

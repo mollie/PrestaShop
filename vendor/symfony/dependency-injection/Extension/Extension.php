@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Extension;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Extension;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ConfigurationInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Processor;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\Config\Definition\ConfigurationInterface;
+use MolliePrefix\Symfony\Component\Config\Definition\Processor;
+use MolliePrefix\Symfony\Component\DependencyInjection\Container;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 /**
  * Provides useful features shared by many extensions.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class Extension implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Extension\ExtensionInterface, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface
+abstract class Extension implements \MolliePrefix\Symfony\Component\DependencyInjection\Extension\ExtensionInterface, \MolliePrefix\Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface
 {
     private $processedConfigs = [];
     /**
@@ -62,15 +62,15 @@ abstract class Extension implements \_PhpScoper5eddef0da618a\Symfony\Component\D
     {
         $className = static::class;
         if ('Extension' != \substr($className, -9)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\BadMethodCallException('This extension does not follow the naming convention; you must overwrite the getAlias() method.');
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\BadMethodCallException('This extension does not follow the naming convention; you must overwrite the getAlias() method.');
         }
         $classBaseName = \substr(\strrchr($className, '\\'), 1, -9);
-        return \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container::underscore($classBaseName);
+        return \MolliePrefix\Symfony\Component\DependencyInjection\Container::underscore($classBaseName);
     }
     /**
      * {@inheritdoc}
      */
-    public function getConfiguration(array $config, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function getConfiguration(array $config, \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $class = static::class;
         if (\false !== \strpos($class, "\0")) {
@@ -85,9 +85,9 @@ abstract class Extension implements \_PhpScoper5eddef0da618a\Symfony\Component\D
     /**
      * @return array
      */
-    protected final function processConfiguration(\_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ConfigurationInterface $configuration, array $configs)
+    protected final function processConfiguration(\MolliePrefix\Symfony\Component\Config\Definition\ConfigurationInterface $configuration, array $configs)
     {
-        $processor = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Processor();
+        $processor = new \MolliePrefix\Symfony\Component\Config\Definition\Processor();
         return $this->processedConfigs[] = $processor->processConfiguration($configuration, $configs);
     }
     /**
@@ -106,10 +106,10 @@ abstract class Extension implements \_PhpScoper5eddef0da618a\Symfony\Component\D
      *
      * @throws InvalidArgumentException When the config is not enableable
      */
-    protected function isConfigEnabled(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $config)
+    protected function isConfigEnabled(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $config)
     {
         if (!\array_key_exists('enabled', $config)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException("The config array has no 'enabled' key.");
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException("The config array has no 'enabled' key.");
         }
         return (bool) $container->getParameterBag()->resolveValue($config['enabled']);
     }

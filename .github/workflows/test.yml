@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['5.6', '7.0', '7,1', '7.2', '7.3']
+        php-versions: ['7,1']
 
     steps:
     - uses: actions/checkout@v2
@@ -19,15 +19,6 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: composer validate
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
 
     - run: composer require --dev phpunit/phpunit ^5
     - run: ./vendor/bin/phpunit tests/Unit

@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\MollieApiClient;
 abstract class BaseResource
 {
     /**
@@ -12,7 +12,7 @@ abstract class BaseResource
     /**
      * @param $client
      */
-    public function __construct(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient $client)
+    public function __construct(\MolliePrefix\Mollie\Api\MollieApiClient $client)
     {
         $this->client = $client;
     }

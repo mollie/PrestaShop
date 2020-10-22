@@ -8,29 +8,29 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Alias;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ChildDefinition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Alias;
+use MolliePrefix\Symfony\Component\DependencyInjection\ChildDefinition;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Definition;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  *
  * @method InstanceofConfigurator instanceof($fqcn)
  */
-class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
+class ServicesConfigurator extends \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractConfigurator
 {
     const FACTORY = 'services';
     private $defaults;
     private $container;
     private $loader;
     private $instanceof;
-    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\PhpFileLoader $loader, array &$instanceof)
+    public function __construct(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container, \MolliePrefix\Symfony\Component\DependencyInjection\Loader\PhpFileLoader $loader, array &$instanceof)
     {
-        $this->defaults = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition();
+        $this->defaults = new \MolliePrefix\Symfony\Component\DependencyInjection\Definition();
         $this->container = $container;
         $this->loader = $loader;
         $this->instanceof =& $instanceof;
@@ -43,7 +43,7 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
      */
     public final function defaults()
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\DefaultsConfigurator($this, $this->defaults = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition());
+        return new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\DefaultsConfigurator($this, $this->defaults = new \MolliePrefix\Symfony\Component\DependencyInjection\Definition());
     }
     /**
      * Defines an instanceof-conditional to be applied to following service definitions.
@@ -54,8 +54,8 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
      */
     protected final function setInstanceof($fqcn)
     {
-        $this->instanceof[$fqcn] = $definition = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ChildDefinition('');
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\InstanceofConfigurator($this, $definition, $fqcn);
+        $this->instanceof[$fqcn] = $definition = new \MolliePrefix\Symfony\Component\DependencyInjection\ChildDefinition('');
+        return new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\InstanceofConfigurator($this, $definition, $fqcn);
     }
     /**
      * Registers a service.
@@ -69,7 +69,7 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
     {
         $defaults = $this->defaults;
         $allowParent = !$defaults->getChanges() && empty($this->instanceof);
-        $definition = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition();
+        $definition = new \MolliePrefix\Symfony\Component\DependencyInjection\Definition();
         if (!$defaults->isPublic() || !$defaults->isPrivate()) {
             $definition->setPublic($defaults->isPublic() && !$defaults->isPrivate());
         }
@@ -78,7 +78,7 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
         // deep clone, to avoid multiple process of the same instance in the passes
         $definition->setBindings(\unserialize(\serialize($defaults->getBindings())));
         $definition->setChanges([]);
-        $configurator = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $this->instanceof, $allowParent, $this, $definition, $id, $defaults->getTags());
+        $configurator = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $this->instanceof, $allowParent, $this, $definition, $id, $defaults->getTags());
         return null !== $class ? $configurator->class($class) : $configurator;
     }
     /**
@@ -92,12 +92,12 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
     public final function alias($id, $referencedId)
     {
         $ref = static::processValue($referencedId, \true);
-        $alias = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Alias((string) $ref);
+        $alias = new \MolliePrefix\Symfony\Component\DependencyInjection\Alias((string) $ref);
         if (!$this->defaults->isPublic() || !$this->defaults->isPrivate()) {
             $alias->setPublic($this->defaults->isPublic());
         }
         $this->container->setAlias($id, $alias);
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\AliasConfigurator($this, $alias);
+        return new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\AliasConfigurator($this, $alias);
     }
     /**
      * Registers a PSR-4 namespace using a glob pattern.
@@ -110,7 +110,7 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
     public final function load($namespace, $resource)
     {
         $allowParent = !$this->defaults->getChanges() && empty($this->instanceof);
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\PrototypeConfigurator($this, $this->loader, $this->defaults, $namespace, $resource, $allowParent);
+        return new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\PrototypeConfigurator($this, $this->loader, $this->defaults, $namespace, $resource, $allowParent);
     }
     /**
      * Gets an already defined service definition.
@@ -125,7 +125,7 @@ class ServicesConfigurator extends \_PhpScoper5eddef0da618a\Symfony\Component\De
     {
         $allowParent = !$this->defaults->getChanges() && empty($this->instanceof);
         $definition = $this->container->getDefinition($id);
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $definition->getInstanceofConditionals(), $allowParent, $this, $definition, $id, []);
+        return new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator($this->container, $definition->getInstanceofConditionals(), $allowParent, $this, $definition, $id, []);
     }
     /**
      * Registers a service.

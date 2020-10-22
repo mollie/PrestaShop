@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * Delete a customer from the Mollie API.
@@ -12,6 +12,6 @@ try {
     require "../initialize.php";
     $mollie->customers->delete("cst_fE3F6nvX");
     echo "<p>Customer deleted!</p>";
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

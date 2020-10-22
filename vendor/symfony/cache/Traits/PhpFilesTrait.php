@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits;
+namespace MolliePrefix\Symfony\Component\Cache\Traits;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\CacheException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\Cache\Exception\CacheException;
+use MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException;
 /**
  * @author Piotr Stankowski <git@trakos.pl>
  * @author Nicolas Grekas <p@tchwork.com>
@@ -121,7 +121,7 @@ trait PhpFilesTrait
                     $value = \serialize($value);
                 }
             } elseif (!\is_scalar($value)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \gettype($value)));
+                throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache key "%s" has non-serializable "%s" value.', $key, \gettype($value)));
             }
             $data[1] = $value;
             $file = $this->getFile($key, \true);
@@ -131,7 +131,7 @@ trait PhpFilesTrait
             }
         }
         if (!$ok && !\is_writable($this->directory)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\CacheException(\sprintf('Cache directory is not writable (%s).', $this->directory));
+            throw new \MolliePrefix\Symfony\Component\Cache\Exception\CacheException(\sprintf('Cache directory is not writable (%s).', $this->directory));
         }
         return $ok;
     }

@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter;
+namespace MolliePrefix\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5eddef0da618a\Doctrine\DBAL\Connection;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits\PdoTrait;
-class PdoAdapter extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AbstractAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface
+use MolliePrefix\Doctrine\DBAL\Connection;
+use MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\Cache\PruneableInterface;
+use MolliePrefix\Symfony\Component\Cache\Traits\PdoTrait;
+class PdoAdapter extends \MolliePrefix\Symfony\Component\Cache\Adapter\AbstractAdapter implements \MolliePrefix\Symfony\Component\Cache\PruneableInterface
 {
     use PdoTrait;
     protected $maxIdLength = 255;

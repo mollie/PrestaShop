@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 /**
  * ParameterBagInterface.
  *

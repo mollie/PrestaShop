@@ -1,7 +1,7 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub;
 
-class Bar implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface
+class Bar implements \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\BarInterface
 {
 }

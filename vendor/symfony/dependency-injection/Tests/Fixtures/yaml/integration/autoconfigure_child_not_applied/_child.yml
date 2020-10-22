@@ -1,4 +1,4 @@
 services:
     child_service:
-        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         parent: parent_service

@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-class Customer extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+use MolliePrefix\Mollie\Api\MollieApiClient;
+class Customer extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -58,8 +58,8 @@ class Customer extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResourc
             return $this;
         }
         $body = \json_encode(array("name" => $this->name, "email" => $this->email, "locale" => $this->locale, "metadata" => $this->metadata));
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
-        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer($this->client));
+        $result = $this->client->performHttpCallToFullUrl(\MolliePrefix\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
+        return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \MolliePrefix\Mollie\Api\Resources\Customer($this->client));
     }
     /**
      * @param array $options

@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
+use MolliePrefix\PrestaShop\Decimal\Number;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {

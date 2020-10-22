@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Definition\Dumper;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Definition\Dumper;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
-class YamlReferenceDumperTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
+use MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
+class YamlReferenceDumperTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testDumper()
     {
-        $configuration = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
+        $configuration = new \MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \MolliePrefix\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
         $this->assertEquals($this->getConfigurationAsString(), $dumper->dump($configuration));
     }
     public function provideDumpAtPath()
@@ -62,8 +62,8 @@ EOL
      */
     public function testDumpAtPath($path, $expected)
     {
-        $configuration = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
+        $configuration = new \MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \MolliePrefix\Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper();
         $this->assertSame(\trim($expected), \trim($dumper->dumpAtPath($configuration, $path)));
     }
     private function getConfigurationAsString()

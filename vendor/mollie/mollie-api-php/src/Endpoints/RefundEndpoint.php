@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Refund;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\RefundCollection;
-class RefundEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Refund;
+use MolliePrefix\Mollie\Api\Resources\RefundCollection;
+class RefundEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "refunds";
     /**
@@ -15,7 +15,7 @@ class RefundEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Colle
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Refund($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Refund($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -27,7 +27,7 @@ class RefundEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Colle
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\RefundCollection($this->client, $count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\RefundCollection($this->client, $count, $_links);
     }
     /**
      * Retrieves a collection of Refunds from Mollie.

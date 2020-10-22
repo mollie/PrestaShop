@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Definition\Dumper;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Definition\Dumper;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
-class XmlReferenceDumperTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper;
+use MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration;
+class XmlReferenceDumperTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testDumper()
     {
-        $configuration = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
+        $configuration = new \MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \MolliePrefix\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
         $this->assertEquals($this->getConfigurationAsString(), $dumper->dump($configuration));
     }
     public function testNamespaceDumper()
     {
-        $configuration = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
-        $dumper = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
+        $configuration = new \MolliePrefix\Symfony\Component\Config\Tests\Fixtures\Configuration\ExampleConfiguration();
+        $dumper = new \MolliePrefix\Symfony\Component\Config\Definition\Dumper\XmlReferenceDumper();
         $this->assertEquals(\str_replace('http://example.org/schema/dic/acme_root', 'http://symfony.com/schema/dic/symfony', $this->getConfigurationAsString()), $dumper->dump($configuration, 'http://symfony.com/schema/dic/symfony'));
     }
     private function getConfigurationAsString()

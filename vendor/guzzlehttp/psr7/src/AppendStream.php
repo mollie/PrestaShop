@@ -1,14 +1,14 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Reads from multiple streams, one after the other.
  *
  * This is a read-only stream decorator.
  */
-class AppendStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface
+class AppendStream implements \MolliePrefix\Psr\Http\Message\StreamInterface
 {
     /** @var StreamInterface[] Streams being decorated */
     private $streams = [];
@@ -41,7 +41,7 @@ class AppendStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamIn
      *
      * @throws \InvalidArgumentException if the stream is not readable
      */
-    public function addStream(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $stream)
+    public function addStream(\MolliePrefix\Psr\Http\Message\StreamInterface $stream)
     {
         if (!$stream->isReadable()) {
             throw new \InvalidArgumentException('Each stream must be readable');
@@ -54,7 +54,7 @@ class AppendStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamIn
     }
     public function getContents()
     {
-        return copy_to_string($this);
+        return \MolliePrefix\GuzzleHttp\Psr7\Utils::copyToString($this);
     }
     /**
      * Closes each attached stream.
@@ -85,6 +85,7 @@ class AppendStream implements \_PhpScoper5eddef0da618a\Psr\Http\Message\StreamIn
             $stream->detach();
         }
         $this->streams = [];
+        return null;
     }
     public function tell()
     {

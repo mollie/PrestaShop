@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Config;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Config;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
-class ContainerParametersResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Config\ContainerParametersResource;
+class ContainerParametersResourceTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /** @var ContainerParametersResource */
     private $resource;
     protected function setUp()
     {
-        $this->resource = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
+        $this->resource = new \MolliePrefix\Symfony\Component\DependencyInjection\Config\ContainerParametersResource(['locales' => ['fr', 'en'], 'default_locale' => 'fr']);
     }
     public function testToString()
     {

@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-class ResolveParameterPlaceHoldersPassTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+class ResolveParameterPlaceHoldersPassTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     private $compilerPass;
     private $container;
     private $fooDefinition;
     protected function setUp()
     {
-        $this->compilerPass = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
+        $this->compilerPass = new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
         $this->container = $this->createContainerBuilder();
         $this->compilerPass->process($this->container);
         $this->fooDefinition = $this->container->getDefinition('foo');
@@ -61,26 +61,26 @@ class ResolveParameterPlaceHoldersPassTest extends \_PhpScoper5eddef0da618a\PHPU
     }
     public function testParameterNotFoundExceptionsIsThrown()
     {
-        $this->expectException(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException::class);
+        $this->expectException(\MolliePrefix\Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException::class);
         $this->expectExceptionMessage('The service "baz_service_id" has a dependency on a non-existent parameter "non_existent_param".');
-        $containerBuilder = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $definition = $containerBuilder->register('baz_service_id');
         $definition->setArgument(0, '%non_existent_param%');
-        $pass = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
+        $pass = new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass();
         $pass->process($containerBuilder);
     }
     public function testParameterNotFoundExceptionsIsNotThrown()
     {
-        $containerBuilder = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $definition = $containerBuilder->register('baz_service_id');
         $definition->setArgument(0, '%non_existent_param%');
-        $pass = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass(\true, \false);
+        $pass = new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass(\true, \false);
         $pass->process($containerBuilder);
         $this->assertCount(1, $definition->getErrors());
     }
     private function createContainerBuilder()
     {
-        $containerBuilder = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $containerBuilder = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $containerBuilder->setParameter('foo.class', 'Foo');
         $containerBuilder->setParameter('foo.factory.class', 'FooFactory');
         $containerBuilder->setParameter('foo.arg1', 'bar');

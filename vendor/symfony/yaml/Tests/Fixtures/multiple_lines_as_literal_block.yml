@@ -10,5 +10,5 @@ data:
         empty line:
         
         baz
-    multi_line_with_carriage_return: "_PhpScoper5eddef0da618a\foo\nbar\r\nbaz"
-    nested_inlined_multi_line_string: { inlined_multi_line: "_PhpScoper5eddef0da618a\foo\nbar\r\nempty line:\_PhpScoper5eddef0da618a\n\nbaz" }
+    multi_line_with_carriage_return: "MolliePrefix\foo\nbar\r\nbaz"
+    nested_inlined_multi_line_string: { inlined_multi_line: "MolliePrefix\foo\nbar\r\nempty line:\MolliePrefix\n\nbaz" }

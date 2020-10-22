@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\PaymentCollection;
-class CustomerPaymentsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Resources\Customer;
+use MolliePrefix\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
+class CustomerPaymentsEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "customers_payments";
     /**
@@ -15,7 +15,7 @@ class CustomerPaymentsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpo
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Payment($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -27,7 +27,7 @@ class CustomerPaymentsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpo
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\PaymentCollection($this->client, $count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\PaymentCollection($this->client, $count, $_links);
     }
     /**
      * Create a subscription for a Customer
@@ -39,7 +39,7 @@ class CustomerPaymentsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpo
      * @return Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, array $options = [], array $filters = [])
+    public function createFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, array $options = [], array $filters = [])
     {
         return $this->createForId($customer->id, $options, $filters);
     }
@@ -67,7 +67,7 @@ class CustomerPaymentsEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpo
      * @return PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, $from = null, $limit = null, array $parameters = [])
+    public function listFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, $from = null, $limit = null, array $parameters = [])
     {
         return $this->listForId($customer->id, $from, $limit, $parameters);
     }

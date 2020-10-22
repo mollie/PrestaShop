@@ -1,16 +1,16 @@
 
 services:
     service_container:
-        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:
         class: Class1
         public: true
         arguments: [!service { class: Class2, arguments: [!service { class: Class2 }] }]
-    _PhpScoper5eddef0da618a\Psr\Container\ContainerInterface:
+    MolliePrefix\Psr\Container\ContainerInterface:
         alias: service_container
         public: false
-    _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface:
+    MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface:
         alias: service_container
         public: false

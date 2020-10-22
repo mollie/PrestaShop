@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Argument;
 
 /**
  * @author Guilhem Niot <guilhem.niot@gmail.com>
  */
-final class BoundArgument implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ArgumentInterface
+final class BoundArgument implements \MolliePrefix\Symfony\Component\DependencyInjection\Argument\ArgumentInterface
 {
     private static $sequence = 0;
     private $value;

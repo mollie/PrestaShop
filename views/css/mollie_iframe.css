@@ -12,6 +12,22 @@ label.mollie-input-error {
     padding-top: 10px;
 }
 
+/*
+  In order to make elements focusable on page render fields must not be hidden - display:none or visibility:hidden
+  @see https://stackoverflow.com/questions/25324079/tab-throug-input-fields-when-displaynone
+ */
+.mollie-credit-card-container__hide {
+  opacity: 0;
+  height: 0;
+  position: absolute;
+}
+
+.mollie-credit-card-container__show {
+  opacity: 1;
+  height: inherit;
+  position: relative;
+}
+
 .mollie-iframe-container .mollie-label {
     position: absolute;
     left: 15px;

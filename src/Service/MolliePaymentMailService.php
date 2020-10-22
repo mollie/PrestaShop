@@ -35,9 +35,9 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Cart;
 use Context;
 use Customer;

@@ -1,0 +1,12 @@
+{
+    "name": "marius/prefix",
+    "authors": [
+        {
+            "name": "marius",
+            "email": "marius.gudauskis@invertus.eu"
+        }
+    ],
+    "require": {
+        "humbug/php-scoper": "^0.11.4"
+    }
+}

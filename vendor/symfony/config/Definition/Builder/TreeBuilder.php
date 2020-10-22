@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder;
+namespace MolliePrefix\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\NodeInterface;
+use MolliePrefix\Symfony\Component\Config\Definition\NodeInterface;
 /**
  * This is the entry class for building a config tree.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TreeBuilder implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\NodeParentInterface
+class TreeBuilder implements \MolliePrefix\Symfony\Component\Config\Definition\Builder\NodeParentInterface
 {
     protected $tree;
     protected $root;
@@ -35,9 +35,9 @@ class TreeBuilder implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\D
      *
      * @throws \RuntimeException When the node type is not supported
      */
-    public function root($name, $type = 'array', \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder = null)
+    public function root($name, $type = 'array', \MolliePrefix\Symfony\Component\Config\Definition\Builder\NodeBuilder $builder = null)
     {
-        $builder = $builder ?: new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\NodeBuilder();
+        $builder = $builder ?: new \MolliePrefix\Symfony\Component\Config\Definition\Builder\NodeBuilder();
         return $this->root = $builder->node($name, $type)->setParent($this);
     }
     /**

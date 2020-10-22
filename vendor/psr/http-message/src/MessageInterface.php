@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Psr\Http\Message;
+namespace MolliePrefix\Psr\Http\Message;
 
 /**
  * HTTP messages consist of requests from a client to a server and responses
@@ -173,5 +173,5 @@ interface MessageInterface
      * @return static
      * @throws \InvalidArgumentException When the body is not valid.
      */
-    public function withBody(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $body);
+    public function withBody(\MolliePrefix\Psr\Http\Message\StreamInterface $body);
 }

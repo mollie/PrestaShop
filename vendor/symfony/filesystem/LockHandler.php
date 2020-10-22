@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Filesystem;
+namespace MolliePrefix\Symfony\Component\Filesystem;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Lock\Store\FlockStore;
-use _PhpScoper5eddef0da618a\Symfony\Component\Lock\Store\SemaphoreStore;
-@\trigger_error(\sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use %s or %s instead.', \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\LockHandler::class, \_PhpScoper5eddef0da618a\Symfony\Component\Lock\Store\SemaphoreStore::class, \_PhpScoper5eddef0da618a\Symfony\Component\Lock\Store\FlockStore::class), \E_USER_DEPRECATED);
+use MolliePrefix\Symfony\Component\Filesystem\Exception\IOException;
+use MolliePrefix\Symfony\Component\Lock\Store\FlockStore;
+use MolliePrefix\Symfony\Component\Lock\Store\SemaphoreStore;
+@\trigger_error(\sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use %s or %s instead.', \MolliePrefix\Symfony\Component\Filesystem\LockHandler::class, \MolliePrefix\Symfony\Component\Lock\Store\SemaphoreStore::class, \MolliePrefix\Symfony\Component\Lock\Store\FlockStore::class), \E_USER_DEPRECATED);
 /**
  * LockHandler class provides a simple abstraction to lock anything by means of
  * a file lock.
@@ -43,11 +43,11 @@ class LockHandler
     {
         $lockPath = $lockPath ?: \sys_get_temp_dir();
         if (!\is_dir($lockPath)) {
-            $fs = new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Filesystem();
+            $fs = new \MolliePrefix\Symfony\Component\Filesystem\Filesystem();
             $fs->mkdir($lockPath);
         }
         if (!\is_writable($lockPath)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('The directory "%s" is not writable.', $lockPath), 0, null, $lockPath);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('The directory "%s" is not writable.', $lockPath), 0, null, $lockPath);
         }
         $this->file = \sprintf('%s/sf.%s.%s.lock', $lockPath, \preg_replace('/[^a-z0-9\\._-]+/i', '-', $name), \hash('sha256', $name));
     }
@@ -81,7 +81,7 @@ class LockHandler
         }
         \restore_error_handler();
         if (!$this->handle) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException($error, 0, null, $this->file);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException($error, 0, null, $this->file);
         }
         // On Windows, even if PHP doc says the contrary, LOCK_NB works, see
         // https://bugs.php.net/54129

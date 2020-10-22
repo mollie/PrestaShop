@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
-$container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-$container->register('foo', 'FooClass')->addArgument(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('bar'))->setPublic(\true);
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Reference;
+$container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+$container->register('foo', 'FooClass')->addArgument(new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('bar'))->setPublic(\true);
 $container->register('bar', 'BarClass')->setPublic(\true);
 $container->compile();
 return $container;

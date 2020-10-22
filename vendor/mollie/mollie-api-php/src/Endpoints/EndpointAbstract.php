@@ -1,19 +1,19 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseCollection;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\BaseResource;
+use MolliePrefix\Mollie\Api\Resources\ResourceFactory;
 abstract class EndpointAbstract
 {
-    const REST_CREATE = \_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_POST;
-    const REST_UPDATE = \_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_PATCH;
-    const REST_READ = \_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_GET;
-    const REST_LIST = \_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_GET;
-    const REST_DELETE = \_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_DELETE;
+    const REST_CREATE = \MolliePrefix\Mollie\Api\MollieApiClient::HTTP_POST;
+    const REST_UPDATE = \MolliePrefix\Mollie\Api\MollieApiClient::HTTP_PATCH;
+    const REST_READ = \MolliePrefix\Mollie\Api\MollieApiClient::HTTP_GET;
+    const REST_LIST = \MolliePrefix\Mollie\Api\MollieApiClient::HTTP_GET;
+    const REST_DELETE = \MolliePrefix\Mollie\Api\MollieApiClient::HTTP_DELETE;
     /**
      * @var MollieApiClient
      */
@@ -29,7 +29,7 @@ abstract class EndpointAbstract
     /**
      * @param MollieApiClient $api
      */
-    public function __construct(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient $api)
+    public function __construct(\MolliePrefix\Mollie\Api\MollieApiClient $api)
     {
         $this->client = $api;
     }
@@ -61,7 +61,7 @@ abstract class EndpointAbstract
     protected function rest_create(array $body, array $filters)
     {
         $result = $this->client->performHttpCall(self::REST_CREATE, $this->getResourcePath() . $this->buildQueryString($filters), $this->parseRequestBody($body));
-        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Retrieves a single object from the REST API.
@@ -74,11 +74,11 @@ abstract class EndpointAbstract
     protected function rest_read($id, array $filters)
     {
         if (empty($id)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
         }
         $id = \urlencode($id);
         $result = $this->client->performHttpCall(self::REST_READ, "{$this->getResourcePath()}/{$id}" . $this->buildQueryString($filters));
-        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Sends a DELETE request to a single Molle API object.
@@ -92,14 +92,14 @@ abstract class EndpointAbstract
     protected function rest_delete($id, array $body = [])
     {
         if (empty($id)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Invalid resource id.");
         }
         $id = \urlencode($id);
         $result = $this->client->performHttpCall(self::REST_DELETE, "{$this->getResourcePath()}/{$id}", $this->parseRequestBody($body));
         if ($result === null) {
             return null;
         }
-        return \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
+        return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
     /**
      * Get a collection of objects from the REST API.
@@ -119,7 +119,7 @@ abstract class EndpointAbstract
         /** @var BaseCollection $collection */
         $collection = $this->getResourceCollectionObject($result->count, $result->_links);
         foreach ($result->_embedded->{$collection->getCollectionResourceName()} as $dataResult) {
-            $collection[] = \_PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
+            $collection[] = \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
         }
         return $collection;
     }
@@ -145,7 +145,7 @@ abstract class EndpointAbstract
         if (\strpos($this->resourcePath, "_") !== \false) {
             list($parentResource, $childResource) = \explode("_", $this->resourcePath, 2);
             if (empty($this->parentId)) {
-                throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Subresource '{$this->resourcePath}' used without parent '{$parentResource}' ID.");
+                throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Subresource '{$this->resourcePath}' used without parent '{$parentResource}' ID.");
             }
             return "{$parentResource}/{$this->parentId}/{$childResource}";
         }
@@ -162,9 +162,9 @@ abstract class EndpointAbstract
             return null;
         }
         try {
-            $encoded = \_PhpScoper5eddef0da618a\GuzzleHttp\json_encode($body);
+            $encoded = \MolliePrefix\GuzzleHttp\json_encode($body);
         } catch (\InvalidArgumentException $e) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Error encoding parameters into JSON: '" . $e->getMessage() . "'.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Error encoding parameters into JSON: '" . $e->getMessage() . "'.");
         }
         return $encoded;
     }

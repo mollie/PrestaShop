@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\LazyProxy;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\LazyProxy;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -37,23 +37,30 @@ class ProxyHelper
         if (!$type) {
             return null;
         }
-        if (!\is_string($type)) {
-            $name = $type instanceof \ReflectionNamedType ? $type->getName() : $type->__toString();
-            if ($type->isBuiltin()) {
-                return $noBuiltin ? null : $name;
+        $types = [];
+        foreach ($type instanceof \MolliePrefix\ReflectionUnionType ? $type->getTypes() : [$type] as $type) {
+            $name = $type instanceof \ReflectionNamedType ? $type->getName() : (string) $type;
+            if (!\is_string($type) && $type->isBuiltin()) {
+                if (!$noBuiltin) {
+                    $types[] = $name;
+                }
+                continue;
+            }
+            $lcName = \strtolower($name);
+            $prefix = $noBuiltin ? '' : '\\';
+            if ('self' !== $lcName && 'parent' !== $lcName) {
+                $types[] = '' !== $prefix ? $prefix . $name : $name;
+                continue;
+            }
+            if (!$r instanceof \ReflectionMethod) {
+                continue;
+            }
+            if ('self' === $lcName) {
+                $types[] = $prefix . $r->getDeclaringClass()->name;
+            } else {
+                $types[] = ($parent = $r->getDeclaringClass()->getParentClass()) ? $prefix . $parent->name : null;
             }
         }
-        $lcName = \strtolower($name);
-        $prefix = $noBuiltin ? '' : '\\';
-        if ('self' !== $lcName && 'parent' !== $lcName) {
-            return $prefix . $name;
-        }
-        if (!$r instanceof \ReflectionMethod) {
-            return null;
-        }
-        if ('self' === $lcName) {
-            return $prefix . $r->getDeclaringClass()->name;
-        }
-        return ($parent = $r->getDeclaringClass()->getParentClass()) ? $prefix . $parent->name : null;
+        return $types ? \implode('|', $types) : null;
     }
 }

@@ -8,38 +8,39 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter;
+namespace MolliePrefix\Symfony\Component\Cache\Adapter;
 
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface;
-use _PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits\ProxyTrait;
+use MolliePrefix\Psr\Cache\CacheItemInterface;
+use MolliePrefix\Psr\Cache\CacheItemPoolInterface;
+use MolliePrefix\Symfony\Component\Cache\CacheItem;
+use MolliePrefix\Symfony\Component\Cache\PruneableInterface;
+use MolliePrefix\Symfony\Component\Cache\ResettableInterface;
+use MolliePrefix\Symfony\Component\Cache\Traits\ProxyTrait;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ProxyAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface
+class ProxyAdapter implements \MolliePrefix\Symfony\Component\Cache\Adapter\AdapterInterface, \MolliePrefix\Symfony\Component\Cache\PruneableInterface, \MolliePrefix\Symfony\Component\Cache\ResettableInterface
 {
     use ProxyTrait;
     private $namespace;
     private $namespaceLen;
     private $createCacheItem;
     private $poolHash;
+    private $defaultLifetime;
     /**
      * @param string $namespace
      * @param int    $defaultLifetime
      */
-    public function __construct(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemPoolInterface $pool, $namespace = '', $defaultLifetime = 0)
+    public function __construct(\MolliePrefix\Psr\Cache\CacheItemPoolInterface $pool, $namespace = '', $defaultLifetime = 0)
     {
         $this->pool = $pool;
         $this->poolHash = $poolHash = \spl_object_hash($pool);
-        $this->namespace = '' === $namespace ? '' : \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey($namespace);
+        $this->namespace = '' === $namespace ? '' : \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($namespace);
         $this->namespaceLen = \strlen($namespace);
-        $this->createCacheItem = \Closure::bind(static function ($key, $innerItem) use($defaultLifetime, $poolHash) {
-            $item = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem();
+        $this->defaultLifetime = $defaultLifetime;
+        $this->createCacheItem = \Closure::bind(static function ($key, $innerItem) use($poolHash) {
+            $item = new \MolliePrefix\Symfony\Component\Cache\CacheItem();
             $item->key = $key;
-            $item->defaultLifetime = $defaultLifetime;
             $item->poolHash = $poolHash;
             if (null !== $innerItem) {
                 $item->value = $innerItem->get();
@@ -48,7 +49,7 @@ class ProxyAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\A
                 $innerItem->set(null);
             }
             return $item;
-        }, null, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::class);
+        }, null, \MolliePrefix\Symfony\Component\Cache\CacheItem::class);
     }
     /**
      * {@inheritdoc}
@@ -107,14 +108,14 @@ class ProxyAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\A
     /**
      * {@inheritdoc}
      */
-    public function save(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function save(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         return $this->doSave($item, __FUNCTION__);
     }
     /**
      * {@inheritdoc}
      */
-    public function saveDeferred(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item)
+    public function saveDeferred(\MolliePrefix\Psr\Cache\CacheItemInterface $item)
     {
         return $this->doSave($item, __FUNCTION__);
     }
@@ -125,19 +126,19 @@ class ProxyAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\A
     {
         return $this->pool->commit();
     }
-    private function doSave(\_PhpScoper5eddef0da618a\Psr\Cache\CacheItemInterface $item, $method)
+    private function doSave(\MolliePrefix\Psr\Cache\CacheItemInterface $item, $method)
     {
-        if (!$item instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem) {
+        if (!$item instanceof \MolliePrefix\Symfony\Component\Cache\CacheItem) {
             return \false;
         }
         $item = (array) $item;
         $expiry = $item["\0*\0expiry"];
-        if (null === $expiry && 0 < $item["\0*\0defaultLifetime"]) {
-            $expiry = \time() + $item["\0*\0defaultLifetime"];
+        if (null === $expiry && 0 < $this->defaultLifetime) {
+            $expiry = \time() + $this->defaultLifetime;
         }
         if ($item["\0*\0poolHash"] === $this->poolHash && $item["\0*\0innerItem"]) {
             $innerItem = $item["\0*\0innerItem"];
-        } elseif ($this->pool instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface) {
+        } elseif ($this->pool instanceof \MolliePrefix\Symfony\Component\Cache\Adapter\AdapterInterface) {
             // this is an optimization specific for AdapterInterface implementations
             // so we can save a round-trip to the backend by just creating a new item
             $f = $this->createCacheItem;
@@ -161,7 +162,7 @@ class ProxyAdapter implements \_PhpScoper5eddef0da618a\Symfony\Component\Cache\A
     }
     private function getId($key)
     {
-        \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey($key);
+        \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($key);
         return $this->namespace . $key;
     }
 }
