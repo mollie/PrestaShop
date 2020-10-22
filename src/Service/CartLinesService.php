@@ -318,7 +318,7 @@ class CartLinesService
         // Convert floats to strings for the Mollie API and add additional info
         foreach ($newItems as $index => $item) {
             $line = new Line();
-            $line->setName($item['name']);
+            $line->setName($item['name'] ?: $item['sku']);
             $line->setQuantity((int)$item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 
