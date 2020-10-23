@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * List the Mollie invoices.
@@ -32,6 +32,6 @@ try {
         echo '<a href="' . $invoice->_links->pdf->href . '" target="_blank">Click here to open PDF</a>';
         echo '</li>';
     }
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

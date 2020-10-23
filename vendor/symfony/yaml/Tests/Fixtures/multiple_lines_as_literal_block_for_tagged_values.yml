@@ -1,2 +1,2 @@
 data:
-    foo: !bar "_PhpScoper5eddef0da618a\foo\r\nline with trailing spaces:\n  \_PhpScoper5eddef0da618a\nbar\ninteger like line:\_PhpScoper5eddef0da618a\n123456789\nempty line:\_PhpScoper5eddef0da618a\n\nbaz"
+    foo: !bar "MolliePrefix\foo\r\nline with trailing spaces:\n  \MolliePrefix\nbar\ninteger like line:\MolliePrefix\n123456789\nempty line:\MolliePrefix\n\nbaz"

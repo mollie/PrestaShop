@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\Psr\\Container\\": "src\/"
+            "MolliePrefix\\Psr\\Container\\": "src\/"
         }
     },
     "extra": {

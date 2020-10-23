@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
+namespace MolliePrefix\GuzzleHttp\Psr7;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 /**
  * Trait implementing functionality common to requests and responses.
  */
@@ -14,7 +14,7 @@ trait MessageTrait
     private $headerNames = [];
     /** @var string */
     private $protocol = '1.1';
-    /** @var StreamInterface */
+    /** @var StreamInterface|null */
     private $stream;
     public function getProtocolVersion()
     {
@@ -92,11 +92,11 @@ trait MessageTrait
     public function getBody()
     {
         if (!$this->stream) {
-            $this->stream = stream_for('');
+            $this->stream = \MolliePrefix\GuzzleHttp\Psr7\Utils::streamFor('');
         }
         return $this->stream;
     }
-    public function withBody(\_PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface $body)
+    public function withBody(\MolliePrefix\Psr\Http\Message\StreamInterface $body)
     {
         if ($body === $this->stream) {
             return $this;
@@ -157,7 +157,7 @@ trait MessageTrait
                 throw new \InvalidArgumentException(\sprintf('Header value must be scalar or null but %s provided.', \is_object($value) ? \get_class($value) : \gettype($value)));
             }
             return \trim((string) $value, " \t");
-        }, $values);
+        }, \array_values($values));
     }
     private function assertHeader($header)
     {

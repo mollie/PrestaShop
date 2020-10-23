@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * Refund all eligible items for an order using the Mollie API.
@@ -19,6 +19,6 @@ try {
     $refund = $order->refundAll();
     echo 'Refund ' . $refund->id . ' was created for order ' . $order->id;
     echo 'You will receive ' . $refund->amount->currency . $refund->amount->value;
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

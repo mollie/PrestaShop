@@ -8,16 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Tests\Node;
+namespace MolliePrefix\Symfony\Component\ExpressionLanguage\Tests\Node;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
-use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node;
-class NodeTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\ExpressionLanguage\Node\ConstantNode;
+use MolliePrefix\Symfony\Component\ExpressionLanguage\Node\Node;
+class NodeTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testToString()
     {
-        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node([new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')]);
+        $node = new \MolliePrefix\Symfony\Component\ExpressionLanguage\Node\Node([new \MolliePrefix\Symfony\Component\ExpressionLanguage\Node\ConstantNode('foo')]);
         $this->assertEquals(<<<'EOF'
 Node(
     ConstantNode(value: 'foo')
@@ -27,7 +27,7 @@ EOF
     }
     public function testSerialization()
     {
-        $node = new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Node\Node(['foo' => 'bar'], ['bar' => 'foo']);
+        $node = new \MolliePrefix\Symfony\Component\ExpressionLanguage\Node\Node(['foo' => 'bar'], ['bar' => 'foo']);
         $serializedNode = \serialize($node);
         $unserializedNode = \unserialize($serializedNode);
         $this->assertEquals($node, $unserializedNode);

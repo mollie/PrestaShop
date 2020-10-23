@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Cookie;
+namespace MolliePrefix\GuzzleHttp\Cookie;
 
 /**
  * Persists non-session cookies using a JSON formatted file
  */
-class FileCookieJar extends \_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJar
+class FileCookieJar extends \MolliePrefix\GuzzleHttp\Cookie\CookieJar
 {
     /** @var string filename */
     private $filename;
@@ -47,11 +47,11 @@ class FileCookieJar extends \_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJar
         $json = [];
         foreach ($this as $cookie) {
             /** @var SetCookie $cookie */
-            if (\_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
+            if (\MolliePrefix\GuzzleHttp\Cookie\CookieJar::shouldPersist($cookie, $this->storeSessionCookies)) {
                 $json[] = $cookie->toArray();
             }
         }
-        $jsonStr = \_PhpScoper5eddef0da618a\GuzzleHttp\json_encode($json);
+        $jsonStr = \MolliePrefix\GuzzleHttp\json_encode($json);
         if (\false === \file_put_contents($filename, $jsonStr, \LOCK_EX)) {
             throw new \RuntimeException("Unable to save file {$filename}");
         }
@@ -72,10 +72,10 @@ class FileCookieJar extends \_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJar
         } elseif ($json === '') {
             return;
         }
-        $data = \_PhpScoper5eddef0da618a\GuzzleHttp\json_decode($json, \true);
+        $data = \MolliePrefix\GuzzleHttp\json_decode($json, \true);
         if (\is_array($data)) {
             foreach (\json_decode($json, \true) as $cookie) {
-                $this->setCookie(new \_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\SetCookie($cookie));
+                $this->setCookie(new \MolliePrefix\GuzzleHttp\Cookie\SetCookie($cookie));
             }
         } elseif (\strlen($data)) {
             throw new \RuntimeException("Invalid cookie file: {$filename}");

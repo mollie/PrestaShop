@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Types;
+namespace MolliePrefix\Mollie\Api\Types;
 
 class SequenceType
 {

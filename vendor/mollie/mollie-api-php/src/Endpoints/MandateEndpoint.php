@@ -1,12 +1,12 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseCollection;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Mandate;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\MandateCollection;
-class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\Customer;
+use MolliePrefix\Mollie\Api\Resources\Mandate;
+use MolliePrefix\Mollie\Api\Resources\MandateCollection;
+class MandateEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "customers_mandates";
     /**
@@ -16,7 +16,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Mandate($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Mandate($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -28,7 +28,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\MandateCollection($this->client, $count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\MandateCollection($this->client, $count, $_links);
     }
     /**
      * @param Customer $customer
@@ -38,7 +38,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      * @return \Mollie\Api\Resources\Mandate
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, array $options = [], array $filters = [])
+    public function createFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, array $options = [], array $filters = [])
     {
         return $this->createForId($customer->id, $options, $filters);
     }
@@ -63,7 +63,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Mandate
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, $mandateId, array $parameters = [])
+    public function getFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, $mandateId, array $parameters = [])
     {
         return $this->getForId($customer->id, $mandateId, $parameters);
     }
@@ -89,7 +89,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\MandateCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, $from = null, $limit = null, array $parameters = [])
+    public function listFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, $from = null, $limit = null, array $parameters = [])
     {
         return $this->listForId($customer->id, $from, $limit, $parameters);
     }
@@ -115,7 +115,7 @@ class MandateEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\Coll
      * @return null
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function revokeFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Customer $customer, $mandateId, $data = [])
+    public function revokeFor(\MolliePrefix\Mollie\Api\Resources\Customer $customer, $mandateId, $data = [])
     {
         return $this->revokeForId($customer->id, $mandateId, $data);
     }

@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\Traits;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ChildDefinition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\DependencyInjection\ChildDefinition;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 /**
  * @method $this parent(string $parent)
  */
@@ -29,14 +29,14 @@ trait ParentTrait
     protected final function setParent($parent)
     {
         if (!$this->allowParent) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('A parent cannot be defined when either "_instanceof" or "_defaults" are also defined for service prototype "%s".', $this->id));
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('A parent cannot be defined when either "_instanceof" or "_defaults" are also defined for service prototype "%s".', $this->id));
         }
-        if ($this->definition instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ChildDefinition) {
+        if ($this->definition instanceof \MolliePrefix\Symfony\Component\DependencyInjection\ChildDefinition) {
             $this->definition->setParent($parent);
         } elseif ($this->definition->isAutoconfigured()) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service "%s" cannot have a "parent" and also have "autoconfigure". Try disabling autoconfiguration for the service.', $this->id));
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service "%s" cannot have a "parent" and also have "autoconfigure". Try disabling autoconfiguration for the service.', $this->id));
         } elseif ($this->definition->getBindings()) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service "%s" cannot have a "parent" and also "bind" arguments.', $this->id));
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException(\sprintf('The service "%s" cannot have a "parent" and also "bind" arguments.', $this->id));
         } else {
             // cast Definition to ChildDefinition
             $definition = \serialize($this->definition);

@@ -33,11 +33,12 @@
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Types\OrderStatus;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\OrderStatusService;
@@ -235,10 +236,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
-                        && $apiPayment->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_CREATED
+                        && $apiPayment->status === OrderStatus::STATUS_CREATED
                     ) {
                         $orderPayments = $apiPayment->payments();
-                        $paymentStatus = \_PhpScoper5eddef0da618a\Mollie\Api\Types\OrderStatus::STATUS_CREATED;
+                        $paymentStatus = OrderStatus::STATUS_CREATED;
                         foreach ($orderPayments as $orderPayment) {
                             $paymentStatus = $orderPayment->status;
                         }

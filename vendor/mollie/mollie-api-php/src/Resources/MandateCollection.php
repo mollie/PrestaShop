@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class MandateCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CursorCollection
+class MandateCollection extends \MolliePrefix\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,7 +16,7 @@ class MandateCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Cu
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Mandate($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Mandate($this->client);
     }
     /**
      * @param string $status

@@ -1,45 +1,46 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api;
+namespace MolliePrefix\Mollie\Api;
 
-use _PhpScoper5eddef0da618a\GuzzleHttp\Client;
-use _PhpScoper5eddef0da618a\GuzzleHttp\ClientInterface;
-use _PhpScoper5eddef0da618a\GuzzleHttp\Exception\GuzzleException;
-use _PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Request;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ChargebackEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CustomerEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CustomerPaymentsEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\InvoiceEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\MandateEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\MethodEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OnboardingEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderLineEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderPaymentEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderRefundEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentCaptureEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrganizationEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentChargebackEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentRefundEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PermissionEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ProfileEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ProfileMethodEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\RefundEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\SettlementsEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ShipmentEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\SubscriptionEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Endpoints\WalletEndpoint;
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\IncompatiblePlatform;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\StreamInterface;
+use MolliePrefix\GuzzleHttp\Client;
+use MolliePrefix\GuzzleHttp\ClientInterface;
+use MolliePrefix\GuzzleHttp\Exception\GuzzleException;
+use MolliePrefix\GuzzleHttp\Psr7\Request;
+use MolliePrefix\Mollie\Api\Endpoints\ChargebackEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\CustomerEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\CustomerPaymentsEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\InvoiceEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\MandateEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\MethodEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OnboardingEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OrderLineEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OrderPaymentEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OrderRefundEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PaymentCaptureEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\OrganizationEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PaymentChargebackEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PaymentEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PaymentRefundEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PermissionEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\ProfileEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\ProfileMethodEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\RefundEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\SettlementPaymentEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\SettlementsEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\ShipmentEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\SubscriptionEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\WalletEndpoint;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform;
+use MolliePrefix\Psr\Http\Message\ResponseInterface;
+use MolliePrefix\Psr\Http\Message\StreamInterface;
 class MollieApiClient
 {
     /**
      * Version of our client.
      */
-    const CLIENT_VERSION = "2.16.0";
+    const CLIENT_VERSION = "2.22.3";
     /**
      * Endpoint of the remote API.
      */
@@ -100,9 +101,17 @@ class MollieApiClient
      */
     public $customerPayments;
     /**
+     * RESTful Settlement resource.
+     *
      * @var SettlementsEndpoint
      */
     public $settlements;
+    /**
+     * RESTful Settlement payment resource.
+     *
+     * @var \Mollie\Api\Endpoints\SettlementPaymentEndpoint
+     */
+    public $settlementPayments;
     /**
      * RESTful Subscription resource.
      *
@@ -232,42 +241,49 @@ class MollieApiClient
      *
      * @throws IncompatiblePlatform
      */
-    public function __construct(\_PhpScoper5eddef0da618a\GuzzleHttp\ClientInterface $httpClient = null)
+    public function __construct(\MolliePrefix\GuzzleHttp\ClientInterface $httpClient = null)
     {
-        $this->httpClient = $httpClient ? $httpClient : new \_PhpScoper5eddef0da618a\GuzzleHttp\Client([\_PhpScoper5eddef0da618a\GuzzleHttp\RequestOptions::VERIFY => \_PhpScoper5eddef0da618a\Composer\CaBundle\CaBundle::getBundledCaBundlePath(), \_PhpScoper5eddef0da618a\GuzzleHttp\RequestOptions::TIMEOUT => self::TIMEOUT]);
-        $compatibilityChecker = new \_PhpScoper5eddef0da618a\Mollie\Api\CompatibilityChecker();
+        $this->httpClient = $httpClient ? $httpClient : new \MolliePrefix\GuzzleHttp\Client([\MolliePrefix\GuzzleHttp\RequestOptions::VERIFY => \MolliePrefix\Composer\CaBundle\CaBundle::getBundledCaBundlePath(), \MolliePrefix\GuzzleHttp\RequestOptions::TIMEOUT => self::TIMEOUT]);
+        $compatibilityChecker = new \MolliePrefix\Mollie\Api\CompatibilityChecker();
         $compatibilityChecker->checkCompatibility();
         $this->initializeEndpoints();
         $this->addVersionString("Mollie/" . self::CLIENT_VERSION);
         $this->addVersionString("PHP/" . \phpversion());
-        $this->addVersionString("Guzzle/" . \_PhpScoper5eddef0da618a\GuzzleHttp\ClientInterface::VERSION);
+        if (\defined('\\GuzzleHttp\\ClientInterface::MAJOR_VERSION')) {
+            // Guzzle 7
+            $this->addVersionString("Guzzle/" . \MolliePrefix\GuzzleHttp\ClientInterface::MAJOR_VERSION);
+        } elseif (\defined('\\GuzzleHttp\\ClientInterface::VERSION')) {
+            // Before Guzzle 7
+            $this->addVersionString("Guzzle/" . \MolliePrefix\GuzzleHttp\ClientInterface::VERSION);
+        }
     }
     public function initializeEndpoints()
     {
-        $this->payments = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentEndpoint($this);
-        $this->methods = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\MethodEndpoint($this);
-        $this->profileMethods = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ProfileMethodEndpoint($this);
-        $this->customers = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CustomerEndpoint($this);
-        $this->settlements = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\SettlementsEndpoint($this);
-        $this->subscriptions = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\SubscriptionEndpoint($this);
-        $this->customerPayments = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CustomerPaymentsEndpoint($this);
-        $this->mandates = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\MandateEndpoint($this);
-        $this->invoices = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\InvoiceEndpoint($this);
-        $this->permissions = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PermissionEndpoint($this);
-        $this->profiles = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ProfileEndpoint($this);
-        $this->onboarding = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OnboardingEndpoint($this);
-        $this->organizations = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrganizationEndpoint($this);
-        $this->orders = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderEndpoint($this);
-        $this->orderLines = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderLineEndpoint($this);
-        $this->orderPayments = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderPaymentEndpoint($this);
-        $this->orderRefunds = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\OrderRefundEndpoint($this);
-        $this->shipments = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ShipmentEndpoint($this);
-        $this->refunds = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\RefundEndpoint($this);
-        $this->paymentRefunds = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentRefundEndpoint($this);
-        $this->paymentCaptures = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentCaptureEndpoint($this);
-        $this->chargebacks = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\ChargebackEndpoint($this);
-        $this->paymentChargebacks = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\PaymentChargebackEndpoint($this);
-        $this->wallets = new \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\WalletEndpoint($this);
+        $this->payments = new \MolliePrefix\Mollie\Api\Endpoints\PaymentEndpoint($this);
+        $this->methods = new \MolliePrefix\Mollie\Api\Endpoints\MethodEndpoint($this);
+        $this->profileMethods = new \MolliePrefix\Mollie\Api\Endpoints\ProfileMethodEndpoint($this);
+        $this->customers = new \MolliePrefix\Mollie\Api\Endpoints\CustomerEndpoint($this);
+        $this->settlements = new \MolliePrefix\Mollie\Api\Endpoints\SettlementsEndpoint($this);
+        $this->settlementPayments = new \MolliePrefix\Mollie\Api\Endpoints\SettlementPaymentEndpoint($this);
+        $this->subscriptions = new \MolliePrefix\Mollie\Api\Endpoints\SubscriptionEndpoint($this);
+        $this->customerPayments = new \MolliePrefix\Mollie\Api\Endpoints\CustomerPaymentsEndpoint($this);
+        $this->mandates = new \MolliePrefix\Mollie\Api\Endpoints\MandateEndpoint($this);
+        $this->invoices = new \MolliePrefix\Mollie\Api\Endpoints\InvoiceEndpoint($this);
+        $this->permissions = new \MolliePrefix\Mollie\Api\Endpoints\PermissionEndpoint($this);
+        $this->profiles = new \MolliePrefix\Mollie\Api\Endpoints\ProfileEndpoint($this);
+        $this->onboarding = new \MolliePrefix\Mollie\Api\Endpoints\OnboardingEndpoint($this);
+        $this->organizations = new \MolliePrefix\Mollie\Api\Endpoints\OrganizationEndpoint($this);
+        $this->orders = new \MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint($this);
+        $this->orderLines = new \MolliePrefix\Mollie\Api\Endpoints\OrderLineEndpoint($this);
+        $this->orderPayments = new \MolliePrefix\Mollie\Api\Endpoints\OrderPaymentEndpoint($this);
+        $this->orderRefunds = new \MolliePrefix\Mollie\Api\Endpoints\OrderRefundEndpoint($this);
+        $this->shipments = new \MolliePrefix\Mollie\Api\Endpoints\ShipmentEndpoint($this);
+        $this->refunds = new \MolliePrefix\Mollie\Api\Endpoints\RefundEndpoint($this);
+        $this->paymentRefunds = new \MolliePrefix\Mollie\Api\Endpoints\PaymentRefundEndpoint($this);
+        $this->paymentCaptures = new \MolliePrefix\Mollie\Api\Endpoints\PaymentCaptureEndpoint($this);
+        $this->chargebacks = new \MolliePrefix\Mollie\Api\Endpoints\ChargebackEndpoint($this);
+        $this->paymentChargebacks = new \MolliePrefix\Mollie\Api\Endpoints\PaymentChargebackEndpoint($this);
+        $this->wallets = new \MolliePrefix\Mollie\Api\Endpoints\WalletEndpoint($this);
     }
     /**
      * @param string $url
@@ -296,7 +312,7 @@ class MollieApiClient
     {
         $apiKey = \trim($apiKey);
         if (!\preg_match('/^(live|test)_\\w{30,}$/', $apiKey)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Invalid API key: '{$apiKey}'. An API key must start with 'test_' or 'live_' and must be at least 30 characters long.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Invalid API key: '{$apiKey}'. An API key must start with 'test_' or 'live_' and must be at least 30 characters long.");
         }
         $this->apiKey = $apiKey;
         $this->oauthAccess = \false;
@@ -312,7 +328,7 @@ class MollieApiClient
     {
         $accessToken = \trim($accessToken);
         if (!\preg_match('/^access_\\w+$/', $accessToken)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Invalid OAuth access token: '{$accessToken}'. An access token must start with 'access_'.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Invalid OAuth access token: '{$accessToken}'. An access token must start with 'access_'.");
         }
         $this->apiKey = $accessToken;
         $this->oauthAccess = \true;
@@ -373,7 +389,7 @@ class MollieApiClient
     public function performHttpCallToFullUrl($httpMethod, $url, $httpBody = null)
     {
         if (empty($this->apiKey)) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("You have not set an API key or OAuth access token. Please use setApiKey() to set the API key.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("You have not set an API key or OAuth access token. Please use setApiKey() to set the API key.");
         }
         $userAgent = \implode(' ', $this->versionStrings);
         if ($this->usesOAuth()) {
@@ -383,14 +399,14 @@ class MollieApiClient
         if (\function_exists("php_uname")) {
             $headers['X-Mollie-Client-Info'] = \php_uname();
         }
-        $request = new \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Request($httpMethod, $url, $headers, $httpBody);
+        $request = new \MolliePrefix\GuzzleHttp\Psr7\Request($httpMethod, $url, $headers, $httpBody);
         try {
             $response = $this->httpClient->send($request, ['http_errors' => \false]);
-        } catch (\_PhpScoper5eddef0da618a\GuzzleHttp\Exception\GuzzleException $e) {
-            throw \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException::createFromGuzzleException($e);
+        } catch (\MolliePrefix\GuzzleHttp\Exception\GuzzleException $e) {
+            throw \MolliePrefix\Mollie\Api\Exceptions\ApiException::createFromGuzzleException($e, $request);
         }
         if (!$response) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Did not receive API response.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Did not receive API response.", 0, null, $request);
         }
         return $this->parseResponseBody($response);
     }
@@ -398,24 +414,24 @@ class MollieApiClient
      * Parse the PSR-7 Response body
      *
      * @param ResponseInterface $response
-     * @return \stdClass|null   
+     * @return \stdClass|null
      * @throws ApiException
      */
-    private function parseResponseBody(\_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response)
+    private function parseResponseBody(\MolliePrefix\Psr\Http\Message\ResponseInterface $response)
     {
         $body = (string) $response->getBody();
         if (empty($body)) {
             if ($response->getStatusCode() === self::HTTP_NO_CONTENT) {
                 return null;
             }
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("No response body found.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("No response body found.");
         }
         $object = @\json_decode($body);
         if (\json_last_error() !== \JSON_ERROR_NONE) {
-            throw new \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException("Unable to decode Mollie response: '{$body}'.");
+            throw new \MolliePrefix\Mollie\Api\Exceptions\ApiException("Unable to decode Mollie response: '{$body}'.");
         }
         if ($response->getStatusCode() >= 400) {
-            throw \_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException::createFromResponse($response);
+            throw \MolliePrefix\Mollie\Api\Exceptions\ApiException::createFromResponse($response, null);
         }
         return $object;
     }

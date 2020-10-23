@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /**
  * Random_* Compatibility Library
@@ -41,12 +41,12 @@ if (!\is_callable('random_bytes')) {
      *
      * @return string
      */
-    if (!function_exists('_PhpScoper5eddef0da618a\random_bytes')) {
+    if (!function_exists('MolliePrefix\random_bytes')) {
         function random_bytes($bytes)
         {
             try {
                 /** @var int $bytes */
-                $bytes = \_PhpScoper5eddef0da618a\RandomCompat_intval($bytes);
+                $bytes = \MolliePrefix\RandomCompat_intval($bytes);
             } catch (\TypeError $ex) {
                 throw new \TypeError('random_bytes(): $bytes must be an integer');
             }
@@ -55,7 +55,7 @@ if (!\is_callable('random_bytes')) {
             }
             /** @var string|bool $buf */
             $buf = @\mcrypt_create_iv((int)$bytes, (int)\MCRYPT_DEV_URANDOM);
-            if (\is_string($buf) && \_PhpScoper5eddef0da618a\RandomCompat_strlen($buf) === $bytes) {
+            if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
                 /**
                  * Return our random entropy buffer here:
                  */

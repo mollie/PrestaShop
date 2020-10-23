@@ -1,7 +1,7 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Fixtures;
 
-class BadParent extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Fixtures\MissingParent
+class BadParent extends \MolliePrefix\Symfony\Component\Config\Tests\Fixtures\MissingParent
 {
 }

@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Loader;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 /**
  * PhpFileLoader loads service definitions from a PHP file.
  *
@@ -19,7 +19,7 @@ use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configu
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class PhpFileLoader extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\FileLoader
+class PhpFileLoader extends \MolliePrefix\Symfony\Component\DependencyInjection\Loader\FileLoader
 {
     /**
      * {@inheritdoc}
@@ -35,10 +35,10 @@ class PhpFileLoader extends \_PhpScoper5eddef0da618a\Symfony\Component\Dependenc
         // the closure forbids access to the private scope in the included file
         $load = \Closure::bind(function ($path) use($container, $loader, $resource, $type) {
             return include $path;
-        }, $this, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\ProtectedPhpFileLoader::class);
+        }, $this, \MolliePrefix\Symfony\Component\DependencyInjection\Loader\ProtectedPhpFileLoader::class);
         $callback = $load($path);
         if ($callback instanceof \Closure) {
-            $callback(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator($this->container, $this, $this->instanceof, $path, $resource), $this->container, $this);
+            $callback(new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator($this->container, $this, $this->instanceof, $path, $resource), $this->container, $this);
         }
     }
     /**
@@ -58,6 +58,6 @@ class PhpFileLoader extends \_PhpScoper5eddef0da618a\Symfony\Component\Dependenc
 /**
  * @internal
  */
-final class ProtectedPhpFileLoader extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\PhpFileLoader
+final class ProtectedPhpFileLoader extends \MolliePrefix\Symfony\Component\DependencyInjection\Loader\PhpFileLoader
 {
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp;
+namespace MolliePrefix\GuzzleHttp;
 
 /**
  * This class contains a list of built-in Guzzle request options.

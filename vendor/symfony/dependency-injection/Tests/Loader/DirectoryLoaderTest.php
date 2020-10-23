@@ -8,17 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Loader;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Loader;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Loader\LoaderResolver;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\DirectoryLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-class DirectoryLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\FileLocator;
+use MolliePrefix\Symfony\Component\Config\Loader\LoaderResolver;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\DirectoryLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+class DirectoryLoaderTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     private static $fixturesPath;
     private $container;
@@ -29,10 +29,10 @@ class DirectoryLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\Tes
     }
     protected function setUp()
     {
-        $locator = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath);
-        $this->container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $this->loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\DirectoryLoader($this->container, $locator);
-        $resolver = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Loader\LoaderResolver([new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\PhpFileLoader($this->container, $locator), new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, $locator), new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($this->container, $locator), $this->loader]);
+        $locator = new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath);
+        $this->container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $this->loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\DirectoryLoader($this->container, $locator);
+        $resolver = new \MolliePrefix\Symfony\Component\Config\Loader\LoaderResolver([new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\PhpFileLoader($this->container, $locator), new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\IniFileLoader($this->container, $locator), new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($this->container, $locator), $this->loader]);
         $this->loader->setResolver($resolver);
     }
     public function testDirectoryCanBeLoadedRecursively()
@@ -53,7 +53,7 @@ class DirectoryLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\Tes
     }
     public function testSupports()
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\DirectoryLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\DirectoryLoader(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), new \MolliePrefix\Symfony\Component\Config\FileLocator());
         $this->assertTrue($loader->supports('directory/'), '->supports("directory/") returns true');
         $this->assertTrue($loader->supports('directory/', 'directory'), '->supports("directory/", "directory") returns true');
         $this->assertFalse($loader->supports('directory'), '->supports("directory") returns false');

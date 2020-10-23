@@ -1,13 +1,13 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp;
+namespace MolliePrefix\GuzzleHttp;
 
-use _PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJarInterface;
-use _PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException;
-use _PhpScoper5eddef0da618a\GuzzleHttp\Promise\RejectedPromise;
-use _PhpScoper5eddef0da618a\GuzzleHttp\Psr7;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface;
-use _PhpScoper5eddef0da618a\Psr\Log\LoggerInterface;
+use MolliePrefix\GuzzleHttp\Cookie\CookieJarInterface;
+use MolliePrefix\GuzzleHttp\Exception\RequestException;
+use MolliePrefix\GuzzleHttp\Promise\RejectedPromise;
+use MolliePrefix\GuzzleHttp\Psr7;
+use MolliePrefix\Psr\Http\Message\ResponseInterface;
+use MolliePrefix\Psr\Log\LoggerInterface;
 /**
  * Functions used to create and wrap handlers with handler middleware.
  */
@@ -27,8 +27,8 @@ final class Middleware
             return function ($request, array $options) use($handler) {
                 if (empty($options['cookies'])) {
                     return $handler($request, $options);
-                } elseif (!$options['cookies'] instanceof \_PhpScoper5eddef0da618a\GuzzleHttp\Cookie\CookieJarInterface) {
-                    throw new \InvalidArgumentException('_PhpScoper5eddef0da618a\\cookies must be an instance of GuzzleHttp\\Cookie\\CookieJarInterface');
+                } elseif (!$options['cookies'] instanceof \MolliePrefix\GuzzleHttp\Cookie\CookieJarInterface) {
+                    throw new \InvalidArgumentException('MolliePrefix\\cookies must be an instance of GuzzleHttp\\Cookie\\CookieJarInterface');
                 }
                 $cookieJar = $options['cookies'];
                 $request = $cookieJar->withCookieHeader($request);
@@ -52,12 +52,12 @@ final class Middleware
                 if (empty($options['http_errors'])) {
                     return $handler($request, $options);
                 }
-                return $handler($request, $options)->then(function (\_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response) use($request) {
+                return $handler($request, $options)->then(function (\MolliePrefix\Psr\Http\Message\ResponseInterface $response) use($request) {
                     $code = $response->getStatusCode();
                     if ($code < 400) {
                         return $response;
                     }
-                    throw \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException::create($request, $response);
+                    throw \MolliePrefix\GuzzleHttp\Exception\RequestException::create($request, $response);
                 });
             };
         };
@@ -82,7 +82,7 @@ final class Middleware
                     return $value;
                 }, function ($reason) use($request, &$container, $options) {
                     $container[] = ['request' => $request, 'response' => null, 'error' => $reason, 'options' => $options];
-                    return \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\rejection_for($reason);
+                    return \MolliePrefix\GuzzleHttp\Promise\rejection_for($reason);
                 });
             };
         };
@@ -123,7 +123,7 @@ final class Middleware
     public static function redirect()
     {
         return function (callable $handler) {
-            return new \_PhpScoper5eddef0da618a\GuzzleHttp\RedirectMiddleware($handler);
+            return new \MolliePrefix\GuzzleHttp\RedirectMiddleware($handler);
         };
     }
     /**
@@ -144,7 +144,7 @@ final class Middleware
     public static function retry(callable $decider, callable $delay = null)
     {
         return function (callable $handler) use($decider, $delay) {
-            return new \_PhpScoper5eddef0da618a\GuzzleHttp\RetryMiddleware($decider, $handler, $delay);
+            return new \MolliePrefix\GuzzleHttp\RetryMiddleware($decider, $handler, $delay);
         };
     }
     /**
@@ -157,7 +157,7 @@ final class Middleware
      *
      * @return callable Returns a function that accepts the next handler.
      */
-    public static function log(\_PhpScoper5eddef0da618a\Psr\Log\LoggerInterface $logger, \_PhpScoper5eddef0da618a\GuzzleHttp\MessageFormatter $formatter, $logLevel = 'info')
+    public static function log(\MolliePrefix\Psr\Log\LoggerInterface $logger, \MolliePrefix\GuzzleHttp\MessageFormatter $formatter, $logLevel = 'info')
     {
         return function (callable $handler) use($logger, $formatter, $logLevel) {
             return function ($request, array $options) use($handler, $logger, $formatter, $logLevel) {
@@ -166,10 +166,10 @@ final class Middleware
                     $logger->log($logLevel, $message);
                     return $response;
                 }, function ($reason) use($logger, $request, $formatter) {
-                    $response = $reason instanceof \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException ? $reason->getResponse() : null;
+                    $response = $reason instanceof \MolliePrefix\GuzzleHttp\Exception\RequestException ? $reason->getResponse() : null;
                     $message = $formatter->format($request, $response, $reason);
                     $logger->notice($message);
-                    return \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\rejection_for($reason);
+                    return \MolliePrefix\GuzzleHttp\Promise\rejection_for($reason);
                 });
             };
         };
@@ -183,7 +183,7 @@ final class Middleware
     public static function prepareBody()
     {
         return function (callable $handler) {
-            return new \_PhpScoper5eddef0da618a\GuzzleHttp\PrepareBodyMiddleware($handler);
+            return new \MolliePrefix\GuzzleHttp\PrepareBodyMiddleware($handler);
         };
     }
     /**

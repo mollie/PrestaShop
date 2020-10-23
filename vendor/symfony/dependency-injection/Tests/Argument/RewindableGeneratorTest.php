@@ -8,21 +8,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Argument;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Argument;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-class RewindableGeneratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+class RewindableGeneratorTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testImplementsCountable()
     {
-        $this->assertInstanceOf(\Countable::class, new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $this->assertInstanceOf(\Countable::class, new \MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 1);
         }, 1));
     }
     public function testCountUsesProvidedValue()
     {
-        $generator = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $generator = new \MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 1);
         }, 3);
         $this->assertCount(3, $generator);
@@ -30,7 +30,7 @@ class RewindableGeneratorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework
     public function testCountUsesProvidedValueAsCallback()
     {
         $called = 0;
-        $generator = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
+        $generator = new \MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator(function () {
             (yield 1);
         }, function () use(&$called) {
             ++$called;

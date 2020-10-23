@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /**
  * Random_* Compatibility Library
@@ -67,7 +67,7 @@ if (!\is_callable('random_bytes')) {
      */
     if (\extension_loaded('libsodium')) {
         // See random_bytes_libsodium.php
-        if (\PHP_VERSION_ID >= 50300 && \is_callable('_PhpScoper5eddef0da618a\\Sodium\\randombytes_buf')) {
+        if (\PHP_VERSION_ID >= 50300 && \is_callable('MolliePrefix\\Sodium\\randombytes_buf')) {
             require_once $RandomCompatDIR . \DIRECTORY_SEPARATOR . 'random_bytes_libsodium.php';
         } elseif (\method_exists('Sodium', 'randombytes_buf')) {
             require_once $RandomCompatDIR . \DIRECTORY_SEPARATOR . 'random_bytes_libsodium_legacy.php';
@@ -127,16 +127,16 @@ if (!\is_callable('random_bytes')) {
      * This is a Windows-specific fallback, for when the mcrypt extension
      * isn't loaded.
      */
-    if (!\is_callable('random_bytes') && \extension_loaded('com_dotnet') && \class_exists('_PhpScoper5eddef0da618a\\COM')) {
+    if (!\is_callable('random_bytes') && \extension_loaded('com_dotnet') && \class_exists('MolliePrefix\\COM')) {
         $RandomCompat_disabled_classes = \preg_split('#\\s*,\\s*#', \strtolower(\ini_get('disable_classes')));
         if (!\in_array('com', $RandomCompat_disabled_classes)) {
             try {
-                $RandomCompatCOMtest = new \_PhpScoper5eddef0da618a\COM('CAPICOM.Utilities.1');
+                $RandomCompatCOMtest = new \MolliePrefix\COM('CAPICOM.Utilities.1');
                 if (\method_exists($RandomCompatCOMtest, 'GetRandom')) {
                     // See random_bytes_com_dotnet.php
                     require_once $RandomCompatDIR . \DIRECTORY_SEPARATOR . 'random_bytes_com_dotnet.php';
                 }
-            } catch (\_PhpScoper5eddef0da618a\com_exception $e) {
+            } catch (\MolliePrefix\com_exception $e) {
                 // Don't try to use it.
             }
         }
@@ -156,12 +156,13 @@ if (!\is_callable('random_bytes')) {
          * @throws Exception
          * @return string
          */
-        if (!function_exists('_PhpScoper5eddef0da618a\random_bytes')) {
+        if (!function_exists('MolliePrefix\random_bytes')) {
             function random_bytes($length)
             {
                 unset($length);
                 // Suppress "variable not used" warnings.
                 throw new \Exception('There is no suitable CSPRNG installed on your system');
+
                 return '';
             }
         }

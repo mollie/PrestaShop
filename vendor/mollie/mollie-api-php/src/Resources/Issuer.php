@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class Issuer extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+class Issuer extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * Id of the issuer.

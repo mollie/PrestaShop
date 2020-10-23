@@ -1,11 +1,11 @@
 services:
     _instanceof:
-        _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
+        MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface:
             autowire: true
             lazy: true
             tags:
                 - { name: foo }
                 - { name: bar }
 
-    _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar: ~
-    _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar: ~
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface: '@MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar'

@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\MandateStatus;
-class Mandate extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Types\MandateStatus;
+class Mandate extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
@@ -57,21 +57,21 @@ class Mandate extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
      */
     public function isValid()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\MandateStatus::STATUS_VALID;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\MandateStatus::STATUS_VALID;
     }
     /**
      * @return bool
      */
     public function isPending()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\MandateStatus::STATUS_PENDING;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\MandateStatus::STATUS_PENDING;
     }
     /**
      * @return bool
      */
     public function isInvalid()
     {
-        return $this->status === \_PhpScoper5eddef0da618a\Mollie\Api\Types\MandateStatus::STATUS_INVALID;
+        return $this->status === \MolliePrefix\Mollie\Api\Types\MandateStatus::STATUS_INVALID;
     }
     /**
      * Revoke the mandate
@@ -87,7 +87,7 @@ class Mandate extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
         if ($this->client->usesOAuth()) {
             $body = \json_encode(["testmode" => $this->mode === "test" ? \true : \false]);
         }
-        $result = $this->client->performHttpCallToFullUrl(\_PhpScoper5eddef0da618a\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
+        $result = $this->client->performHttpCallToFullUrl(\MolliePrefix\Mollie\Api\MollieApiClient::HTTP_DELETE, $this->_links->self->href, $body);
         return $result;
     }
 }

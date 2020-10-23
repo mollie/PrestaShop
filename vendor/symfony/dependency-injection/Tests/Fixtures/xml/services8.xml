@@ -31,8 +31,8 @@
     <parameter key="negative float string" type="string">-10100.1</parameter>
   </parameters>
   <services>
-    <service id="service_container" class="_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface" public="true" synthetic="true"/>
-    <service id="_PhpScoper5eddef0da618a\Psr\Container\ContainerInterface" alias="service_container" public="false"/>
-    <service id="_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface" alias="service_container" public="false"/>
+    <service id="service_container" class="MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface" public="true" synthetic="true"/>
+    <service id="MolliePrefix\Psr\Container\ContainerInterface" alias="service_container" public="false"/>
+    <service id="MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface" alias="service_container" public="false"/>
   </services>
 </container>

@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * List all customer mandates
@@ -22,6 +22,6 @@ try {
         echo "<li>" . \htmlspecialchars($mandate->id) . " - " . \htmlspecialchars($mandate->method) . ": " . \htmlspecialchars($mandate->status) . "</li>";
     }
     echo "</ul>";
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

@@ -13,12 +13,12 @@ You can find out more about floating point precision [here](http://php.net/float
 
 Example:
 ```php
-use PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Operation\Rounding;
 
-echo (new Number('0.1'))
-    ->plus(new Number('0.7'))
-    ->times(new Number('10'))
+echo (new DecimalNumber('0.1'))
+    ->plus(new DecimalNumber('0.7'))
+    ->times(new DecimalNumber('10'))
     ->round(0, Rounding::ROUND_FLOOR)
   
 // echoes '8'
@@ -49,29 +49,29 @@ Quick links:
 ### Instantiation
 Creates a new Decimal number.
 ```php
-public Number Number::__construct ( string $number [, int $exponent = null ] )
+public __construct ( string $number [, int $exponent = null ] ): DecimalNumber
 ```
-There are two ways to instantiate a Decimal\Number:
+There are two ways to instantiate a Decimal\DecimalNumber:
 ``` php
 // create a number from string
-$number = new PrestaShop\Decimal\Number('123.456');
+$number = new PrestaShop\Decimal\DecimalNumber('123.456');
 echo $number; // echoes '123.456'
 ```
 ``` php
 // exponent notation
-$number = new PrestaShop\Decimal\Number('123456', -3);
+$number = new PrestaShop\Decimal\DecimalNumber('123456', -3);
 echo $number; // echoes '123.456'
 ```
 
 ### Addition
 Returns the computed result of adding another number to the current one.
 ```php
-public Number Number::plus ( Number $addend )
+public DecimalNumber::plus ( DecimalNumber $addend ): DecimalNumber
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('123.456');
-$b = new PrestaShop\Decimal\Number('654.321');
+$a = new PrestaShop\Decimal\DecimalNumber('123.456');
+$b = new PrestaShop\Decimal\DecimalNumber('654.321');
 
 echo $a->plus($b); // echoes '777.777'
 ```
@@ -79,12 +79,12 @@ echo $a->plus($b); // echoes '777.777'
 ### Subtraction
 Returns the computed result of subtracting another number to the current one.
 ```php
-public Number Number::minus ( Number $subtrahend )
+public DecimalNumber::minus ( DecimalNumber $subtrahend ): DecimalNumber
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('777.777');
-$b = new PrestaShop\Decimal\Number('654.321');
+$a = new PrestaShop\Decimal\DecimalNumber('777.777');
+$b = new PrestaShop\Decimal\DecimalNumber('654.321');
 
 echo $a->minus($b); // echoes '123.456'
 ```
@@ -92,12 +92,12 @@ echo $a->minus($b); // echoes '123.456'
 ### Multiplication
 Returns the computed result of multiplying the current number with another one.
 ```php
-public Number Number::times ( Number $factor )
+public DecimalNumber::times ( DecimalNumber $factor ): DecimalNumber
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('777.777');
-$b = new PrestaShop\Decimal\Number('654.321');
+$a = new PrestaShop\Decimal\DecimalNumber('777.777');
+$b = new PrestaShop\Decimal\DecimalNumber('654.321');
 
 echo $a->times($b); // echoes '508915.824417'
 ```
@@ -105,12 +105,12 @@ echo $a->times($b); // echoes '508915.824417'
 ### Division
 Returns the computed result of dividing  the current number by another one, with up to a certain number of decimal positions (6 by default).
 ```php
-public Number Number::dividedBy ( Number $divisor [, int $precision = Operation\Division::DEFAULT_PRECISION ] )
+public DecimalNumber::dividedBy ( DecimalNumber $divisor [, int $precision = Operation\Division::DEFAULT_PRECISION ] )
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('777.777');
-$b = new PrestaShop\Decimal\Number('654.321');
+$a = new PrestaShop\Decimal\DecimalNumber('777.777');
+$b = new PrestaShop\Decimal\DecimalNumber('654.321');
 
 echo $a->dividedBy($b, 0);  // echoes '1'
 echo $a->dividedBy($b, 5);  // echoes '1.18867'
@@ -121,8 +121,8 @@ echo $a->dividedBy($b, 15); // echoes '1.188678034175886'
 ### Comparison
 Returns the result of the comparison assertion.
 ```php
-$a = new PrestaShop\Decimal\Number('777.777');
-$b = new PrestaShop\Decimal\Number('654.321');
+$a = new PrestaShop\Decimal\DecimalNumber('777.777');
+$b = new PrestaShop\Decimal\DecimalNumber('654.321');
 
 $a->equals($b);                // returns false
 $a->isLowerThan($b);           // returns false
@@ -141,12 +141,12 @@ $a->isGreaterOrEqualThanZero(); // returns true
 ### Fixed precision
 Returns the number as a string, optionally rounded, with an exact number of decimal positions.
 ```php
-public string Number::toPrecision ( int $precision [, string $roundingMode = Rounding::ROUND_TRUNCATE ] )
+public DecimalNumber::toPrecision ( int $precision [, string $roundingMode = Rounding::ROUND_TRUNCATE ] ): string
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('123.456');
-$a = new PrestaShop\Decimal\Number('-123.456');
+$a = new PrestaShop\Decimal\DecimalNumber('123.456');
+$a = new PrestaShop\Decimal\DecimalNumber('-123.456');
 
 // truncate / pad
 $a->toPrecision(0); // '123'
@@ -200,7 +200,7 @@ $a->toPrecision(0, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN); // '
 $a->toPrecision(1, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN); // '-123.4'
 $a->toPrecision(2, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN); // '-123.46'
 
-$a = new Decimal\Number('1.1525354556575859505');
+$a = new PrestaShop\Decimal\DecimalNumber('1.1525354556575859505');
 $a->toPrecision(0, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN);  // '1'
 $a->toPrecision(1, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN);  // '1.2'
 $a->toPrecision(2, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN);  // '1.15'
@@ -218,12 +218,12 @@ $a->toPrecision(10, PrestaShop\Decimal\Operation\Rounding::ROUND_HALF_EVEN); // 
 Rounding behaves like `toPrecision`, but provides "up to" a certain number of decimal positions
 (it does not add trailing zeroes).
 ```php
-public string Number::round ( int $maxDecimals [, string $roundingMode = Rounding::ROUND_TRUNCATE ] )
+public DecimalNumber::round ( int $maxDecimals [, string $roundingMode = Rounding::ROUND_TRUNCATE ] ): string
 ```
 Examples:
 ```php
-$a = new PrestaShop\Decimal\Number('123.456');
-$a = new PrestaShop\Decimal\Number('-123.456');
+$a = new PrestaShop\Decimal\DecimalNumber('123.456');
+$a = new PrestaShop\Decimal\DecimalNumber('-123.456');
 
 // truncate / pad
 $a->round(0); // '123'
@@ -241,11 +241,11 @@ $b->round(4); // '-123.456'
 ### Dot shifting
 Creates a new copy of this number multiplied by 10^exponent
 ```php
-public Number Number::toMagnitude ( int $exponent )
+public DecimalNumber::toMagnitude ( int $exponent ): DecimalNumber
 ```
 Examples:
 ```php
-$a = new Decimal\Number('123.456789');
+$a = new PrestaShop\Decimal\DecimalNumber('123.456789');
 
 // shift 3 digits to the left
 $a->toMagnitude(-3); // 0.123456789
@@ -256,7 +256,7 @@ $a->toMagnitude(3); // 123456.789
 
 ### Useful methods
 ```php
-$number = new PrestaShop\Decimal\Number('123.45');
+$number = new PrestaShop\Decimal\DecimalNumber('123.45');
 $number->getIntegerPart();    // '123'
 $number->getFractionalPart(); // '45'
 $number->getPrecision();      // '2' (number of decimals)
@@ -265,7 +265,7 @@ $number->getExponent();       // '2' (always positive)
 $number->getCoefficient();    // '123456'
 $number->isPositive();        // true
 $number->isNegative();        // false
-$number->invert();            // new Decimal\Number('-123.45')
+$number->invert();            // new Decimal\DecimalNumber('-123.45')
 ```
 
 ## Testing

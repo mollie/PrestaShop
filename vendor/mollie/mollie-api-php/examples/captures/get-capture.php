@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * Retrieve a payment capture using the Mollie API.
@@ -20,6 +20,6 @@ try {
     $capture = $payment->getCapture('cpt_4qqhO89gsT');
     $amount = $capture->amount->currency . ' ' . $capture->amount->value;
     echo 'Captured ' . $amount;
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

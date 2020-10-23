@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder;
+namespace MolliePrefix\Symfony\Component\Config\Definition\Builder;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\FloatNode;
+use MolliePrefix\Symfony\Component\Config\Definition\FloatNode;
 /**
  * This class provides a fluent interface for defining a float node.
  *
  * @author Jeanmonod David <david.jeanmonod@gmail.com>
  */
-class FloatNodeDefinition extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\NumericNodeDefinition
+class FloatNodeDefinition extends \MolliePrefix\Symfony\Component\Config\Definition\Builder\NumericNodeDefinition
 {
     /**
      * Instantiates a Node.
@@ -25,6 +25,6 @@ class FloatNodeDefinition extends \_PhpScoper5eddef0da618a\Symfony\Component\Con
      */
     protected function instantiateNode()
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\FloatNode($this->name, $this->parent, $this->min, $this->max);
+        return new \MolliePrefix\Symfony\Component\Config\Definition\FloatNode($this->name, $this->parent, $this->min, $this->max);
     }
 }

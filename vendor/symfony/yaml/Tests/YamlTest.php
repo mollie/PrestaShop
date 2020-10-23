@@ -8,29 +8,29 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Tests;
+namespace MolliePrefix\Symfony\Component\Yaml\Tests;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml;
-class YamlTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Yaml\Yaml;
+class YamlTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testParseAndDump()
     {
         $data = ['lorem' => 'ipsum', 'dolor' => 'sit'];
-        $yml = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::dump($data);
-        $parsed = \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::parse($yml);
+        $yml = \MolliePrefix\Symfony\Component\Yaml\Yaml::dump($data);
+        $parsed = \MolliePrefix\Symfony\Component\Yaml\Yaml::parse($yml);
         $this->assertEquals($data, $parsed);
     }
     public function testZeroIndentationThrowsException()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('The indentation must be greater than zero');
-        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::dump(['lorem' => 'ipsum', 'dolor' => 'sit'], 2, 0);
+        \MolliePrefix\Symfony\Component\Yaml\Yaml::dump(['lorem' => 'ipsum', 'dolor' => 'sit'], 2, 0);
     }
     public function testNegativeIndentationThrowsException()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('The indentation must be greater than zero');
-        \_PhpScoper5eddef0da618a\Symfony\Component\Yaml\Yaml::dump(['lorem' => 'ipsum', 'dolor' => 'sit'], 2, -4);
+        \MolliePrefix\Symfony\Component\Yaml\Yaml::dump(['lorem' => 'ipsum', 'dolor' => 'sit'], 2, -4);
     }
 }

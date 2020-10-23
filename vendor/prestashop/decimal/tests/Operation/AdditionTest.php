@@ -6,11 +6,11 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @license   https://opensource.org/licenses/MIT MIT License
  */
-namespace _PhpScoper5eddef0da618a\PrestaShop\Decimal\Test\Operation;
+namespace MolliePrefix\PrestaShop\Decimal\Test\Operation;
 
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Addition;
-class AdditionTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
+use MolliePrefix\PrestaShop\Decimal\Operation\Addition;
+class AdditionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * Given two decimal numbers
@@ -25,9 +25,9 @@ class AdditionTest extends \_PhpScoper5eddef0da618a\PHPUnit_Framework_TestCase
      */
     public function testItAddsNumbers($number1, $number2, $expectedResult)
     {
-        $n1 = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number($number1);
-        $n2 = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Number($number2);
-        $operation = new \_PhpScoper5eddef0da618a\PrestaShop\Decimal\Operation\Addition();
+        $n1 = new \MolliePrefix\PrestaShop\Decimal\DecimalNumber($number1);
+        $n2 = new \MolliePrefix\PrestaShop\Decimal\DecimalNumber($number2);
+        $operation = new \MolliePrefix\PrestaShop\Decimal\Operation\Addition();
         $result1 = $operation->computeUsingBcMath($n1, $n2);
         $result2 = $operation->computeWithoutBcMath($n1, $n2);
         $this->assertSame($expectedResult, (string) $result1, "Failed asserting {$number1} + {$number2} = {$expectedResult} (BC Math)");

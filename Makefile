@@ -1,3 +1,19 @@
+bv: build-vendor
+build-vendor:
+	composer update
+	cd vendorBuilder && vendor/bin/php-scoper add-prefix
+	rm -rf vendor
+	mv vendorBuilder/build/vendor vendor
+	composer dumpautoload
+
+bvn: build-vendor-no-dev
+build-vendor-no-dev:
+	composer update --no-dev
+	cd vendorBuilder && vendor/bin/php-scoper add-prefix
+	rm -rf vendor
+	mv vendorBuilder/build/vendor vendor
+	composer dumpautoload
+
 SHELL:=/bin/bash
 
 MODULE_NAME:=mollie

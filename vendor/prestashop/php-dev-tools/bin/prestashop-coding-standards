@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php 
+namespace MolliePrefix;
+
+// OK, it's not, let give Composer autoloader a try!
+$autoloadFile = __DIR__ . '/../../../autoload.php';
+if (\file_exists($autoloadFile)) {
+    require_once $autoloadFile;
+} else {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+use MolliePrefix\Symfony\Component\Console\Application;
+use MolliePrefix\PrestaShop\CodingStandards\Command\CsFixerInitCommand;
+use MolliePrefix\PrestaShop\CodingStandards\Command\PhpStanInitCommand;
+$app = new \MolliePrefix\Symfony\Component\Console\Application();
+$app->add(new \MolliePrefix\PrestaShop\CodingStandards\Command\CsFixerInitCommand());
+$app->add(new \MolliePrefix\PrestaShop\CodingStandards\Command\PhpStanInitCommand());
+$app->run();

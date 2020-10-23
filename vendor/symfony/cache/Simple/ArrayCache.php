@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5eddef0da618a\Psr\Log\LoggerAwareInterface;
-use _PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Traits\ArrayTrait;
+use MolliePrefix\Psr\Log\LoggerAwareInterface;
+use MolliePrefix\Psr\SimpleCache\CacheInterface;
+use MolliePrefix\Symfony\Component\Cache\CacheItem;
+use MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\Cache\ResettableInterface;
+use MolliePrefix\Symfony\Component\Cache\Traits\ArrayTrait;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface, \_PhpScoper5eddef0da618a\Psr\Log\LoggerAwareInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface
+class ArrayCache implements \MolliePrefix\Psr\SimpleCache\CacheInterface, \MolliePrefix\Psr\Log\LoggerAwareInterface, \MolliePrefix\Symfony\Component\Cache\ResettableInterface
 {
     use ArrayTrait {
         ArrayTrait::deleteItem as delete;
@@ -52,10 +52,10 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
         if ($keys instanceof \Traversable) {
             $keys = \iterator_to_array($keys, \false);
         } elseif (!\is_array($keys)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+            throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
         }
         foreach ($keys as $key) {
-            \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey($key);
+            \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($key);
         }
         return $this->generateItems($keys, \time(), function ($k, $v, $hit) use($default) {
             return $hit ? $v : $default;
@@ -67,7 +67,7 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
     public function deleteMultiple($keys)
     {
         if (!\is_array($keys) && !$keys instanceof \Traversable) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
+            throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache keys must be array or Traversable, "%s" given.', \is_object($keys) ? \get_class($keys) : \gettype($keys)));
         }
         foreach ($keys as $key) {
             $this->delete($key);
@@ -79,7 +79,7 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
      */
     public function set($key, $value, $ttl = null)
     {
-        \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey($key);
+        \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($key);
         return $this->setMultiple([$key => $value], $ttl);
     }
     /**
@@ -88,11 +88,11 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
     public function setMultiple($values, $ttl = null)
     {
         if (!\is_array($values) && !$values instanceof \Traversable) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache values must be array or Traversable, "%s" given.', \is_object($values) ? \get_class($values) : \gettype($values)));
+            throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Cache values must be array or Traversable, "%s" given.', \is_object($values) ? \get_class($values) : \gettype($values)));
         }
         $valuesArray = [];
         foreach ($values as $key => $value) {
-            \is_int($key) || \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::validateKey($key);
+            \is_int($key) || \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($key);
             $valuesArray[$key] = $value;
         }
         if (\false === ($ttl = $this->normalizeTtl($ttl))) {
@@ -104,7 +104,7 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
                     $valuesArray[$key] = \serialize($value);
                 } catch (\Exception $e) {
                     $type = \is_object($value) ? \get_class($value) : \gettype($value);
-                    \_PhpScoper5eddef0da618a\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to save key "{key}" ({type})', ['key' => $key, 'type' => $type, 'exception' => $e]);
+                    \MolliePrefix\Symfony\Component\Cache\CacheItem::log($this->logger, 'Failed to save key "{key}" ({type})', ['key' => $key, 'type' => $type, 'exception' => $e]);
                     return \false;
                 }
             }
@@ -127,6 +127,6 @@ class ArrayCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
         if (\is_int($ttl)) {
             return 0 < $ttl ? $ttl : \false;
         }
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', \is_object($ttl) ? \get_class($ttl) : \gettype($ttl)));
+        throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('Expiration date must be an integer, a DateInterval or null, "%s" given.', \is_object($ttl) ? \get_class($ttl) : \gettype($ttl)));
     }
 }

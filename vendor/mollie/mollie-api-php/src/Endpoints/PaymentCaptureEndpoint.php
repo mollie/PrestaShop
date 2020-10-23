@@ -1,11 +1,11 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Endpoints;
+namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Capture;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\CaptureCollection;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
-class PaymentCaptureEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoints\CollectionEndpointAbstract
+use MolliePrefix\Mollie\Api\Resources\Capture;
+use MolliePrefix\Mollie\Api\Resources\CaptureCollection;
+use MolliePrefix\Mollie\Api\Resources\Payment;
+class PaymentCaptureEndpoint extends \MolliePrefix\Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_captures";
     /**
@@ -15,7 +15,7 @@ class PaymentCaptureEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoin
      */
     protected function getResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Capture($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Capture($this->client);
     }
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
@@ -27,7 +27,7 @@ class PaymentCaptureEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoin
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CaptureCollection($this->client, $count, $_links);
+        return new \MolliePrefix\Mollie\Api\Resources\CaptureCollection($this->client, $count, $_links);
     }
     /**
      * @param Payment $payment
@@ -37,7 +37,7 @@ class PaymentCaptureEndpoint extends \_PhpScoper5eddef0da618a\Mollie\Api\Endpoin
      * @return Capture
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(\_PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment $payment, $captureId, array $parameters = [])
+    public function getFor(\MolliePrefix\Mollie\Api\Resources\Payment $payment, $captureId, array $parameters = [])
     {
         return $this->getForId($payment->id, $captureId, $parameters);
     }

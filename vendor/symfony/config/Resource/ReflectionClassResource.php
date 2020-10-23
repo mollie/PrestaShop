@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource;
+namespace MolliePrefix\Symfony\Component\Config\Resource;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use MolliePrefix\Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ReflectionClassResource implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
+class ReflectionClassResource implements \MolliePrefix\Symfony\Component\Config\Resource\SelfCheckingResourceInterface, \Serializable
 {
     private $files = [];
     private $className;
@@ -131,7 +131,7 @@ class ReflectionClassResource implements \_PhpScoper5eddef0da618a\Symfony\Compon
         if (\defined('HHVM_VERSION')) {
             foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
                 // workaround HHVM bug with variadics, see https://github.com/facebook/hhvm/issues/5762
-                (yield \preg_replace('/^  @@.*/m', '', new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ReflectionMethodHhvmWrapper($m->class, $m->name)));
+                (yield \preg_replace('/^  @@.*/m', '', new \MolliePrefix\Symfony\Component\Config\Resource\ReflectionMethodHhvmWrapper($m->class, $m->name)));
             }
         } else {
             foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
@@ -152,13 +152,15 @@ class ReflectionClassResource implements \_PhpScoper5eddef0da618a\Symfony\Compon
                 if (!$parametersWithUndefinedConstants) {
                     (yield \preg_replace('/^  @@.*/m', '', $m));
                 } else {
-                    $stack = [$m->getDocComment(), $m->getName(), $m->isAbstract(), $m->isFinal(), $m->isStatic(), $m->isPublic(), $m->isPrivate(), $m->isProtected(), $m->returnsReference(), \PHP_VERSION_ID >= 70000 && $m->hasReturnType() ? \PHP_VERSION_ID >= 70100 ? $m->getReturnType()->getName() : (string) $m->getReturnType() : ''];
+                    $t = \PHP_VERSION_ID >= 70000 ? $m->getReturnType() : '';
+                    $stack = [$m->getDocComment(), $m->getName(), $m->isAbstract(), $m->isFinal(), $m->isStatic(), $m->isPublic(), $m->isPrivate(), $m->isProtected(), $m->returnsReference(), $t instanceof \ReflectionNamedType ? (string) $t->allowsNull() . $t->getName() : (string) $t];
                     foreach ($m->getParameters() as $p) {
                         if (!isset($parametersWithUndefinedConstants[$p->name])) {
                             $stack[] = (string) $p;
                         } else {
+                            $t = \PHP_VERSION_ID >= 70000 ? $p->getType() : '';
                             $stack[] = $p->isOptional();
-                            $stack[] = \PHP_VERSION_ID >= 70000 && $p->hasType() ? \PHP_VERSION_ID >= 70100 ? $p->getType()->getName() : (string) $p->getType() : '';
+                            $stack[] = $t instanceof \ReflectionNamedType ? (string) $t->allowsNull() . $t->getName() : (string) $t;
                             $stack[] = $p->isPassedByReference();
                             $stack[] = \PHP_VERSION_ID >= 50600 ? $p->isVariadic() : '';
                             $stack[] = $p->getName();
@@ -172,12 +174,12 @@ class ReflectionClassResource implements \_PhpScoper5eddef0da618a\Symfony\Compon
         if ($class->isAbstract() || $class->isInterface() || $class->isTrait()) {
             return;
         }
-        if (\interface_exists(\_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class)) {
-            (yield \_PhpScoper5eddef0da618a\Symfony\Component\EventDispatcher\EventSubscriberInterface::class);
+        if (\interface_exists(\MolliePrefix\Symfony\Component\EventDispatcher\EventSubscriberInterface::class, \false) && $class->isSubclassOf(\MolliePrefix\Symfony\Component\EventDispatcher\EventSubscriberInterface::class)) {
+            (yield \MolliePrefix\Symfony\Component\EventDispatcher\EventSubscriberInterface::class);
             (yield \print_r(\call_user_func([$class->name, 'getSubscribedEvents']), \true));
         }
-        if (\interface_exists(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class, \false) && $class->isSubclassOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
-            (yield \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class);
+        if (\interface_exists(\MolliePrefix\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class, \false) && $class->isSubclassOf(\MolliePrefix\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class)) {
+            (yield \MolliePrefix\Symfony\Component\DependencyInjection\ServiceSubscriberInterface::class);
             (yield \print_r(\call_user_func([$class->name, 'getSubscribedServices']), \true));
         }
     }
@@ -191,7 +193,7 @@ class ReflectionMethodHhvmWrapper extends \ReflectionMethod
     {
         $params = [];
         foreach (parent::getParameters() as $i => $p) {
-            $params[] = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
+            $params[] = new \MolliePrefix\Symfony\Component\Config\Resource\ReflectionParameterHhvmWrapper([$this->class, $this->name], $i);
         }
         return $params;
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class ProfileCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\CursorCollection
+class ProfileCollection extends \MolliePrefix\Mollie\Api\Resources\CursorCollection
 {
     /**
      * @return string
@@ -16,6 +16,6 @@ class ProfileCollection extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Cu
      */
     protected function createResourceObject()
     {
-        return new \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Profile($this->client);
+        return new \MolliePrefix\Mollie\Api\Resources\Profile($this->client);
     }
 }

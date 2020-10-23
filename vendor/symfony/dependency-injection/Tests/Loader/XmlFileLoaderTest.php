@@ -8,28 +8,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Loader;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Loader;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Loader\LoaderResolver;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\GlobResource;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveBindingsPass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Dumper\PhpDumper;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype;
-use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Expression;
-class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\FileLocator;
+use MolliePrefix\Symfony\Component\Config\Loader\LoaderResolver;
+use MolliePrefix\Symfony\Component\Config\Resource\FileResource;
+use MolliePrefix\Symfony\Component\Config\Resource\GlobResource;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
+use MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveBindingsPass;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use MolliePrefix\Symfony\Component\DependencyInjection\Reference;
+use MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar;
+use MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass;
+use MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy;
+use MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype;
+use MolliePrefix\Symfony\Component\ExpressionLanguage\Expression;
+class XmlFileLoaderTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     protected static $fixturesPath;
     public static function setUpBeforeClass()
@@ -41,7 +41,7 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testLoad()
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini'));
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini'));
         try {
             $loader->load('foo.xml');
             $this->fail('->load() throws an InvalidArgumentException if the loaded file does not exist');
@@ -52,7 +52,7 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testParseFile()
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini'));
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini'));
         $r = new \ReflectionObject($loader);
         $m = $r->getMethod('parseFileToDOM');
         $m->setAccessible(\true);
@@ -60,19 +60,19 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
             $m->invoke($loader, self::$fixturesPath . '/ini/parameters.ini');
             $this->fail('->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
-            $this->assertRegExp(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'parameters.ini'), $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
+            $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
+            $this->assertMatchesRegularExpression(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'parameters.ini'), $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
             $e = $e->getPrevious();
             $this->assertInstanceOf('InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
             $this->assertStringStartsWith('[ERROR 4] Start tag expected, \'<\' not found (in', $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
         }
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         try {
             $m->invoke($loader, self::$fixturesPath . '/xml/nonvalid.xml');
             $this->fail('->parseFileToDOM() throws an InvalidArgumentException if the loaded file does not validate the XSD');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file does not validate the XSD');
-            $this->assertRegExp(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'nonvalid.xml'), $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
+            $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file does not validate the XSD');
+            $this->assertMatchesRegularExpression(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'nonvalid.xml'), $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file is not a valid XML file');
             $e = $e->getPrevious();
             $this->assertInstanceOf('InvalidArgumentException', $e, '->parseFileToDOM() throws an InvalidArgumentException if the loaded file does not validate the XSD');
             $this->assertStringStartsWith('[ERROR 1845] Element \'nonvalid\': No matching global declaration available for the validation root. (in', $e->getMessage(), '->parseFileToDOM() throws an InvalidArgumentException if the loaded file does not validate the XSD');
@@ -82,17 +82,21 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testLoadWithExternalEntitiesDisabled()
     {
-        $disableEntities = \libxml_disable_entity_loader(\true);
-        $containerBuilder = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($containerBuilder, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        if (\LIBXML_VERSION < 20900) {
+            $disableEntities = \libxml_disable_entity_loader(\true);
+        }
+        $containerBuilder = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($containerBuilder, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services2.xml');
-        \libxml_disable_entity_loader($disableEntities);
+        if (\LIBXML_VERSION < 20900) {
+            \libxml_disable_entity_loader($disableEntities);
+        }
         $this->assertGreaterThan(0, $containerBuilder->getParameterBag()->all(), 'Parameters can be read from the config file.');
     }
     public function testLoadParameters()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services2.xml');
         $actual = $container->getParameterBag()->all();
         $expected = ['a string', 'foo' => 'bar', 'values' => [0, 'integer' => 4, 100 => null, 'true', \true, \false, 'on', 'off', 'float' => 1.3, 1000.3, 'a string', ['foo', 'bar']], 'mixedcase' => ['MixedCaseKey' => 'value'], 'constant' => \PHP_EOL];
@@ -100,8 +104,8 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testLoadImports()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $resolver = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Loader\LoaderResolver([new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\IniFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini')), new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/yml')), $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'))]);
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $resolver = new \MolliePrefix\Symfony\Component\Config\Loader\LoaderResolver([new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\IniFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/ini')), new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/yml')), $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'))]);
         $loader->setResolver($resolver);
         $loader->load('services4.xml');
         $actual = $container->getParameterBag()->all();
@@ -113,15 +117,15 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testLoadAnonymousServices()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services5.xml');
         $services = $container->getDefinitions();
         $this->assertCount(7, $services, '->load() attributes unique ids to anonymous services');
         // anonymous service as an argument
         $args = $services['foo']->getArguments();
         $this->assertCount(1, $args, '->load() references anonymous services as "normal" ones');
-        $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Reference', $args[0], '->load() converts anonymous services to references to "normal" services');
+        $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Reference', $args[0], '->load() converts anonymous services to references to "normal" services');
         $this->assertArrayHasKey((string) $args[0], $services, '->load() makes a reference to the created ones');
         $inner = $services[(string) $args[0]];
         $this->assertEquals('BarClass', $inner->getClass(), '->load() uses the same configuration as for the anonymous ones');
@@ -129,7 +133,7 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
         // inner anonymous services
         $args = $inner->getArguments();
         $this->assertCount(1, $args, '->load() references anonymous services as "normal" ones');
-        $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Reference', $args[0], '->load() converts anonymous services to references to "normal" services');
+        $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Reference', $args[0], '->load() converts anonymous services to references to "normal" services');
         $this->assertArrayHasKey((string) $args[0], $services, '->load() makes a reference to the created ones');
         $inner = $services[(string) $args[0]];
         $this->assertEquals('BazClass', $inner->getClass(), '->load() uses the same configuration as for the anonymous ones');
@@ -137,7 +141,7 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
         // anonymous service as a property
         $properties = $services['foo']->getProperties();
         $property = $properties['p'];
-        $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Reference', $property, '->load() converts anonymous services to references to "normal" services');
+        $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Reference', $property, '->load() converts anonymous services to references to "normal" services');
         $this->assertArrayHasKey((string) $property, $services, '->load() makes a reference to the created ones');
         $inner = $services[(string) $property];
         $this->assertEquals('BuzClass', $inner->getClass(), '->load() uses the same configuration as for the anonymous ones');
@@ -163,38 +167,38 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
      */
     public function testLoadAnonymousServicesWithoutId()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_without_id.xml');
     }
     public function testLoadAnonymousNestedServices()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('nested_service_without_id.xml');
         $this->assertTrue($container->hasDefinition('FooClass'));
         $arguments = $container->getDefinition('FooClass')->getArguments();
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference::class, \array_shift($arguments));
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Reference::class, \array_shift($arguments));
     }
     public function testLoadServices()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services6.xml');
         $services = $container->getDefinitions();
         $this->assertArrayHasKey('foo', $services, '->load() parses <service> elements');
         $this->assertFalse($services['not_shared']->isShared(), '->load() parses shared flag');
-        $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Definition', $services['foo'], '->load() converts <service> element to Definition instances');
+        $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Definition', $services['foo'], '->load() converts <service> element to Definition instances');
         $this->assertEquals('FooClass', $services['foo']->getClass(), '->load() parses the class attribute');
         $this->assertEquals('%path%/foo.php', $services['file']->getFile(), '->load() parses the file tag');
-        $this->assertEquals(['foo', new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('foo'), [\true, \false]], $services['arguments']->getArguments(), '->load() parses the argument tags');
+        $this->assertEquals(['foo', new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('foo'), [\true, \false]], $services['arguments']->getArguments(), '->load() parses the argument tags');
         $this->assertEquals('sc_configure', $services['configurator1']->getConfigurator(), '->load() parses the configurator tag');
-        $this->assertEquals([new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('baz'), 'configure'], $services['configurator2']->getConfigurator(), '->load() parses the configurator tag');
+        $this->assertEquals([new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('baz'), 'configure'], $services['configurator2']->getConfigurator(), '->load() parses the configurator tag');
         $this->assertEquals(['BazClass', 'configureStatic'], $services['configurator3']->getConfigurator(), '->load() parses the configurator tag');
-        $this->assertEquals([['setBar', []], ['setBar', [new \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Expression('service("foo").foo() ~ (container.hasParameter("foo") ? parameter("foo") : "default")')]]], $services['method_call1']->getMethodCalls(), '->load() parses the method_call tag');
-        $this->assertEquals([['setBar', ['foo', new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('foo'), [\true, \false]]]], $services['method_call2']->getMethodCalls(), '->load() parses the method_call tag');
+        $this->assertEquals([['setBar', []], ['setBar', [new \MolliePrefix\Symfony\Component\ExpressionLanguage\Expression('service("foo").foo() ~ (container.hasParameter("foo") ? parameter("foo") : "default")')]]], $services['method_call1']->getMethodCalls(), '->load() parses the method_call tag');
+        $this->assertEquals([['setBar', ['foo', new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('foo'), [\true, \false]]]], $services['method_call2']->getMethodCalls(), '->load() parses the method_call tag');
         $this->assertEquals('factory', $services['new_factory1']->getFactory(), '->load() parses the factory tag');
-        $this->assertEquals([new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('baz'), 'getClass'], $services['new_factory2']->getFactory(), '->load() parses the factory tag');
+        $this->assertEquals([new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('baz'), 'getClass'], $services['new_factory2']->getFactory(), '->load() parses the factory tag');
         $this->assertEquals(['BazClass', 'getInstance'], $services['new_factory3']->getFactory(), '->load() parses the factory tag');
         $this->assertSame([null, 'getInstance'], $services['new_factory4']->getFactory(), '->load() accepts factory tag without class');
         $aliases = $container->getAliases();
@@ -210,16 +214,16 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testParsesIteratorArgument()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services9.xml');
         $lazyDefinition = $container->getDefinition('lazy_context');
-        $this->assertEquals([new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\IteratorArgument(['k1' => new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('foo.baz'), 'k2' => new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference('service_container')]), new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\IteratorArgument([])], $lazyDefinition->getArguments(), '->load() parses lazy arguments');
+        $this->assertEquals([new \MolliePrefix\Symfony\Component\DependencyInjection\Argument\IteratorArgument(['k1' => new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('foo.baz'), 'k2' => new \MolliePrefix\Symfony\Component\DependencyInjection\Reference('service_container')]), new \MolliePrefix\Symfony\Component\DependencyInjection\Argument\IteratorArgument([])], $lazyDefinition->getArguments(), '->load() parses lazy arguments');
     }
     public function testParsesTags()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services10.xml');
         $services = $container->findTaggedServiceIds('foo_tag');
         $this->assertCount(1, $services);
@@ -236,23 +240,23 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testParseTagsWithoutNameThrowsException()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('tag_without_name.xml');
     }
     public function testParseTagWithEmptyNameThrowsException()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
-        $this->expectExceptionMessageRegExp('/The tag name for service ".+" in .* must be a non-empty string/');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectExceptionMessageMatches('/The tag name for service ".+" in .* must be a non-empty string/');
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('tag_with_empty_name.xml');
     }
     public function testDeprecated()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_deprecated.xml');
         $this->assertTrue($container->getDefinition('foo')->isDeprecated());
         $message = 'The "foo" service is deprecated. You should stop using it, as it will soon be removed.';
@@ -265,32 +269,32 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     {
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo>bar</foo>');
-        $this->assertEquals('bar', \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals('bar', \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo foo="bar" />');
-        $this->assertEquals(['foo' => 'bar'], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => 'bar'], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo><foo>bar</foo></foo>');
-        $this->assertEquals(['foo' => 'bar'], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => 'bar'], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo><foo>bar<foo>bar</foo></foo></foo>');
-        $this->assertEquals(['foo' => ['value' => 'bar', 'foo' => 'bar']], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => ['value' => 'bar', 'foo' => 'bar']], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo><foo></foo></foo>');
-        $this->assertEquals(['foo' => null], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => null], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo><foo><!-- foo --></foo></foo>');
-        $this->assertEquals(['foo' => null], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => null], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
         $doc = new \DOMDocument('1.0');
         $doc->loadXML('<foo><foo foo="bar"/><foo foo="bar"/></foo>');
-        $this->assertEquals(['foo' => [['foo' => 'bar'], ['foo' => 'bar']]], \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
+        $this->assertEquals(['foo' => [['foo' => 'bar'], ['foo' => 'bar']]], \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader::convertDomElementToArray($doc->documentElement), '::convertDomElementToArray() converts a \\DomElement to an array');
     }
     public function testExtensions()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectExtension());
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectWithXsdExtension());
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerExtension(new \MolliePrefix\ProjectExtension());
+        $container->registerExtension(new \MolliePrefix\ProjectWithXsdExtension());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         // extension without an XSD
         $loader->load('extensions/services1.xml');
         $container->compile();
@@ -301,10 +305,10 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
         $this->assertEquals('BAR', $services['project.service.foo']->getClass(), '->load() parses extension elements');
         $this->assertEquals('BAR', $parameters['project.parameter.foo'], '->load() parses extension elements');
         // extension with an XSD
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectExtension());
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectWithXsdExtension());
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerExtension(new \MolliePrefix\ProjectExtension());
+        $container->registerExtension(new \MolliePrefix\ProjectWithXsdExtension());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('extensions/services2.xml');
         $container->compile();
         $services = $container->getDefinitions();
@@ -313,17 +317,17 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
         $this->assertArrayHasKey('project.parameter.bar', $parameters, '->load() parses extension elements');
         $this->assertEquals('BAR', $services['project.service.foo']->getClass(), '->load() parses extension elements');
         $this->assertEquals('BAR', $parameters['project.parameter.foo'], '->load() parses extension elements');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectExtension());
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectWithXsdExtension());
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerExtension(new \MolliePrefix\ProjectExtension());
+        $container->registerExtension(new \MolliePrefix\ProjectWithXsdExtension());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         // extension with an XSD (does not validate)
         try {
             $loader->load('extensions/services3.xml');
             $this->fail('->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
-            $this->assertRegExp(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'services3.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
+            $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
+            $this->assertMatchesRegularExpression(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'services3.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
             $e = $e->getPrevious();
             $this->assertInstanceOf('InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
             $this->assertStringContainsString('The attribute \'bar\' is not allowed', $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
@@ -347,17 +351,17 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
         }
         require_once self::$fixturesPath . '/includes/ProjectWithXsdExtensionInPhar.phar';
         // extension with an XSD in PHAR archive
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $container->registerExtension(new \_PhpScoper5eddef0da618a\ProjectWithXsdExtensionInPhar());
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $container->registerExtension(new \MolliePrefix\ProjectWithXsdExtensionInPhar());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('extensions/services6.xml');
         // extension with an XSD in PHAR archive (does not validate)
         try {
             $loader->load('extensions/services7.xml');
             $this->fail('->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
-            $this->assertRegExp(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'services7.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
+            $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
+            $this->assertMatchesRegularExpression(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'services7.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
             $e = $e->getPrevious();
             $this->assertInstanceOf('InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
             $this->assertStringContainsString('The attribute \'bar\' is not allowed', $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration does not validate the XSD');
@@ -365,19 +369,19 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testSupports()
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator());
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), new \MolliePrefix\Symfony\Component\Config\FileLocator());
         $this->assertTrue($loader->supports('foo.xml'), '->supports() returns true if the resource is loadable');
         $this->assertFalse($loader->supports('foo.foo'), '->supports() returns false if the resource is not loadable');
         $this->assertTrue($loader->supports('with_wrong_ext.yml', 'xml'), '->supports() returns true if the resource with forced type is loadable');
     }
     public function testNoNamingConflictsForAnonymousServices()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader1 = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml/extension1'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader1 = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml/extension1'));
         $loader1->load('services.xml');
         $services = $container->getDefinitions();
         $this->assertCount(3, $services, '->load() attributes unique ids to anonymous services');
-        $loader2 = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml/extension2'));
+        $loader2 = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml/extension2'));
         $loader2->load('services.xml');
         $services = $container->getDefinitions();
         $this->assertCount(5, $services, '->load() attributes unique ids to anonymous services');
@@ -391,15 +395,15 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testDocTypeIsNotAllowed()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         // document types are not allowed.
         try {
             $loader->load('withdoctype.xml');
             $this->fail('->load() throws an InvalidArgumentException if the configuration contains a document type');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration contains a document type');
-            $this->assertRegExp(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'withdoctype.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration contains a document type');
+            $this->assertInstanceOf('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration contains a document type');
+            $this->assertMatchesRegularExpression(\sprintf('#^Unable to parse file ".+%s": .+.$#', 'withdoctype.xml'), $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration contains a document type');
             $e = $e->getPrevious();
             $this->assertInstanceOf('InvalidArgumentException', $e, '->load() throws an InvalidArgumentException if the configuration contains a document type');
             $this->assertSame('Document types are not allowed.', $e->getMessage(), '->load() throws an InvalidArgumentException if the configuration contains a document type');
@@ -407,8 +411,8 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testXmlNamespaces()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('namespaces.xml');
         $services = $container->getDefinitions();
         $this->assertArrayHasKey('foo', $services, '->load() parses <srv:service> elements');
@@ -417,36 +421,36 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testLoadIndexedArguments()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services14.xml');
         $this->assertEquals(['index_0' => 'app'], $container->findDefinition('logger')->getArguments());
     }
     public function testLoadInlinedServices()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services21.xml');
         $foo = $container->getDefinition('foo');
         $fooFactory = $foo->getFactory();
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference::class, $fooFactory[0]);
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Reference::class, $fooFactory[0]);
         $this->assertTrue($container->has((string) $fooFactory[0]));
         $fooFactoryDefinition = $container->getDefinition((string) $fooFactory[0]);
         $this->assertSame('FooFactory', $fooFactoryDefinition->getClass());
         $this->assertSame('createFoo', $fooFactory[1]);
         $fooFactoryFactory = $fooFactoryDefinition->getFactory();
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference::class, $fooFactoryFactory[0]);
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Reference::class, $fooFactoryFactory[0]);
         $this->assertTrue($container->has((string) $fooFactoryFactory[0]));
         $this->assertSame('Foobar', $container->getDefinition((string) $fooFactoryFactory[0])->getClass());
         $this->assertSame('createFooFactory', $fooFactoryFactory[1]);
         $fooConfigurator = $foo->getConfigurator();
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference::class, $fooConfigurator[0]);
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Reference::class, $fooConfigurator[0]);
         $this->assertTrue($container->has((string) $fooConfigurator[0]));
         $fooConfiguratorDefinition = $container->getDefinition((string) $fooConfigurator[0]);
         $this->assertSame('Bar', $fooConfiguratorDefinition->getClass());
         $this->assertSame('configureFoo', $fooConfigurator[1]);
         $barConfigurator = $fooConfiguratorDefinition->getConfigurator();
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference::class, $barConfigurator[0]);
+        $this->assertInstanceOf(\MolliePrefix\Symfony\Component\DependencyInjection\Reference::class, $barConfigurator[0]);
         $this->assertSame('Baz', $container->getDefinition((string) $barConfigurator[0])->getClass());
         $this->assertSame('configureBar', $barConfigurator[1]);
     }
@@ -455,41 +459,41 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
      */
     public function testType()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services22.xml');
         $this->assertEquals(['Bar', 'Baz'], $container->getDefinition('foo')->getAutowiringTypes());
     }
     public function testAutowire()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services23.xml');
         $this->assertTrue($container->getDefinition('bar')->isAutowired());
     }
     public function testClassFromId()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('class_from_id.xml');
         $container->compile();
-        $this->assertEquals(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class, $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class)->getClass());
+        $this->assertEquals(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class, $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class)->getClass());
     }
     public function testPrototype()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_prototype.xml');
         $ids = \array_keys($container->getDefinitions());
         \sort($ids);
-        $this->assertSame([\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo::class, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar::class, 'service_container'], $ids);
+        $this->assertSame([\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo::class, \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar::class, 'service_container'], $ids);
         $resources = $container->getResources();
         $fixturesDir = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . 'Fixtures' . \DIRECTORY_SEPARATOR;
         $resources = \array_map('strval', $resources);
-        $this->assertContains((string) new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource($fixturesDir . 'xml' . \DIRECTORY_SEPARATOR . 'services_prototype.xml'), $resources);
-        $this->assertContains((string) new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\GlobResource($fixturesDir . 'Prototype', '/*', \true), $resources);
-        $this->assertContains('_PhpScoper5eddef0da618a\\reflection.Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Foo', $resources);
-        $this->assertContains('_PhpScoper5eddef0da618a\\reflection.Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Sub\\Bar', $resources);
+        $this->assertContains((string) new \MolliePrefix\Symfony\Component\Config\Resource\FileResource($fixturesDir . 'xml' . \DIRECTORY_SEPARATOR . 'services_prototype.xml'), $resources);
+        $this->assertContains((string) new \MolliePrefix\Symfony\Component\Config\Resource\GlobResource($fixturesDir . 'Prototype', '/*', \true), $resources);
+        $this->assertContains('MolliePrefix\\reflection.Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Foo', $resources);
+        $this->assertContains('MolliePrefix\\reflection.Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\Sub\\Bar', $resources);
     }
     /**
      * @group legacy
@@ -499,22 +503,22 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
      */
     public function testAliasDefinitionContainsUnsupportedElements()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('legacy_invalid_alias_definition.xml');
         $this->assertTrue($container->has('bar'));
     }
     public function testArgumentWithKeyOutsideCollection()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('with_key_outside_collection.xml');
         $this->assertSame(['type' => 'foo', 'bar'], $container->getDefinition('foo')->getArguments());
     }
     public function testDefaults()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services28.xml');
         $this->assertFalse($container->getDefinition('with_defaults')->isPublic());
         $this->assertSame(['foo' => [[]]], $container->getDefinition('with_defaults')->getTags());
@@ -539,72 +543,72 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testNamedArguments()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_named_args.xml');
-        $this->assertEquals(['$apiKey' => 'ABCD', \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class => null], $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getArguments());
+        $this->assertEquals(['$apiKey' => 'ABCD', \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass::class => null], $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getArguments());
         $container->compile();
-        $this->assertEquals([null, 'ABCD'], $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getArguments());
-        $this->assertEquals([['setApiKey', ['123']]], $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getMethodCalls());
+        $this->assertEquals([null, 'ABCD'], $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getArguments());
+        $this->assertEquals([['setApiKey', ['123']]], $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy::class)->getMethodCalls());
     }
     public function testInstanceof()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_instanceof.xml');
         $container->compile();
-        $definition = $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class);
+        $definition = $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class);
         $this->assertTrue($definition->isAutowired());
         $this->assertTrue($definition->isLazy());
         $this->assertSame(['foo' => [[]], 'bar' => [[]]], $definition->getTags());
     }
     public function testInstanceOfAndChildDefinitionNotAllowed()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The service "child_service" cannot use the "parent" option in the same file where "instanceof" configuration is defined as using both is not supported. Move your child definitions to a separate file.');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_instanceof_with_parent.xml');
         $container->compile();
     }
     public function testAutoConfigureAndChildDefinitionNotAllowed()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The service "child_service" cannot have a "parent" and also have "autoconfigure". Try setting autoconfigure="false" for the service.');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_autoconfigure_with_parent.xml');
         $container->compile();
     }
     public function testDefaultsAndChildDefinitionNotAllowed()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('Attribute "autowire" on service "child_service" cannot be inherited from "defaults" when a "parent" is set. Move your child definitions to a separate file or define this attribute explicitly.');
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_defaults_with_parent.xml');
         $container->compile();
     }
     public function testAutoConfigureInstanceof()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_autoconfigure.xml');
         $this->assertTrue($container->getDefinition('use_defaults_settings')->isAutoconfigured());
         $this->assertFalse($container->getDefinition('override_defaults_settings_to_false')->isAutoconfigured());
     }
     public function testBindings()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_bindings.xml');
         $container->compile();
         $definition = $container->getDefinition('bar');
-        $this->assertEquals(['NonExistent' => null, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface::class => new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class), '$foo' => [null], '$quz' => 'quz', '$factory' => 'factory'], \array_map(function ($v) {
+        $this->assertEquals(['NonExistent' => null, \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface::class => new \MolliePrefix\Symfony\Component\DependencyInjection\Reference(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class), '$foo' => [null], '$quz' => 'quz', '$factory' => 'factory'], \array_map(function ($v) {
             return $v->getValues()[0];
         }, $definition->getBindings()));
-        $this->assertEquals(['quz', null, new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class), [null]], $definition->getArguments());
-        $definition = $container->getDefinition(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class);
+        $this->assertEquals(['quz', null, new \MolliePrefix\Symfony\Component\DependencyInjection\Reference(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class), [null]], $definition->getArguments());
+        $definition = $container->getDefinition(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar::class);
         $this->assertEquals([null, 'factory'], $definition->getArguments());
         $this->assertEquals(['NonExistent' => null, '$quz' => 'quz', '$factory' => 'factory'], \array_map(function ($v) {
             return $v->getValues()[0];
@@ -612,11 +616,11 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
     }
     public function testTsantosContainer()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('services_tsantos.xml');
         $container->compile();
-        $dumper = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Dumper\PhpDumper($container);
+        $dumper = new \MolliePrefix\Symfony\Component\DependencyInjection\Dumper\PhpDumper($container);
         $this->assertStringEqualsFile(self::$fixturesPath . '/php/services_tsantos.php', $dumper->dump());
     }
     /**
@@ -624,11 +628,11 @@ class XmlFileLoaderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestC
      */
     public function testOverriddenDefaultsBindings()
     {
-        $container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
+        $container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
+        $loader = new \MolliePrefix\Symfony\Component\DependencyInjection\Loader\XmlFileLoader($container, new \MolliePrefix\Symfony\Component\Config\FileLocator(self::$fixturesPath . '/xml'));
         $loader->load('defaults_bindings.xml');
         $loader->load('defaults_bindings2.xml');
-        (new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\ResolveBindingsPass())->process($container);
+        (new \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\ResolveBindingsPass())->process($container);
         $this->assertSame('overridden', $container->get('bar')->quz);
     }
 }

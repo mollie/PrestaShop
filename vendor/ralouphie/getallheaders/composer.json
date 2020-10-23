@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\getallheaders\\Tests\\": "tests\/"
+            "MolliePrefix\\getallheaders\\Tests\\": "tests\/"
         }
     }
 }

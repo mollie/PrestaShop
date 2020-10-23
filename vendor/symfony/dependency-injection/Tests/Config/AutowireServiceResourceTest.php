@@ -8,15 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Config;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Config;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\Compiler\AutowirePass;
+use MolliePrefix\Symfony\Component\DependencyInjection\Config\AutowireServiceResource;
 /**
  * @group legacy
  */
-class AutowireServiceResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+class AutowireServiceResourceTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @var AutowireServiceResource
@@ -30,8 +30,8 @@ class AutowireServiceResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Frame
         $this->file = \realpath(\sys_get_temp_dir()) . '/tmp.php';
         $this->time = \time();
         \touch($this->file, $this->time);
-        $this->class = \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Config\Foo::class;
-        $this->resource = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, []);
+        $this->class = \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Config\Foo::class;
+        $this->resource = new \MolliePrefix\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, []);
     }
     public function testToString()
     {
@@ -55,19 +55,19 @@ class AutowireServiceResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Frame
     }
     public function testIsNotFreshChangedResource()
     {
-        $oldResource = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, ['will_be_different']);
+        $oldResource = new \MolliePrefix\Symfony\Component\DependencyInjection\Config\AutowireServiceResource($this->class, $this->file, ['will_be_different']);
         // test with a stale file *and* a resource that *will* be different than the actual
         $this->assertFalse($oldResource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the constructor arguments have changed');
     }
     public function testIsFreshSameConstructorArgs()
     {
-        $oldResource = \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\AutowirePass::createResourceForClass(new \ReflectionClass(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Config\Foo::class));
+        $oldResource = \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\AutowirePass::createResourceForClass(new \ReflectionClass(\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Config\Foo::class));
         // test with a stale file *but* the resource will not be changed
         $this->assertTrue($oldResource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the constructor arguments have changed');
     }
     public function testNotFreshIfClassNotFound()
     {
-        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Config\AutowireServiceResource('_PhpScoper5eddef0da618a\\Some\\Non\\Existent\\Class', $this->file, []);
+        $resource = new \MolliePrefix\Symfony\Component\DependencyInjection\Config\AutowireServiceResource('MolliePrefix\\Some\\Non\\Existent\\Class', $this->file, []);
         $this->assertFalse($resource->isFresh($this->getStaleFileTime()), '->isFresh() returns false if the class no longer exists');
     }
     protected function tearDown()

@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests;
+namespace MolliePrefix\Symfony\Component\Cache\Tests;
 
-use _PhpScoper5eddef0da618a\Doctrine\Common\Cache\CacheProvider;
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\DoctrineProvider;
-class DoctrineProviderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\Doctrine\Common\Cache\CacheProvider;
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter;
+use MolliePrefix\Symfony\Component\Cache\DoctrineProvider;
+class DoctrineProviderTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testProvider()
     {
-        $pool = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter();
-        $cache = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\DoctrineProvider($pool);
-        $this->assertInstanceOf(\_PhpScoper5eddef0da618a\Doctrine\Common\Cache\CacheProvider::class, $cache);
+        $pool = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $cache = new \MolliePrefix\Symfony\Component\Cache\DoctrineProvider($pool);
+        $this->assertInstanceOf(\MolliePrefix\Doctrine\Common\Cache\CacheProvider::class, $cache);
         $key = '{}()/\\@:';
         $this->assertTrue($cache->delete($key));
         $this->assertFalse($cache->contains($key));

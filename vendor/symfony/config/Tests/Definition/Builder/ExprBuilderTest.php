@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Definition\Builder;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Definition\Builder;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\TreeBuilder;
-class ExprBuilderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\Definition\Builder\TreeBuilder;
+class ExprBuilderTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testAlwaysExpression()
     {
@@ -96,7 +96,7 @@ class ExprBuilderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCas
     }
     public function testThenInvalid()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Config\\Definition\\Exception\\InvalidConfigurationException');
         $test = $this->getTestBuilder()->ifString()->thenInvalid('Invalid value')->end();
         $this->finalizeTestBuilder($test);
     }
@@ -126,7 +126,7 @@ class ExprBuilderTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCas
      */
     protected function getTestBuilder()
     {
-        $builder = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Builder\TreeBuilder();
+        $builder = new \MolliePrefix\Symfony\Component\Config\Definition\Builder\TreeBuilder();
         return $builder->root('test')->children()->variableNode('key')->validate();
     }
     /**
