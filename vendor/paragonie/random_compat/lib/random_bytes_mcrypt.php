@@ -41,28 +41,30 @@ if (!\is_callable('random_bytes')) {
      *
      * @return string
      */
-    function random_bytes($bytes)
-    {
-        try {
-            /** @var int $bytes */
-            $bytes = \MolliePrefix\RandomCompat_intval($bytes);
-        } catch (\TypeError $ex) {
-            throw new \TypeError('random_bytes(): $bytes must be an integer');
-        }
-        if ($bytes < 1) {
-            throw new \Error('Length must be greater than 0');
-        }
-        /** @var string|bool $buf */
-        $buf = @\mcrypt_create_iv((int) $bytes, (int) \MCRYPT_DEV_URANDOM);
-        if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
+    if (!function_exists('MolliePrefix\random_bytes')) {
+        function random_bytes($bytes)
+        {
+            try {
+                /** @var int $bytes */
+                $bytes = \MolliePrefix\RandomCompat_intval($bytes);
+            } catch (\TypeError $ex) {
+                throw new \TypeError('random_bytes(): $bytes must be an integer');
+            }
+            if ($bytes < 1) {
+                throw new \Error('Length must be greater than 0');
+            }
+            /** @var string|bool $buf */
+            $buf = @\mcrypt_create_iv((int)$bytes, (int)\MCRYPT_DEV_URANDOM);
+            if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
+                /**
+                 * Return our random entropy buffer here:
+                 */
+                return $buf;
+            }
             /**
-             * Return our random entropy buffer here:
+             * If we reach here, PHP has failed us.
              */
-            return $buf;
+            throw new \Exception('Could not gather sufficient random data');
         }
-        /**
-         * If we reach here, PHP has failed us.
-         */
-        throw new \Exception('Could not gather sufficient random data');
     }
 }
