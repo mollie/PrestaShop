@@ -177,7 +177,7 @@ class CartLinesService
                     'targetVat' => 0,
                 ],
             ];
-            $remaining -= $totalDiscounts;
+            //$remaining -= $totalDiscounts;
         }
 
         // Compensate for order total rounding inaccuracies
