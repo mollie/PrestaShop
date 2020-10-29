@@ -68,4 +68,4 @@ class PHPUnit_Util_String
 /**
  * String helpers.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_String', 'PHPUnit_Util_String', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_String', 'MolliePrefix\\PHPUnit_Util_String', \false);

@@ -506,4 +506,4 @@ class PHPUnit_TextUI_ResultPrinter extends \MolliePrefix\PHPUnit_Util_Printer im
 /**
  * Prints the result of a TextUI TestRunner run.
  */
-\class_alias('MolliePrefix\\PHPUnit_TextUI_ResultPrinter', 'PHPUnit_TextUI_ResultPrinter', \false);
+\class_alias('MolliePrefix\\PHPUnit_TextUI_ResultPrinter', 'MolliePrefix\\PHPUnit_TextUI_ResultPrinter', \false);

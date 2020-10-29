@@ -32,4 +32,4 @@ class StatusTest extends \MolliePrefix\PHPUnit\Framework\TestCase
         throw new \MolliePrefix\PHPUnit_Framework_Warning();
     }
 }
-\class_alias('MolliePrefix\\StatusTest', 'StatusTest', \false);
+\class_alias('MolliePrefix\\StatusTest', 'MolliePrefix\\StatusTest', \false);

@@ -66,4 +66,4 @@ class PHPUnit_Util_Fileloader
 /**
  * Utility methods to load PHP sourcefiles.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Fileloader', 'PHPUnit_Util_Fileloader', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Fileloader', 'MolliePrefix\\PHPUnit_Util_Fileloader', \false);

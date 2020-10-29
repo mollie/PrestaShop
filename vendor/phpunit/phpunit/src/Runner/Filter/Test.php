@@ -94,4 +94,4 @@ class PHPUnit_Runner_Filter_Test extends \RecursiveFilterIterator
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_Test', 'PHPUnit_Runner_Filter_Test', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_Test', 'MolliePrefix\\PHPUnit_Runner_Filter_Test', \false);

@@ -12,4 +12,4 @@ class CoverageFunctionParenthesesWhitespaceTest extends \MolliePrefix\PHPUnit_Fr
         \MolliePrefix\globalFunction();
     }
 }
-\class_alias('MolliePrefix\\CoverageFunctionParenthesesWhitespaceTest', 'CoverageFunctionParenthesesWhitespaceTest', \false);
+\class_alias('MolliePrefix\\CoverageFunctionParenthesesWhitespaceTest', 'MolliePrefix\\CoverageFunctionParenthesesWhitespaceTest', \false);

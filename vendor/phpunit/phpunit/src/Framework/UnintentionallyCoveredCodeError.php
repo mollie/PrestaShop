@@ -29,4 +29,4 @@ class PHPUnit_Framework_UnintentionallyCoveredCodeError extends \MolliePrefix\PH
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of a test that unintentionally covers code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_UnintentionallyCoveredCodeError', 'PHPUnit_Framework_UnintentionallyCoveredCodeError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_UnintentionallyCoveredCodeError', 'MolliePrefix\\PHPUnit_Framework_UnintentionallyCoveredCodeError', \false);

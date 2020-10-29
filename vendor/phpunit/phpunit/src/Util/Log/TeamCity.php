@@ -317,4 +317,4 @@ class PHPUnit_Util_Log_TeamCity extends \MolliePrefix\PHPUnit_TextUI_ResultPrint
  * A TestListener that generates a logfile of the test execution using the
  * TeamCity format (for use with PhpStorm, for instance).
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Log_TeamCity', 'PHPUnit_Util_Log_TeamCity', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Log_TeamCity', 'MolliePrefix\\PHPUnit_Util_Log_TeamCity', \false);

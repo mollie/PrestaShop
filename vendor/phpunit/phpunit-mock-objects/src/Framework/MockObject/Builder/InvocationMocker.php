@@ -242,4 +242,4 @@ class PHPUnit_Framework_MockObject_Builder_InvocationMocker implements \MolliePr
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_InvocationMocker', 'PHPUnit_Framework_MockObject_Builder_InvocationMocker', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_InvocationMocker', 'MolliePrefix\\PHPUnit_Framework_MockObject_Builder_InvocationMocker', \false);

@@ -27,4 +27,4 @@ interface PHPUnit_Framework_SkippedTest
 /**
  * A marker interface for marking a unit test as being skipped.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTest', 'PHPUnit_Framework_SkippedTest', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTest', 'MolliePrefix\\PHPUnit_Framework_SkippedTest', \false);

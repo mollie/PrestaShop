@@ -23,4 +23,4 @@ class Issue2158Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertTrue(\defined('TEST_CONSTANT'));
     }
 }
-\class_alias('MolliePrefix\\Issue2158Test', 'Issue2158Test', \false);
+\class_alias('MolliePrefix\\Issue2158Test', 'MolliePrefix\\Issue2158Test', \false);

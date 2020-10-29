@@ -116,4 +116,4 @@ class PHPUnit_Util_PHPTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  *
  * @link       http://www.phpunit.de/
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_PHPTest', 'PHPUnit_Util_PHPTest', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_PHPTest', 'MolliePrefix\\PHPUnit_Util_PHPTest', \false);

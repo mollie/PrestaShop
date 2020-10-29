@@ -28,4 +28,4 @@ class DataProviderSkippedTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         return [[0, 0, 0], [0, 1, 1]];
     }
 }
-\class_alias('MolliePrefix\\DataProviderSkippedTest', 'DataProviderSkippedTest', \false);
+\class_alias('MolliePrefix\\DataProviderSkippedTest', 'MolliePrefix\\DataProviderSkippedTest', \false);

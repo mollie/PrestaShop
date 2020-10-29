@@ -70,4 +70,4 @@ class PHPUnit_Framework_Constraint_ExceptionMessageRegExp extends \MolliePrefix\
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ExceptionMessageRegExp', 'PHPUnit_Framework_Constraint_ExceptionMessageRegExp', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ExceptionMessageRegExp', 'MolliePrefix\\PHPUnit_Framework_Constraint_ExceptionMessageRegExp', \false);

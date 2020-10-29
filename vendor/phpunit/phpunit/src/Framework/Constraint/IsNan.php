@@ -48,4 +48,4 @@ class PHPUnit_Framework_Constraint_IsNan extends \MolliePrefix\PHPUnit_Framework
 /**
  * Constraint that accepts nan.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsNan', 'PHPUnit_Framework_Constraint_IsNan', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsNan', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsNan', \false);

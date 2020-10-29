@@ -315,4 +315,4 @@ abstract class PHPUnit_Util_PHP
 /**
  * Utility methods for PHP sub-processes.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_PHP', 'PHPUnit_Util_PHP', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_PHP', 'MolliePrefix\\PHPUnit_Util_PHP', \false);

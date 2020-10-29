@@ -29,4 +29,4 @@ class PHPUnit_Framework_OutputError extends \MolliePrefix\PHPUnit_Framework_Asse
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of a test that printed output.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_OutputError', 'PHPUnit_Framework_OutputError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_OutputError', 'MolliePrefix\\PHPUnit_Framework_OutputError', \false);

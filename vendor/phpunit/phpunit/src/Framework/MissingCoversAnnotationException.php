@@ -29,4 +29,4 @@ class PHPUnit_Framework_MissingCoversAnnotationException extends \MolliePrefix\P
  * Extension to PHPUnit_Framework_AssertionFailedError to mark a test as risky
  * when it does not have a @covers annotation but is expected to have one.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MissingCoversAnnotationException', 'PHPUnit_Framework_MissingCoversAnnotationException', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MissingCoversAnnotationException', 'MolliePrefix\\PHPUnit_Framework_MissingCoversAnnotationException', \false);

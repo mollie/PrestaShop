@@ -72,4 +72,4 @@ class PHPUnit_Framework_Constraint_JsonMatches extends \MolliePrefix\PHPUnit_Fra
 /**
  * Asserts whether or not two JSON objects are equal.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches', 'PHPUnit_Framework_Constraint_JsonMatches', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches', 'MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches', \false);

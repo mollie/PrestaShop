@@ -66,4 +66,4 @@ class PHPUnit_Framework_Constraint_IsReadable extends \MolliePrefix\PHPUnit_Fram
  *
  * The file path to check is passed as $other in evaluate().
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsReadable', 'PHPUnit_Framework_Constraint_IsReadable', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsReadable', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsReadable', \false);

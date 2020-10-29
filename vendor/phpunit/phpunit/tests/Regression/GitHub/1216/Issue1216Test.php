@@ -9,4 +9,4 @@ class Issue1216Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertTrue($_ENV['configAvailableInBootstrap']);
     }
 }
-\class_alias('MolliePrefix\\Issue1216Test', 'Issue1216Test', \false);
+\class_alias('MolliePrefix\\Issue1216Test', 'MolliePrefix\\Issue1216Test', \false);

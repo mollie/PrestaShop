@@ -115,4 +115,4 @@ class File_Iterator_Facade
  *
  * @since     Class available since Release 1.3.0
  */
-\class_alias('MolliePrefix\\File_Iterator_Facade', 'File_Iterator_Facade', \false);
+\class_alias('MolliePrefix\\File_Iterator_Facade', 'MolliePrefix\\File_Iterator_Facade', \false);

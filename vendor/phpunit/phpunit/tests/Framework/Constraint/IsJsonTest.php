@@ -33,4 +33,4 @@ class Framework_Constraint_IsJsonTest extends \MolliePrefix\PHPUnit_Framework_Te
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Framework_Constraint_IsJsonTest', 'Framework_Constraint_IsJsonTest', \false);
+\class_alias('MolliePrefix\\Framework_Constraint_IsJsonTest', 'MolliePrefix\\Framework_Constraint_IsJsonTest', \false);

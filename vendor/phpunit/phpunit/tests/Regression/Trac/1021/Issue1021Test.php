@@ -22,4 +22,4 @@ class Issue1021Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         return [[\true]];
     }
 }
-\class_alias('MolliePrefix\\Issue1021Test', 'Issue1021Test', \false);
+\class_alias('MolliePrefix\\Issue1021Test', 'MolliePrefix\\Issue1021Test', \false);

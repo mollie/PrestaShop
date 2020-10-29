@@ -913,4 +913,4 @@ class PHPUnit_Util_Configuration
  * </phpunit>
  * </code>
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Configuration', 'PHPUnit_Util_Configuration', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Configuration', 'MolliePrefix\\PHPUnit_Util_Configuration', \false);

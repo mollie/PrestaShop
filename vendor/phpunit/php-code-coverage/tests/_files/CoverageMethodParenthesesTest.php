@@ -13,4 +13,4 @@ class CoverageMethodParenthesesTest extends \MolliePrefix\PHPUnit_Framework_Test
         $o->publicMethod();
     }
 }
-\class_alias('MolliePrefix\\CoverageMethodParenthesesTest', 'CoverageMethodParenthesesTest', \false);
+\class_alias('MolliePrefix\\CoverageMethodParenthesesTest', 'MolliePrefix\\CoverageMethodParenthesesTest', \false);

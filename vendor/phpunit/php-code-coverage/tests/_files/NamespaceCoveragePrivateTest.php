@@ -13,4 +13,4 @@ class NamespaceCoveragePrivateTest extends \MolliePrefix\PHPUnit_Framework_TestC
         $o->publicMethod();
     }
 }
-\class_alias('MolliePrefix\\NamespaceCoveragePrivateTest', 'NamespaceCoveragePrivateTest', \false);
+\class_alias('MolliePrefix\\NamespaceCoveragePrivateTest', 'MolliePrefix\\NamespaceCoveragePrivateTest', \false);

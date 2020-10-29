@@ -127,4 +127,4 @@ EOT;
 /**
  * Prints TestDox documentation in HTML format.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_HTML', 'PHPUnit_Util_TestDox_ResultPrinter_HTML', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_HTML', 'MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_HTML', \false);

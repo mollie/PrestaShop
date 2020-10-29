@@ -21,7 +21,7 @@ class BankAccountException extends \RuntimeException
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\BankAccountException', 'BankAccountException', \false);
+\class_alias('MolliePrefix\\BankAccountException', 'MolliePrefix\\BankAccountException', \false);
 /**
  * A bank account.
  *
@@ -87,4 +87,4 @@ class BankAccount
  * A bank account.
  *
  */
-\class_alias('MolliePrefix\\BankAccount', 'BankAccount', \false);
+\class_alias('MolliePrefix\\BankAccount', 'MolliePrefix\\BankAccount', \false);

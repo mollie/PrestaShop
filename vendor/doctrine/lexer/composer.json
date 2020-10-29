@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Doctrine\\Tests\\": "tests\/Doctrine"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Doctrine\\Tests\\": "tests\/Doctrine"
         }
     },
     "extra": {

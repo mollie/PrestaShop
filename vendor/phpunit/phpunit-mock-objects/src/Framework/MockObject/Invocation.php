@@ -35,4 +35,4 @@ interface PHPUnit_Framework_MockObject_Invocation
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation', 'PHPUnit_Framework_MockObject_Invocation', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation', 'MolliePrefix\\PHPUnit_Framework_MockObject_Invocation', \false);

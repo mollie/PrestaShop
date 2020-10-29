@@ -9,4 +9,4 @@ class TestSkipped extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->markTestSkipped('Skipped test');
     }
 }
-\class_alias('MolliePrefix\\TestSkipped', 'TestSkipped', \false);
+\class_alias('MolliePrefix\\TestSkipped', 'MolliePrefix\\TestSkipped', \false);

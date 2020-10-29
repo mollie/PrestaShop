@@ -92,7 +92,7 @@ SAMPLE
     {
         $expectedTokens = [\T_LIST, \T_FUNCTION];
         if (\PHP_VERSION_ID >= 70400) {
-            $expectedTokens[] = T_FN;
+            $expectedTokens[] = \T_FN;
         }
         for ($index = $tokens->count() - 1; $index > 0; --$index) {
             $token = $tokens[$index];

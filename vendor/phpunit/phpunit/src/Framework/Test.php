@@ -35,4 +35,4 @@ interface PHPUnit_Framework_Test extends \Countable
 /**
  * A Test can be run and collect its results.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Test', 'PHPUnit_Framework_Test', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Test', 'MolliePrefix\\PHPUnit_Framework_Test', \false);

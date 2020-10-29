@@ -62,4 +62,4 @@ class PHPUnit_Framework_Constraint_Callback extends \MolliePrefix\PHPUnit_Framew
 /**
  * Constraint that evaluates against a specified closure.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Callback', 'PHPUnit_Framework_Constraint_Callback', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Callback', 'MolliePrefix\\PHPUnit_Framework_Constraint_Callback', \false);

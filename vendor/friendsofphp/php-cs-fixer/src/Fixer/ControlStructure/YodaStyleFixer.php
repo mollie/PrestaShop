@@ -376,7 +376,7 @@ return $foo === count($bar);
                 // ??
             }
             if (\defined('T_COALESCE_EQUAL')) {
-                $tokens[] = T_COALESCE_EQUAL;
+                $tokens[] = \T_COALESCE_EQUAL;
                 // ??=
             }
         }

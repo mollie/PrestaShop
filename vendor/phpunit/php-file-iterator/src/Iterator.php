@@ -147,4 +147,4 @@ class File_Iterator extends \FilterIterator
  *
  * @since     Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\File_Iterator', 'File_Iterator', \false);
+\class_alias('MolliePrefix\\File_Iterator', 'MolliePrefix\\File_Iterator', \false);

@@ -48,4 +48,4 @@ class PHPUnit_Framework_Constraint_IsNull extends \MolliePrefix\PHPUnit_Framewor
 /**
  * Constraint that accepts null.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsNull', 'PHPUnit_Framework_Constraint_IsNull', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsNull', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsNull', \false);

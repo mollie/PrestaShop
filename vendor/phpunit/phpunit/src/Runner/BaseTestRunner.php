@@ -119,4 +119,4 @@ abstract class PHPUnit_Runner_BaseTestRunner
 /**
  * Base class for all test runners.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_BaseTestRunner', 'PHPUnit_Runner_BaseTestRunner', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_BaseTestRunner', 'MolliePrefix\\PHPUnit_Runner_BaseTestRunner', \false);

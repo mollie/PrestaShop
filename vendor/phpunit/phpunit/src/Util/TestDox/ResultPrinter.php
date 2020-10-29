@@ -351,4 +351,4 @@ abstract class PHPUnit_Util_TestDox_ResultPrinter extends \MolliePrefix\PHPUnit_
 /**
  * Base class for printers of TestDox documentation.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter', 'PHPUnit_Util_TestDox_ResultPrinter', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter', 'MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter', \false);

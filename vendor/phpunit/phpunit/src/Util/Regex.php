@@ -44,4 +44,4 @@ class PHPUnit_Util_Regex
 /**
  * Error handler that converts PHP errors and warnings to exceptions.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Regex', 'PHPUnit_Util_Regex', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Regex', 'MolliePrefix\\PHPUnit_Util_Regex', \false);

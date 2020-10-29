@@ -8,4 +8,4 @@ class NoArgTestCaseTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\NoArgTestCaseTest', 'NoArgTestCaseTest', \false);
+\class_alias('MolliePrefix\\NoArgTestCaseTest', 'MolliePrefix\\NoArgTestCaseTest', \false);

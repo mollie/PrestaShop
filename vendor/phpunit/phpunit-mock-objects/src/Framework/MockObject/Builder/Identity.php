@@ -49,4 +49,4 @@ interface PHPUnit_Framework_MockObject_Builder_Identity
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Identity', 'PHPUnit_Framework_MockObject_Builder_Identity', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Identity', 'MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Identity', \false);

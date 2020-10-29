@@ -187,4 +187,4 @@ class Framework_SuiteTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
     }
 }
-\class_alias('MolliePrefix\\Framework_SuiteTest', 'Framework_SuiteTest', \false);
+\class_alias('MolliePrefix\\Framework_SuiteTest', 'MolliePrefix\\Framework_SuiteTest', \false);

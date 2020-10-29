@@ -44,4 +44,4 @@ class Issue1351Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $connection->query("DELETE FROM php_wtf WHERE exception_code = 'STRING'");
     }
 }
-\class_alias('MolliePrefix\\Issue1351Test', 'Issue1351Test', \false);
+\class_alias('MolliePrefix\\Issue1351Test', 'MolliePrefix\\Issue1351Test', \false);

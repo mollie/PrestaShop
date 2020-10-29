@@ -15,4 +15,4 @@ class IgnoreCodeCoverageClassTest extends \MolliePrefix\PHPUnit_Framework_TestCa
         $this->assertFalse($sut->returnFalse());
     }
 }
-\class_alias('MolliePrefix\\IgnoreCodeCoverageClassTest', 'IgnoreCodeCoverageClassTest', \false);
+\class_alias('MolliePrefix\\IgnoreCodeCoverageClassTest', 'MolliePrefix\\IgnoreCodeCoverageClassTest', \false);

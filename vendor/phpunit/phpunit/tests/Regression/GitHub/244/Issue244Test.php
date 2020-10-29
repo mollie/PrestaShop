@@ -37,7 +37,7 @@ class Issue244Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \MolliePrefix\Issue244ExceptionIntCode();
     }
 }
-\class_alias('MolliePrefix\\Issue244Test', 'Issue244Test', \false);
+\class_alias('MolliePrefix\\Issue244Test', 'MolliePrefix\\Issue244Test', \false);
 class Issue244Exception extends \Exception
 {
     public function __construct()
@@ -45,7 +45,7 @@ class Issue244Exception extends \Exception
         $this->code = '123StringCode';
     }
 }
-\class_alias('MolliePrefix\\Issue244Exception', 'Issue244Exception', \false);
+\class_alias('MolliePrefix\\Issue244Exception', 'MolliePrefix\\Issue244Exception', \false);
 class Issue244ExceptionIntCode extends \Exception
 {
     public function __construct()
@@ -53,4 +53,4 @@ class Issue244ExceptionIntCode extends \Exception
         $this->code = 123;
     }
 }
-\class_alias('MolliePrefix\\Issue244ExceptionIntCode', 'Issue244ExceptionIntCode', \false);
+\class_alias('MolliePrefix\\Issue244ExceptionIntCode', 'MolliePrefix\\Issue244ExceptionIntCode', \false);

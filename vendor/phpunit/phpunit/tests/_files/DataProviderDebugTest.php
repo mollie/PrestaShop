@@ -44,4 +44,4 @@ class DataProviderDebugTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         ];
     }
 }
-\class_alias('MolliePrefix\\DataProviderDebugTest', 'DataProviderDebugTest', \false);
+\class_alias('MolliePrefix\\DataProviderDebugTest', 'MolliePrefix\\DataProviderDebugTest', \false);

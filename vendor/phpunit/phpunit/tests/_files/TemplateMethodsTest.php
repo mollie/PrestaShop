@@ -44,4 +44,4 @@ class TemplateMethodsTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw $e;
     }
 }
-\class_alias('MolliePrefix\\TemplateMethodsTest', 'TemplateMethodsTest', \false);
+\class_alias('MolliePrefix\\TemplateMethodsTest', 'MolliePrefix\\TemplateMethodsTest', \false);

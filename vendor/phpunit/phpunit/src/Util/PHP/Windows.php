@@ -49,4 +49,4 @@ class PHPUnit_Util_PHP_Windows extends \MolliePrefix\PHPUnit_Util_PHP_Default
  *
  * @see https://bugs.php.net/bug.php?id=51800
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_PHP_Windows', 'PHPUnit_Util_PHP_Windows', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_PHP_Windows', 'MolliePrefix\\PHPUnit_Util_PHP_Windows', \false);

@@ -13,4 +13,4 @@ class MethodCallbackByReference
         $b = 1;
     }
 }
-\class_alias('MolliePrefix\\MethodCallbackByReference', 'MethodCallbackByReference', \false);
+\class_alias('MolliePrefix\\MethodCallbackByReference', 'MolliePrefix\\MethodCallbackByReference', \false);

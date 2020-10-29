@@ -131,4 +131,4 @@ abstract class PHPUnit_Framework_Constraint implements \Countable, \MolliePrefix
 /**
  * Abstract base class for constraints which can be applied to any value.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint', 'PHPUnit_Framework_Constraint', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint', 'MolliePrefix\\PHPUnit_Framework_Constraint', \false);

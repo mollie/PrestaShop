@@ -23,4 +23,4 @@ class SingletonClass
     {
     }
 }
-\class_alias('MolliePrefix\\SingletonClass', 'SingletonClass', \false);
+\class_alias('MolliePrefix\\SingletonClass', 'MolliePrefix\\SingletonClass', \false);

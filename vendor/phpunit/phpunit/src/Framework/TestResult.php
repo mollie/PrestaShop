@@ -1035,4 +1035,4 @@ class PHPUnit_Framework_TestResult implements \Countable
 /**
  * A TestResult collects the results of executing a test case.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_TestResult', 'PHPUnit_Framework_TestResult', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestResult', 'MolliePrefix\\PHPUnit_Framework_TestResult', \false);

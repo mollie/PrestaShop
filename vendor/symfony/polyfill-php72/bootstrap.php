@@ -42,39 +42,39 @@ if (!\function_exists('stream_isatty')) {
     }
 }
 if (!\function_exists('utf8_encode')) {
-    function utf8_encode($s)
+    function utf8_encode($string)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::utf8_encode($s);
+        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::utf8_encode($string);
     }
 }
 if (!\function_exists('utf8_decode')) {
-    function utf8_decode($s)
+    function utf8_decode($string)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::utf8_decode($s);
+        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::utf8_decode($string);
     }
 }
 if (!\function_exists('spl_object_id')) {
-    function spl_object_id($s)
+    function spl_object_id($object)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::spl_object_id($s);
+        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::spl_object_id($object);
     }
 }
-if (!\function_exists('MolliePrefix\\mb_ord')) {
-    function mb_ord($s, $enc = null)
+if (!\function_exists('mb_ord')) {
+    function mb_ord($string, $encoding = null)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::mb_ord($s, $enc);
+        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::mb_ord($string, $encoding);
     }
 }
-if (!\function_exists('MolliePrefix\\mb_chr')) {
-    function mb_chr($code, $enc = null)
+if (!\function_exists('mb_chr')) {
+    function mb_chr($codepoint, $encoding = null)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::mb_chr($code, $enc);
+        return \MolliePrefix\Symfony\Polyfill\Php72\Php72::mb_chr($codepoint, $encoding);
     }
 }
-if (!\function_exists('MolliePrefix\\mb_scrub')) {
-    function mb_scrub($s, $enc = null)
+if (!\function_exists('mb_scrub')) {
+    function mb_scrub($string, $encoding = null)
     {
-        $enc = null === $enc ? \mb_internal_encoding() : $enc;
-        return \mb_convert_encoding($s, $enc, $enc);
+        $encoding = null === $encoding ? \mb_internal_encoding() : $encoding;
+        return \mb_convert_encoding($string, $encoding, $encoding);
     }
 }

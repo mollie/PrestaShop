@@ -8,4 +8,4 @@ class ThrowNoExceptionTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\ThrowNoExceptionTestCase', 'ThrowNoExceptionTestCase', \false);
+\class_alias('MolliePrefix\\ThrowNoExceptionTestCase', 'MolliePrefix\\ThrowNoExceptionTestCase', \false);

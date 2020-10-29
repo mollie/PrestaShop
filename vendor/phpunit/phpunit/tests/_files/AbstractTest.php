@@ -8,4 +8,4 @@ abstract class AbstractTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\AbstractTest', 'AbstractTest', \false);
+\class_alias('MolliePrefix\\AbstractTest', 'MolliePrefix\\AbstractTest', \false);

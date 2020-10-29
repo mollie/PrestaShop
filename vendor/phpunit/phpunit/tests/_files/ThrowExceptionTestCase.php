@@ -9,4 +9,4 @@ class ThrowExceptionTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \RuntimeException('A runtime error occurred');
     }
 }
-\class_alias('MolliePrefix\\ThrowExceptionTestCase', 'ThrowExceptionTestCase', \false);
+\class_alias('MolliePrefix\\ThrowExceptionTestCase', 'MolliePrefix\\ThrowExceptionTestCase', \false);

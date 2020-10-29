@@ -15,4 +15,4 @@ class Calculator
         return $a + $b;
     }
 }
-\class_alias('MolliePrefix\\Calculator', 'Calculator', \false);
+\class_alias('MolliePrefix\\Calculator', 'MolliePrefix\\Calculator', \false);

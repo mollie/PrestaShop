@@ -19,4 +19,4 @@ class MethodCallback
         }
     }
 }
-\class_alias('MolliePrefix\\MethodCallback', 'MethodCallback', \false);
+\class_alias('MolliePrefix\\MethodCallback', 'MolliePrefix\\MethodCallback', \false);

@@ -66,4 +66,4 @@ class PHPUnit_Framework_Constraint_IsEmpty extends \MolliePrefix\PHPUnit_Framewo
 /**
  * Constraint that checks whether a variable is empty().
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsEmpty', 'PHPUnit_Framework_Constraint_IsEmpty', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsEmpty', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsEmpty', \false);

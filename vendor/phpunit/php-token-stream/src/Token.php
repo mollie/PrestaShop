@@ -84,7 +84,7 @@ abstract class PHP_Token
  * @link      http://github.com/sebastianbergmann/php-token-stream/tree
  * @since     Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHP_Token', 'PHP_Token', \false);
+\class_alias('MolliePrefix\\PHP_Token', 'MolliePrefix\\PHP_Token', \false);
 abstract class PHP_TokenWithScope extends \MolliePrefix\PHP_Token
 {
     /**
@@ -160,7 +160,7 @@ abstract class PHP_TokenWithScope extends \MolliePrefix\PHP_Token
         return $this->tokenStream[$this->getEndTokenId()]->getLine();
     }
 }
-\class_alias('MolliePrefix\\PHP_TokenWithScope', 'PHP_TokenWithScope', \false);
+\class_alias('MolliePrefix\\PHP_TokenWithScope', 'MolliePrefix\\PHP_TokenWithScope', \false);
 abstract class PHP_TokenWithScopeAndVisibility extends \MolliePrefix\PHP_TokenWithScope
 {
     /**
@@ -197,7 +197,7 @@ abstract class PHP_TokenWithScopeAndVisibility extends \MolliePrefix\PHP_TokenWi
         return \implode(',', $keywords);
     }
 }
-\class_alias('MolliePrefix\\PHP_TokenWithScopeAndVisibility', 'PHP_TokenWithScopeAndVisibility', \false);
+\class_alias('MolliePrefix\\PHP_TokenWithScopeAndVisibility', 'MolliePrefix\\PHP_TokenWithScopeAndVisibility', \false);
 abstract class PHP_Token_Includes extends \MolliePrefix\PHP_Token
 {
     /**
@@ -237,7 +237,7 @@ abstract class PHP_Token_Includes extends \MolliePrefix\PHP_Token
         }
     }
 }
-\class_alias('MolliePrefix\\PHP_Token_Includes', 'PHP_Token_Includes', \false);
+\class_alias('MolliePrefix\\PHP_Token_Includes', 'MolliePrefix\\PHP_Token_Includes', \false);
 class PHP_Token_FUNCTION extends \MolliePrefix\PHP_TokenWithScopeAndVisibility
 {
     /**
@@ -371,7 +371,7 @@ class PHP_Token_FUNCTION extends \MolliePrefix\PHP_TokenWithScopeAndVisibility
         return $this->signature;
     }
 }
-\class_alias('MolliePrefix\\PHP_Token_FUNCTION', 'PHP_Token_FUNCTION', \false);
+\class_alias('MolliePrefix\\PHP_Token_FUNCTION', 'MolliePrefix\\PHP_Token_FUNCTION', \false);
 class PHP_Token_INTERFACE extends \MolliePrefix\PHP_TokenWithScopeAndVisibility
 {
     /**
@@ -485,75 +485,75 @@ class PHP_Token_INTERFACE extends \MolliePrefix\PHP_TokenWithScopeAndVisibility
         return $this->interfaces;
     }
 }
-\class_alias('MolliePrefix\\PHP_Token_INTERFACE', 'PHP_Token_INTERFACE', \false);
+\class_alias('MolliePrefix\\PHP_Token_INTERFACE', 'MolliePrefix\\PHP_Token_INTERFACE', \false);
 class PHP_Token_ABSTRACT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ABSTRACT', 'PHP_Token_ABSTRACT', \false);
+\class_alias('MolliePrefix\\PHP_Token_ABSTRACT', 'MolliePrefix\\PHP_Token_ABSTRACT', \false);
 class PHP_Token_AMPERSAND extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_AMPERSAND', 'PHP_Token_AMPERSAND', \false);
+\class_alias('MolliePrefix\\PHP_Token_AMPERSAND', 'MolliePrefix\\PHP_Token_AMPERSAND', \false);
 class PHP_Token_AND_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_AND_EQUAL', 'PHP_Token_AND_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_AND_EQUAL', 'MolliePrefix\\PHP_Token_AND_EQUAL', \false);
 class PHP_Token_ARRAY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ARRAY', 'PHP_Token_ARRAY', \false);
+\class_alias('MolliePrefix\\PHP_Token_ARRAY', 'MolliePrefix\\PHP_Token_ARRAY', \false);
 class PHP_Token_ARRAY_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ARRAY_CAST', 'PHP_Token_ARRAY_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_ARRAY_CAST', 'MolliePrefix\\PHP_Token_ARRAY_CAST', \false);
 class PHP_Token_AS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_AS', 'PHP_Token_AS', \false);
+\class_alias('MolliePrefix\\PHP_Token_AS', 'MolliePrefix\\PHP_Token_AS', \false);
 class PHP_Token_AT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_AT', 'PHP_Token_AT', \false);
+\class_alias('MolliePrefix\\PHP_Token_AT', 'MolliePrefix\\PHP_Token_AT', \false);
 class PHP_Token_BACKTICK extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BACKTICK', 'PHP_Token_BACKTICK', \false);
+\class_alias('MolliePrefix\\PHP_Token_BACKTICK', 'MolliePrefix\\PHP_Token_BACKTICK', \false);
 class PHP_Token_BAD_CHARACTER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BAD_CHARACTER', 'PHP_Token_BAD_CHARACTER', \false);
+\class_alias('MolliePrefix\\PHP_Token_BAD_CHARACTER', 'MolliePrefix\\PHP_Token_BAD_CHARACTER', \false);
 class PHP_Token_BOOLEAN_AND extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BOOLEAN_AND', 'PHP_Token_BOOLEAN_AND', \false);
+\class_alias('MolliePrefix\\PHP_Token_BOOLEAN_AND', 'MolliePrefix\\PHP_Token_BOOLEAN_AND', \false);
 class PHP_Token_BOOLEAN_OR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BOOLEAN_OR', 'PHP_Token_BOOLEAN_OR', \false);
+\class_alias('MolliePrefix\\PHP_Token_BOOLEAN_OR', 'MolliePrefix\\PHP_Token_BOOLEAN_OR', \false);
 class PHP_Token_BOOL_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BOOL_CAST', 'PHP_Token_BOOL_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_BOOL_CAST', 'MolliePrefix\\PHP_Token_BOOL_CAST', \false);
 class PHP_Token_BREAK extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_BREAK', 'PHP_Token_BREAK', \false);
+\class_alias('MolliePrefix\\PHP_Token_BREAK', 'MolliePrefix\\PHP_Token_BREAK', \false);
 class PHP_Token_CARET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CARET', 'PHP_Token_CARET', \false);
+\class_alias('MolliePrefix\\PHP_Token_CARET', 'MolliePrefix\\PHP_Token_CARET', \false);
 class PHP_Token_CASE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CASE', 'PHP_Token_CASE', \false);
+\class_alias('MolliePrefix\\PHP_Token_CASE', 'MolliePrefix\\PHP_Token_CASE', \false);
 class PHP_Token_CATCH extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CATCH', 'PHP_Token_CATCH', \false);
+\class_alias('MolliePrefix\\PHP_Token_CATCH', 'MolliePrefix\\PHP_Token_CATCH', \false);
 class PHP_Token_CHARACTER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CHARACTER', 'PHP_Token_CHARACTER', \false);
+\class_alias('MolliePrefix\\PHP_Token_CHARACTER', 'MolliePrefix\\PHP_Token_CHARACTER', \false);
 class PHP_Token_CLASS extends \MolliePrefix\PHP_Token_INTERFACE
 {
     /**
@@ -573,535 +573,535 @@ class PHP_Token_CLASS extends \MolliePrefix\PHP_Token_INTERFACE
         }
     }
 }
-\class_alias('MolliePrefix\\PHP_Token_CLASS', 'PHP_Token_CLASS', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLASS', 'MolliePrefix\\PHP_Token_CLASS', \false);
 class PHP_Token_CLASS_C extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLASS_C', 'PHP_Token_CLASS_C', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLASS_C', 'MolliePrefix\\PHP_Token_CLASS_C', \false);
 class PHP_Token_CLASS_NAME_CONSTANT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLASS_NAME_CONSTANT', 'PHP_Token_CLASS_NAME_CONSTANT', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLASS_NAME_CONSTANT', 'MolliePrefix\\PHP_Token_CLASS_NAME_CONSTANT', \false);
 class PHP_Token_CLONE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLONE', 'PHP_Token_CLONE', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLONE', 'MolliePrefix\\PHP_Token_CLONE', \false);
 class PHP_Token_CLOSE_BRACKET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLOSE_BRACKET', 'PHP_Token_CLOSE_BRACKET', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLOSE_BRACKET', 'MolliePrefix\\PHP_Token_CLOSE_BRACKET', \false);
 class PHP_Token_CLOSE_CURLY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLOSE_CURLY', 'PHP_Token_CLOSE_CURLY', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLOSE_CURLY', 'MolliePrefix\\PHP_Token_CLOSE_CURLY', \false);
 class PHP_Token_CLOSE_SQUARE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLOSE_SQUARE', 'PHP_Token_CLOSE_SQUARE', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLOSE_SQUARE', 'MolliePrefix\\PHP_Token_CLOSE_SQUARE', \false);
 class PHP_Token_CLOSE_TAG extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CLOSE_TAG', 'PHP_Token_CLOSE_TAG', \false);
+\class_alias('MolliePrefix\\PHP_Token_CLOSE_TAG', 'MolliePrefix\\PHP_Token_CLOSE_TAG', \false);
 class PHP_Token_COLON extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_COLON', 'PHP_Token_COLON', \false);
+\class_alias('MolliePrefix\\PHP_Token_COLON', 'MolliePrefix\\PHP_Token_COLON', \false);
 class PHP_Token_COMMA extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_COMMA', 'PHP_Token_COMMA', \false);
+\class_alias('MolliePrefix\\PHP_Token_COMMA', 'MolliePrefix\\PHP_Token_COMMA', \false);
 class PHP_Token_COMMENT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_COMMENT', 'PHP_Token_COMMENT', \false);
+\class_alias('MolliePrefix\\PHP_Token_COMMENT', 'MolliePrefix\\PHP_Token_COMMENT', \false);
 class PHP_Token_CONCAT_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CONCAT_EQUAL', 'PHP_Token_CONCAT_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_CONCAT_EQUAL', 'MolliePrefix\\PHP_Token_CONCAT_EQUAL', \false);
 class PHP_Token_CONST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CONST', 'PHP_Token_CONST', \false);
+\class_alias('MolliePrefix\\PHP_Token_CONST', 'MolliePrefix\\PHP_Token_CONST', \false);
 class PHP_Token_CONSTANT_ENCAPSED_STRING extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CONSTANT_ENCAPSED_STRING', 'PHP_Token_CONSTANT_ENCAPSED_STRING', \false);
+\class_alias('MolliePrefix\\PHP_Token_CONSTANT_ENCAPSED_STRING', 'MolliePrefix\\PHP_Token_CONSTANT_ENCAPSED_STRING', \false);
 class PHP_Token_CONTINUE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CONTINUE', 'PHP_Token_CONTINUE', \false);
+\class_alias('MolliePrefix\\PHP_Token_CONTINUE', 'MolliePrefix\\PHP_Token_CONTINUE', \false);
 class PHP_Token_CURLY_OPEN extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_CURLY_OPEN', 'PHP_Token_CURLY_OPEN', \false);
+\class_alias('MolliePrefix\\PHP_Token_CURLY_OPEN', 'MolliePrefix\\PHP_Token_CURLY_OPEN', \false);
 class PHP_Token_DEC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DEC', 'PHP_Token_DEC', \false);
+\class_alias('MolliePrefix\\PHP_Token_DEC', 'MolliePrefix\\PHP_Token_DEC', \false);
 class PHP_Token_DECLARE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DECLARE', 'PHP_Token_DECLARE', \false);
+\class_alias('MolliePrefix\\PHP_Token_DECLARE', 'MolliePrefix\\PHP_Token_DECLARE', \false);
 class PHP_Token_DEFAULT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DEFAULT', 'PHP_Token_DEFAULT', \false);
+\class_alias('MolliePrefix\\PHP_Token_DEFAULT', 'MolliePrefix\\PHP_Token_DEFAULT', \false);
 class PHP_Token_DIV extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DIV', 'PHP_Token_DIV', \false);
+\class_alias('MolliePrefix\\PHP_Token_DIV', 'MolliePrefix\\PHP_Token_DIV', \false);
 class PHP_Token_DIV_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DIV_EQUAL', 'PHP_Token_DIV_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_DIV_EQUAL', 'MolliePrefix\\PHP_Token_DIV_EQUAL', \false);
 class PHP_Token_DNUMBER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DNUMBER', 'PHP_Token_DNUMBER', \false);
+\class_alias('MolliePrefix\\PHP_Token_DNUMBER', 'MolliePrefix\\PHP_Token_DNUMBER', \false);
 class PHP_Token_DO extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DO', 'PHP_Token_DO', \false);
+\class_alias('MolliePrefix\\PHP_Token_DO', 'MolliePrefix\\PHP_Token_DO', \false);
 class PHP_Token_DOC_COMMENT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOC_COMMENT', 'PHP_Token_DOC_COMMENT', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOC_COMMENT', 'MolliePrefix\\PHP_Token_DOC_COMMENT', \false);
 class PHP_Token_DOLLAR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOLLAR', 'PHP_Token_DOLLAR', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOLLAR', 'MolliePrefix\\PHP_Token_DOLLAR', \false);
 class PHP_Token_DOLLAR_OPEN_CURLY_BRACES extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOLLAR_OPEN_CURLY_BRACES', 'PHP_Token_DOLLAR_OPEN_CURLY_BRACES', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOLLAR_OPEN_CURLY_BRACES', 'MolliePrefix\\PHP_Token_DOLLAR_OPEN_CURLY_BRACES', \false);
 class PHP_Token_DOT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOT', 'PHP_Token_DOT', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOT', 'MolliePrefix\\PHP_Token_DOT', \false);
 class PHP_Token_DOUBLE_ARROW extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOUBLE_ARROW', 'PHP_Token_DOUBLE_ARROW', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOUBLE_ARROW', 'MolliePrefix\\PHP_Token_DOUBLE_ARROW', \false);
 class PHP_Token_DOUBLE_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOUBLE_CAST', 'PHP_Token_DOUBLE_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOUBLE_CAST', 'MolliePrefix\\PHP_Token_DOUBLE_CAST', \false);
 class PHP_Token_DOUBLE_COLON extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOUBLE_COLON', 'PHP_Token_DOUBLE_COLON', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOUBLE_COLON', 'MolliePrefix\\PHP_Token_DOUBLE_COLON', \false);
 class PHP_Token_DOUBLE_QUOTES extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_DOUBLE_QUOTES', 'PHP_Token_DOUBLE_QUOTES', \false);
+\class_alias('MolliePrefix\\PHP_Token_DOUBLE_QUOTES', 'MolliePrefix\\PHP_Token_DOUBLE_QUOTES', \false);
 class PHP_Token_ECHO extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ECHO', 'PHP_Token_ECHO', \false);
+\class_alias('MolliePrefix\\PHP_Token_ECHO', 'MolliePrefix\\PHP_Token_ECHO', \false);
 class PHP_Token_ELSE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ELSE', 'PHP_Token_ELSE', \false);
+\class_alias('MolliePrefix\\PHP_Token_ELSE', 'MolliePrefix\\PHP_Token_ELSE', \false);
 class PHP_Token_ELSEIF extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ELSEIF', 'PHP_Token_ELSEIF', \false);
+\class_alias('MolliePrefix\\PHP_Token_ELSEIF', 'MolliePrefix\\PHP_Token_ELSEIF', \false);
 class PHP_Token_EMPTY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EMPTY', 'PHP_Token_EMPTY', \false);
+\class_alias('MolliePrefix\\PHP_Token_EMPTY', 'MolliePrefix\\PHP_Token_EMPTY', \false);
 class PHP_Token_ENCAPSED_AND_WHITESPACE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENCAPSED_AND_WHITESPACE', 'PHP_Token_ENCAPSED_AND_WHITESPACE', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENCAPSED_AND_WHITESPACE', 'MolliePrefix\\PHP_Token_ENCAPSED_AND_WHITESPACE', \false);
 class PHP_Token_ENDDECLARE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDDECLARE', 'PHP_Token_ENDDECLARE', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDDECLARE', 'MolliePrefix\\PHP_Token_ENDDECLARE', \false);
 class PHP_Token_ENDFOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDFOR', 'PHP_Token_ENDFOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDFOR', 'MolliePrefix\\PHP_Token_ENDFOR', \false);
 class PHP_Token_ENDFOREACH extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDFOREACH', 'PHP_Token_ENDFOREACH', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDFOREACH', 'MolliePrefix\\PHP_Token_ENDFOREACH', \false);
 class PHP_Token_ENDIF extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDIF', 'PHP_Token_ENDIF', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDIF', 'MolliePrefix\\PHP_Token_ENDIF', \false);
 class PHP_Token_ENDSWITCH extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDSWITCH', 'PHP_Token_ENDSWITCH', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDSWITCH', 'MolliePrefix\\PHP_Token_ENDSWITCH', \false);
 class PHP_Token_ENDWHILE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENDWHILE', 'PHP_Token_ENDWHILE', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENDWHILE', 'MolliePrefix\\PHP_Token_ENDWHILE', \false);
 class PHP_Token_END_HEREDOC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_END_HEREDOC', 'PHP_Token_END_HEREDOC', \false);
+\class_alias('MolliePrefix\\PHP_Token_END_HEREDOC', 'MolliePrefix\\PHP_Token_END_HEREDOC', \false);
 class PHP_Token_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EQUAL', 'PHP_Token_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_EQUAL', 'MolliePrefix\\PHP_Token_EQUAL', \false);
 class PHP_Token_EVAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EVAL', 'PHP_Token_EVAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_EVAL', 'MolliePrefix\\PHP_Token_EVAL', \false);
 class PHP_Token_EXCLAMATION_MARK extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EXCLAMATION_MARK', 'PHP_Token_EXCLAMATION_MARK', \false);
+\class_alias('MolliePrefix\\PHP_Token_EXCLAMATION_MARK', 'MolliePrefix\\PHP_Token_EXCLAMATION_MARK', \false);
 class PHP_Token_EXIT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EXIT', 'PHP_Token_EXIT', \false);
+\class_alias('MolliePrefix\\PHP_Token_EXIT', 'MolliePrefix\\PHP_Token_EXIT', \false);
 class PHP_Token_EXTENDS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EXTENDS', 'PHP_Token_EXTENDS', \false);
+\class_alias('MolliePrefix\\PHP_Token_EXTENDS', 'MolliePrefix\\PHP_Token_EXTENDS', \false);
 class PHP_Token_FILE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_FILE', 'PHP_Token_FILE', \false);
+\class_alias('MolliePrefix\\PHP_Token_FILE', 'MolliePrefix\\PHP_Token_FILE', \false);
 class PHP_Token_FINAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_FINAL', 'PHP_Token_FINAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_FINAL', 'MolliePrefix\\PHP_Token_FINAL', \false);
 class PHP_Token_FOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_FOR', 'PHP_Token_FOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_FOR', 'MolliePrefix\\PHP_Token_FOR', \false);
 class PHP_Token_FOREACH extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_FOREACH', 'PHP_Token_FOREACH', \false);
+\class_alias('MolliePrefix\\PHP_Token_FOREACH', 'MolliePrefix\\PHP_Token_FOREACH', \false);
 class PHP_Token_FUNC_C extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_FUNC_C', 'PHP_Token_FUNC_C', \false);
+\class_alias('MolliePrefix\\PHP_Token_FUNC_C', 'MolliePrefix\\PHP_Token_FUNC_C', \false);
 class PHP_Token_GLOBAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_GLOBAL', 'PHP_Token_GLOBAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_GLOBAL', 'MolliePrefix\\PHP_Token_GLOBAL', \false);
 class PHP_Token_GT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_GT', 'PHP_Token_GT', \false);
+\class_alias('MolliePrefix\\PHP_Token_GT', 'MolliePrefix\\PHP_Token_GT', \false);
 class PHP_Token_IF extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IF', 'PHP_Token_IF', \false);
+\class_alias('MolliePrefix\\PHP_Token_IF', 'MolliePrefix\\PHP_Token_IF', \false);
 class PHP_Token_IMPLEMENTS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IMPLEMENTS', 'PHP_Token_IMPLEMENTS', \false);
+\class_alias('MolliePrefix\\PHP_Token_IMPLEMENTS', 'MolliePrefix\\PHP_Token_IMPLEMENTS', \false);
 class PHP_Token_INC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INC', 'PHP_Token_INC', \false);
+\class_alias('MolliePrefix\\PHP_Token_INC', 'MolliePrefix\\PHP_Token_INC', \false);
 class PHP_Token_INCLUDE extends \MolliePrefix\PHP_Token_Includes
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INCLUDE', 'PHP_Token_INCLUDE', \false);
+\class_alias('MolliePrefix\\PHP_Token_INCLUDE', 'MolliePrefix\\PHP_Token_INCLUDE', \false);
 class PHP_Token_INCLUDE_ONCE extends \MolliePrefix\PHP_Token_Includes
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INCLUDE_ONCE', 'PHP_Token_INCLUDE_ONCE', \false);
+\class_alias('MolliePrefix\\PHP_Token_INCLUDE_ONCE', 'MolliePrefix\\PHP_Token_INCLUDE_ONCE', \false);
 class PHP_Token_INLINE_HTML extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INLINE_HTML', 'PHP_Token_INLINE_HTML', \false);
+\class_alias('MolliePrefix\\PHP_Token_INLINE_HTML', 'MolliePrefix\\PHP_Token_INLINE_HTML', \false);
 class PHP_Token_INSTANCEOF extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INSTANCEOF', 'PHP_Token_INSTANCEOF', \false);
+\class_alias('MolliePrefix\\PHP_Token_INSTANCEOF', 'MolliePrefix\\PHP_Token_INSTANCEOF', \false);
 class PHP_Token_INT_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INT_CAST', 'PHP_Token_INT_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_INT_CAST', 'MolliePrefix\\PHP_Token_INT_CAST', \false);
 class PHP_Token_ISSET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ISSET', 'PHP_Token_ISSET', \false);
+\class_alias('MolliePrefix\\PHP_Token_ISSET', 'MolliePrefix\\PHP_Token_ISSET', \false);
 class PHP_Token_IS_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_EQUAL', 'PHP_Token_IS_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_EQUAL', 'MolliePrefix\\PHP_Token_IS_EQUAL', \false);
 class PHP_Token_IS_GREATER_OR_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_GREATER_OR_EQUAL', 'PHP_Token_IS_GREATER_OR_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_GREATER_OR_EQUAL', 'MolliePrefix\\PHP_Token_IS_GREATER_OR_EQUAL', \false);
 class PHP_Token_IS_IDENTICAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_IDENTICAL', 'PHP_Token_IS_IDENTICAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_IDENTICAL', 'MolliePrefix\\PHP_Token_IS_IDENTICAL', \false);
 class PHP_Token_IS_NOT_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_NOT_EQUAL', 'PHP_Token_IS_NOT_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_NOT_EQUAL', 'MolliePrefix\\PHP_Token_IS_NOT_EQUAL', \false);
 class PHP_Token_IS_NOT_IDENTICAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_NOT_IDENTICAL', 'PHP_Token_IS_NOT_IDENTICAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_NOT_IDENTICAL', 'MolliePrefix\\PHP_Token_IS_NOT_IDENTICAL', \false);
 class PHP_Token_IS_SMALLER_OR_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IS_SMALLER_OR_EQUAL', 'PHP_Token_IS_SMALLER_OR_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_IS_SMALLER_OR_EQUAL', 'MolliePrefix\\PHP_Token_IS_SMALLER_OR_EQUAL', \false);
 class PHP_Token_LINE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LINE', 'PHP_Token_LINE', \false);
+\class_alias('MolliePrefix\\PHP_Token_LINE', 'MolliePrefix\\PHP_Token_LINE', \false);
 class PHP_Token_LIST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LIST', 'PHP_Token_LIST', \false);
+\class_alias('MolliePrefix\\PHP_Token_LIST', 'MolliePrefix\\PHP_Token_LIST', \false);
 class PHP_Token_LNUMBER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LNUMBER', 'PHP_Token_LNUMBER', \false);
+\class_alias('MolliePrefix\\PHP_Token_LNUMBER', 'MolliePrefix\\PHP_Token_LNUMBER', \false);
 class PHP_Token_LOGICAL_AND extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LOGICAL_AND', 'PHP_Token_LOGICAL_AND', \false);
+\class_alias('MolliePrefix\\PHP_Token_LOGICAL_AND', 'MolliePrefix\\PHP_Token_LOGICAL_AND', \false);
 class PHP_Token_LOGICAL_OR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LOGICAL_OR', 'PHP_Token_LOGICAL_OR', \false);
+\class_alias('MolliePrefix\\PHP_Token_LOGICAL_OR', 'MolliePrefix\\PHP_Token_LOGICAL_OR', \false);
 class PHP_Token_LOGICAL_XOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LOGICAL_XOR', 'PHP_Token_LOGICAL_XOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_LOGICAL_XOR', 'MolliePrefix\\PHP_Token_LOGICAL_XOR', \false);
 class PHP_Token_LT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LT', 'PHP_Token_LT', \false);
+\class_alias('MolliePrefix\\PHP_Token_LT', 'MolliePrefix\\PHP_Token_LT', \false);
 class PHP_Token_METHOD_C extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_METHOD_C', 'PHP_Token_METHOD_C', \false);
+\class_alias('MolliePrefix\\PHP_Token_METHOD_C', 'MolliePrefix\\PHP_Token_METHOD_C', \false);
 class PHP_Token_MINUS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_MINUS', 'PHP_Token_MINUS', \false);
+\class_alias('MolliePrefix\\PHP_Token_MINUS', 'MolliePrefix\\PHP_Token_MINUS', \false);
 class PHP_Token_MINUS_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_MINUS_EQUAL', 'PHP_Token_MINUS_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_MINUS_EQUAL', 'MolliePrefix\\PHP_Token_MINUS_EQUAL', \false);
 class PHP_Token_MOD_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_MOD_EQUAL', 'PHP_Token_MOD_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_MOD_EQUAL', 'MolliePrefix\\PHP_Token_MOD_EQUAL', \false);
 class PHP_Token_MULT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_MULT', 'PHP_Token_MULT', \false);
+\class_alias('MolliePrefix\\PHP_Token_MULT', 'MolliePrefix\\PHP_Token_MULT', \false);
 class PHP_Token_MUL_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_MUL_EQUAL', 'PHP_Token_MUL_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_MUL_EQUAL', 'MolliePrefix\\PHP_Token_MUL_EQUAL', \false);
 class PHP_Token_NEW extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_NEW', 'PHP_Token_NEW', \false);
+\class_alias('MolliePrefix\\PHP_Token_NEW', 'MolliePrefix\\PHP_Token_NEW', \false);
 class PHP_Token_NUM_STRING extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_NUM_STRING', 'PHP_Token_NUM_STRING', \false);
+\class_alias('MolliePrefix\\PHP_Token_NUM_STRING', 'MolliePrefix\\PHP_Token_NUM_STRING', \false);
 class PHP_Token_OBJECT_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OBJECT_CAST', 'PHP_Token_OBJECT_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_OBJECT_CAST', 'MolliePrefix\\PHP_Token_OBJECT_CAST', \false);
 class PHP_Token_OBJECT_OPERATOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OBJECT_OPERATOR', 'PHP_Token_OBJECT_OPERATOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_OBJECT_OPERATOR', 'MolliePrefix\\PHP_Token_OBJECT_OPERATOR', \false);
 class PHP_Token_OPEN_BRACKET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OPEN_BRACKET', 'PHP_Token_OPEN_BRACKET', \false);
+\class_alias('MolliePrefix\\PHP_Token_OPEN_BRACKET', 'MolliePrefix\\PHP_Token_OPEN_BRACKET', \false);
 class PHP_Token_OPEN_CURLY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OPEN_CURLY', 'PHP_Token_OPEN_CURLY', \false);
+\class_alias('MolliePrefix\\PHP_Token_OPEN_CURLY', 'MolliePrefix\\PHP_Token_OPEN_CURLY', \false);
 class PHP_Token_OPEN_SQUARE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OPEN_SQUARE', 'PHP_Token_OPEN_SQUARE', \false);
+\class_alias('MolliePrefix\\PHP_Token_OPEN_SQUARE', 'MolliePrefix\\PHP_Token_OPEN_SQUARE', \false);
 class PHP_Token_OPEN_TAG extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OPEN_TAG', 'PHP_Token_OPEN_TAG', \false);
+\class_alias('MolliePrefix\\PHP_Token_OPEN_TAG', 'MolliePrefix\\PHP_Token_OPEN_TAG', \false);
 class PHP_Token_OPEN_TAG_WITH_ECHO extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OPEN_TAG_WITH_ECHO', 'PHP_Token_OPEN_TAG_WITH_ECHO', \false);
+\class_alias('MolliePrefix\\PHP_Token_OPEN_TAG_WITH_ECHO', 'MolliePrefix\\PHP_Token_OPEN_TAG_WITH_ECHO', \false);
 class PHP_Token_OR_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_OR_EQUAL', 'PHP_Token_OR_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_OR_EQUAL', 'MolliePrefix\\PHP_Token_OR_EQUAL', \false);
 class PHP_Token_PAAMAYIM_NEKUDOTAYIM extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PAAMAYIM_NEKUDOTAYIM', 'PHP_Token_PAAMAYIM_NEKUDOTAYIM', \false);
+\class_alias('MolliePrefix\\PHP_Token_PAAMAYIM_NEKUDOTAYIM', 'MolliePrefix\\PHP_Token_PAAMAYIM_NEKUDOTAYIM', \false);
 class PHP_Token_PERCENT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PERCENT', 'PHP_Token_PERCENT', \false);
+\class_alias('MolliePrefix\\PHP_Token_PERCENT', 'MolliePrefix\\PHP_Token_PERCENT', \false);
 class PHP_Token_PIPE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PIPE', 'PHP_Token_PIPE', \false);
+\class_alias('MolliePrefix\\PHP_Token_PIPE', 'MolliePrefix\\PHP_Token_PIPE', \false);
 class PHP_Token_PLUS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PLUS', 'PHP_Token_PLUS', \false);
+\class_alias('MolliePrefix\\PHP_Token_PLUS', 'MolliePrefix\\PHP_Token_PLUS', \false);
 class PHP_Token_PLUS_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PLUS_EQUAL', 'PHP_Token_PLUS_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_PLUS_EQUAL', 'MolliePrefix\\PHP_Token_PLUS_EQUAL', \false);
 class PHP_Token_PRINT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PRINT', 'PHP_Token_PRINT', \false);
+\class_alias('MolliePrefix\\PHP_Token_PRINT', 'MolliePrefix\\PHP_Token_PRINT', \false);
 class PHP_Token_PRIVATE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PRIVATE', 'PHP_Token_PRIVATE', \false);
+\class_alias('MolliePrefix\\PHP_Token_PRIVATE', 'MolliePrefix\\PHP_Token_PRIVATE', \false);
 class PHP_Token_PROTECTED extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PROTECTED', 'PHP_Token_PROTECTED', \false);
+\class_alias('MolliePrefix\\PHP_Token_PROTECTED', 'MolliePrefix\\PHP_Token_PROTECTED', \false);
 class PHP_Token_PUBLIC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_PUBLIC', 'PHP_Token_PUBLIC', \false);
+\class_alias('MolliePrefix\\PHP_Token_PUBLIC', 'MolliePrefix\\PHP_Token_PUBLIC', \false);
 class PHP_Token_QUESTION_MARK extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_QUESTION_MARK', 'PHP_Token_QUESTION_MARK', \false);
+\class_alias('MolliePrefix\\PHP_Token_QUESTION_MARK', 'MolliePrefix\\PHP_Token_QUESTION_MARK', \false);
 class PHP_Token_REQUIRE extends \MolliePrefix\PHP_Token_Includes
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_REQUIRE', 'PHP_Token_REQUIRE', \false);
+\class_alias('MolliePrefix\\PHP_Token_REQUIRE', 'MolliePrefix\\PHP_Token_REQUIRE', \false);
 class PHP_Token_REQUIRE_ONCE extends \MolliePrefix\PHP_Token_Includes
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_REQUIRE_ONCE', 'PHP_Token_REQUIRE_ONCE', \false);
+\class_alias('MolliePrefix\\PHP_Token_REQUIRE_ONCE', 'MolliePrefix\\PHP_Token_REQUIRE_ONCE', \false);
 class PHP_Token_RETURN extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_RETURN', 'PHP_Token_RETURN', \false);
+\class_alias('MolliePrefix\\PHP_Token_RETURN', 'MolliePrefix\\PHP_Token_RETURN', \false);
 class PHP_Token_SEMICOLON extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SEMICOLON', 'PHP_Token_SEMICOLON', \false);
+\class_alias('MolliePrefix\\PHP_Token_SEMICOLON', 'MolliePrefix\\PHP_Token_SEMICOLON', \false);
 class PHP_Token_SL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SL', 'PHP_Token_SL', \false);
+\class_alias('MolliePrefix\\PHP_Token_SL', 'MolliePrefix\\PHP_Token_SL', \false);
 class PHP_Token_SL_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SL_EQUAL', 'PHP_Token_SL_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_SL_EQUAL', 'MolliePrefix\\PHP_Token_SL_EQUAL', \false);
 class PHP_Token_SR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SR', 'PHP_Token_SR', \false);
+\class_alias('MolliePrefix\\PHP_Token_SR', 'MolliePrefix\\PHP_Token_SR', \false);
 class PHP_Token_SR_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SR_EQUAL', 'PHP_Token_SR_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_SR_EQUAL', 'MolliePrefix\\PHP_Token_SR_EQUAL', \false);
 class PHP_Token_START_HEREDOC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_START_HEREDOC', 'PHP_Token_START_HEREDOC', \false);
+\class_alias('MolliePrefix\\PHP_Token_START_HEREDOC', 'MolliePrefix\\PHP_Token_START_HEREDOC', \false);
 class PHP_Token_STATIC extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_STATIC', 'PHP_Token_STATIC', \false);
+\class_alias('MolliePrefix\\PHP_Token_STATIC', 'MolliePrefix\\PHP_Token_STATIC', \false);
 class PHP_Token_STRING extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_STRING', 'PHP_Token_STRING', \false);
+\class_alias('MolliePrefix\\PHP_Token_STRING', 'MolliePrefix\\PHP_Token_STRING', \false);
 class PHP_Token_STRING_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_STRING_CAST', 'PHP_Token_STRING_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_STRING_CAST', 'MolliePrefix\\PHP_Token_STRING_CAST', \false);
 class PHP_Token_STRING_VARNAME extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_STRING_VARNAME', 'PHP_Token_STRING_VARNAME', \false);
+\class_alias('MolliePrefix\\PHP_Token_STRING_VARNAME', 'MolliePrefix\\PHP_Token_STRING_VARNAME', \false);
 class PHP_Token_SWITCH extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SWITCH', 'PHP_Token_SWITCH', \false);
+\class_alias('MolliePrefix\\PHP_Token_SWITCH', 'MolliePrefix\\PHP_Token_SWITCH', \false);
 class PHP_Token_THROW extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_THROW', 'PHP_Token_THROW', \false);
+\class_alias('MolliePrefix\\PHP_Token_THROW', 'MolliePrefix\\PHP_Token_THROW', \false);
 class PHP_Token_TILDE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TILDE', 'PHP_Token_TILDE', \false);
+\class_alias('MolliePrefix\\PHP_Token_TILDE', 'MolliePrefix\\PHP_Token_TILDE', \false);
 class PHP_Token_TRY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TRY', 'PHP_Token_TRY', \false);
+\class_alias('MolliePrefix\\PHP_Token_TRY', 'MolliePrefix\\PHP_Token_TRY', \false);
 class PHP_Token_UNSET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_UNSET', 'PHP_Token_UNSET', \false);
+\class_alias('MolliePrefix\\PHP_Token_UNSET', 'MolliePrefix\\PHP_Token_UNSET', \false);
 class PHP_Token_UNSET_CAST extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_UNSET_CAST', 'PHP_Token_UNSET_CAST', \false);
+\class_alias('MolliePrefix\\PHP_Token_UNSET_CAST', 'MolliePrefix\\PHP_Token_UNSET_CAST', \false);
 class PHP_Token_USE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_USE', 'PHP_Token_USE', \false);
+\class_alias('MolliePrefix\\PHP_Token_USE', 'MolliePrefix\\PHP_Token_USE', \false);
 class PHP_Token_USE_FUNCTION extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_USE_FUNCTION', 'PHP_Token_USE_FUNCTION', \false);
+\class_alias('MolliePrefix\\PHP_Token_USE_FUNCTION', 'MolliePrefix\\PHP_Token_USE_FUNCTION', \false);
 class PHP_Token_VAR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_VAR', 'PHP_Token_VAR', \false);
+\class_alias('MolliePrefix\\PHP_Token_VAR', 'MolliePrefix\\PHP_Token_VAR', \false);
 class PHP_Token_VARIABLE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_VARIABLE', 'PHP_Token_VARIABLE', \false);
+\class_alias('MolliePrefix\\PHP_Token_VARIABLE', 'MolliePrefix\\PHP_Token_VARIABLE', \false);
 class PHP_Token_WHILE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_WHILE', 'PHP_Token_WHILE', \false);
+\class_alias('MolliePrefix\\PHP_Token_WHILE', 'MolliePrefix\\PHP_Token_WHILE', \false);
 class PHP_Token_WHITESPACE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_WHITESPACE', 'PHP_Token_WHITESPACE', \false);
+\class_alias('MolliePrefix\\PHP_Token_WHITESPACE', 'MolliePrefix\\PHP_Token_WHITESPACE', \false);
 class PHP_Token_XOR_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XOR_EQUAL', 'PHP_Token_XOR_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_XOR_EQUAL', 'MolliePrefix\\PHP_Token_XOR_EQUAL', \false);
 // Tokens introduced in PHP 5.1
 class PHP_Token_HALT_COMPILER extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 5.1
-\class_alias('MolliePrefix\\PHP_Token_HALT_COMPILER', 'PHP_Token_HALT_COMPILER', \false);
+\class_alias('MolliePrefix\\PHP_Token_HALT_COMPILER', 'MolliePrefix\\PHP_Token_HALT_COMPILER', \false);
 // Tokens introduced in PHP 5.3
 class PHP_Token_DIR extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 5.3
-\class_alias('MolliePrefix\\PHP_Token_DIR', 'PHP_Token_DIR', \false);
+\class_alias('MolliePrefix\\PHP_Token_DIR', 'MolliePrefix\\PHP_Token_DIR', \false);
 class PHP_Token_GOTO extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_GOTO', 'PHP_Token_GOTO', \false);
+\class_alias('MolliePrefix\\PHP_Token_GOTO', 'MolliePrefix\\PHP_Token_GOTO', \false);
 class PHP_Token_NAMESPACE extends \MolliePrefix\PHP_TokenWithScope
 {
     /**
@@ -1121,178 +1121,178 @@ class PHP_Token_NAMESPACE extends \MolliePrefix\PHP_TokenWithScope
         return $namespace;
     }
 }
-\class_alias('MolliePrefix\\PHP_Token_NAMESPACE', 'PHP_Token_NAMESPACE', \false);
+\class_alias('MolliePrefix\\PHP_Token_NAMESPACE', 'MolliePrefix\\PHP_Token_NAMESPACE', \false);
 class PHP_Token_NS_C extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_NS_C', 'PHP_Token_NS_C', \false);
+\class_alias('MolliePrefix\\PHP_Token_NS_C', 'MolliePrefix\\PHP_Token_NS_C', \false);
 class PHP_Token_NS_SEPARATOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_NS_SEPARATOR', 'PHP_Token_NS_SEPARATOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_NS_SEPARATOR', 'MolliePrefix\\PHP_Token_NS_SEPARATOR', \false);
 // Tokens introduced in PHP 5.4
 class PHP_Token_CALLABLE extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 5.4
-\class_alias('MolliePrefix\\PHP_Token_CALLABLE', 'PHP_Token_CALLABLE', \false);
+\class_alias('MolliePrefix\\PHP_Token_CALLABLE', 'MolliePrefix\\PHP_Token_CALLABLE', \false);
 class PHP_Token_INSTEADOF extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_INSTEADOF', 'PHP_Token_INSTEADOF', \false);
+\class_alias('MolliePrefix\\PHP_Token_INSTEADOF', 'MolliePrefix\\PHP_Token_INSTEADOF', \false);
 class PHP_Token_TRAIT extends \MolliePrefix\PHP_Token_INTERFACE
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TRAIT', 'PHP_Token_TRAIT', \false);
+\class_alias('MolliePrefix\\PHP_Token_TRAIT', 'MolliePrefix\\PHP_Token_TRAIT', \false);
 class PHP_Token_TRAIT_C extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TRAIT_C', 'PHP_Token_TRAIT_C', \false);
+\class_alias('MolliePrefix\\PHP_Token_TRAIT_C', 'MolliePrefix\\PHP_Token_TRAIT_C', \false);
 // Tokens introduced in PHP 5.5
 class PHP_Token_FINALLY extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 5.5
-\class_alias('MolliePrefix\\PHP_Token_FINALLY', 'PHP_Token_FINALLY', \false);
+\class_alias('MolliePrefix\\PHP_Token_FINALLY', 'MolliePrefix\\PHP_Token_FINALLY', \false);
 class PHP_Token_YIELD extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_YIELD', 'PHP_Token_YIELD', \false);
+\class_alias('MolliePrefix\\PHP_Token_YIELD', 'MolliePrefix\\PHP_Token_YIELD', \false);
 // Tokens introduced in PHP 5.6
 class PHP_Token_ELLIPSIS extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 5.6
-\class_alias('MolliePrefix\\PHP_Token_ELLIPSIS', 'PHP_Token_ELLIPSIS', \false);
+\class_alias('MolliePrefix\\PHP_Token_ELLIPSIS', 'MolliePrefix\\PHP_Token_ELLIPSIS', \false);
 class PHP_Token_POW extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_POW', 'PHP_Token_POW', \false);
+\class_alias('MolliePrefix\\PHP_Token_POW', 'MolliePrefix\\PHP_Token_POW', \false);
 class PHP_Token_POW_EQUAL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_POW_EQUAL', 'PHP_Token_POW_EQUAL', \false);
+\class_alias('MolliePrefix\\PHP_Token_POW_EQUAL', 'MolliePrefix\\PHP_Token_POW_EQUAL', \false);
 // Tokens introduced in PHP 7.0
 class PHP_Token_COALESCE extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in PHP 7.0
-\class_alias('MolliePrefix\\PHP_Token_COALESCE', 'PHP_Token_COALESCE', \false);
+\class_alias('MolliePrefix\\PHP_Token_COALESCE', 'MolliePrefix\\PHP_Token_COALESCE', \false);
 class PHP_Token_SPACESHIP extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SPACESHIP', 'PHP_Token_SPACESHIP', \false);
+\class_alias('MolliePrefix\\PHP_Token_SPACESHIP', 'MolliePrefix\\PHP_Token_SPACESHIP', \false);
 class PHP_Token_YIELD_FROM extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_YIELD_FROM', 'PHP_Token_YIELD_FROM', \false);
+\class_alias('MolliePrefix\\PHP_Token_YIELD_FROM', 'MolliePrefix\\PHP_Token_YIELD_FROM', \false);
 // Tokens introduced in HackLang / HHVM
 class PHP_Token_ASYNC extends \MolliePrefix\PHP_Token
 {
 }
 // Tokens introduced in HackLang / HHVM
-\class_alias('MolliePrefix\\PHP_Token_ASYNC', 'PHP_Token_ASYNC', \false);
+\class_alias('MolliePrefix\\PHP_Token_ASYNC', 'MolliePrefix\\PHP_Token_ASYNC', \false);
 class PHP_Token_AWAIT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_AWAIT', 'PHP_Token_AWAIT', \false);
+\class_alias('MolliePrefix\\PHP_Token_AWAIT', 'MolliePrefix\\PHP_Token_AWAIT', \false);
 class PHP_Token_COMPILER_HALT_OFFSET extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_COMPILER_HALT_OFFSET', 'PHP_Token_COMPILER_HALT_OFFSET', \false);
+\class_alias('MolliePrefix\\PHP_Token_COMPILER_HALT_OFFSET', 'MolliePrefix\\PHP_Token_COMPILER_HALT_OFFSET', \false);
 class PHP_Token_ENUM extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ENUM', 'PHP_Token_ENUM', \false);
+\class_alias('MolliePrefix\\PHP_Token_ENUM', 'MolliePrefix\\PHP_Token_ENUM', \false);
 class PHP_Token_EQUALS extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_EQUALS', 'PHP_Token_EQUALS', \false);
+\class_alias('MolliePrefix\\PHP_Token_EQUALS', 'MolliePrefix\\PHP_Token_EQUALS', \false);
 class PHP_Token_IN extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_IN', 'PHP_Token_IN', \false);
+\class_alias('MolliePrefix\\PHP_Token_IN', 'MolliePrefix\\PHP_Token_IN', \false);
 class PHP_Token_JOIN extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_JOIN', 'PHP_Token_JOIN', \false);
+\class_alias('MolliePrefix\\PHP_Token_JOIN', 'MolliePrefix\\PHP_Token_JOIN', \false);
 class PHP_Token_LAMBDA_ARROW extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LAMBDA_ARROW', 'PHP_Token_LAMBDA_ARROW', \false);
+\class_alias('MolliePrefix\\PHP_Token_LAMBDA_ARROW', 'MolliePrefix\\PHP_Token_LAMBDA_ARROW', \false);
 class PHP_Token_LAMBDA_CP extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LAMBDA_CP', 'PHP_Token_LAMBDA_CP', \false);
+\class_alias('MolliePrefix\\PHP_Token_LAMBDA_CP', 'MolliePrefix\\PHP_Token_LAMBDA_CP', \false);
 class PHP_Token_LAMBDA_OP extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_LAMBDA_OP', 'PHP_Token_LAMBDA_OP', \false);
+\class_alias('MolliePrefix\\PHP_Token_LAMBDA_OP', 'MolliePrefix\\PHP_Token_LAMBDA_OP', \false);
 class PHP_Token_ONUMBER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_ONUMBER', 'PHP_Token_ONUMBER', \false);
+\class_alias('MolliePrefix\\PHP_Token_ONUMBER', 'MolliePrefix\\PHP_Token_ONUMBER', \false);
 class PHP_Token_NULLSAFE_OBJECT_OPERATOR extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_NULLSAFE_OBJECT_OPERATOR', 'PHP_Token_NULLSAFE_OBJECT_OPERATOR', \false);
+\class_alias('MolliePrefix\\PHP_Token_NULLSAFE_OBJECT_OPERATOR', 'MolliePrefix\\PHP_Token_NULLSAFE_OBJECT_OPERATOR', \false);
 class PHP_Token_SHAPE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SHAPE', 'PHP_Token_SHAPE', \false);
+\class_alias('MolliePrefix\\PHP_Token_SHAPE', 'MolliePrefix\\PHP_Token_SHAPE', \false);
 class PHP_Token_SUPER extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_SUPER', 'PHP_Token_SUPER', \false);
+\class_alias('MolliePrefix\\PHP_Token_SUPER', 'MolliePrefix\\PHP_Token_SUPER', \false);
 class PHP_Token_TYPE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TYPE', 'PHP_Token_TYPE', \false);
+\class_alias('MolliePrefix\\PHP_Token_TYPE', 'MolliePrefix\\PHP_Token_TYPE', \false);
 class PHP_Token_TYPELIST_GT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TYPELIST_GT', 'PHP_Token_TYPELIST_GT', \false);
+\class_alias('MolliePrefix\\PHP_Token_TYPELIST_GT', 'MolliePrefix\\PHP_Token_TYPELIST_GT', \false);
 class PHP_Token_TYPELIST_LT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_TYPELIST_LT', 'PHP_Token_TYPELIST_LT', \false);
+\class_alias('MolliePrefix\\PHP_Token_TYPELIST_LT', 'MolliePrefix\\PHP_Token_TYPELIST_LT', \false);
 class PHP_Token_WHERE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_WHERE', 'PHP_Token_WHERE', \false);
+\class_alias('MolliePrefix\\PHP_Token_WHERE', 'MolliePrefix\\PHP_Token_WHERE', \false);
 class PHP_Token_XHP_ATTRIBUTE extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_ATTRIBUTE', 'PHP_Token_XHP_ATTRIBUTE', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_ATTRIBUTE', 'MolliePrefix\\PHP_Token_XHP_ATTRIBUTE', \false);
 class PHP_Token_XHP_CATEGORY extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_CATEGORY', 'PHP_Token_XHP_CATEGORY', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_CATEGORY', 'MolliePrefix\\PHP_Token_XHP_CATEGORY', \false);
 class PHP_Token_XHP_CATEGORY_LABEL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_CATEGORY_LABEL', 'PHP_Token_XHP_CATEGORY_LABEL', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_CATEGORY_LABEL', 'MolliePrefix\\PHP_Token_XHP_CATEGORY_LABEL', \false);
 class PHP_Token_XHP_CHILDREN extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_CHILDREN', 'PHP_Token_XHP_CHILDREN', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_CHILDREN', 'MolliePrefix\\PHP_Token_XHP_CHILDREN', \false);
 class PHP_Token_XHP_LABEL extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_LABEL', 'PHP_Token_XHP_LABEL', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_LABEL', 'MolliePrefix\\PHP_Token_XHP_LABEL', \false);
 class PHP_Token_XHP_REQUIRED extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_REQUIRED', 'PHP_Token_XHP_REQUIRED', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_REQUIRED', 'MolliePrefix\\PHP_Token_XHP_REQUIRED', \false);
 class PHP_Token_XHP_TAG_GT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_TAG_GT', 'PHP_Token_XHP_TAG_GT', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_TAG_GT', 'MolliePrefix\\PHP_Token_XHP_TAG_GT', \false);
 class PHP_Token_XHP_TAG_LT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_TAG_LT', 'PHP_Token_XHP_TAG_LT', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_TAG_LT', 'MolliePrefix\\PHP_Token_XHP_TAG_LT', \false);
 class PHP_Token_XHP_TEXT extends \MolliePrefix\PHP_Token
 {
 }
-\class_alias('MolliePrefix\\PHP_Token_XHP_TEXT', 'PHP_Token_XHP_TEXT', \false);
+\class_alias('MolliePrefix\\PHP_Token_XHP_TEXT', 'MolliePrefix\\PHP_Token_XHP_TEXT', \false);

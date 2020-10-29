@@ -47,4 +47,4 @@ class PHPUnit_Runner_Filter_Factory
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_Factory', 'PHPUnit_Runner_Filter_Factory', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_Factory', 'MolliePrefix\\PHPUnit_Runner_Filter_Factory', \false);

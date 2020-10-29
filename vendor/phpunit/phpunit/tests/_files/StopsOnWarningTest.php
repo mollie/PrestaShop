@@ -8,4 +8,4 @@ class StopsOnWarningTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\StopsOnWarningTest', 'StopsOnWarningTest', \false);
+\class_alias('MolliePrefix\\StopsOnWarningTest', 'MolliePrefix\\StopsOnWarningTest', \false);

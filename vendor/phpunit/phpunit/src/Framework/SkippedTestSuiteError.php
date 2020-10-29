@@ -29,4 +29,4 @@ class PHPUnit_Framework_SkippedTestSuiteError extends \MolliePrefix\PHPUnit_Fram
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of a skipped test suite.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTestSuiteError', 'PHPUnit_Framework_SkippedTestSuiteError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTestSuiteError', 'MolliePrefix\\PHPUnit_Framework_SkippedTestSuiteError', \false);

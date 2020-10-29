@@ -58,4 +58,4 @@ class Extensions_RepeatedTestTest extends \MolliePrefix\PHPUnit_Framework_TestCa
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Extensions_RepeatedTestTest', 'Extensions_RepeatedTestTest', \false);
+\class_alias('MolliePrefix\\Extensions_RepeatedTestTest', 'MolliePrefix\\Extensions_RepeatedTestTest', \false);

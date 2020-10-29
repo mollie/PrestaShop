@@ -11,7 +11,7 @@
 namespace MolliePrefix\Symfony\Polyfill\Intl\Idn;
 
 use Exception;
-use Normalizer;
+use MolliePrefix\Normalizer;
 use MolliePrefix\Symfony\Polyfill\Intl\Idn\Resources\unidata\DisallowedRanges;
 use MolliePrefix\Symfony\Polyfill\Intl\Idn\Resources\unidata\Regex;
 /**
@@ -38,6 +38,13 @@ final class Idn
     const ERROR_CONTEXTO_DIGITS = 0x4000;
     const INTL_IDNA_VARIANT_2003 = 0;
     const INTL_IDNA_VARIANT_UTS46 = 1;
+    const IDNA_DEFAULT = 0;
+    const IDNA_ALLOW_UNASSIGNED = 1;
+    const IDNA_USE_STD3_RULES = 2;
+    const IDNA_CHECK_BIDI = 4;
+    const IDNA_CHECK_CONTEXTJ = 8;
+    const IDNA_NONTRANSITIONAL_TO_ASCII = 16;
+    const IDNA_NONTRANSITIONAL_TO_UNICODE = 32;
     const MAX_DOMAIN_SIZE = 253;
     const MAX_LABEL_SIZE = 63;
     const BASE = 36;
@@ -98,12 +105,12 @@ final class Idn
      *
      * @return string|false
      */
-    public static function idn_to_ascii($domainName, $options = \IDNA_DEFAULT, $variant = self::INTL_IDNA_VARIANT_UTS46, &$idna_info = array())
+    public static function idn_to_ascii($domainName, $options = self::IDNA_DEFAULT, $variant = self::INTL_IDNA_VARIANT_UTS46, &$idna_info = array())
     {
         if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
             @\trigger_error('idn_to_ascii(): INTL_IDNA_VARIANT_2003 is deprecated', \E_USER_DEPRECATED);
         }
-        $options = array('CheckHyphens' => \true, 'CheckBidi' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 !== ($options & \IDNA_CHECK_BIDI), 'CheckJoiners' => self::INTL_IDNA_VARIANT_UTS46 === $variant && 0 !== ($options & \IDNA_CHECK_CONTEXTJ), 'UseSTD3ASCIIRules' => 0 !== ($options & \IDNA_USE_STD3_RULES), 'Transitional_Processing' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 === ($options & \IDNA_NONTRANSITIONAL_TO_ASCII), 'VerifyDnsLength' => \true);
+        $options = array('CheckHyphens' => \true, 'CheckBidi' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 !== ($options & self::IDNA_CHECK_BIDI), 'CheckJoiners' => self::INTL_IDNA_VARIANT_UTS46 === $variant && 0 !== ($options & self::IDNA_CHECK_CONTEXTJ), 'UseSTD3ASCIIRules' => 0 !== ($options & self::IDNA_USE_STD3_RULES), 'Transitional_Processing' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 === ($options & self::IDNA_NONTRANSITIONAL_TO_ASCII), 'VerifyDnsLength' => \true);
         $info = new \MolliePrefix\Symfony\Polyfill\Intl\Idn\Info();
         $labels = self::process((string) $domainName, $options, $info);
         foreach ($labels as $i => $label) {
@@ -133,13 +140,13 @@ final class Idn
      *
      * @return string|false
      */
-    public static function idn_to_utf8($domainName, $options = \IDNA_DEFAULT, $variant = self::INTL_IDNA_VARIANT_UTS46, &$idna_info = array())
+    public static function idn_to_utf8($domainName, $options = self::IDNA_DEFAULT, $variant = self::INTL_IDNA_VARIANT_UTS46, &$idna_info = array())
     {
         if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
             @\trigger_error('idn_to_utf8(): INTL_IDNA_VARIANT_2003 is deprecated', \E_USER_DEPRECATED);
         }
         $info = new \MolliePrefix\Symfony\Polyfill\Intl\Idn\Info();
-        $labels = self::process((string) $domainName, array('CheckHyphens' => \true, 'CheckBidi' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 !== ($options & \IDNA_CHECK_BIDI), 'CheckJoiners' => self::INTL_IDNA_VARIANT_UTS46 === $variant && 0 !== ($options & \IDNA_CHECK_CONTEXTJ), 'UseSTD3ASCIIRules' => 0 !== ($options & \IDNA_USE_STD3_RULES), 'Transitional_Processing' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 === ($options & \IDNA_NONTRANSITIONAL_TO_UNICODE)), $info);
+        $labels = self::process((string) $domainName, array('CheckHyphens' => \true, 'CheckBidi' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 !== ($options & self::IDNA_CHECK_BIDI), 'CheckJoiners' => self::INTL_IDNA_VARIANT_UTS46 === $variant && 0 !== ($options & self::IDNA_CHECK_CONTEXTJ), 'UseSTD3ASCIIRules' => 0 !== ($options & self::IDNA_USE_STD3_RULES), 'Transitional_Processing' => self::INTL_IDNA_VARIANT_2003 === $variant || 0 === ($options & self::IDNA_NONTRANSITIONAL_TO_UNICODE)), $info);
         $idna_info = array('result' => \implode('.', $labels), 'isTransitionalDifferent' => $info->transitionalDifferent, 'errors' => $info->errors);
         return 0 === $info->errors ? $idna_info['result'] : \false;
     }
@@ -196,7 +203,7 @@ final class Idn
                     $info->errors |= self::ERROR_DISALLOWED;
                 // no break.
                 case 'valid':
-                    $str .= mb_chr($codePoint, 'utf-8');
+                    $str .= \mb_chr($codePoint, 'utf-8');
                     break;
                 case 'ignored':
                     // Do nothing.
@@ -206,7 +213,7 @@ final class Idn
                     break;
                 case 'deviation':
                     $info->transitionalDifferent = \true;
-                    $str .= $transitional ? $data['mapping'] : mb_chr($codePoint, 'utf-8');
+                    $str .= $transitional ? $data['mapping'] : \mb_chr($codePoint, 'utf-8');
                     break;
             }
         }
@@ -232,8 +239,8 @@ final class Idn
         // Step 1. Map each code point in the domain name string
         $domain = self::mapCodePoints($domain, $options, $info);
         // Step 2. Normalize the domain name string to Unicode Normalization Form C.
-        if (!\Normalizer::isNormalized($domain, \Normalizer::FORM_C)) {
-            $domain = \Normalizer::normalize($domain, \Normalizer::FORM_C);
+        if (!\MolliePrefix\Normalizer::isNormalized($domain, \MolliePrefix\Normalizer::FORM_C)) {
+            $domain = \MolliePrefix\Normalizer::normalize($domain, \MolliePrefix\Normalizer::FORM_C);
         }
         // Step 3. Break the string into labels at U+002E (.) FULL STOP.
         $labels = \explode('.', $domain);
@@ -360,7 +367,7 @@ final class Idn
             return;
         }
         // Step 1. The label must be in Unicode Normalization Form C.
-        if (!\Normalizer::isNormalized($label, \Normalizer::FORM_C)) {
+        if (!\MolliePrefix\Normalizer::isNormalized($label, \MolliePrefix\Normalizer::FORM_C)) {
             $info->errors |= self::ERROR_INVALID_ACE_LABEL;
         }
         $codePoints = self::utf8Decode($label);
@@ -477,7 +484,7 @@ final class Idn
             }
             $n += \intdiv($i, $outPlusOne);
             $i %= $outPlusOne;
-            \array_splice($output, $i++, 0, array(mb_chr($n, 'utf-8')));
+            \array_splice($output, $i++, 0, array(\mb_chr($n, 'utf-8')));
         }
         return \implode('', $output);
     }

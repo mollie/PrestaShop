@@ -62,4 +62,4 @@ class PHPUnit_Framework_Constraint_StringStartsWith extends \MolliePrefix\PHPUni
  * Constraint that asserts that the string it is evaluated for begins with a
  * given prefix.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringStartsWith', 'PHPUnit_Framework_Constraint_StringStartsWith', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringStartsWith', 'MolliePrefix\\PHPUnit_Framework_Constraint_StringStartsWith', \false);

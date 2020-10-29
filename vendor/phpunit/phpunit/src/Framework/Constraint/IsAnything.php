@@ -67,4 +67,4 @@ class PHPUnit_Framework_Constraint_IsAnything extends \MolliePrefix\PHPUnit_Fram
 /**
  * Constraint that accepts any input value.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsAnything', 'PHPUnit_Framework_Constraint_IsAnything', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsAnything', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsAnything', \false);

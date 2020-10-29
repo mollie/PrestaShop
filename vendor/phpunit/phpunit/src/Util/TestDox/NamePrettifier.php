@@ -126,4 +126,4 @@ class PHPUnit_Util_TestDox_NamePrettifier
 /**
  * Prettifies class and method names for use in TestDox documentation.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_NamePrettifier', 'PHPUnit_Util_TestDox_NamePrettifier', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_NamePrettifier', 'MolliePrefix\\PHPUnit_Util_TestDox_NamePrettifier', \false);

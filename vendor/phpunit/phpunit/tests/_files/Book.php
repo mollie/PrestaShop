@@ -31,4 +31,4 @@ class Book
  * A book.
  *
  */
-\class_alias('MolliePrefix\\Book', 'Book', \false);
+\class_alias('MolliePrefix\\Book', 'MolliePrefix\\Book', \false);

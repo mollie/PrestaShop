@@ -40,4 +40,4 @@ interface PHPUnit_Framework_MockObject_Builder_Match extends \MolliePrefix\PHPUn
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Match', 'PHPUnit_Framework_MockObject_Builder_Match', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Match', 'MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Match', \false);

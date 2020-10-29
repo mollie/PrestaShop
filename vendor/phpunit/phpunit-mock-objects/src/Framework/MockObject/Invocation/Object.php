@@ -48,4 +48,4 @@ class PHPUnit_Framework_MockObject_Invocation_Object extends \MolliePrefix\PHPUn
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Object', 'PHPUnit_Framework_MockObject_Invocation_Object', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Object', 'MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Object', \false);

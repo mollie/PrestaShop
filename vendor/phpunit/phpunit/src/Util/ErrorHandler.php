@@ -103,4 +103,4 @@ class PHPUnit_Util_ErrorHandler
 /**
  * Error handler that converts PHP errors and warnings to exceptions.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_ErrorHandler', 'PHPUnit_Util_ErrorHandler', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_ErrorHandler', 'MolliePrefix\\PHPUnit_Util_ErrorHandler', \false);

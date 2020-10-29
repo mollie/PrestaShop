@@ -514,4 +514,4 @@ class Framework_TestCaseTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertSame($data, $test->myTestData);
     }
 }
-\class_alias('MolliePrefix\\Framework_TestCaseTest', 'Framework_TestCaseTest', \false);
+\class_alias('MolliePrefix\\Framework_TestCaseTest', 'MolliePrefix\\Framework_TestCaseTest', \false);

@@ -8,4 +8,4 @@ class MockRunner extends \MolliePrefix\PHPUnit_Runner_BaseTestRunner
     {
     }
 }
-\class_alias('MolliePrefix\\MockRunner', 'MockRunner', \false);
+\class_alias('MolliePrefix\\MockRunner', 'MolliePrefix\\MockRunner', \false);

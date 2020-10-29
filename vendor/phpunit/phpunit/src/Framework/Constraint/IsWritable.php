@@ -66,4 +66,4 @@ class PHPUnit_Framework_Constraint_IsWritable extends \MolliePrefix\PHPUnit_Fram
  *
  * The file path to check is passed as $other in evaluate().
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsWritable', 'PHPUnit_Framework_Constraint_IsWritable', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsWritable', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsWritable', \false);

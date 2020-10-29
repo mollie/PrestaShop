@@ -113,4 +113,4 @@ class PHPUnit_Framework_Constraint_IsType extends \MolliePrefix\PHPUnit_Framewor
  *
  * The expected value is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsType', 'PHPUnit_Framework_Constraint_IsType', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsType', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsType', \false);

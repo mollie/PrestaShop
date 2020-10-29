@@ -28,4 +28,4 @@ class DataProviderIncompleteTest extends \MolliePrefix\PHPUnit_Framework_TestCas
         return [[0, 0, 0], [0, 1, 1]];
     }
 }
-\class_alias('MolliePrefix\\DataProviderIncompleteTest', 'DataProviderIncompleteTest', \false);
+\class_alias('MolliePrefix\\DataProviderIncompleteTest', 'MolliePrefix\\DataProviderIncompleteTest', \false);

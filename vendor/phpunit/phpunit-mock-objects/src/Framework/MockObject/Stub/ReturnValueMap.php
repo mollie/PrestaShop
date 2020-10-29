@@ -54,4 +54,4 @@ class PHPUnit_Framework_MockObject_Stub_ReturnValueMap implements \MolliePrefix\
  *
  * @since Class available since Release 1.1.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnValueMap', 'PHPUnit_Framework_MockObject_Stub_ReturnValueMap', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnValueMap', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnValueMap', \false);

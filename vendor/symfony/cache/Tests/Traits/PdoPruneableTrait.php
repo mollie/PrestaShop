@@ -10,7 +10,6 @@
  */
 namespace MolliePrefix\Symfony\Component\Cache\Tests\Traits;
 
-use MolliePrefix\Doctrine\DBAL\Driver\Result;
 trait PdoPruneableTrait
 {
     protected function isPruned($cache, $name)
@@ -25,6 +24,6 @@ trait PdoPruneableTrait
         $select = $getPdoConn->invoke($cache)->prepare('SELECT 1 FROM cache_items WHERE item_id LIKE :id');
         $select->bindValue(':id', \sprintf('%%%s', $name));
         $result = $select->execute();
-        return 1 !== (int) ($result instanceof \MolliePrefix\Doctrine\DBAL\Driver\Result ? $result->fetchOne() : $select->fetch(\PDO::FETCH_COLUMN));
+        return 1 !== (int) (\is_object($result) ? $result->fetchOne() : $select->fetch(\PDO::FETCH_COLUMN));
     }
 }

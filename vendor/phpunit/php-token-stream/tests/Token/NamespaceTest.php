@@ -93,4 +93,4 @@ class PHP_Token_NamespaceTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * @link       http://github.com/sebastianbergmann/php-token-stream/
  * @since      Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHP_Token_NamespaceTest', 'PHP_Token_NamespaceTest', \false);
+\class_alias('MolliePrefix\\PHP_Token_NamespaceTest', 'MolliePrefix\\PHP_Token_NamespaceTest', \false);

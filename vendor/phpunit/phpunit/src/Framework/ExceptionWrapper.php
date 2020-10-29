@@ -94,4 +94,4 @@ class PHPUnit_Framework_ExceptionWrapper extends \MolliePrefix\PHPUnit_Framework
  * Unlike PHPUnit_Framework_Exception, the complete stack of previous Exceptions
  * is processed.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_ExceptionWrapper', 'PHPUnit_Framework_ExceptionWrapper', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_ExceptionWrapper', 'MolliePrefix\\PHPUnit_Framework_ExceptionWrapper', \false);

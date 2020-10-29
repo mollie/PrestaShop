@@ -125,4 +125,4 @@ class PHPUnit_Util_Getopt
 /**
  * Command-line options parsing class.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Getopt', 'PHPUnit_Util_Getopt', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Getopt', 'MolliePrefix\\PHPUnit_Util_Getopt', \false);

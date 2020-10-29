@@ -823,4 +823,4 @@ EOT;
  * A TestRunner for the Command Line Interface (CLI)
  * PHP SAPI Module.
  */
-\class_alias('MolliePrefix\\PHPUnit_TextUI_Command', 'PHPUnit_TextUI_Command', \false);
+\class_alias('MolliePrefix\\PHPUnit_TextUI_Command', 'MolliePrefix\\PHPUnit_TextUI_Command', \false);

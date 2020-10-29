@@ -71,4 +71,4 @@ abstract class PHPUnit_Framework_MockObject_Matcher_StatelessInvocation implemen
  * @since Class available since Release 1.0.0
  * @abstract
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_StatelessInvocation', 'PHPUnit_Framework_MockObject_Matcher_StatelessInvocation', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_StatelessInvocation', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_StatelessInvocation', \false);

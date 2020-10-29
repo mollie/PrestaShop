@@ -76,4 +76,4 @@ class PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider
 /**
  * Provides human readable messages for each JSON error.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider', 'PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider', 'MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider', \false);

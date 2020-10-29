@@ -11,4 +11,4 @@ class OneTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\OneTestCase', 'OneTestCase', \false);
+\class_alias('MolliePrefix\\OneTestCase', 'MolliePrefix\\OneTestCase', \false);

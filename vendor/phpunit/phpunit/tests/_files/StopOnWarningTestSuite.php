@@ -12,4 +12,4 @@ class StopOnWarningTestSuite
         return $suite;
     }
 }
-\class_alias('MolliePrefix\\StopOnWarningTestSuite', 'StopOnWarningTestSuite', \false);
+\class_alias('MolliePrefix\\StopOnWarningTestSuite', 'MolliePrefix\\StopOnWarningTestSuite', \false);

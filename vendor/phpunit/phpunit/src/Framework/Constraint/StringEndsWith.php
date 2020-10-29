@@ -62,4 +62,4 @@ class PHPUnit_Framework_Constraint_StringEndsWith extends \MolliePrefix\PHPUnit_
  * Constraint that asserts that the string it is evaluated for ends with a given
  * suffix.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringEndsWith', 'PHPUnit_Framework_Constraint_StringEndsWith', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringEndsWith', 'MolliePrefix\\PHPUnit_Framework_Constraint_StringEndsWith', \false);

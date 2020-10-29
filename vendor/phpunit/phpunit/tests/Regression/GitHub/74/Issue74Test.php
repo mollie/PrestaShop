@@ -10,4 +10,4 @@ class Issue74Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \MolliePrefix\NewException('Testing GH-74');
     }
 }
-\class_alias('MolliePrefix\\Issue74Test', 'Issue74Test', \false);
+\class_alias('MolliePrefix\\Issue74Test', 'MolliePrefix\\Issue74Test', \false);

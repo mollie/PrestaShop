@@ -31,4 +31,4 @@ class ExceptionInAssertPreConditionsTest extends \MolliePrefix\PHPUnit_Framework
         $this->tearDown = \true;
     }
 }
-\class_alias('MolliePrefix\\ExceptionInAssertPreConditionsTest', 'ExceptionInAssertPreConditionsTest', \false);
+\class_alias('MolliePrefix\\ExceptionInAssertPreConditionsTest', 'MolliePrefix\\ExceptionInAssertPreConditionsTest', \false);

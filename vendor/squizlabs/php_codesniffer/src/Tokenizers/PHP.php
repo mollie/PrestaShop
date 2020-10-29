@@ -38,7 +38,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
      *
      * @var array<int, int>
      */
-    public $knownLengths = [\T_ABSTRACT => 8, \T_AND_EQUAL => 2, \T_ARRAY => 5, \T_AS => 2, \T_BOOLEAN_AND => 2, \T_BOOLEAN_OR => 2, \T_BREAK => 5, \T_CALLABLE => 8, \T_CASE => 4, \T_CATCH => 5, \T_CLASS => 5, \T_CLASS_C => 9, \T_CLONE => 5, \T_CONCAT_EQUAL => 2, \T_CONST => 5, \T_CONTINUE => 8, \T_CURLY_OPEN => 2, \T_DEC => 2, \T_DECLARE => 7, \T_DEFAULT => 7, \T_DIR => 7, \T_DIV_EQUAL => 2, \T_DO => 2, \T_DOLLAR_OPEN_CURLY_BRACES => 2, \T_DOUBLE_ARROW => 2, \T_DOUBLE_COLON => 2, \T_ECHO => 4, \T_ELSE => 4, \T_ELSEIF => 6, \T_EMPTY => 5, \T_ENDDECLARE => 10, \T_ENDFOR => 6, \T_ENDFOREACH => 10, \T_ENDIF => 5, \T_ENDSWITCH => 9, \T_ENDWHILE => 8, \T_EVAL => 4, \T_EXTENDS => 7, \T_FILE => 8, \T_FINAL => 5, \T_FINALLY => 7, \T_FOR => 3, \T_FOREACH => 7, \T_FUNCTION => 8, \T_FUNC_C => 12, \T_GLOBAL => 6, \T_GOTO => 4, \T_HALT_COMPILER => 15, \T_IF => 2, \T_IMPLEMENTS => 10, \T_INC => 2, \T_INCLUDE => 7, \T_INCLUDE_ONCE => 12, \T_INSTANCEOF => 10, \T_INSTEADOF => 9, \T_INTERFACE => 9, \T_ISSET => 5, \T_IS_EQUAL => 2, \T_IS_GREATER_OR_EQUAL => 2, \T_IS_IDENTICAL => 3, \T_IS_NOT_EQUAL => 2, \T_IS_NOT_IDENTICAL => 3, \T_IS_SMALLER_OR_EQUAL => 2, \T_LINE => 8, \T_LIST => 4, \T_LOGICAL_AND => 3, \T_LOGICAL_OR => 2, \T_LOGICAL_XOR => 3, \T_METHOD_C => 10, \T_MINUS_EQUAL => 2, \T_POW_EQUAL => 3, \T_MOD_EQUAL => 2, \T_MUL_EQUAL => 2, \T_NAMESPACE => 9, \T_NS_C => 13, \T_NS_SEPARATOR => 1, \T_NEW => 3, \T_OBJECT_OPERATOR => 2, \T_OPEN_TAG_WITH_ECHO => 3, \T_OR_EQUAL => 2, \T_PLUS_EQUAL => 2, \T_PRINT => 5, \T_PRIVATE => 7, \T_PUBLIC => 6, \T_PROTECTED => 9, \T_REQUIRE => 7, \T_REQUIRE_ONCE => 12, \T_RETURN => 6, \T_STATIC => 6, \T_SWITCH => 6, \T_THROW => 5, \T_TRAIT => 5, \T_TRAIT_C => 9, \T_TRY => 3, \T_UNSET => 5, \T_USE => 3, \T_VAR => 3, \T_WHILE => 5, \T_XOR_EQUAL => 2, \T_YIELD => 5, T_OPEN_CURLY_BRACKET => 1, T_CLOSE_CURLY_BRACKET => 1, T_OPEN_SQUARE_BRACKET => 1, T_CLOSE_SQUARE_BRACKET => 1, T_OPEN_PARENTHESIS => 1, T_CLOSE_PARENTHESIS => 1, T_COLON => 1, T_STRING_CONCAT => 1, T_INLINE_THEN => 1, T_INLINE_ELSE => 1, T_NULLABLE => 1, T_NULL => 4, T_FALSE => 5, T_TRUE => 4, T_SEMICOLON => 1, T_EQUAL => 1, T_MULTIPLY => 1, T_DIVIDE => 1, T_PLUS => 1, T_MINUS => 1, T_MODULUS => 1, \T_POW => 2, \T_SPACESHIP => 3, \T_COALESCE => 2, T_COALESCE_EQUAL => 3, T_BITWISE_AND => 1, T_BITWISE_OR => 1, T_BITWISE_XOR => 1, \T_SL => 2, \T_SR => 2, \T_SL_EQUAL => 3, \T_SR_EQUAL => 3, T_GREATER_THAN => 1, T_LESS_THAN => 1, T_BOOLEAN_NOT => 1, T_SELF => 4, T_PARENT => 6, T_COMMA => 1, T_THIS => 4, T_CLOSURE => 8, T_BACKTICK => 1, T_OPEN_SHORT_ARRAY => 1, T_CLOSE_SHORT_ARRAY => 1];
+    public $knownLengths = [\T_ABSTRACT => 8, \T_AND_EQUAL => 2, \T_ARRAY => 5, \T_AS => 2, \T_BOOLEAN_AND => 2, \T_BOOLEAN_OR => 2, \T_BREAK => 5, \T_CALLABLE => 8, \T_CASE => 4, \T_CATCH => 5, \T_CLASS => 5, \T_CLASS_C => 9, \T_CLONE => 5, \T_CONCAT_EQUAL => 2, \T_CONST => 5, \T_CONTINUE => 8, \T_CURLY_OPEN => 2, \T_DEC => 2, \T_DECLARE => 7, \T_DEFAULT => 7, \T_DIR => 7, \T_DIV_EQUAL => 2, \T_DO => 2, \T_DOLLAR_OPEN_CURLY_BRACES => 2, \T_DOUBLE_ARROW => 2, \T_DOUBLE_COLON => 2, \T_ECHO => 4, \T_ELSE => 4, \T_ELSEIF => 6, \T_EMPTY => 5, \T_ENDDECLARE => 10, \T_ENDFOR => 6, \T_ENDFOREACH => 10, \T_ENDIF => 5, \T_ENDSWITCH => 9, \T_ENDWHILE => 8, \T_EVAL => 4, \T_EXTENDS => 7, \T_FILE => 8, \T_FINAL => 5, \T_FINALLY => 7, \T_FOR => 3, \T_FOREACH => 7, \T_FUNCTION => 8, \T_FUNC_C => 12, \T_GLOBAL => 6, \T_GOTO => 4, \T_HALT_COMPILER => 15, \T_IF => 2, \T_IMPLEMENTS => 10, \T_INC => 2, \T_INCLUDE => 7, \T_INCLUDE_ONCE => 12, \T_INSTANCEOF => 10, \T_INSTEADOF => 9, \T_INTERFACE => 9, \T_ISSET => 5, \T_IS_EQUAL => 2, \T_IS_GREATER_OR_EQUAL => 2, \T_IS_IDENTICAL => 3, \T_IS_NOT_EQUAL => 2, \T_IS_NOT_IDENTICAL => 3, \T_IS_SMALLER_OR_EQUAL => 2, \T_LINE => 8, \T_LIST => 4, \T_LOGICAL_AND => 3, \T_LOGICAL_OR => 2, \T_LOGICAL_XOR => 3, \T_METHOD_C => 10, \T_MINUS_EQUAL => 2, \T_POW_EQUAL => 3, \T_MOD_EQUAL => 2, \T_MUL_EQUAL => 2, \T_NAMESPACE => 9, \T_NS_C => 13, \T_NS_SEPARATOR => 1, \T_NEW => 3, \T_OBJECT_OPERATOR => 2, \T_OPEN_TAG_WITH_ECHO => 3, \T_OR_EQUAL => 2, \T_PLUS_EQUAL => 2, \T_PRINT => 5, \T_PRIVATE => 7, \T_PUBLIC => 6, \T_PROTECTED => 9, \T_REQUIRE => 7, \T_REQUIRE_ONCE => 12, \T_RETURN => 6, \T_STATIC => 6, \T_SWITCH => 6, \T_THROW => 5, \T_TRAIT => 5, \T_TRAIT_C => 9, \T_TRY => 3, \T_UNSET => 5, \T_USE => 3, \T_VAR => 3, \T_WHILE => 5, \T_XOR_EQUAL => 2, \T_YIELD => 5, T_OPEN_CURLY_BRACKET => 1, T_CLOSE_CURLY_BRACKET => 1, T_OPEN_SQUARE_BRACKET => 1, T_CLOSE_SQUARE_BRACKET => 1, T_OPEN_PARENTHESIS => 1, T_CLOSE_PARENTHESIS => 1, T_COLON => 1, T_STRING_CONCAT => 1, T_INLINE_THEN => 1, T_INLINE_ELSE => 1, T_NULLABLE => 1, T_NULL => 4, T_FALSE => 5, T_TRUE => 4, T_SEMICOLON => 1, T_EQUAL => 1, T_MULTIPLY => 1, T_DIVIDE => 1, T_PLUS => 1, T_MINUS => 1, T_MODULUS => 1, \T_POW => 2, \T_SPACESHIP => 3, \T_COALESCE => 2, \T_COALESCE_EQUAL => 3, T_BITWISE_AND => 1, T_BITWISE_OR => 1, T_BITWISE_XOR => 1, \T_SL => 2, \T_SR => 2, \T_SL_EQUAL => 3, \T_SR_EQUAL => 3, T_GREATER_THAN => 1, T_LESS_THAN => 1, T_BOOLEAN_NOT => 1, T_SELF => 4, T_PARENT => 6, T_COMMA => 1, T_THIS => 4, T_CLOSURE => 8, T_BACKTICK => 1, T_OPEN_SHORT_ARRAY => 1, T_CLOSE_SHORT_ARRAY => 1];
     /**
      * A cache of different token types, resolved into arrays.
      *
@@ -436,7 +436,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
             */
             if ($tokenIsArray === \false && $token[0] === '?' && isset($tokens[$stackPtr + 1]) === \true && $tokens[$stackPtr + 1][0] === '?' && isset($tokens[$stackPtr + 2]) === \true && $tokens[$stackPtr + 2][0] === '=' || $tokenIsArray === \true && $token[0] === \T_COALESCE && isset($tokens[$stackPtr + 1]) === \true && $tokens[$stackPtr + 1][0] === '=') {
                 $newToken = [];
-                $newToken['code'] = T_COALESCE_EQUAL;
+                $newToken['code'] = \T_COALESCE_EQUAL;
                 $newToken['type'] = 'T_COALESCE_EQUAL';
                 $newToken['content'] = '??=';
                 $finalTokens[$newStackPtr] = $newToken;
@@ -573,7 +573,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                         }
                         $prevNonEmpty = $tokenType;
                     }
-                    if ($tokenType === \T_FUNCTION || $tokenType === T_FN || isset(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$methodPrefixes[$tokenType]) === \true || $tokenType === \T_VAR) {
+                    if ($tokenType === \T_FUNCTION || $tokenType === \T_FN || isset(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$methodPrefixes[$tokenType]) === \true || $tokenType === \T_VAR) {
                         if (PHP_CODESNIFFER_VERBOSITY > 1) {
                             echo "\t\t* token {$stackPtr} changed from ? to T_NULLABLE" . \PHP_EOL;
                         }
@@ -622,8 +622,8 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                 // Modify the original token stack so that
                 // future checks (like looking for T_NULLABLE) can
                 // detect the T_FN token more easily.
-                $tokens[$stackPtr][0] = T_FN;
-                $token[0] = T_FN;
+                $tokens[$stackPtr][0] = \T_FN;
+                $token[0] = \T_FN;
                 if (PHP_CODESNIFFER_VERBOSITY > 1) {
                     echo "\t\t* token {$stackPtr} changed from T_STRING to T_FN" . \PHP_EOL;
                 }
@@ -634,7 +634,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                 such as when writing code like: function default(): foo
                 so go forward and change the token type before it is processed.
             */
-            if ($tokenIsArray === \true && ($token[0] === \T_FUNCTION || $token[0] === T_FN) && $finalTokens[$lastNotEmptyToken]['code'] !== \T_USE) {
+            if ($tokenIsArray === \true && ($token[0] === \T_FUNCTION || $token[0] === \T_FN) && $finalTokens[$lastNotEmptyToken]['code'] !== \T_USE) {
                 if ($token[0] === \T_FUNCTION) {
                     for ($x = $stackPtr + 1; $x < $numTokens; $x++) {
                         if (\is_array($tokens[$x]) === \false || isset(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$emptyTokens[$tokens[$x][0]]) === \false) {
@@ -866,7 +866,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                                 break;
                             }
                         }
-                        if ($tokens[$i][0] === \T_FUNCTION || $tokens[$i][0] === T_FN || $tokens[$i][0] === \T_USE) {
+                        if ($tokens[$i][0] === \T_FUNCTION || $tokens[$i][0] === \T_FN || $tokens[$i][0] === \T_USE) {
                             $isInlineIf = \false;
                             if (PHP_CODESNIFFER_VERBOSITY > 1) {
                                 echo "\t\t* token is function return type, not T_INLINE_ELSE" . \PHP_EOL;
@@ -1057,7 +1057,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                     //end if
                     continue;
                 } else {
-                    if ($this->tokens[$i]['code'] === T_FN && isset($this->tokens[$i + 1]) === \true) {
+                    if ($this->tokens[$i]['code'] === \T_FN && isset($this->tokens[$i + 1]) === \true) {
                         // Possible arrow function.
                         for ($x = $i + 1; $x < $numTokens; $x++) {
                             if (isset(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$emptyTokens[$this->tokens[$x]['code']]) === \false && $this->tokens[$x]['code'] !== T_BITWISE_AND) {
@@ -1122,7 +1122,7 @@ class PHP extends \MolliePrefix\PHP_CodeSniffer\Tokenizers\Tokenizer
                                         echo "\t\t* parenthesis opener set to {$x} *" . \PHP_EOL;
                                         echo "\t\t* parenthesis closer set to {$closer} *" . \PHP_EOL;
                                     }
-                                    $this->tokens[$i]['code'] = T_FN;
+                                    $this->tokens[$i]['code'] = \T_FN;
                                     $this->tokens[$i]['type'] = 'T_FN';
                                     $this->tokens[$i]['scope_condition'] = $i;
                                     $this->tokens[$i]['scope_opener'] = $arrow;

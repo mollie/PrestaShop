@@ -90,7 +90,7 @@ class PHP_Timer
 /**
  * Utility class for timing.
  */
-\class_alias('MolliePrefix\\PHP_Timer', 'PHP_Timer', \false);
+\class_alias('MolliePrefix\\PHP_Timer', 'MolliePrefix\\PHP_Timer', \false);
 if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
     \MolliePrefix\PHP_Timer::$requestTime = $_SERVER['REQUEST_TIME_FLOAT'];
 } elseif (isset($_SERVER['REQUEST_TIME'])) {

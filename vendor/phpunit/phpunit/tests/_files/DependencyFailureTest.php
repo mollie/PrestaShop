@@ -27,4 +27,4 @@ class DependencyFailureTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\DependencyFailureTest', 'DependencyFailureTest', \false);
+\class_alias('MolliePrefix\\DependencyFailureTest', 'MolliePrefix\\DependencyFailureTest', \false);

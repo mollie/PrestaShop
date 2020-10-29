@@ -111,4 +111,4 @@ class PHPUnit_Framework_Constraint_Xor extends \MolliePrefix\PHPUnit_Framework_C
 /**
  * Logical XOR.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Xor', 'PHPUnit_Framework_Constraint_Xor', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Xor', 'MolliePrefix\\PHPUnit_Framework_Constraint_Xor', \false);

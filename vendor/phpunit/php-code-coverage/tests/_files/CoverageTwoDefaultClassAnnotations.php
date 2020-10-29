@@ -21,4 +21,4 @@ class CoverageTwoDefaultClassAnnotations
  * @coversDefaultClass \NamespaceOne
  * @coversDefaultClass \AnotherDefault\Name\Space\Does\Not\Work
  */
-\class_alias('MolliePrefix\\CoverageTwoDefaultClassAnnotations', 'CoverageTwoDefaultClassAnnotations', \false);
+\class_alias('MolliePrefix\\CoverageTwoDefaultClassAnnotations', 'MolliePrefix\\CoverageTwoDefaultClassAnnotations', \false);

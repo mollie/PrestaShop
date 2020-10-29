@@ -97,4 +97,4 @@ class PHPUnit_Framework_Exception extends \RuntimeException implements \MolliePr
  *
  * @see http://fabien.potencier.org/article/9/php-serialization-stack-traces-and-exceptions
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Exception', 'PHPUnit_Framework_Exception', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Exception', 'MolliePrefix\\PHPUnit_Framework_Exception', \false);

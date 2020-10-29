@@ -159,7 +159,7 @@ class Filesystem
                 if (!self::box('rmdir', $file) && \file_exists($file)) {
                     throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove directory "%s": ', $file) . self::$lastError);
                 }
-            } elseif (!self::box('unlink', $file) && \file_exists($file)) {
+            } elseif (!self::box('unlink', $file) && (\false !== \strpos(self::$lastError, 'Permission denied') || \file_exists($file))) {
                 throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove file "%s": ', $file) . self::$lastError);
             }
         }
@@ -528,7 +528,7 @@ class Filesystem
      */
     public function isAbsolutePath($file)
     {
-        return \strspn($file, '/\\', 0, 1) || \strlen($file) > 3 && \ctype_alpha($file[0]) && ':' === $file[1] && \strspn($file, '/\\', 2, 1) || null !== \parse_url($file, \PHP_URL_SCHEME);
+        return '' !== (string) $file && (\strspn($file, '/\\', 0, 1) || \strlen($file) > 3 && \ctype_alpha($file[0]) && ':' === $file[1] && \strspn($file, '/\\', 2, 1) || null !== \parse_url($file, \PHP_URL_SCHEME));
     }
     /**
      * Creates a temporary file with support for custom stream wrappers.

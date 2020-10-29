@@ -6,4 +6,4 @@ interface InterfaceWithStaticMethod
 {
     public static function staticMethod();
 }
-\class_alias('MolliePrefix\\InterfaceWithStaticMethod', 'InterfaceWithStaticMethod', \false);
+\class_alias('MolliePrefix\\InterfaceWithStaticMethod', 'MolliePrefix\\InterfaceWithStaticMethod', \false);

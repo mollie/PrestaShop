@@ -62,4 +62,4 @@ class FailureTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertStringMatchesFormatFile(__DIR__ . '/expectedFileFormat.txt', '...BAR...');
     }
 }
-\class_alias('MolliePrefix\\FailureTest', 'FailureTest', \false);
+\class_alias('MolliePrefix\\FailureTest', 'MolliePrefix\\FailureTest', \false);

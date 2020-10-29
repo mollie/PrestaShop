@@ -9,4 +9,4 @@ class NonStatic
         return;
     }
 }
-\class_alias('MolliePrefix\\NonStatic', 'NonStatic', \false);
+\class_alias('MolliePrefix\\NonStatic', 'MolliePrefix\\NonStatic', \false);

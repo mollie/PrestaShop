@@ -38,4 +38,4 @@ class PHPUnit_Framework_MockObject_Stub_Return implements \MolliePrefix\PHPUnit_
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Return', 'PHPUnit_Framework_MockObject_Stub_Return', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Return', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Return', \false);

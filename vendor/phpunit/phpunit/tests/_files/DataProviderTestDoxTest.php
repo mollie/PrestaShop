@@ -22,4 +22,4 @@ class DataProviderTestDoxTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         return ['one' => [1], 'two' => [2]];
     }
 }
-\class_alias('MolliePrefix\\DataProviderTestDoxTest', 'DataProviderTestDoxTest', \false);
+\class_alias('MolliePrefix\\DataProviderTestDoxTest', 'MolliePrefix\\DataProviderTestDoxTest', \false);

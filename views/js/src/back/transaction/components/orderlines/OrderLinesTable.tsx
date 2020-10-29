@@ -297,6 +297,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
                 <OrderLinesTableActions
                   loading={loading}
                   line={line}
+                  availableRefundAmount={order.availableRefundAmount}
                   refundLine={_refund}
                   shipLine={_ship}
                   cancelLine={_cancel}

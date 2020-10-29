@@ -7,19 +7,19 @@
     <code_comparison>
         <code title="Valid: Max depth of 2.">
         <![CDATA[
-use MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
-    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassA,
-    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
-    MolliePrefix\MolliePrefix\SubnamespaceTwo\ClassY,
+use MolliePrefix\MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
+    MolliePrefix\MolliePrefix\MolliePrefix\SubnamespaceOne\ClassA,
+    MolliePrefix\MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
+    MolliePrefix\MolliePrefix\MolliePrefix\SubnamespaceTwo\ClassY,
     ClassZ,
 };
         ]]>
         </code>
         <code title="Invalid: Max depth of 3.">
         <![CDATA[
-use MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
-    <em>MolliePrefix\MolliePrefix\SubnamespaceOne\AnotherNamespace\ClassA,</em>
-    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
+use MolliePrefix\MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
+    <em>MolliePrefix\MolliePrefix\MolliePrefix\SubnamespaceOne\AnotherNamespace\ClassA,</em>
+    MolliePrefix\MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
     ClassZ,
 };
         ]]>

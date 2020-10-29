@@ -29,4 +29,4 @@ interface PHPUnit_Framework_IncompleteTest
  * A marker interface for marking any exception/error as result of an unit
  * test as incomplete implementation or currently not implemented.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTest', 'PHPUnit_Framework_IncompleteTest', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTest', 'MolliePrefix\\PHPUnit_Framework_IncompleteTest', \false);

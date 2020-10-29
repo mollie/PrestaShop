@@ -40,4 +40,4 @@ interface PHPUnit_Runner_TestSuiteLoader
 /**
  * An interface to define how a test suite should be loaded.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_TestSuiteLoader', 'PHPUnit_Runner_TestSuiteLoader', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_TestSuiteLoader', 'MolliePrefix\\PHPUnit_Runner_TestSuiteLoader', \false);

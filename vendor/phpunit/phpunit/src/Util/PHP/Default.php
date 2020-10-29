@@ -179,4 +179,4 @@ class PHPUnit_Util_PHP_Default extends \MolliePrefix\PHPUnit_Util_PHP
 /**
  * Default utility for PHP sub-processes.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_PHP_Default', 'PHPUnit_Util_PHP_Default', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_PHP_Default', 'MolliePrefix\\PHPUnit_Util_PHP_Default', \false);

@@ -125,4 +125,4 @@ class PHPUnit_Framework_Constraint_Not extends \MolliePrefix\PHPUnit_Framework_C
 /**
  * Logical NOT.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Not', 'PHPUnit_Framework_Constraint_Not', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Not', 'MolliePrefix\\PHPUnit_Framework_Constraint_Not', \false);

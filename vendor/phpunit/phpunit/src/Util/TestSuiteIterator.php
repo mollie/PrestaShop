@@ -101,4 +101,4 @@ class PHPUnit_Util_TestSuiteIterator implements \RecursiveIterator
 /**
  * Iterator for test suites.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_TestSuiteIterator', 'PHPUnit_Util_TestSuiteIterator', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_TestSuiteIterator', 'MolliePrefix\\PHPUnit_Util_TestSuiteIterator', \false);

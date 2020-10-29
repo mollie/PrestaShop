@@ -23,4 +23,4 @@ class Issue1374Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 /**
  * @requires extension I_DO_NOT_EXIST
  */
-\class_alias('MolliePrefix\\Issue1374Test', 'Issue1374Test', \false);
+\class_alias('MolliePrefix\\Issue1374Test', 'MolliePrefix\\Issue1374Test', \false);

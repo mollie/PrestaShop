@@ -31,4 +31,4 @@ interface PHPUnit_Framework_MockObject_Exception
  *
  * @since Interface available since Release 2.0.6
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Exception', 'PHPUnit_Framework_MockObject_Exception', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Exception', 'MolliePrefix\\PHPUnit_Framework_MockObject_Exception', \false);

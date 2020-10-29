@@ -15,4 +15,4 @@ class Issue2435Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 /**
  * @group
  */
-\class_alias('MolliePrefix\\Issue2435Test', 'Issue2435Test', \false);
+\class_alias('MolliePrefix\\Issue2435Test', 'MolliePrefix\\Issue2435Test', \false);

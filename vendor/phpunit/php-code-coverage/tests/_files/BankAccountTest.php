@@ -57,4 +57,4 @@ class BankAccountTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertEquals(0, $this->ba->getBalance());
     }
 }
-\class_alias('MolliePrefix\\BankAccountTest', 'BankAccountTest', \false);
+\class_alias('MolliePrefix\\BankAccountTest', 'MolliePrefix\\BankAccountTest', \false);

@@ -47,4 +47,4 @@ class PHPUnit_Extensions_PhptTestSuite extends \MolliePrefix\PHPUnit_Framework_T
 /**
  * Suite for .phpt test cases.
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_PhptTestSuite', 'PHPUnit_Extensions_PhptTestSuite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_PhptTestSuite', 'MolliePrefix\\PHPUnit_Extensions_PhptTestSuite', \false);

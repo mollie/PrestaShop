@@ -18,15 +18,15 @@ if (!\defined('PHP_INT_MIN')) {
     \define('PHP_INT_MIN', ~\PHP_INT_MAX);
 }
 if (!\function_exists('intdiv')) {
-    function intdiv($dividend, $divisor)
+    function intdiv($num1, $num2)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php70\Php70::intdiv($dividend, $divisor);
+        return \MolliePrefix\Symfony\Polyfill\Php70\Php70::intdiv($num1, $num2);
     }
 }
 if (!\function_exists('preg_replace_callback_array')) {
-    function preg_replace_callback_array(array $patterns, $subject, $limit = -1, &$count = 0)
+    function preg_replace_callback_array(array $pattern, $subject, $limit = -1, &$count = 0, $flags = null)
     {
-        return \MolliePrefix\Symfony\Polyfill\Php70\Php70::preg_replace_callback_array($patterns, $subject, $limit, $count);
+        return \MolliePrefix\Symfony\Polyfill\Php70\Php70::preg_replace_callback_array($pattern, $subject, $limit, $count);
     }
 }
 if (!\function_exists('error_clear_last')) {

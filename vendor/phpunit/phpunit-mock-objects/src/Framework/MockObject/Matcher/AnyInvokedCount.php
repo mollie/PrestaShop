@@ -45,4 +45,4 @@ class PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount extends \MolliePrefix
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount', 'PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount', \false);

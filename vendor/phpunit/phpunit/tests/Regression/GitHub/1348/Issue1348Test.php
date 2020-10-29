@@ -14,4 +14,4 @@ class Issue1348Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         \fwrite(\STDERR, 'STDERR works as usual.');
     }
 }
-\class_alias('MolliePrefix\\Issue1348Test', 'Issue1348Test', \false);
+\class_alias('MolliePrefix\\Issue1348Test', 'MolliePrefix\\Issue1348Test', \false);

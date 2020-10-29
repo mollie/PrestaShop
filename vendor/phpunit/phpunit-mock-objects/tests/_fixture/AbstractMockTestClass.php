@@ -10,4 +10,4 @@ abstract class AbstractMockTestClass implements \MolliePrefix\MockTestInterface
         return 1;
     }
 }
-\class_alias('MolliePrefix\\AbstractMockTestClass', 'AbstractMockTestClass', \false);
+\class_alias('MolliePrefix\\AbstractMockTestClass', 'MolliePrefix\\AbstractMockTestClass', \false);

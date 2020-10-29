@@ -42,4 +42,4 @@ class PHPUnit_Framework_MockObject_Stub_ReturnSelf implements \MolliePrefix\PHPU
  *
  * @since Class available since Release 1.1.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnSelf', 'PHPUnit_Framework_MockObject_Stub_ReturnSelf', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnSelf', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnSelf', \false);

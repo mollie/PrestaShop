@@ -10,4 +10,4 @@ class ChangeCurrentWorkingDirectoryTest extends \MolliePrefix\PHPUnit_Framework_
         $this->assertTrue(\true);
     }
 }
-\class_alias('MolliePrefix\\ChangeCurrentWorkingDirectoryTest', 'ChangeCurrentWorkingDirectoryTest', \false);
+\class_alias('MolliePrefix\\ChangeCurrentWorkingDirectoryTest', 'MolliePrefix\\ChangeCurrentWorkingDirectoryTest', \false);

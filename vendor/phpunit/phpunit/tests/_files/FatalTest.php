@@ -12,4 +12,4 @@ class FatalTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         eval('class FatalTest {}');
     }
 }
-\class_alias('MolliePrefix\\FatalTest', 'FatalTest', \false);
+\class_alias('MolliePrefix\\FatalTest', 'MolliePrefix\\FatalTest', \false);

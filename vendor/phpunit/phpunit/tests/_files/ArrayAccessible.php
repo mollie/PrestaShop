@@ -34,4 +34,4 @@ class ArrayAccessible implements \ArrayAccess, \IteratorAggregate
         return new \ArrayIterator($this->array);
     }
 }
-\class_alias('MolliePrefix\\ArrayAccessible', 'ArrayAccessible', \false);
+\class_alias('MolliePrefix\\ArrayAccessible', 'MolliePrefix\\ArrayAccessible', \false);

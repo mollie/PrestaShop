@@ -45,7 +45,7 @@ final class ReturnRefTransformer extends \MolliePrefix\PhpCsFixer\Tokenizer\Abst
     {
         $prevKinds = [\T_FUNCTION];
         if (\PHP_VERSION_ID >= 70400) {
-            $prevKinds[] = T_FN;
+            $prevKinds[] = \T_FN;
         }
         if ($token->equals('&') && $tokens[$tokens->getPrevMeaningfulToken($index)]->isGivenKind($prevKinds)) {
             $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_RETURN_REF, '&']);

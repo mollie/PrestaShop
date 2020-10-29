@@ -19,4 +19,4 @@ class Issue578Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \Exception('Double printed exception');
     }
 }
-\class_alias('MolliePrefix\\Issue578Test', 'Issue578Test', \false);
+\class_alias('MolliePrefix\\Issue578Test', 'MolliePrefix\\Issue578Test', \false);

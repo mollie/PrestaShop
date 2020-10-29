@@ -11,7 +11,7 @@ class Foo
 /**
  * Represents foo.
  */
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);
 /**
  * @param mixed $bar
  */

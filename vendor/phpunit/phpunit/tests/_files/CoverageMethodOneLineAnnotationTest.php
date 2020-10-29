@@ -11,4 +11,4 @@ class CoverageMethodOneLineAnnotationTest extends \MolliePrefix\PHPUnit_Framewor
         $o->publicMethod();
     }
 }
-\class_alias('MolliePrefix\\CoverageMethodOneLineAnnotationTest', 'CoverageMethodOneLineAnnotationTest', \false);
+\class_alias('MolliePrefix\\CoverageMethodOneLineAnnotationTest', 'MolliePrefix\\CoverageMethodOneLineAnnotationTest', \false);

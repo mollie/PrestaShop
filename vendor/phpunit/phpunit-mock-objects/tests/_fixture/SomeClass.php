@@ -13,4 +13,4 @@ class SomeClass
         return;
     }
 }
-\class_alias('MolliePrefix\\SomeClass', 'SomeClass', \false);
+\class_alias('MolliePrefix\\SomeClass', 'MolliePrefix\\SomeClass', \false);

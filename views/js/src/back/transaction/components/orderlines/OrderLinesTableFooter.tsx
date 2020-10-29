@@ -81,7 +81,7 @@ export default function OrderLinesTableFooter({ loading, ship, cancel, refund }:
 
   function isRefundable(): boolean {
     for (let line of Object.values(order.lines.filter(line => line.type !== 'discount'))) {
-      if (line.refundableQuantity >= 1) {
+      if (line.refundableQuantity >= 1 && parseFloat(order.availableRefundAmount.value) > 0.0) {
         return true;
       }
     }
@@ -90,79 +90,79 @@ export default function OrderLinesTableFooter({ loading, ship, cancel, refund }:
   }
 
   return (
-    <tfoot>
+      <tfoot>
       <tr>
         <td colSpan={10}>
           <div className="btn-group" role="group">
             <button
-              type="button"
-              onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
-              className="btn btn-primary"
-              disabled={loading || !isShippable()}
-              style={{
-                cursor: (loading || !isShippable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !isShippable()) ? 0.8 : 1
-              }}
+                type="button"
+                onClick={() => ship(compact(order.lines.filter(line => line.type !== 'discount')))}
+                className="btn btn-primary"
+                disabled={loading || !isShippable()}
+                style={{
+                  cursor: (loading || !isShippable()) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !isShippable()) ? 0.8 : 1
+                }}
             >
               {legacy && (
-                <img
-                  src="../img/admin/delivery.gif"
-                  alt=""
-                  style={{
-                    filter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
-                  }}
-                />
+                  <img
+                      src="../img/admin/delivery.gif"
+                      alt=""
+                      style={{
+                        filter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
+                        WebkitFilter: (loading || !isShippable()) ? 'grayscale(100%)' : null,
+                      }}
+                  />
               )}
               {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTruck} spin={loading}/>} {translations.shipAll}
             </button>
             <button
-              type="button"
-              onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
-              className="btn btn-default"
-              disabled={loading || !isRefundable()}
-              style={{
-                cursor: (loading || !isRefundable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !isRefundable()) ? 0.8 : 1
-              }}
+                type="button"
+                onClick={() => refund(compact(order.lines.filter(line => line.type !== 'discount')))}
+                className="btn btn-default"
+                disabled={loading || !isRefundable()}
+                style={{
+                  cursor: (loading || !isRefundable()) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !isRefundable()) ? 0.8 : 1
+                }}
             >
               {legacy && (
-                <img
-                  src="../img/admin/money.gif"
-                  alt=""
-                  style={{
-                    filter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
-                  }}
-                />
+                  <img
+                      src="../img/admin/money.gif"
+                      alt=""
+                      style={{
+                        filter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
+                        WebkitFilter: (loading || !isRefundable()) ? 'grayscale(100%)' : null,
+                      }}
+                  />
               )}
               {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faUndoAlt} spin={loading}/>} {translations.refundAll}
             </button>
             <button
-              type="button"
-              onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
-              className="btn btn-default"
-              disabled={loading || !isCancelable()}
-              style={{
-                cursor: (loading || !isCancelable()) ? 'not-allowed' : 'pointer',
-                opacity: (loading || !isCancelable()) ? 0.8 : 1
-              }}
+                type="button"
+                onClick={() => cancel(compact(order.lines.filter(line => line.type !== 'discount')))}
+                className="btn btn-default"
+                disabled={loading || !isCancelable()}
+                style={{
+                  cursor: (loading || !isCancelable()) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !isCancelable()) ? 0.8 : 1
+                }}
             >
               {legacy && (
-                <img
-                  src="../img/admin/disabled.gif"
-                  alt=""
-                  style={{
-                    filter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
-                    WebkitFilter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
-                  }}
-                />
+                  <img
+                      src="../img/admin/disabled.gif"
+                      alt=""
+                      style={{
+                        filter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
+                        WebkitFilter: (loading || !isCancelable()) ? 'grayscale(100%)' : null,
+                      }}
+                  />
               )}
               {!legacy && <FontAwesomeIcon icon={loading ? faCircleNotch : faTimes} spin={loading}/>} {translations.cancelAll}
             </button>
           </div>
         </td>
       </tr>
-    </tfoot>
+      </tfoot>
   );
 }

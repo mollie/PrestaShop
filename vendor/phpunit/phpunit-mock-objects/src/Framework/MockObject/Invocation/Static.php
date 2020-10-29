@@ -166,4 +166,4 @@ class PHPUnit_Framework_MockObject_Invocation_Static implements \MolliePrefix\PH
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Static', 'PHPUnit_Framework_MockObject_Invocation_Static', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Static', 'MolliePrefix\\PHPUnit_Framework_MockObject_Invocation_Static', \false);

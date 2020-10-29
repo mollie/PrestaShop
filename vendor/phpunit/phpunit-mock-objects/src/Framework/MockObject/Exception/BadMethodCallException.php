@@ -27,4 +27,4 @@ class PHPUnit_Framework_MockObject_BadMethodCallException extends \BadMethodCall
 /**
  * @since Class available since Release 2.0.6
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_BadMethodCallException', 'PHPUnit_Framework_MockObject_BadMethodCallException', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_BadMethodCallException', 'MolliePrefix\\PHPUnit_Framework_MockObject_BadMethodCallException', \false);

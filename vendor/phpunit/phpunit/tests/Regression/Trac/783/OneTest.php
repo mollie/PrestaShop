@@ -14,4 +14,4 @@ class OneTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 /**
  * @group foo
  */
-\class_alias('MolliePrefix\\OneTest', 'OneTest', \false);
+\class_alias('MolliePrefix\\OneTest', 'MolliePrefix\\OneTest', \false);

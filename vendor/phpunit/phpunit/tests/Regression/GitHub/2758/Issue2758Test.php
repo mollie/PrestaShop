@@ -8,4 +8,4 @@ class Issue2758Test extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\Issue2758Test', 'Issue2758Test', \false);
+\class_alias('MolliePrefix\\Issue2758Test', 'MolliePrefix\\Issue2758Test', \false);

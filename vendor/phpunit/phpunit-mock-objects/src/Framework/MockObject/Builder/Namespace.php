@@ -52,4 +52,4 @@ interface PHPUnit_Framework_MockObject_Builder_Namespace
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Namespace', 'PHPUnit_Framework_MockObject_Builder_Namespace', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Namespace', 'MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Namespace', \false);

@@ -38,4 +38,4 @@ class PHPUnit_Framework_Error_Notice extends \MolliePrefix\PHPUnit_Framework_Err
  * PHPUnit_Framework_Error_Notice::$enabled = false;
  * </code>
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Error_Notice', 'PHPUnit_Framework_Error_Notice', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Error_Notice', 'MolliePrefix\\PHPUnit_Framework_Error_Notice', \false);

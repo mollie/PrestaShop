@@ -121,4 +121,4 @@ class Text_Template
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\Text_Template', 'Text_Template', \false);
+\class_alias('MolliePrefix\\Text_Template', 'MolliePrefix\\Text_Template', \false);

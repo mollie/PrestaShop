@@ -94,4 +94,4 @@ class PHPUnit_Util_Filter
 /**
  * Utility class for code filtering.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Filter', 'PHPUnit_Util_Filter', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Filter', 'MolliePrefix\\PHPUnit_Util_Filter', \false);

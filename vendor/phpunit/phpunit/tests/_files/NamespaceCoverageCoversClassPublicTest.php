@@ -19,4 +19,4 @@ class NamespaceCoverageCoversClassPublicTest extends \MolliePrefix\PHPUnit_Frame
 /**
  * @coversDefaultClass \Foo\CoveredClass
  */
-\class_alias('MolliePrefix\\NamespaceCoverageCoversClassPublicTest', 'NamespaceCoverageCoversClassPublicTest', \false);
+\class_alias('MolliePrefix\\NamespaceCoverageCoversClassPublicTest', 'MolliePrefix\\NamespaceCoverageCoversClassPublicTest', \false);

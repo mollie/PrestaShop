@@ -16,7 +16,7 @@ class CoveredParentClass
         $this->protectedMethod();
     }
 }
-\class_alias('MolliePrefix\\CoveredParentClass', 'CoveredParentClass', \false);
+\class_alias('MolliePrefix\\CoveredParentClass', 'MolliePrefix\\CoveredParentClass', \false);
 class CoveredClass extends \MolliePrefix\CoveredParentClass
 {
     private function privateMethod()
@@ -33,4 +33,4 @@ class CoveredClass extends \MolliePrefix\CoveredParentClass
         $this->protectedMethod();
     }
 }
-\class_alias('MolliePrefix\\CoveredClass', 'CoveredClass', \false);
+\class_alias('MolliePrefix\\CoveredClass', 'MolliePrefix\\CoveredClass', \false);

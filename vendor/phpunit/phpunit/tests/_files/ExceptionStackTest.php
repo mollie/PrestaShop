@@ -21,4 +21,4 @@ class ExceptionStackTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw $exceptionOne;
     }
 }
-\class_alias('MolliePrefix\\ExceptionStackTest', 'ExceptionStackTest', \false);
+\class_alias('MolliePrefix\\ExceptionStackTest', 'MolliePrefix\\ExceptionStackTest', \false);

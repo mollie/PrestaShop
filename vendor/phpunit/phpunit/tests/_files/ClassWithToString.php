@@ -33,4 +33,4 @@ class ClassWithToString
  * A class with a __toString() method.
  *
  */
-\class_alias('MolliePrefix\\ClassWithToString', 'ClassWithToString', \false);
+\class_alias('MolliePrefix\\ClassWithToString', 'MolliePrefix\\ClassWithToString', \false);

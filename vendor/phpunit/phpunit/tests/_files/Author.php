@@ -36,4 +36,4 @@ class Author
  * An author.
  *
  */
-\class_alias('MolliePrefix\\Author', 'Author', \false);
+\class_alias('MolliePrefix\\Author', 'MolliePrefix\\Author', \false);

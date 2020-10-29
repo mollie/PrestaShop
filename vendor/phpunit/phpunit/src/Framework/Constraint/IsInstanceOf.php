@@ -91,4 +91,4 @@ class PHPUnit_Framework_Constraint_IsInstanceOf extends \MolliePrefix\PHPUnit_Fr
  *
  * The expected class name is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsInstanceOf', 'PHPUnit_Framework_Constraint_IsInstanceOf', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsInstanceOf', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsInstanceOf', \false);

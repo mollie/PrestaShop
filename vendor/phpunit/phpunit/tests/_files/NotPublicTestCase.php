@@ -11,4 +11,4 @@ class NotPublicTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\NotPublicTestCase', 'NotPublicTestCase', \false);
+\class_alias('MolliePrefix\\NotPublicTestCase', 'MolliePrefix\\NotPublicTestCase', \false);

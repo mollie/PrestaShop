@@ -22,4 +22,4 @@ class MultiDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $b);
     }
 }
-\class_alias('MolliePrefix\\MultiDependencyTest', 'MultiDependencyTest', \false);
+\class_alias('MolliePrefix\\MultiDependencyTest', 'MolliePrefix\\MultiDependencyTest', \false);

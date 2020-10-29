@@ -100,4 +100,4 @@ class Framework_TestListenerTest extends \MolliePrefix\PHPUnit_Framework_TestCas
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Framework_TestListenerTest', 'Framework_TestListenerTest', \false);
+\class_alias('MolliePrefix\\Framework_TestListenerTest', 'MolliePrefix\\Framework_TestListenerTest', \false);

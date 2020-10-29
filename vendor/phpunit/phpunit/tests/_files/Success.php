@@ -8,4 +8,4 @@ class Success extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\Success', 'Success', \false);
+\class_alias('MolliePrefix\\Success', 'MolliePrefix\\Success', \false);

@@ -86,4 +86,4 @@ class PHPUnit_Util_Blacklist
 /**
  * Utility class for blacklisting PHPUnit's own source code files.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Blacklist', 'PHPUnit_Util_Blacklist', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Blacklist', 'MolliePrefix\\PHPUnit_Util_Blacklist', \false);

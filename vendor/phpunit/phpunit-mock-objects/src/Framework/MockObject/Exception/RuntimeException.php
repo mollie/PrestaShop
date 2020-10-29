@@ -27,4 +27,4 @@ class PHPUnit_Framework_MockObject_RuntimeException extends \RuntimeException im
 /**
  * @since Class available since Release 2.0.6
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_RuntimeException', 'PHPUnit_Framework_MockObject_RuntimeException', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_RuntimeException', 'MolliePrefix\\PHPUnit_Framework_MockObject_RuntimeException', \false);

@@ -69,4 +69,4 @@ class PHPUnit_Extensions_GroupTestSuite extends \MolliePrefix\PHPUnit_Framework_
  * $suite = new PHPUnit_Extensions_GroupTestSuite($A, array('C', 'D'));
  * </code>
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_GroupTestSuite', 'PHPUnit_Extensions_GroupTestSuite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_GroupTestSuite', 'MolliePrefix\\PHPUnit_Extensions_GroupTestSuite', \false);

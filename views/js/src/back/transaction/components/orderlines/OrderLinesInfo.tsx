@@ -35,14 +35,17 @@ import styled from 'styled-components';
 
 import OrderLinesTable from '@transaction/components/orderlines/OrderLinesTable';
 import EmptyOrderLinesTable from '@transaction/components/orderlines/EmptyOrderLinesTable';
-import { IMollieApiOrder, IMollieOrderConfig, ITranslations } from '@shared/globals';
-import { useMappedState } from 'redux-react-hook';
+import {ICurrencies, IMollieApiOrder, IMollieOrderConfig, ITranslations} from '@shared/globals';
+import {useMappedState} from 'redux-react-hook';
+import {formatCurrency} from "@shared/tools";
+import {get} from "lodash";
 
 interface IProps {
-  // Redux
-  translations?: ITranslations;
-  order?: IMollieApiOrder;
-  config?: IMollieOrderConfig;
+    // Redux
+    translations?: ITranslations;
+    order?: IMollieApiOrder;
+    currencies?: ICurrencies;
+    config?: IMollieOrderConfig;
 }
 
 const Div = styled.div`
@@ -53,28 +56,44 @@ const Div = styled.div`
 ` as any;
 
 export default function OrderLinesInfo(): ReactElement<{}> {
-  const { translations, order, config: { legacy } }: IProps = useMappedState((state: IMollieOrderState): any => ({
-    translations: state.translations,
-    order: state.order,
-    config: state.config,
-  }));
+    const {translations, order, currencies, config: {legacy}}: IProps = useMappedState((state: IMollieOrderState): any => ({
+        translations: state.translations,
+        order: state.order,
+        currencies: state.currencies,
+        config: state.config,
+    }));
 
-  if (legacy) {
+    if (legacy) {
+        return (
+            <>
+                {legacy && <h3>{translations.products}</h3>}
+                {!legacy && <h4>{translations.products}</h4>}
+                {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
+                {!!order && !!order.lines.length && <OrderLinesTable/>}
+            </>
+        );
+    }
+
     return (
-      <>
-        {legacy && <h3>{translations.products}</h3>}
-        {!legacy && <h4>{translations.products}</h4>}
-        {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
-        {!!order && !!order.lines.length && <OrderLinesTable/>}
-      </>
+        <Div className="col-md-9 panel">
+            <div className="panel-heading">{translations.products}</div>
+            {/*todo: move to order warning component*/}
+            {order.details.vouchers &&
+            <>
+                <div className="alert alert-warning" role="alert">
+                    {translations.refundWarning.replace(
+                        '%1s',
+                        formatCurrency(parseFloat(order.availableRefundAmount.value), get(currencies, order.availableRefundAmount.currency)
+                        )
+                    ).replace(
+                        '%2s',
+                        formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))
+                    )}
+                </div>
+            </>
+            }
+            {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
+            {!!order && !!order.lines.length && <OrderLinesTable/>}
+        </Div>
     );
-  }
-
-  return (
-    <Div className="col-md-9 panel">
-      <div className="panel-heading">{translations.products}</div>
-      {!order || (!order.lines.length && <EmptyOrderLinesTable/>)}
-      {!!order && !!order.lines.length && <OrderLinesTable/>}
-    </Div>
-  );
 }

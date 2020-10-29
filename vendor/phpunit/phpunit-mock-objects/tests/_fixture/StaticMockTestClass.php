@@ -12,4 +12,4 @@ class StaticMockTestClass
         return static::doSomething();
     }
 }
-\class_alias('MolliePrefix\\StaticMockTestClass', 'StaticMockTestClass', \false);
+\class_alias('MolliePrefix\\StaticMockTestClass', 'MolliePrefix\\StaticMockTestClass', \false);

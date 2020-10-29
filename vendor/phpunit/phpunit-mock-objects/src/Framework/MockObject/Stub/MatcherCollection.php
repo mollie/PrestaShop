@@ -38,4 +38,4 @@ interface PHPUnit_Framework_MockObject_Stub_MatcherCollection
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_MatcherCollection', 'PHPUnit_Framework_MockObject_Stub_MatcherCollection', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_MatcherCollection', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_MatcherCollection', \false);

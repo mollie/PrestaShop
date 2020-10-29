@@ -35,4 +35,4 @@ class BeforeClassWithOnlyDataProviderTest extends \MolliePrefix\PHPUnit_Framewor
         $this->assertFalse(\false);
     }
 }
-\class_alias('MolliePrefix\\BeforeClassWithOnlyDataProviderTest', 'BeforeClassWithOnlyDataProviderTest', \false);
+\class_alias('MolliePrefix\\BeforeClassWithOnlyDataProviderTest', 'MolliePrefix\\BeforeClassWithOnlyDataProviderTest', \false);

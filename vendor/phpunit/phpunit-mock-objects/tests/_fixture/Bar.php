@@ -9,4 +9,4 @@ class Bar
         return 'result';
     }
 }
-\class_alias('MolliePrefix\\Bar', 'Bar', \false);
+\class_alias('MolliePrefix\\Bar', 'MolliePrefix\\Bar', \false);

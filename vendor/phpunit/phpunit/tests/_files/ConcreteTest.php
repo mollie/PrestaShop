@@ -8,4 +8,4 @@ class ConcreteTest extends \MolliePrefix\AbstractTest
     {
     }
 }
-\class_alias('MolliePrefix\\ConcreteTest', 'ConcreteTest', \false);
+\class_alias('MolliePrefix\\ConcreteTest', 'MolliePrefix\\ConcreteTest', \false);

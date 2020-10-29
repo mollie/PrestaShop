@@ -87,4 +87,4 @@ class File_Iterator_Factory
  *
  * @since     Class available since Release 1.1.0
  */
-\class_alias('MolliePrefix\\File_Iterator_Factory', 'File_Iterator_Factory', \false);
+\class_alias('MolliePrefix\\File_Iterator_Factory', 'MolliePrefix\\File_Iterator_Factory', \false);

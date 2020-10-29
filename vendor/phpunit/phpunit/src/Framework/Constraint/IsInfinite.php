@@ -48,4 +48,4 @@ class PHPUnit_Framework_Constraint_IsInfinite extends \MolliePrefix\PHPUnit_Fram
 /**
  * Constraint that accepts infinite.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsInfinite', 'PHPUnit_Framework_Constraint_IsInfinite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsInfinite', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsInfinite', \false);

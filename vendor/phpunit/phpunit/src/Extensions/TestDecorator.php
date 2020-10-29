@@ -113,4 +113,4 @@ class PHPUnit_Extensions_TestDecorator extends \MolliePrefix\PHPUnit_Framework_A
  * test decorators. Test decorator subclasses can be introduced
  * to add behaviour before or after a test is run.
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_TestDecorator', 'PHPUnit_Extensions_TestDecorator', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_TestDecorator', 'MolliePrefix\\PHPUnit_Extensions_TestDecorator', \false);

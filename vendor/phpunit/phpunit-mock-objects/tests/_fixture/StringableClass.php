@@ -9,4 +9,4 @@ class StringableClass
         return '12345';
     }
 }
-\class_alias('MolliePrefix\\StringableClass', 'StringableClass', \false);
+\class_alias('MolliePrefix\\StringableClass', 'MolliePrefix\\StringableClass', \false);

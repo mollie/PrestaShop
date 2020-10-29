@@ -27,4 +27,4 @@ interface PHPUnit_Exception
 /**
  * Marker interface for PHPUnit exceptions.
  */
-\class_alias('MolliePrefix\\PHPUnit_Exception', 'PHPUnit_Exception', \false);
+\class_alias('MolliePrefix\\PHPUnit_Exception', 'MolliePrefix\\PHPUnit_Exception', \false);

@@ -112,4 +112,4 @@ class PHPUnit_Framework_Constraint_ArraySubset extends \MolliePrefix\PHPUnit_Fra
  * Uses array_replace_recursive() to check if a key value subset is part of the
  * subject array.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArraySubset', 'PHPUnit_Framework_Constraint_ArraySubset', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArraySubset', 'MolliePrefix\\PHPUnit_Framework_Constraint_ArraySubset', \false);

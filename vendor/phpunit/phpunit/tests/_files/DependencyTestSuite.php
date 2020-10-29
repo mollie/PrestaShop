@@ -12,4 +12,4 @@ class DependencyTestSuite
         return $suite;
     }
 }
-\class_alias('MolliePrefix\\DependencyTestSuite', 'DependencyTestSuite', \false);
+\class_alias('MolliePrefix\\DependencyTestSuite', 'MolliePrefix\\DependencyTestSuite', \false);

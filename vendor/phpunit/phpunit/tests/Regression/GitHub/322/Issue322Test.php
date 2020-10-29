@@ -17,4 +17,4 @@ class Issue322Test extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\Issue322Test', 'Issue322Test', \false);
+\class_alias('MolliePrefix\\Issue322Test', 'MolliePrefix\\Issue322Test', \false);

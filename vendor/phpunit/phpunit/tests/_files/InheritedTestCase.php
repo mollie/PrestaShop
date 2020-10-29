@@ -8,4 +8,4 @@ class InheritedTestCase extends \MolliePrefix\OneTestCase
     {
     }
 }
-\class_alias('MolliePrefix\\InheritedTestCase', 'InheritedTestCase', \false);
+\class_alias('MolliePrefix\\InheritedTestCase', 'MolliePrefix\\InheritedTestCase', \false);

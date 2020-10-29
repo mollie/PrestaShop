@@ -29,4 +29,4 @@ class RequirementsClassDocBlockTest
  * @requires function testFuncClass
  * @requires extension testExtClass
  */
-\class_alias('MolliePrefix\\RequirementsClassDocBlockTest', 'RequirementsClassDocBlockTest', \false);
+\class_alias('MolliePrefix\\RequirementsClassDocBlockTest', 'MolliePrefix\\RequirementsClassDocBlockTest', \false);

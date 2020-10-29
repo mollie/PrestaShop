@@ -46,7 +46,7 @@ final class NullableTypeDeclarationForDefaultNullValueFixer extends \MolliePrefi
         if (!$tokens->isTokenKindFound(\T_VARIABLE)) {
             return \false;
         }
-        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(T_FN)) {
+        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(\T_FN)) {
             return \true;
         }
         return $tokens->isTokenKindFound(\T_FUNCTION);
@@ -75,7 +75,7 @@ final class NullableTypeDeclarationForDefaultNullValueFixer extends \MolliePrefi
         $functionsAnalyzer = new \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\FunctionsAnalyzer();
         $tokenKinds = [\T_FUNCTION];
         if (\PHP_VERSION_ID >= 70400) {
-            $tokenKinds[] = T_FN;
+            $tokenKinds[] = \T_FN;
         }
         for ($index = $tokens->count() - 1; $index >= 0; --$index) {
             $token = $tokens[$index];

@@ -28,7 +28,7 @@ class UnusedFunctionParameterSniff implements \MolliePrefix\PHP_CodeSniffer\Snif
      */
     public function register()
     {
-        return [\T_FUNCTION, T_CLOSURE, T_FN];
+        return [\T_FUNCTION, T_CLOSURE, \T_FN];
     }
     //end register()
     /**

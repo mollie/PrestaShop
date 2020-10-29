@@ -42,4 +42,4 @@ class PHPUnit_Framework_Error extends \MolliePrefix\PHPUnit_Framework_Exception
 /**
  * Wrapper for PHP errors.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Error', 'PHPUnit_Framework_Error', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Error', 'MolliePrefix\\PHPUnit_Framework_Error', \false);

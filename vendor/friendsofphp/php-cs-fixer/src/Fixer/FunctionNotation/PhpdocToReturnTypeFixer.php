@@ -85,7 +85,7 @@ function bar() {}
      */
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
-        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(T_FN)) {
+        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(\T_FN)) {
             return \true;
         }
         return \PHP_VERSION_ID >= 70000 && $tokens->isTokenKindFound(\T_FUNCTION);
@@ -120,7 +120,7 @@ function bar() {}
     protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
         for ($index = $tokens->count() - 1; 0 < $index; --$index) {
-            if (!$tokens[$index]->isGivenKind(\T_FUNCTION) && (\PHP_VERSION_ID < 70400 || !$tokens[$index]->isGivenKind(T_FN))) {
+            if (!$tokens[$index]->isGivenKind(\T_FUNCTION) && (\PHP_VERSION_ID < 70400 || !$tokens[$index]->isGivenKind(\T_FN))) {
                 continue;
             }
             $funcName = $tokens->getNextMeaningfulToken($index);

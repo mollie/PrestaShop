@@ -130,7 +130,7 @@ class FindEndOfStatementTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Ab
      */
     public function testArrowFunctionArrayValue()
     {
-        $start = $this->getTargetToken('/* testArrowFunctionArrayValue */', T_FN);
+        $start = $this->getTargetToken('/* testArrowFunctionArrayValue */', \T_FN);
         $found = self::$phpcsFile->findEndOfStatement($start);
         $this->assertSame($start + 9, $found);
     }
@@ -143,7 +143,7 @@ class FindEndOfStatementTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Ab
     public function testStaticArrowFunction()
     {
         $static = $this->getTargetToken('/* testStaticArrowFunction */', \T_STATIC);
-        $fn = $this->getTargetToken('/* testStaticArrowFunction */', T_FN);
+        $fn = $this->getTargetToken('/* testStaticArrowFunction */', \T_FN);
         $endOfStatementStatic = self::$phpcsFile->findEndOfStatement($static);
         $endOfStatementFn = self::$phpcsFile->findEndOfStatement($fn);
         $this->assertSame($endOfStatementFn, $endOfStatementStatic);
@@ -156,7 +156,7 @@ class FindEndOfStatementTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Ab
      */
     public function testArrowFunctionReturnValue()
     {
-        $start = $this->getTargetToken('/* testArrowFunctionReturnValue */', T_FN);
+        $start = $this->getTargetToken('/* testArrowFunctionReturnValue */', \T_FN);
         $found = self::$phpcsFile->findEndOfStatement($start);
         $this->assertSame($start + 18, $found);
     }
@@ -168,7 +168,7 @@ class FindEndOfStatementTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Ab
      */
     public function testArrowFunctionAsArgument()
     {
-        $start = $this->getTargetToken('/* testArrowFunctionAsArgument */', T_FN);
+        $start = $this->getTargetToken('/* testArrowFunctionAsArgument */', \T_FN);
         $found = self::$phpcsFile->findEndOfStatement($start);
         $this->assertSame($start + 8, $found);
     }
@@ -180,7 +180,7 @@ class FindEndOfStatementTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Ab
      */
     public function testArrowFunctionWithArrayAsArgument()
     {
-        $start = $this->getTargetToken('/* testArrowFunctionWithArrayAsArgument */', T_FN);
+        $start = $this->getTargetToken('/* testArrowFunctionWithArrayAsArgument */', \T_FN);
         $found = self::$phpcsFile->findEndOfStatement($start);
         $this->assertSame($start + 17, $found);
     }

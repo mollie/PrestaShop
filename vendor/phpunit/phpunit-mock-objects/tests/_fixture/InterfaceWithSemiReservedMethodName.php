@@ -6,4 +6,4 @@ interface InterfaceWithSemiReservedMethodName
 {
     public function unset();
 }
-\class_alias('MolliePrefix\\InterfaceWithSemiReservedMethodName', 'InterfaceWithSemiReservedMethodName', \false);
+\class_alias('MolliePrefix\\InterfaceWithSemiReservedMethodName', 'MolliePrefix\\InterfaceWithSemiReservedMethodName', \false);

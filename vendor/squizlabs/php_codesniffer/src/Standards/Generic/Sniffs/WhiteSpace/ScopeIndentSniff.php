@@ -687,7 +687,7 @@ class ScopeIndentSniff implements \MolliePrefix\PHP_CodeSniffer\Sniffs\Sniff
             // the rest of the function declaration, and potentially future ones.
             if ($checkToken !== null && isset(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$methodPrefixes[$tokens[$checkToken]['code']]) === \true && $tokens[$checkToken + 1]['code'] !== \T_DOUBLE_COLON) {
                 $next = $phpcsFile->findNext(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$emptyTokens, $checkToken + 1, null, \true);
-                if ($next === \false || $tokens[$next]['code'] !== T_CLOSURE && $tokens[$next]['code'] !== \T_VARIABLE && $tokens[$next]['code'] !== T_FN) {
+                if ($next === \false || $tokens[$next]['code'] !== T_CLOSURE && $tokens[$next]['code'] !== \T_VARIABLE && $tokens[$next]['code'] !== \T_FN) {
                     if ($this->debug === \true) {
                         $line = $tokens[$checkToken]['line'];
                         $type = $tokens[$checkToken]['type'];
@@ -963,7 +963,7 @@ class ScopeIndentSniff implements \MolliePrefix\PHP_CodeSniffer\Sniffs\Sniff
                     continue;
                 }
                 $condition = $tokens[$tokens[$i]['scope_condition']]['code'];
-                if ($condition === T_FN) {
+                if ($condition === \T_FN) {
                     if ($this->debug === \true) {
                         $line = $tokens[$tokens[$i]['scope_condition']]['line'];
                         echo "* ignoring arrow function on line {$line} *" . \PHP_EOL;

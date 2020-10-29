@@ -14,4 +14,4 @@ class ChildSuite
         return $suite;
     }
 }
-\class_alias('MolliePrefix\\ChildSuite', 'ChildSuite', \false);
+\class_alias('MolliePrefix\\ChildSuite', 'MolliePrefix\\ChildSuite', \false);

@@ -23,4 +23,4 @@ class Mockable
         $this->cloned = \true;
     }
 }
-\class_alias('MolliePrefix\\Mockable', 'Mockable', \false);
+\class_alias('MolliePrefix\\Mockable', 'MolliePrefix\\Mockable', \false);

@@ -8,4 +8,4 @@ class ClassWithSelfTypeHint
     {
     }
 }
-\class_alias('MolliePrefix\\ClassWithSelfTypeHint', 'ClassWithSelfTypeHint', \false);
+\class_alias('MolliePrefix\\ClassWithSelfTypeHint', 'MolliePrefix\\ClassWithSelfTypeHint', \false);

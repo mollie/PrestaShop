@@ -79,4 +79,4 @@ class PHPUnit_Framework_Constraint_Attribute extends \MolliePrefix\PHPUnit_Frame
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Attribute', 'PHPUnit_Framework_Constraint_Attribute', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Attribute', 'MolliePrefix\\PHPUnit_Framework_Constraint_Attribute', \false);

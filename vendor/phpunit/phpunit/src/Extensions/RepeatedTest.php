@@ -87,4 +87,4 @@ class PHPUnit_Extensions_RepeatedTest extends \MolliePrefix\PHPUnit_Extensions_T
 /**
  * A Decorator that runs a test repeatedly.
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_RepeatedTest', 'PHPUnit_Extensions_RepeatedTest', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_RepeatedTest', 'MolliePrefix\\PHPUnit_Extensions_RepeatedTest', \false);

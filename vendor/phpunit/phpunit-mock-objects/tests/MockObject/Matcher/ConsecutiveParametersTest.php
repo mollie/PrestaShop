@@ -27,4 +27,4 @@ class Framework_MockObject_Matcher_ConsecutiveParametersTest extends \MolliePref
         $mock->foo('invalid');
     }
 }
-\class_alias('MolliePrefix\\Framework_MockObject_Matcher_ConsecutiveParametersTest', 'Framework_MockObject_Matcher_ConsecutiveParametersTest', \false);
+\class_alias('MolliePrefix\\Framework_MockObject_Matcher_ConsecutiveParametersTest', 'MolliePrefix\\Framework_MockObject_Matcher_ConsecutiveParametersTest', \false);

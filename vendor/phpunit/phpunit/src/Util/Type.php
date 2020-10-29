@@ -36,4 +36,4 @@ class PHPUnit_Util_Type
 /**
  * Utility class for textual type (and value) representation.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Type', 'PHPUnit_Util_Type', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Type', 'MolliePrefix\\PHPUnit_Util_Type', \false);

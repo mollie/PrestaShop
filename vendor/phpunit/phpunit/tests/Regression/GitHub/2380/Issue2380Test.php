@@ -20,4 +20,4 @@ class Issue2380Test extends \MolliePrefix\PHPUnit\Framework\TestCase
         (yield ['testing']);
     }
 }
-\class_alias('MolliePrefix\\Issue2380Test', 'Issue2380Test', \false);
+\class_alias('MolliePrefix\\Issue2380Test', 'MolliePrefix\\Issue2380Test', \false);

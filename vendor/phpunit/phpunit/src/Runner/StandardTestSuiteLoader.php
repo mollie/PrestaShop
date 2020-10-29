@@ -96,4 +96,4 @@ class PHPUnit_Runner_StandardTestSuiteLoader implements \MolliePrefix\PHPUnit_Ru
 /**
  * The standard test suite loader.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_StandardTestSuiteLoader', 'PHPUnit_Runner_StandardTestSuiteLoader', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_StandardTestSuiteLoader', 'MolliePrefix\\PHPUnit_Runner_StandardTestSuiteLoader', \false);

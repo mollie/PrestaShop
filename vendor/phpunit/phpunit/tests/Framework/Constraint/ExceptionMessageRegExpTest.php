@@ -56,4 +56,4 @@ class ExceptionMessageRegExpTest extends \MolliePrefix\PHPUnit_Framework_TestCas
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\ExceptionMessageRegExpTest', 'ExceptionMessageRegExpTest', \false);
+\class_alias('MolliePrefix\\ExceptionMessageRegExpTest', 'MolliePrefix\\ExceptionMessageRegExpTest', \false);

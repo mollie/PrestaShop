@@ -35,7 +35,7 @@ final class StaticLambdaFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
      */
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
-        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(T_FN)) {
+        if (\PHP_VERSION_ID >= 70400 && $tokens->isTokenKindFound(\T_FN)) {
             return \true;
         }
         return $tokens->isTokenKindFound(\T_FUNCTION);
@@ -55,7 +55,7 @@ final class StaticLambdaFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
         $analyzer = new \MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer($tokens);
         $expectedFunctionKinds = [\T_FUNCTION];
         if (\PHP_VERSION_ID >= 70400) {
-            $expectedFunctionKinds[] = T_FN;
+            $expectedFunctionKinds[] = \T_FN;
         }
         for ($index = $tokens->count() - 4; $index > 0; --$index) {
             if (!$tokens[$index]->isGivenKind($expectedFunctionKinds) || !$analyzer->isLambda($index)) {

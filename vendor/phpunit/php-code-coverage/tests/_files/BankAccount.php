@@ -28,4 +28,4 @@ class BankAccount
         return $this->getBalance();
     }
 }
-\class_alias('MolliePrefix\\BankAccount', 'BankAccount', \false);
+\class_alias('MolliePrefix\\BankAccount', 'MolliePrefix\\BankAccount', \false);

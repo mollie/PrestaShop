@@ -5,4 +5,4 @@ namespace MolliePrefix;
 class NewException extends \Exception
 {
 }
-\class_alias('MolliePrefix\\NewException', 'NewException', \false);
+\class_alias('MolliePrefix\\NewException', 'MolliePrefix\\NewException', \false);

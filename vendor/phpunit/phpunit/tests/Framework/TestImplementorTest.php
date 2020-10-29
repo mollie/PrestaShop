@@ -30,4 +30,4 @@ class Framework_TestImplementorTest extends \MolliePrefix\PHPUnit_Framework_Test
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Framework_TestImplementorTest', 'Framework_TestImplementorTest', \false);
+\class_alias('MolliePrefix\\Framework_TestImplementorTest', 'MolliePrefix\\Framework_TestImplementorTest', \false);

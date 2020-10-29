@@ -20,7 +20,7 @@ class ReturnTypeDeclarationSniff implements \MolliePrefix\PHP_CodeSniffer\Sniffs
      */
     public function register()
     {
-        return [\T_FUNCTION, T_CLOSURE, T_FN];
+        return [\T_FUNCTION, T_CLOSURE, \T_FN];
     }
     //end register()
     /**
