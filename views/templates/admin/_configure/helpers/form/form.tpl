@@ -75,7 +75,6 @@
         </script>
         {foreach $input.paymentMethods as $paymentMethod}
             {assign var = 'methodObj' value=$paymentMethod.obj}
-            {if $paymentMethod.id === 'voucher'}{continue}{/if}
             <div data-tab-id="general_settings" class="payment-method border border-bottom">
                 <a class="text collapsed" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
                    role="button"
