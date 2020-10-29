@@ -104,7 +104,7 @@ class FilesystemTestCase extends \MolliePrefix\PHPUnit\Framework\TestCase
     }
     protected function markAsSkippedIfLinkIsMissing()
     {
-        if (!\function_exists('link')) {
+        if (!\function_exists('\MolliePrefix\link')) {
             $this->markTestSkipped('link is not supported');
         }
         if ('\\' === \DIRECTORY_SEPARATOR && \false === self::$linkOnWindows) {
@@ -129,7 +129,7 @@ class FilesystemTestCase extends \MolliePrefix\PHPUnit\Framework\TestCase
     }
     protected function markAsSkippedIfPosixIsMissing()
     {
-        if (!\function_exists('posix_isatty')) {
+        if (!\function_exists('\MolliePrefix\posix_isatty')) {
             $this->markTestSkipped('Function posix_isatty is required.');
         }
     }

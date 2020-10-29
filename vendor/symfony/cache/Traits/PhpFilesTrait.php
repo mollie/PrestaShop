@@ -26,7 +26,7 @@ trait PhpFilesTrait
     private $zendDetectUnicode;
     public static function isSupported()
     {
-        return \function_exists('opcache_invalidate') && \filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN);
+        return \function_exists('\MolliePrefix\opcache_invalidate') && \filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN);
     }
     /**
      * @return bool

@@ -2,7 +2,7 @@
 
 namespace MolliePrefix;
 
-if (!\function_exists('MolliePrefix\\getallheaders')) {
+if (!\function_exists('\MolliePrefix\getallheaders')) {
     /**
      * Get all HTTP header key/values as an associative array for the current request.
      *

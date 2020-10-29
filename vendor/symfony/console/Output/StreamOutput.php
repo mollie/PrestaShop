@@ -86,12 +86,12 @@ class StreamOutput extends \MolliePrefix\Symfony\Component\Console\Output\Output
             return \true;
         }
         if (\DIRECTORY_SEPARATOR === '\\') {
-            return \function_exists('sapi_windows_vt100_support') && @\sapi_windows_vt100_support($this->stream) || \false !== \getenv('ANSICON') || 'ON' === \getenv('ConEmuANSI') || 'xterm' === \getenv('TERM');
+            return \function_exists('\MolliePrefix\sapi_windows_vt100_support') && @\sapi_windows_vt100_support($this->stream) || \false !== \getenv('ANSICON') || 'ON' === \getenv('ConEmuANSI') || 'xterm' === \getenv('TERM');
         }
-        if (\function_exists('stream_isatty')) {
+        if (\function_exists('\MolliePrefix\stream_isatty')) {
             return @\stream_isatty($this->stream);
         }
-        if (\function_exists('posix_isatty')) {
+        if (\function_exists('\MolliePrefix\posix_isatty')) {
             return @\posix_isatty($this->stream);
         }
         $stat = @\fstat($this->stream);

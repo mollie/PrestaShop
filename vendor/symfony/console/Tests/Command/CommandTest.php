@@ -282,7 +282,7 @@ class CommandTest extends \MolliePrefix\PHPUnit\Framework\TestCase
         $command->setApplication(new \MolliePrefix\Symfony\Component\Console\Application());
         $command->setProcessTitle('foo');
         $this->assertSame(0, $command->run(new \MolliePrefix\Symfony\Component\Console\Input\StringInput(''), new \MolliePrefix\Symfony\Component\Console\Output\NullOutput()));
-        if (\function_exists('cli_set_process_title')) {
+        if (\function_exists('\MolliePrefix\cli_set_process_title')) {
             if (null === @\cli_get_process_title() && 'Darwin' === \PHP_OS) {
                 $this->markTestSkipped('Running "cli_get_process_title" as an unprivileged user is not supported on MacOS.');
             }

@@ -92,11 +92,11 @@ function debug_resource($value = null)
 function choose_handler()
 {
     $handler = null;
-    if (\function_exists('curl_multi_exec') && \function_exists('curl_exec')) {
+    if (\function_exists('\MolliePrefix\curl_multi_exec') && \function_exists('\MolliePrefix\curl_exec')) {
         $handler = \MolliePrefix\GuzzleHttp\Handler\Proxy::wrapSync(new \MolliePrefix\GuzzleHttp\Handler\CurlMultiHandler(), new \MolliePrefix\GuzzleHttp\Handler\CurlHandler());
-    } elseif (\function_exists('curl_exec')) {
+    } elseif (\function_exists('\MolliePrefix\curl_exec')) {
         $handler = new \MolliePrefix\GuzzleHttp\Handler\CurlHandler();
-    } elseif (\function_exists('curl_multi_exec')) {
+    } elseif (\function_exists('\MolliePrefix\curl_multi_exec')) {
         $handler = new \MolliePrefix\GuzzleHttp\Handler\CurlMultiHandler();
     }
     if (\ini_get('allow_url_fopen')) {
@@ -116,7 +116,7 @@ function default_user_agent()
     static $defaultAgent = '';
     if (!$defaultAgent) {
         $defaultAgent = 'GuzzleHttp/' . \MolliePrefix\GuzzleHttp\Client::VERSION;
-        if (\extension_loaded('curl') && \function_exists('curl_version')) {
+        if (\extension_loaded('curl') && \function_exists('\MolliePrefix\curl_version')) {
             $defaultAgent .= ' curl/' . \curl_version()['version'];
         }
         $defaultAgent .= ' PHP/' . \PHP_VERSION;

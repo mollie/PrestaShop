@@ -17,19 +17,19 @@ if (\PHP_VERSION_ID >= 70000) {
 if (!\defined('PHP_INT_MIN')) {
     \define('PHP_INT_MIN', ~\PHP_INT_MAX);
 }
-if (!\function_exists('intdiv')) {
+if (!\function_exists('\MolliePrefix\intdiv')) {
     function intdiv($num1, $num2)
     {
         return \MolliePrefix\Symfony\Polyfill\Php70\Php70::intdiv($num1, $num2);
     }
 }
-if (!\function_exists('preg_replace_callback_array')) {
+if (!\function_exists('\MolliePrefix\preg_replace_callback_array')) {
     function preg_replace_callback_array(array $pattern, $subject, $limit = -1, &$count = 0, $flags = null)
     {
         return \MolliePrefix\Symfony\Polyfill\Php70\Php70::preg_replace_callback_array($pattern, $subject, $limit, $count);
     }
 }
-if (!\function_exists('error_clear_last')) {
+if (!\function_exists('\MolliePrefix\error_clear_last')) {
     function error_clear_last()
     {
         return \MolliePrefix\Symfony\Polyfill\Php70\Php70::error_clear_last();

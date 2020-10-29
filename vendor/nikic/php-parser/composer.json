@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpParser\\": "lib\/PhpParser"
+            "MolliePrefix\\MolliePrefix\\PhpParser\\": "lib\/PhpParser"
         }
     },
     "bin": [

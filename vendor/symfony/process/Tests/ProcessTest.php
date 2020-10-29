@@ -556,7 +556,7 @@ class ProcessTest extends \MolliePrefix\PHPUnit\Framework\TestCase
     {
         $this->expectException('MolliePrefix\\Symfony\\Component\\Process\\Exception\\RuntimeException');
         $this->expectExceptionMessage('The process has been signaled');
-        if (!\function_exists('posix_kill')) {
+        if (!\function_exists('\MolliePrefix\posix_kill')) {
             $this->markTestSkipped('Function posix_kill is required.');
         }
         $this->skipIfNotEnhancedSigchild(\false);

@@ -782,7 +782,7 @@ class Application
         }
         if (\true === $input->hasParameterOption(['--no-interaction', '-n'], \true)) {
             $input->setInteractive(\false);
-        } elseif (\function_exists('posix_isatty')) {
+        } elseif (\function_exists('\MolliePrefix\posix_isatty')) {
             $inputStream = null;
             if ($input instanceof \MolliePrefix\Symfony\Component\Console\Input\StreamableInputInterface) {
                 $inputStream = $input->getStream();

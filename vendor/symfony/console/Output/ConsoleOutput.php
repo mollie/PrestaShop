@@ -108,7 +108,7 @@ class ConsoleOutput extends \MolliePrefix\Symfony\Component\Console\Output\Strea
      */
     private function isRunningOS400()
     {
-        $checks = [\function_exists('php_uname') ? \php_uname('s') : '', \getenv('OSTYPE'), \PHP_OS];
+        $checks = [\function_exists('\MolliePrefix\php_uname') ? \php_uname('s') : '', \getenv('OSTYPE'), \PHP_OS];
         return \false !== \stripos(\implode(';', $checks), 'OS400');
     }
     /**

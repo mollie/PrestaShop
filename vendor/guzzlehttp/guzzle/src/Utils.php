@@ -17,7 +17,7 @@ final class Utils
      */
     public static function currentTime()
     {
-        return \function_exists('MolliePrefix\\hrtime') ? \hrtime(\true) / 1000000000.0 : \microtime(\true);
+        return \function_exists('\MolliePrefix\hrtime') ? \hrtime(\true) / 1000000000.0 : \microtime(\true);
     }
     /**
      * @param int $options
