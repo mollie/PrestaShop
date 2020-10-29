@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Mollie\Config\Config;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
@@ -62,7 +63,8 @@ class LanguageService
             PaymentStatus::STATUS_CANCELED => $this->module->l('Canceled', self::FILE_NAME),
             PaymentStatus::STATUS_EXPIRED => $this->module->l('Expired', self::FILE_NAME),
             RefundStatus::STATUS_REFUNDED => $this->module->l('Refunded', self::FILE_NAME),
-            PaymentStatus::STATUS_OPEN => $this->module->l('Bankwire pending', self::FILE_NAME),
+            PaymentStatus::STATUS_OPEN => $this->module->l('Open', self::FILE_NAME),
+            Config::MOLLIE_AWAITING_PAYMENT => $this->module->l('Awaiting', self::FILE_NAME),
             Mollie\Config\Config::PARTIAL_REFUND_CODE => $this->module->l('Partially refunded', self::FILE_NAME),
             'created' => $this->module->l('Created', self::FILE_NAME),
             'This payment method is not available.' => $this->module->l('This payment method is not available.', self::FILE_NAME),

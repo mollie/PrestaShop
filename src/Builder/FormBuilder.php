@@ -577,6 +577,7 @@ class FormBuilder
 
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], [
+                Config::MOLLIE_AWAITING_PAYMENT,
                 PaymentStatus::STATUS_PAID,
                 OrderStatus::STATUS_COMPLETED,
                 PaymentStatus::STATUS_AUTHORIZED,

@@ -158,6 +158,7 @@ class Config
     const MOLLIE_AUTO_SHIP_MAIN = 'MOLLIE_AS_MAIN';
     const MOLLIE_AUTO_SHIP_STATUSES = 'MOLLIE_AS_STATUSES';
     const MOLLIE_STATUS_OPEN = 'MOLLIE_STATUS_OPEN';
+    const MOLLIE_STATUS_AWAITING = 'MOLLIE_STATUS_AWAITING';
     const MOLLIE_STATUS_PAID = 'MOLLIE_STATUS_PAID';
     const MOLLIE_STATUS_COMPLETED = 'MOLLIE_STATUS_COMPLETED';
     const MOLLIE_STATUS_CANCELED = 'MOLLIE_STATUS_CANCELED';
@@ -167,6 +168,7 @@ class Config
     const MOLLIE_STATUS_SHIPPING = 'MOLLIE_STATUS_SHIPPING';
     const MOLLIE_MAIL_WHEN_SHIPPING = 'MOLLIE_MAIL_WHEN_SHIPPING';
     const MOLLIE_MAIL_WHEN_OPEN = 'MOLLIE_MAIL_WHEN_OPEN';
+    const MOLLIE_MAIL_WHEN_AWAITING = 'MOLLIE_MAIL_WHEN_AWAITING';
     const MOLLIE_MAIL_WHEN_PAID = 'MOLLIE_MAIL_WHEN_PAID';
     const MOLLIE_MAIL_WHEN_COMPLETED = 'MOLLIE_MAIL_WHEN_COMPLETED';
     const MOLLIE_MAIL_WHEN_CANCELED = 'MOLLIE_MAIL_WHEN_CANCELED';
@@ -289,6 +291,7 @@ class Config
     public static function getStatuses()
     {
         return [
+            self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
             PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
@@ -299,7 +302,6 @@ class Config
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_PENDING => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
-            self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),
             self::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
