@@ -81,14 +81,15 @@ export default function OrderLinesInfo(): ReactElement<{}> {
             {order.details.vouchers &&
             <>
                 <div className="alert alert-warning" role="alert">
-                    {translations.refundWarning.replace(
-                        '%1s',
-                        formatCurrency(parseFloat(order.availableRefundAmount.value), get(currencies, order.availableRefundAmount.currency)
+                    {
+                        translations.refundWarning.replace(
+                            '%1s',
+                            formatCurrency(
+                                parseFloat(order.availableRefundAmount.value),
+                                get(currencies, order.availableRefundAmount.currency)
+                            )
                         )
-                    ).replace(
-                        '%2s',
-                        formatCurrency(parseFloat(order.amount.value), get(currencies, order.amount.currency))
-                    )}
+                    }
                 </div>
             </>
             }
