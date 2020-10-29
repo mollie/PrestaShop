@@ -57,7 +57,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\": "src\/"
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\": "src\/"
         },
         "classmap": [
             "tests\/Test\/AbstractFixerTestCase.php",
@@ -74,7 +74,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Tests\\": "tests\/"
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Tests\\": "tests\/"
         }
     },
     "bin": [

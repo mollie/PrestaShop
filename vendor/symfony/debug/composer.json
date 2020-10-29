@@ -27,7 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Debug\\": ""
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\Symfony\\Component\\Debug\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

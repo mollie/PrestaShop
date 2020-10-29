@@ -135,7 +135,7 @@ class QuestionHelper extends \MolliePrefix\Symfony\Component\Console\Helper\Help
         $this->writePrompt($output, $question);
         $inputStream = $this->inputStream ?: \STDIN;
         $autocomplete = $question->getAutocompleterValues();
-        if (\function_exists('\MolliePrefix\MolliePrefix\\sapi_windows_cp_set')) {
+        if (\function_exists('\MolliePrefix\sapi_windows_cp_set')) {
             // Codepage used by cmd.exe on Windows to allow special characters (éàüñ).
             @sapi_windows_cp_set(1252);
         }

@@ -36,12 +36,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Prophecy\\": "src\/Prophecy"
+            "MolliePrefix\\MolliePrefix\Prophecy\\": "src\/Prophecy"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Fixtures\\Prophecy\\": "fixtures"
+            "MolliePrefix\\MolliePrefix\Fixtures\\Prophecy\\": "fixtures"
         }
     },
     "extra": {

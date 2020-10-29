@@ -54,7 +54,7 @@ class FatalErrorException extends \ErrorException
                 }
                 unset($frame);
                 $trace = \array_reverse($trace);
-            } elseif (\function_exists('\MolliePrefix\MolliePrefix\\symfony_debug_backtrace')) {
+            } elseif (\function_exists('\MolliePrefix\symfony_debug_backtrace')) {
                 $trace = symfony_debug_backtrace();
                 if (0 < $traceOffset) {
                     \array_splice($trace, 0, $traceOffset);

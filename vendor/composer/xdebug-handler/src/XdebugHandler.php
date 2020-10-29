@@ -452,7 +452,7 @@ class XdebugHandler
         }
         if (\extension_loaded('uopz') && !\ini_get('uopz.disable')) {
             // uopz works at opcode level and disables exit calls
-            if (\function_exists('\MolliePrefix\MolliePrefix\\uopz_allow_exit')) {
+            if (\function_exists('\MolliePrefix\uopz_allow_exit')) {
                 @uopz_allow_exit(\true);
             } else {
                 $info = 'uopz extension is not compatible';

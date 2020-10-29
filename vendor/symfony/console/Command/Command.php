@@ -206,7 +206,7 @@ class Command
                         \cli_set_process_title($this->processTitle);
                     }
                 }
-            } elseif (\function_exists('\MolliePrefix\MolliePrefix\\setproctitle')) {
+            } elseif (\function_exists('\MolliePrefix\setproctitle')) {
                 setproctitle($this->processTitle);
             } elseif (\MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');

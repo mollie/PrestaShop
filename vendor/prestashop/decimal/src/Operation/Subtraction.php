@@ -37,7 +37,7 @@ class Subtraction
      */
     public function compute(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        if (\function_exists('\MolliePrefix\MolliePrefix\\bcsub')) {
+        if (\function_exists('\MolliePrefix\bcsub')) {
             return $this->computeUsingBcMath($a, $b);
         }
         return $this->computeWithoutBcMath($a, $b);

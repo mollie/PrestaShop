@@ -41,7 +41,7 @@ if (!\is_callable('random_bytes')) {
      *
      * @return string
      */
-    if (!function_exists('\MolliePrefix\MolliePrefix\random_bytes')) {
+    if (!function_exists('\MolliePrefix\random_bytes')) {
         function random_bytes($bytes)
         {
             try {

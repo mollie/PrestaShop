@@ -33,11 +33,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Diff\\v1_4\\Tests\\": "tests\/v1_4",
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Diff\\v2_0\\Tests\\": "tests\/v2_0",
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Diff\\v3_0\\": "tests\/v3_0",
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Diff\\GeckoPackages\\DiffOutputBuilder\\Tests\\": "tests\/GeckoPackages\/DiffOutputBuilder\/Tests",
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\PhpCsFixer\\Diff\\GeckoPackages\\DiffOutputBuilder\\Utils\\": "tests\/GeckoPackages\/DiffOutputBuilder\/Utils"
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Diff\\v1_4\\Tests\\": "tests\/v1_4",
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Diff\\v2_0\\Tests\\": "tests\/v2_0",
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Diff\\v3_0\\": "tests\/v3_0",
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Diff\\GeckoPackages\\DiffOutputBuilder\\Tests\\": "tests\/GeckoPackages\/DiffOutputBuilder\/Tests",
+            "MolliePrefix\\MolliePrefix\MolliePrefix\\PhpCsFixer\\Diff\\GeckoPackages\\DiffOutputBuilder\\Utils\\": "tests\/GeckoPackages\/DiffOutputBuilder\/Utils"
         }
     }
 }

@@ -26,7 +26,7 @@ class PHPDBG implements \MolliePrefix\SebastianBergmann\CodeCoverage\Driver\Driv
         if (\PHP_SAPI !== 'phpdbg') {
             throw new \MolliePrefix\SebastianBergmann\CodeCoverage\RuntimeException('This driver requires the PHPDBG SAPI');
         }
-        if (!\function_exists('\MolliePrefix\MolliePrefix\\phpdbg_start_oplog')) {
+        if (!\function_exists('\MolliePrefix\phpdbg_start_oplog')) {
             throw new \MolliePrefix\SebastianBergmann\CodeCoverage\RuntimeException('This build of PHPDBG does not support code coverage');
         }
     }
