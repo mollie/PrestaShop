@@ -395,7 +395,11 @@ class ApiService
 
         /** @var Payment $payment */
         foreach ($mollieOrder->payments() as $payment) {
-            $order['availableRefundAmount'] = $payment->amountRemaining;
+            $amountRemaining = [
+                'value' => '0.00',
+                'currency' => $payment->amount->currency
+            ];
+            $order['availableRefundAmount'] = $payment->amountRemaining ?: $amountRemaining;
             $order['details'] = $payment->details;
         }
 

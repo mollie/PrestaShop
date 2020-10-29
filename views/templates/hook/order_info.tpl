@@ -120,7 +120,7 @@
                 method: '{l s='Method' mod='mollie' js=1}',
                 remainderMethod: '{l s='Remainder method' mod='mollie' js=1}',
                 issuer: '{l s='Issuer' mod='mollie' js=1}',
-                refundWarning: '{l s='Warning! You can only refund %1s instead of %2s' mod='mollie' js=1}',
+                refundWarning: '{l s='Warning! This order is (partially) paid using a voucher. You can refund a maximum of %1s.' mod='mollie' js=1}',
               },
               {$currencies|json_encode}
       );
