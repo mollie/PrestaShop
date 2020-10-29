@@ -24,7 +24,7 @@ class Multiplication
      */
     public function compute(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        if (\function_exists('MolliePrefix\\bcmul')) {
+        if (\function_exists('\MolliePrefix\MolliePrefix\\bcmul')) {
             return $this->computeUsingBcMath($a, $b);
         }
         return $this->computeWithoutBcMath($a, $b);

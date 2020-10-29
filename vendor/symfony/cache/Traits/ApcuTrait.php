@@ -21,7 +21,7 @@ trait ApcuTrait
 {
     public static function isSupported()
     {
-        return \function_exists('MolliePrefix\\apcu_fetch') && \filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
+        return \function_exists('\MolliePrefix\MolliePrefix\\apcu_fetch') && \filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
     }
     private function init($namespace, $defaultLifetime, $version)
     {

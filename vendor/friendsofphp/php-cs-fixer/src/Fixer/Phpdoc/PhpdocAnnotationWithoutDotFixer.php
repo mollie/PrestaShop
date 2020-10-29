@@ -88,7 +88,7 @@ function foo ($bar) {}
                 $startLine = $doc->getLine($annotation->getStart());
                 $optionalTypeRegEx = $annotation->supportTypes() ? \sprintf('(?:%s\\s+(?:\\$\\w+\\s+)?)?', \preg_quote(\implode('|', $annotation->getTypes()), '/')) : '';
                 $content = \MolliePrefix\PhpCsFixer\Preg::replaceCallback('/^(\\s*\\*\\s*@\\w+\\s+' . $optionalTypeRegEx . ')(\\p{Lu}?(?=\\p{Ll}|\\p{Zs}))(.*)$/', static function (array $matches) {
-                    if (\function_exists('mb_strtolower')) {
+                    if (\function_exists('\MolliePrefix\mb_strtolower')) {
                         return $matches[1] . \mb_strtolower($matches[2]) . $matches[3];
                     }
                     return $matches[1] . \strtolower($matches[2]) . $matches[3];

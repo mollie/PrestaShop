@@ -135,7 +135,7 @@ class QuestionHelper extends \MolliePrefix\Symfony\Component\Console\Helper\Help
         $this->writePrompt($output, $question);
         $inputStream = $this->inputStream ?: \STDIN;
         $autocomplete = $question->getAutocompleterValues();
-        if (\function_exists('MolliePrefix\\sapi_windows_cp_set')) {
+        if (\function_exists('\MolliePrefix\MolliePrefix\\sapi_windows_cp_set')) {
             // Codepage used by cmd.exe on Windows to allow special characters (Ã©Ã Ã¼Ã±).
             @sapi_windows_cp_set(1252);
         }
@@ -281,8 +281,8 @@ class QuestionHelper extends \MolliePrefix\Symfony\Component\Console\Helper\Help
                 }
                 continue;
             } else {
-                if ("€" <= $c) {
-                    $c .= \fread($inputStream, ["À" => 1, "Ð" => 1, "à" => 2, "ð" => 3][$c & "ð"]);
+                if ("ï¿½" <= $c) {
+                    $c .= \fread($inputStream, ["ï¿½" => 1, "ï¿½" => 1, "ï¿½" => 2, "ï¿½" => 3][$c & "ï¿½"]);
                 }
                 $output->write($c);
                 $ret .= $c;

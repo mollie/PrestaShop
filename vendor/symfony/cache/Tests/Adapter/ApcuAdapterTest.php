@@ -17,7 +17,7 @@ class ApcuAdapterTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Adapte
     protected $skippedTests = ['testExpiration' => 'Testing expiration slows down the test suite', 'testHasItemReturnsFalseWhenDeferredItemIsExpired' => 'Testing expiration slows down the test suite', 'testDefaultLifeTime' => 'Testing expiration slows down the test suite'];
     public function createCachePool($defaultLifetime = 0)
     {
-        if (!\function_exists('MolliePrefix\\apcu_fetch') || !\filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN)) {
+        if (!\function_exists('\MolliePrefix\MolliePrefix\\apcu_fetch') || !\filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN)) {
             $this->markTestSkipped('APCu extension is required.');
         }
         if ('cli' === \PHP_SAPI && !\filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
