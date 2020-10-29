@@ -26,13 +26,13 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\Webmozart\\Assert\\": "src\/"
+            "MolliePrefix\\Webmozart\\Assert\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\Webmozart\\Assert\\Tests\\": "tests\/",
-            "MolliePrefix\\MolliePrefix\Webmozart\\Assert\\Bin\\": "bin\/src"
+            "MolliePrefix\\Webmozart\\Assert\\Tests\\": "tests\/",
+            "MolliePrefix\\Webmozart\\Assert\\Bin\\": "bin\/src"
         }
     }
 }

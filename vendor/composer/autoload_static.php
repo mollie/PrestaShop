@@ -39,16 +39,16 @@ class ComposerStaticInit046aa691d0d5876bfeab5b73e25a5013
             'MolliePrefix\\Symfony\\Component\\Config\\' => 38,
             'MolliePrefix\\Symfony\\Component\\Cache\\' => 37,
             'MolliePrefix\\Mollie\\Api\\' => 24,
-            'MolliePrefix\\MolliePrefix\Psr\\SimpleCache\\' => 42,
-            'MolliePrefix\\MolliePrefix\Psr\\Log\\' => 34,
-            'MolliePrefix\\MolliePrefix\Psr\\Http\\Message\\' => 43,
-            'MolliePrefix\\MolliePrefix\Psr\\Container\\' => 40,
-            'MolliePrefix\\MolliePrefix\Psr\\Cache\\' => 36,
-            'MolliePrefix\\MolliePrefix\PrestaShop\\Decimal\\' => 45,
-            'MolliePrefix\\MolliePrefix\GuzzleHttp\\Psr7\\' => 42,
-            'MolliePrefix\\MolliePrefix\GuzzleHttp\\Promise\\' => 45,
-            'MolliePrefix\\MolliePrefix\GuzzleHttp\\' => 37,
-            'MolliePrefix\\MolliePrefix\Composer\\CaBundle\\' => 44,
+            'MolliePrefix\\Psr\\SimpleCache\\' => 42,
+            'MolliePrefix\\Psr\\Log\\' => 34,
+            'MolliePrefix\\Psr\\Http\\Message\\' => 43,
+            'MolliePrefix\\Psr\\Container\\' => 40,
+            'MolliePrefix\\Psr\\Cache\\' => 36,
+            'MolliePrefix\\PrestaShop\\Decimal\\' => 45,
+            'MolliePrefix\\GuzzleHttp\\Psr7\\' => 42,
+            'MolliePrefix\\GuzzleHttp\\Promise\\' => 45,
+            'MolliePrefix\\GuzzleHttp\\' => 37,
+            'MolliePrefix\\Composer\\CaBundle\\' => 44,
         ),
     );
 
@@ -113,43 +113,43 @@ class ComposerStaticInit046aa691d0d5876bfeab5b73e25a5013
         array (
             0 => __DIR__ . '/..' . '/mollie/mollie-api-php/src',
         ),
-        'MolliePrefix\\MolliePrefix\Psr\\SimpleCache\\' =>
+        'MolliePrefix\\Psr\\SimpleCache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
-        'MolliePrefix\\MolliePrefix\Psr\\Log\\' =>
+        'MolliePrefix\\Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'MolliePrefix\\MolliePrefix\Psr\\Http\\Message\\' =>
+        'MolliePrefix\\Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'MolliePrefix\\MolliePrefix\Psr\\Container\\' =>
+        'MolliePrefix\\Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'MolliePrefix\\MolliePrefix\Psr\\Cache\\' =>
+        'MolliePrefix\\Psr\\Cache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
-        'MolliePrefix\\MolliePrefix\PrestaShop\\Decimal\\' =>
+        'MolliePrefix\\PrestaShop\\Decimal\\' =>
         array (
             0 => __DIR__ . '/..' . '/prestashop/decimal/src',
         ),
-        'MolliePrefix\\MolliePrefix\GuzzleHttp\\Psr7\\' =>
+        'MolliePrefix\\GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'MolliePrefix\\MolliePrefix\GuzzleHttp\\Promise\\' =>
+        'MolliePrefix\\GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'MolliePrefix\\MolliePrefix\GuzzleHttp\\' =>
+        'MolliePrefix\\GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'MolliePrefix\\MolliePrefix\Composer\\CaBundle\\' =>
+        'MolliePrefix\\Composer\\CaBundle\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
         ),
