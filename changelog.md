@@ -6,7 +6,8 @@
 + Fixed Order creation in BO crashed page error.
 + After successful payment process memorized cart is now being removed by default. This behavior is added to ensure merchants wont have duplicated carts then
   they are not required.
-
++ Added sku fallback for products without names
++ Updated translations
 
 ## Changes in release 4.0.9 Hotfix-1 ##
 + In PS1.6 prevents double click payment method to create multiple orders

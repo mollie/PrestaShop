@@ -87,7 +87,7 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 
                 while (($line = fgets($handle)) !== false) {
                     $line = preg_replace("/\r|\n/", "", $line);
-                    $values = explode(',', $line);
+                    $values = explode(';', $line);
                     if ($values[self::CSV_POSITION_ID] === 'ID' ||
                         $values[self::CSV_POSITION_ID] === ''
                     ) {
