@@ -34,7 +34,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
+                "MolliePrefix\\Composer\\CaBundle\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -97,7 +97,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -157,7 +157,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -219,7 +219,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -418,7 +418,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
+                "MolliePrefix\\PrestaShop\\Decimal\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -473,7 +473,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
+                "MolliePrefix\\Psr\\Cache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -521,7 +521,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
+                "MolliePrefix\\Psr\\Container\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -572,7 +572,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
+                "MolliePrefix\\Psr\\Http\\Message\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -624,7 +624,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
+                "MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -673,7 +673,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
+                "MolliePrefix\\Psr\\SimpleCache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",

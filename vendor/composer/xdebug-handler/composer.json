@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "src"
+            "MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "tests"
+            "MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "tests"
         }
     },
     "scripts": {

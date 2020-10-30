@@ -1,7 +1,7 @@
 <?php
 function outer()
 {
-    if (!function_exists('inner')) {
+    if (!function_exists('\MolliePrefix\inner')) {
         function inner() {
         }
     }
@@ -42,7 +42,7 @@ new class {
 new class {
     public function outer()
     {
-        if (!function_exists('inner')) {
+        if (!function_exists('\MolliePrefix\inner')) {
             function inner() {
             }
         }

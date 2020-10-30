@@ -16,7 +16,7 @@ class ApcuCacheTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Simple\C
     protected $skippedTests = ['testSetTtl' => 'Testing expiration slows down the test suite', 'testSetMultipleTtl' => 'Testing expiration slows down the test suite', 'testDefaultLifeTime' => 'Testing expiration slows down the test suite'];
     public function createSimpleCache($defaultLifetime = 0)
     {
-        if (!\function_exists('MolliePrefix\\apcu_fetch') || !\filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN) || 'cli' === \PHP_SAPI && !\filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
+        if (!\function_exists('\MolliePrefix\apcu_fetch') || !\filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN) || 'cli' === \PHP_SAPI && !\filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
             $this->markTestSkipped('APCu extension is required.');
         }
         if ('\\' === \DIRECTORY_SEPARATOR) {

@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
+            "MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
         }
     },
     "extra": {

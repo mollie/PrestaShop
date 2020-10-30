@@ -78,7 +78,7 @@ final class Signature implements \MolliePrefix\PhpCsFixer\Cache\SignatureInterfa
     }
     private static function utf8Encode(array $data)
     {
-        if (!\function_exists('mb_detect_encoding')) {
+        if (!\function_exists('\MolliePrefix\mb_detect_encoding')) {
             return $data;
         }
         \array_walk_recursive($data, static function (&$item) {

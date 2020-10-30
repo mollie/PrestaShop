@@ -137,7 +137,7 @@ class Common
             return \false;
         }
         // If PHP has the POSIX extensions we will use them.
-        if (\function_exists('posix_isatty') === \true) {
+        if (\function_exists('\MolliePrefix\posix_isatty') === \true) {
             $isTTY = \posix_isatty(\STDIN) === \true;
             return $isTTY;
         }

@@ -133,7 +133,7 @@ class Process implements \IteratorAggregate
      */
     public function __construct($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = null)
     {
-        if (!\function_exists('proc_open')) {
+        if (!\function_exists('\MolliePrefix\proc_open')) {
             throw new \MolliePrefix\Symfony\Component\Process\Exception\RuntimeException('The Process class relies on proc_open, which is not available on your PHP installation.');
         }
         $this->commandline = $commandline;
@@ -1259,7 +1259,7 @@ class Process implements \IteratorAggregate
         if (null !== self::$sigchild) {
             return self::$sigchild;
         }
-        if (!\function_exists('phpinfo') || \defined('HHVM_VERSION')) {
+        if (!\function_exists('\MolliePrefix\phpinfo') || \defined('HHVM_VERSION')) {
             return self::$sigchild = \false;
         }
         \ob_start();
@@ -1396,7 +1396,7 @@ class Process implements \IteratorAggregate
         } else {
             if (!$this->enhanceSigchildCompatibility || !$this->isSigchildEnabled()) {
                 $ok = @\proc_terminate($this->process, $signal);
-            } elseif (\function_exists('posix_kill')) {
+            } elseif (\function_exists('\MolliePrefix\posix_kill')) {
                 $ok = @\posix_kill($pid, $signal);
             } elseif ($ok = \proc_open(\sprintf('kill -%d %d', $signal, $pid), [2 => ['pipe', 'w']], $pipes)) {
                 $ok = \false === \fgets($pipes[2]);

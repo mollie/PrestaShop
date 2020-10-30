@@ -1,5 +1,5 @@
 <?php
-if (function_exists('myFunction') === TRUE) {
+if (function_exists('\MolliePrefix\myFunction') === TRUE) {
     $retval = MyFunction(true);
     $keys = array_keys($array);
 }

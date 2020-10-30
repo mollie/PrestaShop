@@ -46,6 +46,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\Settings\PaymentMethodPositionHandlerInterface;
 use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -79,6 +80,10 @@ class SettingsSaveService
      * @var MolCarrierInformationService
      */
     private $carrierInformationService;
+    /**
+     * @var PaymentMethodPositionHandlerInterface
+     */
+    private $paymentMethodPositionHandler;
 
     public function __construct(
         Mollie $module,
@@ -86,7 +91,8 @@ class SettingsSaveService
         PaymentMethodRepository $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         ApiService $apiService,
-        MolCarrierInformationService $carrierInformationService
+        MolCarrierInformationService $carrierInformationService,
+        PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -94,6 +100,7 @@ class SettingsSaveService
         $this->paymentMethodService = $paymentMethodService;
         $this->apiService = $apiService;
         $this->carrierInformationService = $carrierInformationService;
+        $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
     }
 
     /**
@@ -111,6 +118,10 @@ class SettingsSaveService
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
         $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
+        $paymentOptionPositions = Tools::getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
+
+        $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
+
 
         $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ? $mollieApiKey : $mollieApiKeyTest;
         $isApiKeyIncorrect = strpos($apiKey, 'live') !== 0 && strpos($apiKey, 'test') !== 0;

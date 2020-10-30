@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\getallheaders\\Tests\\": "tests\/"
+            "MolliePrefix\\getallheaders\\Tests\\": "tests\/"
         }
     }
 }

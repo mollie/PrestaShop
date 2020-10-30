@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
@@ -70,13 +71,16 @@ class ApiService
      * @var CountryRepository
      */
     private $countryRepository;
+    private $paymentMethodSortProvider;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
-        CountryRepository $countryRepository
+        CountryRepository $countryRepository,
+        PaymentMethodSortProviderInterface $paymentMethodSortProvider
     ) {
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
+        $this->paymentMethodSortProvider = $paymentMethodSortProvider;
     }
 
     public function setApiKey($apiKey, $moduleVersion)
@@ -191,6 +195,7 @@ class ApiService
         $methods = $this->getMethodsObjForConfig($methods);
         $methods = $this->getMethodsCountriesForConfig($methods);
         $methods = $this->getExcludedCountriesForConfig($methods);
+        $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForConfiguration($methods);
 
         return $methods;
     }

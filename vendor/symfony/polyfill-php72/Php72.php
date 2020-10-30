@@ -25,15 +25,15 @@ final class Php72
         $len = \strlen($s);
         for ($i = $len >> 1, $j = 0; $i < $len; ++$i, ++$j) {
             switch (\true) {
-                case $s[$i] < "€":
+                case $s[$i] < "ï¿½":
                     $s[$j] = $s[$i];
                     break;
-                case $s[$i] < "À":
-                    $s[$j] = "Â";
+                case $s[$i] < "ï¿½":
+                    $s[$j] = "ï¿½";
                     $s[++$j] = $s[$i];
                     break;
                 default:
-                    $s[$j] = "Ã";
+                    $s[$j] = "ï¿½";
                     $s[++$j] = \chr(\ord($s[$i]) - 64);
                     break;
             }
@@ -45,16 +45,16 @@ final class Php72
         $s = (string) $s;
         $len = \strlen($s);
         for ($i = 0, $j = 0; $i < $len; ++$i, ++$j) {
-            switch ($s[$i] & "ð") {
-                case "À":
-                case "Ð":
+            switch ($s[$i] & "ï¿½") {
+                case "ï¿½":
+                case "ï¿½":
                     $c = \ord($s[$i] & "\37") << 6 | \ord($s[++$i] & "?");
                     $s[$j] = $c < 256 ? \chr($c) : '?';
                     break;
-                case "ð":
+                case "ï¿½":
                     ++$i;
                 // no break
-                case "à":
+                case "ï¿½":
                     $s[$j] = '?';
                     $i += 2;
                     break;
@@ -114,7 +114,7 @@ final class Php72
             // Check if formatted mode is S_IFCHR
             return $stat ? 020000 === ($stat['mode'] & 0170000) : \false;
         }
-        return \function_exists('posix_isatty') && @\posix_isatty($stream);
+        return \function_exists('\MolliePrefix\posix_isatty') && @\posix_isatty($stream);
     }
     private static function initHashMask()
     {

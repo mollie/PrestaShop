@@ -1558,7 +1558,7 @@ class Assert
     }
     protected static function strlen($value)
     {
-        if (!\function_exists('mb_detect_encoding')) {
+        if (!\function_exists('\MolliePrefix\mb_detect_encoding')) {
             return \strlen($value);
         }
         if (\false === ($encoding = \mb_detect_encoding($value))) {

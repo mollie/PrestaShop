@@ -522,6 +522,15 @@ class Mollie extends PaymentModule
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
             }
         }
+
+        $moduleName = Tools::getValue('configure');
+
+        // We are on module configuration page
+        if ($this->name === $moduleName && $currentController === 'AdminModules') {
+            $this->context->controller->addJqueryPlugin('sortable');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');
+        }
     }
 
     /**
