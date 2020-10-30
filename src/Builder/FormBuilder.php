@@ -535,7 +535,9 @@ class FormBuilder
         $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);
         $messageMail = $this->module->l('Send mails when %s', self::FILE_NAME);
         $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
-        $allStatuses = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], OrderState::getOrderStates($this->lang->id));
+        $allStatuses =  OrderState::getOrderStates($this->lang->id);
+        $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
+
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
             if ($name === PaymentStatus::STATUS_AUTHORIZED) {
@@ -610,6 +612,8 @@ class FormBuilder
                     ],
                 ];
             }
+
+            $isStatusAwaiting = $status['name'] === Config::MOLLIE_AWAITING_PAYMENT;
             $input[] = [
                 'type' => 'select',
                 'label' => $status['message'],
@@ -617,7 +621,7 @@ class FormBuilder
                 'desc' => $status['description'],
                 'name' => $status['key'],
                 'options' => [
-                    'query' => $allStatuses,
+                    'query' => $isStatusAwaiting ? $allStatuses : $allStatusesWithSkipOption,
                     'id' => 'id_order_state',
                     'name' => 'name',
                 ],

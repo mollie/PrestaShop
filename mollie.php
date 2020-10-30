@@ -264,6 +264,10 @@ class Mollie extends PaymentModule
             $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
         }
 
+        if(false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING)) {
+            $this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
+        }
+
         $this->context->smarty->assign([
             'link' => Context::getContext()->link,
             'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
