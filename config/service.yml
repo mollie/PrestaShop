@@ -10,11 +10,13 @@ services:
       - '@Mollie\Service\PaymentsTranslationService'
       - '@Mollie\Service\CustomerService'
       - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
 
   Mollie\Service\ApiService:
     arguments:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
 
   Mollie\Service\ConfigFieldService:
     arguments:
@@ -63,6 +65,7 @@ services:
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Service\MolCarrierInformationService'
+      - '@Mollie\Service\Settings\PaymentMethodPositionHandlerInterface'
 
   Mollie\Service\ShipmentService:
     arguments:

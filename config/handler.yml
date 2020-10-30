@@ -1,0 +1,6 @@
+services:
+  Mollie\Service\Settings\PaymentMethodPositionHandler:
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+
+  Mollie\Service\Settings\PaymentMethodPositionHandlerInterface: '@Mollie\Service\Settings\PaymentMethodPositionHandler'

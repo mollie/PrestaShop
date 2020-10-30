@@ -50,6 +50,7 @@ use Mollie\DTO\PaymentData;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
@@ -98,6 +99,7 @@ class PaymentMethodService
      * @var CreditCardLogoProvider
      */
     private $creditCardLogoProvider;
+    private $paymentMethodSortProvider;
 
     public function __construct(
         Mollie $module,
@@ -106,7 +108,8 @@ class PaymentMethodService
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
-        CreditCardLogoProvider $creditCardLogoProvider
+        CreditCardLogoProvider $creditCardLogoProvider,
+        PaymentMethodSortProviderInterface $paymentMethodSortProvider
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -115,6 +118,7 @@ class PaymentMethodService
         $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
+        $this->paymentMethodSortProvider = $paymentMethodSortProvider;
     }
 
     public function savePaymentMethod($method)
@@ -229,6 +233,8 @@ class PaymentMethodService
                 }
             }
         }
+
+        $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
 
         return $methods;
     }

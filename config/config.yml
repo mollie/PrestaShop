@@ -9,6 +9,7 @@ imports:
   - { resource: command.yml }
   - { resource: provider.yml }
   - { resource: adapter.yml }
+  - { resource: handler.yml }
 
 services:
   mollie:
