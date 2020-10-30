@@ -35,4 +35,4 @@ class ClonedDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertNotSame(self::$dependency, $dependency);
     }
 }
-\class_alias('MolliePrefix\\ClonedDependencyTest', 'ClonedDependencyTest', \false);
+\class_alias('MolliePrefix\\ClonedDependencyTest', 'MolliePrefix\\ClonedDependencyTest', \false);

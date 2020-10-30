@@ -63,4 +63,4 @@ abstract class PHPUnit_Framework_BaseTestListener implements \MolliePrefix\PHPUn
  *
  * @see PHPUnit_Framework_TestListener for documentation on the API methods.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_BaseTestListener', 'PHPUnit_Framework_BaseTestListener', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_BaseTestListener', 'MolliePrefix\\PHPUnit_Framework_BaseTestListener', \false);

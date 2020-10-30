@@ -131,7 +131,7 @@ class DebugClassLoader
                 $this->loaded[$class] = \true;
                 if (!($file = $this->classLoader[0]->findFile($class) ?: \false)) {
                     // no-op
-                } elseif (\function_exists('opcache_is_script_cached') && @\opcache_is_script_cached($file)) {
+                } elseif (\function_exists('\MolliePrefix\opcache_is_script_cached') && @\opcache_is_script_cached($file)) {
                     include $file;
                     return;
                 } elseif (\false === (include $file)) {

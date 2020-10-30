@@ -8,14 +8,14 @@ interface Foo
     public function bar();
 }
 /** Docblock */
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);
 class Foo
 {
     public function bar()
     {
     }
 }
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);
 function baz()
 {
     // a one-line comment

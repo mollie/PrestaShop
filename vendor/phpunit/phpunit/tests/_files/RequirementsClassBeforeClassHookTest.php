@@ -15,4 +15,4 @@ class RequirementsClassBeforeClassHookTest extends \MolliePrefix\PHPUnit_Framewo
 /**
  * @requires extension nonExistingExtension
  */
-\class_alias('MolliePrefix\\RequirementsClassBeforeClassHookTest', 'RequirementsClassBeforeClassHookTest', \false);
+\class_alias('MolliePrefix\\RequirementsClassBeforeClassHookTest', 'MolliePrefix\\RequirementsClassBeforeClassHookTest', \false);

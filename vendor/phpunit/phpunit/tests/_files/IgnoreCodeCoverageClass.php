@@ -19,4 +19,4 @@ class IgnoreCodeCoverageClass
 /**
  * @codeCoverageIgnore
  */
-\class_alias('MolliePrefix\\IgnoreCodeCoverageClass', 'IgnoreCodeCoverageClass', \false);
+\class_alias('MolliePrefix\\IgnoreCodeCoverageClass', 'MolliePrefix\\IgnoreCodeCoverageClass', \false);

@@ -22,4 +22,4 @@ class StackTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertCount(0, $stack);
     }
 }
-\class_alias('MolliePrefix\\StackTest', 'StackTest', \false);
+\class_alias('MolliePrefix\\StackTest', 'MolliePrefix\\StackTest', \false);

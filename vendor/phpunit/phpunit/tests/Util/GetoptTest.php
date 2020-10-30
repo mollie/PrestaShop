@@ -35,4 +35,4 @@ class Util_GetoptTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Util_GetoptTest', 'Util_GetoptTest', \false);
+\class_alias('MolliePrefix\\Util_GetoptTest', 'MolliePrefix\\Util_GetoptTest', \false);

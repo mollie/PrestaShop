@@ -7,13 +7,13 @@ class ParentClassWithPrivateAttributes
     private static $privateStaticParentAttribute = 'foo';
     private $privateParentAttribute = 'bar';
 }
-\class_alias('MolliePrefix\\ParentClassWithPrivateAttributes', 'ParentClassWithPrivateAttributes', \false);
+\class_alias('MolliePrefix\\ParentClassWithPrivateAttributes', 'MolliePrefix\\ParentClassWithPrivateAttributes', \false);
 class ParentClassWithProtectedAttributes extends \MolliePrefix\ParentClassWithPrivateAttributes
 {
     protected static $protectedStaticParentAttribute = 'foo';
     protected $protectedParentAttribute = 'bar';
 }
-\class_alias('MolliePrefix\\ParentClassWithProtectedAttributes', 'ParentClassWithProtectedAttributes', \false);
+\class_alias('MolliePrefix\\ParentClassWithProtectedAttributes', 'MolliePrefix\\ParentClassWithProtectedAttributes', \false);
 class ClassWithNonPublicAttributes extends \MolliePrefix\ParentClassWithProtectedAttributes
 {
     public static $publicStaticAttribute = 'foo';
@@ -28,4 +28,4 @@ class ClassWithNonPublicAttributes extends \MolliePrefix\ParentClassWithProtecte
     protected $protectedArray = ['bar'];
     protected $privateArray = ['baz'];
 }
-\class_alias('MolliePrefix\\ClassWithNonPublicAttributes', 'ClassWithNonPublicAttributes', \false);
+\class_alias('MolliePrefix\\ClassWithNonPublicAttributes', 'MolliePrefix\\ClassWithNonPublicAttributes', \false);

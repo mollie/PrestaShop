@@ -8,4 +8,4 @@ class ClassWithScalarTypeDeclarations
     {
     }
 }
-\class_alias('MolliePrefix\\ClassWithScalarTypeDeclarations', 'ClassWithScalarTypeDeclarations', \false);
+\class_alias('MolliePrefix\\ClassWithScalarTypeDeclarations', 'MolliePrefix\\ClassWithScalarTypeDeclarations', \false);

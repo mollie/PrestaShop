@@ -33,6 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Service\MemorizeCartService;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Mollie\Controller\AbstractMollieController;
@@ -307,6 +308,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $paymentMethod,
                     $stockManagement
                 );
+
+                /** @var MemorizeCartService $memorizeCart */
+                $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+                $memorizeCart->removeMemorizedCart($order);
+
                 break;
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:

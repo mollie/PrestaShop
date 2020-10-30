@@ -66,4 +66,4 @@ class PHPUnit_Framework_Constraint_FileExists extends \MolliePrefix\PHPUnit_Fram
  *
  * The file path to check is passed as $other in evaluate().
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_FileExists', 'PHPUnit_Framework_Constraint_FileExists', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_FileExists', 'MolliePrefix\\PHPUnit_Framework_Constraint_FileExists', \false);

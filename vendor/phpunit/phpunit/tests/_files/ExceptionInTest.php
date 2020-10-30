@@ -31,4 +31,4 @@ class ExceptionInTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->tearDown = \true;
     }
 }
-\class_alias('MolliePrefix\\ExceptionInTest', 'ExceptionInTest', \false);
+\class_alias('MolliePrefix\\ExceptionInTest', 'MolliePrefix\\ExceptionInTest', \false);

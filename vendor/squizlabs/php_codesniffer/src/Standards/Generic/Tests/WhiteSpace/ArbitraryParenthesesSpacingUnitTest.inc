@@ -78,7 +78,7 @@ $a = ( null !== $extra ); // Bad x 2.
 
 $sx = $vert ? ($w - 1) : 0;
 
-$this->is_overloaded = ( ( ini_get("mbstring.func_overload") & 2 ) != 0 ) && function_exists('mb_substr'); // Bad x 4.
+$this->is_overloaded = ( ( ini_get("mbstring.func_overload") & 2 ) != 0 ) && function_exists('\MolliePrefix\mb_substr'); // Bad x 4.
 
 $image->flip( ($operation->axis & 1) != 0, ($operation->axis & 2) != 0 );
 
@@ -106,7 +106,7 @@ $a = ( null !== $extra );
 
 $sx = $vert ? ($w - 1) : 0; // Bad x 2.
 
-$this->is_overloaded = ((ini_get("mbstring.func_overload") & 2) != 0) && function_exists('mb_substr'); // Bad x 4.
+$this->is_overloaded = ((ini_get("mbstring.func_overload") & 2) != 0) && function_exists('\MolliePrefix\mb_substr'); // Bad x 4.
 
 $image->flip( ($operation->axis & 1) != 0, ($operation->axis & 2) != 0 ); // Bad x 4.
 

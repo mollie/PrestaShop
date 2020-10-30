@@ -8,4 +8,4 @@ class ClassWithStaticMethod
     {
     }
 }
-\class_alias('MolliePrefix\\ClassWithStaticMethod', 'ClassWithStaticMethod', \false);
+\class_alias('MolliePrefix\\ClassWithStaticMethod', 'MolliePrefix\\ClassWithStaticMethod', \false);

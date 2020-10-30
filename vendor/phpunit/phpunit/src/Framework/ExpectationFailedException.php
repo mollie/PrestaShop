@@ -51,4 +51,4 @@ class PHPUnit_Framework_ExpectationFailedException extends \MolliePrefix\PHPUnit
  * SebastianBergmann\Comparator\ComparisonFailure which is used to
  * generate diff output of the failed expectations.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_ExpectationFailedException', 'PHPUnit_Framework_ExpectationFailedException', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_ExpectationFailedException', 'MolliePrefix\\PHPUnit_Framework_ExpectationFailedException', \false);

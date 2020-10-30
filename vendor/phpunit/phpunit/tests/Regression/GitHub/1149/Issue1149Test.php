@@ -18,4 +18,4 @@ class Issue1149Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         print '2';
     }
 }
-\class_alias('MolliePrefix\\Issue1149Test', 'Issue1149Test', \false);
+\class_alias('MolliePrefix\\Issue1149Test', 'MolliePrefix\\Issue1149Test', \false);

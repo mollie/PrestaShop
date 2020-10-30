@@ -46,4 +46,4 @@ class PHPUnit_Framework_Constraint_ObjectHasAttribute extends \MolliePrefix\PHPU
  *
  * The attribute name is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ObjectHasAttribute', 'PHPUnit_Framework_Constraint_ObjectHasAttribute', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ObjectHasAttribute', 'MolliePrefix\\PHPUnit_Framework_Constraint_ObjectHasAttribute', \false);

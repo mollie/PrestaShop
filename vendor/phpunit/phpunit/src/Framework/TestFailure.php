@@ -152,4 +152,4 @@ class PHPUnit_Framework_TestFailure
 /**
  * A TestFailure collects a failed test together with the caught exception.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_TestFailure', 'PHPUnit_Framework_TestFailure', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestFailure', 'MolliePrefix\\PHPUnit_Framework_TestFailure', \false);

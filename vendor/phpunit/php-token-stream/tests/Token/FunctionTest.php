@@ -122,4 +122,4 @@ class PHP_Token_FunctionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * @link       http://github.com/sebastianbergmann/php-token-stream/
  * @since      Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHP_Token_FunctionTest', 'PHP_Token_FunctionTest', \false);
+\class_alias('MolliePrefix\\PHP_Token_FunctionTest', 'MolliePrefix\\PHP_Token_FunctionTest', \false);

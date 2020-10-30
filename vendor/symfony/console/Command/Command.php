@@ -198,7 +198,7 @@ class Command
         }
         $this->initialize($input, $output);
         if (null !== $this->processTitle) {
-            if (\function_exists('cli_set_process_title')) {
+            if (\function_exists('\MolliePrefix\cli_set_process_title')) {
                 if (!@\cli_set_process_title($this->processTitle)) {
                     if ('Darwin' === \PHP_OS) {
                         $output->writeln('<comment>Running "cli_set_process_title" as an unprivileged user is not supported on MacOS.</comment>', \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE);
@@ -206,7 +206,7 @@ class Command
                         \cli_set_process_title($this->processTitle);
                     }
                 }
-            } elseif (\function_exists('MolliePrefix\\setproctitle')) {
+            } elseif (\function_exists('\MolliePrefix\setproctitle')) {
                 setproctitle($this->processTitle);
             } elseif (\MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');

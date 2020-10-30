@@ -23,4 +23,4 @@ class NotExistingCoveredElementTest extends \MolliePrefix\PHPUnit_Framework_Test
     {
     }
 }
-\class_alias('MolliePrefix\\NotExistingCoveredElementTest', 'NotExistingCoveredElementTest', \false);
+\class_alias('MolliePrefix\\NotExistingCoveredElementTest', 'MolliePrefix\\NotExistingCoveredElementTest', \false);

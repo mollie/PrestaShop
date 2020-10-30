@@ -17,4 +17,4 @@ class TestDoxGroupTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\TestDoxGroupTest', 'TestDoxGroupTest', \false);
+\class_alias('MolliePrefix\\TestDoxGroupTest', 'MolliePrefix\\TestDoxGroupTest', \false);

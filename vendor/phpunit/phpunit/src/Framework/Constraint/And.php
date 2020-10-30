@@ -114,4 +114,4 @@ class PHPUnit_Framework_Constraint_And extends \MolliePrefix\PHPUnit_Framework_C
 /**
  * Logical AND.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_And', 'PHPUnit_Framework_Constraint_And', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_And', 'MolliePrefix\\PHPUnit_Framework_Constraint_And', \false);

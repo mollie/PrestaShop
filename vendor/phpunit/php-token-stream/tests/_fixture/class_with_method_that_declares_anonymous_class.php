@@ -5,7 +5,7 @@ namespace MolliePrefix;
 interface foo
 {
 }
-\class_alias('MolliePrefix\\foo', 'foo', \false);
+\class_alias('MolliePrefix\\foo', 'MolliePrefix\\foo', \false);
 class class_with_method_that_declares_anonymous_class
 {
     public function method()
@@ -33,4 +33,4 @@ class class_with_method_that_declares_anonymous_class
         };
     }
 }
-\class_alias('MolliePrefix\\class_with_method_that_declares_anonymous_class', 'class_with_method_that_declares_anonymous_class', \false);
+\class_alias('MolliePrefix\\class_with_method_that_declares_anonymous_class', 'MolliePrefix\\class_with_method_that_declares_anonymous_class', \false);

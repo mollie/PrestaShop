@@ -20,4 +20,4 @@ class Test
         return \false;
     }
 }
-\class_alias('MolliePrefix\\Test', 'Test', \false);
+\class_alias('MolliePrefix\\Test', 'MolliePrefix\\Test', \false);

@@ -64,4 +64,4 @@ class PHPUnit_Framework_MockObject_Matcher_InvokedAtMostCount extends \MolliePre
  *
  * @since Class available since Release 2.2.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtMostCount', 'PHPUnit_Framework_MockObject_Matcher_InvokedAtMostCount', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtMostCount', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtMostCount', \false);

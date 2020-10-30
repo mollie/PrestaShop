@@ -203,3 +203,10 @@ Before creating release zip make sure to delete:
 /.git
 /gitignore
 /vendorBuilder
+
+# composer update #
+To update composer: 
+1. run: make bvn
+2. add 'if (!function_exists('MolliePrefix\random_bytes')) {}' in mollie/vendor/paragonie/random_compat/lib/random_bytes_mcrypt.php line: 44
+3. add 'if (!function_exists('MolliePrefix\random_bytes')) {}' in mollie/vendor/paragonie/random_compat/lib/random.php line: 159
+4. need to replace function_exists(' to function_exists('\MolliePrefix\ in vendor

@@ -10,4 +10,4 @@ class Issue2811Test extends \MolliePrefix\PHPUnit\Framework\TestCase
         throw new \Exception('hello');
     }
 }
-\class_alias('MolliePrefix\\Issue2811Test', 'Issue2811Test', \false);
+\class_alias('MolliePrefix\\Issue2811Test', 'MolliePrefix\\Issue2811Test', \false);

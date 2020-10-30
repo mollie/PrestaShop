@@ -74,4 +74,4 @@ class PHPUnit_Framework_Constraint_IsJson extends \MolliePrefix\PHPUnit_Framewor
 /**
  * Constraint that asserts that a string is valid JSON.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsJson', 'PHPUnit_Framework_Constraint_IsJson', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsJson', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsJson', \false);

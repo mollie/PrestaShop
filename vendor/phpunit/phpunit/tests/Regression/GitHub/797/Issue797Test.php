@@ -10,4 +10,4 @@ class Issue797Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertEquals(\GITHUB_ISSUE, 797);
     }
 }
-\class_alias('MolliePrefix\\Issue797Test', 'Issue797Test', \false);
+\class_alias('MolliePrefix\\Issue797Test', 'MolliePrefix\\Issue797Test', \false);

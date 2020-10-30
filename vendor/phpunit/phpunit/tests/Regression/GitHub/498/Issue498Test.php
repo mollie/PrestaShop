@@ -33,4 +33,4 @@ class Issue498Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         return [[\true], [\false]];
     }
 }
-\class_alias('MolliePrefix\\Issue498Test', 'Issue498Test', \false);
+\class_alias('MolliePrefix\\Issue498Test', 'MolliePrefix\\Issue498Test', \false);

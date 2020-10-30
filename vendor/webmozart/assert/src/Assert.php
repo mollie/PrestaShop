@@ -18,7 +18,7 @@ use DateTime;
 use DateTimeImmutable;
 use Exception;
 use InvalidArgumentException;
-use ResourceBundle;
+use MolliePrefix\ResourceBundle;
 use SimpleXMLElement;
 use Throwable;
 use Traversable;
@@ -275,7 +275,7 @@ class Assert
      */
     public static function isCountable($value, $message = '')
     {
-        if (!\is_array($value) && !$value instanceof \Countable && !$value instanceof \ResourceBundle && !$value instanceof \SimpleXMLElement) {
+        if (!\is_array($value) && !$value instanceof \Countable && !$value instanceof \MolliePrefix\ResourceBundle && !$value instanceof \SimpleXMLElement) {
             static::reportInvalidArgument(\sprintf($message ?: 'Expected a countable. Got: %s', static::typeToString($value)));
         }
     }
@@ -1558,7 +1558,7 @@ class Assert
     }
     protected static function strlen($value)
     {
-        if (!\function_exists('mb_detect_encoding')) {
+        if (!\function_exists('\MolliePrefix\mb_detect_encoding')) {
             return \strlen($value);
         }
         if (\false === ($encoding = \mb_detect_encoding($value))) {

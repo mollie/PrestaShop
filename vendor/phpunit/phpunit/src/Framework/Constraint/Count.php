@@ -112,4 +112,4 @@ class PHPUnit_Framework_Constraint_Count extends \MolliePrefix\PHPUnit_Framework
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Count', 'PHPUnit_Framework_Constraint_Count', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Count', 'MolliePrefix\\PHPUnit_Framework_Constraint_Count', \false);

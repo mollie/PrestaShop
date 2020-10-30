@@ -28,4 +28,4 @@ class Framework_TestFailureTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Framework_TestFailureTest', 'Framework_TestFailureTest', \false);
+\class_alias('MolliePrefix\\Framework_TestFailureTest', 'MolliePrefix\\Framework_TestFailureTest', \false);

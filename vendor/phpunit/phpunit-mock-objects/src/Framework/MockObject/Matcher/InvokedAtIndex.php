@@ -95,4 +95,4 @@ class PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex implements \MolliePref
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex', 'PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex', \false);

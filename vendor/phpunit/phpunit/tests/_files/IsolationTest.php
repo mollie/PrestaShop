@@ -13,4 +13,4 @@ class IsolationTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertTrue($this->isInIsolation());
     }
 }
-\class_alias('MolliePrefix\\IsolationTest', 'IsolationTest', \false);
+\class_alias('MolliePrefix\\IsolationTest', 'MolliePrefix\\IsolationTest', \false);

@@ -47,4 +47,4 @@ class PHPUnit_Framework_MockObject_Matcher_AnyParameters extends \MolliePrefix\P
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyParameters', 'PHPUnit_Framework_MockObject_Matcher_AnyParameters', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyParameters', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_AnyParameters', \false);

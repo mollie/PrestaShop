@@ -78,4 +78,4 @@ class PHPUnit_Framework_WarningTestCase extends \MolliePrefix\PHPUnit_Framework_
 /**
  * A warning.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_WarningTestCase', 'PHPUnit_Framework_WarningTestCase', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_WarningTestCase', 'MolliePrefix\\PHPUnit_Framework_WarningTestCase', \false);

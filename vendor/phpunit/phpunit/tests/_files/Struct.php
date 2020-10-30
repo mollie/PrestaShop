@@ -10,4 +10,4 @@ class Struct
         $this->var = $var;
     }
 }
-\class_alias('MolliePrefix\\Struct', 'Struct', \false);
+\class_alias('MolliePrefix\\Struct', 'MolliePrefix\\Struct', \false);

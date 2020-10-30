@@ -11,4 +11,4 @@ class OneTest extends \MolliePrefix\PHPUnit\Framework\TestCase
         $this->assertExampleExtensionInitialized();
     }
 }
-\class_alias('MolliePrefix\\OneTest', 'OneTest', \false);
+\class_alias('MolliePrefix\\OneTest', 'MolliePrefix\\OneTest', \false);

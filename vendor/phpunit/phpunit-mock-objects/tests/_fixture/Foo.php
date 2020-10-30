@@ -9,4 +9,4 @@ class Foo
         return $bar->doSomethingElse();
     }
 }
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);

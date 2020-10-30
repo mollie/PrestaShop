@@ -94,4 +94,4 @@ class PHPUnit_Framework_Constraint_TraversableContainsOnly extends \MolliePrefix
  * Constraint that asserts that the Traversable it is applied to contains
  * only values of a given type.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContainsOnly', 'PHPUnit_Framework_Constraint_TraversableContainsOnly', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContainsOnly', 'MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContainsOnly', \false);

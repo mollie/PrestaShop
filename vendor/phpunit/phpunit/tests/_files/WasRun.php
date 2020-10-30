@@ -10,4 +10,4 @@ class WasRun extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->wasRun = \true;
     }
 }
-\class_alias('MolliePrefix\\WasRun', 'WasRun', \false);
+\class_alias('MolliePrefix\\WasRun', 'MolliePrefix\\WasRun', \false);

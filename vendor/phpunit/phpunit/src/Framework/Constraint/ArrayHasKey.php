@@ -90,4 +90,4 @@ class PHPUnit_Framework_Constraint_ArrayHasKey extends \MolliePrefix\PHPUnit_Fra
  *
  * The array key is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArrayHasKey', 'PHPUnit_Framework_Constraint_ArrayHasKey', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArrayHasKey', 'MolliePrefix\\PHPUnit_Framework_Constraint_ArrayHasKey', \false);

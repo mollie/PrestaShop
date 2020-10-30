@@ -11,4 +11,4 @@ class TestAutoreferenced extends \MolliePrefix\PHPUnit\Framework\TestCase
         $this->myTestData = $data;
     }
 }
-\class_alias('MolliePrefix\\TestAutoreferenced', 'TestAutoreferenced', \false);
+\class_alias('MolliePrefix\\TestAutoreferenced', 'MolliePrefix\\TestAutoreferenced', \false);

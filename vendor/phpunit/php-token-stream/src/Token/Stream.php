@@ -453,4 +453,4 @@ class PHP_Token_Stream implements \ArrayAccess, \Countable, \SeekableIterator
  * @link      http://github.com/sebastianbergmann/php-token-stream/tree
  * @since     Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHP_Token_Stream', 'PHP_Token_Stream', \false);
+\class_alias('MolliePrefix\\PHP_Token_Stream', 'MolliePrefix\\PHP_Token_Stream', \false);

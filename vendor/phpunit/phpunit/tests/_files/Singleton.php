@@ -19,4 +19,4 @@ class Singleton
         return self::$uniqueInstance;
     }
 }
-\class_alias('MolliePrefix\\Singleton', 'Singleton', \false);
+\class_alias('MolliePrefix\\Singleton', 'MolliePrefix\\Singleton', \false);

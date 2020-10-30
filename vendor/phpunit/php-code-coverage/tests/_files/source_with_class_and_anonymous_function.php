@@ -14,4 +14,4 @@ class CoveredClassWithAnonymousFunctionInStaticMethod
         $extravar = \true;
     }
 }
-\class_alias('MolliePrefix\\CoveredClassWithAnonymousFunctionInStaticMethod', 'CoveredClassWithAnonymousFunctionInStaticMethod', \false);
+\class_alias('MolliePrefix\\CoveredClassWithAnonymousFunctionInStaticMethod', 'MolliePrefix\\CoveredClassWithAnonymousFunctionInStaticMethod', \false);

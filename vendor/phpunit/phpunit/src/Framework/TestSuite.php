@@ -764,4 +764,4 @@ class PHPUnit_Framework_TestSuite implements \MolliePrefix\PHPUnit_Framework_Tes
 /**
  * A TestSuite is a composite of Tests. It runs a collection of test cases.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_TestSuite', 'PHPUnit_Framework_TestSuite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestSuite', 'MolliePrefix\\PHPUnit_Framework_TestSuite', \false);

@@ -115,4 +115,4 @@ class PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters extends \Mollie
  * It takes a list of match groups and and increases a call index after each invocation.
  * So the first invocation uses the first group of constraints, the second the next and so on.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters', 'PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters', \false);

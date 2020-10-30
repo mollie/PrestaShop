@@ -12,4 +12,4 @@ class CoverageFunctionParenthesesTest extends \MolliePrefix\PHPUnit_Framework_Te
         \MolliePrefix\globalFunction();
     }
 }
-\class_alias('MolliePrefix\\CoverageFunctionParenthesesTest', 'CoverageFunctionParenthesesTest', \false);
+\class_alias('MolliePrefix\\CoverageFunctionParenthesesTest', 'MolliePrefix\\CoverageFunctionParenthesesTest', \false);

@@ -738,4 +738,4 @@ class PHPUnit_TextUI_TestRunner extends \MolliePrefix\PHPUnit_Runner_BaseTestRun
  * A TestRunner for the Command Line Interface (CLI)
  * PHP SAPI Module.
  */
-\class_alias('MolliePrefix\\PHPUnit_TextUI_TestRunner', 'PHPUnit_TextUI_TestRunner', \false);
+\class_alias('MolliePrefix\\PHPUnit_TextUI_TestRunner', 'MolliePrefix\\PHPUnit_TextUI_TestRunner', \false);

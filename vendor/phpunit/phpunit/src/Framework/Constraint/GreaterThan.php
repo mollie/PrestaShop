@@ -62,4 +62,4 @@ class PHPUnit_Framework_Constraint_GreaterThan extends \MolliePrefix\PHPUnit_Fra
  * Constraint that asserts that the value it is evaluated for is greater
  * than a given value.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_GreaterThan', 'PHPUnit_Framework_Constraint_GreaterThan', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_GreaterThan', 'MolliePrefix\\PHPUnit_Framework_Constraint_GreaterThan', \false);

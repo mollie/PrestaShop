@@ -13,4 +13,4 @@ class CoverageProtectedTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $o->publicMethod();
     }
 }
-\class_alias('MolliePrefix\\CoverageProtectedTest', 'CoverageProtectedTest', \false);
+\class_alias('MolliePrefix\\CoverageProtectedTest', 'MolliePrefix\\CoverageProtectedTest', \false);

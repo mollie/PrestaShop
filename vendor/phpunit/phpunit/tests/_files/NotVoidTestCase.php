@@ -5,4 +5,4 @@ namespace MolliePrefix;
 class NotVoidTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
 }
-\class_alias('MolliePrefix\\NotVoidTestCase', 'NotVoidTestCase', \false);
+\class_alias('MolliePrefix\\NotVoidTestCase', 'MolliePrefix\\NotVoidTestCase', \false);

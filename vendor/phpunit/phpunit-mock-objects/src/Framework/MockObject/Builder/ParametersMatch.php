@@ -61,4 +61,4 @@ interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends \MolliePr
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_ParametersMatch', 'PHPUnit_Framework_MockObject_Builder_ParametersMatch', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_ParametersMatch', 'MolliePrefix\\PHPUnit_Framework_MockObject_Builder_ParametersMatch', \false);

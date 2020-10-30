@@ -23,7 +23,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     {
         $tokens = self::$phpcsFile->getTokens();
         foreach (['/* testStandard */', '/* testMixedCase */'] as $comment) {
-            $token = $this->getTargetToken($comment, T_FN);
+            $token = $this->getTargetToken($comment, \T_FN);
             $this->backfillHelper($token);
             $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
             $this->assertSame($tokens[$token]['scope_closer'], $token + 12, 'Scope closer is not the semicolon token');
@@ -46,7 +46,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testWhitespace()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testWhitespace */', T_FN);
+        $token = $this->getTargetToken('/* testWhitespace */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 6, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 13, 'Scope closer is not the semicolon token');
@@ -68,7 +68,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testComment()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testComment */', T_FN);
+        $token = $this->getTargetToken('/* testComment */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 8, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 15, 'Scope closer is not the semicolon token');
@@ -90,7 +90,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testHeredoc()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testHeredoc */', T_FN);
+        $token = $this->getTargetToken('/* testHeredoc */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 4, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 9, 'Scope closer is not the semicolon token');
@@ -112,7 +112,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testNestedOuter()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testNestedOuter */', T_FN);
+        $token = $this->getTargetToken('/* testNestedOuter */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 25, 'Scope closer is not the semicolon token');
@@ -134,7 +134,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testNestedInner()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testNestedInner */', T_FN);
+        $token = $this->getTargetToken('/* testNestedInner */', \T_FN);
         $this->backfillHelper($token, \true);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 16, 'Scope closer is not the semicolon token');
@@ -156,7 +156,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testFunctionCall()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testFunctionCall */', T_FN);
+        $token = $this->getTargetToken('/* testFunctionCall */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 17, 'Scope closer is not the semicolon token');
@@ -178,7 +178,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testChainedFunctionCall()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testChainedFunctionCall */', T_FN);
+        $token = $this->getTargetToken('/* testChainedFunctionCall */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 12, 'Scope closer is not the bracket token');
@@ -200,7 +200,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testFunctionArgument()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testFunctionArgument */', T_FN);
+        $token = $this->getTargetToken('/* testFunctionArgument */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 8, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 15, 'Scope closer is not the comma token');
@@ -222,7 +222,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testClosure()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testClosure */', T_FN);
+        $token = $this->getTargetToken('/* testClosure */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 60, 'Scope closer is not the comma token');
@@ -244,7 +244,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testReturnType()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testReturnType */', T_FN);
+        $token = $this->getTargetToken('/* testReturnType */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 11, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 18, 'Scope closer is not the comma token');
@@ -266,7 +266,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testReference()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testReference */', T_FN);
+        $token = $this->getTargetToken('/* testReference */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 6, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 9, 'Scope closer is not the semicolon token');
@@ -288,7 +288,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testGrouped()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testGrouped */', T_FN);
+        $token = $this->getTargetToken('/* testGrouped */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 8, 'Scope closer is not the semicolon token');
@@ -310,7 +310,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testArrayValue()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testArrayValue */', T_FN);
+        $token = $this->getTargetToken('/* testArrayValue */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 4, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 9, 'Scope closer is not the comma token');
@@ -332,7 +332,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testYield()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testYield */', T_FN);
+        $token = $this->getTargetToken('/* testYield */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 14, 'Scope closer is not the semicolon token');
@@ -354,7 +354,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testNullableNamespace()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testNullableNamespace */', T_FN);
+        $token = $this->getTargetToken('/* testNullableNamespace */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 15, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 18, 'Scope closer is not the semicolon token');
@@ -378,7 +378,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
         $tokens = self::$phpcsFile->getTokens();
         $testMarkers = ['Self', 'Parent', 'Callable', 'Array', 'Static'];
         foreach ($testMarkers as $marker) {
-            $token = $this->getTargetToken('/* test' . $marker . 'ReturnType */', T_FN);
+            $token = $this->getTargetToken('/* test' . $marker . 'ReturnType */', \T_FN);
             $this->backfillHelper($token);
             $this->assertSame($tokens[$token]['scope_opener'], $token + 11, "Scope opener is not the arrow token (for {$marker})");
             $this->assertSame($tokens[$token]['scope_closer'], $token + 14, "Scope closer is not the semicolon token(for {$marker})");
@@ -401,7 +401,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testTernary()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testTernary */', T_FN);
+        $token = $this->getTargetToken('/* testTernary */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 40, 'Scope closer is not the semicolon token');
@@ -411,7 +411,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
         $closer = $tokens[$token]['scope_closer'];
         $this->assertSame($tokens[$closer]['scope_opener'], $token + 5, 'Closer scope opener is not the arrow token');
         $this->assertSame($tokens[$closer]['scope_closer'], $token + 40, 'Closer scope closer is not the semicolon token');
-        $token = $this->getTargetToken('/* testTernaryThen */', T_FN);
+        $token = $this->getTargetToken('/* testTernaryThen */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 8, 'Scope opener for THEN is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 12, 'Scope closer for THEN is not the semicolon token');
@@ -421,7 +421,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
         $closer = $tokens[$token]['scope_closer'];
         $this->assertSame($tokens[$closer]['scope_opener'], $token + 8, 'Closer scope opener for THEN is not the arrow token');
         $this->assertSame($tokens[$closer]['scope_closer'], $token + 12, 'Closer scope closer for THEN is not the semicolon token');
-        $token = $this->getTargetToken('/* testTernaryElse */', T_FN);
+        $token = $this->getTargetToken('/* testTernaryElse */', \T_FN);
         $this->backfillHelper($token, \true);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 8, 'Scope opener for ELSE is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 11, 'Scope closer for ELSE is not the semicolon token');
@@ -443,7 +443,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testNestedInMethod()
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken('/* testNestedInMethod */', T_FN);
+        $token = $this->getTargetToken('/* testNestedInMethod */', \T_FN);
         $this->backfillHelper($token);
         $this->assertSame($tokens[$token]['scope_opener'], $token + 5, 'Scope opener is not the arrow token');
         $this->assertSame($tokens[$token]['scope_closer'], $token + 17, 'Scope closer is not the semicolon token');
@@ -470,7 +470,7 @@ class BackfillFnTokenTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\Abstr
     public function testNotAnArrowFunction($testMarker, $testContent = 'fn')
     {
         $tokens = self::$phpcsFile->getTokens();
-        $token = $this->getTargetToken($testMarker, [\T_STRING, T_FN], $testContent);
+        $token = $this->getTargetToken($testMarker, [\T_STRING, \T_FN], $testContent);
         $tokenArray = $tokens[$token];
         $this->assertSame('T_STRING', $tokenArray['type'], 'Token tokenized as ' . $tokenArray['type'] . ', not T_STRING');
         $this->assertArrayNotHasKey('scope_condition', $tokenArray, 'Scope condition is set');

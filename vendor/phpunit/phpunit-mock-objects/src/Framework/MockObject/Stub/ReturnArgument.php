@@ -48,4 +48,4 @@ class PHPUnit_Framework_MockObject_Stub_ReturnArgument extends \MolliePrefix\PHP
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnArgument', 'PHPUnit_Framework_MockObject_Stub_ReturnArgument', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnArgument', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnArgument', \false);

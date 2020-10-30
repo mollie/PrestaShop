@@ -200,4 +200,4 @@ class PHPUnit_Util_Log_TAP extends \MolliePrefix\PHPUnit_Util_Printer implements
  * A TestListener that generates a logfile of the
  * test execution using the Test Anything Protocol (TAP).
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Log_TAP', 'PHPUnit_Util_Log_TAP', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Log_TAP', 'MolliePrefix\\PHPUnit_Util_Log_TAP', \false);

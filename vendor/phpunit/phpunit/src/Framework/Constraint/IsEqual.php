@@ -152,4 +152,4 @@ class PHPUnit_Framework_Constraint_IsEqual extends \MolliePrefix\PHPUnit_Framewo
  *
  * The expected value is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsEqual', 'PHPUnit_Framework_Constraint_IsEqual', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsEqual', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsEqual', \false);

@@ -38,4 +38,4 @@ interface PHPUnit_Framework_MockObject_Verifiable
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Verifiable', 'PHPUnit_Framework_MockObject_Verifiable', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Verifiable', 'MolliePrefix\\PHPUnit_Framework_MockObject_Verifiable', \false);

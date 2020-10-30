@@ -350,4 +350,4 @@ class PHPUnit_Util_Log_JUnit extends \MolliePrefix\PHPUnit_Util_Printer implemen
  *
  * The XML markup used is the same as the one that is used by the JUnit Ant task.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Log_JUnit', 'PHPUnit_Util_Log_JUnit', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Log_JUnit', 'MolliePrefix\\PHPUnit_Util_Log_JUnit', \false);

@@ -44,4 +44,4 @@ class PHPUnit_Util_Filesystem
 /**
  * Filesystem helpers.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Filesystem', 'PHPUnit_Util_Filesystem', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Filesystem', 'MolliePrefix\\PHPUnit_Util_Filesystem', \false);

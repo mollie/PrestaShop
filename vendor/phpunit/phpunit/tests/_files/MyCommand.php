@@ -14,4 +14,4 @@ class MyCommand extends \MolliePrefix\PHPUnit_TextUI_Command
         echo __METHOD__ . " {$value}\n";
     }
 }
-\class_alias('MolliePrefix\\MyCommand', 'MyCommand', \false);
+\class_alias('MolliePrefix\\MyCommand', 'MolliePrefix\\MyCommand', \false);

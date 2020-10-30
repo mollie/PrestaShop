@@ -42,4 +42,4 @@ class PHPUnit_Framework_MockObject_Stub_Exception implements \MolliePrefix\PHPUn
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Exception', 'PHPUnit_Framework_MockObject_Stub_Exception', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Exception', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_Exception', \false);

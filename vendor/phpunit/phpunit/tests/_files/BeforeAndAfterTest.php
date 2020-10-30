@@ -32,4 +32,4 @@ class BeforeAndAfterTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\BeforeAndAfterTest', 'BeforeAndAfterTest', \false);
+\class_alias('MolliePrefix\\BeforeAndAfterTest', 'MolliePrefix\\BeforeAndAfterTest', \false);

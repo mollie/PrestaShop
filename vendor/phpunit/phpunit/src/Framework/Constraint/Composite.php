@@ -68,4 +68,4 @@ abstract class PHPUnit_Framework_Constraint_Composite extends \MolliePrefix\PHPU
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Composite', 'PHPUnit_Framework_Constraint_Composite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Composite', 'MolliePrefix\\PHPUnit_Framework_Constraint_Composite', \false);

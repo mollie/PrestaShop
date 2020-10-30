@@ -45,4 +45,4 @@ class BankAccountTest extends \MolliePrefix\PHPUnit\Framework\TestCase
         $this->fail();
     }
 }
-\class_alias('MolliePrefix\\BankAccountTest', 'BankAccountTest', \false);
+\class_alias('MolliePrefix\\BankAccountTest', 'MolliePrefix\\BankAccountTest', \false);

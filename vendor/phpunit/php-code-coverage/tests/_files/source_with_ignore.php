@@ -19,7 +19,7 @@ class Foo
 /**
  * @codeCoverageIgnore
  */
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);
 class Bar
 {
     /**
@@ -29,7 +29,7 @@ class Bar
     {
     }
 }
-\class_alias('MolliePrefix\\Bar', 'Bar', \false);
+\class_alias('MolliePrefix\\Bar', 'MolliePrefix\\Bar', \false);
 function baz()
 {
     print '*';
@@ -39,4 +39,4 @@ interface Bor
 {
     public function foo();
 }
-\class_alias('MolliePrefix\\Bor', 'Bor', \false);
+\class_alias('MolliePrefix\\Bor', 'MolliePrefix\\Bor', \false);

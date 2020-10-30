@@ -61,4 +61,4 @@ class Issue1335Test extends \MolliePrefix\PHPUnit_Framework_TestCase
  * @runTestsInSeparateProcesses
  * @preserveGlobalState enabled
  */
-\class_alias('MolliePrefix\\Issue1335Test', 'Issue1335Test', \false);
+\class_alias('MolliePrefix\\Issue1335Test', 'MolliePrefix\\Issue1335Test', \false);

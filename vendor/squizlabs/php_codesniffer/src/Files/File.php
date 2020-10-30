@@ -1079,7 +1079,7 @@ class File
      */
     public function getMethodParameters($stackPtr)
     {
-        if ($this->tokens[$stackPtr]['code'] !== \T_FUNCTION && $this->tokens[$stackPtr]['code'] !== T_CLOSURE && $this->tokens[$stackPtr]['code'] !== \T_USE && $this->tokens[$stackPtr]['code'] !== T_FN) {
+        if ($this->tokens[$stackPtr]['code'] !== \T_FUNCTION && $this->tokens[$stackPtr]['code'] !== T_CLOSURE && $this->tokens[$stackPtr]['code'] !== \T_USE && $this->tokens[$stackPtr]['code'] !== \T_FN) {
             throw new \MolliePrefix\PHP_CodeSniffer\Exceptions\RuntimeException('$stackPtr must be of type T_FUNCTION or T_CLOSURE or T_USE or T_FN');
         }
         if ($this->tokens[$stackPtr]['code'] === \T_USE) {
@@ -1293,7 +1293,7 @@ class File
      */
     public function getMethodProperties($stackPtr)
     {
-        if ($this->tokens[$stackPtr]['code'] !== \T_FUNCTION && $this->tokens[$stackPtr]['code'] !== T_CLOSURE && $this->tokens[$stackPtr]['code'] !== T_FN) {
+        if ($this->tokens[$stackPtr]['code'] !== \T_FUNCTION && $this->tokens[$stackPtr]['code'] !== T_CLOSURE && $this->tokens[$stackPtr]['code'] !== \T_FN) {
             throw new \MolliePrefix\PHP_CodeSniffer\Exceptions\RuntimeException('$stackPtr must be of type T_FUNCTION or T_CLOSURE or T_FN');
         }
         if ($this->tokens[$stackPtr]['code'] === \T_FUNCTION) {
@@ -1361,7 +1361,7 @@ class File
                     $returnType .= $this->tokens[$i]['content'];
                 }
             }
-            if ($this->tokens[$stackPtr]['code'] === T_FN) {
+            if ($this->tokens[$stackPtr]['code'] === \T_FN) {
                 $bodyToken = T_FN_ARROW;
             } else {
                 $bodyToken = T_OPEN_CURLY_BRACKET;
@@ -1552,7 +1552,7 @@ class File
             return \false;
         }
         $tokenBefore = $this->findPrevious(\MolliePrefix\PHP_CodeSniffer\Util\Tokens::$emptyTokens, $stackPtr - 1, null, \true);
-        if ($this->tokens[$tokenBefore]['code'] === \T_FUNCTION || $this->tokens[$tokenBefore]['code'] === T_CLOSURE || $this->tokens[$tokenBefore]['code'] === T_FN) {
+        if ($this->tokens[$tokenBefore]['code'] === \T_FUNCTION || $this->tokens[$tokenBefore]['code'] === T_CLOSURE || $this->tokens[$tokenBefore]['code'] === \T_FN) {
             // Function returns a reference.
             return \true;
         }
@@ -1875,7 +1875,7 @@ class File
             }
             // Skip nested statements.
             if (isset($this->tokens[$i]['scope_closer']) === \true && ($i === $this->tokens[$i]['scope_opener'] || $i === $this->tokens[$i]['scope_condition'])) {
-                if ($this->tokens[$i]['code'] === T_FN) {
+                if ($this->tokens[$i]['code'] === \T_FN) {
                     $lastNotEmpty = $this->tokens[$i]['scope_closer'];
                     $i = $this->tokens[$i]['scope_closer'] - 1;
                     continue;

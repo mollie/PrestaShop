@@ -64,4 +64,4 @@ class PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastCount extends \MolliePr
  *
  * @since Class available since Release 2.2.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastCount', 'PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastCount', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastCount', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastCount', \false);

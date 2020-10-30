@@ -25,7 +25,7 @@ class ConfigCacheTest extends \MolliePrefix\PHPUnit\Framework\TestCase
         $files = [$this->cacheFile, $this->cacheFile . '.meta'];
         foreach ($files as $file) {
             if (\file_exists($file)) {
-                \unlink($file);
+                @\unlink($file);
             }
         }
     }

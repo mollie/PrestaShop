@@ -75,4 +75,4 @@ class PHPUnit_Framework_Constraint_Exception extends \MolliePrefix\PHPUnit_Frame
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Exception', 'PHPUnit_Framework_Constraint_Exception', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Exception', 'MolliePrefix\\PHPUnit_Framework_Constraint_Exception', \false);

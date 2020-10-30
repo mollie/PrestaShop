@@ -13,4 +13,4 @@ class CoverageMethodParenthesesWhitespaceTest extends \MolliePrefix\PHPUnit_Fram
         $o->publicMethod();
     }
 }
-\class_alias('MolliePrefix\\CoverageMethodParenthesesWhitespaceTest', 'CoverageMethodParenthesesWhitespaceTest', \false);
+\class_alias('MolliePrefix\\CoverageMethodParenthesesWhitespaceTest', 'MolliePrefix\\CoverageMethodParenthesesWhitespaceTest', \false);

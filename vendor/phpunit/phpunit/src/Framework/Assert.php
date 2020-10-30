@@ -2231,4 +2231,4 @@ abstract class PHPUnit_Framework_Assert
 /**
  * A set of assertion methods.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Assert', 'PHPUnit_Framework_Assert', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Assert', 'MolliePrefix\\PHPUnit_Framework_Assert', \false);

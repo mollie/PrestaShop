@@ -59,4 +59,4 @@ class PHPUnit_Framework_Constraint_StringMatches extends \MolliePrefix\PHPUnit_F
 /**
  * ...
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringMatches', 'PHPUnit_Framework_Constraint_StringMatches', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringMatches', 'MolliePrefix\\PHPUnit_Framework_Constraint_StringMatches', \false);

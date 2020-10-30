@@ -37,7 +37,7 @@ function MyFunction() {
     echo 'hi';
 }
 
-if (!function_exists('YourFunction')) {
+if (!function_exists('\MolliePrefix\YourFunction')) {
     // Define a function.
     function YourFunction() {
         echo 'hi';

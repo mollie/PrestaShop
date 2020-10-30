@@ -29,4 +29,4 @@ class PHPUnit_Framework_CoveredCodeNotExecutedException extends \MolliePrefix\PH
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of a test that does not execute the code it wants to cover.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_CoveredCodeNotExecutedException', 'PHPUnit_Framework_CoveredCodeNotExecutedException', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_CoveredCodeNotExecutedException', 'MolliePrefix\\PHPUnit_Framework_CoveredCodeNotExecutedException', \false);

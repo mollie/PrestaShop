@@ -149,7 +149,7 @@ abstract class Tokenizer
         $ignoring = null;
         $inTests = \defined('PHP_CODESNIFFER_IN_TESTS');
         $checkEncoding = \false;
-        if (\function_exists('iconv_strlen') === \true) {
+        if (\function_exists('\MolliePrefix\iconv_strlen') === \true) {
             $checkEncoding = \true;
         }
         $checkAnnotations = $this->config->annotations;
@@ -488,7 +488,7 @@ abstract class Tokenizer
     public function replaceTabsInToken(&$token, $prefix = ' ', $padding = ' ', $tabWidth = null)
     {
         $checkEncoding = \false;
-        if (\function_exists('iconv_strlen') === \true) {
+        if (\function_exists('\MolliePrefix\iconv_strlen') === \true) {
             $checkEncoding = \true;
         }
         $currColumn = $token['column'];

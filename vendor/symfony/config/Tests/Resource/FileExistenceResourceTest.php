@@ -26,7 +26,7 @@ class FileExistenceResourceTest extends \MolliePrefix\PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         if (\file_exists($this->file)) {
-            \unlink($this->file);
+            @\unlink($this->file);
         }
     }
     public function testToString()

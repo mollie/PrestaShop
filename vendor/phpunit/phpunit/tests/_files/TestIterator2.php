@@ -30,4 +30,4 @@ class TestIterator2 implements \Iterator
         \reset($this->data);
     }
 }
-\class_alias('MolliePrefix\\TestIterator2', 'TestIterator2', \false);
+\class_alias('MolliePrefix\\TestIterator2', 'MolliePrefix\\TestIterator2', \false);

@@ -29,4 +29,4 @@ class PHPUnit_Framework_RiskyTestError extends \MolliePrefix\PHPUnit_Framework_A
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of a risky test.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_RiskyTestError', 'PHPUnit_Framework_RiskyTestError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_RiskyTestError', 'MolliePrefix\\PHPUnit_Framework_RiskyTestError', \false);

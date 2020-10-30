@@ -10,4 +10,4 @@ class AssertionExampleTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $e->doSomething();
     }
 }
-\class_alias('MolliePrefix\\AssertionExampleTest', 'AssertionExampleTest', \false);
+\class_alias('MolliePrefix\\AssertionExampleTest', 'MolliePrefix\\AssertionExampleTest', \false);

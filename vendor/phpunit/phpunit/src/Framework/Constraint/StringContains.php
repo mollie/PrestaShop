@@ -87,4 +87,4 @@ class PHPUnit_Framework_Constraint_StringContains extends \MolliePrefix\PHPUnit_
  *
  * The sub-string is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringContains', 'PHPUnit_Framework_Constraint_StringContains', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_StringContains', 'MolliePrefix\\PHPUnit_Framework_Constraint_StringContains', \false);

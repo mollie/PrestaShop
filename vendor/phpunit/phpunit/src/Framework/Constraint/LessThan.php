@@ -62,4 +62,4 @@ class PHPUnit_Framework_Constraint_LessThan extends \MolliePrefix\PHPUnit_Framew
  * Constraint that asserts that the value it is evaluated for is less than
  * a given value.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_LessThan', 'PHPUnit_Framework_Constraint_LessThan', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_LessThan', 'MolliePrefix\\PHPUnit_Framework_Constraint_LessThan', \false);

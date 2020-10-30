@@ -8,4 +8,4 @@ class NoTestCases extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\NoTestCases', 'NoTestCases', \false);
+\class_alias('MolliePrefix\\NoTestCases', 'MolliePrefix\\NoTestCases', \false);

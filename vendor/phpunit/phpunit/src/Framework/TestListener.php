@@ -104,4 +104,4 @@ interface PHPUnit_Framework_TestListener
 /**
  * A Listener for test progress.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_TestListener', 'PHPUnit_Framework_TestListener', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestListener', 'MolliePrefix\\PHPUnit_Framework_TestListener', \false);

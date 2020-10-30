@@ -39,4 +39,4 @@ class Framework_MockObject_Invocation_StaticTest extends \MolliePrefix\PHPUnit_F
         $this->assertSame($expectedReturnType, $invocation->returnType);
     }
 }
-\class_alias('MolliePrefix\\Framework_MockObject_Invocation_StaticTest', 'Framework_MockObject_Invocation_StaticTest', \false);
+\class_alias('MolliePrefix\\Framework_MockObject_Invocation_StaticTest', 'MolliePrefix\\Framework_MockObject_Invocation_StaticTest', \false);

@@ -50,4 +50,4 @@ class MultipleDataProviderTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         return $object->getIterator();
     }
 }
-\class_alias('MolliePrefix\\MultipleDataProviderTest', 'MultipleDataProviderTest', \false);
+\class_alias('MolliePrefix\\MultipleDataProviderTest', 'MolliePrefix\\MultipleDataProviderTest', \false);

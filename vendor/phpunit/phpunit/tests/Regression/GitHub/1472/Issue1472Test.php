@@ -17,4 +17,4 @@ class Issue1472Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertEquals(1, $xpath->evaluate('count(//label[text() = "text content"])'));
     }
 }
-\class_alias('MolliePrefix\\Issue1472Test', 'Issue1472Test', \false);
+\class_alias('MolliePrefix\\Issue1472Test', 'MolliePrefix\\Issue1472Test', \false);

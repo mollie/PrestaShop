@@ -36,4 +36,4 @@ class PHPUnit_Framework_Warning extends \MolliePrefix\PHPUnit_Framework_Exceptio
 /**
  * Thrown when there is a warning.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Warning', 'PHPUnit_Framework_Warning', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Warning', 'MolliePrefix\\PHPUnit_Framework_Warning', \false);

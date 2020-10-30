@@ -16,4 +16,4 @@ class DataProviderTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         return [[0, 0, 0], [0, 1, 1], [1, 1, 3], [1, 0, 1]];
     }
 }
-\class_alias('MolliePrefix\\DataProviderTest', 'DataProviderTest', \false);
+\class_alias('MolliePrefix\\DataProviderTest', 'MolliePrefix\\DataProviderTest', \false);

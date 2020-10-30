@@ -32,4 +32,4 @@ class PHPUnit_Framework_Constraint_SameSize extends \MolliePrefix\PHPUnit_Framew
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_SameSize', 'PHPUnit_Framework_Constraint_SameSize', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_SameSize', 'MolliePrefix\\PHPUnit_Framework_Constraint_SameSize', \false);

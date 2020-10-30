@@ -9,4 +9,4 @@ class TestError extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \Exception();
     }
 }
-\class_alias('MolliePrefix\\TestError', 'TestError', \false);
+\class_alias('MolliePrefix\\TestError', 'MolliePrefix\\TestError', \false);

@@ -54,4 +54,4 @@ abstract class PHPUnit_Runner_Filter_GroupFilterIterator extends \RecursiveFilte
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_GroupFilterIterator', 'PHPUnit_Runner_Filter_GroupFilterIterator', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_GroupFilterIterator', 'MolliePrefix\\PHPUnit_Runner_Filter_GroupFilterIterator', \false);

@@ -181,7 +181,7 @@ EOF
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Extensions_PhptTestCaseTest', 'Extensions_PhptTestCaseTest', \false);
+\class_alias('MolliePrefix\\Extensions_PhptTestCaseTest', 'MolliePrefix\\Extensions_PhptTestCaseTest', \false);
 class PhpTestCaseProxy extends \MolliePrefix\PHPUnit_Extensions_PhptTestCase
 {
     public function parseIniSection($content)
@@ -189,4 +189,4 @@ class PhpTestCaseProxy extends \MolliePrefix\PHPUnit_Extensions_PhptTestCase
         return parent::parseIniSection($content);
     }
 }
-\class_alias('MolliePrefix\\PhpTestCaseProxy', 'PhpTestCaseProxy', \false);
+\class_alias('MolliePrefix\\PhpTestCaseProxy', 'MolliePrefix\\PhpTestCaseProxy', \false);

@@ -58,7 +58,7 @@ class Terminal
             return self::$stty;
         }
         // skip check if exec function is disabled
-        if (!\function_exists('exec')) {
+        if (!\function_exists('\MolliePrefix\exec')) {
             return \false;
         }
         \exec('stty 2>&1', $output, $exitcode);
@@ -90,7 +90,7 @@ class Terminal
      */
     private static function hasVt100Support()
     {
-        return \function_exists('sapi_windows_vt100_support') && \sapi_windows_vt100_support(\fopen('php://stdout', 'w'));
+        return \function_exists('\MolliePrefix\sapi_windows_vt100_support') && \sapi_windows_vt100_support(\fopen('php://stdout', 'w'));
     }
     /**
      * Initializes dimensions using the output of an stty columns line.
@@ -138,7 +138,7 @@ class Terminal
      */
     private static function readFromProcess($command)
     {
-        if (!\function_exists('proc_open')) {
+        if (!\function_exists('\MolliePrefix\proc_open')) {
             return null;
         }
         $descriptorspec = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];

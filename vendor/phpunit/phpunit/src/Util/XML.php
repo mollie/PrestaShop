@@ -206,4 +206,4 @@ class PHPUnit_Util_XML
 /**
  * XML helpers.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_XML', 'PHPUnit_Util_XML', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_XML', 'MolliePrefix\\PHPUnit_Util_XML', \false);

@@ -9,4 +9,4 @@ class Issue503Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertSame("foo\n", "foo\r\n");
     }
 }
-\class_alias('MolliePrefix\\Issue503Test', 'Issue503Test', \false);
+\class_alias('MolliePrefix\\Issue503Test', 'MolliePrefix\\Issue503Test', \false);

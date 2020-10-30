@@ -826,4 +826,4 @@ class PHPUnit_Util_Test
 /**
  * Test helpers.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Test', 'PHPUnit_Util_Test', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Test', 'MolliePrefix\\PHPUnit_Util_Test', \false);

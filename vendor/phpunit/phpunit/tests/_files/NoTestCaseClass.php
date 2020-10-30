@@ -5,4 +5,4 @@ namespace MolliePrefix;
 class NoTestCaseClass
 {
 }
-\class_alias('MolliePrefix\\NoTestCaseClass', 'NoTestCaseClass', \false);
+\class_alias('MolliePrefix\\NoTestCaseClass', 'MolliePrefix\\NoTestCaseClass', \false);

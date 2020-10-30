@@ -11,4 +11,4 @@ class Issue2731Test extends \MolliePrefix\PHPUnit\Framework\TestCase
         throw new \Exception('message');
     }
 }
-\class_alias('MolliePrefix\\Issue2731Test', 'Issue2731Test', \false);
+\class_alias('MolliePrefix\\Issue2731Test', 'MolliePrefix\\Issue2731Test', \false);

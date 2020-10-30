@@ -299,4 +299,4 @@ class RequirementsTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\RequirementsTest', 'RequirementsTest', \false);
+\class_alias('MolliePrefix\\RequirementsTest', 'MolliePrefix\\RequirementsTest', \false);

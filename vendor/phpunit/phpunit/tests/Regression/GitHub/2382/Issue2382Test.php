@@ -17,4 +17,4 @@ class Issue2382Test extends \MolliePrefix\PHPUnit\Framework\TestCase
         return [[$this->getMockBuilder(\Exception::class)->getMock()]];
     }
 }
-\class_alias('MolliePrefix\\Issue2382Test', 'Issue2382Test', \false);
+\class_alias('MolliePrefix\\Issue2382Test', 'MolliePrefix\\Issue2382Test', \false);

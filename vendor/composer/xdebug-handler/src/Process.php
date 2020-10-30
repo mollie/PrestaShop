@@ -108,12 +108,12 @@ class Process
             return \true;
         }
         if (\defined('PHP_WINDOWS_VERSION_BUILD')) {
-            return \function_exists('sapi_windows_vt100_support') && \sapi_windows_vt100_support($output) || \false !== \getenv('ANSICON') || 'ON' === \getenv('ConEmuANSI') || 'xterm' === \getenv('TERM');
+            return \function_exists('\MolliePrefix\sapi_windows_vt100_support') && \sapi_windows_vt100_support($output) || \false !== \getenv('ANSICON') || 'ON' === \getenv('ConEmuANSI') || 'xterm' === \getenv('TERM');
         }
-        if (\function_exists('stream_isatty')) {
+        if (\function_exists('\MolliePrefix\stream_isatty')) {
             return \stream_isatty($output);
         }
-        if (\function_exists('posix_isatty')) {
+        if (\function_exists('\MolliePrefix\posix_isatty')) {
             return \posix_isatty($output);
         }
         $stat = \fstat($output);

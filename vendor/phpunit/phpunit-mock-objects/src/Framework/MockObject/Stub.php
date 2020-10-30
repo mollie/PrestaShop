@@ -46,4 +46,4 @@ interface PHPUnit_Framework_MockObject_Stub extends \MolliePrefix\PHPUnit_Framew
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub', 'PHPUnit_Framework_MockObject_Stub', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub', \false);

@@ -29,4 +29,4 @@ interface PHPUnit_Framework_RiskyTest
  * A marker interface for marking any exception/error as result of an unit
  * test as risky.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_RiskyTest', 'PHPUnit_Framework_RiskyTest', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_RiskyTest', 'MolliePrefix\\PHPUnit_Framework_RiskyTest', \false);

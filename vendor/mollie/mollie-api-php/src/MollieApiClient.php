@@ -2,10 +2,13 @@
 
 namespace MolliePrefix\Mollie\Api;
 
+use MolliePrefix\Composer\CaBundle\CaBundle;
 use MolliePrefix\GuzzleHttp\Client;
 use MolliePrefix\GuzzleHttp\ClientInterface;
 use MolliePrefix\GuzzleHttp\Exception\GuzzleException;
+use MolliePrefix\GuzzleHttp\HandlerStack;
 use MolliePrefix\GuzzleHttp\Psr7\Request;
+use MolliePrefix\GuzzleHttp\RequestOptions as GuzzleRequestOptions;
 use MolliePrefix\Mollie\Api\Endpoints\ChargebackEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\CustomerEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\CustomerPaymentsEndpoint;
@@ -33,6 +36,7 @@ use MolliePrefix\Mollie\Api\Endpoints\SubscriptionEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\WalletEndpoint;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform;
+use MolliePrefix\Mollie\Api\Guzzle\RetryMiddlewareFactory;
 use MolliePrefix\Psr\Http\Message\ResponseInterface;
 use MolliePrefix\Psr\Http\Message\StreamInterface;
 class MollieApiClient
@@ -64,6 +68,10 @@ class MollieApiClient
      * Default response timeout (in seconds).
      */
     const TIMEOUT = 10;
+    /**
+     * Default connect timeout (in seconds).
+     */
+    const CONNECT_TIMEOUT = 2;
     /**
      * @var ClientInterface
      */
@@ -243,7 +251,13 @@ class MollieApiClient
      */
     public function __construct(\MolliePrefix\GuzzleHttp\ClientInterface $httpClient = null)
     {
-        $this->httpClient = $httpClient ? $httpClient : new \MolliePrefix\GuzzleHttp\Client([\MolliePrefix\GuzzleHttp\RequestOptions::VERIFY => \MolliePrefix\Composer\CaBundle\CaBundle::getBundledCaBundlePath(), \MolliePrefix\GuzzleHttp\RequestOptions::TIMEOUT => self::TIMEOUT]);
+        $this->httpClient = $httpClient;
+        if (!$this->httpClient) {
+            $retryMiddlewareFactory = new \MolliePrefix\Mollie\Api\Guzzle\RetryMiddlewareFactory();
+            $handlerStack = \MolliePrefix\GuzzleHttp\HandlerStack::create();
+            $handlerStack->push($retryMiddlewareFactory->retry());
+            $this->httpClient = new \MolliePrefix\GuzzleHttp\Client([\MolliePrefix\GuzzleHttp\RequestOptions::VERIFY => \MolliePrefix\Composer\CaBundle\CaBundle::getBundledCaBundlePath(), \MolliePrefix\GuzzleHttp\RequestOptions::TIMEOUT => self::TIMEOUT, \MolliePrefix\GuzzleHttp\RequestOptions::CONNECT_TIMEOUT => self::CONNECT_TIMEOUT, 'handler' => $handlerStack]);
+        }
         $compatibilityChecker = new \MolliePrefix\Mollie\Api\CompatibilityChecker();
         $compatibilityChecker->checkCompatibility();
         $this->initializeEndpoints();

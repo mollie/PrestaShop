@@ -37,7 +37,7 @@ namespace Mollie\Utility;
 
 class RefundUtility
 {
-    public static function getRefundLines(array $lines, $remainingAmount)
+    public static function getRefundLines(array $lines)
     {
         $refunds = [];
         foreach ($lines as $line) {
@@ -47,12 +47,21 @@ class RefundUtility
                     'id',
                     'quantity',
                 ]));
-            $amount = $line['totalAmount']['value'] >= $remainingAmount['value'] ? $remainingAmount : $line['totalAmount'];
+            $amount = $line['totalAmount'];
             $refund['amount'] = $amount;
             $refunds['lines'][] = $refund;
-            $remainingAmount['value'] -= $amount['value'];
         }
 
         return $refunds;
+    }
+
+    public static function isOrderLinesRefundPossible(array $lines, $availableRefund)
+    {
+        $refundedAmount = 0;
+        foreach ($lines as $line) {
+            $refundedAmount = NumberUtility::plus($refundedAmount, $line['totalAmount']['value']);
+        }
+
+        return NumberUtility::isLowerOrEqualThan($refundedAmount, $availableRefund['value']);
     }
 }

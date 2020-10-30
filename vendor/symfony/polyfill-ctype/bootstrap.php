@@ -11,69 +11,69 @@ namespace MolliePrefix;
  * file that was distributed with this source code.
  */
 use MolliePrefix\Symfony\Polyfill\Ctype as p;
-if (!\function_exists('ctype_alnum')) {
-    function ctype_alnum($text)
+if (!\function_exists('\MolliePrefix\ctype_alnum')) {
+    function ctype_alnum($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_alnum($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_alnum($input);
     }
 }
-if (!\function_exists('ctype_alpha')) {
-    function ctype_alpha($text)
+if (!\function_exists('\MolliePrefix\ctype_alpha')) {
+    function ctype_alpha($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_alpha($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_alpha($input);
     }
 }
-if (!\function_exists('ctype_cntrl')) {
-    function ctype_cntrl($text)
+if (!\function_exists('\MolliePrefix\ctype_cntrl')) {
+    function ctype_cntrl($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_cntrl($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_cntrl($input);
     }
 }
-if (!\function_exists('ctype_digit')) {
-    function ctype_digit($text)
+if (!\function_exists('\MolliePrefix\ctype_digit')) {
+    function ctype_digit($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_digit($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_digit($input);
     }
 }
-if (!\function_exists('ctype_graph')) {
-    function ctype_graph($text)
+if (!\function_exists('\MolliePrefix\ctype_graph')) {
+    function ctype_graph($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_graph($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_graph($input);
     }
 }
-if (!\function_exists('ctype_lower')) {
-    function ctype_lower($text)
+if (!\function_exists('\MolliePrefix\ctype_lower')) {
+    function ctype_lower($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_lower($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_lower($input);
     }
 }
-if (!\function_exists('ctype_print')) {
-    function ctype_print($text)
+if (!\function_exists('\MolliePrefix\ctype_print')) {
+    function ctype_print($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_print($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_print($input);
     }
 }
-if (!\function_exists('ctype_punct')) {
-    function ctype_punct($text)
+if (!\function_exists('\MolliePrefix\ctype_punct')) {
+    function ctype_punct($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_punct($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_punct($input);
     }
 }
-if (!\function_exists('ctype_space')) {
-    function ctype_space($text)
+if (!\function_exists('\MolliePrefix\ctype_space')) {
+    function ctype_space($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_space($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_space($input);
     }
 }
-if (!\function_exists('ctype_upper')) {
-    function ctype_upper($text)
+if (!\function_exists('\MolliePrefix\ctype_upper')) {
+    function ctype_upper($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_upper($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_upper($input);
     }
 }
-if (!\function_exists('ctype_xdigit')) {
-    function ctype_xdigit($text)
+if (!\function_exists('\MolliePrefix\ctype_xdigit')) {
+    function ctype_xdigit($input)
     {
-        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_xdigit($text);
+        return \MolliePrefix\Symfony\Polyfill\Ctype\Ctype::ctype_xdigit($input);
     }
 }

@@ -60,4 +60,4 @@ class PHPUnit_Util_TestDox_ResultPrinter_Text extends \MolliePrefix\PHPUnit_Util
 /**
  * Prints TestDox documentation in text format.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_Text', 'PHPUnit_Util_TestDox_ResultPrinter_Text', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_Text', 'MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_Text', \false);

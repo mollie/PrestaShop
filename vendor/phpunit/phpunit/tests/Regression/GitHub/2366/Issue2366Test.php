@@ -8,7 +8,7 @@ class Issue2366
     {
     }
 }
-\class_alias('MolliePrefix\\Issue2366', 'Issue2366', \false);
+\class_alias('MolliePrefix\\Issue2366', 'MolliePrefix\\Issue2366', \false);
 class Issue2366Test extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
@@ -25,4 +25,4 @@ class Issue2366Test extends \MolliePrefix\PHPUnit\Framework\TestCase
         return [[$o], [$o]];
     }
 }
-\class_alias('MolliePrefix\\Issue2366Test', 'Issue2366Test', \false);
+\class_alias('MolliePrefix\\Issue2366Test', 'MolliePrefix\\Issue2366Test', \false);

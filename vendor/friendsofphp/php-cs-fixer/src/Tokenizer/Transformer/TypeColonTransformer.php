@@ -68,7 +68,7 @@ final class TypeColonTransformer extends \MolliePrefix\PhpCsFixer\Tokenizer\Abst
         }
         $prevKinds = [\T_FUNCTION, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_RETURN_REF, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_USE_LAMBDA];
         if (\PHP_VERSION_ID >= 70400) {
-            $prevKinds[] = T_FN;
+            $prevKinds[] = \T_FN;
         }
         if ($prevToken->isGivenKind($prevKinds)) {
             $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_TYPE_COLON, ':']);

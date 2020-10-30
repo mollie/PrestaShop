@@ -328,4 +328,4 @@ class PHPUnit_Framework_MockObject_MockBuilder
  *
  * @since File available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_MockBuilder', 'PHPUnit_Framework_MockObject_MockBuilder', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_MockBuilder', 'MolliePrefix\\PHPUnit_Framework_MockObject_MockBuilder', \false);

@@ -10,10 +10,8 @@
  */
 namespace MolliePrefix\Symfony\Component\Cache\Traits;
 
-use MolliePrefix\Doctrine\DBAL\Abstraction\Result;
 use MolliePrefix\Doctrine\DBAL\Connection;
 use MolliePrefix\Doctrine\DBAL\DBALException;
-use MolliePrefix\Doctrine\DBAL\Driver\Result as DriverResult;
 use MolliePrefix\Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use MolliePrefix\Doctrine\DBAL\Schema\Schema;
 use MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException;
@@ -159,7 +157,7 @@ trait PdoTrait
             $stmt->bindValue(++$i, $id);
         }
         $result = $stmt->execute();
-        if ($result instanceof \MolliePrefix\Doctrine\DBAL\Abstraction\Result) {
+        if (\is_object($result)) {
             $result = $result->iterateNumeric();
         } else {
             $stmt->setFetchMode(\PDO::FETCH_NUM);
@@ -193,7 +191,7 @@ trait PdoTrait
         $stmt->bindValue(':id', $id);
         $stmt->bindValue(':time', \time(), \PDO::PARAM_INT);
         $result = $stmt->execute();
-        return (bool) ($result instanceof \MolliePrefix\Doctrine\DBAL\Driver\Result ? $result->fetchOne() : $stmt->fetchColumn());
+        return (bool) (\is_object($result) ? $result->fetchOne() : $stmt->fetchColumn());
     }
     /**
      * {@inheritdoc}
@@ -299,7 +297,7 @@ trait PdoTrait
         }
         foreach ($serialized as $id => $data) {
             $result = $stmt->execute();
-            if (null === $driver && !($result instanceof \MolliePrefix\Doctrine\DBAL\Driver\Result ? $result->rowCount() : $stmt->rowCount())) {
+            if (null === $driver && !(\is_object($result) ? $result->rowCount() : $stmt->rowCount())) {
                 try {
                     $insertStmt->execute();
                 } catch (\MolliePrefix\Doctrine\DBAL\DBALException $e) {

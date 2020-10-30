@@ -120,4 +120,4 @@ class PHPUnit_Framework_Constraint_TraversableContains extends \MolliePrefix\PHP
  * Constraint that asserts that the Traversable it is applied to contains
  * a given value.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContains', 'PHPUnit_Framework_Constraint_TraversableContains', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContains', 'MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContains', \false);

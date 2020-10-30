@@ -77,4 +77,4 @@ class Util_XMLTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Util_XMLTest', 'Util_XMLTest', \false);
+\class_alias('MolliePrefix\\Util_XMLTest', 'MolliePrefix\\Util_XMLTest', \false);

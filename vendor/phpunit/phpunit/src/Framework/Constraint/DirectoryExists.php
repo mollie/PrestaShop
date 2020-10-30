@@ -66,4 +66,4 @@ class PHPUnit_Framework_Constraint_DirectoryExists extends \MolliePrefix\PHPUnit
  *
  * The file path to check is passed as $other in evaluate().
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_DirectoryExists', 'PHPUnit_Framework_Constraint_DirectoryExists', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_DirectoryExists', 'MolliePrefix\\PHPUnit_Framework_Constraint_DirectoryExists', \false);

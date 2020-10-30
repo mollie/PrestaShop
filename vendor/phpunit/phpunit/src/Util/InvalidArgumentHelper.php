@@ -41,4 +41,4 @@ class PHPUnit_Util_InvalidArgumentHelper
  * Factory for PHPUnit_Framework_Exception objects that are used to describe
  * invalid arguments passed to a function or method.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_InvalidArgumentHelper', 'PHPUnit_Util_InvalidArgumentHelper', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_InvalidArgumentHelper', 'MolliePrefix\\PHPUnit_Util_InvalidArgumentHelper', \false);

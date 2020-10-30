@@ -39,4 +39,4 @@ class Framework_Constraint_JsonMatchesTest extends \MolliePrefix\PHPUnit_Framewo
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-\class_alias('MolliePrefix\\Framework_Constraint_JsonMatchesTest', 'Framework_Constraint_JsonMatchesTest', \false);
+\class_alias('MolliePrefix\\Framework_Constraint_JsonMatchesTest', 'MolliePrefix\\Framework_Constraint_JsonMatchesTest', \false);

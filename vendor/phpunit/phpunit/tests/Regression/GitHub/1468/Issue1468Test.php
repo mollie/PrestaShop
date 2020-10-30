@@ -12,4 +12,4 @@ class Issue1468Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
     }
 }
-\class_alias('MolliePrefix\\Issue1468Test', 'Issue1468Test', \false);
+\class_alias('MolliePrefix\\Issue1468Test', 'MolliePrefix\\Issue1468Test', \false);

@@ -82,4 +82,4 @@ class PHPUnit_Framework_SkippedTestCase extends \MolliePrefix\PHPUnit_Framework_
 /**
  * A skipped test case
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTestCase', 'PHPUnit_Framework_SkippedTestCase', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_SkippedTestCase', 'MolliePrefix\\PHPUnit_Framework_SkippedTestCase', \false);

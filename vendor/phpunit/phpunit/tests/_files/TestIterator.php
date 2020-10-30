@@ -31,4 +31,4 @@ class TestIterator implements \Iterator
         $this->position++;
     }
 }
-\class_alias('MolliePrefix\\TestIterator', 'TestIterator', \false);
+\class_alias('MolliePrefix\\TestIterator', 'MolliePrefix\\TestIterator', \false);

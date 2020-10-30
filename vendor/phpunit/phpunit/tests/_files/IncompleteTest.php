@@ -9,4 +9,4 @@ class IncompleteTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->markTestIncomplete('Test incomplete');
     }
 }
-\class_alias('MolliePrefix\\IncompleteTest', 'IncompleteTest', \false);
+\class_alias('MolliePrefix\\IncompleteTest', 'MolliePrefix\\IncompleteTest', \false);

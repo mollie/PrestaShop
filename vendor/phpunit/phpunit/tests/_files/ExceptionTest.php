@@ -124,4 +124,4 @@ class ExceptionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\ExceptionTest', 'ExceptionTest', \false);
+\class_alias('MolliePrefix\\ExceptionTest', 'MolliePrefix\\ExceptionTest', \false);

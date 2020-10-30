@@ -80,4 +80,4 @@ abstract class PHPUnit_Framework_MockObject_Matcher_InvokedRecorder implements \
  * @since Class available since Release 1.0.0
  * @abstract
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder', 'PHPUnit_Framework_MockObject_Matcher_InvokedRecorder', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder', \false);

@@ -108,4 +108,4 @@ class PHPUnit_Framework_Constraint_Or extends \MolliePrefix\PHPUnit_Framework_Co
 /**
  * Logical OR.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Or', 'PHPUnit_Framework_Constraint_Or', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Or', 'MolliePrefix\\PHPUnit_Framework_Constraint_Or', \false);

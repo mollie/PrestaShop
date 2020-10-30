@@ -54,4 +54,4 @@ interface PHPUnit_Framework_MockObject_Invokable extends \MolliePrefix\PHPUnit_F
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invokable', 'PHPUnit_Framework_MockObject_Invokable', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invokable', 'MolliePrefix\\PHPUnit_Framework_MockObject_Invokable', \false);

@@ -11,4 +11,4 @@ class TestGeneratorMaker
         }
     }
 }
-\class_alias('MolliePrefix\\TestGeneratorMaker', 'TestGeneratorMaker', \false);
+\class_alias('MolliePrefix\\TestGeneratorMaker', 'MolliePrefix\\TestGeneratorMaker', \false);

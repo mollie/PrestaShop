@@ -38,4 +38,4 @@ class PHPUnit_Framework_Error_Deprecated extends \MolliePrefix\PHPUnit_Framework
  * PHPUnit_Framework_Error_Deprecated::$enabled = false;
  * </code>
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Error_Deprecated', 'PHPUnit_Framework_Error_Deprecated', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Error_Deprecated', 'MolliePrefix\\PHPUnit_Framework_Error_Deprecated', \false);

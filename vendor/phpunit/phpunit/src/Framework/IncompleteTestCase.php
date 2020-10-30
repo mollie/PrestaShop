@@ -84,4 +84,4 @@ class PHPUnit_Framework_IncompleteTestCase extends \MolliePrefix\PHPUnit_Framewo
 /**
  * An incomplete test case
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTestCase', 'PHPUnit_Framework_IncompleteTestCase', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTestCase', 'MolliePrefix\\PHPUnit_Framework_IncompleteTestCase', \false);

@@ -48,4 +48,4 @@ class PHPUnit_Framework_Constraint_IsTrue extends \MolliePrefix\PHPUnit_Framewor
 /**
  * Constraint that accepts true.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsTrue', 'PHPUnit_Framework_Constraint_IsTrue', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsTrue', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsTrue', \false);

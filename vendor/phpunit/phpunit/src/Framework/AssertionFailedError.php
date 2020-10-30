@@ -36,4 +36,4 @@ class PHPUnit_Framework_AssertionFailedError extends \MolliePrefix\PHPUnit_Frame
 /**
  * Thrown when an assertion failed.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_AssertionFailedError', 'PHPUnit_Framework_AssertionFailedError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_AssertionFailedError', 'MolliePrefix\\PHPUnit_Framework_AssertionFailedError', \false);

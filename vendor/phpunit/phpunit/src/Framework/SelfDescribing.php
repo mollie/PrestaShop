@@ -33,4 +33,4 @@ interface PHPUnit_Framework_SelfDescribing
 /**
  * Interface for classes that can return a description of itself.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_SelfDescribing', 'PHPUnit_Framework_SelfDescribing', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_SelfDescribing', 'MolliePrefix\\PHPUnit_Framework_SelfDescribing', \false);

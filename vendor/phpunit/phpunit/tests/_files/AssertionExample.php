@@ -9,4 +9,4 @@ class AssertionExample
         \assert(\false);
     }
 }
-\class_alias('MolliePrefix\\AssertionExample', 'AssertionExample', \false);
+\class_alias('MolliePrefix\\AssertionExample', 'MolliePrefix\\AssertionExample', \false);

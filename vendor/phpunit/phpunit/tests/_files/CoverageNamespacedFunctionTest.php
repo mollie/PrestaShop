@@ -12,4 +12,4 @@ class CoverageNamespacedFunctionTest extends \MolliePrefix\PHPUnit_Framework_Tes
         \MolliePrefix\foo\func();
     }
 }
-\class_alias('MolliePrefix\\CoverageNamespacedFunctionTest', 'CoverageNamespacedFunctionTest', \false);
+\class_alias('MolliePrefix\\CoverageNamespacedFunctionTest', 'MolliePrefix\\CoverageNamespacedFunctionTest', \false);

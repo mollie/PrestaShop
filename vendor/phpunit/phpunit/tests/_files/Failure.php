@@ -9,4 +9,4 @@ class Failure extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->fail();
     }
 }
-\class_alias('MolliePrefix\\Failure', 'Failure', \false);
+\class_alias('MolliePrefix\\Failure', 'MolliePrefix\\Failure', \false);

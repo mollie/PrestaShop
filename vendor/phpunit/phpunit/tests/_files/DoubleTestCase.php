@@ -21,4 +21,4 @@ class DoubleTestCase implements \MolliePrefix\PHPUnit_Framework_Test
         $result->endTest($this, 0);
     }
 }
-\class_alias('MolliePrefix\\DoubleTestCase', 'DoubleTestCase', \false);
+\class_alias('MolliePrefix\\DoubleTestCase', 'MolliePrefix\\DoubleTestCase', \false);

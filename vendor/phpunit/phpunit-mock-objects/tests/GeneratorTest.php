@@ -158,4 +158,4 @@ class Framework_MockObject_GeneratorTest extends \MolliePrefix\PHPUnit_Framework
  * @uses PHPUnit_Framework_MockObject_Stub_Return
  * @uses PHPUnit_Framework_MockObject_Matcher_InvokedCount
  */
-\class_alias('MolliePrefix\\Framework_MockObject_GeneratorTest', 'Framework_MockObject_GeneratorTest', \false);
+\class_alias('MolliePrefix\\Framework_MockObject_GeneratorTest', 'MolliePrefix\\Framework_MockObject_GeneratorTest', \false);

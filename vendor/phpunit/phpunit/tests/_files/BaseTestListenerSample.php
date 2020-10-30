@@ -10,4 +10,4 @@ class BaseTestListenerSample extends \MolliePrefix\PHPUnit_Framework_BaseTestLis
         $this->endCount++;
     }
 }
-\class_alias('MolliePrefix\\BaseTestListenerSample', 'BaseTestListenerSample', \false);
+\class_alias('MolliePrefix\\BaseTestListenerSample', 'MolliePrefix\\BaseTestListenerSample', \false);

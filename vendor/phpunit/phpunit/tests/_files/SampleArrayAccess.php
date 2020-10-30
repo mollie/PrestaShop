@@ -42,4 +42,4 @@ class SampleArrayAccess implements \ArrayAccess
  * with some minor changes
  * This class required for PHPUnit_Framework_Constraint_ArrayHasKey testing
  */
-\class_alias('MolliePrefix\\SampleArrayAccess', 'SampleArrayAccess', \false);
+\class_alias('MolliePrefix\\SampleArrayAccess', 'MolliePrefix\\SampleArrayAccess', \false);

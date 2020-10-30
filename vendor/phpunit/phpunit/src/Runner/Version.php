@@ -67,4 +67,4 @@ class PHPUnit_Runner_Version
 /**
  * This class defines the current version of PHPUnit.
  */
-\class_alias('MolliePrefix\\PHPUnit_Runner_Version', 'PHPUnit_Runner_Version', \false);
+\class_alias('MolliePrefix\\PHPUnit_Runner_Version', 'MolliePrefix\\PHPUnit_Runner_Version', \false);

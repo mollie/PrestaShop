@@ -25,4 +25,4 @@ class OutputTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
         print 'bar';
     }
 }
-\class_alias('MolliePrefix\\OutputTestCase', 'OutputTestCase', \false);
+\class_alias('MolliePrefix\\OutputTestCase', 'MolliePrefix\\OutputTestCase', \false);

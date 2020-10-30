@@ -9,4 +9,4 @@ class Issue1330Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertTrue(\PHPUNIT_1330);
     }
 }
-\class_alias('MolliePrefix\\Issue1330Test', 'Issue1330Test', \false);
+\class_alias('MolliePrefix\\Issue1330Test', 'MolliePrefix\\Issue1330Test', \false);

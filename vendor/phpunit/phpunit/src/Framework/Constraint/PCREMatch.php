@@ -72,4 +72,4 @@ class PHPUnit_Framework_Constraint_PCREMatch extends \MolliePrefix\PHPUnit_Frame
  *
  * The pattern string passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_PCREMatch', 'PHPUnit_Framework_Constraint_PCREMatch', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_PCREMatch', 'MolliePrefix\\PHPUnit_Framework_Constraint_PCREMatch', \false);

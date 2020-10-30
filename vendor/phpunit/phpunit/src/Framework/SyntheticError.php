@@ -82,4 +82,4 @@ class PHPUnit_Framework_SyntheticError extends \MolliePrefix\PHPUnit_Framework_A
 /**
  * Creates a synthetic failed assertion.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_SyntheticError', 'PHPUnit_Framework_SyntheticError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_SyntheticError', 'MolliePrefix\\PHPUnit_Framework_SyntheticError', \false);

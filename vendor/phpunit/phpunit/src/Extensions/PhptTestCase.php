@@ -286,4 +286,4 @@ class PHPUnit_Extensions_PhptTestCase implements \MolliePrefix\PHPUnit_Framework
 /**
  * Runner for PHPT test cases.
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_PhptTestCase', 'PHPUnit_Extensions_PhptTestCase', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_PhptTestCase', 'MolliePrefix\\PHPUnit_Extensions_PhptTestCase', \false);

@@ -8,4 +8,4 @@ class InheritanceB extends \MolliePrefix\PHPUnit_Framework_TestCase
     {
     }
 }
-\class_alias('MolliePrefix\\InheritanceB', 'InheritanceB', \false);
+\class_alias('MolliePrefix\\InheritanceB', 'MolliePrefix\\InheritanceB', \false);

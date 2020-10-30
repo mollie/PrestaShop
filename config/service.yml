@@ -107,6 +107,7 @@ services:
   Mollie\Service\MemorizeCartService:
     arguments:
       - '@Mollie\Service\OrderCartAssociationService'
+      - '@Mollie\Repository\PendingOrderCartRepository'
 
   Mollie\Service\RepeatOrderLinkFactory:
 

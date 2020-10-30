@@ -16,4 +16,4 @@ class PartialMockTestClass
     {
     }
 }
-\class_alias('MolliePrefix\\PartialMockTestClass', 'PartialMockTestClass', \false);
+\class_alias('MolliePrefix\\PartialMockTestClass', 'MolliePrefix\\PartialMockTestClass', \false);

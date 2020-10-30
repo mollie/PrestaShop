@@ -336,7 +336,7 @@ class PHPUnit_Framework_MockObject_Generator
             throw new \MolliePrefix\PHPUnit_Framework_MockObject_RuntimeException('The SOAP extension is required to generate a mock object from WSDL.');
         }
         $options = \array_merge($options, ['cache_wsdl' => \WSDL_CACHE_NONE]);
-        $client = new \SoapClient($wsdlFile, $options);
+        $client = new \MolliePrefix\SoapClient($wsdlFile, $options);
         $_methods = \array_unique($client->__getFunctions());
         unset($client);
         \sort($_methods);
@@ -813,4 +813,4 @@ class PHPUnit_Framework_MockObject_Generator
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Generator', 'PHPUnit_Framework_MockObject_Generator', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Generator', 'MolliePrefix\\PHPUnit_Framework_MockObject_Generator', \false);

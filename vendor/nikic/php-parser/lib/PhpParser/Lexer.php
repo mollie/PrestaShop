@@ -68,7 +68,7 @@ class Lexer
     }
     protected function resetErrors()
     {
-        if (\function_exists('error_clear_last')) {
+        if (\function_exists('\MolliePrefix\error_clear_last')) {
             \error_clear_last();
         } else {
             // set error_get_last() to defined state by forcing an undefined variable error

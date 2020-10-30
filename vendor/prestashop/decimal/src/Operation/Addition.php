@@ -37,7 +37,7 @@ class Addition
      */
     public function compute(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        if (\function_exists('MolliePrefix\\bcadd')) {
+        if (\function_exists('\MolliePrefix\bcadd')) {
             return $this->computeUsingBcMath($a, $b);
         }
         return $this->computeWithoutBcMath($a, $b);

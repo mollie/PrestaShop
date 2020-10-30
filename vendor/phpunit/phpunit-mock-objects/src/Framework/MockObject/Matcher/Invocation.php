@@ -59,4 +59,4 @@ interface PHPUnit_Framework_MockObject_Matcher_Invocation extends \MolliePrefix\
  *
  * @since Interface available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_Invocation', 'PHPUnit_Framework_MockObject_Matcher_Invocation', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_Invocation', 'MolliePrefix\\PHPUnit_Framework_MockObject_Matcher_Invocation', \false);

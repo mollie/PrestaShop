@@ -30,4 +30,4 @@ class Issue2137Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->assertSame($provided, $expected);
     }
 }
-\class_alias('MolliePrefix\\Issue2137Test', 'Issue2137Test', \false);
+\class_alias('MolliePrefix\\Issue2137Test', 'MolliePrefix\\Issue2137Test', \false);

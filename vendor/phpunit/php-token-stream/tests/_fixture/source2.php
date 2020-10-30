@@ -9,4 +9,4 @@ abstract class A
     public static abstract function method();
 }
 // short desc
-\class_alias('MolliePrefix\\A', 'A', \false);
+\class_alias('MolliePrefix\\A', 'MolliePrefix\\A', \false);

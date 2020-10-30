@@ -76,4 +76,4 @@ class PHP_Token_IncludeTest extends \MolliePrefix\PHPUnit_Framework_TestCase
  * @link       http://github.com/sebastianbergmann/php-token-stream/
  * @since      Class available since Release 1.0.2
  */
-\class_alias('MolliePrefix\\PHP_Token_IncludeTest', 'PHP_Token_IncludeTest', \false);
+\class_alias('MolliePrefix\\PHP_Token_IncludeTest', 'MolliePrefix\\PHP_Token_IncludeTest', \false);

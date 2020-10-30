@@ -8,4 +8,4 @@ class OverrideTestCase extends \MolliePrefix\OneTestCase
     {
     }
 }
-\class_alias('MolliePrefix\\OverrideTestCase', 'OverrideTestCase', \false);
+\class_alias('MolliePrefix\\OverrideTestCase', 'MolliePrefix\\OverrideTestCase', \false);

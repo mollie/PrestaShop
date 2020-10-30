@@ -43,4 +43,4 @@ class PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls implements \MolliePrefi
  *
  * @since Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls', 'PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls', \false);

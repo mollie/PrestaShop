@@ -1969,4 +1969,4 @@ abstract class PHPUnit_Framework_TestCase extends \MolliePrefix\PHPUnit_Framewor
  * ?>
  * </code>
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_TestCase', 'PHPUnit_Framework_TestCase', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestCase', 'MolliePrefix\\PHPUnit_Framework_TestCase', \false);

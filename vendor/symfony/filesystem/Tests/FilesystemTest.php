@@ -10,6 +10,7 @@
  */
 namespace MolliePrefix\Symfony\Component\Filesystem\Tests;
 
+use MolliePrefix\Symfony\Component\Filesystem\Exception\IOException;
 /**
  * Test class for Filesystem.
  */
@@ -233,6 +234,25 @@ class FilesystemTest extends \MolliePrefix\Symfony\Component\Filesystem\Tests\Fi
         $files = [$basePath . 'dir', $basePath . 'file'];
         $this->filesystem->remove($files);
         $this->assertFileDoesNotExist($basePath . 'dir');
+    }
+    public function testRemoveThrowsExceptionOnPermissionDenied()
+    {
+        $this->markAsSkippedIfChmodIsMissing();
+        $basePath = $this->workspace . \DIRECTORY_SEPARATOR . 'dir_permissions';
+        \mkdir($basePath);
+        $file = $basePath . \DIRECTORY_SEPARATOR . 'file';
+        \touch($file);
+        \chmod($basePath, 0400);
+        try {
+            $this->filesystem->remove($file);
+            $this->fail('Filesystem::remove() should throw an exception');
+        } catch (\MolliePrefix\Symfony\Component\Filesystem\Exception\IOException $e) {
+            $this->assertStringContainsString('Failed to remove file "' . $file . '"', $e->getMessage());
+            $this->assertStringContainsString('Permission denied', $e->getMessage());
+        } finally {
+            // Make sure we can clean up this file
+            \chmod($basePath, 0777);
+        }
     }
     public function testRemoveCleansInvalidLinks()
     {

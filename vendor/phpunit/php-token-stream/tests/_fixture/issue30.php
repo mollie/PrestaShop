@@ -9,4 +9,4 @@ class Foo
         return \MolliePrefix\Foo::CLASS;
     }
 }
-\class_alias('MolliePrefix\\Foo', 'Foo', \false);
+\class_alias('MolliePrefix\\Foo', 'MolliePrefix\\Foo', \false);

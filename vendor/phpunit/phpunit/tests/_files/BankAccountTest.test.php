@@ -89,4 +89,4 @@ class BankAccountWithCustomExtensionTest extends \MolliePrefix\PHPUnit_Framework
  * Tests for the BankAccount class.
  *
  */
-\class_alias('MolliePrefix\\BankAccountWithCustomExtensionTest', 'BankAccountWithCustomExtensionTest', \false);
+\class_alias('MolliePrefix\\BankAccountWithCustomExtensionTest', 'MolliePrefix\\BankAccountWithCustomExtensionTest', \false);

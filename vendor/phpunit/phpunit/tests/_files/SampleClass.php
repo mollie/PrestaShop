@@ -14,4 +14,4 @@ class SampleClass
         $this->c = $c;
     }
 }
-\class_alias('MolliePrefix\\SampleClass', 'SampleClass', \false);
+\class_alias('MolliePrefix\\SampleClass', 'MolliePrefix\\SampleClass', \false);

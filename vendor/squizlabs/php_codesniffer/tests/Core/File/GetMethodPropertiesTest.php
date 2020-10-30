@@ -231,7 +231,7 @@ class GetMethodPropertiesTest extends \MolliePrefix\PHP_CodeSniffer\Tests\Core\A
      */
     private function getMethodPropertiesTestHelper($commentString, $expected)
     {
-        $function = $this->getTargetToken($commentString, [\T_FUNCTION, T_CLOSURE, T_FN]);
+        $function = $this->getTargetToken($commentString, [\T_FUNCTION, T_CLOSURE, \T_FN]);
         $found = self::$phpcsFile->getMethodProperties($function);
         $this->assertArraySubset($expected, $found, \true);
     }

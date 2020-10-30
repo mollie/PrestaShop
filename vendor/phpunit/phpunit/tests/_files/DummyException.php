@@ -5,4 +5,4 @@ namespace MolliePrefix;
 class DummyException extends \Exception
 {
 }
-\class_alias('MolliePrefix\\DummyException', 'DummyException', \false);
+\class_alias('MolliePrefix\\DummyException', 'MolliePrefix\\DummyException', \false);

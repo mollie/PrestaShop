@@ -20,4 +20,4 @@ class Issue433Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         $this->expectOutputString('foo');
     }
 }
-\class_alias('MolliePrefix\\Issue433Test', 'Issue433Test', \false);
+\class_alias('MolliePrefix\\Issue433Test', 'MolliePrefix\\Issue433Test', \false);

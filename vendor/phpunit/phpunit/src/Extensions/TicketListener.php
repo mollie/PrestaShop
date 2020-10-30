@@ -185,4 +185,4 @@ abstract class PHPUnit_Extensions_TicketListener implements \MolliePrefix\PHPUni
 /**
  * Base class for test listeners that interact with an issue tracker.
  */
-\class_alias('MolliePrefix\\PHPUnit_Extensions_TicketListener', 'PHPUnit_Extensions_TicketListener', \false);
+\class_alias('MolliePrefix\\PHPUnit_Extensions_TicketListener', 'MolliePrefix\\PHPUnit_Extensions_TicketListener', \false);

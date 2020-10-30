@@ -183,4 +183,4 @@ class PHPUnit_Util_Log_JSON extends \MolliePrefix\PHPUnit_Util_Printer implement
 /**
  * A TestListener that generates JSON messages.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Log_JSON', 'PHPUnit_Util_Log_JSON', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Log_JSON', 'MolliePrefix\\PHPUnit_Util_Log_JSON', \false);

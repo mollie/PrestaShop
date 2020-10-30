@@ -11,7 +11,6 @@
 namespace MolliePrefix\Symfony\Component\Cache\Tests\Adapter;
 
 use MolliePrefix\Doctrine\DBAL\DriverManager;
-use MolliePrefix\Doctrine\DBAL\Version;
 use MolliePrefix\Symfony\Component\Cache\Adapter\PdoAdapter;
 use MolliePrefix\Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
 /**
@@ -25,9 +24,6 @@ class PdoDbalAdapterTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Ada
     {
         if (!\extension_loaded('pdo_sqlite')) {
             self::markTestSkipped('Extension pdo_sqlite required.');
-        }
-        if (\PHP_VERSION_ID >= 80000 && \class_exists(\MolliePrefix\Doctrine\DBAL\Version::class)) {
-            self::markTestSkipped('Doctrine DBAL 2.x is incompatible with PHP 8.');
         }
         self::$dbFile = \tempnam(\sys_get_temp_dir(), 'sf_sqlite_cache');
         $pool = new \MolliePrefix\Symfony\Component\Cache\Adapter\PdoAdapter(\MolliePrefix\Doctrine\DBAL\DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]));

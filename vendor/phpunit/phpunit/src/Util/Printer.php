@@ -139,4 +139,4 @@ class PHPUnit_Util_Printer
 /**
  * Utility class that can print to STDOUT or write to a file.
  */
-\class_alias('MolliePrefix\\PHPUnit_Util_Printer', 'PHPUnit_Util_Printer', \false);
+\class_alias('MolliePrefix\\PHPUnit_Util_Printer', 'MolliePrefix\\PHPUnit_Util_Printer', \false);

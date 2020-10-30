@@ -48,4 +48,4 @@ class PHPUnit_Framework_Constraint_IsFinite extends \MolliePrefix\PHPUnit_Framew
 /**
  * Constraint that accepts finite.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsFinite', 'PHPUnit_Framework_Constraint_IsFinite', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsFinite', 'MolliePrefix\\PHPUnit_Framework_Constraint_IsFinite', \false);

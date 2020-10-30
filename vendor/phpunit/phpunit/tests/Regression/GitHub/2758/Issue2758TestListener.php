@@ -12,4 +12,4 @@ class Issue2758TestListener extends \MolliePrefix\PHPUnit_Framework_BaseTestList
         $test->addToAssertionCount(1);
     }
 }
-\class_alias('MolliePrefix\\Issue2758TestListener', 'Issue2758TestListener', \false);
+\class_alias('MolliePrefix\\Issue2758TestListener', 'MolliePrefix\\Issue2758TestListener', \false);

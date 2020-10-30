@@ -21,4 +21,4 @@ class Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 /**
  * @author Jean Carlo Machado <contato@jeancarlomachado.com.br>
  */
-\class_alias('MolliePrefix\\Test', 'Test', \false);
+\class_alias('MolliePrefix\\Test', 'MolliePrefix\\Test', \false);

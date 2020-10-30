@@ -29,4 +29,4 @@ class PHPUnit_Framework_IncompleteTestError extends \MolliePrefix\PHPUnit_Framew
  * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
  * case of an incomplete test.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTestError', 'PHPUnit_Framework_IncompleteTestError', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTestError', 'MolliePrefix\\PHPUnit_Framework_IncompleteTestError', \false);

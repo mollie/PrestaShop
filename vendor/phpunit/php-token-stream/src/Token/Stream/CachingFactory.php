@@ -65,4 +65,4 @@ class PHP_Token_Stream_CachingFactory
  * @link      http://github.com/sebastianbergmann/php-token-stream/tree
  * @since     Class available since Release 1.0.0
  */
-\class_alias('MolliePrefix\\PHP_Token_Stream_CachingFactory', 'PHP_Token_Stream_CachingFactory', \false);
+\class_alias('MolliePrefix\\PHP_Token_Stream_CachingFactory', 'MolliePrefix\\PHP_Token_Stream_CachingFactory', \false);

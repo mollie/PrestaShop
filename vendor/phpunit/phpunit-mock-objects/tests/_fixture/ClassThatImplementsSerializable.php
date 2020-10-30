@@ -15,4 +15,4 @@ class ClassThatImplementsSerializable implements \Serializable
         }
     }
 }
-\class_alias('MolliePrefix\\ClassThatImplementsSerializable', 'ClassThatImplementsSerializable', \false);
+\class_alias('MolliePrefix\\ClassThatImplementsSerializable', 'MolliePrefix\\ClassThatImplementsSerializable', \false);

@@ -60,4 +60,4 @@ class PHPUnit_Framework_Constraint_ClassHasStaticAttribute extends \MolliePrefix
  *
  * The attribute name is passed in the constructor.
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ClassHasStaticAttribute', 'PHPUnit_Framework_Constraint_ClassHasStaticAttribute', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ClassHasStaticAttribute', 'MolliePrefix\\PHPUnit_Framework_Constraint_ClassHasStaticAttribute', \false);

@@ -37,4 +37,4 @@ class Framework_MockObject_Builder_InvocationMockerTest extends \MolliePrefix\PH
         $this->assertSame('bar', $mock->foo());
     }
 }
-\class_alias('MolliePrefix\\Framework_MockObject_Builder_InvocationMockerTest', 'Framework_MockObject_Builder_InvocationMockerTest', \false);
+\class_alias('MolliePrefix\\Framework_MockObject_Builder_InvocationMockerTest', 'MolliePrefix\\Framework_MockObject_Builder_InvocationMockerTest', \false);

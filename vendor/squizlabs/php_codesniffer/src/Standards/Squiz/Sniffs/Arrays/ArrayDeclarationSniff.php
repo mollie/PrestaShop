@@ -315,7 +315,7 @@ class ArrayDeclarationSniff implements \MolliePrefix\PHP_CodeSniffer\Sniffs\Snif
                 $nextToken = $tokens[$nextToken]['parenthesis_closer'];
                 continue;
             }
-            if ($tokens[$nextToken]['code'] === \T_ARRAY || $tokens[$nextToken]['code'] === T_OPEN_SHORT_ARRAY || $tokens[$nextToken]['code'] === T_CLOSURE || $tokens[$nextToken]['code'] === T_FN) {
+            if ($tokens[$nextToken]['code'] === \T_ARRAY || $tokens[$nextToken]['code'] === T_OPEN_SHORT_ARRAY || $tokens[$nextToken]['code'] === T_CLOSURE || $tokens[$nextToken]['code'] === \T_FN) {
                 // Let subsequent calls of this test handle nested arrays.
                 if ($tokens[$lastToken]['code'] !== \T_DOUBLE_ARROW) {
                     $indices[] = ['value' => $nextToken];

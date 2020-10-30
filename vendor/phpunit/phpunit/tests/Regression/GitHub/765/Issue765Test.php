@@ -21,4 +21,4 @@ class Issue765Test extends \MolliePrefix\PHPUnit_Framework_TestCase
         throw new \Exception();
     }
 }
-\class_alias('MolliePrefix\\Issue765Test', 'Issue765Test', \false);
+\class_alias('MolliePrefix\\Issue765Test', 'MolliePrefix\\Issue765Test', \false);

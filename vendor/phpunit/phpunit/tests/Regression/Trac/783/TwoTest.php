@@ -14,4 +14,4 @@ class TwoTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 /**
  * @group bar
  */
-\class_alias('MolliePrefix\\TwoTest', 'TwoTest', \false);
+\class_alias('MolliePrefix\\TwoTest', 'MolliePrefix\\TwoTest', \false);

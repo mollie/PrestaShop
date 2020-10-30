@@ -23,4 +23,4 @@ class DataProviderDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCas
         return [];
     }
 }
-\class_alias('MolliePrefix\\DataProviderDependencyTest', 'DataProviderDependencyTest', \false);
+\class_alias('MolliePrefix\\DataProviderDependencyTest', 'MolliePrefix\\DataProviderDependencyTest', \false);

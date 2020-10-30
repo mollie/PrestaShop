@@ -35,4 +35,4 @@ class PHPUnit_Framework_MockObject_Stub_ReturnReference extends \MolliePrefix\PH
  *
  * @since Class available since Release 3.0.7
  */
-\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnReference', 'PHPUnit_Framework_MockObject_Stub_ReturnReference', \false);
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnReference', 'MolliePrefix\\PHPUnit_Framework_MockObject_Stub_ReturnReference', \false);
