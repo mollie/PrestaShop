@@ -299,16 +299,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 throw $e;
             }
 
-        $status = $apiPayment->status;
-        if (!isset(Mollie\Config\Config::getStatuses()[$apiPayment->status])) {
-            $status = 'open';
-        }
-
-        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$status];
-
-        if ($paymentStatus < 1) {
-            $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
-        }
             // Set the `banktransfer` details
             if ($apiPayment instanceof MollieOrderAlias) {
                 // If this is an order, take the first payment
@@ -360,7 +350,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $this->module->validateOrder(
             (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
+            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             $totalPrice->toPrecision(2),
             isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
             null,

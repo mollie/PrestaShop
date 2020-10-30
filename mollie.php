@@ -264,6 +264,12 @@ class Mollie extends PaymentModule
             $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
         }
 
+        if(false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) &&
+            !Tools::isSubmit("submit{$this->name}")
+        ) {
+            $this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
+        }
+
         $this->context->smarty->assign([
             'link' => Context::getContext()->link,
             'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
@@ -511,7 +517,7 @@ class Mollie extends PaymentModule
 
             if (Tools::isSubmit('addorder')) {
                 Media::addJsDef([
-                    'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
+                    'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
                 ]);
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
             }
