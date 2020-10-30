@@ -729,11 +729,14 @@ class Mollie extends PaymentModule
      * @throws PrestaShopException
      * @throws SmartyException
      */
-    public function hookPaymentOptions()
+    public function hookPaymentOptions($params)
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
             return [];
         }
+        /** @var Cart $cart */
+        $cart = $params['cart'];
+
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         /** @var \Mollie\Service\IssuerService $issuerService */
         /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
@@ -779,7 +782,12 @@ class Mollie extends PaymentModule
             $methodObj = new MolPaymentMethod($method['id_payment_method']);
 
             $isVoucherMethod = $methodObj->id_method === \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID;
-            if ($isVoucherMethod && !$voucherValidator->validate($cart->getProducts())) {
+            $hasVoucherProducts = $voucherValidator->validate($cart->getProducts());
+            $totalOrderCost = $cart->getOrderTotal(true);
+            if ($isVoucherMethod && !$hasVoucherProducts) {
+                continue;
+            }
+            if ($isVoucherMethod && \Mollie\Utility\NumberUtility::isLowerThan($totalOrderCost, 1)) {
                 continue;
             }
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
