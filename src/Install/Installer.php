@@ -241,7 +241,7 @@ class Installer
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
-        Configuration::updateValue(Mollie\Config\Config::STATUS_MOLLIE_AWAITING, (int)$orderState->id);
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_AWAITING, (int)$orderState->id);
 
         return true;
     }

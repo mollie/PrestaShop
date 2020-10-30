@@ -291,7 +291,7 @@ class Config
     public static function getStatuses()
     {
         return [
-            self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::STATUS_MOLLIE_AWAITING),
+            self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
             PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
@@ -300,7 +300,7 @@ class Config
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
             PaymentStatus::STATUS_OPEN => Configuration::get(self::MOLLIE_STATUS_OPEN),
             PaymentStatus::STATUS_FAILED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
-            PaymentStatus::STATUS_PENDING => Configuration::get(self::STATUS_MOLLIE_AWAITING),
+            PaymentStatus::STATUS_PENDING => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
             'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),
@@ -330,7 +330,7 @@ class Config
         return [
             self::MOLLIE_STATUS_PARTIALLY_SHIPPED,
             self::MOLLIE_STATUS_PARTIAL_REFUND,
-            self::STATUS_MOLLIE_AWAITING,
+            self::MOLLIE_STATUS_AWAITING,
             self::MOLLIE_STATUS_ORDER_COMPLETED,
         ];
     }

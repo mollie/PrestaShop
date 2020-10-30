@@ -117,7 +117,7 @@ class Uninstall
             Config::MOLLIE_STATUS_COMPLETED,
             Config::MOLLIE_STATUS_ORDER_COMPLETED,
             Config::MOLLIE_MAIL_WHEN_COMPLETED,
-            Config::STATUS_MOLLIE_AWAITING,
+            Config::MOLLIE_STATUS_AWAITING,
         ];
 
         $this->deleteConfigurations($configurations);
