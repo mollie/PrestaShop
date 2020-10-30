@@ -120,8 +120,9 @@ class SettingsSaveService
         $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
         $paymentOptionPositions = Tools::getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
 
-        $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
-
+        if ($paymentOptionPositions){
+            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
+        }
 
         $apiKey = (int)$environment === Config::ENVIRONMENT_LIVE ? $mollieApiKey : $mollieApiKeyTest;
         $isApiKeyIncorrect = strpos($apiKey, 'live') !== 0 && strpos($apiKey, 'test') !== 0;
