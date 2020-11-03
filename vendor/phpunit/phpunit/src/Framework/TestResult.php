@@ -544,7 +544,7 @@ class PHPUnit_Framework_TestResult implements \Countable
         if ($collectCodeCoverage) {
             $this->codeCoverage->start($test);
         }
-        $monitorFunctions = $this->beStrictAboutResourceUsageDuringSmallTests && !$test instanceof \MolliePrefix\PHPUnit_Framework_WarningTestCase && $test->getSize() == \MolliePrefix\PHPUnit_Util_Test::SMALL && \function_exists('\MolliePrefix\xdebug_start_function_monitor');
+        $monitorFunctions = $this->beStrictAboutResourceUsageDuringSmallTests && !$test instanceof \MolliePrefix\PHPUnit_Framework_WarningTestCase && $test->getSize() == \MolliePrefix\PHPUnit_Util_Test::SMALL && \function_exists('MolliePrefix\\xdebug_start_function_monitor');
         if ($monitorFunctions) {
             \xdebug_start_function_monitor(\MolliePrefix\SebastianBergmann\ResourceOperations\ResourceOperations::getFunctions());
         }

@@ -200,7 +200,7 @@ class Filesystem
             if ($recursive && \is_dir($file) && !\is_link($file)) {
                 $this->chown(new \FilesystemIterator($file), $user, \true);
             }
-            if (\is_link($file) && \function_exists('\MolliePrefix\lchown')) {
+            if (\is_link($file) && \function_exists('MolliePrefix\\lchown')) {
                 if (\true !== @\lchown($file, $user)) {
                     throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chown file "%s".', $file), 0, null, $file);
                 }
@@ -226,7 +226,7 @@ class Filesystem
             if ($recursive && \is_dir($file) && !\is_link($file)) {
                 $this->chgrp(new \FilesystemIterator($file), $group, \true);
             }
-            if (\is_link($file) && \function_exists('\MolliePrefix\lchgrp')) {
+            if (\is_link($file) && \function_exists('MolliePrefix\\lchgrp')) {
                 if (\true !== @\lchgrp($file, $group) || \defined('HHVM_VERSION') && !\posix_getgrnam($group)) {
                     throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
                 }

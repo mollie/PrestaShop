@@ -166,6 +166,6 @@ class Runtime
      */
     public function hasPHPDBGCodeCoverage()
     {
-        return $this->isPHPDBG() && \function_exists('\MolliePrefix\phpdbg_start_oplog');
+        return $this->isPHPDBG() && \function_exists('MolliePrefix\\phpdbg_start_oplog');
     }
 }

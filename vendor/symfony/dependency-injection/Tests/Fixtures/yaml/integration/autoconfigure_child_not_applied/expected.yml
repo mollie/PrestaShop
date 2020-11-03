@@ -1,6 +1,6 @@
 services:
     child_service_expected:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         # the parent has autoconfigure true, but that does not cascade to the child
         autoconfigure: false
         # an autoconfigured "instanceof" is setup for IntegrationTestStub

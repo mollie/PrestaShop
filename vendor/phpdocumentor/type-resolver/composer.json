@@ -14,14 +14,14 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\phpDocumentor\\Reflection\\": [
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\phpDocumentor\\Reflection\\": [
                 "src\/"
             ]
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\phpDocumentor\\Reflection\\": [
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\phpDocumentor\\Reflection\\": [
                 "tests\/unit"
             ]
         }

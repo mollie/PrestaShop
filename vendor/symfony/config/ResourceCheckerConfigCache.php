@@ -122,7 +122,7 @@ class ResourceCheckerConfigCache implements \MolliePrefix\Symfony\Component\Conf
                 // discard chmod failure (some filesystem may not support it)
             }
         }
-        if (\function_exists('\MolliePrefix\opcache_invalidate') && \filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN)) {
+        if (\function_exists('MolliePrefix\\opcache_invalidate') && \filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN)) {
             @\opcache_invalidate($this->file, \true);
         }
     }

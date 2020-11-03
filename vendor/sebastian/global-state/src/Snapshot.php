@@ -110,7 +110,7 @@ class Snapshot
         if ($includeIncludedFiles) {
             $this->includedFiles = \get_included_files();
         }
-        if (\function_exists('\MolliePrefix\get_declared_traits')) {
+        if (\function_exists('MolliePrefix\\get_declared_traits')) {
             $this->traits = \get_declared_traits();
         }
     }

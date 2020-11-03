@@ -57,6 +57,7 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
+use Mollie\Provider\PhoneNumberProviderInterface;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -78,7 +79,7 @@ class PaymentMethodService
     /**
      * @var MethodCountryRepository
      */
-    private $countryRepository;
+    private $methodCountryRepository;
 
     /**
      * @var CartLinesService
@@ -99,26 +100,33 @@ class PaymentMethodService
      * @var CreditCardLogoProvider
      */
     private $creditCardLogoProvider;
+
     private $paymentMethodSortProvider;
+
+    private $countryRepository;
+
+    private $phoneNumberProvider;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
-        MethodCountryRepository $countryRepository,
+        MethodCountryRepository $methodCountryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
         CreditCardLogoProvider $creditCardLogoProvider,
-        PaymentMethodSortProviderInterface $paymentMethodSortProvider
+        PaymentMethodSortProviderInterface $paymentMethodSortProvider,
+        PhoneNumberProviderInterface $phoneNumberProvider
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
-        $this->countryRepository = $countryRepository;
+        $this->methodCountryRepository = $methodCountryRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
+        $this->phoneNumberProvider = $phoneNumberProvider;
     }
 
     public function savePaymentMethod($method)
@@ -211,11 +219,11 @@ class PaymentMethodService
             foreach ($methods as $index => $methodId) {
                 $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
                 if ($methodObj->is_countries_applicable) {
-                    if (!$this->countryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                    if (!$this->methodCountryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
                         unset($methods[$index]);
                     }
                 } else {
-                    if ($this->countryRepository->checkIfCountryIsExcluded($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                    if ($this->methodCountryRepository->checkIfCountryIsExcluded($methodObj->id_method, $country = Country::getByIso($countryCode))) {
                         unset($methods[$index]);
                     }
                 }
@@ -366,11 +374,14 @@ class PaymentMethodService
 
             if (isset($cart->id_address_invoice)) {
                 $billing = new Address((int)$cart->id_address_invoice);
+
                 $orderData->setBillingAddress($billing);
+                $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billing));
             }
             if (isset($cart->id_address_delivery)) {
                 $shipping = new Address((int)$cart->id_address_delivery);
                 $orderData->setShippingAddress($shipping);
+                $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shipping));
             }
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));

@@ -27,14 +27,14 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Doctrine\\Instantiator\\": "src\/Doctrine\/Instantiator\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Doctrine\\Instantiator\\": "src\/Doctrine\/Instantiator\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\DoctrineTest\\InstantiatorPerformance\\": "tests\/DoctrineTest\/InstantiatorPerformance\/",
-            "MolliePrefix\\DoctrineTest\\InstantiatorTest\\": "tests\/DoctrineTest\/InstantiatorTest\/",
-            "MolliePrefix\\DoctrineTest\\InstantiatorTestAsset\\": "tests\/DoctrineTest\/InstantiatorTestAsset\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DoctrineTest\\InstantiatorPerformance\\": "tests\/DoctrineTest\/InstantiatorPerformance\/",
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DoctrineTest\\InstantiatorTest\\": "tests\/DoctrineTest\/InstantiatorTest\/",
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DoctrineTest\\InstantiatorTestAsset\\": "tests\/DoctrineTest\/InstantiatorTestAsset\/"
         }
     },
     "extra": {

@@ -9,6 +9,8 @@
 + Added sku fallback for products without names.
 + Updated translations.
 + Added voucher payment method.
++ Bugfix - phone numbers for billing and delivery address are sent with international format and regular phone numbers are tried to be converted to it. If convertion
+  fails in any way then phone number is not sent and thus an informative message is logged in PrestaShop logger.
 
 ## Changes in release 4.0.9 Hotfix-1 ##
 + In PS1.6 prevents double click payment method to create multiple orders

@@ -6,7 +6,7 @@ services:
         tags: [from_defaults]
 
     _instanceof:
-        MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStubParent:
+        MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStubParent:
             autowire: false
             shared: false
             public: false
@@ -15,12 +15,12 @@ services:
             calls:
                 - [setSunshine, [bright]]
 
-        MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub:
+        MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub:
             tags:
                 - { name: bar_tag }
 
     main_service:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         public: true
         tags:
             - { name: foo_tag, tag_option: from_service }

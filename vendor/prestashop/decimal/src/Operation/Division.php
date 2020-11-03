@@ -34,7 +34,7 @@ class Division
      */
     public function compute(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b, $precision = self::DEFAULT_PRECISION)
     {
-        if (\function_exists('\MolliePrefix\bcdiv')) {
+        if (\function_exists('MolliePrefix\\bcdiv')) {
             return $this->computeUsingBcMath($a, $b, $precision);
         }
         return $this->computeWithoutBcMath($a, $b, $precision);

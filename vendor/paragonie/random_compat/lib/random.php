@@ -146,7 +146,7 @@ if (!\is_callable('random_bytes')) {
     /**
      * throw new Exception
      */
-    if (!function_exists('\MolliePrefix\random_bytes')) {
+    if (!\function_exists('MolliePrefix\\random_bytes')) {
         if (!\is_callable('random_bytes')) {
             /**
              * We don't have any more options, so let's throw an exception right now
@@ -162,7 +162,6 @@ if (!\is_callable('random_bytes')) {
                 unset($length);
                 // Suppress "variable not used" warnings.
                 throw new \Exception('There is no suitable CSPRNG installed on your system');
-
                 return '';
             }
         }

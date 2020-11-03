@@ -89,7 +89,7 @@ class Exporter
     {
         if (\is_string($value)) {
             $string = $this->export($value);
-            if (\function_exists('\MolliePrefix\mb_strlen')) {
+            if (\function_exists('MolliePrefix\\mb_strlen')) {
                 if (\mb_strlen($string) > 40) {
                     $string = \mb_substr($string, 0, 30) . '...' . \mb_substr($string, -7);
                 }

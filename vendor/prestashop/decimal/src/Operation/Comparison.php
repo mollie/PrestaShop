@@ -24,7 +24,7 @@ class Comparison
      */
     public function compare(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        if (\function_exists('\MolliePrefix\bccomp')) {
+        if (\function_exists('MolliePrefix\\bccomp')) {
             return $this->compareUsingBcMath($a, $b);
         }
         return $this->compareWithoutBcMath($a, $b);

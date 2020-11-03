@@ -1,7 +1,0 @@
-<documentation title="Line Endings">
-    <standard>
-    <![CDATA[
-    Unix-style line endings are preferred ("\n" instead of "\MolliePrefix\MolliePrefix\r\n").
-    ]]>
-    </standard>
-</documentation>

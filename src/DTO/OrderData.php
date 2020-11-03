@@ -113,6 +113,16 @@ class OrderData implements JsonSerializable
      */
     private $payment;
 
+    /**
+     * @var string
+     */
+    private $billingPhoneNumber;
+
+    /**
+     * @var string
+     */
+    private $deliveryPhoneNumber;
+
     public function __construct(
         Amount $amount,
         $redirectUrl,
@@ -276,6 +286,46 @@ class OrderData implements JsonSerializable
     }
 
     /**
+     * @return mixed
+     */
+    public function getBillingPhoneNumber()
+    {
+        return $this->billingPhoneNumber;
+    }
+
+    /**
+     * @param mixed $billingPhoneNumber
+     *
+     * @return self
+     */
+    public function setBillingPhoneNumber($billingPhoneNumber)
+    {
+        $this->billingPhoneNumber = $billingPhoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryPhoneNumber()
+    {
+        return $this->deliveryPhoneNumber;
+    }
+
+    /**
+     * @param mixed $deliveryPhoneNumber
+     *
+     * @return self
+     */
+    public function setDeliveryPhoneNumber($deliveryPhoneNumber)
+    {
+        $this->deliveryPhoneNumber = $deliveryPhoneNumber;
+
+        return $this;
+    }
+
+    /**
      * @param Address $shippingAddress
      */
     public function setShippingAddress($shippingAddress)
@@ -353,7 +403,8 @@ class OrderData implements JsonSerializable
         foreach ($this->getLines() as $line) {
             $lines[] = $line->jsonSerialize();
         }
-        return [
+
+        $result = [
             'amount' => [
                 'currency' => $this->getAmount()->getCurrency(),
                 'value' => (string)$this->getAmount()->getValue(),
@@ -367,7 +418,6 @@ class OrderData implements JsonSerializable
                 "givenName" => $this->getBillingAddress()->firstname,
                 "familyName" => $this->getBillingAddress()->lastname,
                 "email" => $this->getEmail(),
-                "phone" => $this->getBillingAddress()->phone,
             ],
             'shippingAddress' => [
                 "organizationName" => $this->getShippingAddress()->company,
@@ -378,7 +428,6 @@ class OrderData implements JsonSerializable
                 "givenName" => $this->getShippingAddress()->firstname,
                 "familyName" => $this->getShippingAddress()->lastname,
                 "email" => $this->getEmail(),
-                "phone" => $this->getShippingAddress()->phone,
             ],
             'redirectUrl' => $this->getRedirectUrl(),
             'webhookUrl' => $this->getWebhookUrl(),
@@ -389,5 +438,15 @@ class OrderData implements JsonSerializable
             'lines' => $lines,
             'payment' => $this->getPayment()
         ];
+
+        if ($this->billingPhoneNumber) {
+            $result['billingAddress']['phone'] = $this->billingPhoneNumber;
+        }
+
+        if ($this->deliveryPhoneNumber) {
+            $result['shippingAddress']['phone'] = $this->deliveryPhoneNumber;
+        }
+
+        return $result;
     }
 }

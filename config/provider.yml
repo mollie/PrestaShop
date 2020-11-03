@@ -5,3 +5,8 @@ services:
       - '@=service("mollie.factory.module_factory").getPathUri()'
 
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
+
+  Mollie\Provider\PhoneNumberProvider:
+    arguments:
+      - '@Mollie\Repository\CountryRepository'
+      - '@Mollie\Logger\PrestaLogger'

@@ -1,7 +1,7 @@
 
 services:
     service_container:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:

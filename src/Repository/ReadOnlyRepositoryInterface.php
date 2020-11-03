@@ -48,7 +48,7 @@ interface ReadOnlyRepositoryInterface
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
-     * @return ObjectModel
+     * @return ObjectModel|null
      */
     public function findOneBy(array $keyValueCriteria);
 }

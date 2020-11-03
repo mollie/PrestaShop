@@ -12,7 +12,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\DeepCopy\\": "src\/DeepCopy\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DeepCopy\\": "src\/DeepCopy\/"
         },
         "files": [
             "src\/DeepCopy\/deep_copy.php"
@@ -20,8 +20,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\DeepCopy\\": "fixtures\/",
-            "MolliePrefix\\DeepCopyTest\\": "tests\/DeepCopyTest\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DeepCopy\\": "fixtures\/",
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\DeepCopyTest\\": "tests\/DeepCopyTest\/"
         }
     },
     "require": {

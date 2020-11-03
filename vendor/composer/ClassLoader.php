@@ -279,7 +279,7 @@ class ClassLoader
      */
     public function setApcuPrefix($apcuPrefix)
     {
-        $this->apcuPrefix = function_exists('\MolliePrefix\apcu_fetch') && ini_get('apc.enabled') ? $apcuPrefix : null;
+        $this->apcuPrefix = function_exists('apcu_fetch') && ini_get('apc.enabled') ? $apcuPrefix : null;
     }
 
     /**

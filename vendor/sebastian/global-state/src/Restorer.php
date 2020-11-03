@@ -25,7 +25,7 @@ class Restorer
      */
     public function restoreFunctions(\MolliePrefix\SebastianBergmann\GlobalState\Snapshot $snapshot)
     {
-        if (!\function_exists('\MolliePrefix\uopz_delete')) {
+        if (!\function_exists('MolliePrefix\\uopz_delete')) {
             throw new \MolliePrefix\SebastianBergmann\GlobalState\RuntimeException('The uopz_delete() function is required for this operation');
         }
         $functions = \get_defined_functions();

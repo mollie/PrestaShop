@@ -114,7 +114,7 @@ final class Php72
             // Check if formatted mode is S_IFCHR
             return $stat ? 020000 === ($stat['mode'] & 0170000) : \false;
         }
-        return \function_exists('\MolliePrefix\posix_isatty') && @\posix_isatty($stream);
+        return \function_exists('MolliePrefix\\posix_isatty') && @\posix_isatty($stream);
     }
     private static function initHashMask()
     {
