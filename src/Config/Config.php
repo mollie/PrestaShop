@@ -264,6 +264,7 @@ class Config
         self::MOLLIE_VOUCHER_CATEGORY_GIFT => 'gift',
         self::MOLLIE_VOUCHER_CATEGORY_ECO => 'eco'
     ];
+    const MOLLIE_VOUCHER_MINIMAL_AMOUNT = 1;
 
     /** @var array $methods */
     public static $methods = [

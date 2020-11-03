@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Mollie\Utility\NumberUtility;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use Address;
 use Cart;
@@ -210,6 +211,12 @@ class PaymentMethodService
                 if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
                     unset($methods[$index]);
                 } elseif ($_COOKIE['isApplePayMethod'] === '0') {
+                    unset($methods[$index]);
+                }
+            }
+            if ($methodObj->id_method === Config::MOLLIE_VOUCHER_METHOD_ID) {
+                $totalOrderCost = $context->cart->getOrderTotal(true);
+                if (!$this->isVoucherPaymentAvailable($totalOrderCost)) {
                     unset($methods[$index]);
                 }
             }
@@ -453,5 +460,14 @@ class PaymentMethodService
         $isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 
         return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
+    }
+
+    private function isVoucherPaymentAvailable($totalOrderCost)
+    {
+        if (NumberUtility::isLowerThan($totalOrderCost, Config::MOLLIE_VOUCHER_MINIMAL_AMOUNT)) {
+            return false;
+        }
+
+        return true;
     }
 }

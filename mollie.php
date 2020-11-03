@@ -793,9 +793,6 @@ class Mollie extends PaymentModule
             if ($isVoucherMethod && !$hasVoucherProducts) {
                 continue;
             }
-            if ($isVoucherMethod && \Mollie\Utility\NumberUtility::isLowerThan($totalOrderCost, 1)) {
-                continue;
-            }
             $paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
             $isIdealMethod = $methodObj->id_method === MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL;
             $isIssuersOnClick = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS) === Mollie\Config\Config::ISSUERS_ON_CLICK;
