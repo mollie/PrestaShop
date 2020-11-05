@@ -177,6 +177,9 @@ class PaymentMethodService
         if (!$apiKey) {
             return [];
         }
+        if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
+            return [];
+        }
         $context = Context::getContext();
         $iso = Tools::strtolower($context->currency->iso_code);
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
