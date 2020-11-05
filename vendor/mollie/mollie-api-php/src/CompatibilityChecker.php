@@ -37,9 +37,9 @@ class CompatibilityChecker
     public function satisfiesJsonExtension()
     {
         // Check by extension_loaded
-        if (\function_exists('\\extension_loaded') && \extension_loaded('json')) {
+        if (\function_exists('extension_loaded') && \extension_loaded('json')) {
             return \true;
-        } elseif (\function_exists('\\json_encode')) {
+        } elseif (\function_exists('json_encode')) {
             return \true;
         }
         return \false;

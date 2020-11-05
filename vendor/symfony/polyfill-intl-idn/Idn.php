@@ -11,7 +11,7 @@
 namespace MolliePrefix\Symfony\Polyfill\Intl\Idn;
 
 use Exception;
-use MolliePrefix\Normalizer;
+use Normalizer;
 use MolliePrefix\Symfony\Polyfill\Intl\Idn\Resources\unidata\DisallowedRanges;
 use MolliePrefix\Symfony\Polyfill\Intl\Idn\Resources\unidata\Regex;
 /**
@@ -203,7 +203,7 @@ final class Idn
                     $info->errors |= self::ERROR_DISALLOWED;
                 // no break.
                 case 'valid':
-                    $str .= \mb_chr($codePoint, 'utf-8');
+                    $str .= mb_chr($codePoint, 'utf-8');
                     break;
                 case 'ignored':
                     // Do nothing.
@@ -213,7 +213,7 @@ final class Idn
                     break;
                 case 'deviation':
                     $info->transitionalDifferent = \true;
-                    $str .= $transitional ? $data['mapping'] : \mb_chr($codePoint, 'utf-8');
+                    $str .= $transitional ? $data['mapping'] : mb_chr($codePoint, 'utf-8');
                     break;
             }
         }
@@ -239,8 +239,8 @@ final class Idn
         // Step 1. Map each code point in the domain name string
         $domain = self::mapCodePoints($domain, $options, $info);
         // Step 2. Normalize the domain name string to Unicode Normalization Form C.
-        if (!\MolliePrefix\Normalizer::isNormalized($domain, \MolliePrefix\Normalizer::FORM_C)) {
-            $domain = \MolliePrefix\Normalizer::normalize($domain, \MolliePrefix\Normalizer::FORM_C);
+        if (!\Normalizer::isNormalized($domain, \Normalizer::FORM_C)) {
+            $domain = \Normalizer::normalize($domain, \Normalizer::FORM_C);
         }
         // Step 3. Break the string into labels at U+002E (.) FULL STOP.
         $labels = \explode('.', $domain);
@@ -367,7 +367,7 @@ final class Idn
             return;
         }
         // Step 1. The label must be in Unicode Normalization Form C.
-        if (!\MolliePrefix\Normalizer::isNormalized($label, \MolliePrefix\Normalizer::FORM_C)) {
+        if (!\Normalizer::isNormalized($label, \Normalizer::FORM_C)) {
             $info->errors |= self::ERROR_INVALID_ACE_LABEL;
         }
         $codePoints = self::utf8Decode($label);
@@ -484,7 +484,7 @@ final class Idn
             }
             $n += \intdiv($i, $outPlusOne);
             $i %= $outPlusOne;
-            \array_splice($output, $i++, 0, array(\mb_chr($n, 'utf-8')));
+            \array_splice($output, $i++, 0, array(mb_chr($n, 'utf-8')));
         }
         return \implode('', $output);
     }

@@ -5,7 +5,7 @@ services:
         tags:
             - name: foo
 
-    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Acme\Foo: ~
+    MolliePrefix\Acme\Foo: ~
 
     with_defaults:
         class: Foo
@@ -26,7 +26,7 @@ services:
 
     with_defaults_aliased_short: '@with_defaults'
 
-    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Acme\WithShortCutArgs: [foo]
+    MolliePrefix\Acme\WithShortCutArgs: [foo]
 
     child_def:
         parent: with_defaults

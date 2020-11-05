@@ -41,7 +41,7 @@ if (!\is_callable('random_bytes')) {
      *
      * @return string
      */
-    if (!\function_exists('MolliePrefix\\random_bytes')) {
+    if (!function_exists('MolliePrefix\random_bytes')) {
         function random_bytes($bytes)
         {
             try {
@@ -54,7 +54,7 @@ if (!\is_callable('random_bytes')) {
                 throw new \Error('Length must be greater than 0');
             }
             /** @var string|bool $buf */
-            $buf = @\MolliePrefix\mcrypt_create_iv((int) $bytes, (int) \MCRYPT_DEV_URANDOM);
+            $buf = @\mcrypt_create_iv((int)$bytes, (int)\MCRYPT_DEV_URANDOM);
             if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
                 /**
                  * Return our random entropy buffer here:

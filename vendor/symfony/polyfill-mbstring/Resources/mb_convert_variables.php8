@@ -11,7 +11,7 @@
 
 use Symfony\Polyfill\Mbstring as p;
 
-if (!function_exists('\MolliePrefix\mb_convert_variables')) {
+if (!function_exists('mb_convert_variables')) {
     /**
      * Convert character code in variable(s)
      */
