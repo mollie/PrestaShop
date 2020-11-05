@@ -365,4 +365,4 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \MolliePrefix\Sy
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', 'Symfony_DI_PhpDumper_Test_Almost_Circular_Private', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', \false);

@@ -18,12 +18,12 @@ parameters:
 
 services:
     service_container:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    MolliePrefix\Psr\Container\ContainerInterface:
+    MolliePrefix\MolliePrefix\Psr\Container\ContainerInterface:
         alias: service_container
         public: false
-    MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface:
+    MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface:
         alias: service_container
         public: false

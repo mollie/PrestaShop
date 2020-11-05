@@ -1,7 +1,7 @@
 services:
     # main_service should look like this in the end
     main_service_expected:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         # _instanceof overrides _defaults
         autowire: false
         # inherited from _defaults

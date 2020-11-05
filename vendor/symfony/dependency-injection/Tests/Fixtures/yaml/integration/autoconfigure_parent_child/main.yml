@@ -3,5 +3,5 @@ imports:
 
 services:
     parent_service:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
+        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTestStub
         autoconfigure: true

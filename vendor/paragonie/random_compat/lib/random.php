@@ -156,18 +156,16 @@ if (!\is_callable('random_bytes')) {
          * @throws Exception
          * @return string
          */
-        if (!function_exists('MolliePrefix\random_bytes')) {
+        if (!\function_exists('MolliePrefix\\random_bytes')) {
             function random_bytes($length)
             {
                 unset($length);
                 // Suppress "variable not used" warnings.
                 throw new \Exception('There is no suitable CSPRNG installed on your system');
-
                 return '';
             }
         }
     }
-
 }
 if (!\is_callable('random_int')) {
     require_once $RandomCompatDIR . \DIRECTORY_SEPARATOR . 'random_int.php';

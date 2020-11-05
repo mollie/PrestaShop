@@ -68,4 +68,4 @@ class ProjectServiceContainer extends \MolliePrefix\Symfony\Component\Dependency
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+\class_alias('MolliePrefix\\ProjectServiceContainer', 'MolliePrefix\\ProjectServiceContainer', \false);
