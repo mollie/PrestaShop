@@ -3,7 +3,8 @@ $(document).ready(function() {
   var $sortableElement = $('#js-payment-methods-sortable')
 
   $sortableElement.sortable({
-    appendTo: document.body
+    appendTo: document.body,
+    handle: '.js-sort-handle'
   });
 
   $sortableElement.bind( "sortupdate", function(event, ui) {

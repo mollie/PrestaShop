@@ -76,35 +76,37 @@
   <ul id="js-payment-methods-sortable" class="ui-sortable payment-methods-sortable" data-tab-id="general_settings">
     {foreach $input.paymentMethods as $paymentMethod}
       {assign var = 'methodObj' value=$paymentMethod.obj}
-      <li class="payment-method border border-bottom ui-sortable-handle">
+      <li class="payment-method border border-bottom">
         <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id}]" class="js-payment-option-position">
-        <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-        <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
-           role="button"
-           aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id}">
-          <svg class="bi bi-chevron-compact-up mollie-svg" width="1em" height="1em" viewBox="0 0 16 16"
-               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd"
-                  d="M7.776 5.553a.5.5 0 01.448 0l6 3a.5.5 0 11-.448.894L8 6.56 2.224 9.447a.5.5 0 11-.448-.894l6-3z"
-                  clip-rule="evenodd"/>
-          </svg>
-          {l s=$paymentMethod.name mod='mollie'}
-        </a>
-        <td class="text-center">
-          {if $methodObj->enabled}
-            <a href="#" class="payment-check-link"
-               data-action="deactivate"
-               onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-              <i class="icon-check text-success"></i>
-            </a>
-          {else}
-            <a href="#" class="payment-check-link"
-               data-action="activate"
-               onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
-              <i class="icon-remove text-danger"></i>
-            </a>
-          {/if}
-        </td>
+        <span class="js-sort-handle sort-handle">
+          <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+          <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
+             role="button"
+             aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id}">
+            <svg class="bi bi-chevron-compact-up mollie-svg" width="1em" height="1em" viewBox="0 0 16 16"
+                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                    d="M7.776 5.553a.5.5 0 01.448 0l6 3a.5.5 0 11-.448.894L8 6.56 2.224 9.447a.5.5 0 11-.448-.894l6-3z"
+                    clip-rule="evenodd"/>
+            </svg>
+            {l s=$paymentMethod.name mod='mollie'}
+          </a>
+          <td class="text-center">
+            {if $methodObj->enabled}
+              <a href="#" class="payment-check-link"
+                 data-action="deactivate"
+                 onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                <i class="icon-check text-success"></i>
+              </a>
+            {else}
+              <a href="#" class="payment-check-link"
+                 data-action="activate"
+                 onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                <i class="icon-remove text-danger"></i>
+              </a>
+            {/if}
+          </td>
+        </span>
         <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id}">
           <div class="form-group">
             <label class="control-label col-lg-3">
