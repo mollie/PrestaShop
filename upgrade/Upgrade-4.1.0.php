@@ -67,6 +67,10 @@ function upgrade_module_4_1_0($module)
     $installer = $module->getContainer(Installer::class);
     $installer->installVoucherFeatures();
 
+    foreach ($installer::getHooks() as $hook) {
+        $module->registerHook($hook);
+    }
+
     $isUpdated = true;
     // adding positions for all payments in order they exist in database
     $iteration = 0;
