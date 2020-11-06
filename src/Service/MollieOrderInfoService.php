@@ -179,7 +179,7 @@ class MollieOrderInfoService
                                 'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('refund')),
                             ];
                         }
-                        $status = $this->refundService->doRefundOrderLines($input['order'], isset($input['order']['lines']) ? $input['order']['lines'] : []);
+                        $status = $this->refundService->doRefundOrderLines($input['order'], isset($input['orderLines']) ? $input['orderLines'] : []);
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['order']['id'])]);
                     case 'cancel':
                         // Check order edit permissions
