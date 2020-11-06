@@ -33,6 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Utility\PaymentMethodUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
@@ -256,9 +257,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
                         $paymentStatus = (int) Config::getStatuses()[$status];
 
+                        $transactionInfo = [
+                            'transactionId' => $transaction->id,
+                            'paymentMethod' => PaymentMethodUtility::getPaymentMethodName($transaction->method),
+                        ];
+
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
-                        $orderStatusService->setOrderStatus($orderId, $paymentStatus);
+                        $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, [], $transactionInfo);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
                     }
