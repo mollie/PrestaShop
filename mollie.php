@@ -164,6 +164,21 @@ class Mollie extends PaymentModule
 
     private function compile()
     {
+        if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder')) {
+            // If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
+            // where dependency injection container was without "MolliePrefix".
+            // On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
+            // merchant to try installing again where.
+            $isAdmin = $this->context->controller instanceof AdminController;
+
+            if ($isAdmin) {
+                http_response_code(500);
+                die(
+                $this->l('It looks like one of the critical files required for mollie module functionality is missing. If you recently tried to upgrade module please try again. If the problem persists contact mollie support')
+                );
+            }
+        }
+
         $containerBuilder = new MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
         $locator = new MolliePrefix\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
         $loader = new MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
