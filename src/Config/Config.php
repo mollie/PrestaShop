@@ -288,6 +288,7 @@ class Config
         'klarnasliceit' => 'Slice it.',
         'applepay' => 'Apple Pay',
         'mybank' => 'MyBank',
+        'voucher' => 'Voucher',
     ];
 
     public static function getStatuses()
