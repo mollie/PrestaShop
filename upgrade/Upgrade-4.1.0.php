@@ -32,7 +32,8 @@
  * @link       https://www.mollie.nl
  */
 
-use Mollie\Config\Config;                                
+use Mollie\Config\Config;
+use Mollie\Install\Installer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,7 +47,7 @@ function upgrade_module_4_1_0($module)
 {
     Configuration::updateValue(Config::MOLLIE_STATUS_AWAITING, Configuration::get(Config::STATUS_MOLLIE_AWAITING));
     Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_AWAITING, false);
-  
+
     $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD `position` INT(10);
@@ -61,6 +62,10 @@ function upgrade_module_4_1_0($module)
     /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
     $paymentMethodsRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
     $paymentMethods = $paymentMethodsRepo->findAll();
+
+    /** @var Installer $installer */
+    $installer = $module->getContainer(Installer::class);
+    $installer->installVoucherFeatures();
 
     $isUpdated = true;
     // adding positions for all payments in order they exist in database

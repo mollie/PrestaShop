@@ -53,6 +53,7 @@ use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tab;
 use Tools;
+use Validate;
 
 class Installer
 {
@@ -110,6 +111,13 @@ class Installer
             $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
         } catch (Exception $e) {
             $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
+            return false;
+        }
+
+        try {
+            $this->installVoucherFeatures();
+        } catch (Exception $e) {
+            $this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
             return false;
         }
 
@@ -393,5 +401,31 @@ class Installer
         }
 
         return true;
+    }
+
+    public function installVoucherFeatures()
+    {
+        $mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
+        if ($mollieVoucherId) {
+            $mollieFeature = new Feature($mollieVoucherId);
+            $doesFeatureExist = Validate::isLoadedObject($mollieFeature);
+            if($doesFeatureExist) {
+                return;
+            }
+        }
+
+        $feature = new Feature();
+        $feature->name = MultiLangUtility::createMultiLangField('Voucher');
+        $feature->add();
+
+        foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
+            $featureValue = new FeatureValue();
+            $featureValue->id_feature = $feature->id;
+            $featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
+            $featureValue->add();
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE . $key, $featureValue->id);
+        }
+
+        Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
     }
 }
