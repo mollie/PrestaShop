@@ -174,7 +174,7 @@ class Mollie extends PaymentModule
             if ($isAdmin) {
                 http_response_code(500);
                 die(
-                $this->l('It looks like one of the critical files required for mollie module functionality is missing. If you recently tried to upgrade module please try again. If the problem persists contact mollie support')
+                $this->l('It looks like the module upload requires a refresh. Please upload the Mollie module once again and start collecting the payments. If you still get this error message after another upload, please contact Mollie support with this screenshot and they will guide you with the next steps: info@mollie.com')
                 );
             }
         }
