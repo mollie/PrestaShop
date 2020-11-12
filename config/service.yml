@@ -66,7 +66,7 @@ services:
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Service\MolCarrierInformationService'
-      - '@Mollie\Service\Settings\PaymentMethodPositionHandlerInterface'
+      - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
 
   Mollie\Service\ShipmentService:
     arguments:
@@ -155,6 +155,5 @@ services:
     - '@Mollie\Repository\AttributeRepository'
     - '@Mollie\Adapter\ConfigurationAdapter'
 
-  Mollie\Service\ErrorMessageService:
+  Mollie\Service\ExceptionService:
     - '@mollie'
-    - '@Mollie\Adapter\ConfigurationAdapter'

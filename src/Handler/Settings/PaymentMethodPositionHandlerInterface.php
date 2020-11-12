@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Service\Settings;
+namespace Mollie\Handler\Settings;
 
 interface PaymentMethodPositionHandlerInterface
 {
