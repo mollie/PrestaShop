@@ -149,8 +149,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $exceptionService = $this->module->getContainer(ExceptionService::class);
                 $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
             }
-
             $this->errors[] = $message;
+
             return;
         } catch (PrestaShopException $e) {
             $this->setTemplate('error.tpl');
