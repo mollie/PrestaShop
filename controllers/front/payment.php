@@ -33,6 +33,9 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Exception\OrderCreationException;
+use Mollie\Handler\Exception\OrderExceptionHandler;
+use Mollie\Service\ExceptionService;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
@@ -136,11 +139,18 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         );
         try {
             $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
-        } catch (ApiException $e) {
+        } catch (OrderCreationException $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-                ? $e->getMessage().'. Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+
+            if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
+                $message = 'Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT);
+            } else {
+                /** @var ExceptionService $exceptionService */
+                $exceptionService = $this->module->getContainer(ExceptionService::class);
+                $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+            }
+            $this->errors[] = $message;
+
             return;
         } catch (PrestaShopException $e) {
             $this->setTemplate('error.tpl');
@@ -224,10 +234,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @param array $data
      *
+     * @param $selectedApi
      * @return MolliePaymentAlias|MollieOrderAlias|null
      *
-     * @throws PrestaShopException
-     * @throws ApiException
+     * @throws OrderCreationException
      */
     protected function createPayment($data, $selectedApi)
     {
@@ -240,19 +250,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $payment = $this->module->api->payments->create($data);
             }
         } catch (Exception $e) {
-            throw new ApiException($e->getMessage());
+            /** @var OrderExceptionHandler $orderExceptionHandler */
+            $orderExceptionHandler = $this->module->getContainer(OrderExceptionHandler::class);
+            $orderExceptionHandler->handle($e);
         }
-        return $payment;
-    }
-
-    protected function createCustomer($data, $selectedApi)
-    {
-        try {
-            $payment = $this->module->api->customers->create($data, array('embed' => 'payments'));
-        } catch (Exception $e) {
-            throw new ApiException($e->getMessage());
-        }
-
         return $payment;
     }
 

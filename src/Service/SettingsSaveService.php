@@ -46,7 +46,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\Settings\PaymentMethodPositionHandlerInterface;
+use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
