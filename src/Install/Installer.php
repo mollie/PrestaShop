@@ -234,7 +234,7 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function awaitingMollieOrderState()
+    public function awaitingMollieOrderState()
     {
         $orderState = new OrderState();
         $orderState->send_email = false;
