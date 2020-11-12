@@ -2,9 +2,14 @@
 
 namespace Provider;
 
-use Address;
 use Mollie\Provider\PhoneNumberProvider;
 use PHPUnit\Framework\TestCase;
+
+if (!class_exists('Address')) {
+    class Address {
+        public $phone;
+    }
+}
 
 class PhoneNumberProviderTest extends TestCase
 {
@@ -16,7 +21,7 @@ class PhoneNumberProviderTest extends TestCase
      */
     public function testGetFromAddress($phoneNumber, $result)
     {
-        $address = new Address();
+        $address = new \Address();
         $address->phone = $phoneNumber;
 
         $phoneNumberProvider = new PhoneNumberProvider();

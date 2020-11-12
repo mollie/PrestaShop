@@ -3,7 +3,6 @@
 namespace Mollie\Provider;
 
 use Address;
-use Mollie\Utility\PhoneNumberUtility;
 
 final class PhoneNumberProvider implements PhoneNumberProviderInterface
 {
