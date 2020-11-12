@@ -138,9 +138,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
         } catch (ApiException $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-                ? $e->getMessage().'. Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+            /** @var \Mollie\Service\ErrorMessageService $errorMessageService */
+            $errorMessageService = $this->module->getContainer(\Mollie\Service\ErrorMessageService::class);
+            $errorMessage = $errorMessageService->getPaymentErrorMessage($e->getMessage(), $paymentData);
+
+            $this->errors[] = $errorMessage;
             return;
         } catch (PrestaShopException $e) {
             $this->setTemplate('error.tpl');

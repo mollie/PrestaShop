@@ -154,3 +154,7 @@ services:
   Mollie\Service\VoucherService:
     - '@Mollie\Repository\AttributeRepository'
     - '@Mollie\Adapter\ConfigurationAdapter'
+
+  Mollie\Service\ErrorMessageService:
+    - '@mollie'
+    - '@Mollie\Adapter\ConfigurationAdapter'
