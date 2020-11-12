@@ -163,7 +163,7 @@ class Installer
      * @since 2.0.0
      *
      */
-    private function partialRefundOrderState()
+    private function createPartialRefundOrderState()
     {
         $orderState = new OrderState();
         $orderState->send_email = false;
@@ -189,7 +189,7 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function partialShippedOrderState()
+    public function createPartialShippedOrderState()
     {
         $orderState = new OrderState();
         $orderState->send_email = false;
@@ -211,16 +211,16 @@ class Installer
 
     public function createMollieStatuses()
     {
-        if (!$this->partialRefundOrderState()) {
+        if (!$this->createPartialRefundOrderState()) {
             return false;
         }
-        if (!$this->awaitingMollieOrderState()) {
+        if (!$this->createAwaitingMollieOrderState()) {
             return false;
         }
-        if(!$this->partialShippedOrderState()) {
+        if(!$this->createPartialShippedOrderState()) {
             return false;
         }
-        if(!$this->orderCompletedOrderState()) {
+        if(!$this->createOrderCompletedOrderState()) {
             return false;
         }
 
@@ -234,7 +234,7 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function awaitingMollieOrderState()
+    public function createAwaitingMollieOrderState()
     {
         $orderState = new OrderState();
         $orderState->send_email = false;
@@ -260,7 +260,7 @@ class Installer
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function orderCompletedOrderState()
+    public function createOrderCompletedOrderState()
     {
         $orderState = new OrderState();
         $orderState->send_email = false;

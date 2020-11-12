@@ -91,7 +91,7 @@ function upgrade_module_4_0_0(Mollie $module)
     /** @var Installer $installer */
     $installer = $module->getContainer(Installer::class);
 
-    $installer->awaitingMollieOrderState();
+    $installer->createAwaitingMollieOrderState();
 
     return true;
 }
