@@ -39,6 +39,8 @@ use Configuration;
 use Db;
 use DbQuery;
 use Exception;
+use Feature;
+use FeatureValue;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
