@@ -38,6 +38,7 @@ namespace Mollie\Install;
 use Configuration;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Repository\OrderStateRepository;
 use OrderState;
 use Tab;
 use Validate;
@@ -135,15 +136,11 @@ class Uninstall
 
     private function deleteMollieStatuses()
     {
-        foreach (Config::getMollieOrderStatuses() as $mollieStatus) {
-            $statusId = Configuration::get($mollieStatus);
-            $orderState = new OrderState($statusId);
-            if (!Validate::isLoadedObject($orderState)) {
-                return;
-            }
-            $orderState->deleted = 1;
-            $orderState->update();
-        }
+        /**
+         * @var OrderStateRepository $orderStateRepository
+         */
+        $orderStateRepository = $this->module->getContainer(OrderStateRepository::class);
+        $orderStateRepository->deleteStatuses();
     }
 
     private function uninstallTabs()

@@ -25,3 +25,5 @@ services:
       - 'MolCustomer'
 
   Mollie\Repository\AttributeRepository:
+
+  Mollie\Repository\OrderStateRepository:
