@@ -36,13 +36,9 @@
 namespace Mollie\Install;
 
 use Configuration;
-use Context;
 use Db;
 use DbQuery;
 use Exception;
-use Feature;
-use FeatureValue;
-use FeatureValueLang;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
@@ -55,7 +51,7 @@ use Tab;
 use Tools;
 use Validate;
 
-class Installer
+class Installer implements InstallerInterface
 {
     const FILE_NAME = 'Installer';
 
@@ -74,10 +70,19 @@ class Installer
      */
     private $imageService;
 
-    public function __construct(Mollie $module, ImageService $imageService)
-    {
+    /**
+     * @var InstallerInterface
+     */
+    private $databaseTableInstaller;
+
+    public function __construct(
+        Mollie $module,
+        ImageService $imageService,
+        InstallerInterface $databaseTableInstaller
+    ) {
         $this->module = $module;
         $this->imageService = $imageService;
+        $this->databaseTableInstaller = $databaseTableInstaller;
     }
 
     public function install()
@@ -123,9 +128,7 @@ class Installer
 
         $this->copyEmailTemplates();
 
-        include(dirname(__FILE__) . '/../../sql/install.php');
-
-        return true;
+        return $this->databaseTableInstaller->install();
     }
 
     public function getErrors()

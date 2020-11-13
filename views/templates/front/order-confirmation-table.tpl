@@ -60,11 +60,7 @@
                                                 </div>
                                                 <div class="col-sm-9 col-xs-8 value">
                                                     {if $field.type == 'text'}
-                                                        {if (int)$field.id_module}
-                                                            {$field.text nofilter}
-                                                        {else}
-                                                            {$field.text}
-                                                        {/if}
+                                                      {$field.text}
                                                     {elseif $field.type == 'image'}
                                                         <img src="{$field.image.small.url}">
                                                     {/if}

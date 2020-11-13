@@ -22,7 +22,12 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Service\ImageService'
+      - '@Mollie\Install\DatabaseTableInstaller'
 
   Mollie\Install\Uninstall:
     arguments:
-      - '@mollie'
+      - '@Mollie\Install\DatabaseTableUninstaller'
+
+  Mollie\Install\DatabaseTableInstaller:
+
+  Mollie\Install\DatabaseTableUninstaller:

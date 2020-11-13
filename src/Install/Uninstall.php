@@ -36,14 +36,13 @@
 namespace Mollie\Install;
 
 use Configuration;
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\OrderStateRepository;
 use OrderState;
 use Tab;
 use Validate;
 
-class Uninstall
+class Uninstall implements UninstallerInterface
 {
     /**
      * @var array
@@ -51,13 +50,13 @@ class Uninstall
     private $errors = [];
 
     /**
-     * @var Mollie
+     * @var UninstallerInterface
      */
-    private $module;
+    private $databaseUninstaller;
 
-    public function __construct(Mollie $module)
+    public function __construct(UninstallerInterface $databaseUninstaller)
     {
-        $this->module = $module;
+        $this->databaseUninstaller = $databaseUninstaller;
     }
 
     public function uninstall()
@@ -68,7 +67,7 @@ class Uninstall
 
         $this->uninstallTabs();
 
-        include(dirname(__FILE__) . '/../../sql/uninstall.php');
+        $this->databaseUninstaller->uninstall();
 
         return true;
     }
