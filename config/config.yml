@@ -27,6 +27,7 @@ services:
   Mollie\Install\Uninstall:
     arguments:
       - '@Mollie\Install\DatabaseTableUninstaller'
+      - '@Mollie\Repository\OrderStateRepository'
 
   Mollie\Install\DatabaseTableInstaller:
 

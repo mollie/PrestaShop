@@ -54,14 +54,22 @@ class Uninstall implements UninstallerInterface
      */
     private $databaseUninstaller;
 
-    public function __construct(UninstallerInterface $databaseUninstaller)
-    {
+    /**
+     * @var OrderStateRepository
+     */
+    private $orderStateRepository;
+
+    public function __construct(
+        UninstallerInterface $databaseUninstaller,
+        OrderStateRepository $orderStateRepository
+    ) {
         $this->databaseUninstaller = $databaseUninstaller;
+        $this->orderStateRepository = $orderStateRepository;
     }
 
     public function uninstall()
     {
-        $this->deleteMollieStatuses();
+        $this->orderStateRepository->deleteStatuses();
 
         $this->deleteConfig();
 
@@ -131,15 +139,6 @@ class Uninstall implements UninstallerInterface
         foreach ($configurations as $configuration) {
             Configuration::deleteByName($configuration);
         }
-    }
-
-    private function deleteMollieStatuses()
-    {
-        /**
-         * @var OrderStateRepository $orderStateRepository
-         */
-        $orderStateRepository = $this->module->getContainer(OrderStateRepository::class);
-        $orderStateRepository->deleteStatuses();
     }
 
     private function uninstallTabs()
