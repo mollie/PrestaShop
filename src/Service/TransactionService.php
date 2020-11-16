@@ -35,6 +35,8 @@
 
 namespace Mollie\Service;
 
+use Currency;
+use Mollie\Config\Config;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
@@ -66,14 +68,17 @@ class TransactionService
      * @var Mollie
      */
     private $module;
+
     /**
      * @var PaymentMethodRepository
      */
     private $paymentMethodRepository;
+
     /**
      * @var \Mollie\Service\OrderStatusService
      */
     private $orderStatusService;
+
     /**
      * @var Country
      */
@@ -227,8 +232,6 @@ class TransactionService
 
         // Store status in database
 
-        $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);
-
         if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
             if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transaction->id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie\Config\Config::WARNING);
@@ -243,34 +246,58 @@ class TransactionService
         return $apiPayment;
     }
 
-    /**
-     * Retrieves the OrderPayment object, created at validateOrder. And add transaction data.
-     *
-     * @param string $molliePaymentId
-     * @param string $molliePaymentMethod
-     * @param int $orderId
-     *
-     * @return void
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function saveOrderTransactionData($molliePaymentId, $molliePaymentMethod, $orderId)
+    public function updateOrderTransaction($transactionId, $orderReference)
     {
-        // retrieve ALL payments of order.
-        // in the case of a cancel or expired on banktransfer, this will fire too.
-        // if no OrderPayment objects is retrieved in the collection, do nothing.
-        $order = new Order((int)$orderId);
-        $collection = OrderPayment::getByOrderReference($order->reference);
-        if (count($collection) > 0) {
-            /** @var OrderPayment $orderPayment */
-            $orderPayment = $collection[0];
-
-            // for older versions (1.5) , we check if it hasn't been filled yet.
-            if (!$orderPayment->transaction_id) {
-                $orderPayment->transaction_id = $molliePaymentId;
-                $orderPayment->payment_method = $molliePaymentMethod;
-                $orderPayment->update();
+        $transactionInfos = [];
+        $isOrder = TransactionUtility::isOrderTransaction($transactionId);
+        if ($isOrder) {
+            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            foreach ($transaction->payments() as $payment) {
+                if ($transaction->method === Config::MOLLIE_VOUCHER_METHOD_ID) {
+                    foreach ($payment->details->vouchers as $voucher) {
+                        $transactionInfos[] = [
+                            'paymentName' => $voucher->issuer,
+                            'amount' => $voucher->amount->value,
+                            'currency' => $voucher->amount->currency,
+                            'transactionId' => $payment->id
+                        ];
+                    }
+                    if ($payment->details->remainderMethod) {
+                        $transactionInfos[] = [
+                            'paymentName' => $payment->details->remainderMethod,
+                            'amount' => $payment->details->remainderAmount->value,
+                            'currency' => $payment->details->remainderAmount->currency,
+                            'transactionId' => $payment->id
+                        ];
+                    }
+                } else {
+                    $transactionInfos[] = [
+                        'paymentName' => $payment->method,
+                        'amount' => $payment->amount->value,
+                        'currency' => $payment->amount->currency,
+                        'transactionId' => $payment->id
+                    ];
+                }
             }
+        } else {
+            $transaction = $this->module->api->payments->get($transactionId);
+            $transactionInfos[] = [
+                'paymentName' => $transaction->method,
+                'amount' => $transaction->amount->value,
+                'currency' => $transaction->amount->currency,
+                'transactionId' => $transaction->id
+            ];
+        }
+
+        foreach ($transactionInfos as $transactionInfo) {
+            $orderPayment = new OrderPayment();
+            $orderPayment->order_reference = $orderReference;
+            $orderPayment->amount = $transactionInfo['amount'];
+            $orderPayment->payment_method = $transactionInfo['paymentName'];
+            $orderPayment->transaction_id = $transactionInfo['transactionId'];
+            $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
+
+            $orderPayment->add();
         }
     }
 

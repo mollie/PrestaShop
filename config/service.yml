@@ -47,8 +47,6 @@ services:
   Mollie\Service\OrderStatusService:
     arguments:
       - '@Mollie\Service\MailService'
-      - '@Mollie\Validator\OrderConfMailValidator'
-      - '@Mollie\Validator\NewOrderMailValidator'
 
   Mollie\Service\ErrorDisplayService:
 
@@ -148,6 +146,7 @@ services:
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
+    - '@Mollie\Service\TransactionService'
 
   Mollie\Service\UpgradeNoticeService:
 

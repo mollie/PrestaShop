@@ -33,12 +33,14 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Service\TransactionService;
 use Mollie\Utility\PaymentMethodUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
@@ -257,14 +259,17 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
                         $paymentStatus = (int) Config::getStatuses()[$status];
 
-                        $transactionInfo = [
-                            'transactionId' => $transaction->id,
-                            'paymentMethod' => PaymentMethodUtility::getPaymentMethodName($transaction->method),
-                        ];
-
+                        if ($status === PaymentStatus::STATUS_PAID) {
+                            /** @var TransactionService $transactionService */
+                            $transactionService = $this->module->getContainer(TransactionService::class);
+                            $order = new Order($orderId);
+                            if (!$order->getOrderPayments()) {
+                                $transactionService->updateOrderTransaction($transaction->id, $order->reference);
+                            }
+                        }
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
-                        $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, [], $transactionInfo);
+                        $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
                     }
@@ -273,8 +278,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         // Store status in database
-
-        $this->saveOrderTransactionData($apiPayment->id, $apiPayment->method, $orderId);
 
         if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
             if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
@@ -288,37 +291,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         return $apiPayment;
-    }
-
-    /**
-     * Retrieves the OrderPayment object, created at validateOrder. And add transaction data.
-     *
-     * @param string $molliePaymentId
-     * @param string $molliePaymentMethod
-     * @param int    $orderId
-     *
-     * @return void
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function saveOrderTransactionData($molliePaymentId, $molliePaymentMethod, $orderId)
-    {
-        // retrieve ALL payments of order.
-        // in the case of a cancel or expired on banktransfer, this will fire too.
-        // if no OrderPayment objects is retrieved in the collection, do nothing.
-        $order = new Order((int) $orderId);
-        $collection = OrderPayment::getByOrderReference($order->reference);
-        if (count($collection) > 0) {
-            /** @var OrderPayment $orderPayment */
-            $orderPayment = $collection[0];
-
-            // for older versions (1.5) , we check if it hasn't been filled yet.
-            if (!$orderPayment->transaction_id) {
-                $orderPayment->transaction_id = $molliePaymentId;
-                $orderPayment->payment_method = $molliePaymentMethod;
-                $orderPayment->update();
-            }
-        }
     }
 
     /**

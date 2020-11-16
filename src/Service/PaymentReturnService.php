@@ -41,6 +41,7 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\OrderStatusUtility;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Order;
 use OrderDetail;
 use OrderPayment;
@@ -75,18 +76,25 @@ class PaymentReturnService
      */
     private $orderLinkFactory;
 
+    /**
+     * @var TransactionService
+     */
+    private $transactionService;
+
 
     public function __construct(
         Mollie $module,
         CartDuplicationService $cartDuplicationService,
         PaymentMethodRepository $paymentMethodRepository,
-        RepeatOrderLinkFactory $orderLinkFactory
+        RepeatOrderLinkFactory $orderLinkFactory,
+        TransactionService $transactionService
     ) {
         $this->module = $module;
         $this->context = Context::getContext();
         $this->cartDuplicationService = $cartDuplicationService;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderLinkFactory = $orderLinkFactory;
+        $this->transactionService = $transactionService;
     }
 
     public function handlePendingStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
@@ -128,6 +136,11 @@ class PaymentReturnService
                 break;
             }
         }
+
+        if (!$order->getOrderPayments()) {
+            $this->transactionService->updateOrderTransaction($transaction->id, $order->reference);
+        }
+
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
@@ -135,7 +148,7 @@ class PaymentReturnService
 
     public function handleFailedStatus(Order $order, $transaction, $orderStatus, $paymentMethod)
     {
-        if(null !== $paymentMethod) {
+        if (null !== $paymentMethod) {
 
             $this->cartDuplicationService->restoreCart($order->id_cart);
 
@@ -193,18 +206,6 @@ class PaymentReturnService
         $order->payment = $paymentMethod;
         $order->update();
 
-        $transactionInfo = [
-            'transactionId' => $transactionId,
-            'paymentMethod' => $paymentMethod,
-        ];
-        $orderStatusService->setOrderStatus($orderId, $orderStatusId, null, [], $transactionInfo);
-
-        $orderPayments = OrderPayment::getByOrderId($orderId);
-        /** @var OrderPayment $orderPayment */
-        foreach ($orderPayments as $orderPayment) {
-            $orderPayment->transaction_id = $transactionId;
-            $orderPayment->payment_method = $paymentMethod;
-            $orderPayment->update();
-        }
+        $orderStatusService->setOrderStatus($orderId, $orderStatusId, null, []);
     }
 }
