@@ -45,8 +45,20 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_1_0($module)
 {
-    Configuration::updateValue(Config::MOLLIE_STATUS_AWAITING, Configuration::get(Config::STATUS_MOLLIE_AWAITING));
-    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_AWAITING, false);
+    /** @var Installer $installer */
+    $installer = $module->getContainer(Installer::class);
+
+    $awaitingOrderStatusId = Configuration::get(Config::MOLLIE_STATUS_AWAITING);
+    $orderStatus = new OrderState($awaitingOrderStatusId);
+
+    if (!Validate::isLoadedObject($orderStatus) || $orderStatus->deleted) {
+        $installer->createAwaitingMollieOrderState();
+    }
+
+    /** @var Installer $installer */
+    $installer = $module->getContainer(Installer::class);
+
+    $installer->createAwaitingMollieOrderState();
 
     $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
