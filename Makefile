@@ -1,7 +1,7 @@
 bv: build-vendor
 build-vendor:
 	composer update
-	cd vendorBuilder && vendor/bin/php-scoper add-prefix
+	cd vendorBuilder && php ./vendor/bin/php-scoper add-prefix
 	rm -rf vendor
 	mv vendorBuilder/build/vendor vendor
 	composer dumpautoload
