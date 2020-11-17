@@ -55,11 +55,6 @@ function upgrade_module_4_1_0($module)
         $installer->createAwaitingMollieOrderState();
     }
 
-    /** @var Installer $installer */
-    $installer = $module->getContainer(Installer::class);
-
-    $installer->createAwaitingMollieOrderState();
-
     $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD `position` INT(10);
