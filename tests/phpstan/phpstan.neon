@@ -3,9 +3,7 @@ includes:
 
 parameters:
   paths:
-    - ../../src
-    - ../../controllers
-    - ../../mollie.php
+    - ../../src/DTO/Line.php
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
