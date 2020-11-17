@@ -728,8 +728,8 @@
 
     <div data-tab-id="general_settings">
       <div class="alert alert-info">
-        {l s='You haven\'t enabled any of the' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com">{l s='Mollie' mod='mollie'}</a></b>&nbsp;{l s='payments.' mod='mollie'}<br>
-        {l s='Please enabled payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
+        {l s='You haven\'t enabled any of the Mollie payments.' mod='mollie'}<br>
+        {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
       </div>
     </div>
   {else}
