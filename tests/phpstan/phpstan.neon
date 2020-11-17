@@ -3,9 +3,9 @@ includes:
 
 parameters:
   paths:
-    - ../../classes
+    - ../../src
     - ../../controllers
-    - ../../ps_facebook.php
+    - ../../mollie.php
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
