@@ -1,10 +1,10 @@
 services:
-    MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy: { 0: ~, $apiKey: ABCD }
+    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy: { 0: ~, $apiKey: ABCD }
 
     another_one:
-        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy
         arguments:
             $apiKey: ABCD
-            MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass: ~
+            MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass: ~
         calls:
             - ['setApiKey', { $apiKey: '123' }]
