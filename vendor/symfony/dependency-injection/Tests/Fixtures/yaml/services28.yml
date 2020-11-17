@@ -5,7 +5,7 @@ services:
         tags:
             - name: foo
 
-    _PhpScoper5eddef0da618a\Acme\Foo: ~
+    MolliePrefix\MolliePrefix\Acme\Foo: ~
 
     with_defaults:
         class: Foo
@@ -26,7 +26,7 @@ services:
 
     with_defaults_aliased_short: '@with_defaults'
 
-    _PhpScoper5eddef0da618a\Acme\WithShortCutArgs: [foo]
+    MolliePrefix\MolliePrefix\Acme\WithShortCutArgs: [foo]
 
     child_def:
         parent: with_defaults

@@ -1,21 +1,21 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Container;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class Symfony_DI_PhpDumper_Test_Legacy_Privates extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container
+class Symfony_DI_PhpDumper_Test_Legacy_Privates extends \MolliePrefix\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -32,11 +32,11 @@ class Symfony_DI_PhpDumper_Test_Legacy_Privates extends \_PhpScoper5eddef0da618a
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5eddef0da618a\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'decorated_private' => \true, 'decorated_private_alias' => \true, 'foo' => \true, 'private' => \true, 'private_alias' => \true, 'private_alias_decorator.inner' => \true, 'private_child' => \true, 'private_decorator.inner' => \true, 'private_not_inlined' => \true, 'private_not_removed' => \true, 'private_parent' => \true];
+        return ['MolliePrefix\\Psr\\Container\\ContainerInterface' => \true, 'MolliePrefix\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'decorated_private' => \true, 'decorated_private_alias' => \true, 'foo' => \true, 'private' => \true, 'private_alias' => \true, 'private_alias_decorator.inner' => \true, 'private_child' => \true, 'private_decorator.inner' => \true, 'private_not_inlined' => \true, 'private_not_removed' => \true, 'private_parent' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -144,4 +144,4 @@ class Symfony_DI_PhpDumper_Test_Legacy_Privates extends \_PhpScoper5eddef0da618a
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5eddef0da618a\\Symfony_DI_PhpDumper_Test_Legacy_Privates', 'Symfony_DI_PhpDumper_Test_Legacy_Privates', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Legacy_Privates', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Legacy_Privates', \false);

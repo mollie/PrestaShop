@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition;
+namespace MolliePrefix\Symfony\Component\Config\Definition;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use MolliePrefix\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 /**
  * This node represents a value of variable type in the config tree.
  *
@@ -19,7 +19,7 @@ use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Exception\Invali
  *
  * @author Jeremy Mikola <jmikola@gmail.com>
  */
-class VariableNode extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\BaseNode implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\PrototypeNodeInterface
+class VariableNode extends \MolliePrefix\Symfony\Component\Config\Definition\BaseNode implements \MolliePrefix\Symfony\Component\Config\Definition\PrototypeNodeInterface
 {
     protected $defaultValueSet = \false;
     protected $defaultValue;
@@ -72,7 +72,7 @@ class VariableNode extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Def
     protected function finalizeValue($value)
     {
         if (!$this->allowEmptyValue && $this->isValueEmpty($value)) {
-            $ex = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), \json_encode($value)));
+            $ex = new \MolliePrefix\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException(\sprintf('The path "%s" cannot contain an empty value, but got %s.', $this->getPath(), \json_encode($value)));
             if ($hint = $this->getInfo()) {
                 $ex->addHint($hint);
             }

@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Exception;
 
 /**
  * Thrown when a definition cannot be autowired.
  */
-class AutowiringFailedException extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException
+class AutowiringFailedException extends \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException
 {
     private $serviceId;
     public function __construct($serviceId, $message = '', $code = 0, \Exception $previous = null)

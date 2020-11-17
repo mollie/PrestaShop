@@ -8,28 +8,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Removes unused service definitions from the container.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class RemoveUnusedDefinitionsPass implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
+class RemoveUnusedDefinitionsPass implements \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
 {
     private $repeatedPass;
     /**
      * {@inheritdoc}
      */
-    public function setRepeatedPass(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
+    public function setRepeatedPass(\MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
     {
         $this->repeatedPass = $repeatedPass;
     }
     /**
      * Processes the ContainerBuilder to remove unused definitions.
      */
-    public function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $graph = $container->getCompiler()->getServiceReferenceGraph();
         $hasChanged = \false;

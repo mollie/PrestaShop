@@ -36,7 +36,7 @@
 namespace Mollie\Logger;
 
 use Mollie\Exception\NotImplementedException;
-use Psr\Log\LoggerInterface;
+use MolliePrefix\Psr\Log\LoggerInterface;
 
 class PrestaLogger implements LoggerInterface
 {

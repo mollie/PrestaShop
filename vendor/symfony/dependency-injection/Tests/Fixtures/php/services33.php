@@ -1,38 +1,38 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Container;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class ProjectServiceContainer extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container
+class ProjectServiceContainer extends \MolliePrefix\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
     public function __construct()
     {
         $this->services = [];
-        $this->normalizedIds = ['_PhpScoper5eddef0da618a\\bar\\foo' => '_PhpScoper5eddef0da618a\\Bar\\Foo', '_PhpScoper5eddef0da618a\\foo\\foo' => '_PhpScoper5eddef0da618a\\Foo\\Foo'];
-        $this->methodMap = ['_PhpScoper5eddef0da618a\\Bar\\Foo' => 'getFooService', '_PhpScoper5eddef0da618a\\Foo\\Foo' => 'getFoo2Service'];
+        $this->normalizedIds = ['MolliePrefix\\bar\\foo' => 'MolliePrefix\\Bar\\Foo', 'MolliePrefix\\foo\\foo' => 'MolliePrefix\\Foo\\Foo'];
+        $this->methodMap = ['MolliePrefix\\Bar\\Foo' => 'getFooService', 'MolliePrefix\\Foo\\Foo' => 'getFoo2Service'];
         $this->aliases = [];
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5eddef0da618a\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
+        return ['MolliePrefix\\Psr\\Container\\ContainerInterface' => \true, 'MolliePrefix\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -50,7 +50,7 @@ class ProjectServiceContainer extends \_PhpScoper5eddef0da618a\Symfony\Component
      */
     protected function getFooService()
     {
-        return $this->services['Bar\\Foo'] = new \_PhpScoper5eddef0da618a\Bar\Foo();
+        return $this->services['Bar\\Foo'] = new \MolliePrefix\Bar\Foo();
     }
     /**
      * Gets the public 'Foo\Foo' shared service.
@@ -59,7 +59,7 @@ class ProjectServiceContainer extends \_PhpScoper5eddef0da618a\Symfony\Component
      */
     protected function getFoo2Service()
     {
-        return $this->services['Foo\\Foo'] = new \_PhpScoper5eddef0da618a\Foo\Foo();
+        return $this->services['Foo\\Foo'] = new \MolliePrefix\Foo\Foo();
     }
 }
 /**
@@ -68,4 +68,4 @@ class ProjectServiceContainer extends \_PhpScoper5eddef0da618a\Symfony\Component
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5eddef0da618a\\ProjectServiceContainer', 'ProjectServiceContainer', \false);
+\class_alias('MolliePrefix\\ProjectServiceContainer', 'MolliePrefix\\ProjectServiceContainer', \false);

@@ -35,14 +35,14 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\ResourceFactory;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\RefundStatus;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\ResourceFactory;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Address;
 use Cart;
 use Configuration;

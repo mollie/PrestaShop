@@ -90,6 +90,7 @@ class ConfigFieldService
             Config::MOLLIE_METHOD_COUNTRIES_DISPLAY => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY),
 
             Config::MOLLIE_STATUS_OPEN => Configuration::get(Config::MOLLIE_STATUS_OPEN),
+            Config::MOLLIE_STATUS_AWAITING => Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             Config::MOLLIE_STATUS_PAID => Configuration::get(Config::MOLLIE_STATUS_PAID),
             Config::MOLLIE_STATUS_COMPLETED => Configuration::get(Config::MOLLIE_STATUS_COMPLETED),
             Config::MOLLIE_STATUS_CANCELED => Configuration::get(Config::MOLLIE_STATUS_CANCELED),
@@ -97,6 +98,7 @@ class ConfigFieldService
             Config::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND),
             Config::MOLLIE_STATUS_REFUNDED => Configuration::get(Config::MOLLIE_STATUS_REFUNDED),
             Config::MOLLIE_MAIL_WHEN_OPEN => Configuration::get(Config::MOLLIE_MAIL_WHEN_OPEN),
+            Config::MOLLIE_MAIL_WHEN_AWAITING => Configuration::get(Config::MOLLIE_MAIL_WHEN_AWAITING),
             Config::MOLLIE_MAIL_WHEN_PAID => Configuration::get(Config::MOLLIE_MAIL_WHEN_PAID),
             Config::MOLLIE_MAIL_WHEN_COMPLETED => Configuration::get(Config::MOLLIE_MAIL_WHEN_COMPLETED),
             Config::MOLLIE_MAIL_WHEN_CANCELED => Configuration::get(Config::MOLLIE_MAIL_WHEN_CANCELED),

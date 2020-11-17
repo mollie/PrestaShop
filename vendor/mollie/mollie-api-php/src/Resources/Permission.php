@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class Permission extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+class Permission extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string

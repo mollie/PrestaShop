@@ -35,13 +35,14 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use Mollie;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MollieWebhookModuleFrontController;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
@@ -140,11 +141,27 @@ class RefundService
     public function doRefundOrderLines(array $orderData, $lines = [])
     {
         $transactionId = $orderData['id'];
+        $availableRefund = $orderData['availableRefundAmount'];
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-            $refund = RefundUtility::getRefundLines($lines, $orderData['availableRefundAmount']);
-            $order->refund($refund);
+            $isOrderLinesRefundPossible = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
+            if ($isOrderLinesRefundPossible) {
+                $refund = RefundUtility::getRefundLines($lines);
+                $order->refund($refund);
+            } else {
+                /** @var PaymentCollection $orderPayments */
+                $orderPayments = $order->payments();
+                /** @var \MolliePrefix\Mollie\Api\Resources\Payment $orderPayment */
+                foreach ($orderPayments as $orderPayment) {
+                    $orderPayment->refund(
+                        [
+                            'amount' => $availableRefund
+                        ]
+                    );
+                    continue;
+                }
+            }
 
             if (EnvironmentUtility::isLocalEnvironment()) {
                 // Refresh payment on local environments

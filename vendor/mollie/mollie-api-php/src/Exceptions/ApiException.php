@@ -1,9 +1,10 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Exceptions;
+namespace MolliePrefix\Mollie\Api\Exceptions;
 
-use _PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Response;
-use Throwable;
+use DateTime;
+use MolliePrefix\Psr\Http\Message\RequestInterface;
+use MolliePrefix\Psr\Http\Message\ResponseInterface;
 class ApiException extends \Exception
 {
     /**
@@ -11,9 +12,19 @@ class ApiException extends \Exception
      */
     protected $field;
     /**
-     * @var Response
+     * @var RequestInterface
+     */
+    protected $request;
+    /**
+     * @var ResponseInterface
      */
     protected $response;
+    /**
+     * ISO8601 representation of the moment this exception was thrown
+     *
+     * @var \DateTimeImmutable
+     */
+    protected $raisedAt;
     /**
      * @var array
      */
@@ -22,12 +33,16 @@ class ApiException extends \Exception
      * @param string $message
      * @param int $code
      * @param string|null $field
-     * @param \GuzzleHttp\Psr7\Response|null $response
+     * @param RequestInterface|null $request
+     * @param ResponseInterface|null $response
      * @param \Throwable|null $previous
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function __construct($message = "", $code = 0, $field = null, \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\Response $response = null, \Throwable $previous = null)
+    public function __construct($message = "", $code = 0, $field = null, \MolliePrefix\Psr\Http\Message\RequestInterface $request = null, \MolliePrefix\Psr\Http\Message\ResponseInterface $response = null, $previous = null)
     {
+        $this->raisedAt = new \DateTimeImmutable();
+        $formattedRaisedAt = $this->raisedAt->format(\DateTime::ISO8601);
+        $message = "[{$formattedRaisedAt}] " . $message;
         if (!empty($field)) {
             $this->field = (string) $field;
             $message .= ". Field: {$this->field}";
@@ -44,38 +59,47 @@ class ApiException extends \Exception
         if ($this->hasLink('documentation')) {
             $message .= ". Documentation: {$this->getDocumentationUrl()}";
         }
+        $this->request = $request;
+        if ($request) {
+            $requestBody = $request->getBody()->__toString();
+            if ($requestBody) {
+                $message .= ". Request body: {$requestBody}";
+            }
+        }
         parent::__construct($message, $code, $previous);
     }
     /**
-     * @param \GuzzleHttp\Exception\RequestException $guzzleException
-     * @param \Throwable $previous
-     * @return \Mollie\Api\Exceptions\ApiException
-     * @throws \Mollie\Api\Exceptions\ApiException
-     */
-    public static function createFromGuzzleException($guzzleException, \Throwable $previous = null)
-    {
-        // Not all Guzzle Exceptions implement hasResponse() / getResponse()
-        if (\method_exists($guzzleException, 'hasResponse') && \method_exists($guzzleException, 'getResponse')) {
-            if ($guzzleException->hasResponse()) {
-                return static::createFromResponse($guzzleException->getResponse());
-            }
-        }
-        return new static($guzzleException->getMessage(), $guzzleException->getCode(), null, $previous);
-    }
-    /**
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param \GuzzleHttp\Exception\GuzzleException $guzzleException
+     * @param RequestInterface|null $request
      * @param \Throwable|null $previous
      * @return \Mollie\Api\Exceptions\ApiException
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public static function createFromResponse($response, \Throwable $previous = null)
+    public static function createFromGuzzleException($guzzleException, $request = null, $previous = null)
+    {
+        // Not all Guzzle Exceptions implement hasResponse() / getResponse()
+        if (\method_exists($guzzleException, 'hasResponse') && \method_exists($guzzleException, 'getResponse')) {
+            if ($guzzleException->hasResponse()) {
+                return static::createFromResponse($guzzleException->getResponse(), $request, $previous);
+            }
+        }
+        return new self($guzzleException->getMessage(), $guzzleException->getCode(), null, $request, null, $previous);
+    }
+    /**
+     * @param ResponseInterface $response
+     * @param RequestInterface $request
+     * @param \Throwable|null $previous
+     * @return \Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\ApiException
+     */
+    public static function createFromResponse(\MolliePrefix\Psr\Http\Message\ResponseInterface $response, \MolliePrefix\Psr\Http\Message\RequestInterface $request = null, $previous = null)
     {
         $object = static::parseResponseBody($response);
         $field = null;
         if (!empty($object->field)) {
             $field = $object->field;
         }
-        return new static("Error executing API call ({$object->status}: {$object->title}): {$object->detail}", $response->getStatusCode(), $field, $response, $previous);
+        return new self("Error executing API call ({$object->status}: {$object->title}): {$object->detail}", $response->getStatusCode(), $field, $request, $response, $previous);
     }
     /**
      * @return string|null
@@ -99,7 +123,7 @@ class ApiException extends \Exception
         return $this->getUrl('dashboard');
     }
     /**
-     * @return Response|null
+     * @return ResponseInterface|null
      */
     public function getResponse()
     {
@@ -143,7 +167,23 @@ class ApiException extends \Exception
         return null;
     }
     /**
-     * @param $response
+     * @return RequestInterface
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+    /**
+     * Get the ISO8601 representation of the moment this exception was thrown
+     *
+     * @return \DateTimeImmutable
+     */
+    public function getRaisedAt()
+    {
+        return $this->raisedAt;
+    }
+    /**
+     * @param ResponseInterface $response
      * @return mixed
      * @throws \Mollie\Api\Exceptions\ApiException
      */
@@ -152,7 +192,7 @@ class ApiException extends \Exception
         $body = (string) $response->getBody();
         $object = @\json_decode($body);
         if (\json_last_error() !== \JSON_ERROR_NONE) {
-            throw new static("Unable to decode Mollie response: '{$body}'.");
+            throw new self("Unable to decode Mollie response: '{$body}'.");
         }
         return $object;
     }

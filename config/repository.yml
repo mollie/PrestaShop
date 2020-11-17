@@ -1,5 +1,8 @@
 services:
+#  @deprecated - dont call repositories directly, use interface instead
   Mollie\Repository\PaymentMethodRepository:
+
+  Mollie\Repository\PaymentMethodRepositoryInterface: '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Repository\OrderFeeRepository:
 
@@ -22,3 +25,5 @@ services:
       - 'MolCustomer'
 
   Mollie\Repository\AttributeRepository:
+
+  Mollie\Repository\OrderStateRepository:

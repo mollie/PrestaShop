@@ -36,13 +36,19 @@
 namespace Mollie\Repository;
 
 use ObjectModel;
+use PrestaShopCollection;
 
 interface ReadOnlyRepositoryInterface
 {
     /**
+     * @return PrestaShopCollection
+     */
+    public function findAll();
+
+    /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
-     * @return ObjectModel
+     * @return ObjectModel|null
      */
     public function findOneBy(array $keyValueCriteria);
 }

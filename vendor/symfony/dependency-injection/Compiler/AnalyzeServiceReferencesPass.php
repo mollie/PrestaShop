@@ -8,16 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Compiler;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ExpressionLanguage;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference;
-use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Expression;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Definition;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\DependencyInjection\ExpressionLanguage;
+use MolliePrefix\Symfony\Component\DependencyInjection\Reference;
+use MolliePrefix\Symfony\Component\ExpressionLanguage\Expression;
 /**
  * Run this pass before passes that need to know more about the relation of
  * your services.
@@ -27,7 +27,7 @@ use _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Expression;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class AnalyzeServiceReferencesPass extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
+class AnalyzeServiceReferencesPass extends \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\AbstractRecursivePass implements \MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RepeatablePassInterface
 {
     private $graph;
     private $currentDefinition;
@@ -47,14 +47,14 @@ class AnalyzeServiceReferencesPass extends \_PhpScoper5eddef0da618a\Symfony\Comp
     /**
      * {@inheritdoc}
      */
-    public function setRepeatedPass(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
+    public function setRepeatedPass(\MolliePrefix\Symfony\Component\DependencyInjection\Compiler\RepeatedPass $repeatedPass)
     {
         // no-op for BC
     }
     /**
      * Processes a ContainerBuilder object to populate the service reference graph.
      */
-    public function process(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function process(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $this->container = $container;
         $this->graph = $container->getCompiler()->getServiceReferenceGraph();
@@ -70,23 +70,23 @@ class AnalyzeServiceReferencesPass extends \_PhpScoper5eddef0da618a\Symfony\Comp
     protected function processValue($value, $isRoot = \false)
     {
         $lazy = $this->lazy;
-        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
+        if ($value instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Argument\ArgumentInterface) {
             $this->lazy = \true;
             parent::processValue($value->getValues());
             $this->lazy = $lazy;
             return $value;
         }
-        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage\Expression) {
+        if ($value instanceof \MolliePrefix\Symfony\Component\ExpressionLanguage\Expression) {
             $this->getExpressionLanguage()->compile((string) $value, ['this' => 'container']);
             return $value;
         }
-        if ($value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Reference) {
+        if ($value instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Reference) {
             $targetId = $this->getDefinitionId((string) $value);
             $targetDefinition = $this->getDefinition($targetId);
-            $this->graph->connect($this->currentId, $this->currentDefinition, $targetId, $targetDefinition, $value, $this->lazy || $this->hasProxyDumper && $targetDefinition && $targetDefinition->isLazy(), \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(), $this->byConstructor);
+            $this->graph->connect($this->currentId, $this->currentDefinition, $targetId, $targetDefinition, $value, $this->lazy || $this->hasProxyDumper && $targetDefinition && $targetDefinition->isLazy(), \MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(), $this->byConstructor);
             return $value;
         }
-        if (!$value instanceof \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Definition) {
+        if (!$value instanceof \MolliePrefix\Symfony\Component\DependencyInjection\Definition) {
             return parent::processValue($value, $isRoot);
         }
         if ($isRoot) {
@@ -135,11 +135,11 @@ class AnalyzeServiceReferencesPass extends \_PhpScoper5eddef0da618a\Symfony\Comp
     private function getExpressionLanguage()
     {
         if (null === $this->expressionLanguage) {
-            if (!\class_exists(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ExpressionLanguage::class)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+            if (!\class_exists(\MolliePrefix\Symfony\Component\DependencyInjection\ExpressionLanguage::class)) {
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $providers = $this->container->getExpressionLanguageProviders();
-            $this->expressionLanguage = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ExpressionLanguage(null, $providers, function ($arg) {
+            $this->expressionLanguage = new \MolliePrefix\Symfony\Component\DependencyInjection\ExpressionLanguage(null, $providers, function ($arg) {
                 if ('""' === \substr_replace($arg, '', 1, -1)) {
                     $id = \stripcslashes(\substr($arg, 1, -1));
                     $id = $this->getDefinitionId($id);

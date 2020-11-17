@@ -36,13 +36,13 @@
 namespace Mollie\Install;
 
 use Configuration;
-use Mollie;
 use Mollie\Config\Config;
+use Mollie\Repository\OrderStateRepository;
 use OrderState;
 use Tab;
 use Validate;
 
-class Uninstall
+class Uninstall implements UninstallerInterface
 {
     /**
      * @var array
@@ -50,24 +50,32 @@ class Uninstall
     private $errors = [];
 
     /**
-     * @var Mollie
+     * @var UninstallerInterface
      */
-    private $module;
+    private $databaseUninstaller;
 
-    public function __construct(Mollie $module)
-    {
-        $this->module = $module;
+    /**
+     * @var OrderStateRepository
+     */
+    private $orderStateRepository;
+
+    public function __construct(
+        UninstallerInterface $databaseUninstaller,
+        OrderStateRepository $orderStateRepository
+    ) {
+        $this->databaseUninstaller = $databaseUninstaller;
+        $this->orderStateRepository = $orderStateRepository;
     }
 
     public function uninstall()
     {
-        $this->deleteMollieStatuses();
+        $this->orderStateRepository->deleteStatuses();
 
         $this->deleteConfig();
 
         $this->uninstallTabs();
 
-        include(dirname(__FILE__) . '/../../sql/uninstall.php');
+        $this->databaseUninstaller->uninstall();
 
         return true;
     }
@@ -117,7 +125,7 @@ class Uninstall
             Config::MOLLIE_STATUS_COMPLETED,
             Config::MOLLIE_STATUS_ORDER_COMPLETED,
             Config::MOLLIE_MAIL_WHEN_COMPLETED,
-            Config::STATUS_MOLLIE_AWAITING,
+            Config::MOLLIE_STATUS_AWAITING,
         ];
 
         $this->deleteConfigurations($configurations);
@@ -130,19 +138,6 @@ class Uninstall
     {
         foreach ($configurations as $configuration) {
             Configuration::deleteByName($configuration);
-        }
-    }
-
-    private function deleteMollieStatuses()
-    {
-        foreach (Config::getMollieOrderStatuses() as $mollieStatus) {
-            $statusId = Configuration::get($mollieStatus);
-            $orderState = new OrderState($statusId);
-            if (!Validate::isLoadedObject($orderState)) {
-                return;
-            }
-            $orderState->deleted = 1;
-            $orderState->update();
         }
     }
 

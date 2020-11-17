@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Util;
+namespace MolliePrefix\Symfony\Component\Config\Util;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\InvalidXmlException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException;
+use MolliePrefix\Symfony\Component\Config\Util\Exception\InvalidXmlException;
+use MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException;
 /**
  * XMLUtils is a bunch of utility methods to XML operations.
  *
@@ -47,20 +47,26 @@ class XmlUtils
             throw new \RuntimeException('Extension DOM is required.');
         }
         $internalErrors = \libxml_use_internal_errors(\true);
-        $disableEntities = \libxml_disable_entity_loader(\true);
+        if (\LIBXML_VERSION < 20900) {
+            $disableEntities = \libxml_disable_entity_loader(\true);
+        }
         \libxml_clear_errors();
         $dom = new \DOMDocument();
         $dom->validateOnParse = \true;
         if (!$dom->loadXML($content, \LIBXML_NONET | (\defined('LIBXML_COMPACT') ? \LIBXML_COMPACT : 0))) {
-            \libxml_disable_entity_loader($disableEntities);
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException(\implode("\n", static::getXmlErrors($internalErrors)));
+            if (\LIBXML_VERSION < 20900) {
+                \libxml_disable_entity_loader($disableEntities);
+            }
+            throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException(\implode("\n", static::getXmlErrors($internalErrors)));
         }
         $dom->normalizeDocument();
         \libxml_use_internal_errors($internalErrors);
-        \libxml_disable_entity_loader($disableEntities);
+        if (\LIBXML_VERSION < 20900) {
+            \libxml_disable_entity_loader($disableEntities);
+        }
         foreach ($dom->childNodes as $child) {
             if (\XML_DOCUMENT_TYPE_NODE === $child->nodeType) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException('Document types are not allowed.');
+                throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException('Document types are not allowed.');
             }
         }
         if (null !== $schemaOrCallable) {
@@ -78,14 +84,14 @@ class XmlUtils
                 $valid = @$dom->schemaValidateSource($schemaSource);
             } else {
                 \libxml_use_internal_errors($internalErrors);
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException('The schemaOrCallable argument has to be a valid path to XSD file or callable.');
+                throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException('The schemaOrCallable argument has to be a valid path to XSD file or callable.');
             }
             if (!$valid) {
                 $messages = static::getXmlErrors($internalErrors);
                 if (empty($messages)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\InvalidXmlException('The XML is not valid.', 0, $e);
+                    throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\InvalidXmlException('The XML is not valid.', 0, $e);
                 }
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException(\implode("\n", $messages), 0, $e);
+                throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException(\implode("\n", $messages), 0, $e);
             }
         }
         \libxml_clear_errors();
@@ -118,8 +124,8 @@ class XmlUtils
         }
         try {
             return static::parse($content, $schemaOrCallable);
-        } catch (\_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\InvalidXmlException $e) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\Exception\XmlParsingException(\sprintf('The XML file "%s" is not valid.', $file), 0, $e->getPrevious());
+        } catch (\MolliePrefix\Symfony\Component\Config\Util\Exception\InvalidXmlException $e) {
+            throw new \MolliePrefix\Symfony\Component\Config\Util\Exception\XmlParsingException(\sprintf('The XML file "%s" is not valid.', $file), 0, $e->getPrevious());
         }
     }
     /**

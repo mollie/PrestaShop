@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\PdoCache;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
+use MolliePrefix\Symfony\Component\Cache\Simple\PdoCache;
+use MolliePrefix\Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
 /**
  * @group time-sensitive
  */
-class PdoCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class PdoCacheTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     use PdoPruneableTrait;
     protected static $dbFile;
@@ -25,7 +25,7 @@ class PdoCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Test
             self::markTestSkipped('Extension pdo_sqlite required.');
         }
         self::$dbFile = \tempnam(\sys_get_temp_dir(), 'sf_sqlite_cache');
-        $pool = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\PdoCache('sqlite:' . self::$dbFile);
+        $pool = new \MolliePrefix\Symfony\Component\Cache\Simple\PdoCache('sqlite:' . self::$dbFile);
         $pool->createTable();
     }
     public static function tearDownAfterClass()
@@ -34,6 +34,6 @@ class PdoCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Test
     }
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\PdoCache('sqlite:' . self::$dbFile, 'ns', $defaultLifetime);
+        return new \MolliePrefix\Symfony\Component\Cache\Simple\PdoCache('sqlite:' . self::$dbFile, 'ns', $defaultLifetime);
     }
 }

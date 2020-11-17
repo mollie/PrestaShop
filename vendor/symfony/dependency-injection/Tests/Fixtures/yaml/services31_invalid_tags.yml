@@ -2,5 +2,5 @@ services:
     _defaults:
         tags: ['foo']
 
-    _PhpScoper5eddef0da618a\Foo\Bar:
+    MolliePrefix\MolliePrefix\Foo\Bar:
         tags: invalid

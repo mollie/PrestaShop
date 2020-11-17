@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\DataCollector;
+namespace MolliePrefix\Symfony\Component\Cache\DataCollector;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapterEvent;
-use _PhpScoper5eddef0da618a\Symfony\Component\HttpFoundation\Request;
-use _PhpScoper5eddef0da618a\Symfony\Component\HttpFoundation\Response;
-use _PhpScoper5eddef0da618a\Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use _PhpScoper5eddef0da618a\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
+use MolliePrefix\Symfony\Component\Cache\Adapter\TraceableAdapter;
+use MolliePrefix\Symfony\Component\Cache\Adapter\TraceableAdapterEvent;
+use MolliePrefix\Symfony\Component\HttpFoundation\Request;
+use MolliePrefix\Symfony\Component\HttpFoundation\Response;
+use MolliePrefix\Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use MolliePrefix\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 /**
  * @author Aaron Scherer <aequasi@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class CacheDataCollector extends \_PhpScoper5eddef0da618a\Symfony\Component\HttpKernel\DataCollector\DataCollector implements \_PhpScoper5eddef0da618a\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface
+class CacheDataCollector extends \MolliePrefix\Symfony\Component\HttpKernel\DataCollector\DataCollector implements \MolliePrefix\Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface
 {
     /**
      * @var TraceableAdapter[]
@@ -29,14 +29,14 @@ class CacheDataCollector extends \_PhpScoper5eddef0da618a\Symfony\Component\Http
     /**
      * @param string $name
      */
-    public function addInstance($name, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\TraceableAdapter $instance)
+    public function addInstance($name, \MolliePrefix\Symfony\Component\Cache\Adapter\TraceableAdapter $instance)
     {
         $this->instances[$name] = $instance;
     }
     /**
      * {@inheritdoc}
      */
-    public function collect(\_PhpScoper5eddef0da618a\Symfony\Component\HttpFoundation\Request $request, \_PhpScoper5eddef0da618a\Symfony\Component\HttpFoundation\Response $response, \Exception $exception = null)
+    public function collect(\MolliePrefix\Symfony\Component\HttpFoundation\Request $request, \MolliePrefix\Symfony\Component\HttpFoundation\Response $response, \Exception $exception = null)
     {
         $empty = ['calls' => [], 'config' => [], 'options' => [], 'statistics' => []];
         $this->data = ['instances' => $empty, 'total' => $empty];

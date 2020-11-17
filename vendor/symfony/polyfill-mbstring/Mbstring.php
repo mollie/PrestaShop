@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Polyfill\Mbstring;
+namespace MolliePrefix\Symfony\Polyfill\Mbstring;
 
 /**
  * Partial mbstring implementation in PHP, iconv based, UTF-8 centric.
@@ -106,7 +106,7 @@ final class Mbstring
         $vars = array(&$a, &$b, &$c, &$d, &$e, &$f);
         $ok = \true;
         \array_walk_recursive($vars, function (&$v) use(&$ok, $toEncoding, $fromEncoding) {
-            if (\false === ($v = \_PhpScoper5eddef0da618a\Symfony\Polyfill\Mbstring\Mbstring::mb_convert_encoding($v, $toEncoding, $fromEncoding))) {
+            if (\false === ($v = \MolliePrefix\Symfony\Polyfill\Mbstring\Mbstring::mb_convert_encoding($v, $toEncoding, $fromEncoding))) {
                 $ok = \false;
             }
         });
@@ -157,7 +157,7 @@ final class Mbstring
             $c = isset($m[2]) ? (int) \hexdec($m[2]) : $m[1];
             for ($i = 0; $i < $cnt; $i += 4) {
                 if ($c >= $convmap[$i] && $c <= $convmap[$i + 1]) {
-                    return \_PhpScoper5eddef0da618a\Symfony\Polyfill\Mbstring\Mbstring::mb_chr($c - $convmap[$i + 2]);
+                    return \MolliePrefix\Symfony\Polyfill\Mbstring\Mbstring::mb_chr($c - $convmap[$i + 2]);
                 }
             }
             return $m[0];
@@ -514,10 +514,11 @@ final class Mbstring
     {
         $encoding = self::getEncoding($encoding);
         if ('CP850' === $encoding || 'ASCII' === $encoding) {
-            return \strrchr($haystack, $needle, $part);
+            $pos = \strrpos($haystack, $needle);
+        } else {
+            $needle = self::mb_substr($needle, 0, 1, $encoding);
+            $pos = \iconv_strrpos($haystack, $needle, $encoding);
         }
-        $needle = self::mb_substr($needle, 0, 1, $encoding);
-        $pos = \iconv_strrpos($haystack, $needle, $encoding);
         return self::getSubpart($pos, $part, $haystack, $encoding);
     }
     public static function mb_strrichr($haystack, $needle, $part = \false, $encoding = null)

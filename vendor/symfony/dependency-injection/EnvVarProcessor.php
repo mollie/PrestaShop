@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection;
+namespace MolliePrefix\Symfony\Component\DependencyInjection;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Util\XmlUtils;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\Config\Util\XmlUtils;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\EnvVarProcessorInterface
+class EnvVarProcessor implements \MolliePrefix\Symfony\Component\DependencyInjection\EnvVarProcessorInterface
 {
     private $container;
-    public function __construct(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface $container)
+    public function __construct(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -38,10 +38,10 @@ class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
         $i = \strpos($name, ':');
         if ('file' === $prefix) {
             if (!\is_scalar($file = $getEnv($name))) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid file name: env var "%s" is non-scalar.', $name));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid file name: env var "%s" is non-scalar.', $name));
             }
             if (!\file_exists($file)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Env "file:%s" not found: "%s" does not exist.', $name, $file));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Env "file:%s" not found: "%s" does not exist.', $name, $file));
             }
             return \file_get_contents($file);
         }
@@ -56,14 +56,14 @@ class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
         } elseif (\false === ($env = \getenv($name)) || null === $env) {
             // null is a possible value because of thread safety issues
             if (!$this->container->hasParameter("env({$name})")) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException($name);
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\EnvNotFoundException($name);
             }
             if (null === ($env = $this->container->getParameter("env({$name})"))) {
                 return null;
             }
         }
         if (!\is_scalar($env)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-scalar env var "%s" cannot be cast to "%s".', $name, $prefix));
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-scalar env var "%s" cannot be cast to "%s".', $name, $prefix));
         }
         if ('string' === $prefix) {
             return (string) $env;
@@ -73,19 +73,19 @@ class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
         }
         if ('int' === $prefix) {
             if (!\is_numeric($env = self::phpize($env))) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-numeric env var "%s" cannot be cast to int.', $name));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-numeric env var "%s" cannot be cast to int.', $name));
             }
             return (int) $env;
         }
         if ('float' === $prefix) {
             if (!\is_numeric($env = self::phpize($env))) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-numeric env var "%s" cannot be cast to float.', $name));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Non-numeric env var "%s" cannot be cast to float.', $name));
             }
             return (float) $env;
         }
         if ('const' === $prefix) {
             if (!\defined($env)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Env var "%s" maps to undefined constant "%s".', $name, $env));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Env var "%s" maps to undefined constant "%s".', $name, $env));
             }
             return \constant($env);
         }
@@ -95,10 +95,10 @@ class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
         if ('json' === $prefix) {
             $env = \json_decode($env, \true);
             if (\JSON_ERROR_NONE !== \json_last_error()) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid JSON in env var "%s": ', $name) . \json_last_error_msg());
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid JSON in env var "%s": ', $name) . \json_last_error_msg());
             }
             if (!\is_array($env)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid JSON env var "%s": array expected, "%s" given.', $name, \gettype($env)));
+                throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Invalid JSON env var "%s": array expected, "%s" given.', $name, \gettype($env)));
             }
             return $env;
         }
@@ -109,18 +109,18 @@ class EnvVarProcessor implements \_PhpScoper5eddef0da618a\Symfony\Component\Depe
                 }
                 $value = $this->container->getParameter($match[1]);
                 if (!\is_scalar($value)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Parameter "%s" found when resolving env var "%s" must be scalar, "%s" given.', $match[1], $name, \gettype($value)));
+                    throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Parameter "%s" found when resolving env var "%s" must be scalar, "%s" given.', $match[1], $name, \gettype($value)));
                 }
                 return $value;
             }, $env);
         }
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Unsupported env var prefix "%s".', $prefix));
+        throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException(\sprintf('Unsupported env var prefix "%s".', $prefix));
     }
     private static function phpize($value)
     {
-        if (!\class_exists(\_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\XmlUtils::class)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException('The Symfony Config component is required to cast env vars to "bool", "int" or "float".');
+        if (!\class_exists(\MolliePrefix\Symfony\Component\Config\Util\XmlUtils::class)) {
+            throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException('The Symfony Config component is required to cast env vars to "bool", "int" or "float".');
         }
-        return \_PhpScoper5eddef0da618a\Symfony\Component\Config\Util\XmlUtils::phpize($value);
+        return \MolliePrefix\Symfony\Component\Config\Util\XmlUtils::phpize($value);
     }
 }

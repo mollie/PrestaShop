@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Extension;
+namespace MolliePrefix\Symfony\Component\DependencyInjection\Tests\Extension;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Extension\Extension;
-class ExtensionTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+use MolliePrefix\Symfony\Component\DependencyInjection\Extension\Extension;
+class ExtensionTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getResolvedEnabledFixtures
      */
     public function testIsConfigEnabledReturnsTheResolvedValue($enabled)
     {
-        $extension = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
-        $this->assertSame($enabled, $extension->isConfigEnabled(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), ['enabled' => $enabled]));
+        $extension = new \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
+        $this->assertSame($enabled, $extension->isConfigEnabled(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), ['enabled' => $enabled]));
     }
     public function getResolvedEnabledFixtures()
     {
@@ -29,18 +29,18 @@ class ExtensionTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
     }
     public function testIsConfigEnabledOnNonEnableableConfig()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The config array has no \'enabled\' key.');
-        $extension = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
-        $extension->isConfigEnabled(new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder(), []);
+        $extension = new \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Extension\EnableableExtension();
+        $extension->isConfigEnabled(new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder(), []);
     }
 }
-class EnableableExtension extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Extension\Extension
+class EnableableExtension extends \MolliePrefix\Symfony\Component\DependencyInjection\Extension\Extension
 {
-    public function load(array $configs, \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
     }
-    public function isConfigEnabled(\_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $config)
+    public function isConfigEnabled(\MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder $container, array $config)
     {
         return parent::isConfigEnabled($container, $config);
     }

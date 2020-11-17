@@ -30,12 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\PrestaShop\\Decimal\\": "src"
+            "MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\PrestaShop\\Decimal\\Test\\": "tests"
+            "MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\Test\\": "tests"
         }
     }
 }

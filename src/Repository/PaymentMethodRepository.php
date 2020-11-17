@@ -35,15 +35,27 @@
 
 namespace Mollie\Repository;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Db;
 use DbQuery;
 use Exception;
+use MolPaymentMethod;
+use mysqli_result;
+use PDOStatement;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
-class PaymentMethodRepository
+/**
+ * @deprecated - outside code must always use interface. Use PaymentMethodRepositoryInterface instead.
+ * In Containers use PaymentMethodRepositoryInterface::class
+ */
+class PaymentMethodRepository extends AbstractRepository implements PaymentMethodRepositoryInterface
 {
+    public function __construct()
+    {
+        parent::__construct(MolPaymentMethod::class);
+    }
+
     /**
      * @param $paymentMethodId
      * @return false|string|null
@@ -77,7 +89,7 @@ class PaymentMethodRepository
 
         return Db::getInstance()->delete(
             'mol_payment_method',
-            'id_method NOT IN ("' . implode('", "', $escapedMethods) . '") 
+            'id_method NOT IN ("' . implode('", "', $escapedMethods) . '")
             AND `live_environment` = ' . (int)$environment
         );
     }
@@ -89,7 +101,7 @@ class PaymentMethodRepository
      */
     public function getPaymentMethodIdByMethodId($paymentMethodId, $environment)
     {
-        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` 
+        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
         WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int)$environment . '"';
 
         return Db::getInstance()->getValue($sql);
@@ -171,7 +183,7 @@ class PaymentMethodRepository
     }
 
     /**
-     * @return array|false|\mysqli_result|\PDOStatement|resource|null
+     * @return array|false|mysqli_result|PDOStatement|resource|null
      * @throws PrestaShopDatabaseException
      */
     public function getMethodsForCheckout($environment)

@@ -105,7 +105,7 @@ class CartLinesService
         }
 
         $wrapping = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
-        $totalDiscounts = 0;
+        $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
         $remaining = round(
             CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
             $apiRoundingPrecision
@@ -175,9 +175,10 @@ class CartLinesService
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
                     'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
                     'targetVat' => 0,
+                    'category' => ''
                 ],
             ];
-            $remaining -= $totalDiscounts;
+            $remaining = NumberUtility::plus($remaining, $totalDiscounts);
         }
 
         // Compensate for order total rounding inaccuracies
@@ -318,7 +319,7 @@ class CartLinesService
         // Convert floats to strings for the Mollie API and add additional info
         foreach ($newItems as $index => $item) {
             $line = new Line();
-            $line->setName($item['name']);
+            $line->setName($item['name'] ?: $item['sku']);
             $line->setQuantity((int)$item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 

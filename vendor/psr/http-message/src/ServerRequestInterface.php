@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Psr\Http\Message;
+namespace MolliePrefix\Psr\Http\Message;
 
 /**
  * Representation of an incoming, server-side HTTP request.
@@ -40,7 +40,7 @@ namespace _PhpScoper5eddef0da618a\Psr\Http\Message;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-interface ServerRequestInterface extends \_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface
+interface ServerRequestInterface extends \MolliePrefix\Psr\Http\Message\RequestInterface
 {
     /**
      * Retrieve server parameters.

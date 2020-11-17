@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-class Capture extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\BaseResource
+class Capture extends \MolliePrefix\Mollie\Api\Resources\BaseResource
 {
     /**
      * Always 'capture' for this object

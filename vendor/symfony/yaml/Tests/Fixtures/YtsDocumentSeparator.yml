@@ -80,6 +80,6 @@ yaml: |
         fooness
 php: |
     [
-       'foo' => "---\nfoo: _PhpScoper5eddef0da618a\bar\n---\nyo: _PhpScoper5eddef0da618a\baz\n",
-       'bar' => "_PhpScoper5eddef0da618a\fooness\n"
+       'foo' => "---\nfoo: MolliePrefix\MolliePrefix\bar\n---\nyo: MolliePrefix\MolliePrefix\baz\n",
+       'bar' => "MolliePrefix\MolliePrefix\fooness\n"
     ]

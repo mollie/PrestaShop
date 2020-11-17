@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition;
+namespace MolliePrefix\Symfony\Component\Config\Definition;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use MolliePrefix\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 /**
  * This node represents a numeric value in the config tree.
  *
  * @author David Jeanmonod <david.jeanmonod@gmail.com>
  */
-class NumericNode extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\ScalarNode
+class NumericNode extends \MolliePrefix\Symfony\Component\Config\Definition\ScalarNode
 {
     protected $min;
     protected $max;
-    public function __construct($name, \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\NodeInterface $parent = null, $min = null, $max = null)
+    public function __construct($name, \MolliePrefix\Symfony\Component\Config\Definition\NodeInterface $parent = null, $min = null, $max = null)
     {
         parent::__construct($name, $parent);
         $this->min = $min;
@@ -40,7 +40,7 @@ class NumericNode extends \_PhpScoper5eddef0da618a\Symfony\Component\Config\Defi
             $errorMsg = \sprintf('The value %s is too big for path "%s". Should be less than or equal to %s', $value, $this->getPath(), $this->max);
         }
         if (isset($errorMsg)) {
-            $ex = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException($errorMsg);
+            $ex = new \MolliePrefix\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException($errorMsg);
             $ex->setPath($this->getPath());
             throw $ex;
         }

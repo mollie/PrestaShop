@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Filesystem;
+namespace MolliePrefix\Symfony\Component\Filesystem;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException;
+use MolliePrefix\Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use MolliePrefix\Symfony\Component\Filesystem\Exception\IOException;
 /**
  * Provides basic utility to manipulate the file system.
  *
@@ -38,7 +38,7 @@ class Filesystem
     {
         $originIsLocal = \stream_is_local($originFile) || 0 === \stripos($originFile, 'file://');
         if ($originIsLocal && !\is_file($originFile)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\FileNotFoundException(\sprintf('Failed to copy "%s" because file does not exist.', $originFile), 0, null, $originFile);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\FileNotFoundException(\sprintf('Failed to copy "%s" because file does not exist.', $originFile), 0, null, $originFile);
         }
         $this->mkdir(\dirname($targetFile));
         $doCopy = \true;
@@ -48,24 +48,24 @@ class Filesystem
         if ($doCopy) {
             // https://bugs.php.net/64634
             if (\false === ($source = @\fopen($originFile, 'r'))) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s" because source file could not be opened for reading.', $originFile, $targetFile), 0, null, $originFile);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s" because source file could not be opened for reading.', $originFile, $targetFile), 0, null, $originFile);
             }
             // Stream context created to allow files overwrite when using FTP stream wrapper - disabled by default
             if (\false === ($target = @\fopen($targetFile, 'w', null, \stream_context_create(['ftp' => ['overwrite' => \true]])))) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s" because target file could not be opened for writing.', $originFile, $targetFile), 0, null, $originFile);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s" because target file could not be opened for writing.', $originFile, $targetFile), 0, null, $originFile);
             }
             $bytesCopied = \stream_copy_to_stream($source, $target);
             \fclose($source);
             \fclose($target);
             unset($source, $target);
             if (!\is_file($targetFile)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s".', $originFile, $targetFile), 0, null, $originFile);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy "%s" to "%s".', $originFile, $targetFile), 0, null, $originFile);
             }
             if ($originIsLocal) {
                 // Like `cp`, preserve executable permission bits
                 @\chmod($targetFile, \fileperms($targetFile) | \fileperms($originFile) & 0111);
                 if ($bytesCopied !== ($bytesOrigin = \filesize($originFile))) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy the whole content of "%s" to "%s" (%g of %g bytes copied).', $originFile, $targetFile, $bytesCopied, $bytesOrigin), 0, null, $originFile);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to copy the whole content of "%s" to "%s" (%g of %g bytes copied).', $originFile, $targetFile, $bytesCopied, $bytesOrigin), 0, null, $originFile);
                 }
             }
         }
@@ -88,9 +88,9 @@ class Filesystem
                 if (!\is_dir($dir)) {
                     // The directory was not created by a concurrent process. Let's throw an exception with a developer friendly error message if we have one
                     if (self::$lastError) {
-                        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s": ', $dir) . self::$lastError, 0, null, $dir);
+                        throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s": ', $dir) . self::$lastError, 0, null, $dir);
                     }
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s".', $dir), 0, null, $dir);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s".', $dir), 0, null, $dir);
                 }
             }
         }
@@ -107,7 +107,7 @@ class Filesystem
         $maxPathLength = \PHP_MAXPATHLEN - 2;
         foreach ($this->toIterable($files) as $file) {
             if (\strlen($file) > $maxPathLength) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Could not check if file exist because path length exceeds %d characters.', $maxPathLength), 0, null, $file);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Could not check if file exist because path length exceeds %d characters.', $maxPathLength), 0, null, $file);
             }
             if (!\file_exists($file)) {
                 return \false;
@@ -129,7 +129,7 @@ class Filesystem
         foreach ($this->toIterable($files) as $file) {
             $touch = $time ? @\touch($file, $time, $atime) : @\touch($file);
             if (\true !== $touch) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to touch "%s".', $file), 0, null, $file);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to touch "%s".', $file), 0, null, $file);
             }
         }
     }
@@ -152,15 +152,15 @@ class Filesystem
             if (\is_link($file)) {
                 // See https://bugs.php.net/52176
                 if (!(self::box('unlink', $file) || '\\' !== \DIRECTORY_SEPARATOR || self::box('rmdir', $file)) && \file_exists($file)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove symlink "%s": ', $file) . self::$lastError);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove symlink "%s": ', $file) . self::$lastError);
                 }
             } elseif (\is_dir($file)) {
                 $this->remove(new \FilesystemIterator($file, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS));
                 if (!self::box('rmdir', $file) && \file_exists($file)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove directory "%s": ', $file) . self::$lastError);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove directory "%s": ', $file) . self::$lastError);
                 }
-            } elseif (!self::box('unlink', $file) && \file_exists($file)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove file "%s": ', $file) . self::$lastError);
+            } elseif (!self::box('unlink', $file) && (\false !== \strpos(self::$lastError, 'Permission denied') || \file_exists($file))) {
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to remove file "%s": ', $file) . self::$lastError);
             }
         }
     }
@@ -177,8 +177,8 @@ class Filesystem
     public function chmod($files, $mode, $umask = 00, $recursive = \false)
     {
         foreach ($this->toIterable($files) as $file) {
-            if (\true !== @\chmod($file, $mode & ~$umask)) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chmod file "%s".', $file), 0, null, $file);
+            if ((\PHP_VERSION_ID < 80000 || \is_int($mode)) && \true !== @\chmod($file, $mode & ~$umask)) {
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chmod file "%s".', $file), 0, null, $file);
             }
             if ($recursive && \is_dir($file) && !\is_link($file)) {
                 $this->chmod(new \FilesystemIterator($file), $mode, $umask, \true);
@@ -202,11 +202,11 @@ class Filesystem
             }
             if (\is_link($file) && \function_exists('lchown')) {
                 if (\true !== @\lchown($file, $user)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chown file "%s".', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chown file "%s".', $file), 0, null, $file);
                 }
             } else {
                 if (\true !== @\chown($file, $user)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chown file "%s".', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chown file "%s".', $file), 0, null, $file);
                 }
             }
         }
@@ -228,11 +228,11 @@ class Filesystem
             }
             if (\is_link($file) && \function_exists('lchgrp')) {
                 if (\true !== @\lchgrp($file, $group) || \defined('HHVM_VERSION') && !\posix_getgrnam($group)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
                 }
             } else {
                 if (\true !== @\chgrp($file, $group)) {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
                 }
             }
         }
@@ -251,7 +251,7 @@ class Filesystem
     {
         // we check that target does not exist
         if (!$overwrite && $this->isReadable($target)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Cannot rename because the target "%s" already exists.', $target), 0, null, $target);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Cannot rename because the target "%s" already exists.', $target), 0, null, $target);
         }
         if (\true !== @\rename($origin, $target)) {
             if (\is_dir($origin)) {
@@ -260,7 +260,7 @@ class Filesystem
                 $this->remove($origin);
                 return;
             }
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Cannot rename "%s" to "%s".', $origin, $target), 0, null, $target);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Cannot rename "%s" to "%s".', $origin, $target), 0, null, $target);
         }
     }
     /**
@@ -276,7 +276,7 @@ class Filesystem
     {
         $maxPathLength = \PHP_MAXPATHLEN - 2;
         if (\strlen($filename) > $maxPathLength) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Could not check if file is readable because path length exceeds %d characters.', $maxPathLength), 0, null, $filename);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Could not check if file is readable because path length exceeds %d characters.', $maxPathLength), 0, null, $filename);
         }
         return \is_readable($filename);
     }
@@ -322,10 +322,10 @@ class Filesystem
     public function hardlink($originFile, $targetFiles)
     {
         if (!$this->exists($originFile)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\FileNotFoundException(null, 0, null, $originFile);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\FileNotFoundException(null, 0, null, $originFile);
         }
         if (!\is_file($originFile)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\FileNotFoundException(\sprintf('Origin file "%s" is not a file.', $originFile));
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\FileNotFoundException(\sprintf('Origin file "%s" is not a file.', $originFile));
         }
         foreach ($this->toIterable($targetFiles) as $targetFile) {
             if (\is_file($targetFile)) {
@@ -348,10 +348,10 @@ class Filesystem
     {
         if (self::$lastError) {
             if ('\\' === \DIRECTORY_SEPARATOR && \false !== \strpos(self::$lastError, 'error code(1314)')) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to create "%s" link due to error code 1314: \'A required privilege is not held by the client\'. Do you have the required Administrator-rights?', $linkType), 0, null, $target);
+                throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to create "%s" link due to error code 1314: \'A required privilege is not held by the client\'. Do you have the required Administrator-rights?', $linkType), 0, null, $target);
             }
         }
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s" link from "%s" to "%s".', $linkType, $origin, $target), 0, null, $target);
+        throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to create "%s" link from "%s" to "%s".', $linkType, $origin, $target), 0, null, $target);
     }
     /**
      * Resolves links in paths.
@@ -504,7 +504,7 @@ class Filesystem
                 } elseif (\is_dir($file)) {
                     $this->mkdir($target);
                 } else {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to guess "%s" file type.', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to guess "%s" file type.', $file), 0, null, $file);
                 }
             } else {
                 if (\is_link($file)) {
@@ -514,7 +514,7 @@ class Filesystem
                 } elseif (\is_file($file)) {
                     $this->copy($file, $target, isset($options['override']) ? $options['override'] : \false);
                 } else {
-                    throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to guess "%s" file type.', $file), 0, null, $file);
+                    throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to guess "%s" file type.', $file), 0, null, $file);
                 }
             }
         }
@@ -528,7 +528,7 @@ class Filesystem
      */
     public function isAbsolutePath($file)
     {
-        return \strspn($file, '/\\', 0, 1) || \strlen($file) > 3 && \ctype_alpha($file[0]) && ':' === $file[1] && \strspn($file, '/\\', 2, 1) || null !== \parse_url($file, \PHP_URL_SCHEME);
+        return '' !== (string) $file && (\strspn($file, '/\\', 0, 1) || \strlen($file) > 3 && \ctype_alpha($file[0]) && ':' === $file[1] && \strspn($file, '/\\', 2, 1) || null !== \parse_url($file, \PHP_URL_SCHEME));
     }
     /**
      * Creates a temporary file with support for custom stream wrappers.
@@ -552,7 +552,7 @@ class Filesystem
                 }
                 return $tmpFile;
             }
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException('A temporary file could not be created.');
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException('A temporary file could not be created.');
         }
         // Loop until we create a valid temp file or have reached 10 attempts
         for ($i = 0; $i < 10; ++$i) {
@@ -569,7 +569,7 @@ class Filesystem
             @\fclose($handle);
             return $tmpFile;
         }
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException('A temporary file could not be created.');
+        throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException('A temporary file could not be created.');
     }
     /**
      * Atomically dumps content into a file.
@@ -586,13 +586,13 @@ class Filesystem
             $this->mkdir($dir);
         }
         if (!\is_writable($dir)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to write to the "%s" directory.', $dir), 0, null, $dir);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to write to the "%s" directory.', $dir), 0, null, $dir);
         }
         // Will create a temp file with 0600 access rights
         // when the filesystem supports chmod.
         $tmpFile = $this->tempnam($dir, \basename($filename));
         if (\false === @\file_put_contents($tmpFile, $content)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to write file "%s".', $filename), 0, null, $filename);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to write file "%s".', $filename), 0, null, $filename);
         }
         @\chmod($tmpFile, \file_exists($filename) ? \fileperms($filename) : 0666 & ~\umask());
         $this->rename($tmpFile, $filename, \true);
@@ -612,10 +612,10 @@ class Filesystem
             $this->mkdir($dir);
         }
         if (!\is_writable($dir)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to write to the "%s" directory.', $dir), 0, null, $dir);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Unable to write to the "%s" directory.', $dir), 0, null, $dir);
         }
         if (\false === @\file_put_contents($filename, $content, \FILE_APPEND)) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to write file "%s".', $filename), 0, null, $filename);
+            throw new \MolliePrefix\Symfony\Component\Filesystem\Exception\IOException(\sprintf('Failed to write file "%s".', $filename), 0, null, $filename);
         }
     }
     /**

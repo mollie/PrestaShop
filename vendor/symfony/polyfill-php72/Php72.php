@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Polyfill\Php72;
+namespace MolliePrefix\Symfony\Polyfill\Php72;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -153,7 +153,7 @@ final class Php72
     }
     public static function mb_ord($s, $encoding = null)
     {
-        if (null == $encoding) {
+        if (null === $encoding) {
             $s = \mb_convert_encoding($s, 'UTF-8');
         } elseif ('UTF-8' !== $encoding) {
             $s = \mb_convert_encoding($s, 'UTF-8', $encoding);

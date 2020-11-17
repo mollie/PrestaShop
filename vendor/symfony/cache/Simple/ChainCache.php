@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Simple;
 
-use _PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
+use MolliePrefix\Psr\SimpleCache\CacheInterface;
+use MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\Cache\PruneableInterface;
+use MolliePrefix\Symfony\Component\Cache\ResettableInterface;
 /**
  * Chains several caches together.
  *
@@ -22,7 +22,7 @@ use _PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface;
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class ChainCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface
+class ChainCache implements \MolliePrefix\Psr\SimpleCache\CacheInterface, \MolliePrefix\Symfony\Component\Cache\PruneableInterface, \MolliePrefix\Symfony\Component\Cache\ResettableInterface
 {
     private $miss;
     private $caches = [];
@@ -35,11 +35,11 @@ class ChainCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
     public function __construct(array $caches, $defaultLifetime = 0)
     {
         if (!$caches) {
-            throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException('At least one cache must be specified.');
+            throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException('At least one cache must be specified.');
         }
         foreach ($caches as $cache) {
-            if (!$cache instanceof \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface) {
-                throw new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', \get_class($cache), \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterface::class));
+            if (!$cache instanceof \MolliePrefix\Psr\SimpleCache\CacheInterface) {
+                throw new \MolliePrefix\Symfony\Component\Cache\Exception\InvalidArgumentException(\sprintf('The class "%s" does not implement the "%s" interface.', \get_class($cache), \MolliePrefix\Psr\SimpleCache\CacheInterface::class));
             }
         }
         $this->miss = new \stdClass();
@@ -193,7 +193,7 @@ class ChainCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
     {
         $pruned = \true;
         foreach ($this->caches as $cache) {
-            if ($cache instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface) {
+            if ($cache instanceof \MolliePrefix\Symfony\Component\Cache\PruneableInterface) {
                 $pruned = $cache->prune() && $pruned;
             }
         }
@@ -205,7 +205,7 @@ class ChainCache implements \_PhpScoper5eddef0da618a\Psr\SimpleCache\CacheInterf
     public function reset()
     {
         foreach ($this->caches as $cache) {
-            if ($cache instanceof \_PhpScoper5eddef0da618a\Symfony\Component\Cache\ResettableInterface) {
+            if ($cache instanceof \MolliePrefix\Symfony\Component\Cache\ResettableInterface) {
                 $cache->reset();
             }
         }

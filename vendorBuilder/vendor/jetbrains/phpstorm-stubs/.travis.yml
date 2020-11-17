@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+  - docker
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+install:
+  - composer install --ignore-platform-reqs
+script:
+  - docker-compose -f docker-compose.yml pull
+  - docker-compose -f docker-compose.yml run php /opt/project/vendor/bin/phpunit /opt/project/tests/

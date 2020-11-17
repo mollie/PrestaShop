@@ -13,22 +13,27 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.5"
     },
     "require-dev": {
-        "phpunit\/phpunit": "^4.0"
+        "symfony\/phpunit-bridge": "^4.4 || ^5.1"
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper5eddef0da618a\\GuzzleHttp\\Promise\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\Tests\\": "tests\/"
+        }
+    },
     "scripts": {
-        "test": "vendor\/bin\/phpunit",
-        "test-ci": "vendor\/bin\/phpunit --coverage-text"
+        "test": "vendor\/bin\/simple-phpunit",
+        "test-ci": "vendor\/bin\/simple-phpunit --coverage-text"
     },
     "extra": {
         "branch-alias": {

@@ -8,53 +8,133 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Adapter;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\MockObject\MockObject;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter;
+use MolliePrefix\PHPUnit\Framework\MockObject\MockObject;
+use MolliePrefix\Symfony\Component\Cache\Adapter\AdapterInterface;
+use MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter;
+use MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter;
+use MolliePrefix\Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use MolliePrefix\Symfony\Component\Cache\PruneableInterface;
+use MolliePrefix\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter;
 /**
  * @author Kévin Dunglas <dunglas@gmail.com>
  * @group time-sensitive
  */
-class ChainAdapterTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
+class ChainAdapterTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Adapter\AdapterTestCase
 {
     public function createCachePool($defaultLifetime = 0)
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter([new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ArrayAdapter($defaultLifetime), new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter(), new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime)], $defaultLifetime);
+        return new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter($defaultLifetime), new \MolliePrefix\Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter($defaultLifetime), new \MolliePrefix\Symfony\Component\Cache\Adapter\FilesystemAdapter('', $defaultLifetime)], $defaultLifetime);
     }
     public function testEmptyAdaptersException()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('At least one adapter must be specified.');
-        new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter([]);
+        new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([]);
     }
     public function testInvalidAdapterException()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Cache\\Exception\\InvalidArgumentException');
         $this->expectExceptionMessage('The class "stdClass" does not implement');
-        new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter([new \stdClass()]);
+        new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([new \stdClass()]);
     }
     public function testPrune()
     {
         if (isset($this->skippedTests[__FUNCTION__])) {
             $this->markTestSkipped($this->skippedTests[__FUNCTION__]);
         }
-        $cache = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter([$this->getPruneableMock(), $this->getNonPruneableMock(), $this->getPruneableMock()]);
+        $cache = new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([$this->getPruneableMock(), $this->getNonPruneableMock(), $this->getPruneableMock()]);
         $this->assertTrue($cache->prune());
-        $cache = new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\ChainAdapter([$this->getPruneableMock(), $this->getFailingPruneableMock(), $this->getPruneableMock()]);
+        $cache = new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([$this->getPruneableMock(), $this->getFailingPruneableMock(), $this->getPruneableMock()]);
         $this->assertFalse($cache->prune());
+    }
+    public function testMultipleCachesExpirationWhenCommonTtlIsNotSet()
+    {
+        if (isset($this->skippedTests[__FUNCTION__])) {
+            $this->markTestSkipped($this->skippedTests[__FUNCTION__]);
+        }
+        $adapter1 = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter(4);
+        $adapter2 = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter(2);
+        $cache = new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([$adapter1, $adapter2]);
+        $cache->save($cache->getItem('key')->set('value'));
+        $item = $adapter1->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        $item = $adapter2->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        \sleep(2);
+        $item = $adapter1->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        $item = $adapter2->getItem('key');
+        $this->assertFalse($item->isHit());
+        \sleep(2);
+        $item = $adapter1->getItem('key');
+        $this->assertFalse($item->isHit());
+        $adapter2->save($adapter2->getItem('key1')->set('value1'));
+        $item = $cache->getItem('key1');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value1', $item->get());
+        \sleep(2);
+        $item = $adapter1->getItem('key1');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value1', $item->get());
+        $item = $adapter2->getItem('key1');
+        $this->assertFalse($item->isHit());
+        \sleep(2);
+        $item = $adapter1->getItem('key1');
+        $this->assertFalse($item->isHit());
+    }
+    public function testMultipleCachesExpirationWhenCommonTtlIsSet()
+    {
+        if (isset($this->skippedTests[__FUNCTION__])) {
+            $this->markTestSkipped($this->skippedTests[__FUNCTION__]);
+        }
+        $adapter1 = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter(4);
+        $adapter2 = new \MolliePrefix\Symfony\Component\Cache\Adapter\ArrayAdapter(2);
+        $cache = new \MolliePrefix\Symfony\Component\Cache\Adapter\ChainAdapter([$adapter1, $adapter2], 6);
+        $cache->save($cache->getItem('key')->set('value'));
+        $item = $adapter1->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        $item = $adapter2->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        \sleep(2);
+        $item = $adapter1->getItem('key');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value', $item->get());
+        $item = $adapter2->getItem('key');
+        $this->assertFalse($item->isHit());
+        \sleep(2);
+        $item = $adapter1->getItem('key');
+        $this->assertFalse($item->isHit());
+        $adapter2->save($adapter2->getItem('key1')->set('value1'));
+        $item = $cache->getItem('key1');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value1', $item->get());
+        \sleep(2);
+        $item = $adapter1->getItem('key1');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value1', $item->get());
+        $item = $adapter2->getItem('key1');
+        $this->assertFalse($item->isHit());
+        \sleep(2);
+        $item = $adapter1->getItem('key1');
+        $this->assertTrue($item->isHit());
+        $this->assertEquals('value1', $item->get());
+        \sleep(2);
+        $item = $adapter1->getItem('key1');
+        $this->assertFalse($item->isHit());
     }
     /**
      * @return MockObject|PruneableCacheInterface
      */
     private function getPruneableMock()
     {
-        $pruneable = $this->getMockBuilder(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
+        $pruneable = $this->getMockBuilder(\MolliePrefix\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
         $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(\true);
         return $pruneable;
     }
@@ -63,7 +143,7 @@ class ChainAdapterTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\
      */
     private function getFailingPruneableMock()
     {
-        $pruneable = $this->getMockBuilder(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
+        $pruneable = $this->getMockBuilder(\MolliePrefix\Symfony\Component\Cache\Tests\Adapter\PruneableCacheInterface::class)->getMock();
         $pruneable->expects($this->atLeastOnce())->method('prune')->willReturn(\false);
         return $pruneable;
     }
@@ -72,9 +152,9 @@ class ChainAdapterTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\
      */
     private function getNonPruneableMock()
     {
-        return $this->getMockBuilder(\_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface::class)->getMock();
+        return $this->getMockBuilder(\MolliePrefix\Symfony\Component\Cache\Adapter\AdapterInterface::class)->getMock();
     }
 }
-interface PruneableCacheInterface extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\PruneableInterface, \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Adapter\AdapterInterface
+interface PruneableCacheInterface extends \MolliePrefix\Symfony\Component\Cache\PruneableInterface, \MolliePrefix\Symfony\Component\Cache\Adapter\AdapterInterface
 {
 }

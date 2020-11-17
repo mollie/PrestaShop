@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\ExpressionLanguage;
+namespace MolliePrefix\Symfony\Component\ExpressionLanguage;
 
 /**
  * Represents a Token.
@@ -49,7 +49,7 @@ class Token
     /**
      * Tests the current token for a type and/or a value.
      *
-     * @param array|int   $type  The type to test
+     * @param string      $type  The type to test
      * @param string|null $value The token value
      *
      * @return bool

@@ -1,0 +1,29 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+  paths:
+    - ../../classes
+    - ../../controllers
+    - ../../ps_facebook.php
+  reportUnmatchedIgnoredErrors: false
+  checkMissingIterableValueType: false
+  ignoreErrors:
+    - '#Property TabCore::\$name \(string\) does not accept array.#'
+    - '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
+    - '#Call to an undefined method FrontController::getTemplateVarProduct\(\).#'
+    - '#Call to an undefined method FrontController::getCategory\(\).#'
+    - '#Call to protected method getBreadcrumbLinks\(\) of class FrontControllerCore.#'
+    - '#Call to an undefined method Customer::getSimpleAddresses\(\).#'
+    - '#Call to an undefined method FrontController::registerJavascript\(\).#'
+    - '#Call to an undefined method FrontController::getBreadcrumbLinks\(\).#'
+    - '#Parameter \#1 \$app_id of static method FacebookAds\Api::init\(\) expects string, null given.#'
+    - '#Parameter \#2 \$app_secret of static method FacebookAds\Api::init\(\) expects string, null given.#'
+    - '#Parameter \#1 \$gender of method FacebookAds\\Object\\ServerSide\\UserData::setGender\(\) expects FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\Gender, string given.#'
+    - '#Parameter \#1 \$custom_data of method FacebookAds\\Object\\ServerSide\\Event::setCustomData\(\) expects FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\CustomData, FacebookAds\\Object\\ServerSide\\CustomData given.#'
+    - '#Parameter \#1 \$user_data of method FacebookAds\\Object\\ServerSide\\Event::setUserData\(\) expects FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\UserData, FacebookAds\\Object\\ServerSide\\UserData given.#'
+    - '#Parameter \#1 \$events of method FacebookAds\\Object\\ServerSide\\EventRequest::setEvents\(\) expects array<FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\Event>, array<int, FacebookAds\\Object\\ServerSide\\Event> given.#'
+    - '#Parameter \#1 \$app_id of static method FacebookAds\\Api::init\(\) expects string, null given.#'
+    - '#Parameter \#2 \$app_secret of static method FacebookAds\\Api::init\(\) expects string, null given.#'
+
+  level: 5

@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp;
+namespace MolliePrefix\GuzzleHttp;
 
-use _PhpScoper5eddef0da618a\Psr\Http\Message\MessageInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface;
+use MolliePrefix\Psr\Http\Message\MessageInterface;
+use MolliePrefix\Psr\Http\Message\RequestInterface;
+use MolliePrefix\Psr\Http\Message\ResponseInterface;
 /**
  * Formats log messages using variable substitutions for requests, responses,
  * and other transactional data.
@@ -60,7 +60,7 @@ class MessageFormatter
      *
      * @return string
      */
-    public function format(\_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface $request, \_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response = null, \Exception $error = null)
+    public function format(\MolliePrefix\Psr\Http\Message\RequestInterface $request, \MolliePrefix\Psr\Http\Message\ResponseInterface $response = null, \Exception $error = null)
     {
         $cache = [];
         return \preg_replace_callback('/{\\s*([A-Za-z_\\-\\.0-9]+)\\s*}/', function (array $matches) use($request, $response, $error, &$cache) {
@@ -70,10 +70,10 @@ class MessageFormatter
             $result = '';
             switch ($matches[1]) {
                 case 'request':
-                    $result = \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\str($request);
+                    $result = \MolliePrefix\GuzzleHttp\Psr7\str($request);
                     break;
                 case 'response':
-                    $result = $response ? \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\str($response) : '';
+                    $result = $response ? \MolliePrefix\GuzzleHttp\Psr7\str($response) : '';
                     break;
                 case 'req_headers':
                     $result = \trim($request->getMethod() . ' ' . $request->getRequestTarget()) . ' HTTP/' . $request->getProtocolVersion() . "\r\n" . $this->headers($request);
@@ -145,7 +145,7 @@ class MessageFormatter
      *
      * @return string
      */
-    private function headers(\_PhpScoper5eddef0da618a\Psr\Http\Message\MessageInterface $message)
+    private function headers(\MolliePrefix\Psr\Http\Message\MessageInterface $message)
     {
         $result = '';
         foreach ($message->getHeaders() as $name => $values) {

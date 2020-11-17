@@ -1,9 +1,9 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\Mollie\Api\Resources;
+namespace MolliePrefix\Mollie\Api\Resources;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-class CurrentProfile extends \_PhpScoper5eddef0da618a\Mollie\Api\Resources\Profile
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+class CurrentProfile extends \MolliePrefix\Mollie\Api\Resources\Profile
 {
     /**
      * Enable a payment method for this profile.

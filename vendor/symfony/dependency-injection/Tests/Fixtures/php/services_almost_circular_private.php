@@ -1,21 +1,21 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
+use MolliePrefix\Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface;
+use MolliePrefix\Symfony\Component\DependencyInjection\Container;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException;
+use MolliePrefix\Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use MolliePrefix\Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 /**
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
  * @final since Symfony 3.3
  */
-class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Container
+class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \MolliePrefix\Symfony\Component\DependencyInjection\Container
 {
     private $parameters = [];
     private $targetDirs = [];
@@ -28,11 +28,11 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
     }
     public function getRemovedIds()
     {
-        return ['_PhpScoper5eddef0da618a\\Psr\\Container\\ContainerInterface' => \true, '_PhpScoper5eddef0da618a\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'bar' => \true, 'bar5' => \true, 'bar6' => \true, 'config' => \true, 'config2' => \true, 'connection3' => \true, 'connection4' => \true, 'dispatcher' => \true, 'dispatcher2' => \true, 'foo4' => \true, 'foobar' => \true, 'foobar2' => \true, 'foobar3' => \true, 'level2' => \true, 'level3' => \true, 'level4' => \true, 'level5' => \true, 'level6' => \true, 'logger2' => \true, 'manager4' => \true, 'multiuse1' => \true, 'subscriber2' => \true];
+        return ['MolliePrefix\\Psr\\Container\\ContainerInterface' => \true, 'MolliePrefix\\Symfony\\Component\\DependencyInjection\\ContainerInterface' => \true, 'bar' => \true, 'bar5' => \true, 'bar6' => \true, 'config' => \true, 'config2' => \true, 'connection3' => \true, 'connection4' => \true, 'dispatcher' => \true, 'dispatcher2' => \true, 'foo4' => \true, 'foobar' => \true, 'foobar2' => \true, 'foobar3' => \true, 'level2' => \true, 'level3' => \true, 'level4' => \true, 'level5' => \true, 'level6' => \true, 'logger2' => \true, 'manager4' => \true, 'multiuse1' => \true, 'subscriber2' => \true];
     }
     public function compile()
     {
-        throw new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
+        throw new \MolliePrefix\Symfony\Component\DependencyInjection\Exception\LogicException('You cannot compile a dumped container that was already compiled.');
     }
     public function isCompiled()
     {
@@ -50,8 +50,8 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
      */
     protected function getBar2Service()
     {
-        $this->services['bar2'] = $instance = new \_PhpScoper5eddef0da618a\BarCircular();
-        $instance->addFoobar(new \_PhpScoper5eddef0da618a\FoobarCircular(${($_ = isset($this->services['foo2']) ? $this->services['foo2'] : $this->getFoo2Service()) && \false ?: '_'}));
+        $this->services['bar2'] = $instance = new \MolliePrefix\BarCircular();
+        $instance->addFoobar(new \MolliePrefix\FoobarCircular(${($_ = isset($this->services['foo2']) ? $this->services['foo2'] : $this->getFoo2Service()) && \false ?: '_'}));
         return $instance;
     }
     /**
@@ -61,8 +61,8 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
      */
     protected function getBar3Service()
     {
-        $this->services['bar3'] = $instance = new \_PhpScoper5eddef0da618a\BarCircular();
-        $a = new \_PhpScoper5eddef0da618a\FoobarCircular();
+        $this->services['bar3'] = $instance = new \MolliePrefix\BarCircular();
+        $a = new \MolliePrefix\FoobarCircular();
         $instance->addFoobar($a, $a);
         return $instance;
     }
@@ -115,9 +115,9 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
      */
     protected function getFooService()
     {
-        $a = new \_PhpScoper5eddef0da618a\BarCircular();
-        $this->services['foo'] = $instance = new \_PhpScoper5eddef0da618a\FooCircular($a);
-        $a->addFoobar(new \_PhpScoper5eddef0da618a\FoobarCircular($instance));
+        $a = new \MolliePrefix\BarCircular();
+        $this->services['foo'] = $instance = new \MolliePrefix\FooCircular($a);
+        $a->addFoobar(new \MolliePrefix\FoobarCircular($instance));
         return $instance;
     }
     /**
@@ -131,7 +131,7 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
         if (isset($this->services['foo2'])) {
             return $this->services['foo2'];
         }
-        return $this->services['foo2'] = new \_PhpScoper5eddef0da618a\FooCircular($a);
+        return $this->services['foo2'] = new \MolliePrefix\FooCircular($a);
     }
     /**
      * Gets the public 'foo5' shared service.
@@ -291,7 +291,7 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
      */
     protected function getLevel2Service()
     {
-        $this->services['level2'] = $instance = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\FooForCircularWithAddCalls();
+        $this->services['level2'] = $instance = new \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\FooForCircularWithAddCalls();
         $instance->call(${($_ = isset($this->services['level3']) ? $this->services['level3'] : $this->getLevel3Service()) && \false ?: '_'});
         return $instance;
     }
@@ -333,7 +333,7 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
      */
     protected function getLevel6Service()
     {
-        $this->services['level6'] = $instance = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\FooForCircularWithAddCalls();
+        $this->services['level6'] = $instance = new \MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\FooForCircularWithAddCalls();
         $instance->call(${($_ = isset($this->services['level5']) ? $this->services['level5'] : $this->getLevel5Service()) && \false ?: '_'});
         return $instance;
     }
@@ -365,4 +365,4 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Private extends \_PhpScoper5edde
  *
  * @final since Symfony 3.3
  */
-\class_alias('_PhpScoper5eddef0da618a\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', 'Symfony_DI_PhpDumper_Test_Almost_Circular_Private', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Private', \false);

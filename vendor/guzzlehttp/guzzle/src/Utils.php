@@ -1,10 +1,10 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp;
+namespace MolliePrefix\GuzzleHttp;
 
-use _PhpScoper5eddef0da618a\GuzzleHttp\Exception\InvalidArgumentException;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface;
-use _PhpScoper5eddef0da618a\Symfony\Polyfill\Intl\Idn\Idn;
+use MolliePrefix\GuzzleHttp\Exception\InvalidArgumentException;
+use MolliePrefix\Psr\Http\Message\UriInterface;
+use MolliePrefix\Symfony\Polyfill\Intl\Idn\Idn;
 final class Utils
 {
     /**
@@ -17,7 +17,7 @@ final class Utils
      */
     public static function currentTime()
     {
-        return \function_exists('_PhpScoper5eddef0da618a\\hrtime') ? hrtime(\true) / 1000000000.0 : \microtime(\true);
+        return \function_exists('MolliePrefix\\hrtime') ? \hrtime(\true) / 1000000000.0 : \microtime(\true);
     }
     /**
      * @param int $options
@@ -27,7 +27,7 @@ final class Utils
      *
      * @internal
      */
-    public static function idnUriConvert(\_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $uri, $options = 0)
+    public static function idnUriConvert(\MolliePrefix\Psr\Http\Message\UriInterface $uri, $options = 0)
     {
         if ($uri->getHost()) {
             $asciiHost = self::idnToAsci($uri->getHost(), $options, $info);
@@ -46,7 +46,7 @@ final class Utils
                 if ($errors) {
                     $errorMessage .= ' (errors: ' . \implode(', ', $errors) . ')';
                 }
-                throw new \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\InvalidArgumentException($errorMessage);
+                throw new \MolliePrefix\GuzzleHttp\Exception\InvalidArgumentException($errorMessage);
             } else {
                 if ($uri->getHost() !== $asciiHost) {
                     // Replace URI only if the ASCII version is different
@@ -69,12 +69,14 @@ final class Utils
             return $domain;
         }
         if (\extension_loaded('intl') && \defined('INTL_IDNA_VARIANT_UTS46')) {
-            return \idn_to_ascii($domain, $options, \INTL_IDNA_VARIANT_UTS46, $info);
+            return \MolliePrefix\idn_to_ascii($domain, $options, \INTL_IDNA_VARIANT_UTS46, $info);
         }
         /*
-         * The Idn class is marked as @internal. We've locked the version to
-         * symfony/polyfill-intl-idn to avoid issues in the future.
+         * The Idn class is marked as @internal. Verify that class and method exists.
          */
-        return \_PhpScoper5eddef0da618a\Symfony\Polyfill\Intl\Idn\Idn::idn_to_ascii($domain, $options, \_PhpScoper5eddef0da618a\Symfony\Polyfill\Intl\Idn\Idn::INTL_IDNA_VARIANT_UTS46, $info);
+        if (\method_exists(\MolliePrefix\Symfony\Polyfill\Intl\Idn\Idn::class, 'idn_to_ascii')) {
+            return \MolliePrefix\Symfony\Polyfill\Intl\Idn\Idn::idn_to_ascii($domain, $options, \MolliePrefix\Symfony\Polyfill\Intl\Idn\Idn::INTL_IDNA_VARIANT_UTS46, $info);
+        }
+        throw new \RuntimeException('ext-intl or symfony/polyfill-intl-idn not loaded or too old');
     }
 }

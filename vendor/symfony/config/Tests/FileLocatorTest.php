@@ -8,18 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests;
+namespace MolliePrefix\Symfony\Component\Config\Tests;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator;
-class FileLocatorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\FileLocator;
+class FileLocatorTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider getIsAbsolutePathTests
      */
     public function testIsAbsolutePath($path)
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator([]);
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator([]);
         $r = new \ReflectionObject($loader);
         $m = $r->getMethod('isAbsolutePath');
         $m->setAccessible(\true);
@@ -31,34 +31,34 @@ class FileLocatorTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCas
     }
     public function testLocate()
     {
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(__DIR__ . '/Fixtures');
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator(__DIR__ . '/Fixtures');
         $this->assertEquals(__DIR__ . \DIRECTORY_SEPARATOR . 'FileLocatorTest.php', $loader->locate('FileLocatorTest.php', __DIR__), '->locate() returns the absolute filename if the file exists in the given path');
         $this->assertEquals(__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', $loader->locate('foo.xml', __DIR__), '->locate() returns the absolute filename if the file exists in one of the paths given in the constructor');
         $this->assertEquals(__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', $loader->locate(__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', __DIR__), '->locate() returns the absolute filename if the file exists in one of the paths given in the constructor');
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures', __DIR__ . '/Fixtures/Again']);
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures', __DIR__ . '/Fixtures/Again']);
         $this->assertEquals([__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', __DIR__ . '/Fixtures/Again' . \DIRECTORY_SEPARATOR . 'foo.xml'], $loader->locate('foo.xml', __DIR__, \false), '->locate() returns an array of absolute filenames');
         $this->assertEquals([__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', __DIR__ . '/Fixtures/Again' . \DIRECTORY_SEPARATOR . 'foo.xml'], $loader->locate('foo.xml', __DIR__ . '/Fixtures', \false), '->locate() returns an array of absolute filenames');
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator(__DIR__ . '/Fixtures/Again');
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator(__DIR__ . '/Fixtures/Again');
         $this->assertEquals([__DIR__ . '/Fixtures' . \DIRECTORY_SEPARATOR . 'foo.xml', __DIR__ . '/Fixtures/Again' . \DIRECTORY_SEPARATOR . 'foo.xml'], $loader->locate('foo.xml', __DIR__ . '/Fixtures', \false), '->locate() returns an array of absolute filenames');
     }
     public function testLocateThrowsAnExceptionIfTheFileDoesNotExists()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Exception\\FileLocatorFileNotFoundException');
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Config\\Exception\\FileLocatorFileNotFoundException');
         $this->expectExceptionMessage('The file "foobar.xml" does not exist');
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
         $loader->locate('foobar.xml', __DIR__);
     }
     public function testLocateThrowsAnExceptionIfTheFileDoesNotExistsInAbsolutePath()
     {
-        $this->expectException('_PhpScoper5eddef0da618a\\Symfony\\Component\\Config\\Exception\\FileLocatorFileNotFoundException');
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
+        $this->expectException('MolliePrefix\\Symfony\\Component\\Config\\Exception\\FileLocatorFileNotFoundException');
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
         $loader->locate(__DIR__ . '/Fixtures/foobar.xml', __DIR__);
     }
     public function testLocateEmpty()
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('An empty file name is not valid to be located.');
-        $loader = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
+        $loader = new \MolliePrefix\Symfony\Component\Config\FileLocator([__DIR__ . '/Fixtures']);
         $loader->locate(null, __DIR__);
     }
 }

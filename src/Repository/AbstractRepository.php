@@ -55,6 +55,11 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 
+    public function findAll()
+    {
+        return new PrestaShopCollection($this->fullyClassifiedClassName);
+    }
+
     /**
      * @param array $keyValueCriteria
      * @return ObjectModel|null

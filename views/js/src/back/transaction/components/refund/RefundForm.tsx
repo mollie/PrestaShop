@@ -123,7 +123,7 @@ export default function RefundForm(): ReactElement<{}> {
             disabled={parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
           />
           <span>
-            {translations.remaining}:
+            {translations.refundable}:
           </span>
           <input
             type="text"
@@ -167,7 +167,7 @@ export default function RefundForm(): ReactElement<{}> {
           <div className="form-group">
             <div className="input-group" style={{ minWidth: '100px' }}>
               <div className="input-group-addon">
-                {translations.remaining}:
+                {translations.refundable}:
               </div>
               <input
                 type="text"

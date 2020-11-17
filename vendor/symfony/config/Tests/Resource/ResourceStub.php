@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Resource;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
-class ResourceStub implements \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\SelfCheckingResourceInterface
+use MolliePrefix\Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
+class ResourceStub implements \MolliePrefix\Symfony\Component\Config\Resource\SelfCheckingResourceInterface
 {
     private $fresh = \true;
     public function setFresh($isFresh)

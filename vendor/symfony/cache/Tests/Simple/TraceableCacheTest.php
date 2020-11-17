@@ -8,19 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple;
+namespace MolliePrefix\Symfony\Component\Cache\Tests\Simple;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\FilesystemCache;
-use _PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\TraceableCache;
+use MolliePrefix\Symfony\Component\Cache\Simple\FilesystemCache;
+use MolliePrefix\Symfony\Component\Cache\Simple\TraceableCache;
 /**
  * @group time-sensitive
  */
-class TraceableCacheTest extends \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Tests\Simple\CacheTestCase
+class TraceableCacheTest extends \MolliePrefix\Symfony\Component\Cache\Tests\Simple\CacheTestCase
 {
     protected $skippedTests = ['testPrune' => 'TraceableCache just proxies'];
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\TraceableCache(new \_PhpScoper5eddef0da618a\Symfony\Component\Cache\Simple\FilesystemCache('', $defaultLifetime));
+        return new \MolliePrefix\Symfony\Component\Cache\Simple\TraceableCache(new \MolliePrefix\Symfony\Component\Cache\Simple\FilesystemCache('', $defaultLifetime));
     }
     public function testGetMissTrace()
     {

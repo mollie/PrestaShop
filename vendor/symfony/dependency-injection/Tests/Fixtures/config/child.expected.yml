@@ -1,7 +1,7 @@
 
 services:
     service_container:
-        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:

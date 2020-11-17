@@ -5,7 +5,7 @@ services:
             $foo: [value]
 
     bar:
-        class: _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
 
     foo:
         class: stdClass

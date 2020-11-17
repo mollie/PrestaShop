@@ -1,6 +1,16 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.1.0 ##
++ PS1.7 - Credit card components are now indexed with tabbable feature meaning that clicking TAB in keyboard will point to next credit card input option.
++ Fixed Order creation in BO crashed page error.
++ After successful payment process memorized cart is now being removed by default. This behavior is added to ensure merchants wont have duplicated carts then
+  they are not required.
++ Added sku fallback for products without names.
++ Updated translations.
++ Added voucher payment method.
++ Phone numbers without possible international code ( which does not have + in front of the number ) are not sent to mollie as delivery or billing address phone.
++ Fixed issue when uninstalling module not all mollie order statuses were deleted
 
 ## Changes in release 4.0.9 Hotfix-1 ##
 + In PS1.6 prevents double click payment method to create multiple orders

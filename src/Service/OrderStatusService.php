@@ -35,7 +35,7 @@
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Configuration;
 use Context;
 use Mollie\Config\Config;
@@ -122,8 +122,8 @@ class OrderStatusService
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
-        $orderPayments = OrderPayment::getByOrderId($order->id);
         if ($transactionInfo) {
+            $orderPayments = OrderPayment::getByOrderId($order->id);
             /** @var OrderPayment $orderPayment */
             foreach ($orderPayments as $orderPayment) {
                 $orderPayment->transaction_id = $transactionInfo['transactionId'];

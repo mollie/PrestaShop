@@ -10,11 +10,14 @@ services:
       - '@Mollie\Service\PaymentsTranslationService'
       - '@Mollie\Service\CustomerService'
       - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
+      - '@Mollie\Provider\PhoneNumberProvider'
 
   Mollie\Service\ApiService:
     arguments:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
 
   Mollie\Service\ConfigFieldService:
     arguments:
@@ -63,6 +66,7 @@ services:
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Service\MolCarrierInformationService'
+      - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
 
   Mollie\Service\ShipmentService:
     arguments:
@@ -107,6 +111,7 @@ services:
   Mollie\Service\MemorizeCartService:
     arguments:
       - '@Mollie\Service\OrderCartAssociationService'
+      - '@Mollie\Repository\PendingOrderCartRepository'
 
   Mollie\Service\RepeatOrderLinkFactory:
 
@@ -149,3 +154,6 @@ services:
   Mollie\Service\VoucherService:
     - '@Mollie\Repository\AttributeRepository'
     - '@Mollie\Adapter\ConfigurationAdapter'
+
+  Mollie\Service\ExceptionService:
+    - '@mollie'

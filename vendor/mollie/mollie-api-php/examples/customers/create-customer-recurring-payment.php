@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * How to create an on-demand recurring payment.
@@ -40,18 +40,18 @@ try {
         "webhookUrl" => "{$protocol}://{$hostname}{$path}/payments/webhook.php",
         "metadata" => ["order_id" => $orderId],
         // Flag this payment as a recurring payment.
-        "sequenceType" => \_PhpScoper5eddef0da618a\Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
+        "sequenceType" => \MolliePrefix\Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
     ]);
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper5eddef0da618a\database_write($orderId, $payment->status);
+    \MolliePrefix\database_write($orderId, $payment->status);
     /*
      * The payment will be either pending or paid immediately. The customer
      * does not have to perform any payment steps.
      */
     echo "<p>Selected mandate is '" . \htmlspecialchars($payment->mandateId) . "' (" . \htmlspecialchars($payment->method) . ").</p>\n";
     echo "<p>The payment status is '" . \htmlspecialchars($payment->status) . "'.</p>\n";
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

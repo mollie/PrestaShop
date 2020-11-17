@@ -1,8 +1,8 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
-use _PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder;
-$container = new \_PhpScoper5eddef0da618a\Symfony\Component\DependencyInjection\ContainerBuilder();
+use MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder;
+$container = new \MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
 $container->register('foo', 'Foo')->setAbstract(\true)->setPublic(\true);
 return $container;

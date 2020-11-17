@@ -1,15 +1,15 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Exception;
+namespace MolliePrefix\GuzzleHttp\Exception;
 
-use _PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface;
-use _PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface;
+use MolliePrefix\GuzzleHttp\Promise\PromiseInterface;
+use MolliePrefix\Psr\Http\Message\RequestInterface;
+use MolliePrefix\Psr\Http\Message\ResponseInterface;
+use MolliePrefix\Psr\Http\Message\UriInterface;
 /**
  * HTTP Request exception
  */
-class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\TransferException
+class RequestException extends \MolliePrefix\GuzzleHttp\Exception\TransferException
 {
     /** @var RequestInterface */
     private $request;
@@ -17,10 +17,10 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
     private $response;
     /** @var array */
     private $handlerContext;
-    public function __construct($message, \_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface $request, \_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $handlerContext = [])
+    public function __construct($message, \MolliePrefix\Psr\Http\Message\RequestInterface $request, \MolliePrefix\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $handlerContext = [])
     {
         // Set the code of the exception if the response is set and not future.
-        $code = $response && !$response instanceof \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface ? $response->getStatusCode() : 0;
+        $code = $response && !$response instanceof \MolliePrefix\GuzzleHttp\Promise\PromiseInterface ? $response->getStatusCode() : 0;
         parent::__construct($message, $code, $previous);
         $this->request = $request;
         $this->response = $response;
@@ -34,9 +34,9 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
      *
      * @return RequestException
      */
-    public static function wrapException(\_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface $request, \Exception $e)
+    public static function wrapException(\MolliePrefix\Psr\Http\Message\RequestInterface $request, \Exception $e)
     {
-        return $e instanceof \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException ? $e : new \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\RequestException($e->getMessage(), $request, null, $e);
+        return $e instanceof \MolliePrefix\GuzzleHttp\Exception\RequestException ? $e : new \MolliePrefix\GuzzleHttp\Exception\RequestException($e->getMessage(), $request, null, $e);
     }
     /**
      * Factory method to create a new exception with a normalized error message
@@ -48,7 +48,7 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
      *
      * @return self
      */
-    public static function create(\_PhpScoper5eddef0da618a\Psr\Http\Message\RequestInterface $request, \_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $ctx = [])
+    public static function create(\MolliePrefix\Psr\Http\Message\RequestInterface $request, \MolliePrefix\Psr\Http\Message\ResponseInterface $response = null, \Exception $previous = null, array $ctx = [])
     {
         if (!$response) {
             return new self('Error completing request', $request, null, $previous, $ctx);
@@ -56,10 +56,10 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
         $level = (int) \floor($response->getStatusCode() / 100);
         if ($level === 4) {
             $label = 'Client error';
-            $className = \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\ClientException::class;
+            $className = \MolliePrefix\GuzzleHttp\Exception\ClientException::class;
         } elseif ($level === 5) {
             $label = 'Server error';
-            $className = \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\ServerException::class;
+            $className = \MolliePrefix\GuzzleHttp\Exception\ServerException::class;
         } else {
             $label = 'Unsuccessful request';
             $className = __CLASS__;
@@ -84,9 +84,9 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
      *
      * @return string|null
      */
-    public static function getResponseBodySummary(\_PhpScoper5eddef0da618a\Psr\Http\Message\ResponseInterface $response)
+    public static function getResponseBodySummary(\MolliePrefix\Psr\Http\Message\ResponseInterface $response)
     {
-        return \_PhpScoper5eddef0da618a\GuzzleHttp\Psr7\get_message_body_summary($response);
+        return \MolliePrefix\GuzzleHttp\Psr7\get_message_body_summary($response);
     }
     /**
      * Obfuscates URI if there is a username and a password present
@@ -95,7 +95,7 @@ class RequestException extends \_PhpScoper5eddef0da618a\GuzzleHttp\Exception\Tra
      *
      * @return UriInterface
      */
-    private static function obfuscateUri(\_PhpScoper5eddef0da618a\Psr\Http\Message\UriInterface $uri)
+    private static function obfuscateUri(\MolliePrefix\Psr\Http\Message\UriInterface $uri)
     {
         $userInfo = $uri->getUserInfo();
         if (\false !== ($pos = \strpos($userInfo, ':'))) {

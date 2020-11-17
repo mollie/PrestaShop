@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a;
+namespace MolliePrefix;
 
 /*
  * Create a profile via the Mollie API.
@@ -17,6 +17,6 @@ try {
      */
     $profile = $mollie->profiles->create(["name" => "My website name", "website" => "https://www.mywebsite.com", "email" => "info@mywebsite.com", "phone" => "+31208202070", "categoryCode" => 5399, "mode" => "live"]);
     echo "<p>Profile created: " . \htmlspecialchars($profile->name) . "</p>";
-} catch (\_PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException $e) {
+} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "<p>API call failed: " . \htmlspecialchars($e->getMessage()) . "</p>";
 }

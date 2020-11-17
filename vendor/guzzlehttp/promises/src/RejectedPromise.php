@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
+namespace MolliePrefix\GuzzleHttp\Promise;
 
 /**
  * A promise that has been rejected.
@@ -8,12 +8,12 @@ namespace _PhpScoper5eddef0da618a\GuzzleHttp\Promise;
  * Thenning off of this promise will invoke the onRejected callback
  * immediately and ignore other callbacks.
  */
-class RejectedPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\PromiseInterface
+class RejectedPromise implements \MolliePrefix\GuzzleHttp\Promise\PromiseInterface
 {
     private $reason;
     public function __construct($reason)
     {
-        if (\method_exists($reason, 'then')) {
+        if (\is_object($reason) && \method_exists($reason, 'then')) {
             throw new \InvalidArgumentException('You cannot create a RejectedPromise with a promise.');
         }
         $this->reason = $reason;
@@ -24,11 +24,11 @@ class RejectedPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Pro
         if (!$onRejected) {
             return $this;
         }
-        $queue = queue();
+        $queue = \MolliePrefix\GuzzleHttp\Promise\Utils::queue();
         $reason = $this->reason;
-        $p = new \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Promise([$queue, 'run']);
+        $p = new \MolliePrefix\GuzzleHttp\Promise\Promise([$queue, 'run']);
         $queue->add(static function () use($p, $reason, $onRejected) {
-            if ($p->getState() === self::PENDING) {
+            if (\MolliePrefix\GuzzleHttp\Promise\Is::pending($p)) {
                 try {
                     // Return a resolved promise if onRejected does not throw.
                     $p->resolve($onRejected($reason));
@@ -50,8 +50,9 @@ class RejectedPromise implements \_PhpScoper5eddef0da618a\GuzzleHttp\Promise\Pro
     public function wait($unwrap = \true, $defaultDelivery = null)
     {
         if ($unwrap) {
-            throw exception_for($this->reason);
+            throw \MolliePrefix\GuzzleHttp\Promise\Create::exceptionFor($this->reason);
         }
+        return null;
     }
     public function getState()
     {

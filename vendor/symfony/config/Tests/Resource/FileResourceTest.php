@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _PhpScoper5eddef0da618a\Symfony\Component\Config\Tests\Resource;
+namespace MolliePrefix\Symfony\Component\Config\Tests\Resource;
 
-use _PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase;
-use _PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource;
-class FileResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCase
+use MolliePrefix\PHPUnit\Framework\TestCase;
+use MolliePrefix\Symfony\Component\Config\Resource\FileResource;
+class FileResourceTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     protected $resource;
     protected $file;
@@ -22,14 +22,13 @@ class FileResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCa
         $this->file = \sys_get_temp_dir() . '/tmp.xml';
         $this->time = \time();
         \touch($this->file, $this->time);
-        $this->resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource($this->file);
+        $this->resource = new \MolliePrefix\Symfony\Component\Config\Resource\FileResource($this->file);
     }
     protected function tearDown()
     {
-        if (!\file_exists($this->file)) {
-            return;
+        if (\file_exists($this->file)) {
+            @\unlink($this->file);
         }
-        \unlink($this->file);
     }
     public function testGetResource()
     {
@@ -37,7 +36,7 @@ class FileResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCa
     }
     public function testGetResourceWithScheme()
     {
-        $resource = new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource('file://' . $this->file);
+        $resource = new \MolliePrefix\Symfony\Component\Config\Resource\FileResource('file://' . $this->file);
         $this->assertSame('file://' . $this->file, $resource->getResource(), '->getResource() returns the path to the schemed resource');
     }
     public function testToString()
@@ -47,8 +46,8 @@ class FileResourceTest extends \_PhpScoper5eddef0da618a\PHPUnit\Framework\TestCa
     public function testResourceDoesNotExist()
     {
         $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessageRegExp('/The file ".*" does not exist./');
-        new \_PhpScoper5eddef0da618a\Symfony\Component\Config\Resource\FileResource('/____foo/foobar' . \mt_rand(1, 999999));
+        $this->expectExceptionMessageMatches('/The file ".*" does not exist./');
+        new \MolliePrefix\Symfony\Component\Config\Resource\FileResource('/____foo/foobar' . \mt_rand(1, 999999));
     }
     public function testIsFresh()
     {
