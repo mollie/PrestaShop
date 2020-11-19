@@ -172,9 +172,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             return $this->module->l('Transaction failed', 'webhook');
         }
 
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        $psPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         /** @var OrderStatusService $orderStatusService */
@@ -202,20 +199,19 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         } else {
                             $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
                         }
-                    } elseif ($psPayment['method'] === PaymentMethod::BANKTRANSFER
-                    ) {
-                        $order = new Order($orderId);
-                        $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
-                            ? Mollie\Config\Config::$methods[$apiPayment->method]
-                            : $this->module->displayName;
-                        $order->update();
-
-                        $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
-                    } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                        && ($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
+                    } elseif (($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                     ) {
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
+
+                        if ($apiPayment->status === PaymentStatus::STATUS_PAID) {
+                            /** @var TransactionService $transactionService */
+                            $transactionService = $this->module->getContainer(TransactionService::class);
+                            $order = new Order($orderId);
+                            if (!$order->getOrderPayments()) {
+                                $transactionService->updateOrderTransaction($transaction->id, $order->reference);
+                            }
+                        }
 
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
@@ -227,18 +223,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                 break;
             case Mollie\Config\Config::MOLLIE_API_STATUS_ORDER:
                 if ($apiPayment->metadata->cart_id) {
-                    /** todo: investigate if banktransfer logic is needed here */
-                    if ($psPayment['method'] === PaymentMethod::BANKTRANSFER
-                    ) {
-                        $order = new Order($orderId);
-                        $order->payment = isset(Mollie\Config\Config::$methods[$apiPayment->method])
-                            ? Mollie\Config\Config::$methods[$apiPayment->method]
-                            : $this->module->displayName;
-                        $order->update();
-
-                        $orderStatusService->setOrderStatus($orderId, $apiPayment->status);
-                    } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                        && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
+                    if  (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                         && $apiPayment->status === OrderStatus::STATUS_CREATED
                     ) {
                         $orderPayments = $apiPayment->payments();
@@ -253,9 +238,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
-                    } elseif ($psPayment['method'] !== PaymentMethod::BANKTRANSFER
-                        && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
-                    ) {
+                    } elseif (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key) {
                         $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
                         $paymentStatus = (int) Config::getStatuses()[$status];
 
