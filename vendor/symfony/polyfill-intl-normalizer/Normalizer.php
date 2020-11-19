@@ -22,14 +22,14 @@ namespace MolliePrefix\Symfony\Polyfill\Intl\Normalizer;
  */
 class Normalizer
 {
-    const FORM_D = \MolliePrefix\Normalizer::FORM_D;
-    const FORM_KD = \MolliePrefix\Normalizer::FORM_KD;
-    const FORM_C = \MolliePrefix\Normalizer::FORM_C;
-    const FORM_KC = \MolliePrefix\Normalizer::FORM_KC;
-    const NFD = \MolliePrefix\Normalizer::NFD;
-    const NFKD = \MolliePrefix\Normalizer::NFKD;
-    const NFC = \MolliePrefix\Normalizer::NFC;
-    const NFKC = \MolliePrefix\Normalizer::NFKC;
+    const FORM_D = \Normalizer::FORM_D;
+    const FORM_KD = \Normalizer::FORM_KD;
+    const FORM_C = \Normalizer::FORM_C;
+    const FORM_KC = \Normalizer::FORM_KC;
+    const NFD = \Normalizer::NFD;
+    const NFKD = \Normalizer::NFKD;
+    const NFC = \Normalizer::NFC;
+    const NFKC = \Normalizer::NFKC;
     private static $C;
     private static $D;
     private static $KD;
@@ -74,7 +74,7 @@ class Normalizer
                 $K = \true;
                 break;
             default:
-                if (\defined('Normalizer::NONE') && \MolliePrefix\Normalizer::NONE == $form) {
+                if (\defined('Normalizer::NONE') && \Normalizer::NONE == $form) {
                     return $s;
                 }
                 return \false;

@@ -34,7 +34,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
+                "MolliePrefix\\Composer\\CaBundle\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -55,6 +55,20 @@
             "certificate",
             "ssl",
             "tls"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/packagist.com",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/composer",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/composer\/composer",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -466,7 +480,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -526,7 +540,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -588,7 +602,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
+                "MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -656,7 +670,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
+                "MolliePrefix\\Mollie\\Api\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -893,7 +907,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
+                "MolliePrefix\\PrestaShop\\Decimal\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1036,7 +1050,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
+                "MolliePrefix\\Psr\\Cache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1084,7 +1098,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
+                "MolliePrefix\\Psr\\Container\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1135,7 +1149,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
+                "MolliePrefix\\Psr\\Http\\Message\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1187,7 +1201,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
+                "MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1236,7 +1250,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
+                "MolliePrefix\\Psr\\SimpleCache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1393,7 +1407,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
+                "MolliePrefix\\Symfony\\Component\\Cache\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1418,6 +1432,20 @@
         "keywords": [
             "caching",
             "psr6"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -1458,7 +1486,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
+                "MolliePrefix\\Symfony\\Component\\Config\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1479,7 +1507,21 @@
             }
         ],
         "description": "Symfony Config Component",
-        "homepage": "https:\/\/symfony.com"
+        "homepage": "https:\/\/symfony.com",
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
+        ]
     },
     {
         "name": "symfony\/console",
@@ -1676,7 +1718,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
+                "MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1697,7 +1739,21 @@
             }
         ],
         "description": "Symfony DependencyInjection Component",
-        "homepage": "https:\/\/symfony.com"
+        "homepage": "https:\/\/symfony.com",
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
+        ]
     },
     {
         "name": "symfony\/event-dispatcher",
@@ -1799,7 +1855,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
+                "MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1820,7 +1876,21 @@
             }
         ],
         "description": "Symfony ExpressionLanguage Component",
-        "homepage": "https:\/\/symfony.com"
+        "homepage": "https:\/\/symfony.com",
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
+        ]
     },
     {
         "name": "symfony\/filesystem",
@@ -1846,7 +1916,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
+                "MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1867,7 +1937,21 @@
             }
         ],
         "description": "Symfony Filesystem Component",
-        "homepage": "https:\/\/symfony.com"
+        "homepage": "https:\/\/symfony.com",
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
+        ]
     },
     {
         "name": "symfony\/finder",
@@ -2026,7 +2110,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2054,6 +2138,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2091,7 +2189,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2118,6 +2216,20 @@
             "ctype",
             "polyfill",
             "portable"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2158,7 +2270,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2191,6 +2303,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2228,7 +2354,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2260,6 +2386,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2297,7 +2437,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2325,6 +2465,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2360,7 +2514,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2390,6 +2544,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2424,7 +2592,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
+                "MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2451,6 +2619,20 @@
             "polyfill",
             "portable",
             "shim"
+        ],
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -2606,7 +2788,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Yaml\\": ""
+                "MolliePrefix\\Symfony\\Component\\Yaml\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2627,6 +2809,20 @@
             }
         ],
         "description": "Symfony Yaml Component",
-        "homepage": "https:\/\/symfony.com"
+        "homepage": "https:\/\/symfony.com",
+        "funding": [
+            {
+                "url": "https:\/\/symfony.com\/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https:\/\/github.com\/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                "type": "tidelift"
+            }
+        ]
     }
 ]

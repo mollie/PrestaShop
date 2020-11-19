@@ -470,4 +470,4 @@ class Symfony_DI_PhpDumper_Test_Almost_Circular_Public extends \MolliePrefix\Sym
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Public', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Public', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Almost_Circular_Public', 'Symfony_DI_PhpDumper_Test_Almost_Circular_Public', \false);
