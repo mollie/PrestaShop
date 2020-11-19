@@ -405,7 +405,7 @@ class ApiService
                 'currency' => $payment->amount->currency
             ];
             $order['availableRefundAmount'] = $payment->amountRemaining ?: $amountRemaining;
-            $order['details'] = $payment->details;
+            $order['details'] = $payment->details ?: new \stdClass();
         }
 
         return $order;
