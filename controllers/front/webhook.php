@@ -205,12 +205,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
                         if ($apiPayment->status === PaymentStatus::STATUS_PAID) {
-                            /** @var TransactionService $transactionService */
-                            $transactionService = $this->module->getContainer(TransactionService::class);
-                            $order = new Order($orderId);
-                            if (!$order->getOrderPayments()) {
-                                $transactionService->updateOrderTransaction($transaction->id, $order->reference);
-                            }
+                            $this->updateTransaction($orderId, $transaction);
                         }
 
                         /** @var OrderStatusService $orderStatusService */
@@ -243,12 +238,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $paymentStatus = (int) Config::getStatuses()[$status];
 
                         if ($status === PaymentStatus::STATUS_PAID) {
-                            /** @var TransactionService $transactionService */
-                            $transactionService = $this->module->getContainer(TransactionService::class);
-                            $order = new Order($orderId);
-                            if (!$order->getOrderPayments()) {
-                                $transactionService->updateOrderTransaction($transaction->id, $order->reference);
-                            }
+                            $this->updateTransaction($orderId, $transaction);
                         }
                         /** @var OrderStatusService $orderStatusService */
                         $orderStatusService = $this->module->getContainer(OrderStatusService::class);
@@ -333,6 +323,22 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param $orderId
+     * @param MolliePaymentAlias $transaction
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    private function updateTransaction($orderId, MolliePaymentAlias $transaction)
+    {
+        /** @var TransactionService $transactionService */
+        $transactionService = $this->module->getContainer(TransactionService::class);
+        $order = new Order($orderId);
+        if (!$order->getOrderPayments()) {
+            $transactionService->updateOrderTransaction($transaction->id, $order->reference);
         }
     }
 }

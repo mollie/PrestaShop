@@ -254,51 +254,18 @@ class TransactionService
             $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
             foreach ($transaction->payments() as $payment) {
                 if ($transaction->method === Config::MOLLIE_VOUCHER_METHOD_ID) {
-                    foreach ($payment->details->vouchers as $voucher) {
-                        $transactionInfos[] = [
-                            'paymentName' => $voucher->issuer,
-                            'amount' => $voucher->amount->value,
-                            'currency' => $voucher->amount->currency,
-                            'transactionId' => $payment->id
-                        ];
-                    }
-                    if ($payment->details->remainderMethod) {
-                        $transactionInfos[] = [
-                            'paymentName' => $payment->details->remainderMethod,
-                            'amount' => $payment->details->remainderAmount->value,
-                            'currency' => $payment->details->remainderAmount->currency,
-                            'transactionId' => $payment->id
-                        ];
-                    }
+                    $transactionInfos = $this->getVoucherTransactionInfo($payment, $transactionInfos);
+                    $transactionInfos = $this->getVoucherRemainderTransactionInfo($payment, $transactionInfos);
                 } else {
-                    $transactionInfos[] = [
-                        'paymentName' => $payment->method,
-                        'amount' => $payment->amount->value,
-                        'currency' => $payment->amount->currency,
-                        'transactionId' => $payment->id
-                    ];
+                    $transactionInfos = $this->getPaymentTransactionInfo($payment, $transactionInfos);
                 }
             }
         } else {
             $transaction = $this->module->api->payments->get($transactionId);
-            $transactionInfos[] = [
-                'paymentName' => $transaction->method,
-                'amount' => $transaction->amount->value,
-                'currency' => $transaction->amount->currency,
-                'transactionId' => $transaction->id
-            ];
+            $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 
-        foreach ($transactionInfos as $transactionInfo) {
-            $orderPayment = new OrderPayment();
-            $orderPayment->order_reference = $orderReference;
-            $orderPayment->amount = $transactionInfo['amount'];
-            $orderPayment->payment_method = $transactionInfo['paymentName'];
-            $orderPayment->transaction_id = $transactionInfo['transactionId'];
-            $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
-
-            $orderPayment->add();
-        }
+        $this->updateOrderPayments($transactionInfos, $orderReference);
     }
 
     /**
@@ -358,6 +325,81 @@ class TransactionService
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param $payment
+     * @param array $transactionInfos
+     * @return array
+     */
+    private function getVoucherTransactionInfo($payment, array $transactionInfos)
+    {
+        foreach ($payment->details->vouchers as $voucher) {
+            $transactionInfos[] = [
+                'paymentName' => $voucher->issuer,
+                'amount' => $voucher->amount->value,
+                'currency' => $voucher->amount->currency,
+                'transactionId' => $payment->id
+            ];
+        }
+
+        return $transactionInfos;
+    }
+
+    /**
+     * @param $payment
+     * @param array $transactionInfos
+     * @return array
+     */
+    private function getVoucherRemainderTransactionInfo($payment, array $transactionInfos)
+    {
+        if ($payment->details->remainderMethod) {
+            $transactionInfos[] = [
+                'paymentName' => $payment->details->remainderMethod,
+                'amount' => $payment->details->remainderAmount->value,
+                'currency' => $payment->details->remainderAmount->currency,
+                'transactionId' => $payment->id
+            ];
+        }
+
+        return $transactionInfos;
+    }
+
+    /**
+     * @param $payment
+     * @param array $transactionInfos
+     * @return array
+     */
+    private function getPaymentTransactionInfo($payment, array $transactionInfos)
+    {
+        $transactionInfos[] = [
+            'paymentName' => $payment->method,
+            'amount' => $payment->amount->value,
+            'currency' => $payment->amount->currency,
+            'transactionId' => $payment->id
+        ];
+
+        return $transactionInfos;
+    }
+
+    /**
+     * @param array $transactionInfos
+     * @param $orderReference
+     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function updateOrderPayments(array $transactionInfos, $orderReference)
+    {
+        foreach ($transactionInfos as $transactionInfo) {
+            $orderPayment = new OrderPayment();
+            $orderPayment->order_reference = $orderReference;
+            $orderPayment->amount = $transactionInfo['amount'];
+            $orderPayment->payment_method = $transactionInfo['paymentName'];
+            $orderPayment->transaction_id = $transactionInfo['transactionId'];
+            $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
+
+            $orderPayment->add();
         }
     }
 }
