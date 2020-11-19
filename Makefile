@@ -5,6 +5,7 @@ build-vendor:
 	rm -rf vendor
 	mv vendorBuilder/build/vendor vendor
 	composer dumpautoload
+	find vendor/prestashop/ -type f -exec sed -i 's/MolliePrefix\\Composer\\Autoload\\ClassLoader/Composer\\Autoload\\ClassLoader/g' {} \;
 
 bvn: build-vendor-no-dev
 build-vendor-no-dev:
