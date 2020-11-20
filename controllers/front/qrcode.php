@@ -210,7 +210,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         }
 
         if (EnvironmentUtility::isLocalEnvironment()) {
-            /** @var MolliePaymentAlias | MollieOrderAlias $payment */
+            /** @var MolliePaymentAlias | MollieOrderAlias $apiPayment */
             $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->module->name;

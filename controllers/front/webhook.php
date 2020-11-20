@@ -53,13 +53,6 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__).'/../../mollie.php';
 
-/**
- * Class MollieReturnModuleFrontController
- * @method setTemplate
- *
- * @property mixed  context
- * @property Mollie module
- */
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
     /** @var bool $ssl */
