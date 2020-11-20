@@ -10,7 +10,7 @@ build-vendor:
 bvn: build-vendor-no-dev
 build-vendor-no-dev:
 	composer update --no-dev
-	cd vendorBuilder && vendor/bin/php-scoper add-prefix
+	cd vendorBuilder && php ./vendor/bin/php-scoper add-prefix
 	rm -rf vendor
 	mv vendorBuilder/build/vendor vendor
 	composer dumpautoload
