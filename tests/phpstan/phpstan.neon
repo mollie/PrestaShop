@@ -2,8 +2,8 @@ includes:
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
 
 parameters:
-  autoload_files:
-    - %currentWorkingDirectory%/vendor/prestashop/decimal/src/DecimalNumber.php
+  autoload_directories:
+    - %currentWorkingDirectory%/vendor
   paths:
     - ../../src
     - ../../controllers
