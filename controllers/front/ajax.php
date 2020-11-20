@@ -81,20 +81,20 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                         'label' => $this->translator->trans('Total', array(), 'Shop.Theme.Checkout'),
                         'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
                         'value' => Tools::displayPrice(
-                            $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax
+                            $taxConfiguration->includeTaxes() ? (float) $total_including_tax : (float) $total_excluding_tax
                         ),
                     ),
                     'total_including_tax' => array(
                         'type' => 'total',
                         'label' => $this->translator->trans('Total (tax incl.)', array(), 'Shop.Theme.Checkout'),
                         'amount' => $total_including_tax,
-                        'value' => Tools::displayPrice($total_including_tax),
+                        'value' => Tools::displayPrice((float) $total_including_tax),
                     ),
                     'total_excluding_tax' => array(
                         'type' => 'total',
                         'label' => $this->translator->trans('Total (tax excl.)', array(), 'Shop.Theme.Checkout'),
                         'amount' => $total_excluding_tax,
-                        'value' => Tools::displayPrice($total_excluding_tax),
+                        'value' => Tools::displayPrice((float) $total_excluding_tax),
                     ),
                 );
 
