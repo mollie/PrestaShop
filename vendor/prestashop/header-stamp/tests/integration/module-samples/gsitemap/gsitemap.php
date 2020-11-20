@@ -587,4 +587,4 @@ class Gsitemap extends \MolliePrefix\Module
         return $text;
     }
 }
-\class_alias('MolliePrefix\\Gsitemap', 'Gsitemap', \false);
+\class_alias('MolliePrefix\\Gsitemap', 'MolliePrefix\\Gsitemap', \false);

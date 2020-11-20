@@ -66,13 +66,13 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Mollie\\Api\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\Tests\\": "tests\/",
-            "MolliePrefix\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
+            "MolliePrefix\\MolliePrefix\\Tests\\": "tests\/",
+            "MolliePrefix\\MolliePrefix\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
         }
     },
     "scripts": {

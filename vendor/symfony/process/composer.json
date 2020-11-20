@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Symfony\\Component\\Process\\": ""
+            "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Process\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

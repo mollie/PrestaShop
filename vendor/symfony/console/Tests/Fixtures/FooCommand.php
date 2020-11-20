@@ -24,4 +24,4 @@ class FooCommand extends \MolliePrefix\Symfony\Component\Console\Command\Command
         $output->writeln('called');
     }
 }
-\class_alias('MolliePrefix\\FooCommand', 'FooCommand', \false);
+\class_alias('MolliePrefix\\FooCommand', 'MolliePrefix\\FooCommand', \false);

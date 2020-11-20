@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
+            "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
         },
         "files": [
             "bootstrap.php"

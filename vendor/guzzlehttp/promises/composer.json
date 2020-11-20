@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
@@ -28,7 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\GuzzleHttp\\Promise\\Tests\\": "tests\/"
+            "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\Tests\\": "tests\/"
         }
     },
     "scripts": {

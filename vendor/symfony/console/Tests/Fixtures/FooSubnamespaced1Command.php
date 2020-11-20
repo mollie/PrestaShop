@@ -19,4 +19,4 @@ class FooSubnamespaced1Command extends \MolliePrefix\Symfony\Component\Console\C
         $this->output = $output;
     }
 }
-\class_alias('MolliePrefix\\FooSubnamespaced1Command', 'FooSubnamespaced1Command', \false);
+\class_alias('MolliePrefix\\FooSubnamespaced1Command', 'MolliePrefix\\FooSubnamespaced1Command', \false);

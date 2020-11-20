@@ -15,4 +15,4 @@ class FooHiddenCommand extends \MolliePrefix\Symfony\Component\Console\Command\C
     {
     }
 }
-\class_alias('MolliePrefix\\FooHiddenCommand', 'FooHiddenCommand', \false);
+\class_alias('MolliePrefix\\FooHiddenCommand', 'MolliePrefix\\FooHiddenCommand', \false);

@@ -40,7 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Symfony\\Component\\Cache\\": ""
+            "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

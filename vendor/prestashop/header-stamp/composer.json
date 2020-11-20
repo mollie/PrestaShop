@@ -28,7 +28,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\PrestaShop\\HeaderStamp\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\PrestaShop\\HeaderStamp\\": "src\/"
         }
     },
     "author": "PrestaShop",

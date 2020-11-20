@@ -82,3 +82,4 @@ $application = new \MolliePrefix\PhpCsFixer\Console\Application();
 $application->run();
 __halt_compiler();
 
+

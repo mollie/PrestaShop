@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Psr\\Cache\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
         }
     },
     "extra": {

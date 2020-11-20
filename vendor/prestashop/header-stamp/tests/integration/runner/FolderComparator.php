@@ -97,4 +97,4 @@ class FolderComparator
 /**
  * @see https://github.com/sureshdotariya/folder-compare/
  */
-\class_alias('MolliePrefix\\FolderComparator', 'FolderComparator', \false);
+\class_alias('MolliePrefix\\FolderComparator', 'MolliePrefix\\FolderComparator', \false);
