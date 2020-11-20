@@ -1,0 +1,36 @@
+name: Deploy
+
+on: [pull_request]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: build
+        run: |
+          make bvn
+          cat deploy/replace/random.php > vendor/paragonie/random_compat/lib/random.php
+          cat deploy/replace/random_bytes_mcrypt.php > vendor/paragonie/random_compat/lib/random_bytes_mcrypt.php
+          rm -rf .git
+          rm -rf .github
+          rm -rf vendorBuilder
+          rm -rf node_modules
+          rm -rf tests
+          rm -rf views/js/node_modules
+          rm -rf deploy
+          mkdir mollie
+          rsync -Rr ./ ./mollie
+          shopt -s extglob
+          rm -r !(mollie)
+          find . -maxdepth 1 -type f -exec rm "{}" \;
+          cd mollie && rm -rf mollie
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mollie
+          path: |
+            .
+
+
