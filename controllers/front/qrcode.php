@@ -69,11 +69,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     public $display_column_right = false;
 
     /**
-     * @throws Adapter_Exception
+     * @throws ApiException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws ApiException
      */
     public function initContent()
     {
@@ -106,10 +105,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @throws Adapter_Exception
+     * @throws CoreException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws ApiException
+     * @throws SmartyException
      */
     protected function processAjax()
     {
@@ -194,12 +193,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Get payment status, can be regularly polled
-     *
-     * @throws PrestaShopException
-     * @throws Adapter_Exception
+     * @throws ApiException
      * @throws CoreException
-     * @throws SmartyException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function processGetStatus()
     {
@@ -274,11 +271,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Get the cart amount
-     *
-     * @throws Adapter_Exception
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      * @throws Exception
      */
     protected function processCartAmount()

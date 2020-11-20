@@ -41,6 +41,10 @@ use Mollie\Exception\OrderCreationException;
 class OrderExceptionHandler implements ExceptionHandlerInterface
 {
 
+    /**
+     * @param Exception $e
+     * @throws OrderCreationException
+     */
     public function handle(Exception $e)
     {
         if (strpos($e->getMessage(), 'billingAddress.phone')) {
