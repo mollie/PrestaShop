@@ -48,7 +48,7 @@ function upgrade_module_4_1_0($module)
     /** @var Installer $installer */
     $installer = $module->getContainer(Installer::class);
 
-    $awaitingOrderStatusId = Configuration::get(Config::MOLLIE_STATUS_AWAITING);
+    $awaitingOrderStatusId = Configuration::get(Config::STATUS_MOLLIE_AWAITING);
     $orderStatus = new OrderState($awaitingOrderStatusId);
 
     if (!Validate::isLoadedObject($orderStatus) || $orderStatus->deleted) {

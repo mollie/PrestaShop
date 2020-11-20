@@ -32,35 +32,35 @@
  * @link       https://www.mollie.nl
  */
 
-namespace Mollie\Service;
+use Mollie\Config\Config;
+use Mollie\Service\ImageService;
 
-class ImageService
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * @param Mollie $module
+ * @return bool
+ */
+function upgrade_module_4_2_0($module)
 {
-    public function createOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
-        @copy($source, $destination);
+    /**
+     * @var ImageService $imageService
+     */
+    $imageService = $module->getContainer(ImageService::class);
+    $mollieOrderStatuses = Config::getMollieOrderStatuses();
+
+    foreach($mollieOrderStatuses as $mollieOrderStatus) {
+        $orderStatusId = Configuration::get($mollieOrderStatus);
+
+        if($mollieOrderStatuses) {
+            $imageService->deleteOrderStateLogo($orderStatusId);
+            $imageService->deleteTmpOrderStateLogo($orderStatusId);
+            $imageService->createOrderStateLogo($orderStatusId);
+            $imageService->createTmpOrderStateLogo($orderStatusId);
+        }
     }
 
-    public function deleteOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
-        @unlink($source, $destination);
-    }
-
-    public function createTmpOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_TMP_IMG_DIR_ . 'order_state_mini_'. $orderStateId . '_1.gif';
-        @copy($source, $destination);
-    }
-
-    public function deleteTmpOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_TMP_IMG_DIR_ . 'order_state_mini_'. $orderStateId . '_1.gif';
-        @unlink($source, $destination);
-    }
+    return true;
 }
