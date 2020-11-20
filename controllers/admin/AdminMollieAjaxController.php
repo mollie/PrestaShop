@@ -42,6 +42,9 @@ use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
+    /** @var Mollie */
+    public $module;
+
     public function postProcess()
     {
         $action = Tools::getValue('action');
