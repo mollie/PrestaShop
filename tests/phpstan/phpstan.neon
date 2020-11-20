@@ -25,5 +25,6 @@ parameters:
     - '#Parameter \#1 \$events of method FacebookAds\\Object\\ServerSide\\EventRequest::setEvents\(\) expects array<FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\Event>, array<int, FacebookAds\\Object\\ServerSide\\Event> given.#'
     - '#Parameter \#1 \$app_id of static method FacebookAds\\Api::init\(\) expects string, null given.#'
     - '#Parameter \#2 \$app_secret of static method FacebookAds\\Api::init\(\) expects string, null given.#'
+    - '#Parameter \#1 \$id of class MolPaymentMethod constructor expects int|null, string|false|null given.'
 
   level: 5

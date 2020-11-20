@@ -85,10 +85,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $method = new MolPaymentMethod($methodId);
         switch ($paymentStatus) {
             case 'deactivate':
-                $method->enabled = 0;
+                $method->enabled = false;
                 break;
             case 'activate':
-                $method->enabled = 1;
+                $method->enabled = true;
                 break;
         }
         $method->update();

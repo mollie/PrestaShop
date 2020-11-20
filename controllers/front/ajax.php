@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use MolliePrefix\PrestaShop\Decimal\Number;
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
@@ -62,11 +62,11 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                     );
                 }
 
-                $paymentFee = new Number(Tools::getValue('paymentFee'));
-                $orderTotal = new Number((string)$cart->getOrderTotal());
+                $paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
+                $orderTotal = new DecimalNumber((string)$cart->getOrderTotal());
                 $orderTotalWithFee = $orderTotal->plus($paymentFee);
 
-                $orderTotalNoTax = new Number((string)$cart->getOrderTotal(false));
+                $orderTotalNoTax = new DecimalNumber((string)$cart->getOrderTotal(false));
                 $orderTotalNoTaxWithFee = $orderTotalNoTax->plus($paymentFee);
 
                 $total_including_tax = $orderTotalWithFee->toPrecision(2);

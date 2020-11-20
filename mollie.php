@@ -189,7 +189,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param bool $id
+     * @param string|bool $id
+     *
      * @return mixed
      */
     public function getContainer($id = false)

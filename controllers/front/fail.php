@@ -42,28 +42,28 @@ class MollieFailModuleFrontController extends ModuleFrontController
     /**
      * ID Order Variable Declaration.
      *
-     * @var
+     * @var int $id_order
      */
     private $id_order;
 
     /**
      * Security Key Variable Declaration.
      *
-     * @var
+     * @var string $secure_key
      */
     private $secure_key;
 
     /**
      * ID Cart Variable Declaration.
      *
-     * @var
+     * @var int $id_cart
      */
     private $id_cart;
 
     /**
      * Order Presenter Variable Declaration.
      *
-     * @var
+     * @var OrderPresenter $order_presenter
      */
     private $order_presenter;
 
