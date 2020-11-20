@@ -90,6 +90,10 @@ class Installer implements InstallerInterface
     public function install()
     {
         foreach (self::getHooks() as $hook) {
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && $hook === 'displayPaymentEU') {
+                continue;
+            }
+
             $this->module->registerHook($hook);
         }
 
