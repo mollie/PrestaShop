@@ -313,7 +313,6 @@ class Installer implements InstallerInterface
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_OPEN, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_AWAITING, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
