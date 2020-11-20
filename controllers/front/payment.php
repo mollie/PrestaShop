@@ -58,7 +58,7 @@ require_once dirname(__FILE__).'/../../mollie.php';
 /**
  * Class MolliePaymentModuleFrontController
  *
- * @property Context? $context
+ * @property Context $context
  * @property Mollie       $module
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
@@ -73,10 +73,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @throws SmartyException
-     * @throws CoreException
-     * @throws Exception
      */
     public function initContent()
     {
@@ -120,7 +116,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
-        $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         // Prepare payment
         do {
             $orderReference = Order::generateReference();
@@ -232,11 +228,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param array $data
-     *
-     * @param $selectedApi
-     * @return MolliePaymentAlias|MollieOrderAlias|null
-     *
+     * @param $data array
+     * @param $selectedApi string
+     * @return MollieOrderAlias|MolliePaymentAlias
      * @throws OrderCreationException
      */
     protected function createPayment($data, $selectedApi)
