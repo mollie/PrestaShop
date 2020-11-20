@@ -43,16 +43,17 @@ class OrderExceptionHandler implements ExceptionHandlerInterface
 
     /**
      * @param Exception $e
-     * @throws OrderCreationException
+     *
+     * @return OrderCreationException
      */
     public function handle(Exception $e)
     {
         if (strpos($e->getMessage(), 'billingAddress.phone')) {
-            throw new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION);
+            return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION);
         } elseif (strpos($e->getMessage(), 'shippingAddress.phone')) {
-            throw new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION);
+            return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION);
         }
 
-        throw new OrderCreationException($e->getMessage(), OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION);
+        return new OrderCreationException($e->getMessage(), OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION);
     }
 }

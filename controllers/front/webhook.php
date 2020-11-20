@@ -55,6 +55,8 @@ require_once dirname(__FILE__).'/../../mollie.php';
 
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
+    /** @var Mollie */
+    public $module;
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
@@ -72,16 +74,15 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @throws Adapter_Exception
+     * @throws ApiException
+     * @throws CoreException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws CoreException
-     * @throws ApiException
      */
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::DEBUG_LOG_ALL)) {
+        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
             PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
         }
 
@@ -90,13 +91,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
     /**
      * @return string
-     *
-     * @throws Adapter_Exception
+     * @throws ApiException
+     * @throws CoreException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws SmartyException
-     * @throws CoreException
-     * @throws ApiException
      */
     protected function executeWebhook()
     {

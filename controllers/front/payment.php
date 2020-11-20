@@ -250,7 +250,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         } catch (Exception $e) {
             /** @var OrderExceptionHandler $orderExceptionHandler */
             $orderExceptionHandler = $this->module->getContainer(OrderExceptionHandler::class);
-            $orderExceptionHandler->handle($e);
+
+            throw $orderExceptionHandler->handle($e);
         }
     }
 

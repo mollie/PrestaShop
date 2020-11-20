@@ -54,6 +54,8 @@ require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
+    /** @var Mollie */
+    public $module;
 
     const FILE_NAME = 'return';
 
@@ -107,18 +109,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        /**
-         * Set ref is indicative of a payment that is tied to an order instead of a cart, which
-         * we still support for transitional reasons.
-         */
-        if (Tools::getIsset('ref')) {
-            $idOrder = (int)Tools::getValue('id');
-            // Check if user is allowed to be on the return page
-            $data['auth'] = $paymentMethodRepo->getUniqReferenceOf($idOrder) === Tools::getValue('ref');
-            if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
-            }
-        } elseif (Tools::getIsset('cart_id')) {
+        if (Tools::getIsset('cart_id')) {
             $idCart = (int)Tools::getValue('cart_id');
 
             // Check if user that's seeing this is the cart-owner

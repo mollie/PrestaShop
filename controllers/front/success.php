@@ -172,7 +172,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
         $order = new PaymentFree();
         $order->validateOrder(
             $cart->id,
-            Configuration::get('PS_OS_PAYMENT'),
+            (int) Configuration::get('PS_OS_PAYMENT'),
             0,
             $this->trans('Free order', array(), 'Admin.Orderscustomers.Feature'),
             null,
