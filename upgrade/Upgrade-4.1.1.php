@@ -45,6 +45,9 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_1_1($module)
 {
-   $module->unregisterHook('displayPaymentEU');
+    if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        $module->unregisterHook('displayPaymentEU');
+    }
+
    return true;
 }
