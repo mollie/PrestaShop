@@ -152,13 +152,6 @@ class SettingsSaveService
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
                 }
 
-                $isKlarnaPayment = in_array($method['id'], Config::KLARNA_PAYMENTS, false);
-                if ($isKlarnaPayment) {
-                    if (!$this->paymentMethodService->saveKlarnaInvoiceStatus($method)){
-                        $errors[] = $this->module->l('Failed to save klarna invoice status for ' . $method['id']);
-                    }
-                }
-
                 if ($method['issuers']) {
                     $paymentMethodIssuer = new MolPaymentMethodIssuer();
                     $paymentMethodIssuer->issuers_json = json_encode($method['issuers']);

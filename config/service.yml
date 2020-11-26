@@ -12,7 +12,6 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
-      - '@Mollie\Repository\KlarnaInvoiceRepository'
 
   Mollie\Service\ApiService:
     arguments:

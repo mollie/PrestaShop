@@ -174,22 +174,6 @@
                                 </p>
                             </div>
                         </div>
-                        {if in_array($paymentMethod.id, $input.klarnaPayments)}
-                            <div class="form-group">
-                                <label class="control-label col-lg-3">
-                                    {l s='Create invoice on:' mod='mollie'}
-                                </label>
-                                <div class="col-lg-9">
-                                    <select name="MOLLIE_INVOICE_STATUS_{$paymentMethod.id}"
-                                            class="fixed-width-xl">
-                                        {foreach $input.klarnaStatuses as $status}
-                                            <option value="{$status}"
-                                                    {if {$status === $paymentMethod.invoiceStatus}}selected{/if}>{$status}</option>
-                                        {/foreach}
-                                    </select>
-                                </div>
-                            </div>
-                        {/if}
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Payment allowed from:' mod='mollie'}

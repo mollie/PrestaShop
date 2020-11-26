@@ -133,14 +133,6 @@ final class DatabaseTableInstaller implements InstallerInterface
                     ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
-        $sql[] = '
-    CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_invoice_status` (
-				`id_mol_payment_method_invoice_status`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_method` VARCHAR(64) NOT NULL,
-				`id_state` VARCHAR(64) NOT NULL,
-				`live_environment` TINYINT(1) NOT NULL
-			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-
         return $sql;
     }
 }
