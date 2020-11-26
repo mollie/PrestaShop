@@ -165,6 +165,7 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'MolCustomer' => __DIR__ . '/../..' . '/src/Entity/MolCustomer.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
         'MolPaymentMethod' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethod.php',
+        'MolPaymentMethodInvoiceStatus' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethodInvoiceStatus.php',
         'MolPaymentMethodIssuer' => __DIR__ . '/../..' . '/src/Entity/MolPaymentMethodIssuer.php',
         'MolPendingOrderCart' => __DIR__ . '/../..' . '/src/Entity/MolPendingOrderCart.php',
         'MollieAjaxModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/ajax.php',

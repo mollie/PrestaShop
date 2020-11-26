@@ -27,3 +27,5 @@ services:
   Mollie\Repository\AttributeRepository:
 
   Mollie\Repository\OrderStateRepository:
+
+  Mollie\Repository\KlarnaInvoiceRepository:

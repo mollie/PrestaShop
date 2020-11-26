@@ -48,9 +48,9 @@ final class DatabaseTableInstaller implements InstallerInterface
      */
     private function getCommands()
     {
-        $sql = array();
+        $sql = [];
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mollie_payments` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mollie_payments` (
 				`transaction_id`  VARCHAR(64)  NOT NULL PRIMARY KEY,
 				`cart_id`         INT(64),
 				`order_id`        INT(64),
@@ -60,16 +60,16 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
 				 INDEX (cart_id, order_reference)
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_country` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_country` (
 				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`       VARCHAR(64),
 				`id_country`      INT(64),
 				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method` (
 				`id_payment_method`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`  VARCHAR(64) NOT NULL,
 				`method_name`  VARCHAR(64) NOT NULL,
@@ -87,51 +87,59 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`images_json` TEXT,
 				`live_environment` TINYINT(1),
 				`position` INT(10)
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_issuer` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_issuer` (
 				`id_payment_method_issuer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_payment_method` INT(64) NOT NULL,
 				`issuers_json` TEXT NOT NULL
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_order_fee` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_fee` (
 				`id_mol_order_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_cart` INT(64) NOT NULL,
 				`order_fee` decimal(20,6) NOT NULL
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_carrier_information` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_carrier_information` (
 				`id_mol_carrier_information`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_carrier` INT(64) NOT NULL,
 				`url_source` VARCHAR(64) NOT NULL,
 				`custom_url` VARCHAR(255)
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_country` (
 				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`       VARCHAR(64),
 				`id_country`      INT(64),
 				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         $sql[] = '
-            CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_pending_order_cart` (
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart` (
                 `id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `order_id` INT(64) NOT NULL,
                 `cart_id` INT(64) NOT NULL
-            ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
         $sql[] = '
-            CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_customer` (
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_customer` (
                         `id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
                         `customer_id` VARCHAR(64) NOT NULL,
                         `name` VARCHAR(64) NOT NULL,
                         `email` VARCHAR(64) NOT NULL,
                         `created_at` VARCHAR(64) NOT NULL
-                    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+                    ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
+
+        $sql[] = '
+    CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_invoice_status` (
+				`id_mol_payment_method_invoice_status`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				`id_method` VARCHAR(64) NOT NULL,
+				`id_state` VARCHAR(64) NOT NULL,
+				`live_environment` TINYINT(1) NOT NULL
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return $sql;
     }

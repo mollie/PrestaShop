@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Mollie\Repository\KlarnaInvoiceRepository;
 use Mollie\Utility\NumberUtility;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use Address;
@@ -60,6 +61,7 @@ use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use MolPaymentMethod;
+use MolPaymentMethodInvoiceStatus;
 use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -108,6 +110,11 @@ class PaymentMethodService
 
     private $phoneNumberProvider;
 
+    /**
+     * @var KlarnaInvoiceRepository
+     */
+    private $klarnaInvoiceRepository;
+
     public function __construct(
         Mollie $module,
         PaymentMethodRepository $methodRepository,
@@ -117,7 +124,8 @@ class PaymentMethodService
         CustomerService $customerService,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
-        PhoneNumberProviderInterface $phoneNumberProvider
+        PhoneNumberProviderInterface $phoneNumberProvider,
+        KlarnaInvoiceRepository $klarnaInvoiceRepository
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -128,6 +136,7 @@ class PaymentMethodService
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->phoneNumberProvider = $phoneNumberProvider;
+        $this->klarnaInvoiceRepository = $klarnaInvoiceRepository;
     }
 
     public function savePaymentMethod($method)
@@ -157,6 +166,22 @@ class PaymentMethodService
         $paymentMethod->save();
 
         return $paymentMethod;
+    }
+
+    public function saveKlarnaInvoiceStatus($method)
+    {
+        $environment = Tools::getValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $klarnaPaymentId = $this->klarnaInvoiceRepository->getKlarnaPaymentStatusId($method['id'], $environment);
+        $klarnaPaymentStatus = new MolPaymentMethodInvoiceStatus();
+        if ($klarnaPaymentId) {
+            $klarnaPaymentStatus = new MolPaymentMethodInvoiceStatus($klarnaPaymentId);
+        }
+
+        $klarnaPaymentStatus->id_method = $method['id'];
+        $klarnaPaymentStatus->id_state = Tools::getValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA . $method['id']);
+        $klarnaPaymentStatus->live_environment = $environment;
+
+        return $klarnaPaymentStatus->save();
     }
 
     /**
