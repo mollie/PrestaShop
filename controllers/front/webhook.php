@@ -37,6 +37,7 @@ use Mollie\Utility\PaymentMethodUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
@@ -230,6 +231,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                         && $apiPayment->status === OrderStatus::STATUS_CREATED
                     ) {
+                        /** @var PaymentCollection $orderPayments */
                         $orderPayments = $apiPayment->payments();
                         $paymentStatus = OrderStatus::STATUS_CREATED;
                         foreach ($orderPayments as $orderPayment) {
@@ -314,7 +316,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
     /**
      * @param string $transactionId
-     * @param int    $status
+     * @param string    $status
      * @param int    $orderId
      *
      * @return bool

@@ -109,7 +109,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
     /**
      * @param string $column
-     * @param int $id
+     * @param string $id
      *
      * @return array
      * @throws PrestaShopDatabaseException
