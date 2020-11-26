@@ -295,7 +295,6 @@ class Installer implements InstallerInterface
     }
 
     /**
-     * @param $languageId
      * @return bool
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
