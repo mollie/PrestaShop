@@ -221,6 +221,7 @@ class SettingsSaveService
                 return $this->module->l('Wrong API Key!');
             }
         }
+        $this->handleKlarnaInvoiceStatus();
 
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
@@ -316,5 +317,30 @@ class SettingsSaveService
         }
 
         return $statesEnabled;
+    }
+
+    private function handleKlarnaInvoiceStatus()
+    {
+        $klarnaInvoiceStatus = Tools::getValue(Config::MOLLIE_KLARNA_INVOICE_ON);
+        Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
+        if ($klarnaInvoiceStatus === Config::MOLLIE_STATUS_KLARNA_SHIPPED) {
+            $this->updateKlarnaStatuses(true);
+            return;
+        }
+
+        $this->updateKlarnaStatuses(false);
+    }
+
+    private function updateKlarnaStatuses($isShipped = true)
+    {
+        $klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
+        $klarnaInvoiceShipped = new OrderState($klarnaInvoiceShippedId);
+        $klarnaInvoiceShipped->invoice = $isShipped;
+        $klarnaInvoiceShipped->update();
+
+        $klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+        $klarnaInvoiceAccepted = new OrderState($klarnaInvoiceAcceptedId);
+        $klarnaInvoiceAccepted->invoice = !$isShipped;
+        $klarnaInvoiceAccepted->update();
     }
 }

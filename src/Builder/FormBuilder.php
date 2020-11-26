@@ -537,6 +537,26 @@ class FormBuilder
                 ];
             }
         }
+        $input[] = [
+            'type' => 'select',
+            'label' => $this->module->l('Create Klarna invoice on:', self::FILE_NAME),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
+            'options' => [
+                'query' => [
+                    [
+                        'id' => Config::MOLLIE_STATUS_KLARNA_ACCEPTED,
+                        'name' => $this->module->l('Accepted', self::FILE_NAME),
+                    ],
+                    [
+                        'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                        'name' => $this->module->l('Shipped', self::FILE_NAME),
+                    ],
+                ],
+                'id' => 'id',
+                'name' => 'name',
+            ],
+        ];
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
         $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);
