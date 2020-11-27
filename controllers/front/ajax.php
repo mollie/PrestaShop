@@ -33,7 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use MolliePrefix\PrestaShop\Decimal\Number;
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
@@ -62,11 +62,11 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                     );
                 }
 
-                $paymentFee = new Number(Tools::getValue('paymentFee'));
-                $orderTotal = new Number((string)$cart->getOrderTotal());
+                $paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
+                $orderTotal = new DecimalNumber((string)$cart->getOrderTotal());
                 $orderTotalWithFee = $orderTotal->plus($paymentFee);
 
-                $orderTotalNoTax = new Number((string)$cart->getOrderTotal(false));
+                $orderTotalNoTax = new DecimalNumber((string)$cart->getOrderTotal(false));
                 $orderTotalNoTaxWithFee = $orderTotalNoTax->plus($paymentFee);
 
                 $total_including_tax = $orderTotalWithFee->toPrecision(2);
@@ -81,20 +81,20 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                         'label' => $this->translator->trans('Total', array(), 'Shop.Theme.Checkout'),
                         'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
                         'value' => Tools::displayPrice(
-                            $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax
+                            $taxConfiguration->includeTaxes() ? (float) $total_including_tax : (float) $total_excluding_tax
                         ),
                     ),
                     'total_including_tax' => array(
                         'type' => 'total',
                         'label' => $this->translator->trans('Total (tax incl.)', array(), 'Shop.Theme.Checkout'),
                         'amount' => $total_including_tax,
-                        'value' => Tools::displayPrice($total_including_tax),
+                        'value' => Tools::displayPrice((float) $total_including_tax),
                     ),
                     'total_excluding_tax' => array(
                         'type' => 'total',
                         'label' => $this->translator->trans('Total (tax excl.)', array(), 'Shop.Theme.Checkout'),
                         'amount' => $total_excluding_tax,
-                        'value' => Tools::displayPrice($total_excluding_tax),
+                        'value' => Tools::displayPrice((float) $total_excluding_tax),
                     ),
                 );
 

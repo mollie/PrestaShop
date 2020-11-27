@@ -19,6 +19,7 @@ services:
       - '@Mollie\Repository\CountryRepository'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ConfigFieldService:
     arguments:
@@ -34,6 +35,7 @@ services:
   Mollie\Service\RefundService:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ShipService:
     arguments:
@@ -42,14 +44,13 @@ services:
   Mollie\Service\CancelService:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\CarrierService:
 
   Mollie\Service\OrderStatusService:
     arguments:
       - '@Mollie\Service\MailService'
-      - '@Mollie\Validator\OrderConfMailValidator'
-      - '@Mollie\Validator\NewOrderMailValidator'
 
   Mollie\Service\ErrorDisplayService:
 
@@ -149,6 +150,7 @@ services:
     - '@Mollie\Service\CartDuplicationService'
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
+    - '@Mollie\Service\TransactionService'
 
   Mollie\Service\UpgradeNoticeService:
 
@@ -158,3 +160,5 @@ services:
 
   Mollie\Service\ExceptionService:
     - '@mollie'
+
+  Mollie\Service\ApiKeyService:

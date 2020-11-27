@@ -52,14 +52,10 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
-/**
- * Class MollieReturnModuleFrontController
- *
- * @property Context? $context
- * @property Mollie $module
- */
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
+    /** @var Mollie */
+    public $module;
 
     const FILE_NAME = 'return';
 
@@ -77,7 +73,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var Context $context */
         $context = Context::getContext();
         /** @var Cart $cart */
-        $cart = new Cart((int)$this->context->cookie->id_cart);
+        $cart = new Cart((int)$this->context->cookie->__get('id_cart'));
         if (Validate::isLoadedObject($cart) && !$cart->orderExists()) {
             unset($context->cart);
             unset($context->cookie->id_cart);
@@ -91,9 +87,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Adapter_Exception
      * @throws SmartyException
-     * @throws CoreException
      */
     public function initContent()
     {
@@ -115,18 +109,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        /**
-         * Set ref is indicative of a payment that is tied to an order instead of a cart, which
-         * we still support for transitional reasons.
-         */
-        if (Tools::getIsset('ref')) {
-            $idOrder = (int)Tools::getValue('id');
-            // Check if user is allowed to be on the return page
-            $data['auth'] = $paymentMethodRepo->getUniqReferenceOf($idOrder) === Tools::getValue('ref');
-            if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int)$idOrder);
-            }
-        } elseif (Tools::getIsset('cart_id')) {
+        if (Tools::getIsset('cart_id')) {
             $idCart = (int)Tools::getValue('cart_id');
 
             // Check if user that's seeing this is the cart-owner
@@ -203,13 +186,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     }
 
     /**
-     * Process ajax calls
-     *
-     * @throws Adapter_Exception
+     * @throws CoreException
      * @throws PrestaShopException
      * @throws SmartyException
-     *
-     * @since 3.3.2
      */
     protected function processAjax()
     {
@@ -227,14 +206,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     }
 
     /**
-     * Get payment status, can be regularly polled
-     *
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @throws CoreException
-     * @throws SmartyException
-     *
-     * @since 3.3.2
      */
     protected function processGetStatus()
     {
@@ -336,6 +309,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
                 $response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
                 break;
+            default:
+                die();
         }
 
         die(json_encode($response));
@@ -345,7 +320,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         $this->warning[] = $message;
 
-        $this->context->cookie->mollie_payment_canceled_error =
-            json_encode($this->warning);
+        $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
     }
 }

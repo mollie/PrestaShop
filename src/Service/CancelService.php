@@ -54,9 +54,15 @@ class CancelService
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    /**
+     * @var TransactionService
+     */
+    private $transactionService;
+
+    public function __construct(Mollie $module, TransactionService $transactionService)
     {
         $this->module = $module;
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -93,8 +99,7 @@ class CancelService
                 if (!Tools::isSubmit('module')) {
                     $_GET['module'] = $this->module->name;
                 }
-                $webhookController = new MollieWebhookModuleFrontController();
-                $webhookController->processTransaction($apiPayment);
+                $this->transactionService->processTransaction($apiPayment);
             }
         } catch (ApiException $e) {
             return [

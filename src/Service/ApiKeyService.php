@@ -33,31 +33,40 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Utility;
+namespace Mollie\Service;
 
-use DateTime;
+use Context;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use MolliePrefix\Mollie\Api\MollieApiClient;
+use Tools;
 
-class TimeUtility
+class ApiKeyService
 {
-    const HOURS_IN_DAY = 24;
-    const MINUTES_IN_HOUR = 60;
-    const SECONDS_IN_MINUTE = 60;
-
-    public static function getNowTs()
+    public function setApiKey($apiKey, $moduleVersion)
     {
-        return time();
+        $api = new MollieApiClient();
+        $context = Context::getContext();
+        if ($apiKey) {
+            try {
+                $api->setApiKey($apiKey);
+            } catch (ApiException $e) {
+                return;
+            }
+        } elseif (!empty($context->employee)
+            && Tools::getValue('Mollie_Api_Key')
+            && $context->controller instanceof AdminModulesController
+        ) {
+            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+        }
+        if (defined('_TB_VERSION_')) {
+            $api->addVersionString('ThirtyBees/' . _TB_VERSION_);
+            $api->addVersionString("MollieThirtyBees/{$moduleVersion}");
+        } else {
+            $api->addVersionString('PrestaShop/' . _PS_VERSION_);
+            $api->addVersionString("MolliePrestaShop/{$moduleVersion}");
+        }
+
+        return $api;
     }
 
-    /**
-     * @param $days int
-     */
-    public static function getDayMeasuredInSeconds($days)
-    {
-        return $days * self::HOURS_IN_DAY * self::MINUTES_IN_HOUR * self::SECONDS_IN_MINUTE;
-    }
-
-    public static function getCurrentTimeStamp()
-    {
-        return (new DateTime())->getTimestamp();
-    }
 }

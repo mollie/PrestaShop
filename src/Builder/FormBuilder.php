@@ -40,8 +40,8 @@ use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Configuration;
-use HelperForm;
-use Module;
+use HelperFormCore as HelperForm;
+use ModuleCore as Module;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -54,9 +54,10 @@ use Mollie\Service\MolCarrierInformationService;
 use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
-use OrderState;
+use OrderStateCore as OrderState;
 use Smarty;
-use Tools;
+use ToolsCore as Tools;
+use AttributeCore as Attribute;
 
 class FormBuilder
 {
@@ -420,7 +421,7 @@ class FormBuilder
             ];
         }
 
-        $dateStamp = time();
+        $dateStamp = Mollie\Utility\TimeUtility::getCurrentTimeStamp();
         $input[] = [
             'type' => 'mollie-methods',
             'name' => Config::METHODS_CONFIG,
@@ -442,7 +443,7 @@ class FormBuilder
             'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
             'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
-            'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED]
+            'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
         ];
 
         return $input;

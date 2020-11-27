@@ -50,7 +50,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\UrlPathUtility;
 use MolliePrefix\Mollie\Api\MollieApiClient;
-use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
@@ -84,17 +83,24 @@ class ApiService
      */
     private $environment;
 
+    /*
+     * @var TransactionService
+     */
+    private $transactionService;
+
     public function __construct(
         PaymentMethodRepository $methodRepository,
         CountryRepository $countryRepository,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        TransactionService $transactionService
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->methodRepository = $methodRepository;
         $this->configurationAdapter = $configurationAdapter;
         $this->environment = $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
+        $this->transactionService = $transactionService;
     }
 
     public function setApiKey($apiKey, $moduleVersion)
@@ -314,8 +320,7 @@ class ApiService
         /** @var Payment $payment */
         $payment = $api->payments->get($transactionId);
         if ($process) {
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($payment);
+            $this->transactionService->processTransaction($payment);
         }
 
         if ($payment && method_exists($payment, 'refunds')) {

@@ -75,7 +75,7 @@ class OrderStatusService
      * @since 3.3.2 $useExistingPayment option
      * @since 3.3.4 Accepts template vars for the corresponding email template
      */
-    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [], $transactionInfo = [])
+    public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [])
     {
         if (is_string($statusId)) {
             $status = $statusId;
@@ -121,16 +121,6 @@ class OrderStatusService
         $history = new OrderHistory();
         $history->id_order = $order->id;
         $history->changeIdOrderState($statusId, $order, $useExistingPayment);
-
-        if ($transactionInfo) {
-            $orderPayments = OrderPayment::getByOrderId($order->id);
-            /** @var OrderPayment $orderPayment */
-            foreach ($orderPayments as $orderPayment) {
-                $orderPayment->transaction_id = $transactionInfo['transactionId'];
-                $orderPayment->payment_method = $transactionInfo['paymentMethod'];
-                $orderPayment->update();
-            }
-        }
 
         $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 

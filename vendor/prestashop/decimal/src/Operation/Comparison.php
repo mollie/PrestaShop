@@ -39,7 +39,7 @@ class Comparison
      */
     public function compareUsingBcMath(\MolliePrefix\PrestaShop\Decimal\DecimalNumber $a, \MolliePrefix\PrestaShop\Decimal\DecimalNumber $b)
     {
-        return bccomp((string) $a, (string) $b, \max($a->getExponent(), $b->getExponent()));
+        return \bccomp((string) $a, (string) $b, \max($a->getExponent(), $b->getExponent()));
     }
     /**
      * Compares two decimal numbers without using BC Math

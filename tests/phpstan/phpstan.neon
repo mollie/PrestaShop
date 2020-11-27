@@ -2,10 +2,12 @@ includes:
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
 
 parameters:
+  autoload_directories:
+    - %currentWorkingDirectory%/vendor
   paths:
-    - ../../classes
+    - ../../src
     - ../../controllers
-    - ../../ps_facebook.php
+    - ../../mollie.php
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -25,5 +27,7 @@ parameters:
     - '#Parameter \#1 \$events of method FacebookAds\\Object\\ServerSide\\EventRequest::setEvents\(\) expects array<FacebookAds\\Object\\ServerSide\\FacebookAds\\Object\\ServerSide\\Event>, array<int, FacebookAds\\Object\\ServerSide\\Event> given.#'
     - '#Parameter \#1 \$app_id of static method FacebookAds\\Api::init\(\) expects string, null given.#'
     - '#Parameter \#2 \$app_secret of static method FacebookAds\\Api::init\(\) expects string, null given.#'
+    - '#Parameter \#1 \$id of class MolPaymentMethod constructor expects int|null, string|false|null given.#'
+    - '#Parameter \#1 \$id of class Customer constructor expects null, int given.#'
 
   level: 5

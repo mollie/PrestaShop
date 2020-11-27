@@ -49,5 +49,5 @@ function upgrade_module_4_1_1($module)
         $module->unregisterHook('displayPaymentEU');
     }
 
-    return true;
+   return true;
 }
