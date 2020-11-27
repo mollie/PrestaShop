@@ -35,6 +35,8 @@
 
 namespace Mollie\Utility;
 
+use DateTime;
+
 class TimeUtility
 {
     const HOURS_IN_DAY = 24;
@@ -52,5 +54,10 @@ class TimeUtility
     public static function getDayMeasuredInSeconds($days)
     {
         return $days * self::HOURS_IN_DAY * self::MINUTES_IN_HOUR * self::SECONDS_IN_MINUTE;
+    }
+
+    public static function getCurrentTimeStamp()
+    {
+        return (new DateTime())->getTimestamp();
     }
 }

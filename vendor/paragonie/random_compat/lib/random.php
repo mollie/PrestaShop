@@ -156,14 +156,12 @@ if (!\is_callable('random_bytes')) {
          * @throws Exception
          * @return string
          */
-        if (!\function_exists('MolliePrefix\\random_bytes')) {
-            function random_bytes($length)
-            {
-                unset($length);
-                // Suppress "variable not used" warnings.
-                throw new \Exception('There is no suitable CSPRNG installed on your system');
-                return '';
-            }
+        function random_bytes($length)
+        {
+            unset($length);
+            // Suppress "variable not used" warnings.
+            throw new \Exception('There is no suitable CSPRNG installed on your system');
+            return '';
         }
     }
 }

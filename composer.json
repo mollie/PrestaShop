@@ -22,9 +22,9 @@
       "Mollie\\": "src/"
     },
     "classmap": [
-      "vendor/",
+      "mollie.php",
       "controllers/",
-      "src/Entity"
+      "src/"
     ]
   },
   "config": {

@@ -25,7 +25,9 @@ return [
                 'test_old',
                 'tests',
                 'Tests',
-                'vendor-bin'
+                'vendor-bin',
+                'php-dev-tools',
+                'header-stamp'
             ])
             ->in('vendor'),
         Finder::create()->append([

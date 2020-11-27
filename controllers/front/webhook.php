@@ -37,6 +37,7 @@ use Mollie\Utility\PaymentMethodUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
@@ -53,15 +54,10 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__).'/../../mollie.php';
 
-/**
- * Class MollieReturnModuleFrontController
- * @method setTemplate
- *
- * @property mixed  context
- * @property Mollie module
- */
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
+    /** @var Mollie */
+    public $module;
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
@@ -79,16 +75,15 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @throws Adapter_Exception
+     * @throws ApiException
+     * @throws CoreException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
-     * @throws CoreException
-     * @throws ApiException
      */
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::DEBUG_LOG_ALL)) {
+        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
             PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
         }
 
@@ -97,13 +92,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
     /**
      * @return string
-     *
-     * @throws Adapter_Exception
+     * @throws ApiException
+     * @throws CoreException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws SmartyException
-     * @throws CoreException
-     * @throws ApiException
      */
     protected function executeWebhook()
     {
@@ -239,6 +231,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         && Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
                         && $apiPayment->status === OrderStatus::STATUS_CREATED
                     ) {
+                        /** @var PaymentCollection $orderPayments */
                         $orderPayments = $apiPayment->payments();
                         $paymentStatus = OrderStatus::STATUS_CREATED;
                         foreach ($orderPayments as $orderPayment) {
@@ -323,7 +316,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
     /**
      * @param string $transactionId
-     * @param int    $status
+     * @param string    $status
      * @param int    $orderId
      *
      * @return bool

@@ -97,23 +97,13 @@ class MollieOrderInfoService
      * @return array
      * @since 3.3.0
      */
-    public function displayMollieOrderInfo($input, $adminOrdersControllerId)
+    public function displayMollieOrderInfo($input)
     {
-        $context = Context::getContext();
-
         try {
             $mollieData = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
-            $access = Profile::getProfileAccess($context->employee->id_profile, $adminOrdersControllerId);
             if ($input['resource'] === 'payments') {
                 switch ($input['action']) {
                     case 'refund':
-                        // Check order edit permissions
-                        if (!$access || empty($access['edit'])) {
-                            return [
-                                'success' => false,
-                                'message' => $this->module->l('You do not have permission to refund payments'),
-                            ];
-                        }
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
                             $status = $this->refundService->doPaymentRefund($mollieData['transaction_id']);
@@ -126,13 +116,6 @@ class MollieOrderInfoService
                             'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false),
                         ];
                     case 'retrieve':
-                        // Check order view permissions
-                        if (!$access || empty($access['view'])) {
-                            return [
-                                'success' => false,
-                                'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('view')),
-                            ];
-                        }
                         return [
                             'success' => true,
                             'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false)
@@ -143,13 +126,6 @@ class MollieOrderInfoService
             } elseif ($input['resource'] === 'orders') {
                 switch ($input['action']) {
                     case 'retrieve':
-                        // Check order edit permissions
-                        if (!$access || empty($access['view'])) {
-                            return [
-                                'success' => false,
-                                'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('edit')),
-                            ];
-                        }
                         $info = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
                         if (!$info) {
                             return ['success' => false];
@@ -162,33 +138,12 @@ class MollieOrderInfoService
                             'tracking' => $tracking,
                         ];
                     case 'ship':
-                        // Check order edit permissions
-                        if (!$access || empty($access['edit'])) {
-                            return [
-                                'success' => false,
-                                'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('ship')),
-                            ];
-                        }
                         $status = $this->shipService->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId'])]);
                     case 'refund':
-                        // Check order edit permissions
-                        if (!$access || empty($access['edit'])) {
-                            return [
-                                'success' => false,
-                                'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('refund')),
-                            ];
-                        }
                         $status = $this->refundService->doRefundOrderLines($input['order'], isset($input['orderLines']) ? $input['orderLines'] : []);
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['order']['id'])]);
                     case 'cancel':
-                        // Check order edit permissions
-                        if (!$access || empty($access['edit'])) {
-                            return [
-                                'success' => false,
-                                'message' => sprintf($this->module->l('You do not have permission to %s payments'), $this->module->l('cancel')),
-                            ];
-                        }
                         $status = $this->cancelService->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : []);
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId'])]);
                     default:

@@ -25,9 +25,14 @@
  */
 
 use Mollie\Repository\OrderFeeRepository;
+use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 class MollieSuccessModuleFrontController extends ModuleFrontController
 {
+
+    /** @var Mollie */
+    public $module;
+
     public $ssl = true;
     public $id_cart;
     public $id_module;
@@ -36,6 +41,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
     public $secure_key;
     /** @var OrderPresenter */
     public $order_presenter;
+
 
     /**
      * Initialize order confirmation controller.
@@ -166,14 +172,14 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
         $order = new PaymentFree();
         $order->validateOrder(
             $cart->id,
-            Configuration::get('PS_OS_PAYMENT'),
+            (int) Configuration::get('PS_OS_PAYMENT'),
             0,
             $this->trans('Free order', array(), 'Admin.Orderscustomers.Feature'),
             null,
             array(),
             null,
             false,
-            $cart->secure_key
+            (bool) $cart->secure_key
         );
     }
 }

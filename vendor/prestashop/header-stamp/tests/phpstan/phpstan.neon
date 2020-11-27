@@ -1,0 +1,9 @@
+parameters:
+  paths:
+    - src/
+    - bin/header-stamp
+  level: 7
+  inferPrivatePropertyTypeFromConstructor: true
+  ignoreErrors:
+  - '#Parameter \#1 \$commandName of method Symfony\\Component\\Console\\Application::setDefaultCommand\(\) expects string, string\|null given.#'
+  - '#Parameter \#2 \$str of function explode expects string, array<string>|bool|string|null given.#'

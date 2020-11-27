@@ -1,0 +1,28 @@
+<documentation title="Compound Namespace Depth">
+    <standard>
+    <![CDATA[
+    Compound namespaces with a depth of more than two MUST NOT be used.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Max depth of 2.">
+        <![CDATA[
+use MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
+    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassA,
+    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
+    MolliePrefix\MolliePrefix\SubnamespaceTwo\ClassY,
+    ClassZ,
+};
+        ]]>
+        </code>
+        <code title="Invalid: Max depth of 3.">
+        <![CDATA[
+use MolliePrefix\MolliePrefix\Vendor\Package\SomeNamespace\{
+    <em>MolliePrefix\MolliePrefix\SubnamespaceOne\AnotherNamespace\ClassA,</em>
+    MolliePrefix\MolliePrefix\SubnamespaceOne\ClassB,
+    ClassZ,
+};
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

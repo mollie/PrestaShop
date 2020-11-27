@@ -37,7 +37,7 @@ namespace Mollie\Service;
 
 use Address;
 use AddressFormat;
-use Attribute;
+use AttributeCore as Attribute;
 use Carrier;
 use CartRule;
 use Configuration;

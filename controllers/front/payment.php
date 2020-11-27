@@ -39,6 +39,7 @@ use Mollie\Service\ExceptionService;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\PrestaShop\Decimal\Number;
@@ -58,7 +59,7 @@ require_once dirname(__FILE__) . '/../../mollie.php';
 /**
  * Class MolliePaymentModuleFrontController
  *
- * @property Context? $context
+ * @property Context $context
  * @property Mollie $module
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
@@ -75,10 +76,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @throws SmartyException
-     * @throws CoreException
-     * @throws Exception
      */
     public function initContent()
     {
@@ -122,7 +119,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
-        $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
+        $paymentMethodObj = new MolPaymentMethod((int)$paymentMethodId);
         // Prepare payment
         do {
             $orderReference = Order::generateReference();
@@ -237,10 +234,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
     /**
      * @param array $data
+     * @param string $selectedApi
      *
-     * @param $selectedApi
-     * @return MolliePaymentAlias|MollieOrderAlias|null
-     *
+     * @return MollieOrderAlias|MolliePaymentAlias
      * @throws OrderCreationException
      */
     protected function createPayment($data, $selectedApi)
@@ -253,10 +249,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 /** @var MolliePaymentAlias $payment */
                 $payment = $this->module->api->payments->create($data);
             }
+
+            return $this->module->api->payments->create($data);
         } catch (Exception $e) {
             /** @var OrderExceptionHandler $orderExceptionHandler */
             $orderExceptionHandler = $this->module->getContainer(OrderExceptionHandler::class);
-            $orderExceptionHandler->handle($e);
+
+            throw $orderExceptionHandler->handle($e);
         }
 
         return $payment;
@@ -308,8 +307,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             // Set the `banktransfer` details
             if ($apiPayment instanceof MollieOrderAlias) {
                 // If this is an order, take the first payment
-                $apiPayment = $apiPayment->payments();
-                $apiPayment = $apiPayment[0];
+                /** @var PaymentCollection $payments */
+                $payments = $apiPayment->payments();
+                $apiPayment = $payments[0];
             }
 
             $details = $apiPayment->details->transferReference;
@@ -357,7 +357,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $this->module->validateOrder(
             (int)$cartId,
             (int)Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            $totalPrice->toPrecision(2),
+            (float)$totalPrice->toPrecision(2),
             isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
             null,
             $extraVars,
@@ -368,9 +368,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $orderid = Order::getOrderByCartId($cartId);
         $order = new Order($orderid);
-        $order->total_paid_tax_excl = $orderFeeNumber->plus(new Number((string)$order->total_paid_tax_excl));
-        $order->total_paid_tax_incl = $orderFeeNumber->plus(new Number((string)$order->total_paid_tax_incl));
-        $order->total_paid = $totalPrice->toPrecision(2);
+        $order->total_paid_tax_excl = (float)$orderFeeNumber->plus(new Number((string)$order->total_paid_tax_excl))->toPrecision(2);
+        $order->total_paid_tax_incl = (float)$orderFeeNumber->plus(new Number((string)$order->total_paid_tax_incl))->toPrecision(2);
+        $order->total_paid = (float)$totalPrice->toPrecision(2);
         $order->reference = $orderReference;
         $order->update();
 
