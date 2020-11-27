@@ -43,52 +43,11 @@ if (!defined('_PS_VERSION_')) {
  * @param Mollie $module
  * @return bool
  */
-function upgrade_module_4_1_0($module)
+function upgrade_module_4_1_1($module)
 {
-    /** @var Installer $installer */
-    $installer = $module->getContainer(Installer::class);
-
-    $awaitingOrderStatusId = Configuration::get(Config::STATUS_MOLLIE_AWAITING);
-    $orderStatus = new OrderState($awaitingOrderStatusId);
-
-    if (!Validate::isLoadedObject($orderStatus) || $orderStatus->deleted) {
-        $installer->createAwaitingMollieOrderState();
+    if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        $module->unregisterHook('displayPaymentEU');
     }
 
-    $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        ADD `position` INT(10);
-    ';
-
-    $isAdded = Db::getInstance()->execute($sql);
-
-    if (!$isAdded) {
-        return false;
-    }
-
-    /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
-    $paymentMethodsRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
-    $paymentMethods = $paymentMethodsRepo->findAll();
-
-    /** @var Installer $installer */
-    $installer = $module->getContainer(Installer::class);
-    $installer->installVoucherFeatures();
-
-    foreach ($installer::getHooks() as $hook) {
-        $module->registerHook($hook);
-    }
-
-    $isUpdated = true;
-    // adding positions for all payments in order they exist in database
-    $iteration = 0;
-    /** @var MolPaymentMethod $paymentMethod */
-    foreach ($paymentMethods as $paymentMethod) {
-        $paymentMethod->position = $iteration;
-
-        $iteration++;
-
-        $isUpdated &= $paymentMethod->update();
-    }
-
-    return $isUpdated;
+   return true;
 }

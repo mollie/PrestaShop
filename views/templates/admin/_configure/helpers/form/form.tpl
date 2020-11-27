@@ -724,6 +724,14 @@
     </div>
   {elseif $input.type === 'mollie-button'}
     <button type="button" class="btn btn-default {if isset($input.class)}{$input.class}{/if}">{$input.text}</button>
+  {elseif $input.type === 'mollie-payment-empty-alert'}
+
+    <div data-tab-id="general_settings">
+      <div class="alert alert-info">
+        {l s='You haven\'t enabled any of the Mollie payments.' mod='mollie'}<br>
+        {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
+      </div>
+    </div>
   {else}
     {$smarty.block.parent}
   {/if}

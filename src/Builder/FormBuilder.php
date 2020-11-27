@@ -411,12 +411,21 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
+        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri());
+
+        if (empty($molliePaymentMethods)) {
+            $input[] = [
+                'type' => 'mollie-payment-empty-alert',
+                'tab' => $generalSettings,
+                'name' => '',
+            ];
+        }
 
         $dateStamp = Mollie\Utility\TimeUtility::getCurrentTimeStamp();
         $input[] = [
             'type' => 'mollie-methods',
             'name' => Config::METHODS_CONFIG,
-            'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
+            'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
             'onlyOrderMethods' => [

@@ -142,7 +142,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->setTemplate('error.tpl');
 
             if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
-                $message = 'Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
+                $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
             } else {
                 /** @var ExceptionService $exceptionService */
                 $exceptionService = $this->module->getContainer(ExceptionService::class);
@@ -243,7 +243,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     {
         try {
             if ($selectedApi === Mollie\Config\Config::MOLLIE_ORDERS_API) {
-                return $this->module->api->orders->create($data, ['embed' => 'payments']);
+                /** @var MollieOrderAlias $payment */
+                $payment = $this->module->api->orders->create($data, ['embed' => 'payments']);
+            } else {
+                /** @var MolliePaymentAlias $payment */
+                $payment = $this->module->api->payments->create($data);
             }
 
             return $this->module->api->payments->create($data);
@@ -253,6 +257,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
             throw $orderExceptionHandler->handle($e);
         }
+
+        return $payment;
     }
 
     /**
