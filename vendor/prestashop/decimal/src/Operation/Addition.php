@@ -54,7 +54,7 @@ class Addition
     {
         $precision1 = $a->getPrecision();
         $precision2 = $b->getPrecision();
-        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) bcadd($a, $b, \max($precision1, $precision2)));
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) \bcadd($a, $b, \max($precision1, $precision2)));
     }
     /**
      * Performs the addition without BC Math

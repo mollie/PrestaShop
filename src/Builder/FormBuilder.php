@@ -428,11 +428,7 @@ class FormBuilder
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
-            'onlyOrderMethods' => [
-                PaymentMethod::KLARNA_PAY_LATER,
-                PaymentMethod::KLARNA_SLICE_IT,
-                'voucher', //todo: change with static when mollie vendor will get updated
-            ],
+            'onlyOrderMethods' => array_merge(Config::KLARNA_PAYMENTS, ['voucher']),
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
                 $this->module->l('Click [1]here[/1] to read more about the differences between the Payment and Orders API.', self::FILE_NAME),
@@ -445,7 +441,9 @@ class FormBuilder
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
             'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-            'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
+            'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
+            'klarnaPayments' => Config::KLARNA_PAYMENTS,
+            'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
         ];
 
         return $input;
@@ -540,6 +538,26 @@ class FormBuilder
                 ];
             }
         }
+        $input[] = [
+            'type' => 'select',
+            'label' => $this->module->l('Create Klarna invoice on:', self::FILE_NAME),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
+            'options' => [
+                'query' => [
+                    [
+                        'id' => Config::MOLLIE_STATUS_KLARNA_ACCEPTED,
+                        'name' => $this->module->l('Accepted', self::FILE_NAME),
+                    ],
+                    [
+                        'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                        'name' => $this->module->l('Shipped', self::FILE_NAME),
+                    ],
+                ],
+                'id' => 'id',
+                'name' => 'name',
+            ],
+        ];
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
         $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);

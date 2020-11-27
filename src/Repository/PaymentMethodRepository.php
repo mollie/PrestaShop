@@ -247,4 +247,15 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             ]
         );
     }
+
+    public function getMethodInvoiceStatus($methodId, $environment)
+    {
+        $sql = new DbQuery();
+        $sql->select('*');
+        $sql->from('mol_payment_method_invoice_status');
+        $sql->where('live_environment = ' . (int)$environment);
+        $sql->where('id_method = "' . pSQL($methodId) . '"');
+
+        return Db::getInstance()->executeS($sql);
+    }
 }

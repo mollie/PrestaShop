@@ -60,6 +60,7 @@ use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use MolPaymentMethod;
+use MolPaymentMethodInvoiceStatus;
 use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;

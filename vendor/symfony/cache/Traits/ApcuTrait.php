@@ -34,9 +34,9 @@ trait ApcuTrait
         parent::__construct($namespace, $defaultLifetime);
         if (null !== $version) {
             \MolliePrefix\Symfony\Component\Cache\CacheItem::validateKey($version);
-            if (!apcu_exists($version . '@' . $namespace)) {
+            if (!\apcu_exists($version . '@' . $namespace)) {
                 $this->doClear($namespace);
-                apcu_add($version . '@' . $namespace, null);
+                \apcu_add($version . '@' . $namespace, null);
             }
         }
     }
@@ -46,7 +46,7 @@ trait ApcuTrait
     protected function doFetch(array $ids)
     {
         try {
-            foreach (apcu_fetch($ids, $ok) ?: [] as $k => $v) {
+            foreach (\apcu_fetch($ids, $ok) ?: [] as $k => $v) {
                 if (null !== $v || $ok) {
                     (yield $k => $v);
                 }
@@ -60,14 +60,14 @@ trait ApcuTrait
      */
     protected function doHave($id)
     {
-        return apcu_exists($id);
+        return \apcu_exists($id);
     }
     /**
      * {@inheritdoc}
      */
     protected function doClear($namespace)
     {
-        return isset($namespace[0]) && \class_exists('MolliePrefix\\APCuIterator', \false) && ('cli' !== \PHP_SAPI || \filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) ? apcu_delete(new \MolliePrefix\APCuIterator(\sprintf('/^%s/', \preg_quote($namespace, '/')), \APC_ITER_KEY)) : apcu_clear_cache();
+        return isset($namespace[0]) && \class_exists('MolliePrefix\\APCuIterator', \false) && ('cli' !== \PHP_SAPI || \filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) ? \apcu_delete(new \MolliePrefix\APCuIterator(\sprintf('/^%s/', \preg_quote($namespace, '/')), \APC_ITER_KEY)) : \apcu_clear_cache();
     }
     /**
      * {@inheritdoc}
@@ -75,7 +75,7 @@ trait ApcuTrait
     protected function doDelete(array $ids)
     {
         foreach ($ids as $id) {
-            apcu_delete($id);
+            \apcu_delete($id);
         }
         return \true;
     }
@@ -85,7 +85,7 @@ trait ApcuTrait
     protected function doSave(array $values, $lifetime)
     {
         try {
-            if (\false === ($failures = apcu_store($values, null, $lifetime))) {
+            if (\false === ($failures = \apcu_store($values, null, $lifetime))) {
                 $failures = $values;
             }
             return \array_keys($failures);
@@ -94,7 +94,7 @@ trait ApcuTrait
         }
         if (1 === \count($values)) {
             // Workaround https://github.com/krakjoe/apcu/issues/170
-            apcu_delete(\key($values));
+            \apcu_delete(\key($values));
         }
         throw $e;
     }

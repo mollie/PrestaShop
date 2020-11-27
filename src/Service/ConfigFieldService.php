@@ -114,6 +114,7 @@ class ConfigFieldService
 
             Config::MOLLIE_STATUS_SHIPPING => Configuration::get(Config::MOLLIE_STATUS_SHIPPING),
             Config::MOLLIE_MAIL_WHEN_SHIPPING => Configuration::get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
+            Config::MOLLIE_KLARNA_INVOICE_ON => Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON),
         ];
 
         if (Mollie\Utility\EnvironmentUtility::getApiKey()) {

@@ -36,6 +36,7 @@
 namespace Mollie\Config;
 
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Configuration;
@@ -179,6 +180,9 @@ class Config
     const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
     const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
     const MOLLIE_STATUS_ORDER_COMPLETED = 'MOLLIE_STATUS_ORDER_COMPLETED';
+    const MOLLIE_STATUS_KLARNA_ACCEPTED = 'MOLLIE_STATUS_KLARNA_ACCEPTED';
+    const MOLLIE_STATUS_KLARNA_SHIPPED = 'MOLLIE_STATUS_KLARNA_SHIPPED';
+    const MOLLIE_KLARNA_INVOICE_ON = 'MOLLIE_KLARNA_INVOICE_ON';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -266,6 +270,11 @@ class Config
     ];
     const MOLLIE_VOUCHER_MINIMAL_AMOUNT = 1;
 
+    const KLARNA_PAYMENTS = [
+        PaymentMethod::KLARNA_PAY_LATER,
+        PaymentMethod::KLARNA_SLICE_IT,
+    ];
+
     /** @var array $methods */
     public static $methods = [
         'banktransfer' => 'Bank',
@@ -297,7 +306,7 @@ class Config
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
-            PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
+            PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_KLARNA_ACCEPTED),
             PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
@@ -335,6 +344,8 @@ class Config
             self::MOLLIE_STATUS_PARTIAL_REFUND,
             self::MOLLIE_STATUS_AWAITING,
             self::MOLLIE_STATUS_ORDER_COMPLETED,
+            self::MOLLIE_STATUS_KLARNA_ACCEPTED,
+            self::MOLLIE_STATUS_KLARNA_SHIPPED,
         ];
     }
 }

@@ -82,7 +82,6 @@ class PaymentReturnService
      */
     private $transactionService;
 
-
     public function __construct(
         Mollie $module,
         CartDuplicationService $cartDuplicationService,
@@ -142,6 +141,28 @@ class PaymentReturnService
             $this->transactionService->updateOrderTransaction($transaction->id, $order->reference);
         }
 
+        $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+
+        return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
+    }
+
+    public function handleAuthorizedStatus(Order $order, $transaction, $paymentMethod, $stockManagement)
+    {
+        $cart = new Cart($order->id_cart);
+        $status = static::DONE;
+        $orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
+        $orderDetails = $order->getOrderDetailList();
+        /** @var OrderDetail $detail */
+        foreach ($orderDetails as $detail) {
+            $orderDetail = new OrderDetail($detail['id_order_detail']);
+            if (
+                $stockManagement &&
+                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+            ) {
+                $orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+                break;
+            }
+        }
         $this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);

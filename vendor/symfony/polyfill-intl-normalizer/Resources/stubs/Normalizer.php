@@ -17,4 +17,4 @@ class Normalizer extends \MolliePrefix\Symfony\Polyfill\Intl\Normalizer\Normaliz
     const NFC = 4;
     const NFKC = 5;
 }
-\class_alias('MolliePrefix\\Normalizer', 'Normalizer', \false);
+\class_alias('MolliePrefix\\Normalizer', 'MolliePrefix\\Normalizer', \false);

@@ -36,6 +36,7 @@
 namespace Mollie\Service;
 
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Adapter\ConfigurationAdapter;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use Configuration;
@@ -73,6 +74,16 @@ class ApiService
     private $paymentMethodSortProvider;
 
     /**
+     * @var ConfigurationAdapter
+     */
+    private $configurationAdapter;
+
+    /**
+     * @var false|string
+     */
+    private $environment;
+
+    /*
      * @var TransactionService
      */
     private $transactionService;
@@ -81,12 +92,42 @@ class ApiService
         PaymentMethodRepository $methodRepository,
         CountryRepository $countryRepository,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
+        ConfigurationAdapter $configurationAdapter,
         TransactionService $transactionService
     ) {
-        $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
+        $this->methodRepository = $methodRepository;
+        $this->configurationAdapter = $configurationAdapter;
+        $this->environment = $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $this->transactionService = $transactionService;
+    }
+
+    public function setApiKey($apiKey, $moduleVersion)
+    {
+        $api = new MollieApiClient();
+        $context = Context::getContext();
+        if ($apiKey) {
+            try {
+                $api->setApiKey($apiKey);
+            } catch (ApiException $e) {
+                return;
+            }
+        } elseif (!empty($context->employee)
+            && Tools::getValue('Mollie_Api_Key')
+            && $context->controller instanceof AdminModulesController
+        ) {
+            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+        }
+        if (defined('_TB_VERSION_')) {
+            $api->addVersionString('ThirtyBees/' . _TB_VERSION_);
+            $api->addVersionString("MollieThirtyBees/{$moduleVersion}");
+        } else {
+            $api->addVersionString('PrestaShop/' . _PS_VERSION_);
+            $api->addVersionString("MolliePrestaShop/{$moduleVersion}");
+        }
+
+        return $api;
     }
 
     /**
@@ -120,24 +161,23 @@ class ApiService
 
         $methods = [];
         $deferredMethods = [];
-        $isSSLEnabled = Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
+        $isSSLEnabled = $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
         foreach ($apiMethods as $apiMethod) {
             $tipEnableSSL = false;
             if ($apiMethod->id === Config::APPLEPAY && !$isSSLEnabled) {
                 $notAvailable[] = $apiMethod->id;
                 $tipEnableSSL = true;
             }
-            if (!isset($configMethods[$apiMethod->id]['position'])) {
-                $deferredMethods[] = [
-                    'id' => $apiMethod->id,
-                    'name' => $apiMethod->description,
-                    'enabled' => true,
-                    'available' => !in_array($apiMethod->id, $notAvailable),
-                    'image' => (array)$apiMethod->image,
-                    'issuers' => $apiMethod->issuers,
-                    'tipEnableSSL' => $tipEnableSSL
-                ];
-            }
+            $deferredMethods[] = [
+                'id' => $apiMethod->id,
+                'name' => $apiMethod->description,
+                'enabled' => true,
+                'available' => !in_array($apiMethod->id, $notAvailable),
+                'image' => (array)$apiMethod->image,
+                'issuers' => $apiMethod->issuers,
+                'tipEnableSSL' => $tipEnableSSL
+            ];
+
         }
         $availableApiMethods = array_column(array_map(function ($apiMethod) {
             return (array)$apiMethod;
@@ -174,6 +214,7 @@ class ApiService
         $methods = $this->getMethodsObjForConfig($methods);
         $methods = $this->getMethodsCountriesForConfig($methods);
         $methods = $this->getExcludedCountriesForConfig($methods);
+        $this->addKlarnaStatuses($methods);
         $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForConfiguration($methods);
 
         return $methods;
@@ -195,9 +236,8 @@ class ApiService
         $defaultPaymentMethod->surcharge_percentage = '';
         $defaultPaymentMethod->surcharge_limit = '';
 
-        $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         foreach ($apiMethods as $apiMethod) {
-            $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $environment);
+            $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod($paymentId);
                 $methods[$apiMethod['id']] = $apiMethod;
@@ -215,7 +255,7 @@ class ApiService
         }, $apiMethods), 'id');
         if (in_array('creditcard', $availableApiMethods)) {
             foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
-                $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value, $environment);
+                $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value, $this->environment);
                 if ($paymentId) {
                     $paymentMethod = new MolPaymentMethod($paymentId);
                     $methods[$value]['obj'] = $paymentMethod;
@@ -243,6 +283,19 @@ class ApiService
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($key);
+        }
+
+        return $methods;
+    }
+
+    protected function addKlarnaStatuses(&$methods)
+    {
+        foreach ($methods as $key => $method) {
+            $isKlarnaPayment = in_array($method['id'], Config::KLARNA_PAYMENTS, false);
+            if ($isKlarnaPayment) {
+                $methodInvoice = $this->methodRepository->getMethodInvoiceStatus($method['id'], $this->environment);
+                $methods[$key]['invoiceStatus'] = $methodInvoice;
+            }
         }
 
         return $methods;
