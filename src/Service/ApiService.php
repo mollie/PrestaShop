@@ -49,7 +49,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\UrlPathUtility;
 use MolliePrefix\Mollie\Api\MollieApiClient;
-use MollieWebhookModuleFrontController;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
@@ -73,41 +72,21 @@ class ApiService
     private $countryRepository;
     private $paymentMethodSortProvider;
 
+    /**
+     * @var TransactionService
+     */
+    private $transactionService;
+
     public function __construct(
         PaymentMethodRepository $methodRepository,
         CountryRepository $countryRepository,
-        PaymentMethodSortProviderInterface $paymentMethodSortProvider
+        PaymentMethodSortProviderInterface $paymentMethodSortProvider,
+        TransactionService $transactionService
     ) {
         $this->methodRepository = $methodRepository;
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
-    }
-
-    public function setApiKey($apiKey, $moduleVersion)
-    {
-        $api = new MollieApiClient();
-        $context = Context::getContext();
-        if ($apiKey) {
-            try {
-                $api->setApiKey($apiKey);
-            } catch (ApiException $e) {
-                return;
-            }
-        } elseif (!empty($context->employee)
-            && Tools::getValue('Mollie_Api_Key')
-            && $context->controller instanceof AdminModulesController
-        ) {
-            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
-        }
-        if (defined('_TB_VERSION_')) {
-            $api->addVersionString('ThirtyBees/' . _TB_VERSION_);
-            $api->addVersionString("MollieThirtyBees/{$moduleVersion}");
-        } else {
-            $api->addVersionString('PrestaShop/' . _PS_VERSION_);
-            $api->addVersionString("MolliePrestaShop/{$moduleVersion}");
-        }
-
-        return $api;
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -288,8 +267,7 @@ class ApiService
         /** @var Payment $payment */
         $payment = $api->payments->get($transactionId);
         if ($process) {
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($payment);
+            $this->transactionService->processTransaction($payment);
         }
 
         if ($payment && method_exists($payment, 'refunds')) {

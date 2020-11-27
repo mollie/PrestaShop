@@ -1422,15 +1422,15 @@ class Mollie extends PaymentModule
         if ($this->api) {
             return;
         }
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getContainer(\Mollie\Service\ApiService::class);
+        /** @var \Mollie\Service\ApiKeyService $apiService */
+        $apiKeyService = $this->getContainer(\Mollie\Service\ApiKeyService::class);
 
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $apiKeyConfig = (int)$environment === \Mollie\Config\Config::ENVIRONMENT_LIVE ?
             Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
 
         try {
-            $this->api = $apiService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
+            $this->api = $apiKeyService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
         } catch (MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
         } catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
