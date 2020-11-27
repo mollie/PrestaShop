@@ -27,20 +27,20 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
+use Mollie;
+use Mollie\Utility\EnvironmentUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order;
-use Mollie;
 use MolliePrefix\Mollie\Api\Resources\Payment;
-use Mollie\Utility\EnvironmentUtility;
-use MollieWebhookModuleFrontController;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -49,71 +49,71 @@ use Tools;
 
 class CancelService
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
+	/**
+	 * @var Mollie
+	 */
+	private $module;
 
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
+	/**
+	 * @var TransactionService
+	 */
+	private $transactionService;
 
-    public function __construct(Mollie $module, TransactionService $transactionService)
-    {
-        $this->module = $module;
-        $this->transactionService = $transactionService;
-    }
+	public function __construct(Mollie $module, TransactionService $transactionService)
+	{
+		$this->module = $module;
+		$this->transactionService = $transactionService;
+	}
 
-    /**
-     * @param string $transactionId
-     * @param array $lines
-     *
-     * @return array
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws CoreException
-     * @throws SmartyException
-     * @since 3.3.0
-     */
-    public function doCancelOrderLines($transactionId, $lines = [])
-    {
-        try {
-            /** @var Order $payment */
-            $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-            if ($lines === []) {
-                $order->cancel();
-            } else {
-                $cancelableLines = [];
-                foreach ($lines as $line) {
-                    $cancelableLines[] = ['id' => $line['id'], 'quantity' => $line['quantity']];
-                }
-                $order->cancelLines(['lines' => $cancelableLines]);
-            }
+	/**
+	 * @param string $transactionId
+	 * @param array  $lines
+	 *
+	 * @return array
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 * @throws CoreException
+	 * @throws SmartyException
+	 *
+	 * @since 3.3.0
+	 */
+	public function doCancelOrderLines($transactionId, $lines = [])
+	{
+		try {
+			/** @var Order $payment */
+			$order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+			if ([] === $lines) {
+				$order->cancel();
+			} else {
+				$cancelableLines = [];
+				foreach ($lines as $line) {
+					$cancelableLines[] = ['id' => $line['id'], 'quantity' => $line['quantity']];
+				}
+				$order->cancelLines(['lines' => $cancelableLines]);
+			}
 
-            if (EnvironmentUtility::isLocalEnvironment()) {
-                // Refresh payment on local environments
-                /** @var Payment $payment */
-                $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-                if (!Tools::isSubmit('module')) {
-                    $_GET['module'] = $this->module->name;
-                }
-                $this->transactionService->processTransaction($apiPayment);
-            }
-        } catch (ApiException $e) {
-            return [
-                'success' => false,
-                'message' => $this->module->l('The product(s) could not be canceled!'),
-                'detailed' => $e->getMessage(),
-            ];
-        }
+			if (EnvironmentUtility::isLocalEnvironment()) {
+				// Refresh payment on local environments
+				/** @var Payment $payment */
+				$apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+				if (!Tools::isSubmit('module')) {
+					$_GET['module'] = $this->module->name;
+				}
+				$this->transactionService->processTransaction($apiPayment);
+			}
+		} catch (ApiException $e) {
+			return [
+				'success' => false,
+				'message' => $this->module->l('The product(s) could not be canceled!'),
+				'detailed' => $e->getMessage(),
+			];
+		}
 
-        return [
-            'success' => true,
-            'message' => '',
-            'detailed' => '',
-        ];
-    }
-
+		return [
+			'success' => true,
+			'message' => '',
+			'detailed' => '',
+		];
+	}
 }

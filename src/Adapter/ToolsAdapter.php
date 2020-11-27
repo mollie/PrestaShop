@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,8 +40,8 @@ use Tools;
 
 class ToolsAdapter
 {
-    public function strtoupper($str)
-    {
-        return Tools::strtoupper($str);
-    }
+	public function strtoupper($str)
+	{
+		return Tools::strtoupper($str);
+	}
 }

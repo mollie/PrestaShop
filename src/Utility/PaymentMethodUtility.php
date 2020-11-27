@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,8 +40,8 @@ use Mollie\Config\Config;
 
 class PaymentMethodUtility
 {
-    public static function getPaymentMethodName($method)
-    {
-        return array_key_exists($method, Config::$methods) ? Config::$methods[$method] : $method;
-    }
+	public static function getPaymentMethodName($method)
+	{
+		return array_key_exists($method, Config::$methods) ? Config::$methods[$method] : $method;
+	}
 }

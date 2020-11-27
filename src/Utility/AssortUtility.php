@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,26 +38,26 @@ namespace Mollie\Utility;
 
 class AssortUtility
 {
-    /**
-     * 2D array sort by key
-     *
-     * @param mixed $array
-     * @param mixed $key
-     *
-     * @since 3.3.0
-     */
-    public static function aasort(&$array, $key)
-    {
-        $sorter = [];
-        $ret = [];
-        reset($array);
-        foreach ($array as $ii => $va) {
-            $sorter[$ii] = $va[$key];
-        }
-        asort($sorter);
-        foreach ($sorter as $ii => $va) {
-            $ret[$ii] = $array[$ii];
-        }
-        $array = $ret;
-    }
+	/**
+	 * 2D array sort by key.
+	 *
+	 * @param mixed $array
+	 * @param mixed $key
+	 *
+	 * @since 3.3.0
+	 */
+	public static function aasort(&$array, $key)
+	{
+		$sorter = [];
+		$ret = [];
+		reset($array);
+		foreach ($array as $ii => $va) {
+			$sorter[$ii] = $va[$key];
+		}
+		asort($sorter);
+		foreach ($sorter as $ii => $va) {
+			$ret[$ii] = $array[$ii];
+		}
+		$array = $ret;
+	}
 }

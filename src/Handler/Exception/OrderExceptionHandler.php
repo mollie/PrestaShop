@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,20 +41,17 @@ use Mollie\Exception\OrderCreationException;
 
 class OrderExceptionHandler implements ExceptionHandlerInterface
 {
+	/**
+	 * @return OrderCreationException
+	 */
+	public function handle(Exception $e)
+	{
+		if (strpos($e->getMessage(), 'billingAddress.phone')) {
+			return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION);
+		} elseif (strpos($e->getMessage(), 'shippingAddress.phone')) {
+			return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION);
+		}
 
-    /**
-     * @param Exception $e
-     *
-     * @return OrderCreationException
-     */
-    public function handle(Exception $e)
-    {
-        if (strpos($e->getMessage(), 'billingAddress.phone')) {
-            return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION);
-        } elseif (strpos($e->getMessage(), 'shippingAddress.phone')) {
-            return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION);
-        }
-
-        return new OrderCreationException($e->getMessage(), OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION);
-    }
+		return new OrderCreationException($e->getMessage(), OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION);
+	}
 }

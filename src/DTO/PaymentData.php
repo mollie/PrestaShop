@@ -27,13 +27,14 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
-NameSpace Mollie\DTO;
+namespace Mollie\DTO;
 
 use Address;
 use Country;
@@ -42,300 +43,298 @@ use Mollie\DTO\Object\Amount;
 
 class PaymentData implements JsonSerializable
 {
+	/**
+	 * @var Amount
+	 */
+	private $amount;
 
-    /**
-     * @var Amount
-     */
-    private $amount;
+	/**
+	 * @var
+	 */
+	private $description;
 
-    /**
-     * @var
-     */
-    private $description;
+	/**
+	 * @var
+	 */
+	private $redirectUrl;
 
-    /**
-     * @var
-     */
-    private $redirectUrl;
+	/**
+	 * @var
+	 */
+	private $webhookUrl;
 
-    /**
-     * @var
-     */
-    private $webhookUrl;
+	/**
+	 * @var string
+	 */
+	private $method;
 
-    /**
-     * @var string
-     */
-    private $method;
+	/**
+	 * @var array
+	 */
+	private $metadata;
 
-    /**
-     * @var array
-     */
-    private $metadata;
+	/**
+	 * @var string
+	 */
+	private $locale;
 
-    /**
-     * @var string
-     */
-    private $locale;
+	/**
+	 * @var string
+	 */
+	private $issuer;
 
+	/**
+	 * @var string
+	 */
+	private $cardToken;
 
-    /**
-     * @var string
-     */
-    private $issuer;
+	/**
+	 * @var string
+	 */
+	private $customerId;
 
-    /**
-     * @var string
-     */
-    private $cardToken;
+	/**
+	 * @var Address
+	 */
+	private $billingAddress;
 
-    /**
-     * @var string
-     */
-    private $customerId;
+	/**
+	 * @var Address
+	 */
+	private $shippingAddress;
 
-    /**
-     * @var Address
-     */
-    private $billingAddress;
+	public function __construct(
+		Amount $amount,
+		$description,
+		$redirectUrl,
+		$webhookUrl
+	) {
+		$this->amount = $amount;
+		$this->description = $description;
+		$this->redirectUrl = $redirectUrl;
+		$this->webhookUrl = $webhookUrl;
+	}
 
-    /**
-     * @var Address
-     */
-    private $shippingAddress;
+	/**
+	 * @return Amount
+	 */
+	public function getAmount()
+	{
+		return $this->amount;
+	}
 
-    public function __construct(
-        Amount $amount,
-        $description,
-        $redirectUrl,
-        $webhookUrl
-    ) {
-        $this->amount = $amount;
-        $this->description = $description;
-        $this->redirectUrl = $redirectUrl;
-        $this->webhookUrl = $webhookUrl;
-    }
+	/**
+	 * @param Amount $amount
+	 */
+	public function setAmount($amount)
+	{
+		$this->amount = $amount;
+	}
 
-    /**
-     * @return Amount
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
 
-    /**
-     * @param Amount $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-    }
+	/**
+	 * @param mixed $description
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getRedirectUrl()
+	{
+		return $this->redirectUrl;
+	}
 
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
+	/**
+	 * @param mixed $redirectUrl
+	 */
+	public function setRedirectUrl($redirectUrl)
+	{
+		$this->redirectUrl = $redirectUrl;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getRedirectUrl()
-    {
-        return $this->redirectUrl;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getWebhookUrl()
+	{
+		return $this->webhookUrl;
+	}
 
-    /**
-     * @param mixed $redirectUrl
-     */
-    public function setRedirectUrl($redirectUrl)
-    {
-        $this->redirectUrl = $redirectUrl;
-    }
+	/**
+	 * @param mixed $webhookUrl
+	 */
+	public function setWebhookUrl($webhookUrl)
+	{
+		$this->webhookUrl = $webhookUrl;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getWebhookUrl()
-    {
-        return $this->webhookUrl;
-    }
+	/**
+	 * @return string
+	 */
+	public function getMethod()
+	{
+		return $this->method;
+	}
 
-    /**
-     * @param mixed $webhookUrl
-     */
-    public function setWebhookUrl($webhookUrl)
-    {
-        $this->webhookUrl = $webhookUrl;
-    }
+	/**
+	 * @param string $method
+	 */
+	public function setMethod($method)
+	{
+		$this->method = $method;
+	}
 
-    /**
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
+	/**
+	 * @return array
+	 */
+	public function getMetadata()
+	{
+		return $this->metadata;
+	}
 
-    /**
-     * @param string $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
+	/**
+	 * @param array $metadata
+	 */
+	public function setMetadata($metadata)
+	{
+		$this->metadata = $metadata;
+	}
 
-    /**
-     * @return array
-     */
-    public function getMetadata()
-    {
-        return $this->metadata;
-    }
+	/**
+	 * @return null
+	 */
+	public function getLocale()
+	{
+		return $this->locale;
+	}
 
-    /**
-     * @param array $metadata
-     */
-    public function setMetadata($metadata)
-    {
-        $this->metadata = $metadata;
-    }
+	/**
+	 * @param null $locale
+	 */
+	public function setLocale($locale)
+	{
+		$this->locale = $locale;
+	}
 
-    /**
-     * @return null
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getIssuer()
+	{
+		return $this->issuer;
+	}
 
-    /**
-     * @param null $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
+	/**
+	 * @param mixed $issuer
+	 */
+	public function setIssuer($issuer)
+	{
+		$this->issuer = $issuer;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getIssuer()
-    {
-        return $this->issuer;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getCardToken()
+	{
+		return $this->cardToken;
+	}
 
-    /**
-     * @param mixed $issuer
-     */
-    public function setIssuer($issuer)
-    {
-        $this->issuer = $issuer;
-    }
+	/**
+	 * @param mixed $cardToken
+	 */
+	public function setCardToken($cardToken)
+	{
+		$this->cardToken = $cardToken;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getCardToken()
-    {
-        return $this->cardToken;
-    }
+	/**
+	 * @return string
+	 */
+	public function getCustomerId()
+	{
+		return $this->customerId;
+	}
 
-    /**
-     * @param mixed $cardToken
-     */
-    public function setCardToken($cardToken)
-    {
-        $this->cardToken = $cardToken;
-    }
+	/**
+	 * @param string $customerId
+	 */
+	public function setCustomerId($customerId)
+	{
+		$this->customerId = $customerId;
+	}
 
-    /**
-     * @return string
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
-    }
+	/**
+	 * @return Address
+	 */
+	public function getBillingAddress()
+	{
+		return $this->billingAddress;
+	}
 
-    /**
-     * @param string $customerId
-     */
-    public function setCustomerId($customerId)
-    {
-        $this->customerId = $customerId;
-    }
+	/**
+	 * @param Address $billingAddress
+	 */
+	public function setBillingAddress($billingAddress)
+	{
+		$this->billingAddress = $billingAddress;
+	}
 
-    /**
-     * @return Address
-     */
-    public function getBillingAddress()
-    {
-        return $this->billingAddress;
-    }
+	/**
+	 * @return Address
+	 */
+	public function getShippingAddress()
+	{
+		return $this->shippingAddress;
+	}
 
-    /**
-     * @param Address $billingAddress
-     */
-    public function setBillingAddress($billingAddress)
-    {
-        $this->billingAddress = $billingAddress;
-    }
+	/**
+	 * @param Address $shippingAddress
+	 */
+	public function setShippingAddress($shippingAddress)
+	{
+		$this->shippingAddress = $shippingAddress;
+	}
 
-    /**
-     * @return Address
-     */
-    public function getShippingAddress()
-    {
-        return $this->shippingAddress;
-    }
-
-    /**
-     * @param Address $shippingAddress
-     */
-    public function setShippingAddress($shippingAddress)
-    {
-        $this->shippingAddress = $shippingAddress;
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'amount' => [
-                'currency' => $this->getAmount()->getCurrency(),
-                'value' => (string)$this->getAmount()->getValue(),
-            ],
-            'billingAddress' => [
-                "streetAndNumber" => $this->getBillingAddress()->address1,
-                "city" => $this->getBillingAddress()->city,
-                "postalCode" => $this->getBillingAddress()->postcode,
-                "country" => (string)Country::getIsoById($this->getBillingAddress()->id_country),
-            ],
-            'shippingAddress' => [
-                "streetAndNumber" => $this->getShippingAddress()->address1,
-                "city" => $this->getShippingAddress()->city,
-                "postalCode" => $this->getShippingAddress()->postcode,
-                "country" => (string)Country::getIsoById($this->getShippingAddress()->id_country),
-            ],
-            'description' => $this->getDescription(),
-            'redirectUrl' => $this->getRedirectUrl(),
-            'webhookUrl' => $this->getWebhookUrl(),
-            'method' => $this->getMethod(),
-            'metadata' => $this->getMetadata(),
-            'locale' => $this->getLocale(),
-            'issuer' => $this->getIssuer(),
-            'cardToken' => $this->getCardToken(),
-            'customerId' => $this->getCustomerId(),
-        ];
-    }
+	public function jsonSerialize()
+	{
+		return [
+			'amount' => [
+				'currency' => $this->getAmount()->getCurrency(),
+				'value' => (string) $this->getAmount()->getValue(),
+			],
+			'billingAddress' => [
+				'streetAndNumber' => $this->getBillingAddress()->address1,
+				'city' => $this->getBillingAddress()->city,
+				'postalCode' => $this->getBillingAddress()->postcode,
+				'country' => (string) Country::getIsoById($this->getBillingAddress()->id_country),
+			],
+			'shippingAddress' => [
+				'streetAndNumber' => $this->getShippingAddress()->address1,
+				'city' => $this->getShippingAddress()->city,
+				'postalCode' => $this->getShippingAddress()->postcode,
+				'country' => (string) Country::getIsoById($this->getShippingAddress()->id_country),
+			],
+			'description' => $this->getDescription(),
+			'redirectUrl' => $this->getRedirectUrl(),
+			'webhookUrl' => $this->getWebhookUrl(),
+			'method' => $this->getMethod(),
+			'metadata' => $this->getMetadata(),
+			'locale' => $this->getLocale(),
+			'issuer' => $this->getIssuer(),
+			'cardToken' => $this->getCardToken(),
+			'customerId' => $this->getCustomerId(),
+		];
+	}
 }

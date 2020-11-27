@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,31 +40,31 @@ use Address;
 
 final class PhoneNumberProvider implements PhoneNumberProviderInterface
 {
-    public function getFromAddress(Address $address)
-    {
-        $phoneNumber = $this->getMobileOrPhone($address);
+	public function getFromAddress(Address $address)
+	{
+		$phoneNumber = $this->getMobileOrPhone($address);
 
-        $phoneNumber = str_replace(" ", "", $phoneNumber);
-        $phoneNumber = str_replace("+", "", $phoneNumber);
+		$phoneNumber = str_replace(' ', '', $phoneNumber);
+		$phoneNumber = str_replace('+', '', $phoneNumber);
 
-        while ($phoneNumber[0] === "0") {
-            $phoneNumber = substr($phoneNumber, 1);
-        }
+		while ('0' === $phoneNumber[0]) {
+			$phoneNumber = substr($phoneNumber, 1);
+		}
 
-        if ($phoneNumber[0] !== "+") {
-            $phoneNumber = "+" . $phoneNumber;
-        }
+		if ('+' !== $phoneNumber[0]) {
+			$phoneNumber = '+'.$phoneNumber;
+		}
 
-        $regex = "/^\+\d{3,18}$/";
-        if (preg_match($regex, $phoneNumber) == 1) {
-            return $phoneNumber;
-        } else {
-            return null;
-        }
-    }
+		$regex = "/^\+\d{3,18}$/";
+		if (1 == preg_match($regex, $phoneNumber)) {
+			return $phoneNumber;
+		} else {
+			return null;
+		}
+	}
 
-    private function getMobileOrPhone(Address $address)
-    {
-        return $address->phone_mobile ?: $address->phone;
-    }
+	private function getMobileOrPhone(Address $address)
+	{
+		return $address->phone_mobile ?: $address->phone;
+	}
 }

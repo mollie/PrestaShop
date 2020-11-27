@@ -27,11 +27,11 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 

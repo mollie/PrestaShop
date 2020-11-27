@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,15 +41,15 @@ use PrestaShopCollection;
 
 interface ReadOnlyRepositoryInterface
 {
-    /**
-     * @return PrestaShopCollection
-     */
-    public function findAll();
+	/**
+	 * @return PrestaShopCollection
+	 */
+	public function findAll();
 
-    /**
-     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
-     *
-     * @return ObjectModel|null
-     */
-    public function findOneBy(array $keyValueCriteria);
+	/**
+	 * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
+	 *
+	 * @return ObjectModel|null
+	 */
+	public function findOneBy(array $keyValueCriteria);
 }

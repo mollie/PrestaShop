@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,9 +38,9 @@ namespace Mollie\Exception;
 
 class OrderCreationException extends \Exception
 {
-    const DEFAULT_ORDER_CREATION_EXCEPTION = 1;
+	const DEFAULT_ORDER_CREATION_EXCEPTION = 1;
 
-    const WRONG_BILLING_PHONE_NUMBER_EXCEPTION = 2;
+	const WRONG_BILLING_PHONE_NUMBER_EXCEPTION = 2;
 
-    const WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION = 3;
+	const WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION = 3;
 }

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,25 +40,25 @@ use Mollie\Config\Config;
 
 class RepeatOrderLinkFactory
 {
-    public function getLink()
-    {
-        $globalContext = \Context::getContext();
+	public function getLink()
+	{
+		$globalContext = \Context::getContext();
 
-        if (!Config::isVersion17()) {
-            return $globalContext->link->getPageLink(
-                'order',
-                true,
-                null
-            );
-        }
+		if (!Config::isVersion17()) {
+			return $globalContext->link->getPageLink(
+				'order',
+				true,
+				null
+			);
+		}
 
-        return $globalContext->link->getPageLink(
-            'cart',
-            null,
-            $globalContext->language->id,
-            [
-                'action' => 'show',
-            ]
-        );
-    }
+		return $globalContext->link->getPageLink(
+			'cart',
+			null,
+			$globalContext->language->id,
+			[
+				'action' => 'show',
+			]
+		);
+	}
 }

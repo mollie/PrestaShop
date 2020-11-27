@@ -27,33 +27,33 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
 class MolPaymentMethodIssuer extends ObjectModel
 {
-    /**
-     * @var int
-     */
-    public $id_payment_method;
+	/**
+	 * @var int
+	 */
+	public $id_payment_method;
 
-    /**
-     * @var string
-     */
-    public $issuers_json;
+	/**
+	 * @var string
+	 */
+	public $issuers_json;
 
-    /**
-     * @var array
-     */
-    public static $definition = array(
-        'table' => 'mol_payment_method_issuer',
-        'primary' => 'id_payment_method_issuer',
-        'fields' => array(
-            'id_payment_method' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
-            'issuers_json' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-        ),
-    );
+	/**
+	 * @var array
+	 */
+	public static $definition = [
+		'table' => 'mol_payment_method_issuer',
+		'primary' => 'id_payment_method_issuer',
+		'fields' => [
+			'id_payment_method' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'issuers_json' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+		],
+	];
 }

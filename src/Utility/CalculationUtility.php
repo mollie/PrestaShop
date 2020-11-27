@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,47 +38,49 @@ namespace Mollie\Utility;
 
 class CalculationUtility
 {
-    /**
-     * @param $productPrice
-     * @param $shippingPrice
-     * @param $wrappingPrice
-     * @return float
-     */
-    public static function getCartRemainingPrice($productPrice, $shippingPrice, $wrappingPrice)
-    {
-        return
-            NumberUtility::minus(
-                NumberUtility::minus($productPrice, $shippingPrice),
-                $wrappingPrice
-            );
-    }
+	/**
+	 * @param $productPrice
+	 * @param $shippingPrice
+	 * @param $wrappingPrice
+	 *
+	 * @return float
+	 */
+	public static function getCartRemainingPrice($productPrice, $shippingPrice, $wrappingPrice)
+	{
+		return
+			NumberUtility::minus(
+				NumberUtility::minus($productPrice, $shippingPrice),
+				$wrappingPrice
+			);
+	}
 
-    /**
-     * @param $unitPrice
-     * @param $targetVat
-     * @return float
-     */
-    public static function getUnitPriceNoTax($unitPrice, $targetVat)
-    {
-        return NumberUtility::divide(
-            $unitPrice,
-            NumberUtility::plus(
-                1,
-                NumberUtility::divide(
-                    $targetVat,
-                    100
-                )
-            )
-        );
-    }
+	/**
+	 * @param $unitPrice
+	 * @param $targetVat
+	 *
+	 * @return float
+	 */
+	public static function getUnitPriceNoTax($unitPrice, $targetVat)
+	{
+		return NumberUtility::divide(
+			$unitPrice,
+			NumberUtility::plus(
+				1,
+				NumberUtility::divide(
+					$targetVat,
+					100
+				)
+			)
+		);
+	}
 
-    public static function getActualVatRate($unitPrice, $unitPriceNoTax, $quantity = 1)
-    {
-        $totalPrice = NumberUtility::times($unitPrice, $quantity);
-        $totalPriceNoTax = NumberUtility::times($unitPriceNoTax, $quantity);
-        $vatPrice = NumberUtility::minus($totalPrice, $totalPriceNoTax);
-        $vatPriceDividedByTotalPriceNoTax = NumberUtility::divide($vatPrice, $totalPriceNoTax);
+	public static function getActualVatRate($unitPrice, $unitPriceNoTax, $quantity = 1)
+	{
+		$totalPrice = NumberUtility::times($unitPrice, $quantity);
+		$totalPriceNoTax = NumberUtility::times($unitPriceNoTax, $quantity);
+		$vatPrice = NumberUtility::minus($totalPrice, $totalPriceNoTax);
+		$vatPriceDividedByTotalPriceNoTax = NumberUtility::divide($vatPrice, $totalPriceNoTax);
 
-        return NumberUtility::times($vatPriceDividedByTotalPriceNoTax, 100);
-    }
+		return NumberUtility::times($vatPriceDividedByTotalPriceNoTax, 100);
+	}
 }

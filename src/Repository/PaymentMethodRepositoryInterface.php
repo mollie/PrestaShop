@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,14 +38,23 @@ namespace Mollie\Repository;
 
 interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId);
-    public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId);
-    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment);
-    public function getPaymentMethodIdByMethodId($paymentMethodId, $environment);
-    public function getPaymentBy($column, $id);
-    public function tryAddOrderReferenceColumn();
-    public function getMethodsForCheckout($environment);
-    public function updateTransactionId($oldTransactionId, $newTransactionId);
-    public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod);
-    public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference);
+	public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId);
+
+	public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId);
+
+	public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment);
+
+	public function getPaymentMethodIdByMethodId($paymentMethodId, $environment);
+
+	public function getPaymentBy($column, $id);
+
+	public function tryAddOrderReferenceColumn();
+
+	public function getMethodsForCheckout($environment);
+
+	public function updateTransactionId($oldTransactionId, $newTransactionId);
+
+	public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod);
+
+	public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference);
 }

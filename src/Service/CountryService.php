@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,33 +42,33 @@ use Mollie;
 
 class CountryService
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
+	/**
+	 * @var Mollie
+	 */
+	private $module;
 
-    public function __construct(Mollie $module)
-    {
-        $this->module = $module;
-    }
+	public function __construct(Mollie $module)
+	{
+		$this->module = $module;
+	}
 
-    public function getActiveCountriesList($onlyActive = true)
-    {
-        $context = Context::getContext();
-        $langId = $context->language->id;
-        $countries = Country::getCountries($langId, $onlyActive);
-        $countriesWithNames = [];
-        $countriesWithNames[] = [
-            'id' => 0,
-            'name' => $this->module->l('All')
-        ];
-        foreach ($countries as $key => $country) {
-            $countriesWithNames[] = [
-                'id' => $key,
-                'name' => $country['name'],
-            ];
-        }
+	public function getActiveCountriesList($onlyActive = true)
+	{
+		$context = Context::getContext();
+		$langId = $context->language->id;
+		$countries = Country::getCountries($langId, $onlyActive);
+		$countriesWithNames = [];
+		$countriesWithNames[] = [
+			'id' => 0,
+			'name' => $this->module->l('All'),
+		];
+		foreach ($countries as $key => $country) {
+			$countriesWithNames[] = [
+				'id' => $key,
+				'name' => $country['name'],
+			];
+		}
 
-        return $countriesWithNames;
-    }
+		return $countriesWithNames;
+	}
 }

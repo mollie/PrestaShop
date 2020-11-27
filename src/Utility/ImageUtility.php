@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,12 +40,12 @@ use Mollie\Config\Config;
 
 class ImageUtility
 {
-    public static function setOptionImage($image, $imageConfig)
-    {
-        if ($imageConfig === Config::LOGOS_NORMAL) {
-            return $image['svg'];
-        } elseif ($imageConfig === Config::LOGOS_BIG) {
-            return $image['size2x'];
-        }
-    }
+	public static function setOptionImage($image, $imageConfig)
+	{
+		if (Config::LOGOS_NORMAL === $imageConfig) {
+			return $image['svg'];
+		} elseif (Config::LOGOS_BIG === $imageConfig) {
+			return $image['size2x'];
+		}
+	}
 }

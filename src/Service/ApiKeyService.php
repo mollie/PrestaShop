@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -42,31 +43,30 @@ use Tools;
 
 class ApiKeyService
 {
-    public function setApiKey($apiKey, $moduleVersion)
-    {
-        $api = new MollieApiClient();
-        $context = Context::getContext();
-        if ($apiKey) {
-            try {
-                $api->setApiKey($apiKey);
-            } catch (ApiException $e) {
-                return;
-            }
-        } elseif (!empty($context->employee)
-            && Tools::getValue('Mollie_Api_Key')
-            && $context->controller instanceof AdminModulesController
-        ) {
-            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
-        }
-        if (defined('_TB_VERSION_')) {
-            $api->addVersionString('ThirtyBees/' . _TB_VERSION_);
-            $api->addVersionString("MollieThirtyBees/{$moduleVersion}");
-        } else {
-            $api->addVersionString('PrestaShop/' . _PS_VERSION_);
-            $api->addVersionString("MolliePrestaShop/{$moduleVersion}");
-        }
+	public function setApiKey($apiKey, $moduleVersion)
+	{
+		$api = new MollieApiClient();
+		$context = Context::getContext();
+		if ($apiKey) {
+			try {
+				$api->setApiKey($apiKey);
+			} catch (ApiException $e) {
+				return;
+			}
+		} elseif (!empty($context->employee)
+			&& Tools::getValue('Mollie_Api_Key')
+			&& $context->controller instanceof AdminModulesController
+		) {
+			$api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+		}
+		if (defined('_TB_VERSION_')) {
+			$api->addVersionString('ThirtyBees/'._TB_VERSION_);
+			$api->addVersionString("MollieThirtyBees/{$moduleVersion}");
+		} else {
+			$api->addVersionString('PrestaShop/'._PS_VERSION_);
+			$api->addVersionString("MolliePrestaShop/{$moduleVersion}");
+		}
 
-        return $api;
-    }
-
+		return $api;
+	}
 }

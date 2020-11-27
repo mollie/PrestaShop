@@ -27,39 +27,39 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
 class MolCarrierInformation extends ObjectModel
 {
-    /**
-     * @var int
-     */
-    public $id_carrier;
+	/**
+	 * @var int
+	 */
+	public $id_carrier;
 
-    /**
-     * @var string
-     */
-    public $url_source;
+	/**
+	 * @var string
+	 */
+	public $url_source;
 
-    /**
-     * @var string
-     */
-    public $custom_url;
+	/**
+	 * @var string
+	 */
+	public $custom_url;
 
-    /**
-     * @var array
-     */
-    public static $definition = array(
-        'table' => 'mol_carrier_information',
-        'primary' => 'id_mol_carrier_information',
-        'fields' => array(
-            'id_carrier' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
-            'url_source' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'custom_url' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-        ),
-    );
+	/**
+	 * @var array
+	 */
+	public static $definition = [
+		'table' => 'mol_carrier_information',
+		'primary' => 'id_mol_carrier_information',
+		'fields' => [
+			'id_carrier' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'url_source' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+			'custom_url' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+		],
+	];
 }

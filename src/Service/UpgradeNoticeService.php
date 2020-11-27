@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,18 +41,19 @@ use Mollie\Utility\TimeUtility;
 
 class UpgradeNoticeService
 {
-    /**
-     * @param $currentTimeStamp int
-     * @param $noticeCloseTimeStamp int
-     * @return bool
-     */
-    public function isUpgradeNoticeClosed($currentTimeStamp, $noticeCloseTimeStamp)
-    {
-        $closeDuration = TimeUtility::getDayMeasuredInSeconds( Config::MODULE_UPGRADE_NOTICE_CLOSE_DURATION);
-        if ($noticeCloseTimeStamp + $closeDuration >= $currentTimeStamp) {
-            return true;
-        }
+	/**
+	 * @param $currentTimeStamp int
+	 * @param $noticeCloseTimeStamp int
+	 *
+	 * @return bool
+	 */
+	public function isUpgradeNoticeClosed($currentTimeStamp, $noticeCloseTimeStamp)
+	{
+		$closeDuration = TimeUtility::getDayMeasuredInSeconds(Config::MODULE_UPGRADE_NOTICE_CLOSE_DURATION);
+		if ($noticeCloseTimeStamp + $closeDuration >= $currentTimeStamp) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

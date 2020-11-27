@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,30 +41,28 @@ use Order;
 
 class OrderCartAssociationService
 {
-    private $cartDuplication;
+	private $cartDuplication;
 
-    public function __construct(CartDuplicationService $cartDuplication)
-    {
-        $this->cartDuplication = $cartDuplication;
-    }
+	public function __construct(CartDuplicationService $cartDuplication)
+	{
+		$this->cartDuplication = $cartDuplication;
+	}
 
-    /**
-     * @param Order $order
-     *
-     * @return bool
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function createPendingCart(Order $order)
-    {
-        // globally restores the cart.
-        $newCartId = $this->cartDuplication->restoreCart($order->id_cart);
+	/**
+	 * @return bool
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 * @throws \PrestaShopException
+	 */
+	public function createPendingCart(Order $order)
+	{
+		// globally restores the cart.
+		$newCartId = $this->cartDuplication->restoreCart($order->id_cart);
 
-        $pendingOrderCart = new MolPendingOrderCart();
-        $pendingOrderCart->cart_id = $newCartId;
-        $pendingOrderCart->order_id = $order->id;
+		$pendingOrderCart = new MolPendingOrderCart();
+		$pendingOrderCart->cart_id = $newCartId;
+		$pendingOrderCart->order_id = $order->id;
 
-        return $pendingOrderCart->add();
-    }
+		return $pendingOrderCart->add();
+	}
 }

@@ -27,27 +27,25 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
 /**
  * @param Mollie $module
+ *
  * @return bool
  */
 function upgrade_module_4_1_1($module)
 {
-    if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-        $module->unregisterHook('displayPaymentEU');
-    }
+	if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+		$module->unregisterHook('displayPaymentEU');
+	}
 
-   return true;
+	return true;
 }

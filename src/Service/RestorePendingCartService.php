@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -43,29 +44,29 @@ use Order;
 
 class RestorePendingCartService
 {
-    private $repository;
+	private $repository;
 
-    public function __construct(PendingOrderCartRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+	public function __construct(PendingOrderCartRepository $repository)
+	{
+		$this->repository = $repository;
+	}
 
-    public function restore(Order $order)
-    {
-        /** @var MolPendingOrderCart|null $pendingOrder */
-        $pendingOrder = $this->repository->findOneBy([
-            'order_id' => $order->id,
-        ]);
+	public function restore(Order $order)
+	{
+		/** @var MolPendingOrderCart|null $pendingOrder */
+		$pendingOrder = $this->repository->findOneBy([
+			'order_id' => $order->id,
+		]);
 
-        if (!$pendingOrder) {
-            return;
-        }
+		if (!$pendingOrder) {
+			return;
+		}
 
-        $cart = new Cart($pendingOrder->cart_id);
+		$cart = new Cart($pendingOrder->cart_id);
 
-        $context = Context::getContext();
-        $context->cookie->id_cart = $cart->id;
-        $context->cart = $cart;
-        $context->cookie->write();
-    }
+		$context = Context::getContext();
+		$context->cookie->id_cart = $cart->id;
+		$context->cart = $cart;
+		$context->cookie->write();
+	}
 }

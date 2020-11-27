@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,13 +41,13 @@ use DbQuery;
 
 class MolCarrierInformationRepository
 {
-    public function getMollieCarrierInformationIdByCarrierId($carrierId)
-    {
-        $sql = new DbQuery();
-        $sql->select('id_mol_carrier_information');
-        $sql->from('mol_carrier_information');
-        $sql->where('`id_carrier` = ' . (int)$carrierId . '');
+	public function getMollieCarrierInformationIdByCarrierId($carrierId)
+	{
+		$sql = new DbQuery();
+		$sql->select('id_mol_carrier_information');
+		$sql->from('mol_carrier_information');
+		$sql->where('`id_carrier` = '.(int) $carrierId.'');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
-    }
+		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+	}
 }

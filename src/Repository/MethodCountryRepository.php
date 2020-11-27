@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -43,27 +44,25 @@ use DbQuery;
  */
 class MethodCountryRepository
 {
+	public function checkIfMethodIsAvailableInCountry($methodId, $countryId)
+	{
+		$sql = new DbQuery();
+		$sql->select('`id_mol_country`');
+		$sql->from('mol_country');
+		$sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = '.(int) $countryId.' OR all_countries = 1)');
 
-    public function checkIfMethodIsAvailableInCountry($methodId, $countryId)
-    {
-        $sql = new DbQuery();
-        $sql->select('`id_mol_country`');
-        $sql->from('mol_country');
-        $sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int)$countryId . ' OR all_countries = 1)');
+		return Db::getInstance()->getValue($sql);
+	}
 
-        return Db::getInstance()->getValue($sql);
-    }
+	public function checkIfCountryIsExcluded($methodId, $countryId)
+	{
+		$sql = new DbQuery();
+		$sql->select('`id_mol_country`');
+		$sql->from('mol_excluded_country');
+		$sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = '.(int) $countryId.' OR all_countries = 1)');
 
-    public function checkIfCountryIsExcluded($methodId, $countryId)
-    {
-        $sql = new DbQuery();
-        $sql->select('`id_mol_country`');
-        $sql->from('mol_excluded_country');
-        $sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int)$countryId . ' OR all_countries = 1)');
+		$result = Db::getInstance()->getValue($sql);
 
-        $result = Db::getInstance()->getValue($sql);
-
-        return is_numeric($result) && $result > 0;
-
-    }
+		return is_numeric($result) && $result > 0;
+	}
 }

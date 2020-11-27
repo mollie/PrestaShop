@@ -27,99 +27,89 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
 use Mollie\Service\TransactionService;
-use Mollie\Utility\PaymentMethodUtility;
-use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\Mollie\Api\Types\RefundStatus;
-use Mollie\Config\Config;
-use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\OrderStatusService;
-use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\TransactionUtility;
+use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
 require_once dirname(__FILE__).'/../../mollie.php';
 
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
-    /** @var Mollie */
-    public $module;
-    /** @var bool $ssl */
-    public $ssl = true;
-    /** @var bool $display_column_left */
-    public $display_column_left = false;
-    /** @var bool $display_column_right */
-    public $display_column_right = false;
+	/** @var Mollie */
+	public $module;
+	/** @var bool */
+	public $ssl = true;
+	/** @var bool */
+	public $display_column_left = false;
+	/** @var bool */
+	public $display_column_right = false;
 
-    /**
-     * Prevent displaying the maintenance page
-     *
-     * @return void
-     */
-    protected function displayMaintenancePage()
-    {
-    }
+	/**
+	 * Prevent displaying the maintenance page.
+	 *
+	 * @return void
+	 */
+	protected function displayMaintenancePage()
+	{
+	}
 
-    /**
-     * @throws ApiException
-     * @throws CoreException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function initContent()
-    {
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
-        }
+	/**
+	 * @throws ApiException
+	 * @throws CoreException
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
+	public function initContent()
+	{
+		if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
+			PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
+		}
 
-        die($this->executeWebhook());
-    }
+		die($this->executeWebhook());
+	}
 
-    /**
-     * @return string
-     * @throws ApiException
-     * @throws CoreException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function executeWebhook()
-    {
-        if (Tools::getValue('testByMollie')) {
-            if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
-            }
+	/**
+	 * @return string
+	 *
+	 * @throws ApiException
+	 * @throws CoreException
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
+	protected function executeWebhook()
+	{
+		if (Tools::getValue('testByMollie')) {
+			if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
+				PrestaShopLogger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
+			}
 
-            return 'OK';
-        }
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getContainer(TransactionService::class);
+			return 'OK';
+		}
+		/** @var TransactionService $transactionService */
+		$transactionService = $this->module->getContainer(TransactionService::class);
 
-        $transactionId = Tools::getValue('id');
-        if (TransactionUtility::isOrderTransaction($transactionId)) {
-            $payment = $transactionService->processTransaction($this->module->api->orders->get($transactionId, array('embed' => 'payments')));
-        } else {
-            $payment = $transactionService->processTransaction($this->module->api->payments->get($transactionId));
-        }
-        if (is_string($payment)) {
-            return $payment;
-        }
+		$transactionId = Tools::getValue('id');
+		if (TransactionUtility::isOrderTransaction($transactionId)) {
+			$payment = $transactionService->processTransaction($this->module->api->orders->get($transactionId, ['embed' => 'payments']));
+		} else {
+			$payment = $transactionService->processTransaction($this->module->api->payments->get($transactionId));
+		}
+		if (is_string($payment)) {
+			return $payment;
+		}
 
-        return 'OK';
-    }
+		return 'OK';
+	}
 }

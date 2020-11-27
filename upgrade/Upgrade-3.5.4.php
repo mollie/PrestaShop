@@ -27,22 +27,21 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
 /**
- * @param Mollie $module
  * @return bool
  */
 function upgrade_module_3_5_4(Mollie $module)
 {
-    $module->registerHook('actionFrontControllerSetMedia');
+	$module->registerHook('actionFrontControllerSetMedia');
 
-    return true;
+	return true;
 }

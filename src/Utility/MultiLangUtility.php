@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,18 +40,18 @@ use Language;
 
 class MultiLangUtility
 {
-    public static function createMultiLangField($field, $languageIds = null)
-    {
-        $result = [];
+	public static function createMultiLangField($field, $languageIds = null)
+	{
+		$result = [];
 
-        if (!$languageIds) {
-            $languageIds = Language::getIDs(false);
-        }
+		if (!$languageIds) {
+			$languageIds = Language::getIDs(false);
+		}
 
-        foreach ($languageIds as $languageId) {
-            $result[$languageId] = $field;
-        }
+		foreach ($languageIds as $languageId) {
+			$result[$languageId] = $field;
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 }

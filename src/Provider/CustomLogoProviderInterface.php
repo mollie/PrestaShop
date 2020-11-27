@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,39 +40,38 @@ use MolPaymentMethod;
 
 interface CustomLogoProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+	/**
+	 * @return string
+	 */
+	public function getName();
 
-    /**
-     * @return string
-     */
-    public function getLocalPath();
+	/**
+	 * @return string
+	 */
+	public function getLocalPath();
 
-    /**
-     * @return string
-     */
-    public function getPathUri();
+	/**
+	 * @return string
+	 */
+	public function getPathUri();
 
-    /**
-     * @return string
-     */
-    public function getLocalLogoPath();
+	/**
+	 * @return string
+	 */
+	public function getLocalLogoPath();
 
-    /**
-     * @return string
-     */
-    public function getLogoPathUri();
+	/**
+	 * @return string
+	 */
+	public function getLogoPathUri();
 
-    /**
-     * @return bool
-     */
-    public function logoExists();
+	/**
+	 * @return bool
+	 */
+	public function logoExists();
 
-    /**
-     * @param MolPaymentMethod $methodObj
-     * @return string
-     */
-    public function getMethodOptionLogo(MolPaymentMethod $methodObj);
+	/**
+	 * @return string
+	 */
+	public function getMethodOptionLogo(MolPaymentMethod $methodObj);
 }

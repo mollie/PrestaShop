@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,13 +41,13 @@ use DbQuery;
 
 class OrderShipmentRepository
 {
-    public function getShipmentInformation($table, $orderId)
-    {
-        $sql = new DbQuery();
-        $sql->select('`tracktrace`, `postcode`');
-        $sql->from(bqSQL($table));
-        $sql->where('`id_order` = "' . pSQL($orderId) . '"');
+	public function getShipmentInformation($table, $orderId)
+	{
+		$sql = new DbQuery();
+		$sql->select('`tracktrace`, `postcode`');
+		$sql->from(bqSQL($table));
+		$sql->where('`id_order` = "'.pSQL($orderId).'"');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
-    }
+		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+	}
 }

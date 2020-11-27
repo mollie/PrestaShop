@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,17 +41,18 @@ use Mollie\Config\Config;
 
 class CustomLogoUtility
 {
-    /**
-     * @param $methodName
-     * @return bool
-     */
-    public static function isCustomLogoEnabled($methodName)
-    {
-        switch ($methodName) {
-            case 'creditcard':
-                return (bool)Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO);
-            default:
-                return false;
-        }
-    }
+	/**
+	 * @param $methodName
+	 *
+	 * @return bool
+	 */
+	public static function isCustomLogoEnabled($methodName)
+	{
+		switch ($methodName) {
+			case 'creditcard':
+				return (bool) Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+			default:
+				return false;
+		}
+	}
 }

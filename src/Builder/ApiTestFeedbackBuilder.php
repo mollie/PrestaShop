@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,133 +40,136 @@ use Mollie\Service\ApiService;
 
 class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 {
-    /**
-     * @var ApiService
-     */
-    private $apiService;
+	/**
+	 * @var ApiService
+	 */
+	private $apiService;
 
-    /**
-     * @var string
-     */
-    private $moduleVersion;
+	/**
+	 * @var string
+	 */
+	private $moduleVersion;
 
-    /**
-     * @var string
-     */
-    private $testKey;
+	/**
+	 * @var string
+	 */
+	private $testKey;
 
-    /**
-     * @var string
-     */
-    private $liveKey;
+	/**
+	 * @var string
+	 */
+	private $liveKey;
 
-    public function __construct($moduleVersion, ApiService $apiService)
-    {
-        $this->apiService = $apiService;
-        $this->moduleVersion = $moduleVersion;
-    }
+	public function __construct($moduleVersion, ApiService $apiService)
+	{
+		$this->apiService = $apiService;
+		$this->moduleVersion = $moduleVersion;
+	}
 
-    /**
-     * @return string
-     */
-    public function getTestKey()
-    {
-        return $this->testKey;
-    }
+	/**
+	 * @return string
+	 */
+	public function getTestKey()
+	{
+		return $this->testKey;
+	}
 
-    /**
-     * @param string $testKey
-     */
-    public function setTestKey($testKey)
-    {
-        $this->testKey = $testKey;
-    }
+	/**
+	 * @param string $testKey
+	 */
+	public function setTestKey($testKey)
+	{
+		$this->testKey = $testKey;
+	}
 
-    /**
-     * @return string
-     */
-    public function getLiveKey()
-    {
-        return $this->liveKey;
-    }
+	/**
+	 * @return string
+	 */
+	public function getLiveKey()
+	{
+		return $this->liveKey;
+	}
 
-    /**
-     * @param string $liveKey
-     */
-    public function setLiveKey($liveKey)
-    {
-        $this->liveKey = $liveKey;
-    }
+	/**
+	 * @param string $liveKey
+	 */
+	public function setLiveKey($liveKey)
+	{
+		$this->liveKey = $liveKey;
+	}
 
-    /**
-     * @return array
-     */
-    public function buildParams()
-    {
-        $testKeyInfo = $this->getApiKeyInfo($this->testKey);
-        $liveKeyInfo = $this->getApiKeyInfo($this->liveKey);
+	/**
+	 * @return array
+	 */
+	public function buildParams()
+	{
+		$testKeyInfo = $this->getApiKeyInfo($this->testKey);
+		$liveKeyInfo = $this->getApiKeyInfo($this->liveKey);
 
-        return [
-            'testKeyInfo' => $testKeyInfo,
-            'liveKeyInfo' => $liveKeyInfo
-        ];
-    }
+		return [
+			'testKeyInfo' => $testKeyInfo,
+			'liveKeyInfo' => $liveKeyInfo,
+		];
+	}
 
-    /**
-     * @param $testKey string
-     * @param $liveKey string
-     * @return array
-     */
-    public function getApiKeysTestResult($testKey, $liveKey)
-    {
-        $testKeyInfo = $this->getApiKeyInfo($testKey);
-        $liveKeyInfo = $this->getApiKeyInfo($liveKey);
+	/**
+	 * @param $testKey string
+	 * @param $liveKey string
+	 *
+	 * @return array
+	 */
+	public function getApiKeysTestResult($testKey, $liveKey)
+	{
+		$testKeyInfo = $this->getApiKeyInfo($testKey);
+		$liveKeyInfo = $this->getApiKeyInfo($liveKey);
 
-        return  [
-            'testKeyInfo' => $testKeyInfo,
-            'liveKeyInfo' => $liveKeyInfo
-        ];
-    }
+		return  [
+			'testKeyInfo' => $testKeyInfo,
+			'liveKeyInfo' => $liveKeyInfo,
+		];
+	}
 
-    /**
-     * @param $apiKey string
-     * @return array
-     */
-    public function getApiKeyInfo($apiKey)
-    {
-        if (!$apiKey) {
-            return [
-                'status' => false
-            ];
-        }
-        $api = $this->apiService->setApiKey($apiKey, $this->moduleVersion);
-        if (!$api) {
-            return [
-                'status' => false
-            ];
-        }
-        /** @var  $methods */
-        $methods = $api->methods->allAvailable();
-        $methodsASArray = $methods->getArrayCopy();
+	/**
+	 * @param $apiKey string
+	 *
+	 * @return array
+	 */
+	public function getApiKeyInfo($apiKey)
+	{
+		if (!$apiKey) {
+			return [
+				'status' => false,
+			];
+		}
+		$api = $this->apiService->setApiKey($apiKey, $this->moduleVersion);
+		if (!$api) {
+			return [
+				'status' => false,
+			];
+		}
+		/** @var $methods */
+		$methods = $api->methods->allAvailable();
+		$methodsASArray = $methods->getArrayCopy();
 
-        return [
-            'status' => true,
-            'methods' => $this->getPaymentMethodsAsArray($methodsASArray)
-        ];
-    }
+		return [
+			'status' => true,
+			'methods' => $this->getPaymentMethodsAsArray($methodsASArray),
+		];
+	}
 
-    /**
-     * @param $methods
-     * @return array
-     */
-    private function getPaymentMethodsAsArray($methods)
-    {
-        $methodNameArray = [];
+	/**
+	 * @param $methods
+	 *
+	 * @return array
+	 */
+	private function getPaymentMethodsAsArray($methods)
+	{
+		$methodNameArray = [];
 
-        foreach ($methods as $method) {
-            $methodNameArray[] = $method->id;
-        }
+		foreach ($methods as $method) {
+			$methodNameArray[] = $method->id;
+		}
 
-        return $methodNameArray;
-    }
+		return $methodNameArray;
+	}
 }

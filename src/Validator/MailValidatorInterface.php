@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,9 +38,10 @@ namespace Mollie\Validator;
 
 interface MailValidatorInterface
 {
-    /**
-     * @param $orderState int
-     * @return bool
-     */
-    public function validate($orderState);
+	/**
+	 * @param $orderState int
+	 *
+	 * @return bool
+	 */
+	public function validate($orderState);
 }
