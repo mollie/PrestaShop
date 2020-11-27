@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
+            "MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

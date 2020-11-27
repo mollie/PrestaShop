@@ -41,8 +41,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * <<<<<<< HEAD.
- *
  * @param Mollie $module
  *
  * @return bool
@@ -63,14 +61,6 @@ function upgrade_module_4_1_0($module)
         ALTER TABLE '._DB_PREFIX_.'mol_payment_method
         ADD `position` INT(10);
     ';
-
-	$sql[] = '
-    CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_payment_method_invoice_status` (
-				`id_mol_payment_method_invoice_status`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_method` VARCHAR(64) NOT NULL,
-				`id_state` INT(64) NOT NULL,
-				`live_environment` TINYINT(1) NOT NULL
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 	$isAdded = Db::getInstance()->execute($sql);
 

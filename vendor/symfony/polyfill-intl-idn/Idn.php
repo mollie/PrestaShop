@@ -203,7 +203,7 @@ final class Idn
                     $info->errors |= self::ERROR_DISALLOWED;
                 // no break.
                 case 'valid':
-                    $str .= \mb_chr($codePoint, 'utf-8');
+                    $str .= \MolliePrefix\mb_chr($codePoint, 'utf-8');
                     break;
                 case 'ignored':
                     // Do nothing.
@@ -213,7 +213,7 @@ final class Idn
                     break;
                 case 'deviation':
                     $info->transitionalDifferent = \true;
-                    $str .= $transitional ? $data['mapping'] : \mb_chr($codePoint, 'utf-8');
+                    $str .= $transitional ? $data['mapping'] : \MolliePrefix\mb_chr($codePoint, 'utf-8');
                     break;
             }
         }
@@ -484,7 +484,7 @@ final class Idn
             }
             $n += \intdiv($i, $outPlusOne);
             $i %= $outPlusOne;
-            \array_splice($output, $i++, 0, array(\mb_chr($n, 'utf-8')));
+            \array_splice($output, $i++, 0, array(\MolliePrefix\mb_chr($n, 'utf-8')));
         }
         return \implode('', $output);
     }
