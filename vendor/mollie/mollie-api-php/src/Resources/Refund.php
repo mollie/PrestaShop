@@ -108,6 +108,15 @@ class Refund extends \MolliePrefix\Mollie\Api\Resources\BaseResource
         return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_REFUNDED;
     }
     /**
+     * Is this refund failed?
+     *
+     * @return bool
+     */
+    public function isFailed()
+    {
+        return $this->status === \MolliePrefix\Mollie\Api\Types\RefundStatus::STATUS_FAILED;
+    }
+    /**
      * Cancel the refund.
      * Returns null if successful.
      *

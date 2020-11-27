@@ -5,6 +5,6 @@
             <bind key="$quz">overridden</bind>
         </defaults>
 
-        <service id="bar" class="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar"/>
+        <service id="bar" class="MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar"/>
     </services>
 </container>

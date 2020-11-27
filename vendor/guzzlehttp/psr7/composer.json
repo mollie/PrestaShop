@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
@@ -49,7 +49,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Tests\\Psr7\\": "tests\/"
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Tests\\Psr7\\": "tests\/"
         }
     },
     "extra": {

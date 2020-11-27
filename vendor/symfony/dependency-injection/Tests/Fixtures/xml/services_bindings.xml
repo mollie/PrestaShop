@@ -7,14 +7,14 @@
             <bind key="$factory">factory</bind>
         </defaults>
 
-        <service id="bar" class="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar" autowire="true">
-            <bind key="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface" type="service" id="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar" />
+        <service id="bar" class="MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar" autowire="true">
+            <bind key="MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface" type="service" id="MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar" />
             <bind key="$foo" type="collection">
                 <bind>null</bind>
             </bind>
         </service>
 
-        <service id="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar">
+        <service id="MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar">
             <factory method="create" />
         </service>
     </services>

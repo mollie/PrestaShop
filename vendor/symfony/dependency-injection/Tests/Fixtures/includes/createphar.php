@@ -27,7 +27,7 @@ class ProjectWithXsdExtensionInPhar extends \MolliePrefix\ProjectExtension
         return 'projectwithxsdinphar';
     }
 }
-\class_alias('MolliePrefix\\ProjectWithXsdExtensionInPhar', 'MolliePrefix\\ProjectWithXsdExtensionInPhar', \false);
+\class_alias('MolliePrefix\\ProjectWithXsdExtensionInPhar', 'ProjectWithXsdExtensionInPhar', \false);
 EOT
 );
 $phar->addFromString('schema/project-1.0.xsd', <<<'EOT'
