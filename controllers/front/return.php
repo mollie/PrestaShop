@@ -301,6 +301,18 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 );
                 break;
             case PaymentStatus::STATUS_AUTHORIZED:
+                $response = $paymentReturnService->handleAuthorizedStatus(
+                    $order,
+                    $transaction,
+                    $paymentMethod,
+                    $stockManagement
+                );
+
+                /** @var MemorizeCartService $memorizeCart */
+                $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+                $memorizeCart->removeMemorizedCart($order);
+
+                break;
             case PaymentStatus::STATUS_PAID:
                 $response = $paymentReturnService->handlePaidStatus(
                     $order,

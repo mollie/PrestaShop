@@ -306,7 +306,7 @@ class Config
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
-            PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_PAID),
+            PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_KLARNA_ACCEPTED),
             PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
