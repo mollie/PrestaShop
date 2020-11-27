@@ -100,7 +100,10 @@ class RefundService
                     'amount' => [
                         'currency' => (string)$payment->amount->currency,
                         'value' => (string)TextFormatUtility::formatNumber(
-                            (float)$payment->settlementAmount->value - (float)$payment->amountRefunded->value,
+                            RefundUtility::getRefundableAmount(
+                                (float) $payment->settlementAmount->value,
+                                (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()))
+                            ),
                             2
                         ),
                     ],
