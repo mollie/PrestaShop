@@ -250,7 +250,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $payment = $this->module->api->payments->create($data);
             }
 
-            return $this->module->api->payments->create($data);
+            return $payment;
         } catch (Exception $e) {
             /** @var OrderExceptionHandler $orderExceptionHandler */
             $orderExceptionHandler = $this->module->getContainer(OrderExceptionHandler::class);

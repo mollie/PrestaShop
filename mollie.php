@@ -1335,7 +1335,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if ($this->context->controller->controller_name === 'AdminOrders' &&
+        if ($this->context->controller instanceof AdminOrdersControllerCore &&
             $params["order"]->module === $this->name
         ) {
             $cartId = $params["cart"]->id;
