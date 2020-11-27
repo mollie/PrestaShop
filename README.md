@@ -194,19 +194,4 @@ to info@mollie.com with a accurate description of the problem.
 
 # release preparation #
 
-Before creating release zip make sure to delete:
-/nod_module
-/view/js/node_module
-/view/js/ignoreme
-/test/
-/.github
-/.git
-/gitignore
-/vendorBuilder
-
-# composer update #
-To update composer: 
-1. run: make bvn
-2. add 'if (!function_exists('MolliePrefix\random_bytes')) {}' in mollie/vendor/paragonie/random_compat/lib/random_bytes_mcrypt.php line: 44
-3. add 'if (!function_exists('MolliePrefix\random_bytes')) {}' in mollie/vendor/paragonie/random_compat/lib/random.php line: 159
-4. need to replace function_exists(' to function_exists('\MolliePrefix\ in vendor
+A pull request and merge generates zip archive which can be used for release.
