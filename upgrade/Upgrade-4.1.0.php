@@ -41,7 +41,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- *
  * @param Mollie $module
  *
  * @return bool
