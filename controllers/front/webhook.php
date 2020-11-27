@@ -38,6 +38,7 @@ use Mollie\Utility\PaymentMethodUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
@@ -55,15 +56,10 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__).'/../../mollie.php';
 
-/**
- * Class MollieReturnModuleFrontController
- * @method setTemplate
- *
- * @property mixed  context
- * @property Mollie module
- */
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
+    /** @var Mollie */
+    public $module;
     /** @var bool $ssl */
     public $ssl = true;
     /** @var bool $display_column_left */
@@ -88,7 +84,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::DEBUG_LOG_ALL)) {
+        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
             PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
         }
 
@@ -97,7 +93,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
     /**
      * @return string
-     *
      * @throws ApiException
      * @throws CoreException
      * @throws PrestaShopDatabaseException

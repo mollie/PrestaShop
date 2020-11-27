@@ -36,13 +36,11 @@
 namespace Mollie\Install;
 
 use Configuration;
-use Context;
 use Db;
 use DbQuery;
 use Exception;
 use Feature;
 use FeatureValue;
-use FeatureValueLang;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
@@ -55,7 +53,7 @@ use Tab;
 use Tools;
 use Validate;
 
-class Installer
+class Installer implements InstallerInterface
 {
     const FILE_NAME = 'Installer';
 
@@ -74,15 +72,28 @@ class Installer
      */
     private $imageService;
 
-    public function __construct(Mollie $module, ImageService $imageService)
-    {
+    /**
+     * @var InstallerInterface
+     */
+    private $databaseTableInstaller;
+
+    public function __construct(
+        Mollie $module,
+        ImageService $imageService,
+        InstallerInterface $databaseTableInstaller
+    ) {
         $this->module = $module;
         $this->imageService = $imageService;
+        $this->databaseTableInstaller = $databaseTableInstaller;
     }
 
     public function install()
     {
         foreach (self::getHooks() as $hook) {
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && $hook === 'displayPaymentEU') {
+                continue;
+            }
+
             $this->module->registerHook($hook);
         }
 
@@ -123,9 +134,7 @@ class Installer
 
         $this->copyEmailTemplates();
 
-        include(dirname(__FILE__) . '/../../sql/install.php');
-
-        return true;
+        return $this->databaseTableInstaller->install();
     }
 
     public function getErrors()
@@ -304,7 +313,6 @@ class Installer
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, false);
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_OPEN, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_AWAITING, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));

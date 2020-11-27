@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.1.0';
+        $this->version = '4.1.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -189,7 +189,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @param bool $id
+     * @param string|bool $id
+     *
      * @return mixed
      */
     public function getContainer($id = false)
@@ -557,10 +558,10 @@ class Mollie extends PaymentModule
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
         $html = '';
-        if ($this->context->controller instanceof AdminOrdersController) {
+        if ($this->context->controller->controller_name === 'AdminOrders') {
             $this->context->smarty->assign([
                 'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
-                'mollieCheckMethods' => time() > ((int)Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
+                'mollieCheckMethods' => Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int)Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
             ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
             if (Tools::isSubmit('addorder')) {
@@ -733,7 +734,7 @@ class Mollie extends PaymentModule
                 'action' => $this->context->link->getModuleLink(
                     'mollie',
                     'payment',
-                    ['method' => $method['id_method'], 'rand' => time()],
+                    ['method' => $method['id_method'], 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
                     true
                 ),
             ];
@@ -821,7 +822,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         $this->name,
                         'payment',
-                        ['method' => $methodObj->id_method, 'rand' => time()],
+                        ['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
                         true
                     ))
                     ->setInputs([
@@ -881,7 +882,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payScreen',
-                        ['method' => $methodObj->id_method, 'rand' => time(), 'cardToken' => ''],
+                        ['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp(), 'cardToken' => ''],
                         true
                     ));
 
@@ -929,7 +930,7 @@ class Mollie extends PaymentModule
                     ->setAction(Context::getContext()->link->getModuleLink(
                         'mollie',
                         'payment',
-                        ['method' => $methodObj->id_method, 'rand' => time()],
+                        ['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
                         true
                     ));
 
@@ -1010,7 +1011,7 @@ class Mollie extends PaymentModule
                 'message' => $e->getMessage(),
             ];
         }
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK, time());
+        Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK, Mollie\Utility\TimeUtility::getCurrentTimeStamp());
         if (!is_array($methodsForConfig)) {
             return [
                 'success' => false,
@@ -1099,9 +1100,8 @@ class Mollie extends PaymentModule
         $orderInfoService = $this->getContainer(\Mollie\Service\MollieOrderInfoService::class);
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
-        $adminOrdersController = new AdminOrdersController();
 
-        return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
+        return $orderInfoService->displayMollieOrderInfo($input);
     }
 
     /**
@@ -1316,7 +1316,7 @@ class Mollie extends PaymentModule
     public function hookActionAdminOrdersListingFieldsModifier($params)
     {
         if (isset($params['select'])) {
-            $params['select'] .= ' ,mol.`transaction_id`';
+            $params['select'] = rtrim($params['select'], ' ,') . ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
             $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference`';
@@ -1335,7 +1335,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if ($this->context->controller instanceof AdminOrdersControllerCore &&
+        if ($this->context->controller->controller_name === 'AdminOrders' &&
             $params["order"]->module === $this->name
         ) {
             $cartId = $params["cart"]->id;

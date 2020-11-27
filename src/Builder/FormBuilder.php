@@ -40,8 +40,8 @@ use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Configuration;
-use HelperForm;
-use Module;
+use HelperFormCore as HelperForm;
+use ModuleCore as Module;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -54,9 +54,10 @@ use Mollie\Service\MolCarrierInformationService;
 use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
-use OrderState;
+use OrderStateCore as OrderState;
 use Smarty;
-use Tools;
+use ToolsCore as Tools;
+use AttributeCore as Attribute;
 
 class FormBuilder
 {
@@ -410,12 +411,21 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
+        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri());
 
-        $dateStamp = time();
+        if (empty($molliePaymentMethods)) {
+            $input[] = [
+                'type' => 'mollie-payment-empty-alert',
+                'tab' => $generalSettings,
+                'name' => '',
+            ];
+        }
+
+        $dateStamp = Mollie\Utility\TimeUtility::getCurrentTimeStamp();
         $input[] = [
             'type' => 'mollie-methods',
             'name' => Config::METHODS_CONFIG,
-            'paymentMethods' => $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()),
+            'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
             'onlyOrderMethods' => [
@@ -435,7 +445,7 @@ class FormBuilder
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
             'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-            'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
+            'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
         ];
 
         return $input;

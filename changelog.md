@@ -10,9 +10,11 @@
 + Updated translations.
 + Added voucher payment method.
 + Phone numbers without possible international code ( which does not have + in front of the number ) are not sent to mollie as delivery or billing address phone.
++ Fixed issue when uninstalling module not all mollie order statuses were deleted
 
 ## Changes in release 4.0.9 Hotfix-1 ##
 + In PS1.6 prevents double click payment method to create multiple orders
++ Fixed Order creation in BO crashed page error.
 
 ## Changes in release 4.0.9 ##
 + Improved payment settings UI. Now test and live API has separated payment settings so that you can more easily swap between test and live API.

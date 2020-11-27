@@ -42,6 +42,9 @@ use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
+    /** @var Mollie */
+    public $module;
+
     public function postProcess()
     {
         $action = Tools::getValue('action');
@@ -82,10 +85,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $method = new MolPaymentMethod($methodId);
         switch ($paymentStatus) {
             case 'deactivate':
-                $method->enabled = 0;
+                $method->enabled = false;
                 break;
             case 'activate':
-                $method->enabled = 1;
+                $method->enabled = true;
                 break;
         }
         $method->update();
