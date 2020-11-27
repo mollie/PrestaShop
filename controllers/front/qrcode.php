@@ -33,6 +33,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Service\TransactionService;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
@@ -218,8 +219,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             if (!Tools::isSubmit('module')) {
                 $_GET['module'] = $this->module->name;
             }
-            $webhookController = new MollieWebhookModuleFrontController();
-            $webhookController->processTransaction($apiPayment);
+            /** @var TransactionService $transactionService */
+            $transactionService = $this->module->getContainer(TransactionService::class);
+
+            $transactionService->processTransaction($apiPayment);
         }
 
         try {
