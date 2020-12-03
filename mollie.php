@@ -224,13 +224,14 @@ class Mollie extends PaymentModule
 		return $this->identifier;
 	}
 
-    /**
-     * @return string|void
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws SmartyException
-     * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
-     */
+	/**
+	 * @return string|void
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 * @throws SmartyException
+	 * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
+	 */
 	public function getContent()
 	{
 		if (Tools::getValue('ajax')) {
@@ -303,13 +304,13 @@ class Mollie extends PaymentModule
 			}
 		}
 
-        $resultMessages = '';
+		$resultMessages = '';
 		$errors = [];
 
 		if (Tools::isSubmit("submit{$this->name}")) {
 			/** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
 			$saveSettingsService = $this->getContainer(\Mollie\Service\SettingsSaveService::class);
-            $resultMessages = $saveSettingsService->saveSettings($errors);
+			$resultMessages = $saveSettingsService->saveSettings($errors);
 			if (!empty($errors)) {
 				$this->context->controller->errors[] = $resultMessages;
 			} else {
@@ -570,14 +571,14 @@ class Mollie extends PaymentModule
 		return $html;
 	}
 
-    /**
-     * @param array $params Hook parameters
-     *
-     * @return string Hook HTML
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param array $params Hook parameters
+	 *
+	 * @return string Hook HTML
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function hookDisplayAdminOrder($params)
 	{
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
@@ -616,12 +617,12 @@ class Mollie extends PaymentModule
 		return $this->display(__FILE__, 'order_info.tpl');
 	}
 
-    /**
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return string
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function hookDisplayPayment()
 	{
 		$smarty = $this->context->smarty;
@@ -738,15 +739,15 @@ class Mollie extends PaymentModule
 		return $paymentOptions;
 	}
 
-    /**
-     * @param array $params
-     *
-     * @return array|null
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
-     */
+	/**
+	 * @param array $params
+	 *
+	 * @return array|null
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+	 */
 	public function hookPaymentOptions($params)
 	{
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
@@ -957,12 +958,12 @@ class Mollie extends PaymentModule
 		return $paymentOptions;
 	}
 
-    /**
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return string
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function hookDisplayOrderConfirmation()
 	{
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
@@ -977,11 +978,11 @@ class Mollie extends PaymentModule
 		return '';
 	}
 
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
+	/**
+	 * @return array
+	 *
+	 * @since 3.3.0
+	 */
 	public function displayAjaxMollieMethodConfig()
 	{
 		header('Content-Type: application/json;charset=UTF-8');
@@ -1061,11 +1062,11 @@ class Mollie extends PaymentModule
 		];
 	}
 
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
+	/**
+	 * @return array
+	 *
+	 * @since 3.3.0
+	 */
 	public function displayAjaxMollieCarrierConfig()
 	{
 		header('Content-Type: application/json;charset=UTF-8');
@@ -1076,11 +1077,11 @@ class Mollie extends PaymentModule
 		return ['success' => true, 'carriers' => $carrierService->carrierConfig($dbConfig)];
 	}
 
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
+	/**
+	 * @return array
+	 *
+	 * @since 3.3.0
+	 */
 	public function displayAjaxMollieOrderInfo()
 	{
 		header('Content-Type: application/json;charset=UTF-8');

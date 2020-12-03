@@ -49,11 +49,11 @@ class TimeUtility
 		return time();
 	}
 
-    /**
-     * @param int $days
-     *
-     * @return float|int
-     */
+	/**
+	 * @param int $days
+	 *
+	 * @return float|int
+	 */
 	public static function getDayMeasuredInSeconds($days)
 	{
 		return $days * self::HOURS_IN_DAY * self::MINUTES_IN_HOUR * self::SECONDS_IN_MINUTE;

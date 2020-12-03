@@ -47,7 +47,6 @@ use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
 use Tools;
 
 class RefundService
@@ -135,17 +134,17 @@ class RefundService
 		];
 	}
 
-    /**
-     * @param array $orderData
-     * @param array $lines
-     *
-     * @return array
-     *
-     * @throws CoreException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @since 3.3.0
-     */
+	/**
+	 * @param array $lines
+	 *
+	 * @return array
+	 *
+	 * @throws CoreException
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 *
+	 * @since 3.3.0
+	 */
 	public function doRefundOrderLines(array $orderData, $lines = [])
 	{
 		$transactionId = $orderData['id'];

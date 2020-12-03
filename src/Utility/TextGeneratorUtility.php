@@ -42,17 +42,17 @@ use Customer;
 
 class TextGeneratorUtility
 {
-    /**
-     * Generate a description from the Cart.
-     *
-     * @param string $methodDescription
-     * @param Cart|int $cartId Cart or Cart ID
-     * @param string $orderReference Order reference
-     *
-     * @return string Description
-     *
-     * @since 3.0.0
-     */
+	/**
+	 * Generate a description from the Cart.
+	 *
+	 * @param string   $methodDescription
+	 * @param Cart|int $cartId            Cart or Cart ID
+	 * @param string   $orderReference    Order reference
+	 *
+	 * @return string Description
+	 *
+	 * @since 3.0.0
+	 */
 	public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
 	{
 		if ($cartId instanceof Cart) {

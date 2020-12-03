@@ -146,12 +146,12 @@ class SettingsSaveService
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
 				} catch (Exception $e) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods').":{$method['id']}";
 					continue;
 				}
 
 				if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers').":{$method['id']}";
 					continue;
 				}
 
@@ -298,15 +298,15 @@ class SettingsSaveService
 		return $resultMessage;
 	}
 
-    /**
-     * Get all status values from the form.
-     *
-     * @param string $key The key that is used in the HelperForm
-     *
-     * @return array Array with statuses
-     *
-     * @since 3.3.0
-     */
+	/**
+	 * Get all status values from the form.
+	 *
+	 * @param string $key The key that is used in the HelperForm
+	 *
+	 * @return array Array with statuses
+	 *
+	 * @since 3.3.0
+	 */
 	private function getStatusesValue($key)
 	{
 		$statesEnabled = [];
