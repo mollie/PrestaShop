@@ -213,7 +213,6 @@ class ApiService
 		$methods = $this->getMethodsObjForConfig($methods);
 		$methods = $this->getMethodsCountriesForConfig($methods);
 		$methods = $this->getExcludedCountriesForConfig($methods);
-		$this->addKlarnaStatuses($methods);
 		$methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForConfiguration($methods);
 
 		return $methods;
@@ -282,19 +281,6 @@ class ApiService
 	{
 		foreach ($methods as $key => $method) {
 			$methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($key);
-		}
-
-		return $methods;
-	}
-
-	protected function addKlarnaStatuses(&$methods)
-	{
-		foreach ($methods as $key => $method) {
-			$isKlarnaPayment = in_array($method['id'], Config::KLARNA_PAYMENTS, false);
-			if ($isKlarnaPayment) {
-				$methodInvoice = $this->methodRepository->getMethodInvoiceStatus($method['id'], $this->environment);
-				$methods[$key]['invoiceStatus'] = $methodInvoice;
-			}
 		}
 
 		return $methods;
