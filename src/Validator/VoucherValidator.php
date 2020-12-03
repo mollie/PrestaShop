@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,35 +42,35 @@ use Mollie\Service\VoucherService;
 
 class VoucherValidator
 {
-    /**
-     * @var ConfigurationAdapter
-     */
-    private $configuration;
+	/**
+	 * @var ConfigurationAdapter
+	 */
+	private $configuration;
 
-    /**
-     * @var VoucherService
-     */
-    private $voucherService;
+	/**
+	 * @var VoucherService
+	 */
+	private $voucherService;
 
-    public function __construct(ConfigurationAdapter $configuration, VoucherService $voucherService)
-    {
-        $this->configuration = $configuration;
-        $this->voucherService = $voucherService;
-    }
+	public function __construct(ConfigurationAdapter $configuration, VoucherService $voucherService)
+	{
+		$this->configuration = $configuration;
+		$this->voucherService = $voucherService;
+	}
 
-    public function validate(array $products)
-    {
-        if ($this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY) !== Config::MOLLIE_VOUCHER_CATEGORY_NULL) {
-            return true;
-        }
+	public function validate(array $products)
+	{
+		if (Config::MOLLIE_VOUCHER_CATEGORY_NULL !== $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY)) {
+			return true;
+		}
 
-        foreach ($products as $product) {
-            $voucherCategory = $this->voucherService->getProductCategory($product);
-            if ($voucherCategory) {
-                return true;
-            }
-        }
+		foreach ($products as $product) {
+			$voucherCategory = $this->voucherService->getProductCategory($product);
+			if ($voucherCategory) {
+				return true;
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

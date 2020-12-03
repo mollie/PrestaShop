@@ -19,4 +19,4 @@ class Foo1Command extends \MolliePrefix\Symfony\Component\Console\Command\Comman
         $this->output = $output;
     }
 }
-\class_alias('MolliePrefix\\Foo1Command', 'MolliePrefix\\Foo1Command', \false);
+\class_alias('MolliePrefix\\Foo1Command', 'Foo1Command', \false);

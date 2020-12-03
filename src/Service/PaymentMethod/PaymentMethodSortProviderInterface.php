@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,15 +42,13 @@ namespace Mollie\Service\PaymentMethod;
  */
 interface PaymentMethodSortProviderInterface
 {
-    /**
-     * @param array $paymentMethods
-     * @return array
-     */
-    public function getSortedInAscendingWayForCheckout(array $paymentMethods);
+	/**
+	 * @return array
+	 */
+	public function getSortedInAscendingWayForCheckout(array $paymentMethods);
 
-    /**
-     * @param array $paymentMethods
-     * @return array
-     */
-    public function getSortedInAscendingWayForConfiguration(array $paymentMethods);
+	/**
+	 * @return array
+	 */
+	public function getSortedInAscendingWayForConfiguration(array $paymentMethods);
 }

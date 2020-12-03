@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,17 +40,18 @@ use Module;
 
 class ModuleFactory
 {
-    public function getModuleVersion()
-    {
-        return Module::getInstanceByName('mollie')->version;
-    }
+	public function getModuleVersion()
+	{
+		return Module::getInstanceByName('mollie')->version;
+	}
 
-    public function getLocalPath()
-    {
-        return Module::getInstanceByName('mollie')->getLocalPath();
-    }
-    public function getPathUri()
-    {
-        return Module::getInstanceByName('mollie')->getPathUri();
-    }
+	public function getLocalPath()
+	{
+		return Module::getInstanceByName('mollie')->getLocalPath();
+	}
+
+	public function getPathUri()
+	{
+		return Module::getInstanceByName('mollie')->getPathUri();
+	}
 }

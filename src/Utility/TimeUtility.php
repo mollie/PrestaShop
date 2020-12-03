@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,25 +40,25 @@ use DateTime;
 
 class TimeUtility
 {
-    const HOURS_IN_DAY = 24;
-    const MINUTES_IN_HOUR = 60;
-    const SECONDS_IN_MINUTE = 60;
+	const HOURS_IN_DAY = 24;
+	const MINUTES_IN_HOUR = 60;
+	const SECONDS_IN_MINUTE = 60;
 
-    public static function getNowTs()
-    {
-        return time();
-    }
+	public static function getNowTs()
+	{
+		return time();
+	}
 
-    /**
-     * @param $days int
-     */
-    public static function getDayMeasuredInSeconds($days)
-    {
-        return $days * self::HOURS_IN_DAY * self::MINUTES_IN_HOUR * self::SECONDS_IN_MINUTE;
-    }
+	/**
+	 * @param $days int
+	 */
+	public static function getDayMeasuredInSeconds($days)
+	{
+		return $days * self::HOURS_IN_DAY * self::MINUTES_IN_HOUR * self::SECONDS_IN_MINUTE;
+	}
 
-    public static function getCurrentTimeStamp()
-    {
-        return (new DateTime())->getTimestamp();
-    }
+	public static function getCurrentTimeStamp()
+	{
+		return (new DateTime())->getTimestamp();
+	}
 }

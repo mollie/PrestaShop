@@ -27,19 +27,20 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
 
 namespace Mollie\Service;
 
 class ImageService
 {
-    public function createOrderStateLogo($orderStateId)
-    {
-        $source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
-        $destination = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
-        @copy($source, $destination);
-    }
+	public function createOrderStateLogo($orderStateId)
+	{
+		$source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
+		$destination = _PS_ORDER_STATE_IMG_DIR_.$orderStateId.'.gif';
+		@copy($source, $destination);
+	}
 }

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,41 +42,39 @@ use PrestaShopException;
 
 class AbstractRepository implements ReadOnlyRepositoryInterface
 {
-    /**
-     * @var string
-     */
-    private $fullyClassifiedClassName;
+	/**
+	 * @var string
+	 */
+	private $fullyClassifiedClassName;
 
-    /**
-     * @param string $fullyClassifiedClassName
-     *
-     */
-    public function __construct($fullyClassifiedClassName)
-    {
-        $this->fullyClassifiedClassName = $fullyClassifiedClassName;
-    }
+	/**
+	 * @param string $fullyClassifiedClassName
+	 */
+	public function __construct($fullyClassifiedClassName)
+	{
+		$this->fullyClassifiedClassName = $fullyClassifiedClassName;
+	}
 
-    public function findAll()
-    {
-        return new PrestaShopCollection($this->fullyClassifiedClassName);
-    }
+	public function findAll()
+	{
+		return new PrestaShopCollection($this->fullyClassifiedClassName);
+	}
 
-    /**
-     * @param array $keyValueCriteria
-     * @return ObjectModel|null
-     *
-     * @throws PrestaShopException
-     */
-    public function findOneBy(array $keyValueCriteria)
-    {
-        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+	/**
+	 * @return ObjectModel|null
+	 *
+	 * @throws PrestaShopException
+	 */
+	public function findOneBy(array $keyValueCriteria)
+	{
+		$psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
 
-        foreach ($keyValueCriteria as $field => $value) {
-            $psCollection = $psCollection->where($field, '=', $value);
-        }
+		foreach ($keyValueCriteria as $field => $value) {
+			$psCollection = $psCollection->where($field, '=', $value);
+		}
 
-        $first = $psCollection->getFirst();
+		$first = $psCollection->getFirst();
 
-        return false === $first ? null: $first;
-    }
+		return false === $first ? null : $first;
+	}
 }

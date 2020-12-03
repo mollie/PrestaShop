@@ -18,6 +18,7 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
+      - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ConfigFieldService:

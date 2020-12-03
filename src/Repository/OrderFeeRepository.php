@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,10 +40,10 @@ use Db;
 
 class OrderFeeRepository
 {
-    public function getOrderFeeIdByCartId($cartId)
-    {
-        $sql = 'Select id_mol_order_fee FROM `' . _DB_PREFIX_ . 'mol_order_fee` WHERE id_cart = "' . (int)$cartId . '"';
+	public function getOrderFeeIdByCartId($cartId)
+	{
+		$sql = 'Select id_mol_order_fee FROM `'._DB_PREFIX_.'mol_order_fee` WHERE id_cart = "'.(int) $cartId.'"';
 
-        return Db::getInstance()->getValue($sql);
-    }
+		return Db::getInstance()->getValue($sql);
+	}
 }

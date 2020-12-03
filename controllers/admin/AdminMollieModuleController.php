@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,23 +38,23 @@ use Mollie\Config\Config;
 
 class AdminMollieModuleController extends ModuleAdminController
 {
-    public function postProcess()
-    {
-        if (Config::isVersion17()) {
-            Tools::redirectAdmin(
-                $this->context->link->getAdminLink(
-                    'AdminModules',
-                    true,
-                    [],
-                    [
-                        'configure' => 'mollie'
-                    ]
-                )
-            );
-        };
+	public function postProcess()
+	{
+		if (Config::isVersion17()) {
+			Tools::redirectAdmin(
+				$this->context->link->getAdminLink(
+					'AdminModules',
+					true,
+					[],
+					[
+						'configure' => 'mollie',
+					]
+				)
+			);
+		}
 
-        Tools::redirectAdmin(
-            $this->context->link->getAdminLink('AdminModules') . '&configure=mollie'
-        );
-    }
+		Tools::redirectAdmin(
+			$this->context->link->getAdminLink('AdminModules').'&configure=mollie'
+		);
+	}
 }

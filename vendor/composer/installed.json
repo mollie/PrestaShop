@@ -34,7 +34,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -55,20 +55,6 @@
             "certificate",
             "ssl",
             "tls"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/packagist.com",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/composer",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/composer\/composer",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -103,7 +89,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Composer\\Semver\\": "src"
+                "MolliePrefix\\Composer\\Semver\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -176,7 +162,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "src"
+                "MolliePrefix\\Composer\\XdebugHandler\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -242,7 +228,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
+                "MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -310,7 +296,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
+                "MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -403,7 +389,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PhpCsFixer\\": "src\/"
+                "MolliePrefix\\PhpCsFixer\\": "src\/"
             },
             "classmap": [
                 "tests\/Test\/AbstractFixerTestCase.php",
@@ -480,7 +466,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -540,7 +526,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -602,7 +588,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -637,17 +623,17 @@
     },
     {
         "name": "mollie\/mollie-api-php",
-        "version": "v2.24.0",
-        "version_normalized": "2.24.0.0",
+        "version": "v2.25.0",
+        "version_normalized": "2.25.0.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/mollie\/mollie-api-php.git",
-            "reference": "52bd606724109906d61226698c8b031ccae9e637"
+            "reference": "ae0ff0229b2f616997c224270eb50ed1b224239c"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/mollie\/mollie-api-php\/zipball\/52bd606724109906d61226698c8b031ccae9e637",
-            "reference": "52bd606724109906d61226698c8b031ccae9e637",
+            "url": "https:\/\/api.github.com\/repos\/mollie\/mollie-api-php\/zipball\/ae0ff0229b2f616997c224270eb50ed1b224239c",
+            "reference": "ae0ff0229b2f616997c224270eb50ed1b224239c",
             "shasum": ""
         },
         "require": {
@@ -665,12 +651,12 @@
         "suggest": {
             "mollie\/oauth2-mollie-php": "Use OAuth to authenticate with the Mollie API. This is needed for some endpoints. Visit https:\/\/docs.mollie.com\/ for more information."
         },
-        "time": "2020-10-15T12:55:48+00:00",
+        "time": "2020-11-24T14:17:48+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -758,7 +744,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PhpParser\\": "lib\/PhpParser"
+                "MolliePrefix\\PhpParser\\": "lib\/PhpParser"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -907,7 +893,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -966,7 +952,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PrestaShop\\HeaderStamp\\": "src\/"
+                "MolliePrefix\\PrestaShop\\HeaderStamp\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -984,17 +970,17 @@
     },
     {
         "name": "prestashop\/php-dev-tools",
-        "version": "v3.10",
-        "version_normalized": "3.10.0.0",
+        "version": "v3.11",
+        "version_normalized": "3.11.0.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/PrestaShop\/php-dev-tools.git",
-            "reference": "d806112cb6466cae8d9a4418fe65090d0c672747"
+            "reference": "4406828ed591e2d2bd03718a46fbdf888646fb65"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/PrestaShop\/php-dev-tools\/zipball\/d806112cb6466cae8d9a4418fe65090d0c672747",
-            "reference": "d806112cb6466cae8d9a4418fe65090d0c672747",
+            "url": "https:\/\/api.github.com\/repos\/PrestaShop\/php-dev-tools\/zipball\/4406828ed591e2d2bd03718a46fbdf888646fb65",
+            "reference": "4406828ed591e2d2bd03718a46fbdf888646fb65",
             "shasum": ""
         },
         "require": {
@@ -1005,7 +991,7 @@
             "symfony\/console": "~3.2 || ~4.0 || ~5.0",
             "symfony\/filesystem": "~3.2 || ~4.0 || ~5.0"
         },
-        "time": "2020-09-29T16:25:14+00:00",
+        "time": "2020-11-24T08:15:01+00:00",
         "bin": [
             "bin\/prestashop-coding-standards"
         ],
@@ -1013,7 +999,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\PrestaShop\\CodingStandards\\": "src\/"
+                "MolliePrefix\\PrestaShop\\CodingStandards\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1050,7 +1036,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1098,7 +1084,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1149,7 +1135,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1201,7 +1187,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1250,7 +1236,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1369,8 +1355,8 @@
     },
     {
         "name": "symfony\/cache",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/cache.git",
@@ -1407,7 +1393,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1450,8 +1436,8 @@
     },
     {
         "name": "symfony\/config",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/config.git",
@@ -1486,7 +1472,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1525,8 +1511,8 @@
     },
     {
         "name": "symfony\/console",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/console.git",
@@ -1569,7 +1555,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Console\\": ""
+                "MolliePrefix\\Symfony\\Component\\Console\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1608,8 +1594,8 @@
     },
     {
         "name": "symfony\/debug",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/debug.git",
@@ -1636,7 +1622,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Debug\\": ""
+                "MolliePrefix\\Symfony\\Component\\Debug\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1675,8 +1661,8 @@
     },
     {
         "name": "symfony\/dependency-injection",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/dependency-injection.git",
@@ -1718,7 +1704,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1757,8 +1743,8 @@
     },
     {
         "name": "symfony\/event-dispatcher",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/event-dispatcher.git",
@@ -1793,7 +1779,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
+                "MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1832,8 +1818,8 @@
     },
     {
         "name": "symfony\/expression-language",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/expression-language.git",
@@ -1855,7 +1841,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1894,8 +1880,8 @@
     },
     {
         "name": "symfony\/filesystem",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/filesystem.git",
@@ -1916,7 +1902,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1955,28 +1941,28 @@
     },
     {
         "name": "symfony\/finder",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/finder.git",
-            "reference": "4e1da3c110c52d868f8a9153b7de3ebc381fba78"
+            "reference": "b6b6ad3db3edb1b4b1c1896b1975fb684994de6e"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/symfony\/finder\/zipball\/4e1da3c110c52d868f8a9153b7de3ebc381fba78",
-            "reference": "4e1da3c110c52d868f8a9153b7de3ebc381fba78",
+            "url": "https:\/\/api.github.com\/repos\/symfony\/finder\/zipball\/b6b6ad3db3edb1b4b1c1896b1975fb684994de6e",
+            "reference": "b6b6ad3db3edb1b4b1c1896b1975fb684994de6e",
             "shasum": ""
         },
         "require": {
             "php": "^5.5.9|>=7.0.8"
         },
-        "time": "2020-10-24T10:57:07+00:00",
+        "time": "2020-11-16T17:02:08+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Finder\\": ""
+                "MolliePrefix\\Symfony\\Component\\Finder\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2015,8 +2001,8 @@
     },
     {
         "name": "symfony\/options-resolver",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/options-resolver.git",
@@ -2036,7 +2022,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
+                "MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2110,7 +2096,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2138,20 +2124,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2189,7 +2161,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2216,20 +2188,6 @@
             "ctype",
             "polyfill",
             "portable"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2270,7 +2228,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2303,20 +2261,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2354,7 +2298,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2386,20 +2330,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2437,7 +2367,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2465,20 +2395,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2514,7 +2430,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2544,20 +2460,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -2592,7 +2494,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2619,26 +2521,12 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https:\/\/symfony.com\/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https:\/\/github.com\/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
         "name": "symfony\/process",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/process.git",
@@ -2658,7 +2546,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Process\\": ""
+                "MolliePrefix\\Symfony\\Component\\Process\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2697,8 +2585,8 @@
     },
     {
         "name": "symfony\/stopwatch",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/stopwatch.git",
@@ -2718,7 +2606,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Stopwatch\\": ""
+                "MolliePrefix\\Symfony\\Component\\Stopwatch\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2757,8 +2645,8 @@
     },
     {
         "name": "symfony\/yaml",
-        "version": "v3.4.46",
-        "version_normalized": "3.4.46.0",
+        "version": "v3.4.47",
+        "version_normalized": "3.4.47.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/symfony\/yaml.git",
@@ -2788,7 +2676,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Yaml\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Yaml\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"

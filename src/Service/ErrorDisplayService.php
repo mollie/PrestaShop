@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
 
 namespace Mollie\Service;
@@ -40,26 +41,26 @@ use Tools;
 
 class ErrorDisplayService
 {
-    public function showCookieError($id)
-    {
-        $context = Context::getContext();
-        if (isset($context->cookie->$id)) {
-            if (Config::isVersion17()) {
-                $context->controller->warning = $this->stripSlashesDeep(json_decode($context->cookie->$id));
-            } else {
-                $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
-            }
-            unset($context->cookie->$id);
-            unset($_SERVER['HTTP_REFERER']);
-        }
-    }
+	public function showCookieError($id)
+	{
+		$context = Context::getContext();
+		if (isset($context->cookie->$id)) {
+			if (Config::isVersion17()) {
+				$context->controller->warning = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+			} else {
+				$context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+			}
+			unset($context->cookie->$id);
+			unset($_SERVER['HTTP_REFERER']);
+		}
+	}
 
-    private function stripSlashesDeep($value)
-    {
-        $value = is_array($value) ?
-            array_map('stripslashes', $value) :
-            Tools::stripslashes($value);
+	private function stripSlashesDeep($value)
+	{
+		$value = is_array($value) ?
+			array_map('stripslashes', $value) :
+			Tools::stripslashes($value);
 
-        return $value;
-    }
+		return $value;
+	}
 }

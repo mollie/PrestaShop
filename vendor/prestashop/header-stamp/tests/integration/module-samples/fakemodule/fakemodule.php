@@ -26,4 +26,4 @@ if (!\defined('_PS_VERSION_')) {
 class Fakemodule extends \MolliePrefix\Module
 {
 }
-\class_alias('MolliePrefix\\Fakemodule', 'MolliePrefix\\Fakemodule', \false);
+\class_alias('MolliePrefix\\Fakemodule', 'Fakemodule', \false);

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,13 +41,13 @@ use DbQuery;
 
 class ModuleRepository
 {
-    public function getModuleDatabaseVersion($moduleName)
-    {
-        $sql = new DbQuery();
-        $sql->select('version');
-        $sql->from('module');
-        $sql->where('`name` = "' . pSQL($moduleName) . '"');
+	public function getModuleDatabaseVersion($moduleName)
+	{
+		$sql = new DbQuery();
+		$sql->select('version');
+		$sql->from('module');
+		$sql->where('`name` = "'.pSQL($moduleName).'"');
 
-        return Db::getInstance()->getValue($sql);
-    }
+		return Db::getInstance()->getValue($sql);
+	}
 }

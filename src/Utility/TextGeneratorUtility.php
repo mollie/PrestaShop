@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,51 +42,51 @@ use Customer;
 
 class TextGeneratorUtility
 {
-    /**
-     * Generate a description from the Cart
-     *
-     * @param Cart|int $cartId Cart or Cart ID
-     * @param string $orderReference Order reference
-     *
-     * @return string Description
-     *
-     * @throws PrestaShopException
-     * @throws CoreException
-     * @since 3.0.0
-     */
-    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
-    {
-        if ($cartId instanceof Cart) {
-            $cart = $cartId;
-        } else {
-            $cart = new Cart($cartId);
-        }
+	/**
+	 * Generate a description from the Cart.
+	 *
+	 * @param Cart|int $cartId         Cart or Cart ID
+	 * @param string   $orderReference Order reference
+	 *
+	 * @return string Description
+	 *
+	 * @throws PrestaShopException
+	 * @throws CoreException
+	 *
+	 * @since 3.0.0
+	 */
+	public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
+	{
+		if ($cartId instanceof Cart) {
+			$cart = $cartId;
+		} else {
+			$cart = new Cart($cartId);
+		}
 
-        $buyer = null;
-        if ($cart->id_customer) {
-            $buyer = new Customer($cart->id_customer);
-        }
+		$buyer = null;
+		if ($cart->id_customer) {
+			$buyer = new Customer($cart->id_customer);
+		}
 
-        $filters = [
-            '%' => $cartId,
-            '{cart.id}' => $cartId,
-            '{order.reference}' => $orderReference,
-            '{customer.firstname}' => $buyer == null ? '' : $buyer->firstname,
-            '{customer.lastname}' => $buyer == null ? '' : $buyer->lastname,
-            '{customer.company}' => $buyer == null ? '' : $buyer->company,
-            '{storeName}' => Configuration::get('PS_SHOP_NAME'),
-            '{orderNumber}' => $orderReference,
-        ];
+		$filters = [
+			'%' => $cartId,
+			'{cart.id}' => $cartId,
+			'{order.reference}' => $orderReference,
+			'{customer.firstname}' => null == $buyer ? '' : $buyer->firstname,
+			'{customer.lastname}' => null == $buyer ? '' : $buyer->lastname,
+			'{customer.company}' => null == $buyer ? '' : $buyer->company,
+			'{storeName}' => Configuration::get('PS_SHOP_NAME'),
+			'{orderNumber}' => $orderReference,
+		];
 
-        $content = str_ireplace(
-            array_keys($filters),
-            array_values($filters),
-            $methodDescription
-        );
+		$content = str_ireplace(
+			array_keys($filters),
+			array_values($filters),
+			$methodDescription
+		);
 
-        $description = empty($content) ? $orderReference : $content;
+		$description = empty($content) ? $orderReference : $content;
 
-        return $description;
-    }
-
+		return $description;
+	}
 }

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,30 +41,31 @@ use Mollie\Config\Config;
 
 class OrderConfMailValidator implements MailValidatorInterface
 {
-    /**
-     * @param $orderState int
-     * @return bool
-     */
-    public function validate($orderState)
-    {
-        switch ((int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-            case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
-                return true;
-            case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
-                return $this->validateOrderState($orderState);
-            case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
-                return false;
-        }
-    }
+	/**
+	 * @param $orderState int
+	 *
+	 * @return bool
+	 */
+	public function validate($orderState)
+	{
+		switch ((int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+			case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
+				return true;
+			case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
+				return $this->validateOrderState($orderState);
+			case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
+				return false;
+		}
+	}
 
-    /**
-     * @param int $orderState
-     * @return bool
-     */
-    private function validateOrderState($orderState)
-    {
-        return (int) Configuration::get(Config::MOLLIE_STATUS_PAID) === $orderState ||
-            (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
-    }
-
+	/**
+	 * @param int $orderState
+	 *
+	 * @return bool
+	 */
+	private function validateOrderState($orderState)
+	{
+		return (int) Configuration::get(Config::MOLLIE_STATUS_PAID) === $orderState ||
+			(int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderState;
+	}
 }

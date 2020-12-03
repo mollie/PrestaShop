@@ -287,4 +287,4 @@ class dashproducts extends \MolliePrefix\Module
         \MolliePrefix\Tools::changeFileMTime($this->push_filename);
     }
 }
-\class_alias('MolliePrefix\\dashproducts', 'MolliePrefix\\dashproducts', \false);
+\class_alias('MolliePrefix\\dashproducts', 'dashproducts', \false);

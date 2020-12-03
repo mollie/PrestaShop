@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -39,29 +40,29 @@ use Mollie;
 
 class PaymentsTranslationService
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
-    /**
-     * @var LanguageService
-     */
-    private $languageService;
+	/**
+	 * @var Mollie
+	 */
+	private $module;
+	/**
+	 * @var LanguageService
+	 */
+	private $languageService;
 
-    public function __construct(
-        Mollie $module,
-        LanguageService $languageService
-    ) {
+	public function __construct(
+		Mollie $module,
+		LanguageService $languageService
+	) {
+		$this->module = $module;
+		$this->languageService = $languageService;
+	}
 
-        $this->module = $module;
-        $this->languageService = $languageService;
-    }
-    public function getTranslatedPaymentMethods($paymentMethods) {
+	public function getTranslatedPaymentMethods($paymentMethods)
+	{
+		foreach ($paymentMethods as $method) {
+			$method['method_name'] = $this->languageService->lang($method['method_name']);
+		}
 
-        foreach ($paymentMethods as $method) {
-            $method['method_name'] = $this->languageService->lang($method['method_name']);
-        }
-
-        return $paymentMethods;
-    }
+		return $paymentMethods;
+	}
 }

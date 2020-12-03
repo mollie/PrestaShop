@@ -15,7 +15,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\PrestaShop\\CodingStandards\\": "src\/"
+            "MolliePrefix\\PrestaShop\\CodingStandards\\": "src\/"
         }
     },
     "config": {

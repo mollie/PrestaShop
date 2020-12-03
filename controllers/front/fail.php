@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -38,106 +39,105 @@ use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 class MollieFailModuleFrontController extends ModuleFrontController
 {
+	/**
+	 * ID Order Variable Declaration.
+	 *
+	 * @var int
+	 */
+	private $id_order;
 
-    /**
-     * ID Order Variable Declaration.
-     *
-     * @var int $id_order
-     */
-    private $id_order;
+	/**
+	 * Security Key Variable Declaration.
+	 *
+	 * @var string
+	 */
+	private $secure_key;
 
-    /**
-     * Security Key Variable Declaration.
-     *
-     * @var string $secure_key
-     */
-    private $secure_key;
+	/**
+	 * ID Cart Variable Declaration.
+	 *
+	 * @var int
+	 */
+	private $id_cart;
 
-    /**
-     * ID Cart Variable Declaration.
-     *
-     * @var int $id_cart
-     */
-    private $id_cart;
+	/**
+	 * Order Presenter Variable Declaration.
+	 *
+	 * @var OrderPresenter
+	 */
+	private $order_presenter;
 
-    /**
-     * Order Presenter Variable Declaration.
-     *
-     * @var OrderPresenter $order_presenter
-     */
-    private $order_presenter;
+	public function init()
+	{
+		if (!Config::isVersion17()) {
+			return parent::init();
+		}
+		parent::init();
 
-    public function init()
-    {
-        if (!Config::isVersion17()) {
-            return parent::init();
-        }
-        parent::init();
+		$this->id_cart = (int) Tools::getValue('cartId', 0);
 
-        $this->id_cart = (int) Tools::getValue('cartId', 0);
+		$redirectLink = 'index.php?controller=history';
 
-        $redirectLink = 'index.php?controller=history';
+		$this->id_order = Order::getOrderByCartId((int) $this->id_cart);
+		$this->secure_key = Tools::getValue('secureKey');
+		$order = new Order((int) $this->id_order);
 
-        $this->id_order = Order::getOrderByCartId((int) $this->id_cart);
-        $this->secure_key = Tools::getValue('secureKey');
-        $order = new Order((int) $this->id_order);
+		if (!$this->id_order || !$this->module->id || !$this->secure_key || empty($this->secure_key)) {
+			Tools::redirect($redirectLink.(Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
+		}
 
-        if (!$this->id_order || !$this->module->id || !$this->secure_key || empty($this->secure_key)) {
-            Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
-        }
+		if ((string) $this->secure_key !== (string) $order->secure_key ||
+			(int) $order->id_customer !== (int) $this->context->customer->id ||
+			!Validate::isLoadedObject($order)
+		) {
+			Tools::redirect($redirectLink);
+		}
 
-        if ((string) $this->secure_key !== (string) $order->secure_key ||
-            (int) $order->id_customer !== (int) $this->context->customer->id ||
-            !Validate::isLoadedObject($order)
-        ) {
-            Tools::redirect($redirectLink);
-        }
+		if ($order->module !== $this->module->name) {
+			Tools::redirect($redirectLink);
+		}
+		$this->order_presenter = new OrderPresenter();
+	}
 
-        if ($order->module !== $this->module->name) {
-            Tools::redirect($redirectLink);
-        }
-        $this->order_presenter = new OrderPresenter();
-    }
+	public function initContent()
+	{
+		parent::initContent();
 
-    public function initContent()
-    {
-        parent::initContent();
+		$cartId = Tools::getValue('cartId');
+		$moduleId = Tools::getValue('moduleId');
+		$orderId = Tools::getValue('orderId');
+		$secureKey = Tools::getValue('secureKey');
 
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
+		$orderLink = $this->context->link->getPageLink(
+			'order-confirmation',
+			true,
+			null,
+			[
+				'id_cart' => $cartId,
+				'id_module' => $moduleId,
+				'id_order' => $orderId,
+				'key' => $secureKey,
+				'cancel' => 1,
+			]
+		);
+		if (!Config::isVersion17()) {
+			Tools::redirect($orderLink);
+		}
 
-        $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
-            true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-                'cancel' => 1,
-            ]
-        );
-        if (!Config::isVersion17()) {
-            Tools::redirect($orderLink);
-        }
+		$order = new Order($this->id_order);
+		if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
+			$this->context->smarty->assign([
+				'order' => $this->order_presenter->present($order),
+			]);
+		} else {
+			$this->context->smarty->assign([
+				'id_order' => $this->id_order,
+				'email' => $this->context->customer->email,
+			]);
+		}
 
-        $order = new Order($this->id_order);
-        if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->context->smarty->assign([
-                'order' => $this->order_presenter->present($order),
-            ]);
-        } else {
-            $this->context->smarty->assign([
-                'id_order' => $this->id_order,
-                'email' => $this->context->customer->email,
-            ]);
-        }
-
-        $this->setTemplate(
-            sprintf('module:%s/views/templates/front/order_fail.tpl', $this->module->name)
-        );
-    }
+		$this->setTemplate(
+			sprintf('module:%s/views/templates/front/order_fail.tpl', $this->module->name)
+		);
+	}
 }

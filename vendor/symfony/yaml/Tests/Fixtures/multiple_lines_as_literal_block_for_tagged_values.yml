@@ -1,2 +1,2 @@
 data:
-    foo: !bar "MolliePrefix\MolliePrefix\foo\r\nline with trailing spaces:\n  \MolliePrefix\MolliePrefix\nbar\ninteger like line:\MolliePrefix\MolliePrefix\n123456789\nempty line:\MolliePrefix\MolliePrefix\n\nbaz"
+    foo: !bar "MolliePrefix\MolliePrefix\MolliePrefix\foo\r\nline with trailing spaces:\n  \MolliePrefix\MolliePrefix\MolliePrefix\nbar\ninteger like line:\MolliePrefix\MolliePrefix\MolliePrefix\n123456789\nempty line:\MolliePrefix\MolliePrefix\MolliePrefix\n\nbaz"

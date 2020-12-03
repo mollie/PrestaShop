@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -37,7 +38,7 @@ namespace Mollie\Exception;
 
 class MollieException extends \Exception
 {
-    const CUSTOMER_EXCEPTION = 1;
+	const CUSTOMER_EXCEPTION = 1;
 
-    const API_CONNECTION_EXCEPTION = 2;
+	const API_CONNECTION_EXCEPTION = 2;
 }

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,15 +41,15 @@ use Mollie\Utility\ContextUtility;
 
 class CustomerFactory
 {
-    public function recreateFromRequest($customerId, $customerSecureKey, $context)
-    {
-        if ($customerId) {
-            $customer = new Customer($customerId);
-            if ($customer->secure_key === $customerSecureKey) {
-                return ContextUtility::setCustomerToContext($context, $customer);
-            }
-        }
+	public function recreateFromRequest($customerId, $customerSecureKey, $context)
+	{
+		if ($customerId) {
+			$customer = new Customer($customerId);
+			if ($customer->secure_key === $customerSecureKey) {
+				return ContextUtility::setCustomerToContext($context, $customer);
+			}
+		}
 
-        return $context;
-    }
+		return $context;
+	}
 }

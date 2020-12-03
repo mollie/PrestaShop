@@ -29,40 +29,42 @@ namespace MolliePrefix;
  * SOFTWARE.
  */
 if (!\is_callable('random_bytes')) {
-    /**
-     * Powered by ext/mcrypt (and thankfully NOT libmcrypt)
-     *
-     * @ref https://bugs.php.net/bug.php?id=55169
-     * @ref https://github.com/php/php-src/blob/c568ffe5171d942161fc8dda066bce844bdef676/ext/mcrypt/mcrypt.c#L1321-L1386
-     *
-     * @param int $bytes
-     *
-     * @throws Exception
-     *
-     * @return string
-     */
-    function random_bytes($bytes)
-    {
-        try {
-            /** @var int $bytes */
-            $bytes = \MolliePrefix\RandomCompat_intval($bytes);
-        } catch (\TypeError $ex) {
-            throw new \TypeError('random_bytes(): $bytes must be an integer');
-        }
-        if ($bytes < 1) {
-            throw new \Error('Length must be greater than 0');
-        }
-        /** @var string|bool $buf */
-        $buf = @\mcrypt_create_iv((int) $bytes, (int) \MCRYPT_DEV_URANDOM);
-        if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
-            /**
-             * Return our random entropy buffer here:
-             */
-            return $buf;
-        }
+    if (!\function_exists('MolliePrefix\\random_bytes')) {
         /**
-         * If we reach here, PHP has failed us.
+         * Powered by ext/mcrypt (and thankfully NOT libmcrypt)
+         *
+         * @ref https://bugs.php.net/bug.php?id=55169
+         * @ref https://github.com/php/php-src/blob/c568ffe5171d942161fc8dda066bce844bdef676/ext/mcrypt/mcrypt.c#L1321-L1386
+         *
+         * @param int $bytes
+         *
+         * @throws Exception
+         *
+         * @return string
          */
-        throw new \Exception('Could not gather sufficient random data');
+        function random_bytes($bytes)
+        {
+            try {
+                /** @var int $bytes */
+                $bytes = \MolliePrefix\RandomCompat_intval($bytes);
+            } catch (\TypeError $ex) {
+                throw new \TypeError('random_bytes(): $bytes must be an integer');
+            }
+            if ($bytes < 1) {
+                throw new \Error('Length must be greater than 0');
+            }
+            /** @var string|bool $buf */
+            $buf = @\mcrypt_create_iv((int) $bytes, (int) \MCRYPT_DEV_URANDOM);
+            if (\is_string($buf) && \MolliePrefix\RandomCompat_strlen($buf) === $bytes) {
+                /**
+                 * Return our random entropy buffer here:
+                 */
+                return $buf;
+            }
+            /**
+             * If we reach here, PHP has failed us.
+             */
+            throw new \Exception('Could not gather sufficient random data');
+        }
     }
 }

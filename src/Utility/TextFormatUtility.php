@@ -27,17 +27,18 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
 
 namespace Mollie\Utility;
 
 class TextFormatUtility
 {
-    public static function formatNumber($unitPrice, $apiRoundingPrecision, $docPoint = '.', $thousandSep = '')
-    {
-        return number_format($unitPrice, $apiRoundingPrecision, $docPoint, $thousandSep);
-    }
+	public static function formatNumber($unitPrice, $apiRoundingPrecision, $docPoint = '.', $thousandSep = '')
+	{
+		return number_format($unitPrice, $apiRoundingPrecision, $docPoint, $thousandSep);
+	}
 }

@@ -27,46 +27,42 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
 
 namespace Mollie\Service;
 
 use Cart;
-use CartRule;
 use Context;
-use Db;
-use Order;
 
 class CartDuplicationService
 {
-    /**
-     *
-     *
-     * @param int $cartId
-     *
-     * @return int
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function restoreCart($cartId)
-    {
-        $context = Context::getContext();
-        $cart = new Cart($cartId);
-        $duplication = $cart->duplicate();
-        if ($duplication['success']) {
-            /** @var Cart $duplicatedCart */
-            $duplicatedCart = $duplication['cart'];
+	/**
+	 * @param int $cartId
+	 *
+	 * @return int
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 */
+	public function restoreCart($cartId)
+	{
+		$context = Context::getContext();
+		$cart = new Cart($cartId);
+		$duplication = $cart->duplicate();
+		if ($duplication['success']) {
+			/** @var Cart $duplicatedCart */
+			$duplicatedCart = $duplication['cart'];
 
-            $context->cookie->id_cart = $duplicatedCart->id;
-            $context->cart = $duplicatedCart;
-            $context->cookie->write();
+			$context->cookie->id_cart = $duplicatedCart->id;
+			$context->cart = $duplicatedCart;
+			$context->cookie->write();
 
-            return  $duplicatedCart->id;
-        }
+			return  $duplicatedCart->id;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 }

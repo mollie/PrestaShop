@@ -12,7 +12,7 @@
         <service id="monolog.logger" parent="monolog.logger_prototype" public="false">
             <argument index="0">app</argument>
         </service>
-        <service id="monolog.logger_prototype" class="MolliePrefix\MolliePrefix\Symfony\Bridge\Monolog\Logger" abstract="true">
+        <service id="monolog.logger_prototype" class="MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Bridge\Monolog\Logger" abstract="true">
             <argument /><!-- Channel -->
         </service>
     </services>

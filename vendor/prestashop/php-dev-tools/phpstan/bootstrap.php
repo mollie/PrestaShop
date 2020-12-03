@@ -16,6 +16,10 @@ if (!$rootDir) {
     echo '[ERROR] Define _PS_ROOT_DIR_ with the path to PrestaShop folder' . \PHP_EOL;
     exit(1);
 }
+if (!\realpath($rootDir)) {
+    echo \sprintf('[ERROR] _PS_ROOT_DIR_ configuration is wrong. No directory found at %s .', $rootDir) . \PHP_EOL;
+    exit(1);
+}
 // This file will be in the directory vendor/prestashop/php-dev-tools/phpstan.
 $pathToModuleRoot = __DIR__ . '/../../../../';
 // Add module composer autoloader

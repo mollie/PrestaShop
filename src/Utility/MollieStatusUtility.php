@@ -27,32 +27,33 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
 
+use Mollie\Config\Config;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use Mollie\Config\Config;
 
 class MollieStatusUtility
 {
-    public static function isPaymentFinished($paymentStatus)
-    {
-        switch ($paymentStatus) {
-            case OrderStatus::STATUS_COMPLETED:
-            case OrderStatus::STATUS_PAID:
-            case OrderStatus::STATUS_SHIPPING:
-            case PaymentStatus::STATUS_AUTHORIZED:
-            case PaymentStatus::STATUS_PAID:
-            case Config::STATUS_PAID_ON_BACKORDER:
-                return true;
-            default:
-                return false;
-        }
-    }
+	public static function isPaymentFinished($paymentStatus)
+	{
+		switch ($paymentStatus) {
+			case OrderStatus::STATUS_COMPLETED:
+			case OrderStatus::STATUS_PAID:
+			case OrderStatus::STATUS_SHIPPING:
+			case PaymentStatus::STATUS_AUTHORIZED:
+			case PaymentStatus::STATUS_PAID:
+			case Config::STATUS_PAID_ON_BACKORDER:
+				return true;
+			default:
+				return false;
+		}
+	}
 }

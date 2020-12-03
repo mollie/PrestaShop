@@ -10,4 +10,4 @@ class FooSameCaseUppercaseCommand extends \MolliePrefix\Symfony\Component\Consol
         $this->setName('foo:BAR')->setDescription('foo:BAR command');
     }
 }
-\class_alias('MolliePrefix\\FooSameCaseUppercaseCommand', 'MolliePrefix\\FooSameCaseUppercaseCommand', \false);
+\class_alias('MolliePrefix\\FooSameCaseUppercaseCommand', 'FooSameCaseUppercaseCommand', \false);

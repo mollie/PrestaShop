@@ -17,7 +17,7 @@ final class Utils
      */
     public static function currentTime()
     {
-        return \function_exists('MolliePrefix\\hrtime') ? hrtime(\true) / 1000000000.0 : \microtime(\true);
+        return \function_exists('MolliePrefix\\hrtime') ? \MolliePrefix\hrtime(\true) / 1000000000.0 : \microtime(\true);
     }
     /**
      * @param int $options
@@ -69,7 +69,7 @@ final class Utils
             return $domain;
         }
         if (\extension_loaded('intl') && \defined('INTL_IDNA_VARIANT_UTS46')) {
-            return \idn_to_ascii($domain, $options, \INTL_IDNA_VARIANT_UTS46, $info);
+            return \MolliePrefix\idn_to_ascii($domain, $options, \INTL_IDNA_VARIANT_UTS46, $info);
         }
         /*
          * The Idn class is marked as @internal. Verify that class and method exists.

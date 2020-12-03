@@ -27,13 +27,13 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
 /**
@@ -44,8 +44,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_0_0()
 {
-    Configuration::deleteByName('MOLLIE_VERSION');
-    Configuration::updateValue('MOLLIE_ISSUERS', 'payment-page');
+	Configuration::deleteByName('MOLLIE_VERSION');
+	Configuration::updateValue('MOLLIE_ISSUERS', 'payment-page');
 
-    return true;
+	return true;
 }

@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -43,49 +44,50 @@ use MolPaymentMethod;
 
 final class CreditCardLogoProvider extends AbstractCustomLogoProvider
 {
-    /**
-     * @var string
-     */
-    private $localPath;
+	/**
+	 * @var string
+	 */
+	private $localPath;
 
-    /**
-     * @var string
-     */
-    private $pathUri;
+	/**
+	 * @var string
+	 */
+	private $pathUri;
 
-    public function __construct($localPath, $pathUri)
-    {
-        $this->localPath = $localPath;
-        $this->pathUri = $pathUri;
-    }
+	public function __construct($localPath, $pathUri)
+	{
+		$this->localPath = $localPath;
+		$this->pathUri = $pathUri;
+	}
 
-    public function getName()
-    {
-        return 'customCreditCardLogo';
-    }
+	public function getName()
+	{
+		return 'customCreditCardLogo';
+	}
 
-    public function getLocalPath()
-    {
-        return $this->localPath;
-    }
+	public function getLocalPath()
+	{
+		return $this->localPath;
+	}
 
-    public function getPathUri()
-    {
-        return $this->pathUri;
-    }
+	public function getPathUri()
+	{
+		return $this->pathUri;
+	}
 
-    public function getMethodOptionLogo(MolPaymentMethod $methodObj)
-    {
-        $isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
-        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
+	public function getMethodOptionLogo(MolPaymentMethod $methodObj)
+	{
+		$isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
+		$imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
 
-        if ($imageConfig !== Config::LOGOS_HIDE && $isCustomLogoEnabled && $this->logoExists()) {
-            $dateStamp = time();
-            return $this->getLogoPathUri() . "?{$dateStamp}";
-        }
+		if (Config::LOGOS_HIDE !== $imageConfig && $isCustomLogoEnabled && $this->logoExists()) {
+			$dateStamp = time();
 
-        $image = json_decode($methodObj->images_json, true);
+			return $this->getLogoPathUri()."?{$dateStamp}";
+		}
 
-        return ImageUtility::setOptionImage($image, $imageConfig);
-    }
+		$image = json_decode($methodObj->images_json, true);
+
+		return ImageUtility::setOptionImage($image, $imageConfig);
+	}
 }

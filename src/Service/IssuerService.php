@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -38,45 +39,45 @@ namespace Mollie\Service;
 use Configuration;
 use Context;
 use Mollie;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use Mollie\Repository\PaymentMethodRepository;
+use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 
 class IssuerService
 {
-    /**
-     * @var PaymentMethodRepository
-     */
-    private $paymentMethodRepository;
-    /**
-     * @var Mollie
-     */
-    private $module;
+	/**
+	 * @var PaymentMethodRepository
+	 */
+	private $paymentMethodRepository;
+	/**
+	 * @var Mollie
+	 */
+	private $module;
 
-    public function __construct(Mollie $module, PaymentMethodRepository $paymentMethodRepository)
-    {
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->module = $module;
-    }
+	public function __construct(Mollie $module, PaymentMethodRepository $paymentMethodRepository)
+	{
+		$this->paymentMethodRepository = $paymentMethodRepository;
+		$this->module = $module;
+	}
 
-    public function getIdealIssuers()
-    {
-        $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+	public function getIdealIssuers()
+	{
+		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
-        $methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
-        $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
-        $issuers = json_decode($issuersJson, true);
-        $issuerList[PaymentMethod::IDEAL] = [];
-        $context = Context::getContext();
-        foreach ($issuers as $issuer) {
-            $issuer['href'] = $context->link->getModuleLink(
-                $this->module->name,
-                'payment',
-                ['method' => $methodId , 'issuer' => $issuer['id'], 'rand' => time()],
-                true
-            );
-            $issuerList[PaymentMethod::IDEAL][$issuer['id']] = $issuer;
-        }
+		$methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
+		$issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
+		$issuers = json_decode($issuersJson, true);
+		$issuerList[PaymentMethod::IDEAL] = [];
+		$context = Context::getContext();
+		foreach ($issuers as $issuer) {
+			$issuer['href'] = $context->link->getModuleLink(
+				$this->module->name,
+				'payment',
+				['method' => $methodId, 'issuer' => $issuer['id'], 'rand' => time()],
+				true
+			);
+			$issuerList[PaymentMethod::IDEAL][$issuer['id']] = $issuer;
+		}
 
-        return $issuerList;
-    }
+		return $issuerList;
+	}
 }

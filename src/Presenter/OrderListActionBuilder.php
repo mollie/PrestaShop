@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,35 +41,35 @@ use Smarty_Data;
 
 class OrderListActionBuilder
 {
-    const FILE_NAME = 'OrderListActionBuilder';
-    /**
-     * @var Mollie
-     */
-    private $mollie;
+	const FILE_NAME = 'OrderListActionBuilder';
+	/**
+	 * @var Mollie
+	 */
+	private $mollie;
 
-    public function __construct(Mollie $mollie)
-    {
-        $this->mollie = $mollie;
-    }
+	public function __construct(Mollie $mollie)
+	{
+		$this->mollie = $mollie;
+	}
 
-    public function buildOrderPaymentResendButton(Smarty_Data $smarty, $orderId)
-    {
-        $smarty->assign('idOrder', $orderId);
+	public function buildOrderPaymentResendButton(Smarty_Data $smarty, $orderId)
+	{
+		$smarty->assign('idOrder', $orderId);
 
-        $smarty->assign(
-            'message',
-            $this->mollie->l('You will resend email with payment link to the customer', self::FILE_NAME)
-        );
-        $icon = $this->mollie->display(
-            $this->mollie->getLocalPath(),
-            'views/templates/hook/admin/order-list-save-label-icon.tpl'
-        );
+		$smarty->assign(
+			'message',
+			$this->mollie->l('You will resend email with payment link to the customer', self::FILE_NAME)
+		);
+		$icon = $this->mollie->display(
+			$this->mollie->getLocalPath(),
+			'views/templates/hook/admin/order-list-save-label-icon.tpl'
+		);
 
-        $smarty->assign('icon', $icon);
+		$smarty->assign('icon', $icon);
 
-        return $this->mollie->display(
-            $this->mollie->getLocalPath(),
-            'views/templates/hook/admin/order-list-icon-container.tpl'
-        );
-    }
+		return $this->mollie->display(
+			$this->mollie->getLocalPath(),
+			'views/templates/hook/admin/order-list-icon-container.tpl'
+		);
+	}
 }

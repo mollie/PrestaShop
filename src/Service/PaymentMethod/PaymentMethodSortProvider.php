@@ -27,41 +27,40 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod;
 
-use MolPaymentMethod;
-
 final class PaymentMethodSortProvider implements PaymentMethodSortProviderInterface
 {
-    public function getSortedInAscendingWayForCheckout(array $paymentMethods)
-    {
-        usort($paymentMethods, function (array $a, array $b) {
-            if ($a['position'] === $b['position']) {
-                return 0;
-            }
+	public function getSortedInAscendingWayForCheckout(array $paymentMethods)
+	{
+		usort($paymentMethods, function (array $a, array $b) {
+			if ($a['position'] === $b['position']) {
+				return 0;
+			}
 
-            return ($a['position'] < $b['position']) ? -1 : 1;
-        });
+			return ($a['position'] < $b['position']) ? -1 : 1;
+		});
 
-        return $paymentMethods;
-    }
+		return $paymentMethods;
+	}
 
-    public function getSortedInAscendingWayForConfiguration(array $paymentMethods)
-    {
-        usort($paymentMethods, function (array $a, array $b) {
-            if ($a['obj']->position === $b['obj']->position) {
-                return 0;
-            }
+	public function getSortedInAscendingWayForConfiguration(array $paymentMethods)
+	{
+		usort($paymentMethods, function (array $a, array $b) {
+			if ($a['obj']->position === $b['obj']->position) {
+				return 0;
+			}
 
-            return ($a['obj']->position < $b['obj']->position) ? -1 : 1;
-        });
+			return ($a['obj']->position < $b['obj']->position) ? -1 : 1;
+		});
 
-        return $paymentMethods;
-    }
+		return $paymentMethods;
+	}
 }

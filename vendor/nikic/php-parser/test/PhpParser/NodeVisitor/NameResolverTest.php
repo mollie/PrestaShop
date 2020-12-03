@@ -88,10 +88,10 @@ new \MolliePrefix\A\T\D\E\F();
 new \MolliePrefix\Z\T\G();
 \MolliePrefix\X\T\b\c();
 \MolliePrefix\X\T\d\e();
-\MolliePrefix\Z\T\f();
+f();
 \MolliePrefix\Y\T\B\C;
 \MolliePrefix\Y\T\D\E;
-\MolliePrefix\Z\T\K;
+K;
 EOC;
         $expectedCode = <<<'EOC'
 namespace Foo {

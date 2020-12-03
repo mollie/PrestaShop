@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -40,13 +41,13 @@ use DbQuery;
 
 class AttributeRepository
 {
-    public function hasAttributeInCombination($attrCombinationId, $attributeId)
-    {
-        $sql = new DbQuery();
-        $sql->select('`id_attribute`');
-        $sql->from('product_attribute_combination');
-        $sql->where('`id_product_attribute` = "' . pSQL($attrCombinationId) . '" AND id_attribute = ' . pSQL($attributeId));
+	public function hasAttributeInCombination($attrCombinationId, $attributeId)
+	{
+		$sql = new DbQuery();
+		$sql->select('`id_attribute`');
+		$sql->from('product_attribute_combination');
+		$sql->where('`id_product_attribute` = "'.pSQL($attrCombinationId).'" AND id_attribute = '.pSQL($attributeId));
 
-        return (bool)Db::getInstance()->getValue($sql);
-    }
+		return (bool) Db::getInstance()->getValue($sql);
+	}
 }

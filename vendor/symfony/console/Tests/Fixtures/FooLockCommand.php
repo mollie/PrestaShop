@@ -22,4 +22,4 @@ class FooLockCommand extends \MolliePrefix\Symfony\Component\Console\Command\Com
         return 2;
     }
 }
-\class_alias('MolliePrefix\\FooLockCommand', 'MolliePrefix\\FooLockCommand', \false);
+\class_alias('MolliePrefix\\FooLockCommand', 'FooLockCommand', \false);

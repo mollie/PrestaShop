@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
@@ -41,34 +42,34 @@ use Tools;
 
 class EnvironmentUtility
 {
-    /**
-     * Check if local domain
-     *
-     * @param string|null $host
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    public static function isLocalEnvironment($host = null)
-    {
-        if (!$host) {
-            $host = Tools::getHttpHost(false, false, true);
-        }
-        $hostParts = explode('.', $host);
-        $tld = end($hostParts);
+	/**
+	 * Check if local domain.
+	 *
+	 * @param string|null $host
+	 *
+	 * @return bool
+	 *
+	 * @since 3.3.2
+	 */
+	public static function isLocalEnvironment($host = null)
+	{
+		if (!$host) {
+			$host = Tools::getHttpHost(false, false, true);
+		}
+		$hostParts = explode('.', $host);
+		$tld = end($hostParts);
 
-        return in_array($tld, ['localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'])
-            || (filter_var($host, FILTER_VALIDATE_IP)
-                && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
-    }
+		return in_array($tld, ['localhost', 'test', 'dev', 'app', 'local', 'invalid', 'example'])
+			|| (filter_var($host, FILTER_VALIDATE_IP)
+				&& !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
+	}
 
-    public static function getApiKey()
-    {
-        $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $apiKeyConfig = (int)$environment === Config::ENVIRONMENT_LIVE ?
-            Config::MOLLIE_API_KEY : Config::MOLLIE_API_KEY_TEST;
+	public static function getApiKey()
+	{
+		$environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+		$apiKeyConfig = Config::ENVIRONMENT_LIVE === (int) $environment ?
+			Config::MOLLIE_API_KEY : Config::MOLLIE_API_KEY_TEST;
 
-        return Configuration::get($apiKeyConfig);
-    }
+		return Configuration::get($apiKeyConfig);
+	}
 }
