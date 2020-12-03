@@ -203,9 +203,9 @@ class TransactionService
 						$status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
 						$paymentStatus = (int) Config::getStatuses()[$status];
 						$isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);
-						if ($status === OrderStatus::STATUS_COMPLETED && $isKlarnaOrder) {
-                            $paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
-                        }
+						if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder) {
+							$paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
+						}
 						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
 							$this->updateTransaction($orderId, $transaction);
 						}
@@ -391,13 +391,13 @@ class TransactionService
 		}
 	}
 
-    /**
-     * @param $orderId
-     *
-     * @param MolliePaymentAlias|MollieOrderAlias $transaction
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param $orderId
+	 * @param MolliePaymentAlias|MollieOrderAlias $transaction
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	private function updateTransaction($orderId, $transaction)
 	{
 		/** @var TransactionService $transactionService */
