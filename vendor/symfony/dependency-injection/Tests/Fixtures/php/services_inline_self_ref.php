@@ -64,4 +64,4 @@ class Symfony_DI_PhpDumper_Test_Inline_Self_Ref extends \MolliePrefix\Symfony\Co
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Inline_Self_Ref', 'Symfony_DI_PhpDumper_Test_Inline_Self_Ref', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Inline_Self_Ref', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Inline_Self_Ref', \false);

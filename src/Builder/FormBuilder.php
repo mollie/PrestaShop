@@ -36,6 +36,7 @@
 
 namespace Mollie\Builder;
 
+use AttributeCore as Attribute;
 use Configuration;
 use HelperFormCore as HelperForm;
 use ModuleCore as Module;
@@ -438,7 +439,7 @@ class FormBuilder
 			'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
 			'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
 			'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-			'productAttributes' => \Attribute::getAttributes($this->module->getContext()->language->id),
+			'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
 			'klarnaPayments' => Config::KLARNA_PAYMENTS,
 			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
 		];

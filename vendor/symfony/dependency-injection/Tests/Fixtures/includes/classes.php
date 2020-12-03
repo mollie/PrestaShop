@@ -22,7 +22,7 @@ class BarClass extends \MolliePrefix\BazClass
         return $this->baz;
     }
 }
-\class_alias('MolliePrefix\\BarClass', 'BarClass', \false);
+\class_alias('MolliePrefix\\BarClass', 'MolliePrefix\\BarClass', \false);
 class BazClass
 {
     protected $foo;
@@ -46,7 +46,7 @@ class BazClass
     {
     }
 }
-\class_alias('MolliePrefix\\BazClass', 'BazClass', \false);
+\class_alias('MolliePrefix\\BazClass', 'MolliePrefix\\BazClass', \false);
 class BarUserClass
 {
     public $bar;
@@ -55,7 +55,7 @@ class BarUserClass
         $this->bar = $bar;
     }
 }
-\class_alias('MolliePrefix\\BarUserClass', 'BarUserClass', \false);
+\class_alias('MolliePrefix\\BarUserClass', 'MolliePrefix\\BarUserClass', \false);
 class MethodCallClass
 {
     public $simple;
@@ -70,7 +70,7 @@ class MethodCallClass
         return $this->callPassed;
     }
 }
-\class_alias('MolliePrefix\\MethodCallClass', 'MethodCallClass', \false);
+\class_alias('MolliePrefix\\MethodCallClass', 'MolliePrefix\\MethodCallClass', \false);
 class DummyProxyDumper implements \MolliePrefix\Symfony\Component\DependencyInjection\LazyProxy\PhpDumper\DumperInterface
 {
     public function isProxyCandidate(\MolliePrefix\Symfony\Component\DependencyInjection\Definition $definition)
@@ -86,7 +86,7 @@ class DummyProxyDumper implements \MolliePrefix\Symfony\Component\DependencyInje
         return "// proxy code for {$definition->getClass()}\n";
     }
 }
-\class_alias('MolliePrefix\\DummyProxyDumper', 'DummyProxyDumper', \false);
+\class_alias('MolliePrefix\\DummyProxyDumper', 'MolliePrefix\\DummyProxyDumper', \false);
 class LazyContext
 {
     public $lazyValues;
@@ -97,7 +97,7 @@ class LazyContext
         $this->lazyEmptyValues = $lazyEmptyValues;
     }
 }
-\class_alias('MolliePrefix\\LazyContext', 'LazyContext', \false);
+\class_alias('MolliePrefix\\LazyContext', 'MolliePrefix\\LazyContext', \false);
 class FoobarCircular
 {
     public function __construct(\MolliePrefix\FooCircular $foo)
@@ -105,7 +105,7 @@ class FoobarCircular
         $this->foo = $foo;
     }
 }
-\class_alias('MolliePrefix\\FoobarCircular', 'FoobarCircular', \false);
+\class_alias('MolliePrefix\\FoobarCircular', 'MolliePrefix\\FoobarCircular', \false);
 class FooCircular
 {
     public function __construct(\MolliePrefix\BarCircular $bar)
@@ -113,7 +113,7 @@ class FooCircular
         $this->bar = $bar;
     }
 }
-\class_alias('MolliePrefix\\FooCircular', 'FooCircular', \false);
+\class_alias('MolliePrefix\\FooCircular', 'MolliePrefix\\FooCircular', \false);
 class BarCircular
 {
     public function addFoobar(\MolliePrefix\FoobarCircular $foobar)
@@ -121,4 +121,4 @@ class BarCircular
         $this->foobar = $foobar;
     }
 }
-\class_alias('MolliePrefix\\BarCircular', 'BarCircular', \false);
+\class_alias('MolliePrefix\\BarCircular', 'MolliePrefix\\BarCircular', \false);

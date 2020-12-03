@@ -1,4 +1,4 @@
 services:
-    MolliePrefix\AppBundle\Foo:
+    MolliePrefix\MolliePrefix\AppBundle\Foo:
         arguments:
-            - !service {class: MolliePrefix\AppBundle\Bar }
+            - !service {class: MolliePrefix\MolliePrefix\AppBundle\Bar }
