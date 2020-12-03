@@ -43,14 +43,13 @@ use Tools;
 
 class LocaleUtility
 {
-
-    /**
-     * @return string
-     */
+	/**
+	 * @return string
+	 */
 	public static function getWebShopLocale()
 	{
 		// Current language
-        $language = Context::getContext()->language->iso_code;
+		$language = Context::getContext()->language->iso_code;
 
 		$supportedLanguages = [
 			'de',

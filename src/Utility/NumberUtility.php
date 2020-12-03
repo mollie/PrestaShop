@@ -41,16 +41,17 @@ use MolliePrefix\PrestaShop\Decimal\Number;
 
 class NumberUtility
 {
-    /**
-     * Decreases number by its given percentage
-     * E.g 75/1.5 = 50.
-     *
-     * @param float $number
-     * @param float $percentage
-     *
-     * @return float
-     * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
-     */
+	/**
+	 * Decreases number by its given percentage
+	 * E.g 75/1.5 = 50.
+	 *
+	 * @param float $number
+	 * @param float $percentage
+	 *
+	 * @return float
+	 *
+	 * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
+	 */
 	public static function decreaseByPercentage($number, $percentage)
 	{
 		if (!$percentage || $percentage <= 0) {

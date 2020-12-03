@@ -51,10 +51,9 @@ class RestorePendingCartService
 		$this->repository = $repository;
 	}
 
-    /**
-     * @param Order $order
-     * @throws \PrestaShopException
-     */
+	/**
+	 * @throws \PrestaShopException
+	 */
 	public function restore(Order $order)
 	{
 		/** @var MolPendingOrderCart|null $pendingOrder */

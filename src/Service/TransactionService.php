@@ -189,7 +189,7 @@ class TransactionService
 					if (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
 						&& OrderStatus::STATUS_CREATED === $apiPayment->status
 					) {
-					    /** @var null|PaymentCollection $orderPayments */
+						/** @var PaymentCollection|null $orderPayments */
 						$orderPayments = $apiPayment->payments();
 
 						$paymentStatus = OrderStatus::STATUS_CREATED;
@@ -245,7 +245,7 @@ class TransactionService
 		$isOrder = TransactionUtility::isOrderTransaction($transactionId);
 		if ($isOrder) {
 			$transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-			/** @var null|PaymentCollection $payments */
+			/** @var PaymentCollection|null $payments */
 			$payments = $transaction->payments();
 
 			foreach ($payments as $payment) {
@@ -323,12 +323,9 @@ class TransactionService
 		}
 	}
 
-    /**
-     * @param MolliePaymentAlias $payment
-     * @param array $transactionInfos
-     *
-     * @return array
-     */
+	/**
+	 * @return array
+	 */
 	private function getVoucherTransactionInfo(MolliePaymentAlias $payment, array $transactionInfos)
 	{
 		foreach ($payment->details->vouchers as $voucher) {
@@ -343,12 +340,9 @@ class TransactionService
 		return $transactionInfos;
 	}
 
-    /**
-     * @param MolliePaymentAlias $payment
-     *
-     * @param array $transactionInfos
-     * @return array
-     */
+	/**
+	 * @return array
+	 */
 	private function getVoucherRemainderTransactionInfo(MolliePaymentAlias $payment, array $transactionInfos)
 	{
 		if ($payment->details->remainderMethod) {
@@ -363,12 +357,9 @@ class TransactionService
 		return $transactionInfos;
 	}
 
-    /**
-     * @param MolliePaymentAlias $payment
-     *
-     * @param array $transactionInfos
-     * @return array
-     */
+	/**
+	 * @return array
+	 */
 	private function getPaymentTransactionInfo(MolliePaymentAlias $payment, array $transactionInfos)
 	{
 		$transactionInfos[] = [
@@ -381,13 +372,12 @@ class TransactionService
 		return $transactionInfos;
 	}
 
-    /**
-     * @param array $transactionInfos
-     * @param string $orderReference
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param string $orderReference
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	private function updateOrderPayments(array $transactionInfos, $orderReference)
 	{
 		foreach ($transactionInfos as $transactionInfo) {
@@ -403,7 +393,7 @@ class TransactionService
 	}
 
 	/**
-	 * @param int $orderId
+	 * @param int                                 $orderId
 	 * @param MolliePaymentAlias|MollieOrderAlias $transaction
 	 *
 	 * @throws PrestaShopDatabaseException

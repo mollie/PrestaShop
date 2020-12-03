@@ -260,24 +260,23 @@ class PaymentMethodService
 		return $methods;
 	}
 
-    /**
-     * Get payment data.
-     *
-     * @param float|string $amount
-     * @param string $currency
-     * @param string $method
-     * @param string|null $issuer
-     * @param int|Cart $cartId
-     * @param string $secureKey
-     * @param MolPaymentMethod $molPaymentMethod
-     * @param bool $qrCode
-     * @param string $orderReference
-     *
-     * @param bool $cardToken
-     * @return PaymentData|OrderData
-     *
-     * @since 3.3.0 Order reference
-     */
+	/**
+	 * Get payment data.
+	 *
+	 * @param float|string $amount
+	 * @param string       $currency
+	 * @param string       $method
+	 * @param string|null  $issuer
+	 * @param int|Cart     $cartId
+	 * @param string       $secureKey
+	 * @param bool         $qrCode
+	 * @param string       $orderReference
+	 * @param bool         $cardToken
+	 *
+	 * @return PaymentData|OrderData
+	 *
+	 * @since 3.3.0 Order reference
+	 */
 	public function getPaymentData(
 		$amount,
 		$currency,
