@@ -1,11 +1,11 @@
 
 services:
     service_container:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         tags:
             - { name: tag, k: v }
         lazy: true
@@ -16,4 +16,4 @@ services:
         shared: false
         configurator: c
     foo:
-        class: MolliePrefix\App\FooService
+        class: MolliePrefix\MolliePrefix\MolliePrefix\App\FooService

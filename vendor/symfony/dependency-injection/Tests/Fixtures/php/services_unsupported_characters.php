@@ -149,4 +149,4 @@ class Symfony_DI_PhpDumper_Test_Unsupported_Characters extends \MolliePrefix\Sym
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Unsupported_Characters', 'Symfony_DI_PhpDumper_Test_Unsupported_Characters', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Unsupported_Characters', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Unsupported_Characters', \false);

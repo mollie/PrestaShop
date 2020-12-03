@@ -1,14 +1,14 @@
 
 services:
     service_container:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    MolliePrefix\App\BarService:
-        class: MolliePrefix\App\BarService
+    MolliePrefix\MolliePrefix\MolliePrefix\App\BarService:
+        class: MolliePrefix\MolliePrefix\MolliePrefix\App\BarService
         arguments: [!service { class: FooClass }]
-    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         public: true
         tags:
             - { name: t, a: b }
@@ -16,7 +16,7 @@ services:
         autoconfigure: true
         arguments: ['@bar']
     bar:
-        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         public: false
         tags:
             - { name: t, a: b }

@@ -50,7 +50,6 @@ use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
@@ -203,8 +202,11 @@ class TransactionService
 					} elseif (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key) {
 						$status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
 						$paymentStatus = (int) Config::getStatuses()[$status];
-
-						if (PaymentStatus::STATUS_PAID === $status) {
+						$isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);
+						if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder) {
+							$paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
+						}
+						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
 							$this->updateTransaction($orderId, $transaction);
 						}
 						/** @var OrderStatusService $orderStatusService */
@@ -391,11 +393,12 @@ class TransactionService
 
 	/**
 	 * @param $orderId
+	 * @param MolliePaymentAlias|MollieOrderAlias $transaction
 	 *
 	 * @throws PrestaShopDatabaseException
-	 * @throws \PrestaShopException
+	 * @throws PrestaShopException
 	 */
-	private function updateTransaction($orderId, MolliePaymentAlias $transaction)
+	private function updateTransaction($orderId, $transaction)
 	{
 		/** @var TransactionService $transactionService */
 		$transactionService = $this->module->getContainer(TransactionService::class);

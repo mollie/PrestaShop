@@ -321,6 +321,7 @@ class Config
 			self::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
 			self::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
 			self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
+			self::MOLLIE_STATUS_KLARNA_SHIPPED => Configuration::get(self::MOLLIE_STATUS_KLARNA_SHIPPED),
 		];
 	}
 

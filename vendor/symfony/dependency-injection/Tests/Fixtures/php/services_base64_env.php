@@ -129,4 +129,4 @@ class Symfony_DI_PhpDumper_Test_Base64Parameters extends \MolliePrefix\Symfony\C
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Base64Parameters', 'Symfony_DI_PhpDumper_Test_Base64Parameters', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Base64Parameters', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Base64Parameters', \false);

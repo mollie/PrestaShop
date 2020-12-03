@@ -131,10 +131,10 @@ class OrderStatusService
 			$this->mailService->sendNewOrderMail($order, $statusId);
 		}
 
-		if (Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
-			$history->addWithemail(true, $templateVars);
-		} else {
+		if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
 			$history->add();
+		} else {
+			$history->addWithemail(true, $templateVars);
 		}
 	}
 

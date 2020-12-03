@@ -63,7 +63,7 @@ yaml: |
         
       bar
 php: |
-  ['foo' => ['bar' => "MolliePrefix\foo\n\n\n  \MolliePrefix\nbar\n"]]
+  ['foo' => ['bar' => "MolliePrefix\MolliePrefix\MolliePrefix\foo\n\n\n  \MolliePrefix\MolliePrefix\MolliePrefix\nbar\n"]]
 ---
 test: Empty lines in folded blocks
 brief: >
@@ -77,7 +77,7 @@ yaml: |
       
       bar
 php: |
-  ['foo' => ['bar' => "\MolliePrefix\nfoo\n\nbar\n"]]
+  ['foo' => ['bar' => "\MolliePrefix\MolliePrefix\MolliePrefix\nfoo\n\nbar\n"]]
 ---
 test: IP addresses
 brief: >
@@ -123,7 +123,7 @@ yaml: |
   foo: |
     0123
 php: |
-  ['foo' => "MolliePrefix\0123\n"]
+  ['foo' => "MolliePrefix\MolliePrefix\MolliePrefix\0123\n"]
 ---
 test: Document as a simple hash
 brief: Document as a simple hash

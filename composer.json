@@ -22,7 +22,13 @@
       "Mollie\\": "src/"
     },
     "classmap": [
-      "vendor",
+      "vendor/composer",
+      "vendor/guzzlehttp",
+      "vendor/mollie",
+      "vendor/paragonie",
+      "vendor/prestashop",
+      "vendor/psr",
+      "vendor/symfony",
       "mollie.php",
       "controllers/",
       "src/"

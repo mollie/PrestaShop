@@ -374,9 +374,9 @@ yaml: |
     \//||\/||
     // ||  ||_
 perl: |
-  "\\//||\\/||\n// ||  ||MolliePrefix\_\n"
+  "\\//||\\/||\n// ||  ||MolliePrefix\MolliePrefix\MolliePrefix\_\n"
 ruby: |
-  "\\//||\\/||\n// ||  ||MolliePrefix\_\n"
+  "\\//||\\/||\n// ||  ||MolliePrefix\MolliePrefix\MolliePrefix\_\n"
 python: |
     [
         flushLeft(
@@ -388,7 +388,7 @@ python: |
     ]
 syck: |
   struct test_node stream[] = {
-      { T_STR, 0, "\\//||\\/||\n// ||  ||MolliePrefix\_\n" },
+      { T_STR, 0, "\\//||\\/||\n// ||  ||MolliePrefix\MolliePrefix\MolliePrefix\_\n" },
       end_node
   };
 
@@ -427,9 +427,9 @@ yaml: |
 
    What a year!
 perl: |
-  "Sammy Sosa completed another fine season with great stats.\MolliePrefix\n\n  63 Home MolliePrefix\Runs\n  0.288 Batting MolliePrefix\Average\n\nWhat a year!\n"
+  "Sammy Sosa completed another fine season with great stats.\MolliePrefix\MolliePrefix\MolliePrefix\n\n  63 Home MolliePrefix\MolliePrefix\MolliePrefix\Runs\n  0.288 Batting MolliePrefix\MolliePrefix\MolliePrefix\Average\n\nWhat a year!\n"
 ruby: |
-  "Sammy Sosa completed another fine season with great stats.\MolliePrefix\n\n  63 Home MolliePrefix\Runs\n  0.288 Batting MolliePrefix\Average\n\nWhat a year!\n"
+  "Sammy Sosa completed another fine season with great stats.\MolliePrefix\MolliePrefix\MolliePrefix\n\n  63 Home MolliePrefix\MolliePrefix\MolliePrefix\Runs\n  0.288 Batting MolliePrefix\MolliePrefix\MolliePrefix\Average\n\nWhat a year!\n"
 python: |
     [
         flushLeft(
@@ -445,7 +445,7 @@ python: |
     ]
 syck: |
   struct test_node stream[] = {
-      { T_STR, 0, "Sammy Sosa completed another fine season with great stats.\MolliePrefix\n\n  63 Home MolliePrefix\Runs\n  0.288 Batting MolliePrefix\Average\n\nWhat a year!\n" },
+      { T_STR, 0, "Sammy Sosa completed another fine season with great stats.\MolliePrefix\MolliePrefix\MolliePrefix\n\n  63 Home MolliePrefix\MolliePrefix\MolliePrefix\Runs\n  0.288 Batting MolliePrefix\MolliePrefix\MolliePrefix\Average\n\nWhat a year!\n" },
       end_node
   };
 
@@ -465,7 +465,7 @@ php: |
   [
     'name' => 'Mark McGwire',
     'accomplishment' => "Mark set a major league home run record in 1998.\n",
-    'stats' => "65 Home MolliePrefix\Runs\n0.278 Batting MolliePrefix\Average\n"
+    'stats' => "65 Home MolliePrefix\MolliePrefix\MolliePrefix\Runs\n0.278 Batting MolliePrefix\MolliePrefix\MolliePrefix\Average\n"
   ]
 ---
 test: Quoted scalars
@@ -473,8 +473,8 @@ todo: true
 spec: 2.17
 yaml: |
   unicode: "Sosa did fine.\u263A"
-  control: "\MolliePrefix\b1998\t1999\t2000\n"
-  hexesc:  "\MolliePrefix\x0D\x0A is \MolliePrefix\r\n"
+  control: "\MolliePrefix\MolliePrefix\MolliePrefix\b1998\t1999\t2000\n"
+  hexesc:  "\MolliePrefix\MolliePrefix\MolliePrefix\x0D\x0A is \MolliePrefix\MolliePrefix\MolliePrefix\r\n"
 
   single: '"Howdy!" he cried.'
   quoted: ' # not a ''comment''.'
@@ -482,11 +482,11 @@ yaml: |
 ruby: |
   {
     "tie-fighter" => "|\\-*-/|",
-    "control"=>"\MolliePrefix\0101998\t1999\t2000\n",
+    "control"=>"\MolliePrefix\MolliePrefix\MolliePrefix\0101998\t1999\t2000\n",
     "unicode"=>"Sosa did fine." + ["263A".hex ].pack('U*'),
     "quoted"=>" # not a 'comment'.",
     "single"=>"\"Howdy!\" he cried.",
-    "hexesc"=>"\MolliePrefix\r\n is \MolliePrefix\r\n"
+    "hexesc"=>"\MolliePrefix\MolliePrefix\MolliePrefix\r\n is \MolliePrefix\MolliePrefix\MolliePrefix\r\n"
   }
 ---
 test: Multiline flow scalars
@@ -611,8 +611,8 @@ ruby-setup: |
 ruby: |
   {
     'not-date' => '2002-04-28',
-    'picture' => "MolliePrefix\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\MolliePrefix\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236i^\020' \MolliePrefix\202\n\001\000;",
-    'application specific tag' => "SOMETHING: The semantics of the MolliePrefix\tag\nabove may be different MolliePrefix\for\ndifferent documents.\n"
+    'picture' => "MolliePrefix\MolliePrefix\MolliePrefix\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\MolliePrefix\MolliePrefix\MolliePrefix\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236i^\020' \MolliePrefix\MolliePrefix\MolliePrefix\202\n\001\000;",
+    'application specific tag' => "SOMETHING: The semantics of the MolliePrefix\MolliePrefix\MolliePrefix\tag\nabove may be different MolliePrefix\MolliePrefix\MolliePrefix\for\ndifferent documents.\n"
   }
 ---
 test: Application specific family
@@ -757,9 +757,9 @@ php: |
   [
      'invoice' => 34843, 'date' => gmmktime(0, 0, 0, 1, 23, 2001),
      'bill-to' =>
-      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #MolliePrefix\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
+      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #MolliePrefix\MolliePrefix\MolliePrefix\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
      , 'ship-to' =>
-      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #MolliePrefix\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
+      [ 'given' => 'Chris', 'family' => 'Dumars', 'address' => [ 'lines' => "458 Walkman Dr.\nSuite #MolliePrefix\MolliePrefix\MolliePrefix\292\n", 'city' => 'Royal Oak', 'state' => 'MI', 'postal' => 48046 ] ]
      , 'product' =>
        [
         [ 'sku' => 'BL394D', 'quantity' => 4, 'description' => 'Basketball', 'price' => 450.00 ],
@@ -794,7 +794,7 @@ yaml: |
     - file: TopClass.py
       line: 23
       code: |
-        x = MoreObject("MolliePrefix\345\n")
+        x = MoreObject("MolliePrefix\MolliePrefix\MolliePrefix\345\n")
     - file: MoreClass.py
       line: 58
       code: |-
@@ -802,13 +802,13 @@ yaml: |
 ruby: |
   y = YAML::Stream.new
   y.add( { 'Time' => YAML::mktime( 2001, 11, 23, 15, 01, 42, 00, "-05:00" ),
-           'User' => 'ed', 'Warning' => "This is an error message for the log MolliePrefix\file\n" } )
+           'User' => 'ed', 'Warning' => "This is an error message for the log MolliePrefix\MolliePrefix\MolliePrefix\file\n" } )
   y.add( { 'Time' => YAML::mktime( 2001, 11, 23, 15, 02, 31, 00, "-05:00" ),
            'User' => 'ed', 'Warning' => "A slightly different error message.\n" } )
   y.add( { 'Date' => YAML::mktime( 2001, 11, 23, 15, 03, 17, 00, "-05:00" ),
            'User' => 'ed', 'Fatal' => "Unknown variable \"bar\"\n",
            'Stack' => [
-           { 'file' => 'TopClass.py', 'line' => 23, 'code' => "x = MoreObject(\"MolliePrefix\\345\\n\")\n" },
+           { 'file' => 'TopClass.py', 'line' => 23, 'code' => "x = MoreObject(\"MolliePrefix\\MolliePrefix\\MolliePrefix\\345\\n\")\n" },
            { 'file' => 'MoreClass.py', 'line' => 58, 'code' => "foo = bar" } ] } )
 documents: 3
 
@@ -827,7 +827,7 @@ yaml: |
    # lines (the first line is empty).
 php: |
    [
-     'this' => "contains three lines of text.\nThe third one starts with MolliePrefix\a\n# character. This isn't a comment.\n"
+     'this' => "contains three lines of text.\nThe third one starts with MolliePrefix\MolliePrefix\MolliePrefix\a\n# character. This isn't a comment.\n"
    ]
 ---
 test: Document with a single value
@@ -988,7 +988,7 @@ test: URI Escaping
 todo: true
 yaml: |
   same:
-    - !domain.tld,2002/MolliePrefix\type\x30 value
+    - !domain.tld,2002/MolliePrefix\MolliePrefix\MolliePrefix\type\x30 value
     - !domain.tld,2002/type0 value
   different: # As far as the YAML parser is concerned
     - !domain.tld,2002/type%30 value
@@ -1060,7 +1060,7 @@ yaml: |
 ruby: |
   { 'empty' => [], 'flow' => [ 'one', 'two', 'three', 'four', 'five' ],
     'block' => [ 'First item in top sequence', [ 'Subordinate sequence entry' ],
-    "A folded sequence MolliePrefix\entry\n", 'Sixth item in top sequence' ] }
+    "A folded sequence MolliePrefix\MolliePrefix\MolliePrefix\entry\n", 'Sixth item in top sequence' ] }
 ---
 test: Complete mapping test
 todo: true
@@ -1117,7 +1117,7 @@ ruby: |
         { 'A key' => 'value pair in a sequence.', 'A second' => 'key:value pair.' } ],
     12.0 => 'This key is a float.', "?\n" => 'This key had to be protected.',
     "\a" => 'This key had to be escaped.',
-    "This is a multi-line folded MolliePrefix\key\n" => "Whose value is also multi-line.",
+    "This is a multi-line folded MolliePrefix\MolliePrefix\MolliePrefix\key\n" => "Whose value is also multi-line.",
     'this also works as a key' => 'with a value at the next line.',
     [ 'This key', 'is a sequence' ] => [ 'With a sequence value.' ] } }
   # Couldn't recreate map exactly, so we'll do a detailed check to be sure it's entact
@@ -1155,7 +1155,7 @@ php: |
    [
       'leading spaces' => "    This value starts with four spaces.\n",
       'leading line break' => "\nThis value starts with a line break.\n",
-      'leading comment indicator' => "# first line starts with MolliePrefix\a\n# character.\n",
+      'leading comment indicator' => "# first line starts with MolliePrefix\MolliePrefix\MolliePrefix\a\n# character.\n",
       'redundant' => "This value is indented 2 spaces.\n"
    ]
 ---
@@ -1174,15 +1174,15 @@ yaml: |
     kept: |+
         This has two newlines.
 
-    same as "kept" above: "This has two newlines.\MolliePrefix\n\n"
+    same as "kept" above: "This has two newlines.\MolliePrefix\MolliePrefix\MolliePrefix\n\n"
 php: |
     [
       'clipped' => "This has one newline.\n",
       'same as "clipped" above' => "This has one newline.\n",
       'stripped' => 'This has no newline.',
       'same as "stripped" above' => 'This has no newline.',
-      'kept' => "This has two newlines.\MolliePrefix\n\n",
-      'same as "kept" above' => "This has two newlines.\MolliePrefix\n\n"
+      'kept' => "This has two newlines.\MolliePrefix\MolliePrefix\MolliePrefix\n\n",
+      'same as "kept" above' => "This has two newlines.\MolliePrefix\MolliePrefix\MolliePrefix\n\n"
     ]
 ---
 test: Literal combinations
@@ -1202,11 +1202,11 @@ yaml: |
     not start with one.
 
    is equal to: "The \\ ' \" characters may \
-    MolliePrefix\be\nfreely used. Leading MolliePrefix\white\n   space \
-    is significant.\MolliePrefix\n\nLine breaks are \
+    MolliePrefix\MolliePrefix\MolliePrefix\be\nfreely used. Leading MolliePrefix\MolliePrefix\MolliePrefix\white\n   space \
+    is significant.\MolliePrefix\MolliePrefix\MolliePrefix\n\nLine breaks are \
     significant.\nThus this value contains \
-    MolliePrefix\one\nempty line and ends with MolliePrefix\a\nsingle \
-    line break, but MolliePrefix\does\nnot start with one.\n"
+    MolliePrefix\MolliePrefix\MolliePrefix\one\nempty line and ends with MolliePrefix\MolliePrefix\MolliePrefix\a\nsingle \
+    line break, but MolliePrefix\MolliePrefix\MolliePrefix\does\nnot start with one.\n"
 
    # Comments may follow a block
    # scalar value. They must be
@@ -1223,12 +1223,12 @@ yaml: |
 php: |
    [
      'empty' => '',
-     'literal' => "The \\ ' \" characters may MolliePrefix\be\nfreely used. Leading MolliePrefix\white\n   space " +
-       "is significant.\MolliePrefix\n\nLine breaks are significant.\nThus this value contains MolliePrefix\one\n" +
-       "empty line and ends with MolliePrefix\a\nsingle line break, but MolliePrefix\does\nnot start with one.\n",
-     'is equal to' => "The \\ ' \" characters may MolliePrefix\be\nfreely used. Leading MolliePrefix\white\n   space " +
-       "is significant.\MolliePrefix\n\nLine breaks are significant.\nThus this value contains MolliePrefix\one\n" +
-       "empty line and ends with MolliePrefix\a\nsingle line break, but MolliePrefix\does\nnot start with one.\n",
+     'literal' => "The \\ ' \" characters may MolliePrefix\MolliePrefix\MolliePrefix\be\nfreely used. Leading MolliePrefix\MolliePrefix\MolliePrefix\white\n   space " +
+       "is significant.\MolliePrefix\MolliePrefix\MolliePrefix\n\nLine breaks are significant.\nThus this value contains MolliePrefix\MolliePrefix\MolliePrefix\one\n" +
+       "empty line and ends with MolliePrefix\MolliePrefix\MolliePrefix\a\nsingle line break, but MolliePrefix\MolliePrefix\MolliePrefix\does\nnot start with one.\n",
+     'is equal to' => "The \\ ' \" characters may MolliePrefix\MolliePrefix\MolliePrefix\be\nfreely used. Leading MolliePrefix\MolliePrefix\MolliePrefix\white\n   space " +
+       "is significant.\MolliePrefix\MolliePrefix\MolliePrefix\n\nLine breaks are significant.\nThus this value contains MolliePrefix\MolliePrefix\MolliePrefix\one\n" +
+       "empty line and ends with MolliePrefix\MolliePrefix\MolliePrefix\a\nsingle line break, but MolliePrefix\MolliePrefix\MolliePrefix\does\nnot start with one.\n",
      'indented and chomped' => '  This has no newline.',
      'also written as' => '  This has no newline.',
      'both are equal to' => '  This has no newline.'
@@ -1295,11 +1295,11 @@ php: |
      'multiple paragraphs' => "\nAn empty line, either at the start or in the value:\n".
        "Is interpreted as a line break. Thus this value contains three line breaks.\n",
      'indented text' => "This is a folded paragraph followed by a list:\n".
-       " * first MolliePrefix\entry\n * second MolliePrefix\entry\nFollowed by another folded paragraph, ".
-       "another list:\MolliePrefix\n\n * first MolliePrefix\entry\n\n * second MolliePrefix\entry\n\nAnd a final folded paragraph.\n",
+       " * first MolliePrefix\MolliePrefix\MolliePrefix\entry\n * second MolliePrefix\MolliePrefix\MolliePrefix\entry\nFollowed by another folded paragraph, ".
+       "another list:\MolliePrefix\MolliePrefix\MolliePrefix\n\n * first MolliePrefix\MolliePrefix\MolliePrefix\entry\n\n * second MolliePrefix\MolliePrefix\MolliePrefix\entry\n\nAnd a final folded paragraph.\n",
      'above is equal to' => "This is a folded paragraph followed by a list:\n".
-       " * first MolliePrefix\entry\n * second MolliePrefix\entry\nFollowed by another folded paragraph, ".
-       "another list:\MolliePrefix\n\n * first MolliePrefix\entry\n\n * second MolliePrefix\entry\n\nAnd a final folded paragraph.\n"
+       " * first MolliePrefix\MolliePrefix\MolliePrefix\entry\n * second MolliePrefix\MolliePrefix\MolliePrefix\entry\nFollowed by another folded paragraph, ".
+       "another list:\MolliePrefix\MolliePrefix\MolliePrefix\n\n * first MolliePrefix\MolliePrefix\MolliePrefix\entry\n\n * second MolliePrefix\MolliePrefix\MolliePrefix\entry\n\nAnd a final folded paragraph.\n"
    ]
 ---
 test: Single quotes
@@ -1313,14 +1313,14 @@ yaml: |
 
          and one
          line break'
-   is same as: "this contains six MolliePrefix\spaces\nand one line break"
+   is same as: "this contains six MolliePrefix\MolliePrefix\MolliePrefix\spaces\nand one line break"
 php: |
    [
      'empty' => '',
      'second' => '! : \\ etc. can be used freely.',
      'third' => "a single quote ' must be escaped.",
-     'span' => "this contains six MolliePrefix\spaces\nand one line break",
-     'is same as' => "this contains six MolliePrefix\spaces\nand one line break"
+     'span' => "this contains six MolliePrefix\MolliePrefix\MolliePrefix\spaces\nand one line break",
+     'is same as' => "this contains six MolliePrefix\MolliePrefix\MolliePrefix\spaces\nand one line break"
    ]
 ---
 test: Double quotes
@@ -1375,7 +1375,7 @@ php: |
      'first' => 'There is no unquoted empty string.',
      'second' => 12,
      'third' => '12',
-     'span' => "this contains six MolliePrefix\spaces\nand one line break",
+     'span' => "this contains six MolliePrefix\MolliePrefix\MolliePrefix\spaces\nand one line break",
      'indicators' => "this has no comments. #:foo and bar# are both text.",
      'flow' => [ 'can span lines', 'like this' ],
      'note' => { 'one-line keys' => 'but multi-line values' }
@@ -1595,7 +1595,7 @@ yaml: |
     The binary value above is a tiny arrow
     encoded as a gif image.
 ruby-setup: |
-   arrow_gif = "MolliePrefix\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\MolliePrefix\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236iiiccc\243\243\243\204\204\204\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371!\MolliePrefix\376\016Made with MolliePrefix\GIMP\000,\MolliePrefix\000\000\000\000\f\000\f\000\000\005,  \MolliePrefix\216\2010\236\343@\MolliePrefix\024\350i\020\304\321\212\010\034\317\200M$MolliePrefix\z\357\3770\205p\270\2601f\r\e\316\001\303\001\036\020' \MolliePrefix\202\n\001\000;"
+   arrow_gif = "MolliePrefix\MolliePrefix\MolliePrefix\GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff\000\000\000\347\347\347^^^\MolliePrefix\MolliePrefix\MolliePrefix\363\363\355\216\216\216\340\340\340\237\237\237\223\223\223\247\247\247\236\236\236iiiccc\243\243\243\204\204\204\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371\377\376\371!\MolliePrefix\MolliePrefix\MolliePrefix\376\016Made with MolliePrefix\MolliePrefix\MolliePrefix\GIMP\000,\MolliePrefix\MolliePrefix\MolliePrefix\000\000\000\000\f\000\f\000\000\005,  \MolliePrefix\MolliePrefix\MolliePrefix\216\2010\236\343@\MolliePrefix\MolliePrefix\MolliePrefix\024\350i\020\304\321\212\010\034\317\200M$MolliePrefix\MolliePrefix\MolliePrefix\z\357\3770\205p\270\2601f\r\e\316\001\303\001\036\020' \MolliePrefix\MolliePrefix\MolliePrefix\202\n\001\000;"
 ruby: |
    {
      'canonical' => arrow_gif,

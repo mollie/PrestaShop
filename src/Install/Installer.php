@@ -193,7 +193,7 @@ class Installer implements InstallerInterface
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
 
 		return true;
 	}
@@ -221,7 +221,7 @@ class Installer implements InstallerInterface
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED, (int) $orderState->id);
 
 		return true;
 	}
@@ -273,7 +273,7 @@ class Installer implements InstallerInterface
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_AWAITING, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_AWAITING, (int) $orderState->id);
 
 		return true;
 	}
@@ -295,13 +295,14 @@ class Installer implements InstallerInterface
 		$orderState->delivery = false;
 		$orderState->logable = false;
 		$orderState->invoice = false;
+		$orderState->send_email = true;
 		$orderState->module_name = $this->module->name;
 		$orderState->name = MultiLangUtility::createMultiLangField('Completed');
 
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_ORDER_COMPLETED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_ORDER_COMPLETED, (int) $orderState->id);
 
 		return true;
 	}
@@ -319,22 +320,25 @@ class Installer implements InstallerInterface
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
-		$orderState->logable = false;
+		$orderState->logable = true;
 		$orderState->invoice = false;
+		$orderState->pdf_invoice = true;
+		$orderState->paid = true;
+		$orderState->send_email = true;
+		$orderState->template = 'payment';
 		$orderState->module_name = $this->module->name;
 		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment accepted');
 
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_ACCEPTED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_ACCEPTED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
 
 		return true;
 	}
 
 	/**
-	 * @param $languageId
-	 *
 	 * @return bool
 	 *
 	 * @throws PrestaShopDatabaseException
@@ -347,15 +351,20 @@ class Installer implements InstallerInterface
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
-		$orderState->logable = false;
-		$orderState->invoice = false;
+		$orderState->logable = true;
+		$orderState->invoice = true;
+		$orderState->shipped = true;
+		$orderState->paid = true;
+		$orderState->delivery = true;
+		$orderState->template = 'shipped';
+		$orderState->pdf_invoice = true;
 		$orderState->module_name = $this->module->name;
 		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment shipped');
 
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_KLARNA_SHIPPED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_SHIPPED, (int) $orderState->id);
 
 		return true;
 	}
@@ -365,44 +374,44 @@ class Installer implements InstallerInterface
 	 */
 	protected function initConfig()
 	{
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY, '');
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_API_KEY_TEST, '');
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_TEST);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_PROFILE_ID, '');
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_ORDER_CONFIRMATION, 0);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_SEND_NEW_ORDER, 0);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE, Mollie\Config\Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_IFRAME, false);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_IMAGES, Mollie\Config\Config::LOGOS_NORMAL);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_ISSUERS, Mollie\Config\Config::ISSUERS_ON_CLICK);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_CSS, '');
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_TRACKING_URLS, '');
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_DEBUG_LOG, Mollie\Config\Config::DEBUG_LOG_ERRORS);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_QRENABLED, false);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES, 0);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS, false);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_OPEN, Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
+		Configuration::updateValue(Config::MOLLIE_API_KEY, '');
+		Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, '');
+		Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_TEST);
+		Configuration::updateValue(Config::MOLLIE_PROFILE_ID, '');
+		Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, 0);
+		Configuration::updateValue(Config::MOLLIE_SEND_NEW_ORDER, 0);
+		Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
+		Configuration::updateValue(Config::MOLLIE_IFRAME, false);
+		Configuration::updateValue(Config::MOLLIE_IMAGES, Config::LOGOS_NORMAL);
+		Configuration::updateValue(Config::MOLLIE_ISSUERS, Config::ISSUERS_ON_CLICK);
+		Configuration::updateValue(Config::MOLLIE_CSS, '');
+		Configuration::updateValue(Config::MOLLIE_TRACKING_URLS, '');
+		Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, Config::DEBUG_LOG_ERRORS);
+		Configuration::updateValue(Config::MOLLIE_QRENABLED, false);
+		Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, 0);
+		Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
+		Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
+		Configuration::updateValue(Config::MOLLIE_STATUS_OPEN, Configuration::get(Config::STATUS_MOLLIE_AWAITING));
+		Configuration::updateValue(Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+		Configuration::updateValue(Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
+		Configuration::updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
+		Configuration::updateValue(Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
 		Configuration::updateValue(
-			Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND,
-			Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIAL_REFUND)
+			Config::MOLLIE_STATUS_PARTIAL_REFUND,
+			Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND)
 		);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_STATUS_SHIPPING, Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_PAID, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_COMPLETED, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_CANCELED, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_ACCOUNT_SWITCH, false);
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_CSS, '');
+		Configuration::updateValue(Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+		Configuration::updateValue(Config::MOLLIE_STATUS_SHIPPING, Configuration::get(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_PAID, true);
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_COMPLETED, true);
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_CANCELED, true);
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
+		Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
+		Configuration::updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
+		Configuration::updateValue(Config::MOLLIE_CSS, '');
 
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_API, Mollie\Config\Config::MOLLIE_ORDERS_API);
+		Configuration::updateValue(Config::MOLLIE_API, Config::MOLLIE_ORDERS_API);
 	}
 
 	public function setDefaultCarrierStatuses()
@@ -417,7 +426,7 @@ class Installer implements InstallerInterface
 			return;
 		}
 		$defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
-		Configuration::updateValue(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
+		Configuration::updateValue(Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
 	}
 
 	public function installTab($className, $parent, $name, $active = true, $icon = '')

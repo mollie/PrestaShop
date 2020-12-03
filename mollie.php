@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
 	{
 		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
-		$this->version = '4.1.1';
+		$this->version = '4.2.0';
 		$this->author = 'Mollie B.V.';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -1341,7 +1341,10 @@ class Mollie extends PaymentModule
 
 	public function hookActionValidateOrder($params)
 	{
-		if ($this->context->controller instanceof AdminOrdersControllerCore &&
+		if ('admin' !== $this->context->controller->controller_type) {
+			return;
+		}
+		if ('AdminOrders' === $this->context->controller->controller_name &&
 			$params['order']->module === $this->name
 		) {
 			$cartId = $params['cart']->id;
