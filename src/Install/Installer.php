@@ -336,12 +336,12 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function klarnaPaymentShippedState()
 	{
 		$orderState = new OrderState();
@@ -354,9 +354,9 @@ class Installer implements InstallerInterface
 		$orderState->shipped = true;
 		$orderState->paid = true;
 		$orderState->delivery = true;
-        $orderState->template = 'shipped';
-        $orderState->pdf_invoice = true;
-        $orderState->module_name = $this->module->name;
+		$orderState->template = 'shipped';
+		$orderState->pdf_invoice = true;
+		$orderState->module_name = $this->module->name;
 		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment shipped');
 
 		if ($orderState->add()) {

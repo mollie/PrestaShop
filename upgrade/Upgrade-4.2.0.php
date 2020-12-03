@@ -47,14 +47,14 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
-    /** @var Installer $installer */
-    $installer = $module->getContainer(Installer::class);
+	/** @var Installer $installer */
+	$installer = $module->getContainer(Installer::class);
 
-    $installer->klarnaPaymentAcceptedState();
-    $installer->klarnaPaymentShippedState();
+	$installer->klarnaPaymentAcceptedState();
+	$installer->klarnaPaymentShippedState();
 
-    $acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
-    Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
 
 	return true;
 }
