@@ -47,6 +47,7 @@ use Mollie\Repository\MolCarrierInformationRepository;
 use Mollie\Repository\OrderShipmentRepository;
 use Order;
 use OrderCarrier;
+use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
@@ -72,21 +73,21 @@ class ShipmentService
 		$this->informationRepository = $informationRepository;
 	}
 
-	/**
-	 * Get shipment information.
-	 *
-	 * @param int $idOrder
-	 *
-	 * @return array|null
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * Get shipment information.
+     *
+     * @param string $orderReference
+     * @return array|null
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 3.3.0
+     */
 	public function getShipmentInformation($orderReference)
 	{
-		$order = Order::getByReference($orderReference)[0];
+		$orders = Order::getByReference($orderReference);
+		/** @var Order $order */
+        $order = $orders->getFirst();
 		if (!Validate::isLoadedObject($order)) {
 			return null;
 		}

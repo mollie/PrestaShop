@@ -106,7 +106,7 @@ class SettingsSaveService
 	/**
 	 * @param array $errors
 	 *
-	 * @return string
+	 * @return array
 	 *
 	 * @throws ApiException
 	 * @throws PrestaShopDatabaseException
@@ -146,11 +146,13 @@ class SettingsSaveService
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
 				} catch (Exception $e) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods');
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+					continue;
 				}
 
 				if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+					continue;
 				}
 
 				if ($method['issuers']) {
@@ -220,7 +222,7 @@ class SettingsSaveService
 				$errors[] = $e->getMessage();
 				Configuration::updateValue(Config::MOLLIE_API_KEY, null);
 
-				return $this->module->l('Wrong API Key!');
+				return [$this->module->l('Wrong API Key!')];
 			}
 		}
 		$this->handleKlarnaInvoiceStatus();
@@ -285,7 +287,7 @@ class SettingsSaveService
 				}
 			}
 
-			$resultMessage = $this->module->l('The configuration has been saved!');
+			$resultMessage[] = $this->module->l('The configuration has been saved!');
 		} else {
 			$resultMessage = [];
 			foreach ($errors as $error) {
@@ -296,18 +298,15 @@ class SettingsSaveService
 		return $resultMessage;
 	}
 
-	/**
-	 * Get all status values from the form.
-	 *
-	 * @param $key string The key that is used in the HelperForm
-	 *
-	 * @return array Array with statuses
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * Get all status values from the form.
+     *
+     * @param string $key The key that is used in the HelperForm
+     *
+     * @return array Array with statuses
+     *
+     * @since 3.3.0
+     */
 	private function getStatusesValue($key)
 	{
 		$statesEnabled = [];

@@ -117,7 +117,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 			$cart = new Cart($idCart);
 			$data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
 			if ($data['auth']) {
-				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (int) $idCart);
+				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (string) $idCart);
 			}
 		}
 

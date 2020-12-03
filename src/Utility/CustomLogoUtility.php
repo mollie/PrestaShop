@@ -42,7 +42,7 @@ use Mollie\Config\Config;
 class CustomLogoUtility
 {
 	/**
-	 * @param $methodName
+	 * @param string $methodName
 	 *
 	 * @return bool
 	 */

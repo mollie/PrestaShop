@@ -258,8 +258,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 			throw $orderExceptionHandler->handle($e);
 		}
-
-		return $payment;
 	}
 
 	/**

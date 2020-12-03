@@ -224,14 +224,13 @@ class Mollie extends PaymentModule
 		return $this->identifier;
 	}
 
-	/**
-	 * @return string
-	 *
-	 * @throws Exception
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
+    /**
+     * @return string|void
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
+     */
 	public function getContent()
 	{
 		if (Tools::getValue('ajax')) {
@@ -303,19 +302,18 @@ class Mollie extends PaymentModule
 				$updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
 			}
 		}
-		$resultMessage = '';
-		$warningMessage = '';
 
+        $resultMessages = '';
 		$errors = [];
 
 		if (Tools::isSubmit("submit{$this->name}")) {
 			/** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
 			$saveSettingsService = $this->getContainer(\Mollie\Service\SettingsSaveService::class);
-			$resultMessage = $saveSettingsService->saveSettings($errors);
+            $resultMessages = $saveSettingsService->saveSettings($errors);
 			if (!empty($errors)) {
-				$this->context->controller->errors = $resultMessage;
+				$this->context->controller->errors[] = $resultMessages;
 			} else {
-				$this->context->controller->confirmations[] = $resultMessage;
+				$this->context->controller->confirmations[] = $resultMessages;
 			}
 		}
 		/** @var Mollie\Service\LanguageService $langService */
@@ -325,8 +323,7 @@ class Mollie extends PaymentModule
 			'title_status' => $this->l('%s statuses:'),
 			'title_visual' => $this->l('Visual settings:'),
 			'title_debug' => $this->l('Debug info:'),
-			'msg_result' => $resultMessage,
-			'msg_warning' => $warningMessage,
+			'msg_result' => $resultMessages,
 			'path' => $this->_path,
 			'payscreen_locale_value' => Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE),
 			'val_images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
@@ -573,17 +570,14 @@ class Mollie extends PaymentModule
 		return $html;
 	}
 
-	/**
-	 * @param array $params Hook parameters
-	 *
-	 * @return string Hook HTML
-	 *
-	 * @throws Adapter_Exception
-	 * @throws Exception
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
+    /**
+     * @param array $params Hook parameters
+     *
+     * @return string Hook HTML
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
 	public function hookDisplayAdminOrder($params)
 	{
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
@@ -622,13 +616,12 @@ class Mollie extends PaymentModule
 		return $this->display(__FILE__, 'order_info.tpl');
 	}
 
-	/**
-	 * @return string
-	 *
-	 * @throws Exception
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
+    /**
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
 	public function hookDisplayPayment()
 	{
 		$smarty = $this->context->smarty;
@@ -745,15 +738,15 @@ class Mollie extends PaymentModule
 		return $paymentOptions;
 	}
 
-	/**
-	 * @param array $params
-	 *
-	 * @return array|null
-	 *
-	 * @throws Exception
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
+    /**
+     * @param array $params
+     *
+     * @return array|null
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+     */
 	public function hookPaymentOptions($params)
 	{
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
@@ -964,19 +957,17 @@ class Mollie extends PaymentModule
 		return $paymentOptions;
 	}
 
-	/**
-	 * @return string
-	 *
-	 * @throws Exception
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
+    /**
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
 	public function hookDisplayOrderConfirmation()
 	{
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-		$payment = $paymentMethodRepo->getPaymentBy('cart_id', (int) Tools::getValue('id_cart'));
+		$payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
 		if ($payment && MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status']) {
 			$this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
@@ -986,13 +977,11 @@ class Mollie extends PaymentModule
 		return '';
 	}
 
-	/**
-	 * @return array
-	 *
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * @return array
+     *
+     * @since 3.3.0
+     */
 	public function displayAjaxMollieMethodConfig()
 	{
 		header('Content-Type: application/json;charset=UTF-8');
@@ -1072,13 +1061,11 @@ class Mollie extends PaymentModule
 		];
 	}
 
-	/**
-	 * @return array
-	 *
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * @return array
+     *
+     * @since 3.3.0
+     */
 	public function displayAjaxMollieCarrierConfig()
 	{
 		header('Content-Type: application/json;charset=UTF-8');
@@ -1089,15 +1076,11 @@ class Mollie extends PaymentModule
 		return ['success' => true, 'carriers' => $carrierService->carrierConfig($dbConfig)];
 	}
 
-	/**
-	 * @return array
-	 *
-	 * @throws Adapter_Exception
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * @return array
+     *
+     * @since 3.3.0
+     */
 	public function displayAjaxMollieOrderInfo()
 	{
 		header('Content-Type: application/json;charset=UTF-8');
@@ -1117,7 +1100,6 @@ class Mollie extends PaymentModule
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws Adapter_Exception
 	 *
 	 * @since 3.3.0
 	 */

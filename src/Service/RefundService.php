@@ -135,19 +135,17 @@ class RefundService
 		];
 	}
 
-	/**
-	 * @param string $transactionId
-	 * @param array  $lines
-	 *
-	 * @return array
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * @param array $orderData
+     * @param array $lines
+     *
+     * @return array
+     *
+     * @throws CoreException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 3.3.0
+     */
 	public function doRefundOrderLines(array $orderData, $lines = [])
 	{
 		$transactionId = $orderData['id'];

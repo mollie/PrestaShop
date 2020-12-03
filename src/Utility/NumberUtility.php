@@ -36,19 +36,21 @@
 
 namespace Mollie\Utility;
 
+use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
 use MolliePrefix\PrestaShop\Decimal\Number;
 
 class NumberUtility
 {
-	/**
-	 * Decreases number by its given percentage
-	 * E.g 75/1.5 = 50.
-	 *
-	 * @param float $number
-	 * @param float $percentage
-	 *
-	 * @return float
-	 */
+    /**
+     * Decreases number by its given percentage
+     * E.g 75/1.5 = 50.
+     *
+     * @param float $number
+     * @param float $percentage
+     *
+     * @return float
+     * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
+     */
 	public static function decreaseByPercentage($number, $percentage)
 	{
 		if (!$percentage || $percentage <= 0) {
@@ -167,10 +169,10 @@ class NumberUtility
 	/**
 	 * @param float $number
 	 *
-	 * @return Number
+	 * @return DecimalNumber
 	 */
 	private static function toObject($number)
 	{
-		return new Number((string) $number);
+		return new DecimalNumber((string) $number);
 	}
 }

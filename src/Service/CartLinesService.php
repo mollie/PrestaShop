@@ -106,7 +106,7 @@ class CartLinesService
 		$wrapping = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
 		$totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
 		$remaining = round(
-			CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
+			CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $shipping, (float) $wrapping),
 			$apiRoundingPrecision
 		);
 

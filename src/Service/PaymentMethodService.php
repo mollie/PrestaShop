@@ -41,6 +41,7 @@ use Cart;
 use Configuration;
 use Context;
 use Country;
+use Currency;
 use Customer;
 use Mollie;
 use Mollie\Config\Config;
@@ -259,22 +260,24 @@ class PaymentMethodService
 		return $methods;
 	}
 
-	/**
-	 * Get payment data.
-	 *
-	 * @param float|string $amount
-	 * @param              $currency
-	 * @param string       $method
-	 * @param string|null  $issuer
-	 * @param int|Cart     $cartId
-	 * @param string       $secureKey
-	 * @param bool         $qrCode
-	 * @param string       $orderReference
-	 *
-	 * @return PaymentData|OrderData
-	 *
-	 * @since 3.3.0 Order reference
-	 */
+    /**
+     * Get payment data.
+     *
+     * @param float|string $amount
+     * @param string $currency
+     * @param string $method
+     * @param string|null $issuer
+     * @param int|Cart $cartId
+     * @param string $secureKey
+     * @param MolPaymentMethod $molPaymentMethod
+     * @param bool $qrCode
+     * @param string $orderReference
+     *
+     * @param bool $cardToken
+     * @return PaymentData|OrderData
+     *
+     * @since 3.3.0 Order reference
+     */
 	public function getPaymentData(
 		$amount,
 		$currency,
@@ -369,7 +372,7 @@ class PaymentMethodService
 			}
 
 			if (PaymentMethod::BANKTRANSFER === $method) {
-				$paymentData->setLocale(LocaleUtility::getWebshopLocale());
+				$paymentData->setLocale(LocaleUtility::getWebShopLocale());
 			}
 
 			$isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
@@ -401,7 +404,7 @@ class PaymentMethodService
 			$orderData->setMethod($molPaymentMethod->id_method);
 			$orderData->setMetadata($metaData);
 
-			$currency = new \Currency($cart->id_currency);
+			$currency = new Currency($cart->id_currency);
 			$selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
 			$orderData->setLines(
 				$this->cartLinesService->getCartLines(
@@ -449,7 +452,7 @@ class PaymentMethodService
 				&& Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE === Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE))
 			|| Mollie\Config\Config::MOLLIE_ORDERS_API === $method
 		) {
-			$locale = LocaleUtility::getWebshopLocale();
+			$locale = LocaleUtility::getWebShopLocale();
 			if (preg_match(
 				'/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
 				$locale
