@@ -5,7 +5,8 @@ parameters:
   autoload_directories:
     - %currentWorkingDirectory%/vendor
   paths:
-
+    - ../../src
+    - ../../controllers
     - ../../mollie.php
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
