@@ -222,10 +222,10 @@ class PaymentReturnService
 
 		$orderStatusId = (int) Mollie\Config\Config::getStatuses()[$orderStatus];
 		$this->paymentMethodRepository->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);
-        $isKlarnaOrder = in_array($paymentMethod, Config::KLARNA_PAYMENTS, false);
-        if ($orderStatus === OrderStatus::STATUS_COMPLETED && $isKlarnaOrder) {
-            $orderStatusId = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
-        }
+		$isKlarnaOrder = in_array($paymentMethod, Config::KLARNA_PAYMENTS, false);
+		if (OrderStatus::STATUS_COMPLETED === $orderStatus && $isKlarnaOrder) {
+			$orderStatusId = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
+		}
 		$order = new Order($orderId);
 		$order->payment = $paymentMethod;
 		$order->update();
