@@ -202,7 +202,10 @@ class TransactionService
 					} elseif (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key) {
 						$status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
 						$paymentStatus = (int) Config::getStatuses()[$status];
-
+						$isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);
+						if ($status === OrderStatus::STATUS_COMPLETED && $isKlarnaOrder) {
+                            $paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
+                        }
 						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
 							$this->updateTransaction($orderId, $transaction);
 						}

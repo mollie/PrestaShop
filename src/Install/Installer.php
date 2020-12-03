@@ -321,7 +321,7 @@ class Installer implements InstallerInterface
 		$orderState->delivery = false;
 		$orderState->logable = true;
 		$orderState->invoice = false;
-		$orderState->pdf_invoice = false;
+		$orderState->pdf_invoice = true;
 		$orderState->paid = true;
 		$orderState->template = 'payment';
 		$orderState->module_name = $this->module->name;
@@ -355,7 +355,8 @@ class Installer implements InstallerInterface
 		$orderState->paid = true;
 		$orderState->delivery = true;
         $orderState->template = 'shipped';
-		$orderState->module_name = $this->module->name;
+        $orderState->pdf_invoice = true;
+        $orderState->module_name = $this->module->name;
 		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment shipped');
 
 		if ($orderState->add()) {

@@ -35,7 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
+            "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"
