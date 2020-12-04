@@ -40,13 +40,13 @@ use Context;
 
 class CartDuplicationService
 {
-    /**
-     * @param int $cartId
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
+	/**
+	 * @param int $cartId
+	 *
+	 * @return int
+	 *
+	 * @throws \Exception
+	 */
 	public function restoreCart($cartId)
 	{
 		$context = Context::getContext();

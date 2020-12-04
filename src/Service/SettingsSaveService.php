@@ -85,20 +85,20 @@ class SettingsSaveService
 	 */
 	private $paymentMethodPositionHandler;
 
-    /**
-     * @var ApiService
-     */
-    private $apiService;
+	/**
+	 * @var ApiService
+	 */
+	private $apiService;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		CountryRepository $countryRepository,
 		PaymentMethodRepository $paymentMethodRepository,
 		PaymentMethodService $paymentMethodService,
-        ApiService $apiService,
+		ApiService $apiService,
 		MolCarrierInformationService $carrierInformationService,
 		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
-        ApiKeyService $apiKeyService
+		ApiKeyService $apiKeyService
 	) {
 		$this->module = $module;
 		$this->countryRepository = $countryRepository;
@@ -107,8 +107,8 @@ class SettingsSaveService
 		$this->apiKeyService = $apiKeyService;
 		$this->carrierInformationService = $carrierInformationService;
 		$this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
-        $this->apiService = $apiService;
-    }
+		$this->apiService = $apiService;
+	}
 
 	/**
 	 * @param array $errors

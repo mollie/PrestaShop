@@ -60,11 +60,13 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 		return new PrestaShopCollection($this->fullyClassifiedClassName);
 	}
 
-    /**
-     * @param array $keyValueCriteria
-     * @return ObjectModel|null
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param array $keyValueCriteria
+	 *
+	 * @return ObjectModel|null
+	 *
+	 * @throws PrestaShopException
+	 */
 	public function findOneBy(array $keyValueCriteria)
 	{
 		$psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);

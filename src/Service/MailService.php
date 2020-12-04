@@ -97,13 +97,13 @@ class MailService
 		);
 	}
 
-    /**
-     * @param Order $order
-     * @param string $orderStateId
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
+	/**
+	 * @param Order $order
+	 * @param string $orderStateId
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 * @throws \PrestaShopException
+	 */
 	public function sendOrderConfMail(Order $order, $orderStateId)
 	{
 		$orderLanguage = new Language((int) $order->id_lang);
@@ -130,12 +130,13 @@ class MailService
 		);
 	}
 
-    /**
-     * @param Order $order
-     * @param string $orderStateId
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
+	/**
+	 * @param Order $order
+	 * @param string $orderStateId
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 * @throws \PrestaShopException
+	 */
 	public function sendNewOrderMail(Order $order, $orderStateId)
 	{
 		if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
