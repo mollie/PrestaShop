@@ -31,7 +31,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
 
-    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap /var/www/html/mollie17/modules/mollie/tests/Unit/bootstrap.php --configuration /var/www/html/mollie17/modules/mollie/tests/Unit/phpunit.xml
+    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap /var/www/html/mollie17/modules/mollie/tests/Unit/bootstrap.php
 
   phpstan:
     name: PHPStan
