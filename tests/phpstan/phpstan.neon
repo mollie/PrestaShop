@@ -38,5 +38,6 @@ parameters:
     - '#Call to method hookActionValidateOrder\(\) on an unknown class Ps_EmailAlerts.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
+    - '#Variable \$order in PHPDoc tag \@var does not match assigned variable \$mollieOrder.#'
 
   level: 5

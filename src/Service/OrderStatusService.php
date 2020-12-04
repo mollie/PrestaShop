@@ -140,7 +140,7 @@ class OrderStatusService
 
 	private function checkIfOrderConfNeedsToBeSend($statusId)
 	{
-		if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_NEW_ORDER)) {
+		if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
 			return false;
 		}
 

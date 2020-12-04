@@ -51,6 +51,7 @@ use MolliePrefix\Mollie\Api\Resources\BaseCollection;
 use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
@@ -386,8 +387,11 @@ class ApiService
 			$order = null;
 		}
 
+		/** @var PaymentCollection $molliePayments */
+		$molliePayments = $mollieOrder->payments();
+
 		/** @var Payment $payment */
-		foreach ($mollieOrder->payments() as $payment) {
+		foreach ($molliePayments as $payment) {
 			$amountRemaining = [
 				'value' => '0.00',
 				'currency' => $payment->amount->currency,
