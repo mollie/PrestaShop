@@ -97,12 +97,13 @@ class MailService
 		);
 	}
 
-	/**
-	 * @param $orderStateId
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
+    /**
+     * @param Order $order
+     * @param string $orderStateId
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
 	public function sendOrderConfMail(Order $order, $orderStateId)
 	{
 		$orderLanguage = new Language((int) $order->id_lang);
@@ -129,12 +130,12 @@ class MailService
 		);
 	}
 
-	/**
-	 * @param $orderStateId
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
+    /**
+     * @param Order $order
+     * @param string $orderStateId
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
 	public function sendNewOrderMail(Order $order, $orderStateId)
 	{
 		if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
@@ -197,7 +198,7 @@ class MailService
 					}
 
 					if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-						$customization_text .= $this->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
+						$customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
 					}
 
 					$customization_quantity = (int) $customization['quantity'];
@@ -276,7 +277,7 @@ class MailService
 			'{invoice_other}' => $invoice->other,
 			'{order_name}' => $order->getUniqReference(),
 			'{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
-			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? $this->trans('No carrier', [], 'Admin.Payment.Notification') : $carrier->name,
+			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? Context::getContext()->getTranslator()->trans('No carrier', [], 'Admin.Payment.Notification') : $carrier->name,
 			'{payment}' => Tools::substr($order->payment, 0, 255),
 			'{products}' => $product_list_html,
 			'{products_txt}' => $product_list_txt,

@@ -410,7 +410,7 @@ class Installer implements InstallerInterface
 		$sql->from(bqSQL(OrderState::$definition['table']));
 		$sql->where('`shipped` = 1');
 
-		$defaultStatuses = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+		$defaultStatuses = Db::getInstance()->executeS($sql);
 		if (!is_array($defaultStatuses)) {
 			return;
 		}

@@ -37,6 +37,7 @@
 namespace Mollie\Service;
 
 use Cart;
+use Customer;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
@@ -70,6 +71,7 @@ class CustomerService
 		$customer = new \Customer($cart->id_customer);
 
 		$fullName = "{$customer->firstname} {$customer->lastname}";
+		/** @var Customer|null $molCustomer */
 		$molCustomer = $this->customerRepository->findOneBy(
 			[
 				'name' => $fullName,

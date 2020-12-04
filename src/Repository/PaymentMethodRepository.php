@@ -123,7 +123,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	public function getPaymentBy($column, $id)
 	{
 		try {
-			$paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+			$paidPayment = Db::getInstance()->getRow(
 				sprintf(
 					'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
 					_DB_PREFIX_ . 'mollie_payments',
@@ -169,7 +169,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	public function tryAddOrderReferenceColumn()
 	{
 		try {
-			if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+			if (!Db::getInstance()->getValue('
                 SELECT COUNT(*)
                 FROM information_schema.COLUMNS
                 WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'

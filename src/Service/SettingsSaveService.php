@@ -85,14 +85,20 @@ class SettingsSaveService
 	 */
 	private $paymentMethodPositionHandler;
 
-	public function __construct(
+    /**
+     * @var ApiService
+     */
+    private $apiService;
+
+    public function __construct(
 		Mollie $module,
 		CountryRepository $countryRepository,
 		PaymentMethodRepository $paymentMethodRepository,
 		PaymentMethodService $paymentMethodService,
-		ApiKeyService $apiKeyService,
+        ApiService $apiService,
 		MolCarrierInformationService $carrierInformationService,
-		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler
+		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
+        ApiKeyService $apiKeyService
 	) {
 		$this->module = $module;
 		$this->countryRepository = $countryRepository;
@@ -101,7 +107,8 @@ class SettingsSaveService
 		$this->apiKeyService = $apiKeyService;
 		$this->carrierInformationService = $carrierInformationService;
 		$this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
-	}
+        $this->apiService = $apiService;
+    }
 
 	/**
 	 * @param array $errors
@@ -141,7 +148,7 @@ class SettingsSaveService
 
 		if ($oldEnvironment === $environment && null !== $this->module->api->methods && $apiKey) {
 			$savedPaymentMethods = [];
-			foreach ($this->apiKeyService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
+			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;

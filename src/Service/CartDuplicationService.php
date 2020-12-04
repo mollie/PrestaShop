@@ -40,13 +40,13 @@ use Context;
 
 class CartDuplicationService
 {
-	/**
-	 * @param int $cartId
-	 *
-	 * @return int
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 */
+    /**
+     * @param int $cartId
+     *
+     * @return int
+     *
+     * @throws \Exception
+     */
 	public function restoreCart($cartId)
 	{
 		$context = Context::getContext();
@@ -56,7 +56,7 @@ class CartDuplicationService
 			/** @var Cart $duplicatedCart */
 			$duplicatedCart = $duplication['cart'];
 
-			$context->cookie->id_cart = $duplicatedCart->id;
+			$context->cookie->__set('id_cart', $duplicatedCart->id);
 			$context->cart = $duplicatedCart;
 			$context->cookie->write();
 

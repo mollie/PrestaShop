@@ -47,7 +47,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_3_3_0($module)
 {
 	try {
-		if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+		if (!Db::getInstance()->getValue('
                 SELECT COUNT(*)
                 FROM information_schema.COLUMNS
                 WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'

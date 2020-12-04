@@ -48,6 +48,8 @@ use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\UrlPathUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolPaymentMethod;
@@ -105,25 +107,27 @@ class ApiService
 		$this->transactionService = $transactionService;
 	}
 
-	/**
-	 * Get payment methods to show on the configuration page.
-	 *
-	 * @param $api
-	 * @param $path
-	 * @param bool $active Active methods only
-	 *
-	 * @return array
-	 *
-	 * @since 3.0.0
-	 * @since 3.4.0 public
-	 *
-	 * @public ✓ This method is part of the public API
-	 */
+    /**
+     * Get payment methods to show on the configuration page.
+     *
+     * @param MollieApiClient $api
+     * @param string $path
+     * @param bool $active Active methods only
+     *
+     * @return array
+     *
+     * @since 3.0.0
+     * @since 3.4.0 public
+     *
+     * @public ✓ This method is part of the public API
+     */
 	public function getMethodsForConfig(MollieApiClient $api, $path, $active = false)
 	{
 		$notAvailable = [];
 		try {
-			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
+		    /** @var BaseCollection|MethodCollection $apiMethods */
+			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay']);
+			$apiMethods = $apiMethods->getArrayCopy();
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
 
@@ -197,7 +201,7 @@ class ApiService
 	{
 		$methods = [];
 		$defaultPaymentMethod = new MolPaymentMethod();
-		$defaultPaymentMethod->enabled = 0;
+		$defaultPaymentMethod->enabled = false;
 		$defaultPaymentMethod->title = '';
 		$defaultPaymentMethod->method = 'payments';
 		$defaultPaymentMethod->description = '';
@@ -261,24 +265,22 @@ class ApiService
 		return $methods;
 	}
 
-	/**
-	 * @param string $transactionId
-	 * @param bool $process Process the new payment/order status
-	 *
-	 * @return array|null
-	 *
-	 * @throws ApiException
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
-	 *
-	 * @since 3.3.0
-	 * @since 3.3.2 $process option
-	 */
+    /**
+     * @param MollieApiClient $api
+     * @param string $transactionId
+     * @param bool $process Process the new payment/order status
+     *
+     * @return array|null
+     *
+     * @throws ApiException
+     * @throws CoreException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 3.3.0
+     * @since 3.3.2 $process option
+     */
 	public function getFilteredApiPayment($api, $transactionId, $process = false)
 	{
-		/** @var Payment $payment */
 		$payment = $api->payments->get($transactionId);
 		if ($process) {
 			$this->transactionService->processTransaction($payment);

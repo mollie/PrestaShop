@@ -701,7 +701,7 @@ class Mollie extends PaymentModule
 			return [];
 		}
 
-		/** @var \Mollie\Service\IssuerService $issuerService */
+		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
@@ -751,13 +751,16 @@ class Mollie extends PaymentModule
 		}
 
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-		/** @var \Mollie\Service\IssuerService $issuerService */
-		/** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
-		/** @var \Mollie\Validator\VoucherValidator $voucherValidator */
 		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
-		$issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
-		$creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
-		$voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
+
+        /** @var \Mollie\Service\IssuerService $issuerService */
+        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+
+        /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
+        $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
+
+        /** @var \Mollie\Validator\VoucherValidator $voucherValidator */
+        $voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
@@ -1141,7 +1144,7 @@ class Mollie extends PaymentModule
 		try {
 			/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 			$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-			$dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (int) $idOrder);
+			$dbPayment = $paymentMethodRepo->getPaymentBy('order_id', $idOrder);
 		} catch (PrestaShopDatabaseException $e) {
 			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
 
@@ -1198,9 +1201,10 @@ class Mollie extends PaymentModule
 			return true;
 		}
 		/** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
-		/** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
 		$orderConfMailValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
-		$newOrderMailValidator = $this->getContainer(\Mollie\Validator\NewOrderMailValidator::class);
+
+        /** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
+        $newOrderMailValidator = $this->getContainer(\Mollie\Validator\NewOrderMailValidator::class);
 
 		if ('order_conf' === $params['template']) {
 			return $orderConfMailValidator->validate((int) $order->current_state);
@@ -1368,13 +1372,12 @@ class Mollie extends PaymentModule
 		}
 	}
 
-	/**
-	 * @param $idOrder
-	 *
-	 * @return string
-	 *
-	 * @throws Exception
-	 */
+    /**
+     * @param int $orderId
+     * @return string
+     *
+     * @throws PrestaShopDatabaseException
+     */
 	public static function resendOrderPaymentLink($orderId)
 	{
 		$module = Module::getInstanceByName('mollie');
