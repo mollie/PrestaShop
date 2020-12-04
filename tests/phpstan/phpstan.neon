@@ -28,6 +28,16 @@ parameters:
     - '#Parameter \#1 \$app_id of static method FacebookAds\\Api::init\(\) expects string, null given.#'
     - '#Parameter \#2 \$app_secret of static method FacebookAds\\Api::init\(\) expects string, null given.#'
     - '#Parameter \#1 \$id of class MolPaymentMethod constructor expects int|null, string|false|null given.#'
-    - '#Parameter \#1 \$id of class Customer constructor expects null, int given.#'
+    - '#Class OrderOpcControllerCore not found.#'
+    - '#Variable \$payment in PHPDoc tag @var does not match assigned variable \$order.#'
+    - '#Variable \$payment in PHPDoc tag @var does not match assigned variable \$apiPayment.#'
+    - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, int given.#'
+    - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, int<min,-1>|int<1, max> given.#'
+    - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, mixed given.#'
+    - '#PHPDoc tag \@var for variable \$emailAlertsModule contains unknown class Ps_EmailAlerts.#'
+    - '#Call to method hookActionValidateOrder\(\) on an unknown class Ps_EmailAlerts.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
+    - '#Variable \$order in PHPDoc tag \@var does not match assigned variable \$mollieOrder.#'
 
   level: 5

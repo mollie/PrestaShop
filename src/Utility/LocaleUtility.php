@@ -44,22 +44,13 @@ use Tools;
 class LocaleUtility
 {
 	/**
-	 * Get webshop locale.
-	 *
 	 * @return string
-	 *
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.0.0
 	 */
-	public static function getWebshopLocale()
+	public static function getWebShopLocale()
 	{
 		// Current language
-		if (Context::getContext()->language instanceof Language) {
-			$language = Context::getContext()->language->iso_code;
-		} else {
-			$language = 'en';
-		}
+		$language = Context::getContext()->language->iso_code;
+
 		$supportedLanguages = [
 			'de',
 			'en',

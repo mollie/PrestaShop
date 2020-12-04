@@ -196,26 +196,17 @@ class MolliePaymentMailService
 			);
 		}
 		$newPayment = $api->payments->create($paymentData);
+		$updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
 
-		if (isset($newPayment)) {
-			$updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
+		if ($updateTransactionId) {
+			$checkoutUrl = $newPayment->getCheckoutUrl();
 
-			if ($updateTransactionId) {
-				$checkoutUrl = $newPayment->getCheckoutUrl();
-
-				return [
-					'success' => true,
-					'message' => $this->module->l('Second chance email was successfully send!'),
-					'checkoutUrl' => $checkoutUrl,
-				];
-			}
-		}
-
-		return
-			[
-				'success' => false,
-				'message' => $this->module->l('Failed to send second chance email!'),
+			return [
+				'success' => true,
+				'message' => $this->module->l('Second chance email was successfully send!'),
+				'checkoutUrl' => $checkoutUrl,
 			];
+		}
 	}
 
 	private function getCheckoutUrl($molliePayments)

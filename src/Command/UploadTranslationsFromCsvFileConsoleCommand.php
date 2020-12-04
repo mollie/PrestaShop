@@ -70,7 +70,7 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		include_once $this->module->getLocalPath().'/translations/en.php';
+		include_once $this->module->getLocalPath() . '/translations/en.php';
 
 		$csvHeader = "<?php \n\nglobal \$_MODULE;\n\$_MODULE = array();\n";
 		try {
@@ -120,7 +120,7 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 		$translatedText = str_replace("'", "\'", $values[$position]);
 
 		$translationLine =
-			'$_MODULE[\''.$values[self::CSV_POSITION_ID].'\'] = \''.$translatedText."';\n";
+			'$_MODULE[\'' . $values[self::CSV_POSITION_ID] . '\'] = \'' . $translatedText . "';\n";
 
 		file_put_contents($file, $translationLine, FILE_APPEND);
 	}

@@ -81,7 +81,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
 		/** @var PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod, $environment);
 		$method = new MolPaymentMethod($methodId);
 		switch ($paymentStatus) {
@@ -135,7 +135,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$this->context->smarty->assign($apiKeysTestInfo);
 		$this->ajaxDie(json_encode(
 			[
-				'template' => $this->context->smarty->fetch($this->module->getLocalPath().'views/templates/admin/api_test_results.tpl'),
+				'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
 			]
 		));
 	}

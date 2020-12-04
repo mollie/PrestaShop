@@ -49,12 +49,12 @@ class OrderData implements JsonSerializable
 	private $amount;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	private $redirectUrl;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	private $webhookUrl;
 
@@ -214,7 +214,7 @@ class OrderData implements JsonSerializable
 	}
 
 	/**
-	 * @return null
+	 * @return string
 	 */
 	public function getLocale()
 	{
@@ -222,7 +222,7 @@ class OrderData implements JsonSerializable
 	}
 
 	/**
-	 * @param null $locale
+	 * @param string $locale
 	 */
 	public function setLocale($locale)
 	{
@@ -230,7 +230,7 @@ class OrderData implements JsonSerializable
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getCardToken()
 	{
@@ -238,7 +238,7 @@ class OrderData implements JsonSerializable
 	}
 
 	/**
-	 * @param mixed $cardToken
+	 * @param string $cardToken
 	 */
 	public function setCardToken($cardToken)
 	{

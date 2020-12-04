@@ -43,6 +43,14 @@ use Tools;
 
 class ApiKeyService
 {
+	/**
+	 * @param string $apiKey
+	 * @param string $moduleVersion
+	 *
+	 * @return MollieApiClient|void
+	 *
+	 * @throws ApiException
+	 */
 	public function setApiKey($apiKey, $moduleVersion)
 	{
 		$api = new MollieApiClient();
@@ -55,15 +63,14 @@ class ApiKeyService
 			}
 		} elseif (!empty($context->employee)
 			&& Tools::getValue('Mollie_Api_Key')
-			&& $context->controller instanceof AdminModulesController
 		) {
 			$api->setApiKey(Tools::getValue('Mollie_Api_Key'));
 		}
 		if (defined('_TB_VERSION_')) {
-			$api->addVersionString('ThirtyBees/'._TB_VERSION_);
+			$api->addVersionString('ThirtyBees/' . _TB_VERSION_);
 			$api->addVersionString("MollieThirtyBees/{$moduleVersion}");
 		} else {
-			$api->addVersionString('PrestaShop/'._PS_VERSION_);
+			$api->addVersionString('PrestaShop/' . _PS_VERSION_);
 			$api->addVersionString("MolliePrestaShop/{$moduleVersion}");
 		}
 

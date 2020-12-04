@@ -45,13 +45,11 @@ class TextGeneratorUtility
 	/**
 	 * Generate a description from the Cart.
 	 *
-	 * @param Cart|int $cartId         Cart or Cart ID
-	 * @param string   $orderReference Order reference
+	 * @param string $methodDescription
+	 * @param Cart|int $cartId Cart or Cart ID
+	 * @param string $orderReference Order reference
 	 *
 	 * @return string Description
-	 *
-	 * @throws PrestaShopException
-	 * @throws CoreException
 	 *
 	 * @since 3.0.0
 	 */

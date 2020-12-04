@@ -55,7 +55,7 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 		}
 
 		if ('+' !== $phoneNumber[0]) {
-			$phoneNumber = '+'.$phoneNumber;
+			$phoneNumber = '+' . $phoneNumber;
 		}
 
 		$regex = "/^\+\d{3,18}$/";

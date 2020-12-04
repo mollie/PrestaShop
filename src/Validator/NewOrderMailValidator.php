@@ -42,7 +42,7 @@ use Mollie\Config\Config;
 class NewOrderMailValidator implements MailValidatorInterface
 {
 	/**
-	 * @param $orderState int
+	 * @param int $orderState
 	 *
 	 * @return bool
 	 */
@@ -54,6 +54,7 @@ class NewOrderMailValidator implements MailValidatorInterface
 			case Config::NEW_ORDER_MAIL_SEND_ON_PAID:
 				return $this->validateOrderState($orderState);
 			case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
+			default:
 				return false;
 		}
 	}

@@ -51,7 +51,7 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
@@ -117,7 +117,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 			$cart = new Cart($idCart);
 			$data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
 			if ($data['auth']) {
-				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (int) $idCart);
+				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (string) $idCart);
 			}
 		}
 
@@ -169,8 +169,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	/**
 	 * Prepend module path if PS version >= 1.7.
 	 *
-	 * @param string      $template
-	 * @param array       $params
+	 * @param string $template
+	 * @param array $params
 	 * @param string|null $locale
 	 *
 	 * @throws PrestaShopException

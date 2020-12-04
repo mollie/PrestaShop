@@ -49,7 +49,7 @@ class MethodCountryRepository
 		$sql = new DbQuery();
 		$sql->select('`id_mol_country`');
 		$sql->from('mol_country');
-		$sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = '.(int) $countryId.' OR all_countries = 1)');
+		$sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int) $countryId . ' OR all_countries = 1)');
 
 		return Db::getInstance()->getValue($sql);
 	}
@@ -59,7 +59,7 @@ class MethodCountryRepository
 		$sql = new DbQuery();
 		$sql->select('`id_mol_country`');
 		$sql->from('mol_excluded_country');
-		$sql->where('`id_method` = "'.pSQL($methodId).'" AND ( id_country = '.(int) $countryId.' OR all_countries = 1)');
+		$sql->where('`id_method` = "' . pSQL($methodId) . '" AND ( id_country = ' . (int) $countryId . ' OR all_countries = 1)');
 
 		$result = Db::getInstance()->getValue($sql);
 

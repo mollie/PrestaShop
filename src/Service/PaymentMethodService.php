@@ -41,6 +41,7 @@ use Cart;
 use Configuration;
 use Context;
 use Country;
+use Currency;
 use Customer;
 use Mollie;
 use Mollie\Config\Config;
@@ -141,17 +142,17 @@ class PaymentMethodService
 		}
 		$paymentMethod->id_method = $method['id'];
 		$paymentMethod->method_name = $method['name'];
-		$paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED.$method['id']);
-		$paymentMethod->title = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TITLE.$method['id']);
-		$paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API.$method['id']);
-		$paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION.$method['id']);
-		$paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES.$method['id']);
-		$paymentMethod->minimal_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE.$method['id']);
-		$paymentMethod->max_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_ORDER_VALUE.$method['id']);
-		$paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE.$method['id']);
-		$paymentMethod->surcharge_fixed_amount = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT.$method['id']);
-		$paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE.$method['id']);
-		$paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT.$method['id']);
+		$paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
+		$paymentMethod->title = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TITLE . $method['id']);
+		$paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
+		$paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
+		$paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
+		$paymentMethod->minimal_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
+		$paymentMethod->max_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
+		$paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
+		$paymentMethod->surcharge_fixed_amount = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT . $method['id']);
+		$paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
+		$paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
 		$paymentMethod->images_json = json_encode($method['image']);
 		$paymentMethod->live_environment = $environment;
 
@@ -263,13 +264,15 @@ class PaymentMethodService
 	 * Get payment data.
 	 *
 	 * @param float|string $amount
-	 * @param              $currency
-	 * @param string       $method
-	 * @param string|null  $issuer
-	 * @param int|Cart     $cartId
-	 * @param string       $secureKey
-	 * @param bool         $qrCode
-	 * @param string       $orderReference
+	 * @param string $currency
+	 * @param string $method
+	 * @param string|null $issuer
+	 * @param int|Cart $cartId
+	 * @param string $secureKey
+	 * @param MolPaymentMethod $molPaymentMethod
+	 * @param bool $qrCode
+	 * @param string $orderReference
+	 * @param string $cardToken
 	 *
 	 * @return PaymentData|OrderData
 	 *
@@ -285,7 +288,7 @@ class PaymentMethodService
 		MolPaymentMethod $molPaymentMethod,
 		$qrCode = false,
 		$orderReference = '',
-		$cardToken = false
+		$cardToken = ''
 	) {
 		$totalAmount = TextFormatUtility::formatNumber($amount, 2);
 		if (!$orderReference) {
@@ -369,7 +372,7 @@ class PaymentMethodService
 			}
 
 			if (PaymentMethod::BANKTRANSFER === $method) {
-				$paymentData->setLocale(LocaleUtility::getWebshopLocale());
+				$paymentData->setLocale(LocaleUtility::getWebShopLocale());
 			}
 
 			$isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
@@ -401,7 +404,7 @@ class PaymentMethodService
 			$orderData->setMethod($molPaymentMethod->id_method);
 			$orderData->setMetadata($metaData);
 
-			$currency = new \Currency($cart->id_currency);
+			$currency = new Currency($cart->id_currency);
 			$selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
 			$orderData->setLines(
 				$this->cartLinesService->getCartLines(
@@ -411,7 +414,7 @@ class PaymentMethodService
 					$cart->getSummaryDetails(),
 					$cart->getTotalShippingCost(null, true),
 					$cart->getProducts(),
-					Configuration::get('PS_GIFT_WRAPPING'),
+					(bool) Configuration::get('PS_GIFT_WRAPPING'),
 					$selectedVoucherCategory
 				));
 			$payment = [];
@@ -449,7 +452,7 @@ class PaymentMethodService
 				&& Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE === Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE))
 			|| Mollie\Config\Config::MOLLIE_ORDERS_API === $method
 		) {
-			$locale = LocaleUtility::getWebshopLocale();
+			$locale = LocaleUtility::getWebShopLocale();
 			if (preg_match(
 				'/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
 				$locale

@@ -71,13 +71,13 @@ class CartLinesService
 	}
 
 	/**
-	 * @param float  $amount
-	 * @param float  $paymentFee
+	 * @param float $amount
+	 * @param float $paymentFee
 	 * @param string $currencyIsoCode
-	 * @param array  $cartSummary
-	 * @param float  $shippingCost
-	 * @param array  $cartItems
-	 * @param bool   $psGiftWrapping
+	 * @param array $cartSummary
+	 * @param float $shippingCost
+	 * @param array $cartItems
+	 * @param bool $psGiftWrapping
 	 * @param string $selectedVoucherCategory
 	 *
 	 * @return array
@@ -106,7 +106,7 @@ class CartLinesService
 		$wrapping = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
 		$totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
 		$remaining = round(
-			CalculationUtility::getCartRemainingPrice($totalPrice, $shipping, $wrapping),
+			CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $shipping, (float) $wrapping),
 			$apiRoundingPrecision
 		);
 
@@ -364,7 +364,7 @@ class CartLinesService
 	 * Optionally split into multiple lines in case of rounding inaccuracies
 	 *
 	 * @param array[] $cartLineGroup Cart Line Group WITHOUT VAT details (except target VAT rate)
-	 * @param float   $newTotal
+	 * @param float $newTotal
 	 *
 	 * @return array[]
 	 *

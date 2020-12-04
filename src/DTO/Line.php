@@ -91,9 +91,9 @@ class Line implements JsonSerializable
 	private $totalPrice;
 
 	/**
-	 * @var Amount
+	 * @var Amount|null
 	 */
-	private $discountAmount;
+	private $discountAmount = null;
 
 	/**
 	 * @var Amount
@@ -306,7 +306,7 @@ class Line implements JsonSerializable
 	}
 
 	/**
-	 * @return Amount
+	 * @return Amount|null
 	 */
 	public function getDiscountAmount()
 	{

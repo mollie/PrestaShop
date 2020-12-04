@@ -61,6 +61,8 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 	}
 
 	/**
+	 * @param array $keyValueCriteria
+	 *
 	 * @return ObjectModel|null
 	 *
 	 * @throws PrestaShopException

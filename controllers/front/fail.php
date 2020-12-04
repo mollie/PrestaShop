@@ -83,7 +83,7 @@ class MollieFailModuleFrontController extends ModuleFrontController
 		$order = new Order((int) $this->id_order);
 
 		if (!$this->id_order || !$this->module->id || !$this->secure_key || empty($this->secure_key)) {
-			Tools::redirect($redirectLink.(Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
+			Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
 		}
 
 		if ((string) $this->secure_key !== (string) $order->secure_key ||

@@ -58,7 +58,7 @@ function upgrade_module_4_1_0($module)
 	}
 
 	$sql = '
-        ALTER TABLE '._DB_PREFIX_.'mol_payment_method
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD `position` INT(10);
     ';
 
