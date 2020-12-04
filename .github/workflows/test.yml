@@ -11,7 +11,7 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - name: Run php-cs-fixer
-        uses: docker://oskarstark/php-cs-fixer-ga:latest --allow-risky=yes
+        uses: docker://oskarstark/php-cs-fixer-ga --allow-risky=yes
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
