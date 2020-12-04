@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['5.6', '7,1']
+        php-versions: ['7,1']
 
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ['1.7.6.8']
+        presta-versions: ['1.7.6.8', '1.6.1.23']
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
