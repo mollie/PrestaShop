@@ -260,24 +260,24 @@ class PaymentMethodService
 		return $methods;
 	}
 
-    /**
-     * Get payment data.
-     *
-     * @param float|string $amount
-     * @param string $currency
-     * @param string $method
-     * @param string|null $issuer
-     * @param int|Cart $cartId
-     * @param string $secureKey
-     * @param MolPaymentMethod $molPaymentMethod
-     * @param bool $qrCode
-     * @param string $orderReference
-     * @param string $cardToken
-     *
-     * @return PaymentData|OrderData
-     *
-     * @since 3.3.0 Order reference
-     */
+	/**
+	 * Get payment data.
+	 *
+	 * @param float|string $amount
+	 * @param string $currency
+	 * @param string $method
+	 * @param string|null $issuer
+	 * @param int|Cart $cartId
+	 * @param string $secureKey
+	 * @param MolPaymentMethod $molPaymentMethod
+	 * @param bool $qrCode
+	 * @param string $orderReference
+	 * @param string $cardToken
+	 *
+	 * @return PaymentData|OrderData
+	 *
+	 * @since 3.3.0 Order reference
+	 */
 	public function getPaymentData(
 		$amount,
 		$currency,
@@ -414,7 +414,7 @@ class PaymentMethodService
 					$cart->getSummaryDetails(),
 					$cart->getTotalShippingCost(null, true),
 					$cart->getProducts(),
-                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+					(bool) Configuration::get('PS_GIFT_WRAPPING'),
 					$selectedVoucherCategory
 				));
 			$payment = [];

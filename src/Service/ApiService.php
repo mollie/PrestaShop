@@ -37,7 +37,6 @@
 namespace Mollie\Service;
 
 use Configuration;
-use ErrorException;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
@@ -331,15 +330,15 @@ class ApiService
 		return $payment;
 	}
 
-    /**
-     * @param $api
-     * @param string $transactionId
-     *
-     * @return array|null
-     *
-     * @since 3.3.0
-     * @since 3.3.2 $process option
-     */
+	/**
+	 * @param $api
+	 * @param string $transactionId
+	 *
+	 * @return array|null
+	 *
+	 * @since 3.3.0
+	 * @since 3.3.2 $process option
+	 */
 	public function getFilteredApiOrder($api, $transactionId)
 	{
 		/** @var MollieOrderAlias $order */

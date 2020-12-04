@@ -157,14 +157,16 @@ class MailService
 		);
 	}
 
-    /**
-     * @param Order $order
-     * @param int $orderStateId
-     * @return array
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
-     */
+	/**
+	 * @param Order $order
+	 * @param int $orderStateId
+	 *
+	 * @return array
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 * @throws \PrestaShopException
+	 * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+	 */
 	private function getOrderConfData(Order $order, $orderStateId)
 	{
 		$virtual_product = true;

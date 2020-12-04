@@ -764,8 +764,8 @@ class Mollie extends PaymentModule
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
-        $methodObj = new MolPaymentMethod();
-        foreach ($methods as $method) {
+		$methodObj = new MolPaymentMethod();
+		foreach ($methods as $method) {
 			$methodObj = new MolPaymentMethod($method['id_payment_method']);
 			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $methodObj->id_method) {
 				$issuerList = $issuerService->getIdealIssuers();
@@ -1144,7 +1144,7 @@ class Mollie extends PaymentModule
 		try {
 			/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 			$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-			$dbPayment = $paymentMethodRepo->getPaymentBy('order_id',(string) $idOrder);
+			$dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (string) $idOrder);
 		} catch (PrestaShopDatabaseException $e) {
 			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
 
@@ -1381,11 +1381,11 @@ class Mollie extends PaymentModule
 	 */
 	public static function resendOrderPaymentLink($orderId)
 	{
-	    /** @var Mollie $module */
+		/** @var Mollie $module */
 		$module = Module::getInstanceByName('mollie');
 		/** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
 		$molliePaymentRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
-		$molPayment = $molliePaymentRepo->getPaymentBy('order_id',(string) $orderId);
+		$molPayment = $molliePaymentRepo->getPaymentBy('order_id', (string) $orderId);
 		if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
 			return false;
 		}
