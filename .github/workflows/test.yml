@@ -31,9 +31,6 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
     - run: composer require --dev phpunit/phpunit ^5
     - run: ./vendor/bin/phpunit tests/Unit
 
