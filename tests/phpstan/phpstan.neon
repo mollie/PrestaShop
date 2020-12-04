@@ -35,7 +35,7 @@ parameters:
     - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, int<min,-1>|int<1, max> given.#'
     - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, mixed given.#'
     - '#PHPDoc tag \@var for variable \$emailAlertsModule contains unknown class Ps_EmailAlerts.#'
-    - '#Call to method hookActionValidateOrder() on an unknown class Ps_EmailAlerts.#'
+    - '#Call to method hookActionValidateOrder\(\) on an unknown class Ps_EmailAlerts.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
 
   level: 5
