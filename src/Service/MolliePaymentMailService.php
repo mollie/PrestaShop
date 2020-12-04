@@ -197,7 +197,7 @@ class MolliePaymentMailService
 		}
 		$newPayment = $api->payments->create($paymentData);
 
-		if (isset($newPayment)) {
+		if ($newPayment) {
 			$updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
 
 			if ($updateTransactionId) {

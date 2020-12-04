@@ -122,7 +122,7 @@ class SettingsSaveService
 	public function saveSettings(&$errors = [])
 	{
 		$oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-		$environment = Tools::getValue(Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
 		$mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
 		$mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
 		$mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);

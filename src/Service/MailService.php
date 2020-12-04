@@ -53,6 +53,7 @@ use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
+use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 use Product;
 use State;
 use Tools;
@@ -99,7 +100,7 @@ class MailService
 
 	/**
 	 * @param Order $order
-	 * @param string $orderStateId
+	 * @param int $orderStateId
 	 *
 	 * @throws \PrestaShopDatabaseException
 	 * @throws \PrestaShopException
@@ -132,7 +133,7 @@ class MailService
 
 	/**
 	 * @param Order $order
-	 * @param string $orderStateId
+	 * @param int $orderStateId
 	 *
 	 * @throws \PrestaShopDatabaseException
 	 * @throws \PrestaShopException
@@ -156,6 +157,14 @@ class MailService
 		);
 	}
 
+    /**
+     * @param Order $order
+     * @param int $orderStateId
+     * @return array
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+     */
 	private function getOrderConfData(Order $order, $orderStateId)
 	{
 		$virtual_product = true;
@@ -173,7 +182,7 @@ class MailService
 			$product_var_tpl = [
 				'id_product' => $product['id_product'],
 				'reference' => $product['reference'],
-				'name' => $product['product_name'] . (isset($attribute) ? ' - ' . $attribute->name : ''),
+				'name' => $product['product_name'] . (Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
 				'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
 				'quantity' => $product['product_quantity'],
 				'customization' => [],
@@ -277,7 +286,7 @@ class MailService
 			'{invoice_phone}' => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
 			'{invoice_other}' => $invoice->other,
 			'{order_name}' => $order->getUniqReference(),
-			'{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, 1),
+			'{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, true),
 			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? Context::getContext()->getTranslator()->trans('No carrier', [], 'Admin.Payment.Notification') : $carrier->name,
 			'{payment}' => Tools::substr($order->payment, 0, 255),
 			'{products}' => $product_list_html,

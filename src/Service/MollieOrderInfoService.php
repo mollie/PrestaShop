@@ -91,7 +91,7 @@ class MollieOrderInfoService
 	}
 
 	/**
-	 * @param $input
+	 * @param array $input
 	 *
 	 * @return array
 	 *

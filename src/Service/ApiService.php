@@ -286,7 +286,7 @@ class ApiService
 			$this->transactionService->processTransaction($payment);
 		}
 
-		if ($payment && method_exists($payment, 'refunds')) {
+		if (method_exists($payment, 'refunds')) {
 			$refunds = $payment->refunds();
 			if (empty($refunds)) {
 				$refunds = [];
@@ -331,18 +331,15 @@ class ApiService
 		return $payment;
 	}
 
-	/**
-	 * @param $api
-	 * @param string $transactionId
-	 *
-	 * @return array|null
-	 *
-	 * @throws ErrorException
-	 * @throws ApiException
-	 *
-	 * @since 3.3.0
-	 * @since 3.3.2 $process option
-	 */
+    /**
+     * @param $api
+     * @param string $transactionId
+     *
+     * @return array|null
+     *
+     * @since 3.3.0
+     * @since 3.3.2 $process option
+     */
 	public function getFilteredApiOrder($api, $transactionId)
 	{
 		/** @var MollieOrderAlias $order */
@@ -356,7 +353,7 @@ class ApiService
 			]
 		);
 
-		if ($mollieOrder && method_exists($mollieOrder, 'refunds')) {
+		if (method_exists($mollieOrder, 'refunds')) {
 			$refunds = $mollieOrder->refunds();
 			if (empty($refunds)) {
 				$refunds = [];
