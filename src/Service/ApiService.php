@@ -332,11 +332,12 @@ class ApiService
 	}
 
     /**
-     * @param $api
+     * @param MollieApiClient $api
      * @param string $transactionId
      *
      * @return array|null
      *
+     * @throws ApiException
      * @since 3.3.0
      * @since 3.3.2 $process option
      */
@@ -397,7 +398,7 @@ class ApiService
 				'currency' => $payment->amount->currency,
 			];
 			$order['availableRefundAmount'] = $payment->amountRemaining ?: $amountRemaining;
-			$order['details'] = $payment->details ?: new \stdClass();
+			$order['details'] = $payment->details !== null ? $payment->details : new \stdClass();
 		}
 
 		return $order;

@@ -37,5 +37,6 @@ parameters:
     - '#PHPDoc tag \@var for variable \$emailAlertsModule contains unknown class Ps_EmailAlerts.#'
     - '#Call to method hookActionValidateOrder\(\) on an unknown class Ps_EmailAlerts.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
 
   level: 5
