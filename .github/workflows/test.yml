@@ -31,7 +31,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
 
-    - run: php ./tests/phpunit.phar tests/Unit/
+    - run:   php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php --configuration ./tests/Unit/phpunit.xml
 
   phpstan:
     name: PHPStan
