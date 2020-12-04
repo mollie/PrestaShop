@@ -81,12 +81,12 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		return Db::getInstance()->execute($sql);
 	}
 
-    /**
-     * @param array $savedPaymentMethods
-     * @param int $environment
-     *
-     * @return bool
-     */
+	/**
+	 * @param array $savedPaymentMethods
+	 * @param int $environment
+	 *
+	 * @return bool
+	 */
 	public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
 	{
 		$escapedMethods = array_map(static function ($str) { return pSQL($str); }, $savedPaymentMethods);
@@ -112,13 +112,14 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		return Db::getInstance()->getValue($sql);
 	}
 
-
-    /**
-     * @param string $column
-     * @param string $id
-     * @return array|bool|object|null
-     * @throws PrestaShopDatabaseException
-     */
+	/**
+	 * @param string $column
+	 * @param string $id
+	 *
+	 * @return array|bool|object|null
+	 *
+	 * @throws PrestaShopDatabaseException
+	 */
 	public function getPaymentBy($column, $id)
 	{
 		try {

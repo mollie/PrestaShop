@@ -168,11 +168,12 @@ class Installer implements InstallerInterface
 		];
 	}
 
-    /**
-     * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	private function createPartialRefundOrderState()
 	{
 		$orderState = new OrderState();
@@ -192,11 +193,12 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function createPartialShippedOrderState()
 	{
 		$orderState = new OrderState();
@@ -241,11 +243,12 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function createAwaitingMollieOrderState()
 	{
 		$orderState = new OrderState();
@@ -266,11 +269,12 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function createOrderCompletedOrderState()
 	{
 		$orderState = new OrderState();
@@ -292,11 +296,12 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
 	public function klarnaPaymentAcceptedState()
 	{
 		$orderState = new OrderState();
@@ -436,9 +441,9 @@ class Installer implements InstallerInterface
 		return true;
 	}
 
-    /**
-     * @return bool
-     */
+	/**
+	 * @return bool
+	 */
 	public function copyEmailTemplates()
 	{
 		$languages = Language::getLanguages(false);

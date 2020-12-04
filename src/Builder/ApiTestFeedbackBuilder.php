@@ -37,7 +37,6 @@
 namespace Mollie\Builder;
 
 use Mollie\Service\ApiKeyService;
-use Mollie\Service\ApiService;
 use MolliePrefix\Mollie\Api\Resources\BaseCollection;
 use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 
