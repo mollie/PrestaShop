@@ -330,11 +330,12 @@ class ApiService
 		return $payment;
 	}
 
-    /**
-     * @param $api
-     * @param $transactionId
-     * @return array|MollieOrderAlias|null
-     */
+	/**
+	 * @param $api
+	 * @param $transactionId
+	 *
+	 * @return array|MollieOrderAlias|null
+	 */
 	public function getFilteredApiOrder($api, $transactionId)
 	{
 		/** @var MollieOrderAlias $order */
