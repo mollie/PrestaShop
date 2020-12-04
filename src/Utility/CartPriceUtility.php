@@ -46,7 +46,7 @@ class CartPriceUtility
 	 * Spread the amount evenly.
 	 *
 	 * @param float $amount
-	 * @param int   $qty
+	 * @param int $qty
 	 *
 	 * @return array Spread amounts
 	 *

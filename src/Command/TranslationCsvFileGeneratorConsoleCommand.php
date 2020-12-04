@@ -64,7 +64,7 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		include_once $this->module->getLocalPath().'/translations/en.php';
+		include_once $this->module->getLocalPath() . '/translations/en.php';
 
 		$csvHeader = [
 			'ID',

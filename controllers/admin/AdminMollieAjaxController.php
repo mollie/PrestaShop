@@ -135,7 +135,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$this->context->smarty->assign($apiKeysTestInfo);
 		$this->ajaxDie(json_encode(
 			[
-				'template' => $this->context->smarty->fetch($this->module->getLocalPath().'views/templates/admin/api_test_results.tpl'),
+				'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
 			]
 		));
 	}

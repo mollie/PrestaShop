@@ -47,7 +47,7 @@ class MenuLocationUtility
 	/**
 	 * Get page location.
 	 *
-	 * @param string   $class
+	 * @param string $class
 	 * @param int|null $idLang
 	 *
 	 * @return string

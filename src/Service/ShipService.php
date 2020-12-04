@@ -53,8 +53,8 @@ class ShipService
 	}
 
 	/**
-	 * @param string     $transactionId
-	 * @param array      $lines
+	 * @param string $transactionId
+	 * @param array $lines
 	 * @param array|null $tracking
 	 *
 	 * @return array

@@ -71,13 +71,13 @@ class CartLinesService
 	}
 
 	/**
-	 * @param float  $amount
-	 * @param float  $paymentFee
+	 * @param float $amount
+	 * @param float $paymentFee
 	 * @param string $currencyIsoCode
-	 * @param array  $cartSummary
-	 * @param float  $shippingCost
-	 * @param array  $cartItems
-	 * @param bool   $psGiftWrapping
+	 * @param array $cartSummary
+	 * @param float $shippingCost
+	 * @param array $cartItems
+	 * @param bool $psGiftWrapping
 	 * @param string $selectedVoucherCategory
 	 *
 	 * @return array
@@ -364,7 +364,7 @@ class CartLinesService
 	 * Optionally split into multiple lines in case of rounding inaccuracies
 	 *
 	 * @param array[] $cartLineGroup Cart Line Group WITHOUT VAT details (except target VAT rate)
-	 * @param float   $newTotal
+	 * @param float $newTotal
 	 *
 	 * @return array[]
 	 *

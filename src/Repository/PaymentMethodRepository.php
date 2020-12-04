@@ -64,7 +64,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 */
 	public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
 	{
-		$sql = 'Select issuers_json FROM `'._DB_PREFIX_.'mol_payment_method_issuer` WHERE id_payment_method = "'.pSQL($paymentMethodId).'"';
+		$sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
 
 		return Db::getInstance()->getValue($sql);
 	}
@@ -76,7 +76,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 */
 	public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
 	{
-		$sql = 'DELETE FROM `'._DB_PREFIX_.'mol_payment_method_issuer` WHERE id_payment_method = "'.pSQL($paymentMethodId).'"';
+		$sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
 
 		return Db::getInstance()->execute($sql);
 	}
@@ -92,8 +92,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
 		return Db::getInstance()->delete(
 			'mol_payment_method',
-			'id_method NOT IN ("'.implode('", "', $escapedMethods).'")
-            AND `live_environment` = '.(int) $environment
+			'id_method NOT IN ("' . implode('", "', $escapedMethods) . '")
+            AND `live_environment` = ' . (int) $environment
 		);
 	}
 
@@ -105,8 +105,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 */
 	public function getPaymentMethodIdByMethodId($paymentMethodId, $environment)
 	{
-		$sql = 'SELECT id_payment_method FROM `'._DB_PREFIX_.'mol_payment_method`
-        WHERE id_method = "'.pSQL($paymentMethodId).'" AND live_environment = "'.(int) $environment.'"';
+		$sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '"';
 
 		return Db::getInstance()->getValue($sql);
 	}
@@ -128,7 +128,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 			$paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
 				sprintf(
 					'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
-					_DB_PREFIX_.'mollie_payments',
+					_DB_PREFIX_ . 'mollie_payments',
 					bqSQL($column),
 					pSQL($id),
 					PaymentStatus::STATUS_PAID,
@@ -148,7 +148,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 			$nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
 				sprintf(
 					'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
-					_DB_PREFIX_.'mollie_payments',
+					_DB_PREFIX_ . 'mollie_payments',
 					bqSQL($column),
 					pSQL($id)
 				)
@@ -174,11 +174,11 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 			if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
                 SELECT COUNT(*)
                 FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \''._DB_NAME_.'\'
-                AND TABLE_NAME = \''._DB_PREFIX_.'mollie_payments\'
+                WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
+                AND TABLE_NAME = \'' . _DB_PREFIX_ . 'mollie_payments\'
                 AND COLUMN_NAME = \'order_reference\'')
 			) {
-				return Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'mollie_payments` ADD `order_reference` varchar(191)');
+				return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD `order_reference` varchar(191)');
 			}
 		} catch (PrestaShopException $e) {
 			return false;
@@ -197,7 +197,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		$sql = new DbQuery();
 		$sql->select('*');
 		$sql->from('mol_payment_method');
-		$sql->where('live_environment = '.pSQL($environment));
+		$sql->where('live_environment = ' . pSQL($environment));
 
 		return Db::getInstance()->executeS($sql);
 	}
@@ -215,7 +215,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 			[
 				'transaction_id' => pSQL($newTransactionId),
 			],
-			'`transaction_id` = \''.pSQL($oldTransactionId).'\''
+			'`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
 		);
 	}
 
@@ -230,7 +230,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 					'order_id' => (int) $orderId,
 					'method' => pSQL($paymentMethod),
 				],
-				'`transaction_id` = \''.pSQL($transactionId).'\''
+				'`transaction_id` = \'' . pSQL($transactionId) . '\''
 			);
 		} catch (Exception $e) {
 			$this->tryAddOrderReferenceColumn();

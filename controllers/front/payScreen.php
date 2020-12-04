@@ -41,7 +41,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 	public function postProcess()
 	{
 		$method = Tools::getValue('method');
-		$cardToken = Tools::getValue('mollieCardToken'.$method);
+		$cardToken = Tools::getValue('mollieCardToken' . $method);
 
 		$validateUrl = Context::getContext()->link->getModuleLink(
 			'mollie',
@@ -62,7 +62,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 			'price' => $this->context->cart->getOrderTotal(),
 			'priceSign' => $this->context->currency->getSign(),
 		]);
-		$this->setTemplate('module:mollie/views/templates/'.'front/mollie_iframe.tpl');
+		$this->setTemplate('module:mollie/views/templates/' . 'front/mollie_iframe.tpl');
 	}
 
 	public function setMedia()

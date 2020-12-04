@@ -70,8 +70,8 @@ class RefundService
 	}
 
 	/**
-	 * @param string     $transactionId Transaction/Mollie Order ID
-	 * @param float|null $amount        Amount to refund, refund all if `null`
+	 * @param string $transactionId Transaction/Mollie Order ID
+	 * @param float|null $amount Amount to refund, refund all if `null`
 	 *
 	 * @return array
 	 *
@@ -113,7 +113,7 @@ class RefundService
 			return [
 				'status' => 'fail',
 				'msg_fail' => $this->module->l('The order could not be refunded!', self::FILE_NAME),
-				'msg_details' => $this->module->l('Reason:', self::FILE_NAME).' '.$e->getMessage(),
+				'msg_details' => $this->module->l('Reason:', self::FILE_NAME) . ' ' . $e->getMessage(),
 			];
 		}
 

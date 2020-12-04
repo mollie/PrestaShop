@@ -93,7 +93,7 @@ class MailService
 			null,
 			null,
 			null,
-			$this->module->getLocalPath().'mails/'
+			$this->module->getLocalPath() . 'mails/'
 		);
 	}
 
@@ -121,7 +121,7 @@ class MailService
 			),
 			$data,
 			$customer->email,
-			$customer->firstname.' '.$customer->lastname,
+			$customer->firstname . ' ' . $customer->lastname,
 			null,
 			null,
 			$fileAttachment,
@@ -171,7 +171,7 @@ class MailService
 			$product_var_tpl = [
 				'id_product' => $product['id_product'],
 				'reference' => $product['reference'],
-				'name' => $product['product_name'].(isset($attribute) ? ' - '.$attribute->name : ''),
+				'name' => $product['product_name'] . (isset($attribute) ? ' - ' . $attribute->name : ''),
 				'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
 				'quantity' => $product['product_quantity'],
 				'customization' => [],
@@ -180,7 +180,7 @@ class MailService
 			if (isset($product['price']) && $product['price']) {
 				$product_var_tpl['unit_price'] = Tools::displayPrice($product_price, $this->context->currency, false);
 				$product_var_tpl['unit_price_full'] = Tools::displayPrice($product_price, $this->context->currency, false)
-					.' '.$product['unity'];
+					. ' ' . $product['unity'];
 			} else {
 				$product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
 			}
@@ -192,12 +192,12 @@ class MailService
 					$customization_text = '';
 					if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
 						foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
-							$customization_text .= '<strong>'.$text['name'].'</strong>: '.$text['value'].'<br />';
+							$customization_text .= '<strong>' . $text['name'] . '</strong>: ' . $text['value'] . '<br />';
 						}
 					}
 
 					if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-						$customization_text .= $this->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification').'<br />';
+						$customization_text .= $this->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
 					}
 
 					$customization_quantity = (int) $customization['quantity'];
@@ -326,9 +326,9 @@ class MailService
 				unset($voucher->id);
 
 				// Set a new voucher code
-				$voucher->code = empty($voucher->code) ? substr(md5($order->id.'-'.$order->id_customer.'-'.$cart_rule['obj']->id), 0, 16) : $voucher->code.'-2';
+				$voucher->code = empty($voucher->code) ? substr(md5($order->id . '-' . $order->id_customer . '-' . $cart_rule['obj']->id), 0, 16) : $voucher->code . '-2';
 				if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-					$voucher->code = preg_replace('/'.$matches[0].'$/', '-'.(intval($matches[1]) + 1), $voucher->code);
+					$voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . (intval($matches[1]) + 1), $voucher->code);
 				}
 
 				// Set the new voucher value
@@ -384,7 +384,7 @@ class MailService
 						),
 						$params,
 						$this->context->customer->email,
-						$this->context->customer->firstname.' '.$this->context->customer->lastname,
+						$this->context->customer->firstname . ' ' . $this->context->customer->lastname,
 						null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
 					);
 				}
@@ -413,7 +413,7 @@ class MailService
 
 			$cart_rules_list[] = [
 				'voucher_name' => $cart_rule['obj']->name,
-				'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '').Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
+				'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
 			];
 		}
 
@@ -431,7 +431,7 @@ class MailService
 			Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $order_invoice_list]);
 			$pdf = new PDF($order_invoice_list, PDF::TEMPLATE_INVOICE, $this->context->smarty);
 			$fileAttachment['content'] = $pdf->render(false);
-			$fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop).sprintf('%06d', $order->invoice_number).'.pdf';
+			$fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
 			$fileAttachment['mime'] = 'application/pdf';
 		} else {
 			$fileAttachment = null;
@@ -448,10 +448,10 @@ class MailService
 		}
 
 		$pathToFindEmail = [
-			_PS_THEME_DIR_.'mails'.DIRECTORY_SEPARATOR.$this->context->language->iso_code.DIRECTORY_SEPARATOR.$template_name,
-			_PS_THEME_DIR_.'mails'.DIRECTORY_SEPARATOR.'en'.DIRECTORY_SEPARATOR.$template_name,
-			_PS_MAIL_DIR_.$this->context->language->iso_code.DIRECTORY_SEPARATOR.$template_name,
-			_PS_MAIL_DIR_.'en'.DIRECTORY_SEPARATOR.$template_name,
+			_PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
+			_PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR . $template_name,
+			_PS_MAIL_DIR_ . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
+			_PS_MAIL_DIR_ . 'en' . DIRECTORY_SEPARATOR . $template_name,
 		];
 
 		foreach ($pathToFindEmail as $path) {

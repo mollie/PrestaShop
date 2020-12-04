@@ -114,7 +114,7 @@ class TransactionService
 	{
 		if (empty($transaction)) {
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-				PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request without proper transaction ID.', Mollie\Config\Config::WARNING);
+				PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Mollie\Config\Config::WARNING);
 			}
 
 			return $this->module->l('Transaction failed', 'webhook');
@@ -153,7 +153,7 @@ class TransactionService
 				'bank_status' => pSQL(\Mollie\Config\Config::getStatuses()[$apiPayment->status]),
 				'order_id' => (int) $orderId,
 			],
-			'`transaction_id` = \''.pSQL($transaction->id).'\''
+			'`transaction_id` = \'' . pSQL($transaction->id) . '\''
 		);
 
 		switch ($transaction->resource) {
@@ -227,13 +227,13 @@ class TransactionService
 
 		if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-				PrestaShopLogger::addLog(__METHOD__.' said: Could not save Mollie payment status for transaction "'.$transaction->id.'". Reason: '.Db::getInstance()->getMsgError(), Mollie\Config\Config::WARNING);
+				PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transaction->id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie\Config\Config::WARNING);
 			}
 		}
 
 		// Log successful webhook requests in extended log mode only
 		if (Mollie\Config\Config::DEBUG_LOG_ALL == Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-			PrestaShopLogger::addLog(__METHOD__.' said: Received webhook request for order '.(int) $orderId.' / transaction '.$transaction->id, Mollie\Config\Config::NOTICE);
+			PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $transaction->id, Mollie\Config\Config::NOTICE);
 		}
 
 		return $apiPayment;
@@ -267,7 +267,7 @@ class TransactionService
 	/**
 	 * @param string $transactionId
 	 * @param string $status
-	 * @param int    $orderId
+	 * @param int $orderId
 	 *
 	 * @return bool
 	 *
@@ -284,7 +284,7 @@ class TransactionService
 					'bank_status' => pSQL($status),
 					'order_id' => (int) $orderId,
 				],
-				'`transaction_id` = \''.pSQL($transactionId).'\''
+				'`transaction_id` = \'' . pSQL($transactionId) . '\''
 			);
 		} catch (PrestaShopDatabaseException $e) {
 			/** @var PaymentMethodRepository $paymentMethodRepo */
@@ -393,7 +393,7 @@ class TransactionService
 	}
 
 	/**
-	 * @param int                                 $orderId
+	 * @param int $orderId
 	 * @param MolliePaymentAlias|MollieOrderAlias $transaction
 	 *
 	 * @throws PrestaShopDatabaseException

@@ -146,12 +146,12 @@ class SettingsSaveService
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
 				} catch (Exception $e) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods').":{$method['id']}";
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
 					continue;
 				}
 
 				if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers').":{$method['id']}";
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
 					continue;
 				}
 
@@ -166,9 +166,9 @@ class SettingsSaveService
 					}
 				}
 
-				$countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES.$method['id']);
+				$countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
 				$excludedCountries = Tools::getValue(
-					Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES.$method['id']
+					Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
 				);
 				$this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
 				$this->countryRepository->updatePaymentMethodExcludedCountries($method['id'], $excludedCountries);
@@ -265,8 +265,8 @@ class SettingsSaveService
 				Carrier::ALL_CARRIERS
 			);
 			foreach ($carriers as $carrier) {
-				$urlSource = Tools::getValue(Config::MOLLIE_CARRIER_URL_SOURCE.$carrier['id_carrier']);
-				$customUrl = Tools::getValue(Config::MOLLIE_CARRIER_CUSTOM_URL.$carrier['id_carrier']);
+				$urlSource = Tools::getValue(Config::MOLLIE_CARRIER_URL_SOURCE . $carrier['id_carrier']);
+				$customUrl = Tools::getValue(Config::MOLLIE_CARRIER_CUSTOM_URL . $carrier['id_carrier']);
 				$this->carrierInformationService->saveMolCarrierInfo($carrier['id_carrier'], $urlSource, $customUrl);
 			}
 
@@ -312,7 +312,7 @@ class SettingsSaveService
 		$statesEnabled = [];
 		$context = Context::getContext();
 		foreach (OrderState::getOrderStates($context->language->id) as $state) {
-			if (Tools::isSubmit($key.'_'.$state['id_order_state'])) {
+			if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
 				$statesEnabled[] = $state['id_order_state'];
 			}
 		}

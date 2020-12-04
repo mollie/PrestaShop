@@ -67,7 +67,7 @@ class CancelService
 
 	/**
 	 * @param string $transactionId
-	 * @param array  $lines
+	 * @param array $lines
 	 *
 	 * @return array
 	 *

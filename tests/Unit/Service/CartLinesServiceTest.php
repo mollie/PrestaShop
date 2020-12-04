@@ -337,7 +337,7 @@ class CartLinesServiceTest extends TestCase
 					],
 					1 => [
 						'function' => 'get',
-						'expects' => Config::MOLLIE_VOUCHER_FEATURE.Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
+						'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
 						'return' => '31',
 						'at' => 1,
 					],
@@ -349,13 +349,13 @@ class CartLinesServiceTest extends TestCase
 					],
 					3 => [
 						'function' => 'get',
-						'expects' => Config::MOLLIE_VOUCHER_FEATURE.Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
+						'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_MEAL,
 						'return' => '31',
 						'at' => 3,
 					],
 					4 => [
 						'function' => 'get',
-						'expects' => Config::MOLLIE_VOUCHER_FEATURE.Config::MOLLIE_VOUCHER_CATEGORY_GIFT,
+						'expects' => Config::MOLLIE_VOUCHER_FEATURE . Config::MOLLIE_VOUCHER_CATEGORY_GIFT,
 						'return' => '32',
 						'at' => 4,
 					],
