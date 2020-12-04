@@ -753,14 +753,14 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
 
-        /** @var \Mollie\Service\IssuerService $issuerService */
-        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+		/** @var \Mollie\Service\IssuerService $issuerService */
+		$issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
 
-        /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
-        $creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
+		/** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
+		$creditCardProvider = $this->getContainer(\Mollie\Provider\CreditCardLogoProvider::class);
 
-        /** @var \Mollie\Validator\VoucherValidator $voucherValidator */
-        $voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
+		/** @var \Mollie\Validator\VoucherValidator $voucherValidator */
+		$voucherValidator = $this->getContainer(\Mollie\Validator\VoucherValidator::class);
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
@@ -1203,8 +1203,8 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
 		$orderConfMailValidator = $this->getContainer(\Mollie\Validator\OrderConfMailValidator::class);
 
-        /** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
-        $newOrderMailValidator = $this->getContainer(\Mollie\Validator\NewOrderMailValidator::class);
+		/** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
+		$newOrderMailValidator = $this->getContainer(\Mollie\Validator\NewOrderMailValidator::class);
 
 		if ('order_conf' === $params['template']) {
 			return $orderConfMailValidator->validate((int) $order->current_state);
@@ -1372,12 +1372,13 @@ class Mollie extends PaymentModule
 		}
 	}
 
-    /**
-     * @param int $orderId
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     */
+	/**
+	 * @param int $orderId
+	 *
+	 * @return string
+	 *
+	 * @throws PrestaShopDatabaseException
+	 */
 	public static function resendOrderPaymentLink($orderId)
 	{
 		$module = Module::getInstanceByName('mollie');

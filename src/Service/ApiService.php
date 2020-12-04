@@ -56,7 +56,6 @@ use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
 
 class ApiService
 {
@@ -107,25 +106,25 @@ class ApiService
 		$this->transactionService = $transactionService;
 	}
 
-    /**
-     * Get payment methods to show on the configuration page.
-     *
-     * @param MollieApiClient $api
-     * @param string $path
-     * @param bool $active Active methods only
-     *
-     * @return array
-     *
-     * @since 3.0.0
-     * @since 3.4.0 public
-     *
-     * @public ✓ This method is part of the public API
-     */
+	/**
+	 * Get payment methods to show on the configuration page.
+	 *
+	 * @param MollieApiClient $api
+	 * @param string $path
+	 * @param bool $active Active methods only
+	 *
+	 * @return array
+	 *
+	 * @since 3.0.0
+	 * @since 3.4.0 public
+	 *
+	 * @public ✓ This method is part of the public API
+	 */
 	public function getMethodsForConfig(MollieApiClient $api, $path, $active = false)
 	{
 		$notAvailable = [];
 		try {
-		    /** @var BaseCollection|MethodCollection $apiMethods */
+			/** @var BaseCollection|MethodCollection $apiMethods */
 			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay']);
 			$apiMethods = $apiMethods->getArrayCopy();
 		} catch (Exception $e) {
@@ -265,20 +264,21 @@ class ApiService
 		return $methods;
 	}
 
-    /**
-     * @param MollieApiClient $api
-     * @param string $transactionId
-     * @param bool $process Process the new payment/order status
-     *
-     * @return array|null
-     *
-     * @throws ApiException
-     * @throws CoreException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @since 3.3.0
-     * @since 3.3.2 $process option
-     */
+	/**
+	 * @param MollieApiClient $api
+	 * @param string $transactionId
+	 * @param bool $process Process the new payment/order status
+	 *
+	 * @return array|null
+	 *
+	 * @throws ApiException
+	 * @throws CoreException
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 *
+	 * @since 3.3.0
+	 * @since 3.3.2 $process option
+	 */
 	public function getFilteredApiPayment($api, $transactionId, $process = false)
 	{
 		$payment = $api->payments->get($transactionId);
