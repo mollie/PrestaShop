@@ -331,9 +331,10 @@ class ApiService
 	}
 
     /**
-     * @param $api
-     * @param $transactionId
+     * @param MollieApiClient $api
+     * @param string $transactionId
      * @return array|MollieOrderAlias|null
+     * @throws ApiException
      */
 	public function getFilteredApiOrder($api, $transactionId)
 	{

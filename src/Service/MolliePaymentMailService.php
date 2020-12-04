@@ -50,186 +50,177 @@ use Order;
 
 class MolliePaymentMailService
 {
-	/**
-	 * @var PaymentMethodRepository
-	 */
-	private $paymentMethodRepository;
+    /**
+     * @var PaymentMethodRepository
+     */
+    private $paymentMethodRepository;
 
-	/**
-	 * @var Mollie
-	 */
-	private $module;
+    /**
+     * @var Mollie
+     */
+    private $module;
 
-	/**
-	 * @var MailService
-	 */
-	private $mailService;
+    /**
+     * @var MailService
+     */
+    private $mailService;
 
-	public function __construct(
-		Mollie $module,
-		PaymentMethodRepository $paymentMethodRepository,
-		MailService $mailService
-	) {
-		$this->module = $module;
-		$this->paymentMethodRepository = $paymentMethodRepository;
-		$this->mailService = $mailService;
-	}
+    public function __construct(
+        Mollie $module,
+        PaymentMethodRepository $paymentMethodRepository,
+        MailService $mailService
+    ) {
+        $this->module = $module;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->mailService = $mailService;
+    }
 
-	public function sendSecondChanceMail($orderId)
-	{
-		$order = new Order($orderId);
-		$payment = $this->paymentMethodRepository->getPaymentBy('order_id', $orderId);
-		if (!$payment) {
-			return false;
-		}
+    public function sendSecondChanceMail($orderId)
+    {
+        $order = new Order($orderId);
+        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', $orderId);
+        if (!$payment) {
+            return false;
+        }
 
-		$response = [
-			'success' => false,
-			'message' => $this->module->l('Failed to created second chance email!'),
-		];
+        $response = [
+            'success' => false,
+            'message' => $this->module->l('Failed to created second chance email!'),
+        ];
 
-		$transactionId = $payment['transaction_id'];
+        $transactionId = $payment['transaction_id'];
 
-		$customer = new Customer($order->id_customer);
+        $customer = new Customer($order->id_customer);
 
-		/** @var MollieApiClient $api */
-		$api = $this->module->api;
-		if (TransactionUtility::isOrderTransaction($transactionId)) {
-			$response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
-		} else {
-			$response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
-		}
+        /** @var MollieApiClient $api */
+        $api = $this->module->api;
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            $response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
+        } else {
+            $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
+        }
 
-		if ($response['success']) {
-			$this->mailService->sendSecondChanceMail($customer, $response['checkoutUrl'], $payment['method']);
-		}
+        if ($response['success']) {
+            $this->mailService->sendSecondChanceMail($customer, $response['checkoutUrl'], $payment['method']);
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	public function sendSecondChanceMailWithOrderAPI(MollieApiClient $api, $transactionId, $paymentMethod)
-	{
-		$orderApi = $api->orders->get($transactionId, ['embed' => 'payments']);
-		if ($orderApi->isPaid() || $orderApi->isAuthorized() || $orderApi->isShipping() || $orderApi->isCompleted()) {
-			return
-				[
-					'success' => false,
-					'message' => $this->module->l('Failed to send second chance email! Order is already paid!'),
-				];
-		}
+    public function sendSecondChanceMailWithOrderAPI(MollieApiClient $api, $transactionId, $paymentMethod)
+    {
+        $orderApi = $api->orders->get($transactionId, ['embed' => 'payments']);
+        if ($orderApi->isPaid() || $orderApi->isAuthorized() || $orderApi->isShipping() || $orderApi->isCompleted()) {
+            return
+                [
+                    'success' => false,
+                    'message' => $this->module->l('Failed to send second chance email! Order is already paid!'),
+                ];
+        }
 
-		$molliePayments = $orderApi->payments();
-		$checkoutUrl = $this->getCheckoutUrl($molliePayments);
+        $molliePayments = $orderApi->payments();
+        $checkoutUrl = $this->getCheckoutUrl($molliePayments);
 
-		if (!$checkoutUrl) {
-			/** @var Payment $newPayment */
-			$newPayment = $api->orders->get($transactionId)->createPayment(
-				[
-				]
-			);
-			$checkoutUrl = $newPayment->getCheckoutUrl();
-		}
+        if (!$checkoutUrl) {
+            /** @var Payment $newPayment */
+            $newPayment = $api->orders->get($transactionId)->createPayment(
+                [
+                ]
+            );
+            $checkoutUrl = $newPayment->getCheckoutUrl();
+        }
 
-		return [
-			'success' => true,
-			'message' => $this->module->l('Second chance email was successfully send!'),
-			'checkoutUrl' => $checkoutUrl,
-		];
-	}
+        return [
+            'success' => true,
+            'message' => $this->module->l('Second chance email was successfully send!'),
+            'checkoutUrl' => $checkoutUrl,
+        ];
+    }
 
-	public function sendSecondChanceMailWithPaymentApi(MollieApiClient $api, $transactionId)
-	{
-		$context = Context::getContext();
-		$paymentApi = $api->payments->get($transactionId);
+    public function sendSecondChanceMailWithPaymentApi(MollieApiClient $api, $transactionId)
+    {
+        $context = Context::getContext();
+        $paymentApi = $api->payments->get($transactionId);
 
-		if ($paymentApi->isPaid() || $paymentApi->isAuthorized()) {
-			return
-				[
-					'success' => false,
-					'message' => $this->module->l('Failed to send second chance email! Order is already paid or expired!'),
-				];
-		}
+        if ($paymentApi->isPaid() || $paymentApi->isAuthorized()) {
+            return
+                [
+                    'success' => false,
+                    'message' => $this->module->l('Failed to send second chance email! Order is already paid or expired!'),
+                ];
+        }
 
-		if (null !== $paymentApi->getCheckoutUrl()) {
-			$checkoutUrl = $paymentApi->getCheckoutUrl();
+        if (null !== $paymentApi->getCheckoutUrl()) {
+            $checkoutUrl = $paymentApi->getCheckoutUrl();
 
-			return [
-				'success' => true,
-				'message' => $this->module->l('Second chance email was successfully send!'),
-				'checkoutUrl' => $checkoutUrl,
-			];
-		}
+            return [
+                'success' => true,
+                'message' => $this->module->l('Second chance email was successfully send!'),
+                'checkoutUrl' => $checkoutUrl,
+            ];
+        }
 
-		$cart = new Cart($paymentApi->metadata->cart_id);
-		$customer = new Customer($cart->id_customer);
-		$paymentData = [
-			'amount' => [
-				'value' => $paymentApi->amount->value,
-				'currency' => $paymentApi->amount->currency,
-			],
-			'redirectUrl' => $context->link->getModuleLink(
-				'mollie',
-				'return',
-				[
-					'cart_id' => $paymentApi->metadata->cart_id,
-					'utm_nooverride' => 1,
-					'rand' => time(),
-					'key' => $customer->secure_key,
-					'customerId' => $customer->id,
-				],
-				true
-			),
-			'description' => $paymentApi->description,
-			'metadata' => [
-				'cart_id' => $paymentApi->metadata->cart_id,
-				'order_reference' => $paymentApi->metadata->order_reference,
-				'secure_key' => $paymentApi->metadata->secure_key,
-			],
-		];
+        $cart = new Cart($paymentApi->metadata->cart_id);
+        $customer = new Customer($cart->id_customer);
+        $paymentData = [
+            'amount' => [
+                'value' => $paymentApi->amount->value,
+                'currency' => $paymentApi->amount->currency,
+            ],
+            'redirectUrl' => $context->link->getModuleLink(
+                'mollie',
+                'return',
+                [
+                    'cart_id' => $paymentApi->metadata->cart_id,
+                    'utm_nooverride' => 1,
+                    'rand' => time(),
+                    'key' => $customer->secure_key,
+                    'customerId' => $customer->id,
+                ],
+                true
+            ),
+            'description' => $paymentApi->description,
+            'metadata' => [
+                'cart_id' => $paymentApi->metadata->cart_id,
+                'order_reference' => $paymentApi->metadata->order_reference,
+                'secure_key' => $paymentApi->metadata->secure_key,
+            ],
+        ];
 
-		if (!EnvironmentUtility::isLocalEnvironment()) {
-			$paymentData['webhookUrl'] = $context->link->getModuleLink(
-				'mollie',
-				'webhook',
-				[],
-				true
-			);
-		}
-		$newPayment = $api->payments->create($paymentData);
+        if (!EnvironmentUtility::isLocalEnvironment()) {
+            $paymentData['webhookUrl'] = $context->link->getModuleLink(
+                'mollie',
+                'webhook',
+                [],
+                true
+            );
+        }
+        $newPayment = $api->payments->create($paymentData);
+        $updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
 
-		if ($newPayment) {
-			$updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
+        if ($updateTransactionId) {
+            $checkoutUrl = $newPayment->getCheckoutUrl();
 
-			if ($updateTransactionId) {
-				$checkoutUrl = $newPayment->getCheckoutUrl();
+            return [
+                'success' => true,
+                'message' => $this->module->l('Second chance email was successfully send!'),
+                'checkoutUrl' => $checkoutUrl,
+            ];
+        }
+    }
 
-				return [
-					'success' => true,
-					'message' => $this->module->l('Second chance email was successfully send!'),
-					'checkoutUrl' => $checkoutUrl,
-				];
-			}
-		}
+    private function getCheckoutUrl($molliePayments)
+    {
+        $checkoutUrl = '';
+        /** @var Payment $molliePayment */
+        foreach ($molliePayments as $molliePayment) {
+            if (PaymentStatus::STATUS_OPEN === $molliePayment->status ||
+                PaymentStatus::STATUS_PENDING === $molliePayment->status
+            ) {
+                return $molliePayment->getCheckoutUrl();
+            }
+        }
 
-		return
-			[
-				'success' => false,
-				'message' => $this->module->l('Failed to send second chance email!'),
-			];
-	}
-
-	private function getCheckoutUrl($molliePayments)
-	{
-		$checkoutUrl = '';
-		/** @var Payment $molliePayment */
-		foreach ($molliePayments as $molliePayment) {
-			if (PaymentStatus::STATUS_OPEN === $molliePayment->status ||
-				PaymentStatus::STATUS_PENDING === $molliePayment->status
-			) {
-				return $molliePayment->getCheckoutUrl();
-			}
-		}
-
-		return $checkoutUrl;
-	}
+        return $checkoutUrl;
+    }
 }
