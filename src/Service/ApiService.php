@@ -37,7 +37,6 @@
 namespace Mollie\Service;
 
 use Configuration;
-use Context;
 use ErrorException;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -56,7 +55,6 @@ use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use SmartyException;
-use Tools;
 
 class ApiService
 {
@@ -72,9 +70,9 @@ class ApiService
 	 */
 	private $countryRepository;
 
-    /**
-     * @var PaymentMethodSortProviderInterface
-     */
+	/**
+	 * @var PaymentMethodSortProviderInterface
+	 */
 	private $paymentMethodSortProvider;
 
 	/**

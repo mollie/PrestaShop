@@ -43,13 +43,14 @@ use Tools;
 
 class ApiKeyService
 {
-    /**
-     * @param string $apiKey
-     * @param string $moduleVersion
-     *
-     * @return MollieApiClient|void
-     * @throws ApiException
-     */
+	/**
+	 * @param string $apiKey
+	 * @param string $moduleVersion
+	 *
+	 * @return MollieApiClient|void
+	 *
+	 * @throws ApiException
+	 */
 	public function setApiKey($apiKey, $moduleVersion)
 	{
 		$api = new MollieApiClient();

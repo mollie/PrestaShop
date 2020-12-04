@@ -43,12 +43,13 @@ use Mollie\Config\Config;
 
 class CarrierService
 {
-    /**
-     * todo: fix this function
-     *
-     * @param string $trackingUrls
-     * @return array
-     */
+	/**
+	 * todo: fix this function
+	 *
+	 * @param string $trackingUrls
+	 *
+	 * @return array
+	 */
 	public function carrierConfig($trackingUrls)
 	{
 		if (!is_array($trackingUrls)) {
@@ -65,7 +66,7 @@ class CarrierService
 		);
 
 		$configCarriers = [];
-        $dbConfig = [];
+		$dbConfig = [];
 		foreach ($carriers as $carrier) {
 			$idCarrier = (int) $carrier['id_carrier'];
 			$configCarriers[] = [

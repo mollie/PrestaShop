@@ -584,8 +584,8 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
 
-        /** @var \Mollie\Service\ShipmentService $shipmentService */
-        $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
+		/** @var \Mollie\Service\ShipmentService $shipmentService */
+		$shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
 
 		$cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
 		$transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
@@ -632,11 +632,11 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
 
-        /** @var \Mollie\Service\IssuerService $issuerService */
-        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+		/** @var \Mollie\Service\IssuerService $issuerService */
+		$issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
 
-        /** @var \Mollie\Service\OrderFeeService $orderFeeService */
-        $orderFeeService = $this->getContainer(\Mollie\Service\OrderFeeService::class);
+		/** @var \Mollie\Service\OrderFeeService $orderFeeService */
+		$orderFeeService = $this->getContainer(\Mollie\Service\OrderFeeService::class);
 
 		$apiMethods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
@@ -701,8 +701,8 @@ class Mollie extends PaymentModule
 			return [];
 		}
 
-        /** @var \Mollie\Service\IssuerService $issuerService */
-        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
+		/** @var \Mollie\Service\IssuerService $issuerService */
+		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
 
