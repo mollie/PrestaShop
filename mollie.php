@@ -1412,7 +1412,7 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Service\ApiKeyService $apiService */
 		$apiKeyService = $this->getContainer(\Mollie\Service\ApiKeyService::class);
 
-		$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
 			Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
 
