@@ -81,7 +81,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
 		/** @var PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-		$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod, $environment);
 		$method = new MolPaymentMethod($methodId);
 		switch ($paymentStatus) {

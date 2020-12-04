@@ -152,7 +152,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
 		$orderTotal = $cart->getOrderTotal(true);
-		$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
 		$paymentMethodObj = new MolPaymentMethod($paymentMethodId);
 		$payment = $mollie->api->{$apiService->selectedApi(Mollie::$selectedApi)}->create($paymentMethodService->getPaymentData(
