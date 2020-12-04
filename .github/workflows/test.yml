@@ -1,6 +1,6 @@
 name: Tests
 
-on: [pull_request, push]
+on: [pull_request]
 
 jobs:
   php-cs-fixer:
@@ -31,8 +31,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
 
-    - run: composer require --dev phpunit/phpunit ^5
-    - run: ./vendor/bin/phpunit tests/Unit
+    - run: php ./tests/phpunit.phar tests/Unit/
 
   phpstan:
     name: PHPStan
