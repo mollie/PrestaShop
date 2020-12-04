@@ -582,12 +582,13 @@ class Mollie extends PaymentModule
 	public function hookDisplayAdminOrder($params)
 	{
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-		/** @var \Mollie\Service\ShipmentService $shipmentService */
-		$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepository::class);
-		$shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
+		$paymentMethodRepo = $this->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+
+        /** @var \Mollie\Service\ShipmentService $shipmentService */
+        $shipmentService = $this->getContainer(\Mollie\Service\ShipmentService::class);
 
 		$cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
-		$transaction = $paymentMethodRepo->getPaymentBy('cart_id', (int) $cartId);
+		$transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
 		if (empty($transaction)) {
 			return false;
 		}
@@ -629,11 +630,13 @@ class Mollie extends PaymentModule
 		$issuerSetting = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS);
 
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-		/** @var \Mollie\Service\IssuerService $issuerService */
-		/** @var \Mollie\Service\OrderFeeService $orderFeeService */
 		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
-		$issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
-		$orderFeeService = $this->getContainer(\Mollie\Service\OrderFeeService::class);
+
+        /** @var \Mollie\Service\IssuerService $issuerService */
+        $issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+
+        /** @var \Mollie\Service\OrderFeeService $orderFeeService */
+        $orderFeeService = $this->getContainer(\Mollie\Service\OrderFeeService::class);
 
 		$apiMethods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
@@ -697,18 +700,11 @@ class Mollie extends PaymentModule
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
 			return [];
 		}
-		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-		/** @var \Mollie\Service\IssuerService $issuerService */
-		$paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
-		$issuerService = $this->getContainer(\Mollie\Service\IssuerService::class);
+
+        /** @var \Mollie\Service\IssuerService $issuerService */
+        $paymentMethodService = $this->getContainer(\Mollie\Service\PaymentMethodService::class);
 
 		$methods = $paymentMethodService->getMethodsForCheckout();
-		$issuerList = [];
-		foreach ($methods as $apiMethod) {
-			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id']) {
-				$issuerList = $issuerService->getIdealIssuers();
-			}
-		}
 
 		$context = Context::getContext();
 		$iso = Tools::strtolower($context->currency->iso_code);
@@ -753,8 +749,6 @@ class Mollie extends PaymentModule
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
 			return [];
 		}
-		/** @var Cart $cart */
-		$cart = $params['cart'];
 
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
 		/** @var \Mollie\Service\IssuerService $issuerService */

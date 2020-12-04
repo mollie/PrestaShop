@@ -36,14 +36,17 @@
 
 namespace Mollie\Builder;
 
+use Mollie\Service\ApiKeyService;
 use Mollie\Service\ApiService;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 
 class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 {
 	/**
-	 * @var ApiService
+	 * @var ApiKeyService
 	 */
-	private $apiService;
+	private $apiKeyService;
 
 	/**
 	 * @var string
@@ -60,9 +63,9 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 	 */
 	private $liveKey;
 
-	public function __construct($moduleVersion, ApiService $apiService)
+	public function __construct($moduleVersion, ApiKeyService $apiKeyService)
 	{
-		$this->apiService = $apiService;
+		$this->apiKeyService = $apiKeyService;
 		$this->moduleVersion = $moduleVersion;
 	}
 
@@ -113,8 +116,8 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 	}
 
 	/**
-	 * @param $testKey string
-	 * @param $liveKey string
+	 * @param string $testKey
+	 * @param string $liveKey
 	 *
 	 * @return array
 	 */
@@ -130,7 +133,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 	}
 
 	/**
-	 * @param $apiKey string
+	 * @param string $apiKey
 	 *
 	 * @return array
 	 */
@@ -141,24 +144,24 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 				'status' => false,
 			];
 		}
-		$api = $this->apiService->setApiKey($apiKey, $this->moduleVersion);
+		$api = $this->apiKeyService->setApiKey($apiKey, $this->moduleVersion);
 		if (!$api) {
 			return [
 				'status' => false,
 			];
 		}
-		/** @var $methods */
+		/** @var BaseCollection|MethodCollection $methods */
 		$methods = $api->methods->allAvailable();
-		$methodsASArray = $methods->getArrayCopy();
+		$methodsAsArray = $methods->getArrayCopy();
 
 		return [
 			'status' => true,
-			'methods' => $this->getPaymentMethodsAsArray($methodsASArray),
+			'methods' => $this->getPaymentMethodsAsArray($methodsAsArray),
 		];
 	}
 
 	/**
-	 * @param $methods
+	 * @param array $methods
 	 *
 	 * @return array
 	 */

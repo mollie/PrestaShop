@@ -48,6 +48,6 @@ class MolCarrierInformationRepository
 		$sql->from('mol_carrier_information');
 		$sql->where('`id_carrier` = ' . (int) $carrierId . '');
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+		return Db::getInstance()->getValue($sql);
 	}
 }

@@ -73,9 +73,9 @@ class SettingsSaveService
 	 */
 	private $paymentMethodService;
 	/**
-	 * @var ApiService
+	 * @var ApiKeyService
 	 */
-	private $apiService;
+	private $apiKeyService;
 	/**
 	 * @var MolCarrierInformationService
 	 */
@@ -90,7 +90,7 @@ class SettingsSaveService
 		CountryRepository $countryRepository,
 		PaymentMethodRepository $paymentMethodRepository,
 		PaymentMethodService $paymentMethodService,
-		ApiService $apiService,
+        ApiKeyService $apiKeyService,
 		MolCarrierInformationService $carrierInformationService,
 		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler
 	) {
@@ -98,7 +98,7 @@ class SettingsSaveService
 		$this->countryRepository = $countryRepository;
 		$this->paymentMethodRepository = $paymentMethodRepository;
 		$this->paymentMethodService = $paymentMethodService;
-		$this->apiService = $apiService;
+		$this->apiKeyService = $apiKeyService;
 		$this->carrierInformationService = $carrierInformationService;
 		$this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
 	}
@@ -141,7 +141,7 @@ class SettingsSaveService
 
 		if ($oldEnvironment === $environment && null !== $this->module->api->methods && $apiKey) {
 			$savedPaymentMethods = [];
-			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
+			foreach ($this->apiKeyService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
@@ -213,7 +213,7 @@ class SettingsSaveService
 
 		if ($apiKey) {
 			try {
-				$api = $this->apiService->setApiKey($apiKey, $this->module->version);
+				$api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
 				if (null === $api) {
 					throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
 				}

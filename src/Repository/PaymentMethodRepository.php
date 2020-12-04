@@ -58,7 +58,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	}
 
 	/**
-	 * @param $paymentMethodId
+	 * @param string $paymentMethodId
 	 *
 	 * @return false|string|null
 	 */
@@ -70,7 +70,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	}
 
 	/**
-	 * @param $paymentMethodId
+	 * @param string $paymentMethodId
 	 *
 	 * @return bool
 	 */
@@ -81,11 +81,12 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		return Db::getInstance()->execute($sql);
 	}
 
-	/**
-	 * @param $environment
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param array $savedPaymentMethods
+     * @param int $environment
+     *
+     * @return bool
+     */
 	public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
 	{
 		$escapedMethods = array_map(static function ($str) { return pSQL($str); }, $savedPaymentMethods);
@@ -98,8 +99,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	}
 
 	/**
-	 * @param $paymentMethodId
-	 * @param $environment
+	 * @param string $paymentMethodId
+	 * @param int $environment
 	 *
 	 * @return false|string|null
 	 */
@@ -111,17 +112,13 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		return Db::getInstance()->getValue($sql);
 	}
 
-	/**
-	 * @param string $column
-	 * @param string $id
-	 *
-	 * @return array
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.0 static function
-	 */
+
+    /**
+     * @param string $column
+     * @param string $id
+     * @return array|bool|object|null
+     * @throws PrestaShopDatabaseException
+     */
 	public function getPaymentBy($column, $id)
 	{
 		try {
@@ -145,7 +142,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 		}
 
 		try {
-			$nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+			$nonPaidPayment = Db::getInstance()->getRow(
 				sprintf(
 					'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
 					_DB_PREFIX_ . 'mollie_payments',
@@ -203,8 +200,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	}
 
 	/**
-	 * @param $oldTransactionId
-	 * @param $newTransactionId
+	 * @param string $oldTransactionId
+	 * @param string $newTransactionId
 	 *
 	 * @return bool
 	 */

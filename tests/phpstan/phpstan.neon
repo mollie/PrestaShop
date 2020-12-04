@@ -33,6 +33,7 @@ parameters:
     - '#Variable \$payment in PHPDoc tag @var does not match assigned variable \$apiPayment.#'
     - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, int given.#'
     - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, int<min,-1>|int<1, max> given.#'
+    - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, mixed given.#'
 
 
   level: 5
