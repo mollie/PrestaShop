@@ -33,6 +33,14 @@
  * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
+
+use Doctrine\DBAL\Query\QueryBuilder;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
+use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
+use PrestaShop\PrestaShop\Core\Search\Filters\OrderFilters;
+use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
+
 if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
 	return;
 }
@@ -1338,6 +1346,33 @@ class Mollie extends PaymentModule
 			'callback' => 'resendOrderPaymentLink',
 		];
 	}
+
+    public function hookActionOrderGridDefinitionModifier(array $params)
+    {
+        /** @var GridDefinitionInterface $definition */
+        $definition = $params['definition'];
+
+        $translator = $this->getTranslator();
+
+        $definition
+            ->getColumns()
+            ->addAfter('new', (new DataColumn('transaction_id'))
+                ->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
+                ->setOptions([
+                    'field' => 'transaction_id',
+                ])
+            );
+    }
+
+	public function hookActionOrderGridQueryBuilderModifier($params)
+    {
+        /** @var QueryBuilder $searchQueryBuilder */
+        $searchQueryBuilder = $params['search_query_builder'];
+
+        $searchQueryBuilder->addSelect('mol.`transaction_id`');
+
+        $searchQueryBuilder->leftJoin('o', '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`', 'mol', 'mol.`order_reference` = o.`reference`');
+    }
 
 	public function hookActionValidateOrder($params)
 	{
