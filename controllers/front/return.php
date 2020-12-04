@@ -96,7 +96,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$customerSecureKey = Tools::getValue('key');
 
 		/** @var CustomerFactory $customerFactory */
-		$customerFactory = $this->module->getContainer(CustomerFactory::class);
+		$customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
 		$this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
 		if (Tools::getValue('ajax')) {
 			$this->processAjax();
@@ -109,7 +109,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$cart = null;
 
 		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
 		if (Tools::getIsset('cart_id')) {
 			$idCart = (int) Tools::getValue('cart_id');
 
@@ -214,7 +214,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	{
 		header('Content-Type: application/json;charset=UTF-8');
 		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
 
 		$transactionId = Tools::getValue('transaction_id');
 		$dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
@@ -261,7 +261,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
 
 		/** @var PaymentReturnService $paymentReturnService */
-		$paymentReturnService = $this->module->getContainer(PaymentReturnService::class);
+		$paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
 		$stockManagement = Configuration::get('PS_STOCK_MANAGEMENT');
 		switch ($orderStatus) {
 			case PaymentStatus::STATUS_OPEN:
@@ -283,7 +283,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				);
 
 				/** @var MemorizeCartService $memorizeCart */
-				$memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 				$memorizeCart->removeMemorizedCart($order);
 
 				break;
@@ -296,7 +296,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				);
 
 				/** @var MemorizeCartService $memorizeCart */
-				$memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 				$memorizeCart->removeMemorizedCart($order);
 
 				break;
@@ -305,7 +305,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 			case PaymentStatus::STATUS_FAILED:
 				$this->setWarning($notSuccessfulPaymentMessage);
 				/** @var RestorePendingCartService $restorePendingCart */
-				$restorePendingCart = $this->module->getContainer(RestorePendingCartService::class);
+				$restorePendingCart = $this->module->getMollieContainer(RestorePendingCartService::class);
 				$restorePendingCart->restore($order);
 
 				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);

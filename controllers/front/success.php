@@ -101,7 +101,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 		parent::initContent();
 
 		/** @var OrderFeeRepository $orderFeeRepo */
-		$orderFeeRepo = $this->module->getContainer(OrderFeeRepository::class);
+		$orderFeeRepo = $this->module->getMollieContainer(OrderFeeRepository::class);
 		$orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($order->id_cart);
 		$fee = 0;
 		if ($orderFeeId) {

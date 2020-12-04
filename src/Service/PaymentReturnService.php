@@ -218,7 +218,7 @@ class PaymentReturnService
 	private function updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod)
 	{
 		/** @var OrderStatusService $orderStatusService */
-		$orderStatusService = $this->module->getContainer(OrderStatusService::class);
+		$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 
 		$orderStatusId = (int) Mollie\Config\Config::getStatuses()[$orderStatus];
 		$this->paymentMethodRepository->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);
