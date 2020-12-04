@@ -12,11 +12,6 @@ $rules = [
         'cast_spaces' => [
             'space' => 'single',
         ],
-        'error_suppression' => [
-            'mute_deprecation_error' => false,
-            'noise_remaining_usages' => false,
-            'noise_remaining_usages_exclude' => [],
-        ],
         'function_to_constant' => false,
         'no_alias_functions' => false,
         'non_printable_character' => false,
@@ -28,7 +23,6 @@ $rules = [
         'psr4' => false,
         'self_accessor' => false,
         'yoda_style' => null,
-        'non_printable_character' => true,
         'no_superfluous_phpdoc_tags' => false,
     ];
 

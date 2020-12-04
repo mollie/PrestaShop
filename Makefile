@@ -17,4 +17,4 @@ build-vendor-no-dev:
 
 fl: fix-lint
 fix-lint:
-	docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest --allow-risky=yes
+	docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest
