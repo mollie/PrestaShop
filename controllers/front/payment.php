@@ -116,7 +116,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		/** @var PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
 		$paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 		// Prepare payment
@@ -322,7 +322,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		}
 		/** @var PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
 		$orderFee = PaymentFeeUtility::getPaymentFee(
 			new MolPaymentMethod(
@@ -337,7 +337,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		if ($orderFee) {
 			$orderFeeObj = new MolOrderFee();
 			$orderFeeObj->id_cart = (int) $cartId;
-			$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+			$environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 			$orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
 				new MolPaymentMethod(
 					$paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
