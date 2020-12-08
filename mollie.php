@@ -135,7 +135,7 @@ class Mollie extends PaymentModule
 		}
 
 		/** @var \Mollie\Install\Installer $installer */
-		$installer = $this->getContainer(\Mollie\Install\Installer::class);
+		$installer = $this->getMollieContainer(\Mollie\Install\Installer::class);
 		if (!$installer->install()) {
 			$this->_errors = array_merge($this->_errors, $installer->getErrors());
 
@@ -151,7 +151,7 @@ class Mollie extends PaymentModule
 	public function uninstall()
 	{
 		/** @var \Mollie\Install\Uninstall $uninstall */
-		$uninstall = $this->getContainer(\Mollie\Install\Uninstall::class);
+		$uninstall = $this->getMollieContainer(\Mollie\Install\Uninstall::class);
 		if (!$uninstall->uninstall()) {
 			$this->_errors[] = $uninstall->getErrors();
 
