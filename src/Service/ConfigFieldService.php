@@ -122,10 +122,10 @@ class ConfigFieldService
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				$countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
 				if ($countryIds) {
-					$configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES.$method['id'].'[]' => $countryIds]);
+					$configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds]);
 					continue;
 				}
-				$configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES.$method['id'].'[]' => []]);
+				$configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => []]);
 			}
 		}
 
@@ -138,7 +138,7 @@ class ConfigFieldService
 		}
 
 		foreach ($checkConfs as $conf) {
-			$checkStatuses[Config::MOLLIE_AUTO_SHIP_STATUSES.'_'.(int) $conf] = true;
+			$checkStatuses[Config::MOLLIE_AUTO_SHIP_STATUSES . '_' . (int) $conf] = true;
 		}
 
 		$configFields = array_merge($configFields, $checkStatuses);

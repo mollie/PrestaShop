@@ -43,7 +43,7 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
@@ -74,7 +74,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	public function initContent()
 	{
 		if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-			PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
+			PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
 		}
 
 		die($this->executeWebhook());
@@ -92,7 +92,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	{
 		if (Tools::getValue('testByMollie')) {
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-				PrestaShopLogger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
+				PrestaShopLogger::addLog(__METHOD__ . ' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
 			}
 
 			return 'OK';

@@ -175,8 +175,7 @@ class PaymentReturnService
 
 			$warning[] = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
 
-			$this->context->cookie->mollie_payment_canceled_error =
-				json_encode($warning);
+			$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($warning));
 
 			$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		}

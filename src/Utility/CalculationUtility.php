@@ -39,9 +39,9 @@ namespace Mollie\Utility;
 class CalculationUtility
 {
 	/**
-	 * @param $productPrice
-	 * @param $shippingPrice
-	 * @param $wrappingPrice
+	 * @param float $productPrice
+	 * @param float $shippingPrice
+	 * @param float $wrappingPrice
 	 *
 	 * @return float
 	 */
@@ -55,8 +55,8 @@ class CalculationUtility
 	}
 
 	/**
-	 * @param $unitPrice
-	 * @param $targetVat
+	 * @param float $unitPrice
+	 * @param float $targetVat
 	 *
 	 * @return float
 	 */

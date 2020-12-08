@@ -37,8 +37,6 @@
 namespace Mollie\Service;
 
 use Configuration;
-use Context;
-use ErrorException;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
@@ -49,14 +47,15 @@ use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\UrlPathUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment;
+use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
-use Tools;
 
 class ApiService
 {
@@ -71,6 +70,10 @@ class ApiService
 	 * @var CountryRepository
 	 */
 	private $countryRepository;
+
+	/**
+	 * @var PaymentMethodSortProviderInterface
+	 */
 	private $paymentMethodSortProvider;
 
 	/**
@@ -103,38 +106,11 @@ class ApiService
 		$this->transactionService = $transactionService;
 	}
 
-	public function setApiKey($apiKey, $moduleVersion)
-	{
-		$api = new MollieApiClient();
-		$context = Context::getContext();
-		if ($apiKey) {
-			try {
-				$api->setApiKey($apiKey);
-			} catch (ApiException $e) {
-				return;
-			}
-		} elseif (!empty($context->employee)
-			&& Tools::getValue('Mollie_Api_Key')
-			&& $context->controller instanceof AdminModulesController
-		) {
-			$api->setApiKey(Tools::getValue('Mollie_Api_Key'));
-		}
-		if (defined('_TB_VERSION_')) {
-			$api->addVersionString('ThirtyBees/'._TB_VERSION_);
-			$api->addVersionString("MollieThirtyBees/{$moduleVersion}");
-		} else {
-			$api->addVersionString('PrestaShop/'._PS_VERSION_);
-			$api->addVersionString("MolliePrestaShop/{$moduleVersion}");
-		}
-
-		return $api;
-	}
-
 	/**
 	 * Get payment methods to show on the configuration page.
 	 *
-	 * @param $api
-	 * @param $path
+	 * @param MollieApiClient $api
+	 * @param string $path
 	 * @param bool $active Active methods only
 	 *
 	 * @return array
@@ -148,7 +124,9 @@ class ApiService
 	{
 		$notAvailable = [];
 		try {
-			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay'])->getArrayCopy();
+			/** @var BaseCollection|MethodCollection $apiMethods */
+			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay']);
+			$apiMethods = $apiMethods->getArrayCopy();
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
 
@@ -222,7 +200,7 @@ class ApiService
 	{
 		$methods = [];
 		$defaultPaymentMethod = new MolPaymentMethod();
-		$defaultPaymentMethod->enabled = 0;
+		$defaultPaymentMethod->enabled = false;
 		$defaultPaymentMethod->title = '';
 		$defaultPaymentMethod->method = 'payments';
 		$defaultPaymentMethod->description = '';
@@ -287,29 +265,28 @@ class ApiService
 	}
 
 	/**
+	 * @param MollieApiClient $api
 	 * @param string $transactionId
-	 * @param bool   $process       Process the new payment/order status
+	 * @param bool $process Process the new payment/order status
 	 *
 	 * @return array|null
 	 *
 	 * @throws ApiException
+	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
 	 *
 	 * @since 3.3.0
 	 * @since 3.3.2 $process option
 	 */
 	public function getFilteredApiPayment($api, $transactionId, $process = false)
 	{
-		/** @var Payment $payment */
 		$payment = $api->payments->get($transactionId);
 		if ($process) {
 			$this->transactionService->processTransaction($payment);
 		}
 
-		if ($payment && method_exists($payment, 'refunds')) {
+		if (method_exists($payment, 'refunds')) {
 			$refunds = $payment->refunds();
 			if (empty($refunds)) {
 				$refunds = [];
@@ -355,16 +332,12 @@ class ApiService
 	}
 
 	/**
-	 * @param $api
+	 * @param MollieApiClient $api
 	 * @param string $transactionId
 	 *
-	 * @return array|null
+	 * @return array|MollieOrderAlias|null
 	 *
-	 * @throws ErrorException
 	 * @throws ApiException
-	 *
-	 * @since 3.3.0
-	 * @since 3.3.2 $process option
 	 */
 	public function getFilteredApiOrder($api, $transactionId)
 	{
@@ -379,7 +352,7 @@ class ApiService
 			]
 		);
 
-		if ($mollieOrder && method_exists($mollieOrder, 'refunds')) {
+		if (method_exists($mollieOrder, 'refunds')) {
 			$refunds = $mollieOrder->refunds();
 			if (empty($refunds)) {
 				$refunds = [];
@@ -416,14 +389,17 @@ class ApiService
 			$order = null;
 		}
 
+		/** @var PaymentCollection $molliePayments */
+		$molliePayments = $mollieOrder->payments();
+
 		/** @var Payment $payment */
-		foreach ($mollieOrder->payments() as $payment) {
+		foreach ($molliePayments as $payment) {
 			$amountRemaining = [
 				'value' => '0.00',
 				'currency' => $payment->amount->currency,
 			];
 			$order['availableRefundAmount'] = $payment->amountRemaining ?: $amountRemaining;
-			$order['details'] = $payment->details ?: new \stdClass();
+			$order['details'] = $payment->details !== null ? $payment->details : new \stdClass();
 		}
 
 		return $order;

@@ -51,6 +51,9 @@ class RestorePendingCartService
 		$this->repository = $repository;
 	}
 
+	/**
+	 * @throws \PrestaShopException
+	 */
 	public function restore(Order $order)
 	{
 		/** @var MolPendingOrderCart|null $pendingOrder */
@@ -65,7 +68,7 @@ class RestorePendingCartService
 		$cart = new Cart($pendingOrder->cart_id);
 
 		$context = Context::getContext();
-		$context->cookie->id_cart = $cart->id;
+		$context->cookie->__set('id_cart', $cart->id);
 		$context->cart = $cart;
 		$context->cookie->write();
 	}

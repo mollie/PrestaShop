@@ -41,7 +41,7 @@ use Tools;
 class UrlPathUtility
 {
 	/**
-	 * @param string      $mediaUri
+	 * @param string $mediaUri
 	 * @param string|null $cssMediaType
 	 *
 	 * @return array|bool|mixed|string
@@ -62,9 +62,9 @@ class UrlPathUtility
 		}
 
 		if (!array_key_exists('host', $urlData)) {
-			$mediaUri = '/'.ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
+			$mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
 			// remove PS_BASE_URI on _PS_ROOT_DIR_ for the following
-			$fileUri = _PS_ROOT_DIR_.Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
+			$fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
 
 			if (!@filemtime($fileUri) || 0 === @filesize($fileUri)) {
 				return false;
@@ -94,9 +94,9 @@ class UrlPathUtility
 		static $manifest = null;
 		if (!$manifest) {
 			$manifest = [];
-			foreach (include(_PS_MODULE_DIR_.'mollie/views/js/dist/manifest.php') as $chunk) {
+			foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
 				$manifest[$chunk['name']] = array_map(function ($chunk) {
-					return UrlPathUtility::getMediaPath(_PS_MODULE_DIR_."mollie/views/js/dist/{$chunk}");
+					return UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
 				}, $chunk['files']);
 			}
 		}

@@ -106,7 +106,7 @@ class VoucherService
 	private function getVoucherCategoryByFeatureValueId($idFeatureValue)
 	{
 		foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
-			if ($this->configuration->get(Config::MOLLIE_VOUCHER_FEATURE.$key) === $idFeatureValue) {
+			if ($this->configuration->get(Config::MOLLIE_VOUCHER_FEATURE . $key) === $idFeatureValue) {
 				return $key;
 			}
 		}

@@ -49,17 +49,17 @@ class PaymentData implements JsonSerializable
 	private $amount;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	private $description;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	private $redirectUrl;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	private $webhookUrl;
 
@@ -212,7 +212,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @return null
+	 * @return string
 	 */
 	public function getLocale()
 	{
@@ -220,7 +220,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @param null $locale
+	 * @param string $locale
 	 */
 	public function setLocale($locale)
 	{
@@ -228,7 +228,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getIssuer()
 	{
@@ -236,7 +236,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @param mixed $issuer
+	 * @param string $issuer
 	 */
 	public function setIssuer($issuer)
 	{
@@ -244,7 +244,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getCardToken()
 	{
@@ -252,7 +252,7 @@ class PaymentData implements JsonSerializable
 	}
 
 	/**
-	 * @param mixed $cardToken
+	 * @param string $cardToken
 	 */
 	public function setCardToken($cardToken)
 	{

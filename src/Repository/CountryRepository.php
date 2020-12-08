@@ -48,7 +48,7 @@ final class CountryRepository extends AbstractRepository
 
 	public function getMethodCountryIds($methodId)
 	{
-		$sql = 'SELECT id_country FROM `'._DB_PREFIX_.'mol_country` WHERE id_method = "'.pSQL($methodId).'"';
+		$sql = 'SELECT id_country FROM `' . _DB_PREFIX_ . 'mol_country` WHERE id_method = "' . pSQL($methodId) . '"';
 
 		$countryIds = Db::getInstance()->executeS($sql);
 		$countryIdsArray = [];
@@ -61,7 +61,7 @@ final class CountryRepository extends AbstractRepository
 
 	public function updatePaymentMethodCountries($idMethod, $idCountries)
 	{
-		$sql = 'DELETE FROM '._DB_PREFIX_.'mol_country WHERE `id_method` = "'.$idMethod.'"';
+		$sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . $idMethod . '"';
 		if (!Db::getInstance()->execute($sql)) {
 			return false;
 		}
@@ -73,12 +73,12 @@ final class CountryRepository extends AbstractRepository
 		$response = true;
 		foreach ($idCountries as $idCountry) {
 			$allCountries = 0;
-			$sql = 'INSERT INTO `'._DB_PREFIX_.'mol_country` (id_method, id_country, all_countries) VALUES (';
+			$sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_country` (id_method, id_country, all_countries) VALUES (';
 
 			if ('0' === $idCountry) {
 				$allCountries = 1;
 			}
-			$sql .= '"'.pSQL($idMethod).'", '.(int) $idCountry.', '.(int) $allCountries.')';
+			$sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCountry . ', ' . (int) $allCountries . ')';
 
 			if (!Db::getInstance()->execute($sql)) {
 				$response = false;
@@ -91,8 +91,8 @@ final class CountryRepository extends AbstractRepository
 	public function getExcludedCountryIds($methodId)
 	{
 		$sql = 'SELECT id_country
-                    FROM `'._DB_PREFIX_.'mol_excluded_country`
-                    WHERE id_method = "'.pSQL($methodId).'"';
+                    FROM `' . _DB_PREFIX_ . 'mol_excluded_country`
+                    WHERE id_method = "' . pSQL($methodId) . '"';
 
 		$countryIds = Db::getInstance()->executeS($sql);
 		$countryIdsArray = [];
@@ -105,7 +105,7 @@ final class CountryRepository extends AbstractRepository
 
 	public function updatePaymentMethodExcludedCountries($idMethod, $idCountries)
 	{
-		$sql = 'DELETE FROM '._DB_PREFIX_.'mol_excluded_country WHERE `id_method` = "'.$idMethod.'"';
+		$sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_country WHERE `id_method` = "' . $idMethod . '"';
 		if (!Db::getInstance()->execute($sql)) {
 			return false;
 		}
@@ -117,13 +117,13 @@ final class CountryRepository extends AbstractRepository
 		$response = true;
 		foreach ($idCountries as $idCountry) {
 			$allCountries = 0;
-			$sql = 'INSERT INTO `'._DB_PREFIX_.'mol_excluded_country` (id_method, id_country, all_countries)
+			$sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_excluded_country` (id_method, id_country, all_countries)
                 VALUES (';
 
 			if ('0' === $idCountry) {
 				$allCountries = 1;
 			}
-			$sql .= '"'.pSQL($idMethod).'", '.(int) $idCountry.', '.(int) $allCountries.')';
+			$sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCountry . ', ' . (int) $allCountries . ')';
 
 			if (!Db::getInstance()->execute($sql)) {
 				$response = false;

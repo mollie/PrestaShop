@@ -42,8 +42,8 @@ use Mollie\Utility\TimeUtility;
 class UpgradeNoticeService
 {
 	/**
-	 * @param $currentTimeStamp int
-	 * @param $noticeCloseTimeStamp int
+	 * @param int $currentTimeStamp
+	 * @param int $noticeCloseTimeStamp
 	 *
 	 * @return bool
 	 */

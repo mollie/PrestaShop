@@ -50,7 +50,7 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 /**
  * Class MollieQrcodeModuleFrontController.
@@ -98,10 +98,10 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
 			header('Content-Type: text/html');
 			$this->context->smarty->assign([
-				'ideal_logo' => __PS_BASE_URI__.'modules/mollie/views/img/ideal_logo.png',
+				'ideal_logo' => __PS_BASE_URI__ . 'modules/mollie/views/img/ideal_logo.png',
 				'canceled' => $canceled,
 			]);
-			echo $this->context->smarty->fetch(_PS_MODULE_DIR_.'mollie/views/templates/front/qr_done.tpl');
+			echo $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/front/qr_done.tpl');
 			exit;
 		}
 	}
@@ -152,7 +152,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
 
 		$orderTotal = $cart->getOrderTotal(true);
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
 		$paymentMethodObj = new MolPaymentMethod($paymentMethodId);
 		$payment = $mollie->api->{$apiService->selectedApi(Mollie::$selectedApi)}->create($paymentMethodService->getPaymentData(

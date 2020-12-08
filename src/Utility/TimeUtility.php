@@ -50,7 +50,9 @@ class TimeUtility
 	}
 
 	/**
-	 * @param $days int
+	 * @param int $days
+	 *
+	 * @return float|int
 	 */
 	public static function getDayMeasuredInSeconds($days)
 	{

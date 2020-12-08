@@ -57,7 +57,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 		}
 
 		if (!Config::isVersion17()) {
-			$this->context->cookie->mollie_payment_canceled_error = json_encode($this->warning);
+			$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
 		}
 
 		return call_user_func_array(['Tools', 'redirect'], func_get_args());

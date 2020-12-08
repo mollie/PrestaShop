@@ -53,7 +53,7 @@ if (!defined('_PS_VERSION_')) {
 	return;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 /**
  * Class MolliePaymentModuleFrontController.
@@ -116,7 +116,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		/** @var PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
 
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
 		$paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 		// Prepare payment
@@ -141,7 +141,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			$this->setTemplate('error.tpl');
 
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
-				$message = 'Cart Dump: '.$e->getMessage().' json: '.json_encode($paymentData, JSON_PRETTY_PRINT);
+				$message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
 			} else {
 				/** @var ExceptionService $exceptionService */
 				$exceptionService = $this->module->getMollieContainer(ExceptionService::class);
@@ -153,7 +153,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		} catch (PrestaShopException $e) {
 			$this->setTemplate('error.tpl');
 			$this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-				? $e->getMessage().' Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
+				? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
 				: $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
 
 			return;
@@ -195,7 +195,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	 * Checks if this payment option is still available
 	 * May redirect the user to a more appropriate page.
 	 *
-	 * @param Cart     $cart
+	 * @param Cart $cart
 	 * @param Customer $customer
 	 *
 	 * @return bool
@@ -233,7 +233,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * @param array  $data
+	 * @param array $data
 	 * @param string $selectedApi
 	 *
 	 * @return MollieOrderAlias|MolliePaymentAlias
@@ -258,15 +258,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 			throw $orderExceptionHandler->handle($e);
 		}
-
-		return $payment;
 	}
 
 	/**
 	 * Prepend module path if PS version >= 1.7.
 	 *
-	 * @param string      $template
-	 * @param array       $params
+	 * @param string $template
+	 * @param array $params
 	 * @param string|null $locale
 	 *
 	 * @throws PrestaShopException
@@ -324,7 +322,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		}
 		/** @var PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
 		$orderFee = PaymentFeeUtility::getPaymentFee(
 			new MolPaymentMethod(
@@ -339,7 +337,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		if ($orderFee) {
 			$orderFeeObj = new MolOrderFee();
 			$orderFeeObj->id_cart = (int) $cartId;
-			$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+			$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 			$orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
 				new MolPaymentMethod(
 					$paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)

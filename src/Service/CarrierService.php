@@ -44,11 +44,11 @@ use Mollie\Config\Config;
 class CarrierService
 {
 	/**
-	 * Get carrier configuration.
+	 * todo: fix this function
+	 *
+	 * @param string $trackingUrls
 	 *
 	 * @return array
-	 *
-	 * @since 3.3.0
 	 */
 	public function carrierConfig($trackingUrls)
 	{
@@ -71,10 +71,10 @@ class CarrierService
 			$configCarriers[] = [
 				'id_carrier' => $idCarrier,
 				'name' => $carrier['name'],
-				'source' => isset($dbConfig[$idCarrier]) ? $trackingUrls[$idCarrier]['source'] : ($carrier['external_module_name'] ? Config::MOLLIE_CARRIER_MODULE : Config::MOLLIE_CARRIER_CARRIER),
+				'source' => ($carrier['external_module_name'] ? Config::MOLLIE_CARRIER_MODULE : Config::MOLLIE_CARRIER_CARRIER),
 				'module' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
 				'module_name' => !empty($carrier['external_module_name']) ? $carrier['external_module_name'] : null,
-				'custom_url' => isset($dbConfig[$idCarrier]) ? $trackingUrls[$idCarrier]['custom_url'] : '',
+				'custom_url' => '',
 			];
 		}
 		if (count($trackingUrls) !== count($configCarriers)) {
