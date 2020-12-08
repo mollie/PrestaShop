@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use Exception;
 use MolliePrefix\Mollie\Api\MollieApiClient;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
@@ -95,10 +96,17 @@ class MolliePaymentMailService
 
         /** @var MollieApiClient $api */
         $api = $this->module->api;
-        if (TransactionUtility::isOrderTransaction($transactionId)) {
-            $response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
-        } else {
-            $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
+
+        try {
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                $response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
+            } else {
+                $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
+            }
+        } catch (Exception $exception) {
+            $response['message'] = $this->module->l('Failed to create second chance email - API error');
+
+            return $response;
         }
 
         if ($response['success']) {

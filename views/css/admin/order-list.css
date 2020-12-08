@@ -54,6 +54,7 @@
 
 .mollie-message-container{
     background-color: #92d097;
+    text-align: center;
 }
 .mollie-message-container:before{
     position: absolute;
