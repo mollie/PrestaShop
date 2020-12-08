@@ -85,7 +85,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
         if (Tools::getValue('done')) {
             $canceled = true;
             /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
             $dbPayment = $paymentMethodRepo->getPaymentBy('cart_id', Tools::getValue('cart_id'));
             if (is_array($dbPayment)) {
                 try {
@@ -144,11 +144,11 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             )));
         }
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         /** @var ApiService $apiService */
-        $apiService = $this->module->getContainer(ApiService::class);
+        $apiService = $this->module->getMollieContainer(ApiService::class);
         /** @var PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
+        $paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
 
         $orderTotal = $cart->getOrderTotal(true);
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -224,7 +224,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
         try {
             /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
             $payment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
         } catch (PrestaShopDatabaseException $e) {
             die(json_encode(array(

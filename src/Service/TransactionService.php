@@ -297,7 +297,7 @@ class TransactionService
             );
         } catch (PrestaShopDatabaseException $e) {
             /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }
