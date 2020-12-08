@@ -1320,42 +1320,42 @@ class Mollie extends PaymentModule
 		];
 	}
 
-    public function hookActionOrderGridDefinitionModifier(array $params)
-    {
-        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
-        $gridDefinition = $params['definition'];
-        $translator = $this->getTranslator();
+	public function hookActionOrderGridDefinitionModifier(array $params)
+	{
+		/** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
+		$gridDefinition = $params['definition'];
+		$translator = $this->getTranslator();
 
-        $gridDefinition->getColumns()
-            ->addBefore('date_add', (new \PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn('second_chance'))
-                ->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
-                ->setOptions([
-                    'actions' => (new \PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection())
-                        ->add((new \Mollie\Grid\Action\Type\SecondChanceRowAction('transaction_id'))
-                            ->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
-                            ->setOptions([
-                                'route' => 'mollie_module_admin_resend_payment_message',
-                                'route_param_field' => 'id_order',
-                                'route_param_name' => 'orderId',
-                                'use_inline_display' => true,
-                                'accessibility_checker' => $this->getMollieContainer(
-                                    Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker::class
-                                ),
-                            ])
-                        )
-                ])
-            );
-    }
+		$gridDefinition->getColumns()
+			->addBefore('date_add', (new \PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn('second_chance'))
+				->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
+				->setOptions([
+					'actions' => (new \PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection())
+						->add((new \Mollie\Grid\Action\Type\SecondChanceRowAction('transaction_id'))
+							->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
+							->setOptions([
+								'route' => 'mollie_module_admin_resend_payment_message',
+								'route_param_field' => 'id_order',
+								'route_param_name' => 'orderId',
+								'use_inline_display' => true,
+								'accessibility_checker' => $this->getMollieContainer(
+									Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker::class
+								),
+							])
+						),
+				])
+			);
+	}
 
-    public function hookActionOrderGridQueryBuilderModifier($params)
-    {
-        /** @var \Doctrine\ORM\QueryBuilder $searchQueryBuilder */
-        $searchQueryBuilder = $params['search_query_builder'];
+	public function hookActionOrderGridQueryBuilderModifier($params)
+	{
+		/** @var \Doctrine\ORM\QueryBuilder $searchQueryBuilder */
+		$searchQueryBuilder = $params['search_query_builder'];
 
-        $searchQueryBuilder->addSelect('mol.`transaction_id`');
+		$searchQueryBuilder->addSelect('mol.`transaction_id`');
 
-        $searchQueryBuilder->leftJoin('o', '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`', 'mol', 'mol.`order_reference` = o.`reference`');
-    }
+		$searchQueryBuilder->leftJoin('o', '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`', 'mol', 'mol.`order_reference` = o.`reference`');
+	}
 
 	public function hookActionValidateOrder($params)
 	{
@@ -1408,8 +1408,6 @@ class Mollie extends PaymentModule
 			}
 		}
 	}
-
-
 
 	/**
 	 * @param int $orderId
