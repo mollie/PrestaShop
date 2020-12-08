@@ -171,12 +171,12 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         }
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         $psPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
         $this->setCountryContextIfNotSet($apiPayment);
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         /** @var OrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
         $cart = new Cart($apiPayment->metadata->cart_id);
 
         Db::getInstance()->update(
@@ -216,7 +216,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
                         /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
                         $orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
@@ -247,7 +247,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         $paymentStatus = (int)Mollie\Config\Config::getStatuses()[$paymentStatus];
 
                         /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
                         $orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
@@ -263,7 +263,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
                         ];
 
                         /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
                         $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, [], $transactionInfo);
 
                         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
@@ -344,7 +344,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             );
         } catch (PrestaShopDatabaseException $e) {
             /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
         }

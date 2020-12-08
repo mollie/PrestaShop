@@ -93,7 +93,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer
         )) {
             /** @var Mollie\Service\LanguageService $langService */
-            $langService = $this->module->getContainer(Mollie\Service\LanguageService::class);
+            $langService = $this->module->getMollieContainer(Mollie\Service\LanguageService::class);
             $this->errors[] = $langService->getLang()['This payment method is not available.'];
             $this->setTemplate('error.tpl');
 
@@ -116,9 +116,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         /** @var PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
+        $paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
 
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -148,7 +148,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
             } else {
                 /** @var ExceptionService $exceptionService */
-                $exceptionService = $this->module->getContainer(ExceptionService::class);
+                $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
                 $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
             }
             $this->errors[] = $message;
@@ -255,7 +255,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             }
         } catch (Exception $e) {
             /** @var OrderExceptionHandler $orderExceptionHandler */
-            $orderExceptionHandler = $this->module->getContainer(OrderExceptionHandler::class);
+            $orderExceptionHandler = $this->module->getMollieContainer(OrderExceptionHandler::class);
             $orderExceptionHandler->handle($e);
         }
 
@@ -300,7 +300,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 );
             } catch (PrestaShopDatabaseException $e) {
                 /** @var PaymentMethodRepository $paymentMethodRepo */
-                $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+                $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
                 $paymentMethodRepo->tryAddOrderReferenceColumn();
                 throw $e;
             }
@@ -322,7 +322,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             ];
         }
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         $environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
         $orderFee = PaymentFeeUtility::getPaymentFee(
@@ -375,7 +375,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $order->update();
 
         /** @var MemorizeCartService $memorizeCart */
-        $memorizeCart = $this->module->getContainer(MemorizeCartService::class);
+        $memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 
         $memorizeCart->memorizeCart($order);
     }
