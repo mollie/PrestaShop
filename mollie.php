@@ -35,11 +35,11 @@
  */
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
-use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
-use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
-use PrestaShop\PrestaShop\Core\Search\Filters\OrderFilters;
-use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinition;
 
 if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
 	return;
@@ -1347,21 +1347,50 @@ class Mollie extends PaymentModule
 		];
 	}
 
+    /**
+     * Use hook to add Row action for subscribing customer to newsletter
+     */
+    public function hookActionCategoryGridDefinitionModifier(array $params)
+    {
+        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinition */
+        $gridDefinition = $params['definition'];
+
+        $gridDefinition->getGridActions()
+            ->add((new SubmitRowAction('subscribe'))
+                ->setName($this->trans('Subscribe', [], 'Admin.Actions'))
+                ->setIcon('mail')
+                ->setOptions([
+                    'route' => 'admin_customer_subscribe',
+                    'route_param_name' => 'customerId',
+                    'route_param_field' => 'id_customer',
+                    'confirm_message' => $this->trans(
+                        'Subscribe to newsletter?',
+                        [],
+                        'Admin.Notifications.Warning'
+                    ),
+                ])
+            )
+        ;
+    }
+
     public function hookActionOrderGridDefinitionModifier(array $params)
     {
-        /** @var GridDefinitionInterface $definition */
-        $definition = $params['definition'];
-
+        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
+        $gridDefinition = $params['definition'];
         $translator = $this->getTranslator();
 
-        $definition
-            ->getColumns()
-            ->addAfter('new', (new DataColumn('transaction_id'))
+        $gridDefinition->getGridActions()
+            ->add((new LinkRowAction('id_transaction'))
                 ->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
+                ->setIcon('mail')
                 ->setOptions([
-                    'field' => 'transaction_id',
+                    'route' => 'mollie_module_admin_resend_payment_message',
+                    'route_param_field' => 'id_order',
+                    'route_param_name' => 'orderId',
+                    'use_inline_display' => true,
                 ])
-            );
+            )
+        ;
     }
 
 	public function hookActionOrderGridQueryBuilderModifier($params)

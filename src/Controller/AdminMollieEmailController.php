@@ -33,33 +33,18 @@
  * @see       https://www.mollie.nl
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Controller;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use Mollie\Service\MolliePaymentMailService;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class AdminMollieEmailController extends FrameworkBundleAdminController
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
-
-	$installer->klarnaPaymentAcceptedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
-        $module->registerHook('actionOrderGridQueryBuilderModifier');
-        $module->registerHook('actionOrderGridDefinitionModifier');
+    public function sendSecondChanceMessage($orderId, Request $request)
+    {
+        /** @var MolliePaymentMailService $molliePaymentMailService */
+        $molliePaymentMailService = $this->get(MolliePaymentMailService::class);
+        $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
     }
-
-	return true;
 }
