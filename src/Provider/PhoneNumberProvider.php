@@ -43,6 +43,10 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
     {
         $phoneNumber = $this->getMobileOrPhone($address);
 
+        if (empty($phoneNumber)) {
+            return null;
+        }
+
         $phoneNumber = str_replace(" ", "", $phoneNumber);
         $phoneNumber = str_replace("+", "", $phoneNumber);
 
