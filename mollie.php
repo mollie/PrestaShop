@@ -34,13 +34,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
-use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinition;
-
 if (!include_once(dirname(__FILE__).'/vendor/autoload.php')) {
 	return;
 }
@@ -1347,55 +1340,36 @@ class Mollie extends PaymentModule
 		];
 	}
 
-    /**
-     * Use hook to add Row action for subscribing customer to newsletter
-     */
-    public function hookActionCategoryGridDefinitionModifier(array $params)
-    {
-        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinition */
-        $gridDefinition = $params['definition'];
-
-        $gridDefinition->getGridActions()
-            ->add((new SubmitRowAction('subscribe'))
-                ->setName($this->trans('Subscribe', [], 'Admin.Actions'))
-                ->setIcon('mail')
-                ->setOptions([
-                    'route' => 'admin_customer_subscribe',
-                    'route_param_name' => 'customerId',
-                    'route_param_field' => 'id_customer',
-                    'confirm_message' => $this->trans(
-                        'Subscribe to newsletter?',
-                        [],
-                        'Admin.Notifications.Warning'
-                    ),
-                ])
-            )
-        ;
-    }
-
     public function hookActionOrderGridDefinitionModifier(array $params)
     {
         /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
         $gridDefinition = $params['definition'];
         $translator = $this->getTranslator();
 
-        $gridDefinition->getGridActions()
-            ->add((new LinkRowAction('id_transaction'))
+        $gridDefinition->getColumns()
+            ->addBefore('date_add', (new \PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn('second_chance'))
                 ->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
-                ->setIcon('mail')
                 ->setOptions([
-                    'route' => 'mollie_module_admin_resend_payment_message',
-                    'route_param_field' => 'id_order',
-                    'route_param_name' => 'orderId',
-                    'use_inline_display' => true,
+                    'actions' => (new \PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection())
+                        ->add((new \Mollie\Grid\Action\Type\SecondChanceRowAction('transaction_id'))
+                            ->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
+                            ->setOptions([
+                                'route' => 'mollie_module_admin_resend_payment_message',
+                                'route_param_field' => 'id_order',
+                                'route_param_name' => 'orderId',
+                                'use_inline_display' => true,
+                                'accessibility_checker' => $this->getMollieContainer(
+                                    Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker::class
+                                ),
+                            ])
+                        )
                 ])
-            )
-        ;
+            );
     }
 
 	public function hookActionOrderGridQueryBuilderModifier($params)
     {
-        /** @var QueryBuilder $searchQueryBuilder */
+        /** @var \Doctrine\ORM\QueryBuilder $searchQueryBuilder */
         $searchQueryBuilder = $params['search_query_builder'];
 
         $searchQueryBuilder->addSelect('mol.`transaction_id`');

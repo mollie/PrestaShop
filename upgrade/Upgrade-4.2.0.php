@@ -56,10 +56,9 @@ function upgrade_module_4_2_0($module)
 	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
 	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
 
-	if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
-        $module->registerHook('actionOrderGridQueryBuilderModifier');
-        $module->registerHook('actionOrderGridDefinitionModifier');
-    }
+    $module->registerHook('actionOrderGridQueryBuilderModifier');
+    $module->registerHook('actionOrderGridDefinitionModifier');
+    $module->registerHook('actionCustomerGridQueryBuilderModifier');
 
 	return true;
 }
