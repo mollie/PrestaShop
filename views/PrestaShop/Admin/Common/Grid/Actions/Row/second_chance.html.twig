@@ -31,10 +31,11 @@
 * @link       https://www.mollie.nl
 * #}
 
+{% set route_params = { (action.options.route_param_name) : (record[action.options.route_param_field]) } %}
 
 <div class="mollie-icon-container">
     <a class="icon-send-mail-mollie"
-       href="{{ path(action.options.route, action.options.route_param_field ) }}"
+       href="{{ path(action.options.route, route_params ) }}"
     >
     </a>
 

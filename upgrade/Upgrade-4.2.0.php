@@ -58,7 +58,6 @@ function upgrade_module_4_2_0($module)
 
     $module->registerHook('actionOrderGridQueryBuilderModifier');
     $module->registerHook('actionOrderGridDefinitionModifier');
-    $module->registerHook('actionCustomerGridQueryBuilderModifier');
 
 	return true;
 }

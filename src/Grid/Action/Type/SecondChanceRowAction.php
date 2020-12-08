@@ -67,4 +67,22 @@ final class SecondChanceRowAction extends AbstractRowAction
             ->setAllowedTypes('use_inline_display', 'bool')
         ;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(array $record)
+    {
+        $accessibilityChecker = $this->getOptions()['accessibility_checker'];
+
+        if ($accessibilityChecker instanceof AccessibilityCheckerInterface) {
+            return $accessibilityChecker->isGranted($record);
+        }
+
+        if (is_callable($accessibilityChecker)) {
+            return call_user_func($accessibilityChecker, $record);
+        }
+
+        return parent::isApplicable($record);
+    }
 }

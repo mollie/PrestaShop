@@ -35,6 +35,7 @@
 
 namespace Mollie\Controller;
 
+use Module;
 use Mollie\Service\MolliePaymentMailService;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,8 +44,22 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
 {
     public function sendSecondChanceMessage($orderId, Request $request)
     {
+        $mollie = Module::getInstanceByName('mollie'); //Unable to get services without mollieContainer.
+
         /** @var MolliePaymentMailService $molliePaymentMailService */
-        $molliePaymentMailService = $this->get(MolliePaymentMailService::class);
+        $molliePaymentMailService = $mollie->getMollieContainer(MolliePaymentMailService::class);
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
+
+        if (empty($response)) {
+            $this->addFlash('error',
+                $this->trans('Unexpected error occurred', 'Module.mollie')
+            );
+        } else {
+            $this->addFlash($response['success'] ? 'success' : 'error',
+                $response['message']
+            );
+        }
+
+        return $this->redirectToRoute('admin_orders_index', $request->query->all());
     }
 }

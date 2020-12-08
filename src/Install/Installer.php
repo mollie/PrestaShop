@@ -166,8 +166,7 @@ class Installer implements InstallerInterface
 			'actionAdminControllerSetMedia',
 			'actionValidateOrder',
             'actionOrderGridDefinitionModifier',
-            'actionOrderGridQueryBuilderModifier',
-            'actionCustomerGridQueryBuilderModifier',
+            'actionOrderGridQueryBuilderModifier'
 		];
 	}
 
