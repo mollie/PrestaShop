@@ -97,16 +97,16 @@ class MolliePaymentMailService
 		$api = $this->module->api;
 
 		try {
-            if (TransactionUtility::isOrderTransaction($transactionId)) {
-                $response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
-            } else {
-                $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
-            }
-        } catch (Exception $exception) {
-            $response['message'] = $this->module->l('Failed to create second chance email - API error');
+			if (TransactionUtility::isOrderTransaction($transactionId)) {
+				$response = $this->sendSecondChanceMailWithOrderAPI($api, $transactionId, $payment['method']);
+			} else {
+				$response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
+			}
+		} catch (Exception $exception) {
+			$response['message'] = $this->module->l('Failed to create second chance email - API error');
 
-            return $response;
-        }
+			return $response;
+		}
 
 		if ($response['success']) {
 			$this->mailService->sendSecondChanceMail($customer, $response['checkoutUrl'], $payment['method']);

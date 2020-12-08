@@ -42,11 +42,11 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\Accessibilit
  */
 final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function isGranted(array $record)
-    {
-        return !empty($record['transaction_id']);
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function isGranted(array $record)
+	{
+		return !empty($record['transaction_id']);
+	}
 }
