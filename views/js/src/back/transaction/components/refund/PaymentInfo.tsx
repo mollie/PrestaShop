@@ -34,7 +34,7 @@ import React, { ReactElement, useCallback } from 'react';
 import styled from 'styled-components';
 import { useMappedState } from 'redux-react-hook';
 
-import PaymentInfoContent from '@transaction/components/orderlines/PaymentInfoContent';
+import PaymentInfoContent from '@transaction/components/refund/PaymentInfoContent';
 
 const Div = styled.div`
 @media only screen and (min-width: 992px) {
