@@ -530,9 +530,11 @@ class Mollie extends PaymentModule
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
 
-            if (Tools::isSubmit('addorder')) {
+            //TODO: consider removed this if statement
+            if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
                 Media::addJsDef([
                     'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+                    'isPsVersion177' => version_compare(_PS_VERSION_, '1.7.7.0', '>='),
                 ]);
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
             }
@@ -563,7 +565,9 @@ class Mollie extends PaymentModule
                 'mollieCheckMethods' => time() > ((int)Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
             ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
-            if (Tools::isSubmit('addorder')) {
+
+            //TODO: consider removed this if statement
+            if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
                 $html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
             }
         }
@@ -1371,9 +1375,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if ($this->context->controller instanceof AdminOrdersControllerCore &&
-            $params["order"]->module === $this->name
-        ) {
+        if ($params['order']->module === $this->name) {
             $cartId = $params["cart"]->id;
             $totalPaid = strval($params["order"]->total_paid);
             $currency = $params["currency"]->iso_code;
