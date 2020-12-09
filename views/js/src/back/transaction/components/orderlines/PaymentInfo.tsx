@@ -53,14 +53,18 @@ export default function PaymentInfo(): ReactElement<{}> {
 
   if (legacy) {
     return (
-      <PaymentInfoContent/>
+        <PaymentInfoContent/>
     );
   }
 
   return (
-    <Div className="col-md-3 panel">
-      <div className="panel-heading">{translations.paymentInfo}</div>
-      <PaymentInfoContent/>
-    </Div>
+      <Div className="col-md-3">
+        <div className="panel card">
+          <div className="panel-heading card-header">{translations.paymentInfo}</div>
+          <div className="card-body">
+            <PaymentInfoContent/>
+          </div>
+        </div>
+      </Div>
   );
 }
