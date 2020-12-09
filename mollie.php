@@ -1099,9 +1099,8 @@ class Mollie extends PaymentModule
         $orderInfoService = $this->getMollieContainer(\Mollie\Service\MollieOrderInfoService::class);
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
-        $adminOrdersController = new AdminOrdersController();
 
-        return $orderInfoService->displayMollieOrderInfo($input, $adminOrdersController->id);
+        return $orderInfoService->displayMollieOrderInfo($input);
     }
 
     /**
