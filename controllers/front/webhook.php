@@ -67,7 +67,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -84,7 +83,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	 * @return string
 	 *
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */

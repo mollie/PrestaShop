@@ -67,7 +67,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	 * Unset the cart id from cookie if the order exists.
 	 *
 	 * @throws PrestaShopException
-	 * @throws CoreException
 	 */
 	public function init()
 	{
@@ -187,7 +186,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	}
 
 	/**
-	 * @throws CoreException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
 	 */

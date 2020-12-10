@@ -77,7 +77,6 @@ class RefundService
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
 	 * @throws ApiException
 	 *
 	 * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
@@ -139,7 +138,6 @@ class RefundService
 	 *
 	 * @return array
 	 *
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 *

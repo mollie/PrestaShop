@@ -65,19 +65,16 @@ class CancelService
 		$this->transactionService = $transactionService;
 	}
 
-	/**
-	 * @param string $transactionId
-	 * @param array $lines
-	 *
-	 * @return array
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
-	 *
-	 * @since 3.3.0
-	 */
+    /**
+     * @param string $transactionId
+     * @param array $lines
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @since 3.3.0
+     */
 	public function doCancelOrderLines($transactionId, $lines = [])
 	{
 		try {

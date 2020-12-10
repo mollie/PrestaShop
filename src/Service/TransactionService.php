@@ -103,7 +103,6 @@ class TransactionService
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
 	 * @throws ApiException
 	 *
 	 * @since 3.3.0

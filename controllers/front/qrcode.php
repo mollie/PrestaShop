@@ -107,7 +107,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
@@ -196,7 +195,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */

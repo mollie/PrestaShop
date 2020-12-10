@@ -262,7 +262,6 @@ class ApiService
 	 * @return array|null
 	 *
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 *
