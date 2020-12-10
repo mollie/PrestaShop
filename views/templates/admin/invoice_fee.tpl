@@ -42,7 +42,7 @@
                         {l s='Payment Fee' mod='mollie'}
                     </td>
                     <td class="white" width="50%">
-                        {$orderFeeAmountDisplay}
+                        {$orderFeeAmountDisplay|escape:'html':'UTF-8'}
                     </td>
                 </tr>
             </table>

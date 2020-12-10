@@ -30,24 +30,15 @@
  * @category   Mollie
  * @package    Mollie
  * @link       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-/**
- * @param Mollie $module
- * @return bool
- */
-function upgrade_module_4_1_1($module)
-{
-    if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-        $module->unregisterHook('displayPaymentEU');
-    }
-
-    return true;
-}
+header("Location: ../");
+exit;

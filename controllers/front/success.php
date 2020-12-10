@@ -63,7 +63,10 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
         $this->reference = $order->reference;
-        if (!Validate::isLoadedObject($order) || $order->id_customer != $this->context->customer->id || $this->secure_key != $order->secure_key) {
+        if (!Validate::isLoadedObject($order)
+            || $order->id_customer != $this->context->customer->id
+            || $this->secure_key != $order->secure_key
+        ) {
             Tools::redirect($redirectLink);
         }
         $module = Module::getInstanceById((int) ($this->id_module));
