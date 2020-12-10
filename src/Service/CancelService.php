@@ -41,10 +41,8 @@ use Mollie\Utility\EnvironmentUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order;
 use MolliePrefix\Mollie\Api\Resources\Payment;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
 use Tools;
 
 class CancelService
@@ -65,16 +63,17 @@ class CancelService
 		$this->transactionService = $transactionService;
 	}
 
-    /**
-     * @param string $transactionId
-     * @param array $lines
-     *
-     * @return array
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @since 3.3.0
-     */
+	/**
+	 * @param string $transactionId
+	 * @param array $lines
+	 *
+	 * @return array
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 *
+	 * @since 3.3.0
+	 */
 	public function doCancelOrderLines($transactionId, $lines = [])
 	{
 		try {

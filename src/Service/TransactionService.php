@@ -57,7 +57,6 @@ use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use Order;
 use OrderPayment;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;

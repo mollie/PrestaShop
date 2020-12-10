@@ -53,7 +53,6 @@ use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolPaymentMethod;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
