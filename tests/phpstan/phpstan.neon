@@ -2,7 +2,7 @@ includes:
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
 
 parameters:
-  autoload_directories:
+  scanDirectories:
     - %currentWorkingDirectory%/vendor
   paths:
     - ../../src
