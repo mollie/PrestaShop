@@ -44,9 +44,9 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 	{
 		$phoneNumber = $this->getMobileOrPhone($address);
 
-        if (empty($phoneNumber)) {
-            return null;
-        }
+		if (empty($phoneNumber)) {
+			return null;
+		}
 
 		$phoneNumber = str_replace(' ', '', $phoneNumber);
 		$phoneNumber = str_replace('+', '', $phoneNumber);
@@ -55,8 +55,8 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 			$phoneNumber = substr($phoneNumber, 1);
 
 			if (empty($phoneNumber) && $phoneNumber !== '0') {
-			    return null;
-            }
+				return null;
+			}
 		}
 
 		if ('+' !== $phoneNumber[0]) {
