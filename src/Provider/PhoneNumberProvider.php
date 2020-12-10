@@ -52,6 +52,10 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 
         while ($phoneNumber[0] === "0") {
             $phoneNumber = substr($phoneNumber, 1);
+
+            if (empty($phoneNumber) && $phoneNumber !== '0') {
+                return null;
+            }
         }
 
         if ($phoneNumber[0] !== "+") {
