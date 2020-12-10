@@ -46,6 +46,6 @@ parameters:
     - '#Access to an undefined property AdminController\|FrontController::\$warning.#'
     - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException\|SmartyException is not subtype of Throwable#'
     - '#PHPDoc tag \@throws with type MolliePrefix\\Mollie\\Api\\Exceptions\\ApiException\|PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException is not subtype of Throwable#'
-    - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException||PrestaShopException is not subtype of Throwable#'
+    - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException\|PrestaShopException is not subtype of Throwable#'
 
   level: 5
