@@ -45,7 +45,6 @@ use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
