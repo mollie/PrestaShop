@@ -125,7 +125,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 		$testKeyInfo = $this->getApiKeyInfo($testKey);
 		$liveKeyInfo = $this->getApiKeyInfo($liveKey);
 
-		return  [
+		return [
 			'testKeyInfo' => $testKeyInfo,
 			'liveKeyInfo' => $liveKeyInfo,
 		];

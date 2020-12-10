@@ -77,7 +77,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
 		}
 
-		die($this->executeWebhook());
+		exit($this->executeWebhook());
 	}
 
 	/**
