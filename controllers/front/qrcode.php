@@ -138,7 +138,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$customer = $context->customer;
 		$cart = $context->cart;
 		if (!$cart instanceof Cart || !$cart->getOrderTotal(true)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 				'message' => 'No active cart',
 			]));
@@ -184,7 +184,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		}
 
 		$src = isset($payment->details->qrCode->src) ? $payment->details->qrCode->src : null;
-		die(json_encode([
+		exit(json_encode([
 			'success' => (bool) $src,
 			'href' => $src,
 			'idTransaction' => $payment->id,
@@ -202,7 +202,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 	{
 		header('Content-Type: application/json;charset=UTF-8');
 		if (empty($this->context->cart)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 				'status' => false,
 				'amount' => null,
@@ -226,13 +226,13 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 			$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 			$payment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
 		} catch (PrestaShopDatabaseException $e) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 				'status' => false,
 				'amount' => null,
 			]));
 		} catch (PrestaShopException $e) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 				'status' => false,
 				'amount' => null,
@@ -254,7 +254,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
 		$cart = new Cart($payment['cart_id']);
 		$amount = (int) ($cart->getOrderTotal(true) * 100);
-		die(json_encode([
+		exit(json_encode([
 			'success' => true,
 			'status' => $status,
 			'amount' => $amount,
@@ -284,7 +284,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$cart = $context->cart;
 
 		$cartTotal = (int) ($cart->getOrderTotal(true) * 100);
-		die(json_encode([
+		exit(json_encode([
 			'success' => true,
 			'amount' => $cartTotal,
 		]));

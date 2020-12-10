@@ -218,7 +218,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
 		$cart = new Cart($dbPayment['cart_id']);
 		if (!Validate::isLoadedObject($cart)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
@@ -226,13 +226,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$order = new Order((int) $orderId);
 
 		if (!Validate::isLoadedObject($cart)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
 
 		if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
@@ -309,10 +309,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
 				break;
 			default:
-				die();
+				exit();
 		}
 
-		die(json_encode($response));
+		exit(json_encode($response));
 	}
 
 	private function setWarning($message)
