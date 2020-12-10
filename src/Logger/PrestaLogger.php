@@ -95,6 +95,6 @@ class PrestaLogger implements LoggerInterface
 	{
 		$content = json_encode($context);
 
-		return  "{$message} . context: {$content}";
+		return "{$message} . context: {$content}";
 	}
 }

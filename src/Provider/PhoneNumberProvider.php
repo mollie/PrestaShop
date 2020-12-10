@@ -40,34 +40,34 @@ use Address;
 
 final class PhoneNumberProvider implements PhoneNumberProviderInterface
 {
-    public function getFromAddress(Address $address)
-    {
-        $phoneNumber = $this->getMobileOrPhone($address);
+	public function getFromAddress(Address $address)
+	{
+		$phoneNumber = $this->getMobileOrPhone($address);
 
-        if (empty($phoneNumber)) {
-            return null;
-        }
-        $phoneNumber = str_replace(' ', '', $phoneNumber);
-        $phoneNumber = str_replace('+', '', $phoneNumber);
+		if (empty($phoneNumber)) {
+			return null;
+		}
+		$phoneNumber = str_replace(' ', '', $phoneNumber);
+		$phoneNumber = str_replace('+', '', $phoneNumber);
 
-        while ('0' === $phoneNumber[0]) {
-            $phoneNumber = substr($phoneNumber, 1);
-        }
+		while ('0' === $phoneNumber[0]) {
+			$phoneNumber = substr($phoneNumber, 1);
+		}
 
-        if ('+' !== $phoneNumber[0]) {
-            $phoneNumber = '+' . $phoneNumber;
-        }
+		if ('+' !== $phoneNumber[0]) {
+			$phoneNumber = '+' . $phoneNumber;
+		}
 
-        $regex = "/^\+\d{3,18}$/";
-        if (1 == preg_match($regex, $phoneNumber)) {
-            return $phoneNumber;
-        } else {
-            return null;
-        }
-    }
+		$regex = "/^\+\d{3,18}$/";
+		if (1 == preg_match($regex, $phoneNumber)) {
+			return $phoneNumber;
+		} else {
+			return null;
+		}
+	}
 
-    private function getMobileOrPhone(Address $address)
-    {
-        return $address->phone_mobile ?: $address->phone;
-    }
+	private function getMobileOrPhone(Address $address)
+	{
+		return $address->phone_mobile ?: $address->phone;
+	}
 }
