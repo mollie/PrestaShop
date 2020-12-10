@@ -49,5 +49,7 @@ parameters:
     - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException\|SmartyException is not subtype of Throwable#'
     - '#PHPDoc tag \@throws with type MolliePrefix\\Mollie\\Api\\Exceptions\\ApiException\|PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException is not subtype of Throwable#'
     - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException\|PrestaShopException is not subtype of Throwable#'
+    - '#Call to an undefined method AdminController\|FrontController::registerJavascript\(\).#'
+    - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
 
   level: 5
