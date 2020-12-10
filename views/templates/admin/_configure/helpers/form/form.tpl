@@ -140,7 +140,7 @@
                 <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
               </select>
               <p class="help-block">
-                {$input.methodDescription|escape:'html':'UTF-8'}
+                {$input.methodDescription}
               </p>
             </div>
           </div>

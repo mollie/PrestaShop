@@ -51,13 +51,9 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
         if (empty($response)) {
-            $this->addFlash('error',
-                $this->trans('Unexpected error occurred', 'Module.mollie')
-            );
+            $this->addFlash('error', $this->trans('Unexpected error occurred', 'Module.mollie'));
         } else {
-            $this->addFlash($response['success'] ? 'success' : 'error',
-                $response['message']
-            );
+            $this->addFlash($response['success'] ? 'success' : 'error', $response['message']);
         }
 
         return $this->redirectToRoute('admin_orders_index', $request->query->all());
