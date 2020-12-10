@@ -158,7 +158,6 @@ class MailService
      * @param int $orderStateId
      *
      * @return array
-     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
@@ -171,7 +170,9 @@ class MailService
         $product_var_tpl_list = [];
         foreach ($order->getProducts() as $product) {
             $specific_price = null;
+            /* @phpstan-ignore-next-line */
             $price = Product::getPriceStatic((int)$product['id_product'], false, ($product['product_attribute_id'] ? (int)$product['product_attribute_id'] : null), 6, null, false, true, $product['product_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
+            /* @phpstan-ignore-next-line */
             $price_wt = Product::getPriceStatic((int)$product['id_product'], true, ($product['product_attribute_id'] ? (int)$product['product_attribute_id'] : null), 2, null, false, true, $product['product_quantity'], false, (int)$order->id_customer, (int)$order->id_cart, (int)$order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
 
             $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
@@ -180,7 +181,7 @@ class MailService
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
-                'name' => $product['product_name'] . (Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
+                'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
                 'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
                 'quantity' => $product['product_quantity'],
                 'customization' => [],
@@ -194,6 +195,7 @@ class MailService
                 $product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
             }
 
+            /* @phpstan-ignore-next-line */
             $customized_datas = Product::getAllCustomizedDatas((int)$order->id_cart, null, true, null, (int)$product['id_customization']);
             if (isset($customized_datas[$product['id_product']][$product['product_attribute_id']])) {
                 $product_var_tpl['customization'] = [];
@@ -206,10 +208,11 @@ class MailService
                     }
 
                     if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                        /* @phpstan-ignore-next-line */
                         Config::isVersion17() ?
+                            /* @phpstan-ignore-next-line */
                             $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />'
                             :
+                            /* @phpstan-ignore-next-line */
                             $customization_text .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . '<br />';
                     }
 

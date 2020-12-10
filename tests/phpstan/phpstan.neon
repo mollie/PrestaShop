@@ -38,6 +38,7 @@ parameters:
     - '#Call to method hookActionValidateOrder\(\) on an unknown class Ps_EmailAlerts.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
+    - '#Parameter \#4 \$template_vars of static method MailCore::Send\(\) expects string, array given.#'
     - '#Variable \$order in PHPDoc tag \@var does not match assigned variable \$mollieOrder.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::Send\(\) expects string, array<string, mixed> given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::Send\(\) expects string, array given.#'
@@ -45,5 +46,6 @@ parameters:
     - '#Access to an undefined property AdminController\|FrontController::\$warning.#'
     - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException\|SmartyException is not subtype of Throwable#'
     - '#PHPDoc tag \@throws with type MolliePrefix\\Mollie\\Api\\Exceptions\\ApiException\|PrestaShop\\PrestaShop\\Adapter\\CoreException\|PrestaShopException is not subtype of Throwable#'
+    - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException||PrestaShopException is not subtype of Throwable#'
 
   level: 5
