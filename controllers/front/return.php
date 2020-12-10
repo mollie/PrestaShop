@@ -224,7 +224,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				'success' => false,
 			]));
 		}
-		$orderId = Order::getOrderByCartId((int) $cart->id);
+		$orderId = (int) Order::getOrderByCartId((int) $cart->id); /** @phpstan-ignore-line */
 		$order = new Order((int) $orderId);
 
 		if (!Validate::isLoadedObject($cart)) {

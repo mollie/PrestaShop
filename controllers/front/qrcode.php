@@ -284,12 +284,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$context = Context::getContext();
 		/** @var Cart $cart */
 		$cart = $context->cart;
-		if (!$cart) {
-			die(json_encode([
-				'success' => true,
-				'amount' => 0,
-			]));
-		}
 
 		$cartTotal = (int) ($cart->getOrderTotal(true) * 100);
 		die(json_encode([

@@ -50,10 +50,6 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 	{
 		parent::init();
 
-		if (true === (bool) Tools::getValue('free_order')) {
-			$this->checkFreeOrder();
-		}
-
 		$this->id_cart = (int) (Tools::getValue('id_cart', 0));
 
 		$redirectLink = 'index.php?controller=history';
@@ -61,7 +57,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 		$this->id_module = (int) (Tools::getValue('id_module', 0));
 		$this->id_order = Order::getOrderByCartId((int) ($this->id_cart));
 		$this->secure_key = Tools::getValue('key', false);
-		$order = new Order((int) ($this->id_order));
+		$order = new Order((int) ($this->id_order)); /** @phpstan-ignore-line */
 
 		if (!$this->id_order || !$this->id_module || !$this->secure_key || empty($this->secure_key)) {
 			Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
@@ -90,8 +86,9 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 		if (Configuration::isCatalogMode()) {
 			Tools::redirect('index.php');
 		}
+        $orderId = (int) Order::getOrderByCartId((int) $this->id_cart); /** @phpstan-ignore-line */
 
-		$order = new Order(Order::getIdByCartId((int) ($this->id_cart)));
+		$order = new Order($orderId);
 		$presentedOrder = $this->order_presenter->present($order);
 		$register_form = $this
 			->makeCustomerForm()
@@ -145,39 +142,5 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 	public function displayOrderConfirmation($order)
 	{
 		return Hook::exec('displayOrderConfirmation', ['order' => $order]);
-	}
-
-	/**
-	 * Check if an order is free and create it.
-	 */
-	protected function checkFreeOrder()
-	{
-		$cart = $this->context->cart;
-		if (0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
-			Tools::redirect($this->context->link->getPageLink('order'));
-		}
-
-		$customer = new Customer($cart->id_customer);
-		if (!Validate::isLoadedObject($customer)) {
-			Tools::redirect($this->context->link->getPageLink('order'));
-		}
-
-		$total = (float) $cart->getOrderTotal(true, Cart::BOTH);
-		if ($total > 0) {
-			Tools::redirect($this->context->link->getPageLink('order'));
-		}
-
-		$order = new PaymentFree();
-		$order->validateOrder(
-			$cart->id,
-			(int) Configuration::get('PS_OS_PAYMENT'),
-			0,
-			$this->trans('Free order', [], 'Admin.Orderscustomers.Feature'),
-			null,
-			[],
-			null,
-			false,
-			(bool) $cart->secure_key
-		);
 	}
 }

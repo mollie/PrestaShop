@@ -82,7 +82,7 @@ class ApiService
 	private $configurationAdapter;
 
 	/**
-	 * @var false|string
+	 * @var int
 	 */
 	private $environment;
 
@@ -102,7 +102,7 @@ class ApiService
 		$this->paymentMethodSortProvider = $paymentMethodSortProvider;
 		$this->methodRepository = $methodRepository;
 		$this->configurationAdapter = $configurationAdapter;
-		$this->environment = $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
+		$this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
 		$this->transactionService = $transactionService;
 	}
 
@@ -111,7 +111,6 @@ class ApiService
 	 *
 	 * @param MollieApiClient $api
 	 * @param string $path
-	 * @param bool $active Active methods only
 	 *
 	 * @return array
 	 *
@@ -120,7 +119,7 @@ class ApiService
 	 *
 	 * @public ✓ This method is part of the public API
 	 */
-	public function getMethodsForConfig(MollieApiClient $api, $path, $active = false)
+	public function getMethodsForConfig(MollieApiClient $api, $path)
 	{
 		$notAvailable = [];
 		try {
@@ -149,7 +148,6 @@ class ApiService
 			$deferredMethods[] = [
 				'id' => $apiMethod->id,
 				'name' => $apiMethod->description,
-				'enabled' => true,
 				'available' => !in_array($apiMethod->id, $notAvailable),
 				'image' => (array) $apiMethod->image,
 				'issuers' => $apiMethod->issuers,
@@ -164,7 +162,6 @@ class ApiService
 				$deferredMethods[] = [
 					'id' => $id,
 					'name' => $name,
-					'enabled' => true,
 					'available' => !in_array($id, $notAvailable),
 					'image' => [
 						'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
@@ -179,13 +176,6 @@ class ApiService
 		$methods = array_values($methods);
 		foreach ($deferredMethods as $deferredMethod) {
 			$methods[] = $deferredMethod;
-		}
-		if ($active) {
-			foreach ($methods as $index => $method) {
-				if (!$method['enabled']) {
-					unset($methods[$index]);
-				}
-			}
 		}
 
 		$methods = $this->getMethodsObjForConfig($methods);
@@ -215,7 +205,7 @@ class ApiService
 		foreach ($apiMethods as $apiMethod) {
 			$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
 			if ($paymentId) {
-				$paymentMethod = new MolPaymentMethod($paymentId);
+				$paymentMethod = new MolPaymentMethod((int) $paymentId);
 				$methods[$apiMethod['id']] = $apiMethod;
 				$methods[$apiMethod['id']]['obj'] = $paymentMethod;
 				continue;
@@ -233,7 +223,7 @@ class ApiService
 			foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
 				$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value, $this->environment);
 				if ($paymentId) {
-					$paymentMethod = new MolPaymentMethod($paymentId);
+					$paymentMethod = new MolPaymentMethod((int) $paymentId);
 					$methods[$value]['obj'] = $paymentMethod;
 					continue;
 				}
