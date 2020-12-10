@@ -33,19 +33,19 @@
  * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
-if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
 	return;
 }
-if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
 	return;
 }
-if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
 	return;
 }
-if (!include_once(dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
 	return;
 }
 
@@ -172,7 +172,7 @@ class Mollie extends PaymentModule
 
 			if ($isAdmin) {
 				http_response_code(500);
-				die(
+				exit(
 				$this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
 				);
 			}
@@ -238,11 +238,11 @@ class Mollie extends PaymentModule
 			header('Content-Type: application/json;charset=UTF-8');
 
 			if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
-				die(json_encode([
+				exit(json_encode([
 					'success' => false,
 				]));
 			}
-			die(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
+			exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
 		}
 		/** @var \Mollie\Repository\ModuleRepository $moduleRepository */
 		$moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
