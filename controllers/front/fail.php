@@ -98,8 +98,8 @@ class MollieFailModuleFrontController extends ModuleFrontController
 		if ($order->module !== $this->module->name) {
 			Tools::redirect($redirectLink);
 		}
-        /* @phpstan-ignore-next-line */
-        $this->order_presenter = new OrderPresenter();
+		/* @phpstan-ignore-next-line */
+		$this->order_presenter = new OrderPresenter();
 	}
 
 	public function initContent()
@@ -130,8 +130,8 @@ class MollieFailModuleFrontController extends ModuleFrontController
 		$order = new Order($this->id_order);
 		if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
 			$this->context->smarty->assign([
-                /* @phpstan-ignore-next-line */
-                'order' => $this->order_presenter->present($order),
+				/* @phpstan-ignore-next-line */
+				'order' => $this->order_presenter->present($order),
 			]);
 		} else {
 			$this->context->smarty->assign([

@@ -181,7 +181,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 			$template = "module:mollie/views/templates/front/17_{$template}";
 		}
 
-        /* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line */
 		parent::setTemplate($template, $params, $locale);
 	}
 
@@ -317,8 +317,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
 	private function setWarning($message)
 	{
-        /* @phpstan-ignore-next-line */
-        $this->warning[] = $message;
+		/* @phpstan-ignore-next-line */
+		$this->warning[] = $message;
 
 		$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
 	}
