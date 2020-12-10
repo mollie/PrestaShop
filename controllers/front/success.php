@@ -57,7 +57,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 		$this->id_module = (int) (Tools::getValue('id_module', 0));
 		$this->id_order = Order::getOrderByCartId((int) ($this->id_cart));
 		$this->secure_key = Tools::getValue('key', false);
-		$order = new Order((int) ($this->id_order)); /** @phpstan-ignore-line */
+		$order = new Order((int) ($this->id_order)); /* @phpstan-ignore-line */
 
 		if (!$this->id_order || !$this->id_module || !$this->secure_key || empty($this->secure_key)) {
 			Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
@@ -86,8 +86,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
 		if (Configuration::isCatalogMode()) {
 			Tools::redirect('index.php');
 		}
-        $orderId = (int) Order::getOrderByCartId((int) $this->id_cart); /** @phpstan-ignore-line */
-
+		$orderId = (int) Order::getOrderByCartId((int) $this->id_cart); /** @phpstan-ignore-line */
 		$order = new Order($orderId);
 		$presentedOrder = $this->order_presenter->present($order);
 		$register_form = $this

@@ -77,7 +77,7 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
 		$first = $psCollection->getFirst();
 
-        /* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line */
 		return false === $first ? null : $first;
 	}
 }

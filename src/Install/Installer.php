@@ -428,7 +428,6 @@ class Installer implements InstallerInterface
 		$moduleTab->module = $this->module->name;
 		$moduleTab->active = $active;
 		$moduleTab->icon = $icon; /** @phpstan-ignore-line */
-
 		$languages = Language::getLanguages(true);
 		foreach ($languages as $language) {
 			$moduleTab->name[$language['id_lang']] = $name;

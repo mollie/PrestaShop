@@ -180,7 +180,7 @@ class PaymentMethodService
 		if (!$apiKey) {
 			return [];
 		}
-        /* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line */
 		if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
 			return [];
 		}
