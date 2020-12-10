@@ -41,7 +41,7 @@
     {foreach $methods as $method}
         <p class="payment_module">
             {if $mollieIframe === '1' && ($method['id_method'] === 'creditcard' || $method['id_method'] === $CARTES_BANCAIRES)}
-            <a href="{$nonRedirectPlaceholder}"
+            <a href="{$nonRedirectPlaceholder|escape:'html':'UTF-8'}"
                title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
                id="mollie_link_{$method['id_method']|escape:'htmlall':'UTF-8'}"
                class="mollie_method js_call_iframe"
@@ -73,7 +73,7 @@
                     {/if}
                     {$module->lang($method['method_name'])|escape:'htmlall':'UTF-8'}
                     {if $method.fee}
-                        <span>{l s='Payment Fee:' mod='mollie'}{$method.fee_display}</span>
+                        <span>{l s='Payment Fee:' mod='mollie'}{$method.fee_display|escape:'html':'UTF-8'}</span>
                     {/if}
                 </a>
         </p>

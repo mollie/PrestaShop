@@ -166,8 +166,8 @@ export default function RefundForm(): ReactElement<{}> {
           </div>
           <div className="form-group">
             <div className="input-group" style={{ minWidth: '100px' }}>
-              <div className="input-group-addon">
-                {translations.refundable}:
+              <div className="input-group-addon input-group-prepend">
+                <span className="input-group-text">{translations.refundable}:</span>
               </div>
               <input
                 type="text"

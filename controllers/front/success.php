@@ -63,7 +63,10 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
         $this->reference = $order->reference;
-        if (!Validate::isLoadedObject($order) || $order->id_customer != $this->context->customer->id || $this->secure_key != $order->secure_key) {
+        if (!Validate::isLoadedObject($order)
+            || $order->id_customer != $this->context->customer->id
+            || $this->secure_key != $order->secure_key
+        ) {
             Tools::redirect($redirectLink);
         }
         $module = Module::getInstanceById((int) ($this->id_module));
@@ -97,7 +100,7 @@ class MollieSuccessModuleFrontController extends ModuleFrontController
         parent::initContent();
 
         /** @var OrderFeeRepository $orderFeeRepo */
-        $orderFeeRepo = $this->module->getContainer(OrderFeeRepository::class);
+        $orderFeeRepo = $this->module->getMollieContainer(OrderFeeRepository::class);
         $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($order->id_cart);
         $fee = 0;
         if ($orderFeeId) {

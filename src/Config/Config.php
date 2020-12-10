@@ -53,7 +53,7 @@ class Config
         'belfius' => ['eur'],
         'bitcoin' => ['eur'],
         'cartesbancaires' => ['eur'],
-        'creditcard' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'],
+        'creditcard' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd', 'rub'],
         'directdebit' => ['eur'],
         'eps' => ['eur'],
         'giftcard' => ['eur'],

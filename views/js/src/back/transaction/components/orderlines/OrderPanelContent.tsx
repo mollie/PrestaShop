@@ -50,7 +50,7 @@ export default function OrderPanelContent(): ReactElement<{}> {
       {!!order && order.status && (
         <div className={
           cx({
-            'panel-body': !legacy,
+            'panel-body card-body': !legacy,
             'row': !legacy,
           })}
         >

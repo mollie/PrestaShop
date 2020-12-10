@@ -49,6 +49,7 @@ class PaymentReturnService
 {
     const PENDING = 1;
     const DONE = 2;
+    const FILE_NAME = 'PaymentReturnService';
 
     /**
      * @var Mollie
@@ -139,7 +140,7 @@ class PaymentReturnService
 
             $this->cartDuplicationService->restoreCart($order->id_cart);
 
-            $warning[] = $this->module->l('Your payment was not successful, please try again.');
+            $warning[] = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
 
             $this->context->cookie->mollie_payment_canceled_error =
                 json_encode($warning);
@@ -184,7 +185,7 @@ class PaymentReturnService
     private function updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod)
     {
         /** @var OrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getContainer(OrderStatusService::class);
+        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 
         $orderStatusId = (int)Mollie\Config\Config::getStatuses()[$orderStatus];
         $this->paymentMethodRepository->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);

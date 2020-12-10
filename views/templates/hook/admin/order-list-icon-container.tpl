@@ -10,6 +10,6 @@
  *
  *}
 
-<div class="mollie-icon-container" data-id-order="{$idOrder}">
-    {$icon}
+<div class="mollie-icon-container" data-id-order="{$idOrder|intval}">
+    {$icon|escape:'html':'UTF-8'}
 </div>

@@ -410,7 +410,7 @@ class OrderData implements JsonSerializable
                 'value' => (string)$this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                "organizationName" => $this->getBillingAddress()->company,
+                "organizationName" => ltrim($this->getBillingAddress()->company),
                 "streetAndNumber" => $this->getBillingAddress()->address1,
                 "city" => $this->getBillingAddress()->city,
                 "postalCode" => $this->getBillingAddress()->postcode,
@@ -420,7 +420,7 @@ class OrderData implements JsonSerializable
                 "email" => $this->getEmail(),
             ],
             'shippingAddress' => [
-                "organizationName" => $this->getShippingAddress()->company,
+                "organizationName" => ltrim($this->getShippingAddress()->company),
                 "streetAndNumber" => $this->getShippingAddress()->address1,
                 "city" => $this->getShippingAddress()->city,
                 "postalCode" => $this->getShippingAddress()->postcode,
