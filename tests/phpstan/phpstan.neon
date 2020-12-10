@@ -53,5 +53,6 @@ parameters:
     - '#Call to an undefined method AdminController\|FrontController::registerJavascript\(\).#'
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
+    - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
 
   level: 5
