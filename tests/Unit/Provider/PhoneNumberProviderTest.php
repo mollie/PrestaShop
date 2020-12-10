@@ -54,6 +54,14 @@
 //                'phoneNumber' => '+0164742671',
 //                'result' => '+164742671',
 //            ],
+//            'number that consists of 0s with +' => [
+//                'phoneNumber' => '+000000',
+//                'result' => null,
+//            ],
+//            'number that consists of 0s' => [
+//                'phoneNumber' => '000000',
+//                'result' => null,
+//            ],
 //        ];
 //    }
 //}
