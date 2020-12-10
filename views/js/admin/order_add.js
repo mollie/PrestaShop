@@ -33,7 +33,7 @@
  */
 $(document).ready(function () {
     var $paymentSelector = isPsVersion177 ? 'select[name="cart_summary[payment_module]"]' : 'select[name="payment_module_name"]';
-    var displayHiddenClass = isPsVersion177 ? 'd-none' : 'hidden';
+    var displayHiddenClass = 'd-none hidden';
     var $paymentSelectInput = $($paymentSelector)
 
     $paymentSelectInput.ready(function () {
