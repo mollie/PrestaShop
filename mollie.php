@@ -809,7 +809,7 @@ class Mollie extends PaymentModule
 			if ($isIdealMethod && $isIssuersOnClick) {
 				$newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
 				$newOption
-					->setCallToActionText($this->lang($methodObj->method_name))
+					->setCallToActionText($this->lang($methodObj->method_name)) /** @phpstan-ignore-line */
 					->setModuleName($this->name)
 					->setAction(Context::getContext()->link->getModuleLink(
 						$this->name,
@@ -827,7 +827,7 @@ class Mollie extends PaymentModule
 					->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /** @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(
@@ -879,7 +879,7 @@ class Mollie extends PaymentModule
 					));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /** @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(
@@ -927,7 +927,7 @@ class Mollie extends PaymentModule
 					));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /** @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(

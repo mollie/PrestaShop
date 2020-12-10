@@ -10,6 +10,7 @@ parameters:
     - ../../mollie.php
   excludes_analyse:
     - ../../controllers/front/ajax.php
+    - ../../src/Command
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -51,5 +52,6 @@ parameters:
     - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException\|PrestaShopException is not subtype of Throwable#'
     - '#Call to an undefined method AdminController\|FrontController::registerJavascript\(\).#'
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
 
   level: 5

@@ -291,7 +291,7 @@ class MailService
 			'{invoice_other}' => $invoice->other,
 			'{order_name}' => $order->getUniqReference(),
 			'{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, true),
-			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? Context::getContext()->getTranslator()->trans('No carrier', [], 'Admin.Payment.Notification') : $carrier->name,
+			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? $this->module->l('No carrier', self::FILE_NAME) : $carrier->name,
 			'{payment}' => Tools::substr($order->payment, 0, 255),
 			'{products}' => $product_list_html,
 			'{products_txt}' => $product_list_txt,
