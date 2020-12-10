@@ -537,7 +537,8 @@ class FormBuilder
 		}
 		$input[] = [
 			'type' => 'select',
-			'label' => $this->module->l('Create Klarna invoice on:', self::FILE_NAME),
+			'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),
+            'desc'=> $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
 			'tab' => $advancedSettings,
 			'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
 			'options' => [
