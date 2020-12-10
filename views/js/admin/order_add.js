@@ -38,7 +38,7 @@ $(document).ready(function () {
 
     $paymentSelectInput.ready(function () {
         $("#mollie-email-send-group").appendTo($paymentSelectInput.closest('div.form-group'));
-        isMollie = isMolliePayment($($paymentSelector).val());
+        isMollie = isMolliePayment($paymentSelectInput.val());
         toggleOrderStatus(isMollie);
     });
 
@@ -50,7 +50,7 @@ $(document).ready(function () {
 
     function toggleOrderStatus(isMolliePayment) {
         var $molliePaymentCheckboxGroup = $('#mollie-email-send-group');
-        var $orderStatusSelector = isPsVersion177 ? $('select[name="cart_summary[order_state]"]') : $('select[name="id_order_state"]');
+        var $orderStatusSelector = $('select[name="cart_summary[order_state]"],select[name="id_order_state"]');
         if (isMolliePayment) {
             $orderStatusSelector.closest('div.form-group').toggleClass(displayHiddenClass, true);
             $('#send_email_to_customer').toggleClass(displayHiddenClass, true);
