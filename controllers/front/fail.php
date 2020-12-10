@@ -63,7 +63,8 @@ class MollieFailModuleFrontController extends ModuleFrontController
 	/**
 	 * Order Presenter Variable Declaration.
 	 *
-     * @phpstan-ignore-next-line
+	 * @phpstan-ignore-next-line
+	 *
 	 * @var OrderPresenter
 	 */
 	private $order_presenter;
