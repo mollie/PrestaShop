@@ -165,7 +165,7 @@ $(document).ready(function () {
 
                 $mollieCardToken.val(token.token);
                 isResubmit = true;
-                $form.submit();
+                $form[0].submit();
             });
         });
     }
