@@ -143,7 +143,7 @@ class TransactionService
 		/** @var int $orderId */
 		$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 		/** @var OrderStatusService $orderStatusService */
-		$orderStatusService = $this->module->getContainer(OrderStatusService::class);
+		$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 		$cart = new Cart($apiPayment->metadata->cart_id);
 
 		Db::getInstance()->update(
@@ -177,7 +177,7 @@ class TransactionService
 						}
 
 						/** @var OrderStatusService $orderStatusService */
-						$orderStatusService = $this->module->getContainer(OrderStatusService::class);
+						$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 						$orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
 						$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -199,7 +199,7 @@ class TransactionService
 						$paymentStatus = (int) Mollie\Config\Config::getStatuses()[$paymentStatus];
 
 						/** @var OrderStatusService $orderStatusService */
-						$orderStatusService = $this->module->getContainer(OrderStatusService::class);
+						$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 						$orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
 						$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -214,7 +214,7 @@ class TransactionService
 							$this->updateTransaction($orderId, $transaction);
 						}
 						/** @var OrderStatusService $orderStatusService */
-						$orderStatusService = $this->module->getContainer(OrderStatusService::class);
+						$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 						$orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
 
 						$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -288,7 +288,7 @@ class TransactionService
 			);
 		} catch (PrestaShopDatabaseException $e) {
 			/** @var PaymentMethodRepository $paymentMethodRepo */
-			$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
+			$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
 			$paymentMethodRepo->tryAddOrderReferenceColumn();
 			throw $e;
 		}
@@ -402,7 +402,7 @@ class TransactionService
 	private function updateTransaction($orderId, $transaction)
 	{
 		/** @var TransactionService $transactionService */
-		$transactionService = $this->module->getContainer(TransactionService::class);
+		$transactionService = $this->module->getMollieContainer(TransactionService::class);
 		$order = new Order($orderId);
 		if (!$order->getOrderPayments()) {
 			$transactionService->updateOrderTransaction($transaction->id, $order->reference);
