@@ -42,8 +42,8 @@ class AdminMollieModuleController extends ModuleAdminController
 	{
 		if (Config::isVersion17()) {
 			Tools::redirectAdmin(
-            /* @phpstan-ignore-next-line */
-            $this->context->link->getAdminLink(
+			/* @phpstan-ignore-next-line */
+			$this->context->link->getAdminLink(
 					'AdminModules',
 					true,
 					[],
