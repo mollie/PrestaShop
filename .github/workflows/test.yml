@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: e558994992393904fbdaff21e25d6a7d301b15d2
+          token: 8c4c05e8bbc2f1dd8057758fe7c8da4bd66fd785
 
       - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
