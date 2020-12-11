@@ -82,8 +82,6 @@ class Mollie extends PaymentModule
 	const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
 	const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
 
-
-
 	/**
 	 * Mollie constructor.
 	 */
