@@ -85,13 +85,9 @@ class Mollie extends PaymentModule
 	const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
 	const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
 
-	/**
-	 * Mollie constructor.
-	 *
-	 * @throws ErrorException
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 */
+    /**
+     * Mollie constructor.
+     */
 	public function __construct()
 	{
 		$this->name = 'mollie';
