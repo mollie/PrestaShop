@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-          token: 0c9b61eaa4bff997c1ed46af43be7756b1e5f984
+          token: faf5f0cf8867d87e5999c0c01ee0caeb4edafc4f
 
       - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
