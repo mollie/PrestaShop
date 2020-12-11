@@ -84,9 +84,10 @@ class Mollie extends PaymentModule
 
 
 
-    /**
-     * Mollie constructor.
-     */
+
+	/**
+	 * Mollie constructor.
+	 */
 	public function __construct()
 	{
 		$this->name = 'mollie';
