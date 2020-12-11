@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.test }}
+          token: ${{ secrets.SuperSecret }}
 
       - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
