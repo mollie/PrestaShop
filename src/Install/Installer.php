@@ -305,12 +305,12 @@ class Installer implements InstallerInterface
 	public function klarnaPaymentAuthorizedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = false;
+		$orderState->invoice = true;
 		$orderState->pdf_invoice = true;
 		$orderState->paid = true;
 		$orderState->send_email = true;
@@ -336,12 +336,12 @@ class Installer implements InstallerInterface
 	public function klarnaPaymentShippedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = true;
+		$orderState->invoice = false;
 		$orderState->shipped = true;
 		$orderState->paid = true;
 		$orderState->delivery = true;
