@@ -441,7 +441,7 @@ class FormBuilder
 			'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
 			'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
 			'klarnaPayments' => Config::KLARNA_PAYMENTS,
-			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
+			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
 		];
 
 		return $input;
@@ -544,7 +544,7 @@ class FormBuilder
 			'options' => [
 				'query' => [
 					[
-						'id' => Config::MOLLIE_STATUS_KLARNA_ACCEPTED,
+						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
 						'name' => $this->module->l('Accepted', self::FILE_NAME),
 					],
 					[

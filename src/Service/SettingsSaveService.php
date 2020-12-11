@@ -146,7 +146,7 @@ class SettingsSaveService
 			);
 		}
 
-		if ($oldEnvironment === $environment && null !== $this->module->api->methods && $apiKey) {
+		if ($oldEnvironment === $environment && $apiKey) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
@@ -347,7 +347,7 @@ class SettingsSaveService
 		$klarnaInvoiceShipped->invoice = $isShipped;
 		$klarnaInvoiceShipped->update();
 
-		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
 		$klarnaInvoiceAccepted = new OrderState($klarnaInvoiceAcceptedId);
 		$klarnaInvoiceAccepted->invoice = !$isShipped;
 		$klarnaInvoiceAccepted->update();
