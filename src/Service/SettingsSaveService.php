@@ -121,7 +121,7 @@ class SettingsSaveService
 	 */
 	public function saveSettings(&$errors = [])
 	{
-		$oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+		$oldEnvironment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
 		$environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
 		$mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
 		$mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
@@ -343,12 +343,13 @@ class SettingsSaveService
 	private function updateKlarnaStatuses($isShipped = true)
 	{
 		$klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
-		$klarnaInvoiceShipped = new OrderState($klarnaInvoiceShippedId);
+		$klarnaInvoiceShipped = new OrderState((int) $klarnaInvoiceShippedId);
 		$klarnaInvoiceShipped->invoice = $isShipped;
 		$klarnaInvoiceShipped->update();
 
 		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-		$klarnaInvoiceAccepted = new OrderState($klarnaInvoiceAcceptedId);
+		$klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+
 		$klarnaInvoiceAccepted->invoice = !$isShipped;
 		$klarnaInvoiceAccepted->update();
 	}

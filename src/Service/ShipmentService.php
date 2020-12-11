@@ -98,12 +98,12 @@ class ShipmentService
 		$carrierInformation = new MolCarrierInformation($carrierInformationId);
 		if (!Validate::isLoadedObject($invoiceAddress)
 			|| !Validate::isLoadedObject($deliveryAddress)
-			|| !$carrierInformation
+			|| !Validate::isLoadedObject($carrierInformation)
 		) {
 			return [];
 		}
 
-		if (Config::MOLLIE_CARRIER_NO_TRACKING_INFO === $carrierInformation) {
+		if (Config::MOLLIE_CARRIER_NO_TRACKING_INFO === $carrierInformation->url_source) {
 			return [];
 		}
 
