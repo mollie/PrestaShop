@@ -8,7 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
           token: faf5f0cf8867d87e5999c0c01ee0caeb4edafc4f
 
       - name: Run php-cs-fixer
