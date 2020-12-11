@@ -441,7 +441,7 @@ class FormBuilder
 			'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
 			'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
 			'klarnaPayments' => Config::KLARNA_PAYMENTS,
-			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
+			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
 		];
 
 		return $input;
@@ -537,13 +537,14 @@ class FormBuilder
 		}
 		$input[] = [
 			'type' => 'select',
-			'label' => $this->module->l('Create Klarna invoice on:', self::FILE_NAME),
+			'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),
+			'desc' => $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
 			'tab' => $advancedSettings,
 			'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
 			'options' => [
 				'query' => [
 					[
-						'id' => Config::MOLLIE_STATUS_KLARNA_ACCEPTED,
+						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
 						'name' => $this->module->l('Accepted', self::FILE_NAME),
 					],
 					[

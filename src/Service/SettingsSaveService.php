@@ -347,8 +347,9 @@ class SettingsSaveService
 		$klarnaInvoiceShipped->invoice = $isShipped;
 		$klarnaInvoiceShipped->update();
 
-		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
 		$klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+
 		$klarnaInvoiceAccepted->invoice = !$isShipped;
 		$klarnaInvoiceAccepted->update();
 	}
