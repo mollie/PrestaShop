@@ -138,7 +138,7 @@ class PaymentMethodService
 		$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment);
 		$paymentMethod = new MolPaymentMethod();
 		if ($paymentId) {
-			$paymentMethod = new MolPaymentMethod($paymentId);
+			$paymentMethod = new MolPaymentMethod((int) $paymentId);
 		}
 		$paymentMethod->id_method = $method['id'];
 		$paymentMethod->method_name = $method['name'];
@@ -180,6 +180,7 @@ class PaymentMethodService
 		if (!$apiKey) {
 			return [];
 		}
+		/* @phpstan-ignore-next-line */
 		if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
 			return [];
 		}

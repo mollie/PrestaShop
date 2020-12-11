@@ -427,8 +427,7 @@ class Installer implements InstallerInterface
 		$moduleTab->id_parent = $idParent;
 		$moduleTab->module = $this->module->name;
 		$moduleTab->active = $active;
-		$moduleTab->icon = $icon;
-
+		$moduleTab->icon = $icon; /** @phpstan-ignore-line */
 		$languages = Language::getLanguages(true);
 		foreach ($languages as $language) {
 			$moduleTab->name[$language['id_lang']] = $name;
@@ -476,7 +475,7 @@ class Installer implements InstallerInterface
 	{
 		$mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
 		if ($mollieVoucherId) {
-			$mollieFeature = new Feature($mollieVoucherId);
+			$mollieFeature = new Feature((int) $mollieVoucherId);
 			$doesFeatureExist = Validate::isLoadedObject($mollieFeature);
 			if ($doesFeatureExist) {
 				return;

@@ -37,7 +37,6 @@
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -67,7 +66,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -77,14 +75,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
 		}
 
-		die($this->executeWebhook());
+		exit($this->executeWebhook());
 	}
 
 	/**
 	 * @return string
 	 *
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */

@@ -45,7 +45,6 @@ use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -67,7 +66,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	 * Unset the cart id from cookie if the order exists.
 	 *
 	 * @throws PrestaShopException
-	 * @throws CoreException
 	 */
 	public function init()
 	{
@@ -126,18 +124,18 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
 			if (false === $data['mollie_info']) {
 				$data['mollie_info'] = [];
-				$data['msg_details'] = $this->l('The order with this id does not exist.');
+				$data['msg_details'] = $this->module->l('The order with this id does not exist.', self::FILE_NAME);
 			} elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
 				&& PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
 			) {
-				$data['msg_details'] = $this->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.');
+				$data['msg_details'] = $this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME);
 			} else {
 				$data['wait'] = true;
 			}
 		} else {
 			// Not allowed? Don't make query but redirect.
 			$data['mollie_info'] = [];
-			$data['msg_details'] = $this->l('You are not authorised to see this page.');
+			$data['msg_details'] = $this->module->l('You are not authorised to see this page.', self::FILE_NAME);
 			Tools::redirect(Context::getContext()->link->getPageLink('index', true));
 		}
 
@@ -183,11 +181,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 			$template = "module:mollie/views/templates/front/17_{$template}";
 		}
 
+		/* @phpstan-ignore-next-line */
 		parent::setTemplate($template, $params, $locale);
 	}
 
 	/**
-	 * @throws CoreException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
 	 */
@@ -220,21 +218,21 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 		$dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
 		$cart = new Cart($dbPayment['cart_id']);
 		if (!Validate::isLoadedObject($cart)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
-		$orderId = Order::getOrderByCartId((int) $cart->id);
+		$orderId = (int) Order::getOrderByCartId((int) $cart->id); /** @phpstan-ignore-line */
 		$order = new Order((int) $orderId);
 
 		if (!Validate::isLoadedObject($cart)) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
 
 		if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
-			die(json_encode([
+			exit(json_encode([
 				'success' => false,
 			]));
 		}
@@ -311,14 +309,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
 				break;
 			default:
-				die();
+				exit();
 		}
 
-		die(json_encode($response));
+		exit(json_encode($response));
 	}
 
 	private function setWarning($message)
 	{
+		/* @phpstan-ignore-next-line */
 		$this->warning[] = $message;
 
 		$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
