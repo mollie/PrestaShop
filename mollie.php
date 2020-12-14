@@ -1341,7 +1341,7 @@ class Mollie extends PaymentModule
 				->setOptions([
 					'actions' => (new \PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection())
 						->add((new \Mollie\Grid\Action\Type\SecondChanceRowAction('transaction_id')) /* @phpstan-ignore-line */
-                        ->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
+						->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
 							->setOptions([
 								'route' => 'mollie_module_admin_resend_payment_message',
 								'route_param_field' => 'id_order',
