@@ -11,3 +11,4 @@ var/
 config.xml
 mails/
 views/img/customLogo/*.jpg
+.php_cs.cache
