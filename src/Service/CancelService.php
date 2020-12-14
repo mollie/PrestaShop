@@ -41,10 +41,8 @@ use Mollie\Utility\EnvironmentUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order;
 use MolliePrefix\Mollie\Api\Resources\Payment;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
 use Tools;
 
 class CancelService
@@ -73,8 +71,6 @@ class CancelService
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
 	 *
 	 * @since 3.3.0
 	 */

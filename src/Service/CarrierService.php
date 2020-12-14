@@ -46,7 +46,7 @@ class CarrierService
 	/**
 	 * todo: fix this function
 	 *
-	 * @param string $trackingUrls
+	 * @param array $trackingUrls
 	 *
 	 * @return array
 	 */

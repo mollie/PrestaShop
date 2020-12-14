@@ -192,6 +192,9 @@ class PaymentReturnService
 
 	private function getStatusResponse($transaction, $status, $cartId, $cartSecureKey)
 	{
+		/* @phpstan-ignore-next-line */
+		$orderId = (int) Order::getOrderByCartId((int) $cartId);
+
 		$successUrl = $this->context->link->getPageLink(
 			'order-confirmation',
 			true,
@@ -199,9 +202,7 @@ class PaymentReturnService
 			[
 				'id_cart' => (int) $cartId,
 				'id_module' => (int) $this->module->id,
-				'id_order' => (int) version_compare(_PS_VERSION_, '1.7.1.0', '>=')
-					? Order::getIdByCartId((int) $cartId)
-					: Order::getOrderByCartId((int) $cartId),
+				'id_order' => $orderId,
 				'key' => $cartSecureKey,
 			]
 		);

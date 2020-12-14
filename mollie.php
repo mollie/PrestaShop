@@ -42,9 +42,6 @@ if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_
 if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
 	return;
 }
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
-	return;
-}
 if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
 	return;
 }
@@ -87,10 +84,6 @@ class Mollie extends PaymentModule
 
 	/**
 	 * Mollie constructor.
-	 *
-	 * @throws ErrorException
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
 	 */
 	public function __construct()
 	{
@@ -279,9 +272,10 @@ class Mollie extends PaymentModule
 			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
 		}
 
-		if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) &&
-			!Tools::isSubmit("submit{$this->name}")
-		) {
+		$isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
+
+		/* @phpstan-ignore-next-line */
+		if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
 			$this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
 		}
 
@@ -312,9 +306,9 @@ class Mollie extends PaymentModule
 			$saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
 			$resultMessages = $saveSettingsService->saveSettings($errors);
 			if (!empty($errors)) {
-				$this->context->controller->errors[] = $resultMessages;
+				$this->context->controller->errors = $resultMessages;
 			} else {
-				$this->context->controller->confirmations[] = $resultMessages;
+				$this->context->controller->confirmations = $resultMessages;
 			}
 		}
 		/** @var Mollie\Service\LanguageService $langService */
@@ -451,7 +445,7 @@ class Mollie extends PaymentModule
 	/**
 	 * @param string $url
 	 *
-	 * @return string
+	 * @return bool|string
 	 */
 	protected function getUpdateXML($url)
 	{
@@ -530,9 +524,10 @@ class Mollie extends PaymentModule
 			$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order-list.css');
 			$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_list.js');
 
-			if (Tools::isSubmit('addorder')) {
+			if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
 				Media::addJsDef([
 					'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+					'isPsVersion177' => version_compare(_PS_VERSION_, '1.7.7.0', '>='),
 				]);
 				$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
 			}
@@ -557,13 +552,13 @@ class Mollie extends PaymentModule
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
 		$html = '';
-		if ('AdminOrders' === $this->context->controller->controller_name) {
+		if ($this->context->controller->controller_name === 'AdminOrders' || $this->context->controller instanceof AdminOrdersController) {
 			$this->context->smarty->assign([
 				'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
 				'mollieCheckMethods' => Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int) Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
 			]);
 			$html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
-			if (Tools::isSubmit('addorder')) {
+			if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
 				$html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
 			}
 		}
@@ -574,7 +569,7 @@ class Mollie extends PaymentModule
 	/**
 	 * @param array $params Hook parameters
 	 *
-	 * @return string Hook HTML
+	 * @return string|bool Hook HTML
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
@@ -811,7 +806,7 @@ class Mollie extends PaymentModule
 			if ($isIdealMethod && $isIssuersOnClick) {
 				$newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
 				$newOption
-					->setCallToActionText($this->lang($methodObj->method_name))
+					->setCallToActionText($this->lang($methodObj->method_name)) /* @phpstan-ignore-line */
 					->setModuleName($this->name)
 					->setAction(Context::getContext()->link->getModuleLink(
 						$this->name,
@@ -829,7 +824,7 @@ class Mollie extends PaymentModule
 					->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /* @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(
@@ -881,7 +876,7 @@ class Mollie extends PaymentModule
 					));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /* @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(
@@ -929,7 +924,7 @@ class Mollie extends PaymentModule
 					));
 
 				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image);
+				$newOption->setLogo($image); /* @phpstan-ignore-line */
 
 				if ($paymentFee) {
 					$newOption->setInputs(
@@ -1188,6 +1183,15 @@ class Mollie extends PaymentModule
 		}
 	}
 
+	/**
+	 * @param array $params
+	 *
+	 * @return bool
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+	 */
 	public function hookActionEmailSendBefore($params)
 	{
 		if (!isset($params['cart']->id)) {
@@ -1197,7 +1201,7 @@ class Mollie extends PaymentModule
 		$cart = new Cart($params['cart']->id);
 		$orderId = Order::getOrderByCartId($cart->id);
 		$order = new Order($orderId);
-		if (null === $order || $order->module !== $this->name) {
+		if ($order->module !== $this->name) {
 			return true;
 		}
 		/** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
@@ -1206,35 +1210,38 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
 		$newOrderMailValidator = $this->getMollieContainer(\Mollie\Validator\NewOrderMailValidator::class);
 
-		if ('order_conf' === $params['template']) {
+		/** @var string $template */
+		$template = $params['template'];
+
+		if ('order_conf' === $template) {
 			return $orderConfMailValidator->validate((int) $order->current_state);
 		}
 
-		if ('new_order' === $params['template']) {
+		if ('new_order' === $template) {
 			return $newOrderMailValidator->validate((int) $order->current_state);
 		}
 
-		if ('order_conf' === $params['template'] ||
-			'account' === $params['template'] ||
-			'backoffice_order' === $params['template'] ||
-			'contact_form' === $params['template'] ||
-			'credit_slip' === $params['template'] ||
-			'in_transit' === $params['template'] ||
-			'order_changed' === $params['template'] ||
-			'order_merchant_comment' === $params['template'] ||
-			'order_return_state' === $params['template'] ||
-			'cheque' === $params['template'] ||
-			'payment' === $params['template'] ||
-			'preparation' === $params['template'] ||
-			'shipped' === $params['template'] ||
-			'order_canceled' === $params['template'] ||
-			'payment_error' === $params['template'] ||
-			'outofstock' === $params['template'] ||
-			'bankwire' === $params['template'] ||
-			'refund' === $params['template']) {
+		if ('order_conf' === $template ||
+			'account' === $template ||
+			'backoffice_order' === $template ||
+			'contact_form' === $template ||
+			'credit_slip' === $template ||
+			'in_transit' === $template ||
+			'order_changed' === $template ||
+			'order_merchant_comment' === $template ||
+			'order_return_state' === $template ||
+			'cheque' === $template ||
+			'payment' === $template ||
+			'preparation' === $template ||
+			'shipped' === $template ||
+			'order_canceled' === $template ||
+			'payment_error' === $template ||
+			'outofstock' === $template ||
+			'bankwire' === $template ||
+			'refund' === $template) {
 			$orderId = Order::getOrderByCartId($cart->id);
 			$order = new Order($orderId);
-			if (!$order) {
+			if (!Validate::isLoadedObject($order)) {
 				return true;
 			}
 			try {
@@ -1250,6 +1257,8 @@ class Mollie extends PaymentModule
 				$params['templateVars']['{payment_fee}'] = Tools::displayPrice(0);
 			}
 		}
+
+		return true;
 	}
 
 	public function hookDisplayPDFInvoice($params)
@@ -1412,7 +1421,7 @@ class Mollie extends PaymentModule
 	/**
 	 * @param int $orderId
 	 *
-	 * @return string
+	 * @return string|bool
 	 *
 	 * @throws PrestaShopDatabaseException
 	 */

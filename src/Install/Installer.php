@@ -235,7 +235,7 @@ class Installer implements InstallerInterface
 		if (!$this->createOrderCompletedOrderState()) {
 			return false;
 		}
-		if (!$this->klarnaPaymentAcceptedState()) {
+		if (!$this->klarnaPaymentAuthorizedState()) {
 			return false;
 		}
 		if (!$this->klarnaPaymentShippedState()) {
@@ -304,27 +304,27 @@ class Installer implements InstallerInterface
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
-	public function klarnaPaymentAcceptedState()
+	public function klarnaPaymentAuthorizedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = false;
+		$orderState->invoice = true;
 		$orderState->pdf_invoice = true;
 		$orderState->paid = true;
 		$orderState->send_email = true;
 		$orderState->template = 'payment';
 		$orderState->module_name = $this->module->name;
-		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment accepted');
+		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment authorized');
 
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_ACCEPTED, (int) $orderState->id);
-		Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
 
 		return true;
 	}
@@ -338,12 +338,12 @@ class Installer implements InstallerInterface
 	public function klarnaPaymentShippedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = true;
+		$orderState->invoice = false;
 		$orderState->shipped = true;
 		$orderState->paid = true;
 		$orderState->delivery = true;
@@ -429,8 +429,7 @@ class Installer implements InstallerInterface
 		$moduleTab->id_parent = $idParent;
 		$moduleTab->module = $this->module->name;
 		$moduleTab->active = $active;
-		$moduleTab->icon = $icon;
-
+		$moduleTab->icon = $icon; /** @phpstan-ignore-line */
 		$languages = Language::getLanguages(true);
 		foreach ($languages as $language) {
 			$moduleTab->name[$language['id_lang']] = $name;
@@ -478,7 +477,7 @@ class Installer implements InstallerInterface
 	{
 		$mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
 		if ($mollieVoucherId) {
-			$mollieFeature = new Feature($mollieVoucherId);
+			$mollieFeature = new Feature((int) $mollieVoucherId);
 			$doesFeatureExist = Validate::isLoadedObject($mollieFeature);
 			if ($doesFeatureExist) {
 				return;

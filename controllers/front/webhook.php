@@ -37,7 +37,6 @@
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -67,7 +66,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -84,7 +82,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	 * @return string
 	 *
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
