@@ -11,8 +11,7 @@ parameters:
   excludes_analyse:
     - ../../controllers/front/ajax.php
     - ../../src/Command
-    - %currentWorkingDirectory%/src/Core/Grid/Action/Row/AbstractRowAction.php
-    - %currentWorkingDirectory%/src/Core/Grid/Action/Row/AccessibilityChecker/AccessibilityCheckerInterface.php
+    - ../../src/Grid/Action/Type/SecondChanceRowAction.php
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
