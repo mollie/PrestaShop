@@ -50,10 +50,10 @@ function upgrade_module_4_2_0($module)
 	/** @var Installer $installer */
 	$installer = $module->getContainer(Installer::class);
 
-	$installer->klarnaPaymentAcceptedState();
+	$installer->klarnaPaymentAuthorizedState();
 	$installer->klarnaPaymentShippedState();
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
 	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
 
 	return true;
