@@ -40,7 +40,7 @@ use Mollie;
 use Mollie\Service\MolliePaymentMailService;
 use Symfony\Component\HttpFoundation\Request;
 
-class AdminMollieEmailController extends \PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController /* @phpstan-ignore-line */
+class AdminMollieEmailController extends \PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController
 {
 	public function sendSecondChanceMessage($orderId, Request $request)
 	{
