@@ -11,6 +11,7 @@ parameters:
   excludes_analyse:
     - ../../controllers/front/ajax.php
     - ../../src/Command
+    - %currentWorkingDirectory%/src/Core/Grid/Action/Row/*
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -54,6 +55,5 @@ parameters:
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
     - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
-    - '#Class PrestaShop\\PrestaShop\\Core\\Grid\\Action\\Row\\AbstractRowAction not found.#'
 
   level: 5
