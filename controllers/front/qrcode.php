@@ -44,7 +44,6 @@ use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -107,7 +106,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
@@ -196,7 +194,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -284,12 +281,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$context = Context::getContext();
 		/** @var Cart $cart */
 		$cart = $context->cart;
-		if (!$cart) {
-			exit(json_encode([
-				'success' => true,
-				'amount' => 0,
-			]));
-		}
 
 		$cartTotal = (int) ($cart->getOrderTotal(true) * 100);
 		exit(json_encode([

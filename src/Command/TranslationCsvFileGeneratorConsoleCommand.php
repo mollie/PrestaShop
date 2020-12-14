@@ -76,17 +76,36 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
 		$translations = $GLOBALS['_MODULE'];
 		try {
 			$fp = fopen('translation.csv', 'w');
-			fputcsv($fp, $csvHeader);
+			$fields = [];
 			foreach ($translations as $id => $text) {
 				$field = array_map('utf8_decode', [$id, $text]);
-				fputcsv($fp, $field);
+				$fields[$field[0]] = $field;
 			}
-			fclose($fp);
 		} catch (\Exception $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
 
 			return 0;
 		}
+
+		$translationFiles = [
+			2 => 'nl',
+			3 => 'de',
+			4 => 'fr',
+		];
+		fputcsv($fp, $csvHeader);
+		foreach ($translationFiles as $position => $file) {
+			include_once $this->module->getLocalPath() . "translations/{$file}.php";
+			$translations = $GLOBALS['_MODULE'];
+
+			foreach ($translations as $id => $text) {
+				$fields[$id][$position] = $text;
+			}
+		}
+		foreach ($fields as $field) {
+			fputcsv($fp, $field);
+		}
+
+		fclose($fp);
 		$output->writeln('<info>Translation export to CSV finished</info>');
 
 		return 0;
