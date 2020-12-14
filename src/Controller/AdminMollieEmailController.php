@@ -45,7 +45,7 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
 {
 	public function sendSecondChanceMessage($orderId, Request $request)
 	{
-	    /** @var Mollie $mollie */
+		/** @var Mollie $mollie */
 		$mollie = Module::getInstanceByName('mollie'); //Unable to get services without mollieContainer.
 
 		/** @var MolliePaymentMailService $molliePaymentMailService */
