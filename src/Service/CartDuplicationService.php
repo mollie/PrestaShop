@@ -60,7 +60,7 @@ class CartDuplicationService
 			$context->cart = $duplicatedCart;
 			$context->cookie->write();
 
-			return  $duplicatedCart->id;
+			return $duplicatedCart->id;
 		}
 
 		return 0;

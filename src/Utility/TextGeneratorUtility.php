@@ -63,7 +63,7 @@ class TextGeneratorUtility
 
 		$buyer = null;
 		if ($cart->id_customer) {
-			$buyer = new Customer($cart->id_customer);
+			$buyer = new Customer((int) $cart->id_customer);
 		}
 
 		$filters = [
