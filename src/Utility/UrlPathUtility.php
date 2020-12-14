@@ -52,6 +52,7 @@ class UrlPathUtility
 	 */
 	public static function getMediaPath($mediaUri, $cssMediaType = null)
 	{
+		/* @phpstan-ignore-next-line */
 		if (is_array($mediaUri) || null === $mediaUri || empty($mediaUri)) {
 			return false;
 		}

@@ -277,6 +277,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			$template = "module:mollie/views/templates/front/17_{$template}";
 		}
 
+		/* @phpstan-ignore-next-line */
 		parent::setTemplate($template, $params, $locale);
 	}
 

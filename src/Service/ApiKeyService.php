@@ -47,7 +47,7 @@ class ApiKeyService
 	 * @param string $apiKey
 	 * @param string $moduleVersion
 	 *
-	 * @return MollieApiClient|void
+	 * @return MollieApiClient|null
 	 *
 	 * @throws ApiException
 	 */
@@ -59,7 +59,7 @@ class ApiKeyService
 			try {
 				$api->setApiKey($apiKey);
 			} catch (ApiException $e) {
-				return;
+				return null;
 			}
 		} elseif (!empty($context->employee)
 			&& Tools::getValue('Mollie_Api_Key')

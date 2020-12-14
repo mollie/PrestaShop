@@ -44,7 +44,6 @@ use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -86,7 +85,7 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		if (Tools::getValue('done')) {
 			$canceled = true;
 			/** @var PaymentMethodRepository $paymentMethodRepo */
-			$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+			$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 			$dbPayment = $paymentMethodRepo->getPaymentBy('cart_id', Tools::getValue('cart_id'));
 			if (is_array($dbPayment)) {
 				try {
@@ -107,7 +106,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
@@ -145,11 +143,11 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 			]));
 		}
 		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 		/** @var ApiService $apiService */
-		$apiService = $this->module->getMollieContainer(ApiService::class);
+		$apiService = $this->module->getContainer(ApiService::class);
 		/** @var PaymentMethodService $paymentMethodService */
-		$paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
+		$paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
 
 		$orderTotal = $cart->getOrderTotal(true);
 		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -196,7 +194,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -218,14 +215,14 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 				$_GET['module'] = $this->module->name;
 			}
 			/** @var TransactionService $transactionService */
-			$transactionService = $this->module->getMollieContainer(TransactionService::class);
+			$transactionService = $this->module->getContainer(TransactionService::class);
 
 			$transactionService->processTransaction($apiPayment);
 		}
 
 		try {
 			/** @var PaymentMethodRepository $paymentMethodRepo */
-			$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+			$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
 			$payment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'));
 		} catch (PrestaShopDatabaseException $e) {
 			exit(json_encode([
@@ -284,12 +281,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
 		$context = Context::getContext();
 		/** @var Cart $cart */
 		$cart = $context->cart;
-		if (!$cart) {
-			exit(json_encode([
-				'success' => true,
-				'amount' => 0,
-			]));
-		}
 
 		$cartTotal = (int) ($cart->getOrderTotal(true) * 100);
 		exit(json_encode([
