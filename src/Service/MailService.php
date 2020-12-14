@@ -53,13 +53,14 @@ use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
-use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 use Product;
 use State;
 use Tools;
 
 class MailService
 {
+	const FILE_NAME = 'MailService';
+
 	/**
 	 * @var Mollie
 	 */
@@ -107,20 +108,13 @@ class MailService
 	 */
 	public function sendOrderConfMail(Order $order, $orderStateId)
 	{
-		$orderLanguage = new Language((int) $order->id_lang);
-
 		$data = $this->getOrderConfData($order, $orderStateId);
 		$fileAttachment = $this->getFileAttachment($orderStateId, $order);
 		$customer = $order->getCustomer();
 		Mail::Send(
 			(int) $order->id_lang,
 			'order_conf',
-			$this->context->getTranslator()->trans(
-				'Order confirmation',
-				[],
-				'Emails.Subject',
-				$orderLanguage->locale
-			),
+			Mail::l('Order confirmation', (int) $order->id_lang),
 			$data,
 			$customer->email,
 			$customer->firstname . ' ' . $customer->lastname,
@@ -175,7 +169,9 @@ class MailService
 		$product_var_tpl_list = [];
 		foreach ($order->getProducts() as $product) {
 			$specific_price = null;
+			/* @phpstan-ignore-next-line */
 			$price = Product::getPriceStatic((int) $product['id_product'], false, ($product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null), 6, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
+			/* @phpstan-ignore-next-line */
 			$price_wt = Product::getPriceStatic((int) $product['id_product'], true, ($product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null), 2, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
 
 			$product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
@@ -184,7 +180,7 @@ class MailService
 			$product_var_tpl = [
 				'id_product' => $product['id_product'],
 				'reference' => $product['reference'],
-				'name' => $product['product_name'] . (Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
+				'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
 				'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
 				'quantity' => $product['product_quantity'],
 				'customization' => [],
@@ -198,6 +194,7 @@ class MailService
 				$product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
 			}
 
+			/* @phpstan-ignore-next-line */
 			$customized_datas = Product::getAllCustomizedDatas((int) $order->id_cart, null, true, null, (int) $product['id_customization']);
 			if (isset($customized_datas[$product['id_product']][$product['product_attribute_id']])) {
 				$product_var_tpl['customization'] = [];
@@ -210,7 +207,12 @@ class MailService
 					}
 
 					if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-						$customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
+						Config::isVersion17() ?
+							/* @phpstan-ignore-next-line */
+							$customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />'
+							:
+							/* @phpstan-ignore-next-line */
+							$customization_text .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . '<br />';
 					}
 
 					$customization_quantity = (int) $customization['quantity'];
@@ -289,7 +291,7 @@ class MailService
 			'{invoice_other}' => $invoice->other,
 			'{order_name}' => $order->getUniqReference(),
 			'{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, true),
-			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? Context::getContext()->getTranslator()->trans('No carrier', [], 'Admin.Payment.Notification') : $carrier->name,
+			'{carrier}' => ($virtual_product || !isset($carrier->name)) ? $this->module->l('No carrier', self::FILE_NAME) : $carrier->name,
 			'{payment}' => Tools::substr($order->payment, 0, 255),
 			'{products}' => $product_list_html,
 			'{products_txt}' => $product_list_txt,
@@ -389,11 +391,9 @@ class MailService
 					Mail::Send(
 						(int) $order->id_lang,
 						'voucher',
-						Context::getContext()->getTranslator()->trans(
+						$this->module->l(
 							'New voucher for your order %s',
-							[$order->reference],
-							'Emails.Subject',
-							$orderLanguage->locale
+							self::FILE_NAME
 						),
 						$params,
 						$this->context->customer->email,
