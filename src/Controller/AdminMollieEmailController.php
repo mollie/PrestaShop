@@ -38,11 +38,9 @@ namespace Mollie\Controller;
 use Module;
 use Mollie;
 use Mollie\Service\MolliePaymentMailService;
-/* @phpstan-ignore-next-line */
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
 
-/* @phpstan-ignore-next-line */
 class AdminMollieEmailController extends FrameworkBundleAdminController
 {
 	public function sendSecondChanceMessage($orderId, Request $request)
