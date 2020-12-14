@@ -27,7 +27,7 @@
 namespace Mollie\Grid\Action\Type;
 
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AbstractRowAction;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface; /* @phpstan-ignore-line */
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SecondChanceRowAction extends AbstractRowAction
