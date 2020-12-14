@@ -11,7 +11,7 @@ parameters:
   excludes_analyse:
     - ../../controllers/front/ajax.php
     - ../../src/Command
-    - ../../src/Grid/Action/Type/SecondChanceRowAction.php
+    - ../../src/Grid
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
