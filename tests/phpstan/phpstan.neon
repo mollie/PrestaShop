@@ -12,6 +12,7 @@ parameters:
     - ../../controllers/front/ajax.php
     - ../../src/Command
     - ../../src/Grid/*
+    - ../../src/Controller/AdminMollieEmailController
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
