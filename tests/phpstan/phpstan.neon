@@ -11,6 +11,8 @@ parameters:
   excludes_analyse:
     - ../../controllers/front/ajax.php
     - ../../src/Command
+    - ../../src/Grid/*
+    - ../../src/Controller/AdminMollieEmailController
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -54,5 +56,6 @@ parameters:
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
     - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Class PrestaShopBundle\\Controller\\Admin\\FrameworkBundleAdminController not found.#'
 
   level: 5

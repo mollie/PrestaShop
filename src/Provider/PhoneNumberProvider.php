@@ -47,7 +47,6 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 		if (empty($phoneNumber)) {
 			return null;
 		}
-
 		$phoneNumber = str_replace(' ', '', $phoneNumber);
 		$phoneNumber = str_replace('+', '', $phoneNumber);
 

@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -26,46 +27,41 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-import React, { ReactElement, useCallback } from 'react';
-import styled from 'styled-components';
-import { useMappedState } from 'redux-react-hook';
 
-import PaymentInfoContent from '@transaction/components/refund/PaymentInfoContent';
+namespace Mollie\Controller;
 
-const Div = styled.div`
-@media only screen and (min-width: 992px) {
-  margin-left: -5px!important;
-  margin-right: 5px!important;
-}
-` as any;
+use Module;
+use Mollie;
+use Mollie\Service\MolliePaymentMailService;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\Request;
 
-export default function PaymentInfo(): ReactElement<{}> {
-  const { translations, config: { legacy } } = useMappedState((state: IMollieOrderState): any => ({
-    translations: state.translations,
-    config: state.config,
-  }));
+class AdminMollieEmailController extends FrameworkBundleAdminController
+{
+	public function sendSecondChanceMessage($orderId, Request $request)
+	{
+		/** @var Mollie $mollie */
+		$mollie = Module::getInstanceByName('mollie'); //Unable to get services without mollieContainer.
 
-  if (legacy) {
-    return (
-      <>
-        <PaymentInfoContent/>
-        <br/>
-      </>
-    );
-  }
+		/** @var MolliePaymentMailService $molliePaymentMailService */
+		$molliePaymentMailService = $mollie->getMollieContainer(MolliePaymentMailService::class);
+		$response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
-  return (
-    <Div className="col-md-3">
-      <div className="panel card">
-        <div className="panel-heading card-header">{translations.paymentInfo}</div>
-        <div className="card-body">
-          <PaymentInfoContent/>
-        </div>
-      </div>
-    </Div>
-  );
+		if (empty($response)) {
+			$this->addFlash('error',
+				$this->trans('Unexpected error occurred', 'Module.mollie')
+			);
+		} else {
+			$this->addFlash($response['success'] ? 'success' : 'error',
+				$response['message']
+			);
+		}
+
+		return $this->redirectToRoute('admin_orders_index', $request->query->all());
+	}
 }
