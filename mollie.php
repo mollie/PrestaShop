@@ -1333,9 +1333,6 @@ class Mollie extends PaymentModule
 	{
 		/** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
 		$orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
-
-		/* @phpstan-ignore-next-line */
-		/** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
 		$gridDefinition = $params['definition'];
 
 		$orderGridDefinitionModifier->modify($gridDefinition);
@@ -1345,9 +1342,6 @@ class Mollie extends PaymentModule
 	{
 		/** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
 		$orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
-
-		/* @phpstan-ignore-next-line */
-		/** @var \Doctrine\DBAL\Query\QueryBuilder $searchQueryBuilder */
 		$searchQueryBuilder = $params['search_query_builder'];
 
 		$orderGridQueryModifier->modify($searchQueryBuilder);
