@@ -52,19 +52,19 @@ class OrderListActionBuilder
 		$this->mollie = $mollie;
 	}
 
-    public function buildOrderPaymentResendButton(Smarty_Data $smarty, $orderId)
-    {
-        $smarty->assign([
-            'idOrder' => (int) $orderId,
-            'message' => $this->mollie->l(
-                'You will resend email with payment link to the customer',
-                self::FILE_NAME
-            ),
-        ]);
+	public function buildOrderPaymentResendButton(Smarty_Data $smarty, $orderId)
+	{
+		$smarty->assign([
+			'idOrder' => (int) $orderId,
+			'message' => $this->mollie->l(
+				'You will resend email with payment link to the customer',
+				self::FILE_NAME
+			),
+		]);
 
-        return $this->mollie->display(
-            $this->mollie->getLocalPath(),
-            'views/templates/hook/admin/order-list-icon.tpl'
-        );
-    }
+		return $this->mollie->display(
+			$this->mollie->getLocalPath(),
+			'views/templates/hook/admin/order-list-icon.tpl'
+		);
+	}
 }
