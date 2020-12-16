@@ -12,7 +12,6 @@ parameters:
     - ../../controllers/front/ajax.php
     - ../../src/Command
     - ../../src/Grid/*
-    - ../../src/Controller/*
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
