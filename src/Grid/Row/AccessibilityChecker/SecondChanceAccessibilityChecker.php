@@ -33,31 +33,20 @@
  * @see       https://www.mollie.nl
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Grid\Row\AccessibilityChecker;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
 /**
- * @param Mollie $module
- *
- * @return bool
+ * Checks if second chance email option can be visible in order list.
  */
-function upgrade_module_4_2_0($module)
+final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
-
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function isGranted(array $record)
+	{
+		return !empty($record['transaction_id']);
+	}
 }

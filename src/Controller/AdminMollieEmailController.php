@@ -33,31 +33,35 @@
  * @see       https://www.mollie.nl
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Controller;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use Module;
+use Mollie;
+use Mollie\Service\MolliePaymentMailService;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class AdminMollieEmailController extends FrameworkBundleAdminController
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	public function sendSecondChanceMessage($orderId, Request $request)
+	{
+		/** @var Mollie $mollie */
+		$mollie = Module::getInstanceByName('mollie'); //Unable to get services without mollieContainer.
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
+		/** @var MolliePaymentMailService $molliePaymentMailService */
+		$molliePaymentMailService = $mollie->getMollieContainer(MolliePaymentMailService::class);
+		$response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+		if (empty($response)) {
+			$this->addFlash('error',
+				$this->trans('Unexpected error occurred', 'Module.mollie')
+			);
+		} else {
+			$this->addFlash($response['success'] ? 'success' : 'error',
+				$response['message']
+			);
+		}
 
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
+		return $this->redirectToRoute('admin_orders_index', $request->query->all());
+	}
 }

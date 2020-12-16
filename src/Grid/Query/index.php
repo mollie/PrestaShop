@@ -31,33 +31,14 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
-
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
-{
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
-
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
-}
+header('Location: ../');
+exit;

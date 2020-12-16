@@ -31,33 +31,27 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Grid\Query\Modifier;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use Doctrine\DBAL\Query\QueryBuilder;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class OrderGridQueryModifier implements GridQueryModifierInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	/**
+	 * {@inheritDoc}
+	 */
+	public function modify(QueryBuilder $queryBuilder)
+	{
+		$queryBuilder->addSelect('mol.`transaction_id`');
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
+		$queryBuilder->leftJoin(
+			'o',
+			'`' . pSQL(_DB_PREFIX_) . 'mollie_payments`',
+			'mol',
+			'mol.`order_reference` = o.`reference`'
+		);
+	}
 }

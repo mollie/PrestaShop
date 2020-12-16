@@ -31,33 +31,19 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Grid\Definition\Modifier;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+interface GridDefinitionModifierInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
-
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
+	/**
+	 * Used to modify Grid Definition.
+	 *
+	 * @param GridDefinitionInterface $gridDefinition
+	 */
+	public function modify(GridDefinitionInterface $gridDefinition);
 }

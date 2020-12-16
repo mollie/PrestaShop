@@ -1,0 +1,7 @@
+mollie_module_admin_resend_payment_message:
+    path: /mollie/email/{orderId}/secondChance/send
+    methods: [GET]
+    defaults:
+        _controller: 'Mollie\Controller\AdminMollieEmailController::sendSecondChanceMessage'
+    requirements:
+        orderId: "^[0-9]*"

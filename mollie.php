@@ -1329,6 +1329,24 @@ class Mollie extends PaymentModule
 		];
 	}
 
+	public function hookActionOrderGridDefinitionModifier(array $params)
+	{
+		/** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
+		$orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
+		$gridDefinition = $params['definition'];
+
+		$orderGridDefinitionModifier->modify($gridDefinition);
+	}
+
+	public function hookActionOrderGridQueryBuilderModifier(array $params)
+	{
+		/** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
+		$orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
+		$searchQueryBuilder = $params['search_query_builder'];
+
+		$orderGridQueryModifier->modify($searchQueryBuilder);
+	}
+
 	public function hookActionValidateOrder($params)
 	{
 		if ('admin' !== $this->context->controller->controller_type) {

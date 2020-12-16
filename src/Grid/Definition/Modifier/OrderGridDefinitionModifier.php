@@ -31,33 +31,52 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Grid\Definition\Modifier;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use Mollie;
+use Mollie\Grid\Action\Type\SecondChanceRowAction;
+use Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	private $module;
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
+	public function __construct(Mollie $module)
+	{
+		$this->module = $module;
+	}
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+	/**
+	 * {@inheritDoc}
+	 */
+	public function modify(GridDefinitionInterface $gridDefinition)
+	{
+		$translator = $this->module->getTranslator();
 
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	return true;
+		$gridDefinition->getColumns()
+			->addBefore('date_add', (new ActionColumn('second_chance'))
+				->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
+				->setOptions([
+					'actions' => (new RowActionCollection())
+						->add((new SecondChanceRowAction('transaction_id'))
+							->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
+							->setOptions([
+								'route' => Mollie\Config\Config::ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE,
+								'route_param_field' => 'id_order',
+								'route_param_name' => 'orderId',
+								'use_inline_display' => true,
+								'accessibility_checker' => $this->module->getMollieContainer(
+									SecondChanceAccessibilityChecker::class
+								),
+							])
+						),
+				])
+			);
+	}
 }
