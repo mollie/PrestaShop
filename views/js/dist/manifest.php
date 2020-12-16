@@ -27,11 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- *
  * @category   Mollie
- *
- * @see       https://www.mollie.nl
+ * @package    Mollie
+ * @link       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
 
-return json_decode('[{"name":"app","files":["vendors~app.min.js","app.min.js"]}]', true);
+return json_decode("[{\"name\":\"app\",\"files\":[\"vendors~app.min.js\",\"app.min.js\"]}]", true);

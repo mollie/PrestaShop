@@ -63,11 +63,16 @@ export default function RefundInfo(): ReactElement<{}> {
   }
 
   return (
-    <Div className="col-md-6 panel">
-      <div className="panel-heading">{translations.refunds}</div>
-      {payment.amountRefunded && <RefundHistory/>}
-      {payment.amountRefunded && <RefundForm/>}
-      {!payment.amountRefunded && <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
+    <Div className="col-md-9">
+      <div className="panel card">
+        <div className="panel-heading card-header">{translations.refunds}</div>
+        <div className="card-body">
+          {payment.amountRefunded && <RefundHistory/>}
+          {payment.amountRefunded && <RefundForm/>}
+          {!payment.amountRefunded &&
+          <div className="alert alert-warning">{translations.refundsAreCurrentlyUnavailable}</div>}
+        </div>
+      </div>
     </Div>
   );
 }

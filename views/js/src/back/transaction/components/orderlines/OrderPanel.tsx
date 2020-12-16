@@ -67,8 +67,8 @@ export default function OrderPanel(): ReactElement<{}> {
     }
 
     return (
-        <div className="panel">
-            <div className="panel-heading">
+        <div className="panel card">
+            <div className="panel-heading card-header">
                 <img
                     src={`${moduleDir}views/img/mollie_panel_icon.png`}
                     width="32"

@@ -52,7 +52,7 @@ export default function RefundPanel(): ReactElement<{}> {
   if (legacy) {
     return (
       <fieldset style={{ marginTop: '14px' }}>
-        <legend className="panel-heading">
+        <legend className="panel-heading card-header">
           <img
             src={`${moduleDir}views/img/logo_small.png`}
             width="32"
@@ -75,8 +75,8 @@ export default function RefundPanel(): ReactElement<{}> {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-heading">
+    <div className="panel card">
+      <div className="panel-heading card-header">
         <img
           src={`${moduleDir}views/img/mollie_panel_icon.png`}
           width="32"
@@ -88,7 +88,7 @@ export default function RefundPanel(): ReactElement<{}> {
       <WarningContent/>
       {!payment && <LoadingDots/>}
       {!!payment && payment.status && (
-        <div className="panel-body row">
+        <div className="panel-body card-body row">
           <PaymentInfo/>
           <RefundInfo/>
         </div>
