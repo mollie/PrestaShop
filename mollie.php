@@ -1331,39 +1331,24 @@ class Mollie extends PaymentModule
 
 	public function hookActionOrderGridDefinitionModifier(array $params)
 	{
-		/** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
-		$gridDefinition = $params['definition'];
-		$translator = $this->getTranslator();
+	    /** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
+	    $orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
 
-		$gridDefinition->getColumns()
-			->addBefore('date_add', (new \PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn('second_chance'))
-				->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
-				->setOptions([
-					'actions' => (new \PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection())
-						->add((new \Mollie\Grid\Action\Type\SecondChanceRowAction('transaction_id')) /* @phpstan-ignore-line */
-						->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
-							->setOptions([
-								'route' => 'mollie_module_admin_resend_payment_message',
-								'route_param_field' => 'id_order',
-								'route_param_name' => 'orderId',
-								'use_inline_display' => true,
-								'accessibility_checker' => $this->getMollieContainer(
-									Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker::class
-								),
-							])
-						),
-				])
-			);
+        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
+        $gridDefinition = $params['definition'];
+
+	    $orderGridDefinitionModifier->modify($gridDefinition);
 	}
 
-	public function hookActionOrderGridQueryBuilderModifier($params)
+	public function hookActionOrderGridQueryBuilderModifier(array $params)
 	{
-		/** @var \Doctrine\ORM\QueryBuilder $searchQueryBuilder */
+        /** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
+        $orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
+
+		/** @var \Doctrine\DBAL\Query\QueryBuilder $searchQueryBuilder */
 		$searchQueryBuilder = $params['search_query_builder'];
 
-		$searchQueryBuilder->addSelect('mol.`transaction_id`');
-
-		$searchQueryBuilder->leftJoin('o', '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`', 'mol', 'mol.`order_reference` = o.`reference`');
+		$orderGridQueryModifier->modify($searchQueryBuilder);
 	}
 
 	public function hookActionValidateOrder($params)
