@@ -40,10 +40,10 @@ use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
 interface GridDefinitionModifierInterface
 {
-    /**
-     * Used to modify Grid Definition.
-     *
-     * @param GridDefinitionInterface $gridDefinition
-     */
-    public function modify(GridDefinitionInterface $gridDefinition);
+	/**
+	 * Used to modify Grid Definition.
+	 *
+	 * @param GridDefinitionInterface $gridDefinition
+	 */
+	public function modify(GridDefinitionInterface $gridDefinition);
 }

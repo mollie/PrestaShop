@@ -1331,19 +1331,19 @@ class Mollie extends PaymentModule
 
 	public function hookActionOrderGridDefinitionModifier(array $params)
 	{
-	    /** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
-	    $orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
+		/** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
+		$orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
 
-        /** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
-        $gridDefinition = $params['definition'];
+		/** @var \PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface $gridDefinition */
+		$gridDefinition = $params['definition'];
 
-	    $orderGridDefinitionModifier->modify($gridDefinition);
+		$orderGridDefinitionModifier->modify($gridDefinition);
 	}
 
 	public function hookActionOrderGridQueryBuilderModifier(array $params)
 	{
-        /** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
-        $orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
+		/** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
+		$orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
 
 		/** @var \Doctrine\DBAL\Query\QueryBuilder $searchQueryBuilder */
 		$searchQueryBuilder = $params['search_query_builder'];
