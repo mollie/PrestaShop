@@ -95,7 +95,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 			return 'OK';
 		}
 		/** @var TransactionService $transactionService */
-		$transactionService = $this->module->getContainer(TransactionService::class);
+		$transactionService = $this->module->getMollieContainer(TransactionService::class);
 
 		$transactionId = Tools::getValue('id');
 		if (TransactionUtility::isOrderTransaction($transactionId)) {
