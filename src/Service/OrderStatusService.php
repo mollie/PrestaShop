@@ -59,10 +59,10 @@ class OrderStatusService
 	}
 
 	/**
-	 * @param int        $order
+	 * @param int $orderId
 	 * @param string|int $statusId
-	 * @param null       $useExistingPayment
-	 * @param array      $templateVars
+	 * @param null $useExistingPayment
+	 * @param array $templateVars
 	 *
 	 * @return void
 	 *
@@ -74,7 +74,7 @@ class OrderStatusService
 	 * @since 3.3.2 $useExistingPayment option
 	 * @since 3.3.4 Accepts template vars for the corresponding email template
 	 */
-	public function setOrderStatus($order, $statusId, $useExistingPayment = null, $templateVars = [])
+	public function setOrderStatus($orderId, $statusId, $useExistingPayment = null, $templateVars = [])
 	{
 		if (is_string($statusId)) {
 			$status = $statusId;
@@ -95,10 +95,7 @@ class OrderStatusService
 		if (0 === (int) $statusId) {
 			return;
 		}
-
-		if (!$order instanceof Order) {
-			$order = new Order((int) $order);
-		}
+		$order = new Order((int) $orderId);
 
 		if (!Validate::isLoadedObject($order)) {
 			return;
@@ -119,7 +116,7 @@ class OrderStatusService
 
 		$history = new OrderHistory();
 		$history->id_order = $order->id;
-		$history->changeIdOrderState($statusId, $order, $useExistingPayment);
+		$history->changeIdOrderState($statusId, $orderId, $useExistingPayment);
 
 		$status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 
@@ -131,7 +128,7 @@ class OrderStatusService
 			$this->mailService->sendNewOrderMail($order, $statusId);
 		}
 
-		if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($status))) {
+		if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
 			$history->add();
 		} else {
 			$history->addWithemail(true, $templateVars);
@@ -140,7 +137,7 @@ class OrderStatusService
 
 	private function checkIfOrderConfNeedsToBeSend($statusId)
 	{
-		if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_NEW_ORDER)) {
+		if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
 			return false;
 		}
 

@@ -39,8 +39,8 @@ class ImageService
 {
 	public function createOrderStateLogo($orderStateId)
 	{
-		$source = _PS_MODULE_DIR_.'mollie/views/img/logo_small.png';
-		$destination = _PS_ORDER_STATE_IMG_DIR_.$orderStateId.'.gif';
+		$source = _PS_MODULE_DIR_ . 'mollie/views/img/logo_small.png';
+		$destination = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
 		@copy($source, $destination);
 	}
 }

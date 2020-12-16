@@ -162,7 +162,7 @@ class FormBuilder
 		$helper->identifier = $this->module->getIdentifier();
 		$helper->submit_action = 'submitmollie';
 		$helper->currentIndex = $this->module->getContext()->link->getAdminLink('AdminModules', false)
-			."&configure={$this->module->name}&tab_module={$this->module->tab}&module_name={$this->module->name}";
+			. "&configure={$this->module->name}&tab_module={$this->module->tab}&module_name={$this->module->name}";
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 
 		$helper->tpl_vars = [
@@ -435,13 +435,13 @@ class FormBuilder
 				]
 			),
 			'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-			'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri()."?{$dateStamp}",
+			'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
 			'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
 			'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
 			'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
 			'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
 			'klarnaPayments' => Config::KLARNA_PAYMENTS,
-			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_ACCEPTED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
+			'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
 		];
 
 		return $input;
@@ -537,13 +537,14 @@ class FormBuilder
 		}
 		$input[] = [
 			'type' => 'select',
-			'label' => $this->module->l('Create Klarna invoice on:', self::FILE_NAME),
+			'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),
+			'desc' => $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
 			'tab' => $advancedSettings,
 			'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
 			'options' => [
 				'query' => [
 					[
-						'id' => Config::MOLLIE_STATUS_KLARNA_ACCEPTED,
+						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
 						'name' => $this->module->l('Accepted', self::FILE_NAME),
 					],
 					[
@@ -585,12 +586,12 @@ class FormBuilder
 			}
 			$statuses[] = [
 				'name' => $name,
-				'key' => @constant('Mollie\Config\Config::MOLLIE_STATUS_'.Tools::strtoupper($name)),
+				'key' => @constant('Mollie\Config\Config::MOLLIE_STATUS_' . Tools::strtoupper($name)),
 				'value' => $val,
 				'description' => $desc,
 				'message' => sprintf($messageStatus, $this->module->lang($name)),
-				'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
-				'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_'.Tools::strtoupper($name)),
+				'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
+				'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
 				'description_mail' => sprintf($descriptionMail, $this->module->lang($name)),
 				'message_mail' => sprintf($messageMail, $this->module->lang($name)),
 			];
@@ -757,7 +758,7 @@ class FormBuilder
 		$orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
 		$orderStatusesCount = count($orderStatuses);
 		for ($i = 0; $i < $orderStatusesCount; ++$i) {
-			$orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'].' - '.$orderStatuses[$i]['name'];
+			$orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
 		}
 
 		AssortUtility::aasort($orderStatuses, 'id_order_state');

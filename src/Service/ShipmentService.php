@@ -75,7 +75,7 @@ class ShipmentService
 	/**
 	 * Get shipment information.
 	 *
-	 * @param int $idOrder
+	 * @param string $orderReference
 	 *
 	 * @return array|null
 	 *
@@ -86,7 +86,9 @@ class ShipmentService
 	 */
 	public function getShipmentInformation($orderReference)
 	{
-		$order = Order::getByReference($orderReference)[0];
+		$orders = Order::getByReference($orderReference);
+		/** @var Order $order */
+		$order = $orders->getFirst();
 		if (!Validate::isLoadedObject($order)) {
 			return null;
 		}
@@ -96,12 +98,12 @@ class ShipmentService
 		$carrierInformation = new MolCarrierInformation($carrierInformationId);
 		if (!Validate::isLoadedObject($invoiceAddress)
 			|| !Validate::isLoadedObject($deliveryAddress)
-			|| !$carrierInformation
+			|| !Validate::isLoadedObject($carrierInformation)
 		) {
 			return [];
 		}
 
-		if (Config::MOLLIE_CARRIER_NO_TRACKING_INFO === $carrierInformation) {
+		if (Config::MOLLIE_CARRIER_NO_TRACKING_INFO === $carrierInformation->url_source) {
 			return [];
 		}
 

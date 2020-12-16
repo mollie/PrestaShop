@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
+          token: ${{ secrets.MOLLIE_TESTS}}
 
       - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
@@ -31,18 +31,14 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
-    - run: composer require --dev phpunit/phpunit ^5
-    - run: ./vendor/bin/phpunit tests/Unit
+    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
 
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ['1.7.6.5']
+        presta-versions: ['1.7.6.8', '1.6.1.23']
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0

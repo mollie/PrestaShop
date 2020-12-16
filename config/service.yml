@@ -69,6 +69,7 @@ services:
       - '@Mollie\Service\ApiService'
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
+      - '@Mollie\Service\ApiKeyService'
 
   Mollie\Service\ShipmentService:
     arguments:

@@ -73,9 +73,9 @@ class SettingsSaveService
 	 */
 	private $paymentMethodService;
 	/**
-	 * @var ApiService
+	 * @var ApiKeyService
 	 */
-	private $apiService;
+	private $apiKeyService;
 	/**
 	 * @var MolCarrierInformationService
 	 */
@@ -85,6 +85,11 @@ class SettingsSaveService
 	 */
 	private $paymentMethodPositionHandler;
 
+	/**
+	 * @var ApiService
+	 */
+	private $apiService;
+
 	public function __construct(
 		Mollie $module,
 		CountryRepository $countryRepository,
@@ -92,21 +97,23 @@ class SettingsSaveService
 		PaymentMethodService $paymentMethodService,
 		ApiService $apiService,
 		MolCarrierInformationService $carrierInformationService,
-		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler
+		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
+		ApiKeyService $apiKeyService
 	) {
 		$this->module = $module;
 		$this->countryRepository = $countryRepository;
 		$this->paymentMethodRepository = $paymentMethodRepository;
 		$this->paymentMethodService = $paymentMethodService;
-		$this->apiService = $apiService;
+		$this->apiKeyService = $apiKeyService;
 		$this->carrierInformationService = $carrierInformationService;
 		$this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
+		$this->apiService = $apiService;
 	}
 
 	/**
 	 * @param array $errors
 	 *
-	 * @return string
+	 * @return array
 	 *
 	 * @throws ApiException
 	 * @throws PrestaShopDatabaseException
@@ -114,8 +121,8 @@ class SettingsSaveService
 	 */
 	public function saveSettings(&$errors = [])
 	{
-		$oldEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-		$environment = Tools::getValue(Config::MOLLIE_ENVIRONMENT);
+		$oldEnvironment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+		$environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
 		$mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
 		$mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
 		$mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
@@ -139,18 +146,20 @@ class SettingsSaveService
 			);
 		}
 
-		if ($oldEnvironment === $environment && null !== $this->module->api->methods && $apiKey) {
+		if ($oldEnvironment === $environment && $apiKey) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
 				} catch (Exception $e) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods');
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+					continue;
 				}
 
 				if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
+					$errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+					continue;
 				}
 
 				if ($method['issuers']) {
@@ -164,9 +173,9 @@ class SettingsSaveService
 					}
 				}
 
-				$countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES.$method['id']);
+				$countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
 				$excludedCountries = Tools::getValue(
-					Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES.$method['id']
+					Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
 				);
 				$this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
 				$this->countryRepository->updatePaymentMethodExcludedCountries($method['id'], $excludedCountries);
@@ -211,7 +220,7 @@ class SettingsSaveService
 
 		if ($apiKey) {
 			try {
-				$api = $this->apiService->setApiKey($apiKey, $this->module->version);
+				$api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
 				if (null === $api) {
 					throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
 				}
@@ -220,7 +229,7 @@ class SettingsSaveService
 				$errors[] = $e->getMessage();
 				Configuration::updateValue(Config::MOLLIE_API_KEY, null);
 
-				return $this->module->l('Wrong API Key!');
+				return [$this->module->l('Wrong API Key!')];
 			}
 		}
 		$this->handleKlarnaInvoiceStatus();
@@ -263,8 +272,8 @@ class SettingsSaveService
 				Carrier::ALL_CARRIERS
 			);
 			foreach ($carriers as $carrier) {
-				$urlSource = Tools::getValue(Config::MOLLIE_CARRIER_URL_SOURCE.$carrier['id_carrier']);
-				$customUrl = Tools::getValue(Config::MOLLIE_CARRIER_CUSTOM_URL.$carrier['id_carrier']);
+				$urlSource = Tools::getValue(Config::MOLLIE_CARRIER_URL_SOURCE . $carrier['id_carrier']);
+				$customUrl = Tools::getValue(Config::MOLLIE_CARRIER_CUSTOM_URL . $carrier['id_carrier']);
 				$this->carrierInformationService->saveMolCarrierInfo($carrier['id_carrier'], $urlSource, $customUrl);
 			}
 
@@ -285,7 +294,7 @@ class SettingsSaveService
 				}
 			}
 
-			$resultMessage = $this->module->l('The configuration has been saved!');
+			$resultMessage[] = $this->module->l('The configuration has been saved!');
 		} else {
 			$resultMessage = [];
 			foreach ($errors as $error) {
@@ -299,12 +308,9 @@ class SettingsSaveService
 	/**
 	 * Get all status values from the form.
 	 *
-	 * @param $key string The key that is used in the HelperForm
+	 * @param string $key The key that is used in the HelperForm
 	 *
 	 * @return array Array with statuses
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
 	 *
 	 * @since 3.3.0
 	 */
@@ -313,7 +319,7 @@ class SettingsSaveService
 		$statesEnabled = [];
 		$context = Context::getContext();
 		foreach (OrderState::getOrderStates($context->language->id) as $state) {
-			if (Tools::isSubmit($key.'_'.$state['id_order_state'])) {
+			if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
 				$statesEnabled[] = $state['id_order_state'];
 			}
 		}
@@ -337,12 +343,13 @@ class SettingsSaveService
 	private function updateKlarnaStatuses($isShipped = true)
 	{
 		$klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
-		$klarnaInvoiceShipped = new OrderState($klarnaInvoiceShippedId);
+		$klarnaInvoiceShipped = new OrderState((int) $klarnaInvoiceShippedId);
 		$klarnaInvoiceShipped->invoice = $isShipped;
 		$klarnaInvoiceShipped->update();
 
-		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
-		$klarnaInvoiceAccepted = new OrderState($klarnaInvoiceAcceptedId);
+		$klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
+		$klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+
 		$klarnaInvoiceAccepted->invoice = !$isShipped;
 		$klarnaInvoiceAccepted->update();
 	}

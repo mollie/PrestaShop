@@ -169,15 +169,10 @@ class Installer implements InstallerInterface
 	}
 
 	/**
-	 * Create new order state for partial refunds.
-	 *
 	 * @return bool
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws Adapter_Exception
-	 *
-	 * @since 2.0.0
 	 */
 	private function createPartialRefundOrderState()
 	{
@@ -199,8 +194,6 @@ class Installer implements InstallerInterface
 	}
 
 	/**
-	 * @param $languageId
-	 *
 	 * @return bool
 	 *
 	 * @throws PrestaShopDatabaseException
@@ -240,7 +233,7 @@ class Installer implements InstallerInterface
 		if (!$this->createOrderCompletedOrderState()) {
 			return false;
 		}
-		if (!$this->klarnaPaymentAcceptedState()) {
+		if (!$this->klarnaPaymentAuthorizedState()) {
 			return false;
 		}
 		if (!$this->klarnaPaymentShippedState()) {
@@ -251,8 +244,6 @@ class Installer implements InstallerInterface
 	}
 
 	/**
-	 * @param $languageId
-	 *
 	 * @return bool
 	 *
 	 * @throws PrestaShopDatabaseException
@@ -279,8 +270,6 @@ class Installer implements InstallerInterface
 	}
 
 	/**
-	 * @param $languageId
-	 *
 	 * @return bool
 	 *
 	 * @throws PrestaShopDatabaseException
@@ -313,27 +302,27 @@ class Installer implements InstallerInterface
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
-	public function klarnaPaymentAcceptedState()
+	public function klarnaPaymentAuthorizedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = false;
+		$orderState->invoice = true;
 		$orderState->pdf_invoice = true;
 		$orderState->paid = true;
 		$orderState->send_email = true;
 		$orderState->template = 'payment';
 		$orderState->module_name = $this->module->name;
-		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment accepted');
+		$orderState->name = MultiLangUtility::createMultiLangField('Klarna payment authorized');
 
 		if ($orderState->add()) {
 			$this->imageService->createOrderStateLogo($orderState->id);
 		}
-		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_ACCEPTED, (int) $orderState->id);
-		Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_ACCEPTED);
+		Configuration::updateValue(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, (int) $orderState->id);
+		Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
 
 		return true;
 	}
@@ -347,12 +336,12 @@ class Installer implements InstallerInterface
 	public function klarnaPaymentShippedState()
 	{
 		$orderState = new OrderState();
-		$orderState->send_email = false;
+		$orderState->send_email = true;
 		$orderState->color = '#8A2BE2';
 		$orderState->hidden = false;
 		$orderState->delivery = false;
 		$orderState->logable = true;
-		$orderState->invoice = true;
+		$orderState->invoice = false;
 		$orderState->shipped = true;
 		$orderState->paid = true;
 		$orderState->delivery = true;
@@ -417,11 +406,11 @@ class Installer implements InstallerInterface
 	public function setDefaultCarrierStatuses()
 	{
 		$sql = new DbQuery();
-		$sql->select('`'.bqSQL(OrderState::$definition['primary']).'`');
+		$sql->select('`' . bqSQL(OrderState::$definition['primary']) . '`');
 		$sql->from(bqSQL(OrderState::$definition['table']));
 		$sql->where('`shipped` = 1');
 
-		$defaultStatuses = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+		$defaultStatuses = Db::getInstance()->executeS($sql);
 		if (!is_array($defaultStatuses)) {
 			return;
 		}
@@ -438,8 +427,7 @@ class Installer implements InstallerInterface
 		$moduleTab->id_parent = $idParent;
 		$moduleTab->module = $this->module->name;
 		$moduleTab->active = $active;
-		$moduleTab->icon = $icon;
-
+		$moduleTab->icon = $icon; /** @phpstan-ignore-line */
 		$languages = Language::getLanguages(true);
 		foreach ($languages as $language) {
 			$moduleTab->name[$language['id_lang']] = $name;
@@ -453,12 +441,7 @@ class Installer implements InstallerInterface
 	}
 
 	/**
-	 * Copies module email templates to all languages
-	 * Collects error messages if email templates copy process is unsuccessful.
-	 *
-	 * @param Module $module Module object
-	 *
-	 * @return bool Email templates copied successfully or not
+	 * @return bool
 	 */
 	public function copyEmailTemplates()
 	{
@@ -469,17 +452,17 @@ class Installer implements InstallerInterface
 				continue;
 			}
 
-			if (file_exists($this->module->getLocalPath().'mails/'.$language['iso_code'])) {
+			if (file_exists($this->module->getLocalPath() . 'mails/' . $language['iso_code'])) {
 				continue;
 			}
 
 			try {
 				Tools::recurseCopy(
-					$this->module->getLocalPath().'mails/'.Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE,
-					$this->module->getLocalPath().'mails/'.$language['iso_code']
+					$this->module->getLocalPath() . 'mails/' . Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE,
+					$this->module->getLocalPath() . 'mails/' . $language['iso_code']
 				);
 			} catch (PrestaShopException $e) {
-				$this->errors[] = $this->module->l('Could not copy email templates:', self::FILE_NAME).' '.$e->getMessage();
+				$this->errors[] = $this->module->l('Could not copy email templates:', self::FILE_NAME) . ' ' . $e->getMessage();
 
 				return false;
 			}
@@ -492,7 +475,7 @@ class Installer implements InstallerInterface
 	{
 		$mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
 		if ($mollieVoucherId) {
-			$mollieFeature = new Feature($mollieVoucherId);
+			$mollieFeature = new Feature((int) $mollieVoucherId);
 			$doesFeatureExist = Validate::isLoadedObject($mollieFeature);
 			if ($doesFeatureExist) {
 				return;
@@ -508,7 +491,7 @@ class Installer implements InstallerInterface
 			$featureValue->id_feature = $feature->id;
 			$featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
 			$featureValue->add();
-			Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE.$key, $featureValue->id);
+			Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE . $key, $featureValue->id);
 		}
 
 		Configuration::updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);

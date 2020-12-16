@@ -37,13 +37,12 @@
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieWebhookModuleFrontController extends ModuleFrontController
 {
@@ -67,24 +66,22 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
 	/**
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
 	public function initContent()
 	{
 		if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-			PrestaShopLogger::addLog('Mollie incoming webhook: '.Tools::file_get_contents('php://input'));
+			PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
 		}
 
-		die($this->executeWebhook());
+		exit($this->executeWebhook());
 	}
 
 	/**
 	 * @return string
 	 *
 	 * @throws ApiException
-	 * @throws CoreException
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 */
@@ -92,13 +89,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 	{
 		if (Tools::getValue('testByMollie')) {
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-				PrestaShopLogger::addLog(__METHOD__.' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
+				PrestaShopLogger::addLog(__METHOD__ . ' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
 			}
 
 			return 'OK';
 		}
 		/** @var TransactionService $transactionService */
-		$transactionService = $this->module->getContainer(TransactionService::class);
+		$transactionService = $this->module->getMollieContainer(TransactionService::class);
 
 		$transactionId = Tools::getValue('id');
 		if (TransactionUtility::isOrderTransaction($transactionId)) {

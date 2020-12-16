@@ -48,7 +48,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_4_1_0($module)
 {
 	/** @var Installer $installer */
-	$installer = $module->getContainer(Installer::class);
+	$installer = $module->getMollieContainer(Installer::class);
 
 	$awaitingOrderStatusId = Configuration::get(Config::STATUS_MOLLIE_AWAITING);
 	$orderStatus = new OrderState($awaitingOrderStatusId);
@@ -58,7 +58,7 @@ function upgrade_module_4_1_0($module)
 	}
 
 	$sql = '
-        ALTER TABLE '._DB_PREFIX_.'mol_payment_method
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD `position` INT(10);
     ';
 
@@ -69,11 +69,11 @@ function upgrade_module_4_1_0($module)
 	}
 
 	/** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
-	$paymentMethodsRepo = $module->getContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+	$paymentMethodsRepo = $module->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
 	$paymentMethods = $paymentMethodsRepo->findAll();
 
 	/** @var Installer $installer */
-	$installer = $module->getContainer(Installer::class);
+	$installer = $module->getMollieContainer(Installer::class);
 	$installer->installVoucherFeatures();
 
 	foreach ($installer::getHooks() as $hook) {

@@ -83,7 +83,7 @@ final class CreditCardLogoProvider extends AbstractCustomLogoProvider
 		if (Config::LOGOS_HIDE !== $imageConfig && $isCustomLogoEnabled && $this->logoExists()) {
 			$dateStamp = time();
 
-			return $this->getLogoPathUri()."?{$dateStamp}";
+			return $this->getLogoPathUri() . "?{$dateStamp}";
 		}
 
 		$image = json_decode($methodObj->images_json, true);

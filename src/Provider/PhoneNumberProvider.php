@@ -52,10 +52,14 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 
 		while ('0' === $phoneNumber[0]) {
 			$phoneNumber = substr($phoneNumber, 1);
+
+			if (empty($phoneNumber) && $phoneNumber !== '0') {
+				return null;
+			}
 		}
 
 		if ('+' !== $phoneNumber[0]) {
-			$phoneNumber = '+'.$phoneNumber;
+			$phoneNumber = '+' . $phoneNumber;
 		}
 
 		$regex = "/^\+\d{3,18}$/";

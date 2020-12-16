@@ -63,6 +63,8 @@ class MollieFailModuleFrontController extends ModuleFrontController
 	/**
 	 * Order Presenter Variable Declaration.
 	 *
+	 * @phpstan-ignore-next-line
+	 *
 	 * @var OrderPresenter
 	 */
 	private $order_presenter;
@@ -78,12 +80,14 @@ class MollieFailModuleFrontController extends ModuleFrontController
 
 		$redirectLink = 'index.php?controller=history';
 
-		$this->id_order = Order::getOrderByCartId((int) $this->id_cart);
+		$orderId = (int) Order::getOrderByCartId((int) $this->id_cart); /* @phpstan-ignore-line */
+
+		$this->id_order = $orderId;
 		$this->secure_key = Tools::getValue('secureKey');
 		$order = new Order((int) $this->id_order);
 
 		if (!$this->id_order || !$this->module->id || !$this->secure_key || empty($this->secure_key)) {
-			Tools::redirect($redirectLink.(Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
+			Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
 		}
 
 		if ((string) $this->secure_key !== (string) $order->secure_key ||
@@ -96,6 +100,7 @@ class MollieFailModuleFrontController extends ModuleFrontController
 		if ($order->module !== $this->module->name) {
 			Tools::redirect($redirectLink);
 		}
+		/* @phpstan-ignore-next-line */
 		$this->order_presenter = new OrderPresenter();
 	}
 
@@ -127,6 +132,7 @@ class MollieFailModuleFrontController extends ModuleFrontController
 		$order = new Order($this->id_order);
 		if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
 			$this->context->smarty->assign([
+				/* @phpstan-ignore-next-line */
 				'order' => $this->order_presenter->present($order),
 			]);
 		} else {

@@ -39,7 +39,7 @@ namespace Mollie\Validator;
 interface MailValidatorInterface
 {
 	/**
-	 * @param $orderState int
+	 * @param int $orderState
 	 *
 	 * @return bool
 	 */

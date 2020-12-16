@@ -43,4 +43,8 @@ class OrderCreationException extends \Exception
 	const WRONG_BILLING_PHONE_NUMBER_EXCEPTION = 2;
 
 	const WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION = 3;
+
+	const ORDER_TOTAL_LOWER_THAN_MINIMUM = 4;
+
+	const ORDER_TOTAL_HIGHER_THAN_MAXIMUM = 5;
 }

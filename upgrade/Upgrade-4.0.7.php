@@ -51,19 +51,19 @@ function upgrade_module_4_0_7($module)
 	Configuration::updateValue(Config::MOLLIE_STATUS_SHIPPING, true);
 	Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, Config::ORDER_CONF_MAIL_SEND_ON_NEVER);
 
-	$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_excluded_country` (
+	$sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_country` (
 				`id_mol_country`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_method`       VARCHAR(64),
 				`id_country`      INT(64),
 				`all_countries` tinyint
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
 	$sql .= '
-        CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mol_pending_order_cart` (
+        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart` (
 				`id_mol_pending_order_cart`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`order_id` INT(64) NOT NULL,
 				`cart_id` INT(64) NOT NULL
-			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
+			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
     ';
 
 	if (false == Db::getInstance()->execute($sql)) {
@@ -75,7 +75,7 @@ function upgrade_module_4_0_7($module)
 	$module->registerHook('actionValidateOrder');
 
 	/** @var Installer $installer */
-	$installer = $module->getContainer(Installer::class);
+	$installer = $module->getMollieContainer(Installer::class);
 	$installed = true;
 
 	$installed &= $installer->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);

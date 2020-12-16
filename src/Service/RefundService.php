@@ -44,10 +44,8 @@ use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
-use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use SmartyException;
 use Tools;
 
 class RefundService
@@ -71,14 +69,13 @@ class RefundService
 	}
 
 	/**
-	 * @param string     $transactionId Transaction/Mollie Order ID
-	 * @param float|null $amount        Amount to refund, refund all if `null`
+	 * @param string $transactionId Transaction/Mollie Order ID
+	 * @param float|null $amount Amount to refund, refund all if `null`
 	 *
 	 * @return array
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
 	 * @throws ApiException
 	 *
 	 * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
@@ -114,7 +111,7 @@ class RefundService
 			return [
 				'status' => 'fail',
 				'msg_fail' => $this->module->l('The order could not be refunded!', self::FILE_NAME),
-				'msg_details' => $this->module->l('Reason:', self::FILE_NAME).' '.$e->getMessage(),
+				'msg_details' => $this->module->l('Reason:', self::FILE_NAME) . ' ' . $e->getMessage(),
 			];
 		}
 
@@ -136,15 +133,12 @@ class RefundService
 	}
 
 	/**
-	 * @param string $transactionId
-	 * @param array  $lines
+	 * @param array $lines
 	 *
 	 * @return array
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws CoreException
-	 * @throws SmartyException
 	 *
 	 * @since 3.3.0
 	 */

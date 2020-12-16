@@ -45,7 +45,7 @@ class CartDuplicationService
 	 *
 	 * @return int
 	 *
-	 * @throws \PrestaShopDatabaseException
+	 * @throws \Exception
 	 */
 	public function restoreCart($cartId)
 	{
@@ -56,11 +56,11 @@ class CartDuplicationService
 			/** @var Cart $duplicatedCart */
 			$duplicatedCart = $duplication['cart'];
 
-			$context->cookie->id_cart = $duplicatedCart->id;
+			$context->cookie->__set('id_cart', $duplicatedCart->id);
 			$context->cart = $duplicatedCart;
 			$context->cookie->write();
 
-			return  $duplicatedCart->id;
+			return $duplicatedCart->id;
 		}
 
 		return 0;

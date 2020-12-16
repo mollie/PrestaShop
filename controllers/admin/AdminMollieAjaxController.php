@@ -80,8 +80,8 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$paymentStatus = Tools::getValue('status');
 
 		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-		$environment = Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod, $environment);
 		$method = new MolPaymentMethod($methodId);
 		switch ($paymentStatus) {
@@ -110,7 +110,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$orderId = Tools::getValue('id_order');
 
 		/** @var MolliePaymentMailService $molliePaymentMailService */
-		$molliePaymentMailService = $this->module->getContainer(MolliePaymentMailService::class);
+		$molliePaymentMailService = $this->module->getMollieContainer(MolliePaymentMailService::class);
 
 		$response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
@@ -127,7 +127,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$liveKey = Tools::getValue('liveKey');
 
 		/** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
-		$apiTestFeedbackBuilder = $this->module->getContainer(ApiTestFeedbackBuilder::class);
+		$apiTestFeedbackBuilder = $this->module->getMollieContainer(ApiTestFeedbackBuilder::class);
 		$apiTestFeedbackBuilder->setTestKey($testKey);
 		$apiTestFeedbackBuilder->setLiveKey($liveKey);
 		$apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
@@ -135,7 +135,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$this->context->smarty->assign($apiKeysTestInfo);
 		$this->ajaxDie(json_encode(
 			[
-				'template' => $this->context->smarty->fetch($this->module->getLocalPath().'views/templates/admin/api_test_results.tpl'),
+				'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
 			]
 		));
 	}
@@ -148,7 +148,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 	private function validateLogo()
 	{
 		/** @var CreditCardLogoProvider $creditCardLogoProvider */
-		$creditCardLogoProvider = $this->module->getContainer(CreditCardLogoProvider::class);
+		$creditCardLogoProvider = $this->module->getMollieContainer(CreditCardLogoProvider::class);
 		$target_file = $creditCardLogoProvider->getLocalLogoPath();
 		$isUploaded = 1;
 		$imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);

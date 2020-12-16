@@ -61,6 +61,8 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 	}
 
 	/**
+	 * @param array $keyValueCriteria
+	 *
 	 * @return ObjectModel|null
 	 *
 	 * @throws PrestaShopException
@@ -75,6 +77,7 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
 		$first = $psCollection->getFirst();
 
+		/* @phpstan-ignore-next-line */
 		return false === $first ? null : $first;
 	}
 }

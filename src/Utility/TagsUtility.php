@@ -42,7 +42,7 @@ class TagsUtility
 	 * Post process tags in (translated) strings.
 	 *
 	 * @param string $string
-	 * @param array  $tags
+	 * @param array $tags
 	 *
 	 * @return string
 	 *
@@ -59,11 +59,11 @@ class TagsUtility
 				$match = [];
 				if (preg_match('/^\s*<\s*(\w+)/', $tag, $match)) {
 					$opener = $tag;
-					$closer = '</'.$match[1].'>';
+					$closer = '</' . $match[1] . '>';
 
-					$string = str_replace('['.$position.']', $opener, $string);
-					$string = str_replace('[/'.$position.']', $closer, $string);
-					$string = str_replace('['.$position.'/]', $opener.$closer, $string);
+					$string = str_replace('[' . $position . ']', $opener, $string);
+					$string = str_replace('[/' . $position . ']', $closer, $string);
+					$string = str_replace('[' . $position . '/]', $opener . $closer, $string);
 				}
 			}
 		}
