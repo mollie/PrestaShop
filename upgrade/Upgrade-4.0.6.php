@@ -48,7 +48,10 @@ function upgrade_module_4_0_6()
 	$moduleClass = Module::getInstanceByName('mollie');
 	foreach ($states as $state) {
 		if ($moduleClass->l('Awaiting Mollie payment') === $state['name']) {
-			Configuration::updateValue(Mollie\Config\Config::STATUS_MOLLIE_AWAITING, (int) $state[OrderState::$definition['primary']]);
+			Configuration::updateValue(
+			    Mollie\Config\Config::STATUS_MOLLIE_AWAITING,
+                (int) $state[OrderState::$definition['primary']]
+            );
 			break;
 		}
 	}

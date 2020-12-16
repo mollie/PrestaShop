@@ -128,5 +128,5 @@
   }());
 </script>
 {foreach $webPackChunks as $webPackChunk}
-  <script type="text/javascript" src="{$webPackChunk}"></script>
+  <script type="text/javascript" src="{$webPackChunk|escape:'html':'UTF-8'}"></script>
 {/foreach}

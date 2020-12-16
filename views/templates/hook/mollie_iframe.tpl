@@ -33,31 +33,31 @@
 
 
 <div class="mollie-iframe-container">
-    <input type="hidden" value="{$methodId}" name="method-id">
+    <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="method-id">
     <div class="container">
         <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
             <li class="js-mollie-alert"></li>
         </article>
     </div>
     <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
-    <div class="form-group form-group-card-holder {$methodId}">
-        <label class="mollie-label" for="card-holder-{$methodId}">{l s='Card holder' mod='mollie'}</label>
-        <div id="card-holder-{$methodId}" class="mollie-input card-holder">
+    <div class="form-group form-group-card-holder {$methodId|escape:'html':'UTF-8'}">
+        <label class="mollie-label" for="card-holder-{$methodId|escape:'html':'UTF-8'}">{l s='Card holder' mod='mollie'}</label>
+        <div id="card-holder-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-holder">
         </div>
     </div>
     <div class="inline-form-group">
-        <div class="form-group form-group-card-number {$methodId}">
-            <label class="mollie-label" for="card-number-{$methodId}">{l s='Card number' mod='mollie'}</label>
-            <div id="card-number-{$methodId}" class="mollie-input card-number">
+        <div class="form-group form-group-card-number {$methodId|escape:'html':'UTF-8'}">
+            <label class="mollie-label" for="card-number-{$methodId|escape:'html':'UTF-8'}">{l s='Card number' mod='mollie'}</label>
+            <div id="card-number-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-number">
             </div>
         </div>
-        <div class="form-group form-group-expiry-date {$methodId}">
-            <div id="expiry-date-{$methodId}" class="mollie-input expiry-date">
+        <div class="form-group form-group-expiry-date {$methodId|escape:'html':'UTF-8'}">
+            <div id="expiry-date-{$methodId|escape:'html':'UTF-8'}" class="mollie-input expiry-date">
             </div>
         </div>
-        <div class="form-group form-group-verification-code {$methodId}">
-            <label class="mollie-label" for="verification-code-{$methodId}">{l s='CVC' mod='mollie'}</label>
-            <div id="verification-code-{$methodId}" class="mollie-input verification-code">
+        <div class="form-group form-group-verification-code {$methodId|escape:'html':'UTF-8'}">
+            <label class="mollie-label" for="verification-code-{$methodId|escape:'html':'UTF-8'}">{l s='CVC' mod='mollie'}</label>
+            <div id="verification-code-{$methodId|escape:'html':'UTF-8'}" class="mollie-input verification-code">
             </div>
         </div>
     </div>

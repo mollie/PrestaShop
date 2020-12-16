@@ -34,7 +34,7 @@
 <div class="container js-mollie-payment-error">
     <article class="alert alert-danger" role="alert" data-alert="danger">
         <ul id="mollie-notifications">
-            <li>{$errorMessage}</li>
+            <li>{$errorMessage|escape:'html':'UTF-8'}</li>
         </ul>
     </article>
 </div>
