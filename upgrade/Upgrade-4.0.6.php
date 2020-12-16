@@ -49,9 +49,9 @@ function upgrade_module_4_0_6()
 	foreach ($states as $state) {
 		if ($moduleClass->l('Awaiting Mollie payment') === $state['name']) {
 			Configuration::updateValue(
-			    Mollie\Config\Config::STATUS_MOLLIE_AWAITING,
-                (int) $state[OrderState::$definition['primary']]
-            );
+				Mollie\Config\Config::STATUS_MOLLIE_AWAITING,
+				(int) $state[OrderState::$definition['primary']]
+			);
 			break;
 		}
 	}
