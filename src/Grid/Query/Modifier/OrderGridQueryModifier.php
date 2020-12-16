@@ -36,23 +36,22 @@
 
 namespace Mollie\Grid\Query\Modifier;
 
-
 use Doctrine\DBAL\Query\QueryBuilder;
 
 class OrderGridQueryModifier implements GridQueryModifierInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function modify(QueryBuilder $queryBuilder)
-    {
-        $queryBuilder->addSelect('mol.`transaction_id`');
+	/**
+	 * {@inheritDoc}
+	 */
+	public function modify(QueryBuilder $queryBuilder)
+	{
+		$queryBuilder->addSelect('mol.`transaction_id`');
 
-        $queryBuilder->leftJoin(
-            'o',
-            '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`',
-            'mol',
-            'mol.`order_reference` = o.`reference`'
-        );
-    }
+		$queryBuilder->leftJoin(
+			'o',
+			'`' . pSQL(_DB_PREFIX_) . 'mollie_payments`',
+			'mol',
+			'mol.`order_reference` = o.`reference`'
+		);
+	}
 }
