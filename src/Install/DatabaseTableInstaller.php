@@ -133,7 +133,7 @@ final class DatabaseTableInstaller implements InstallerInterface
                     ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
-        $sql[] = '
+		$sql[] = '
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
                 `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `id_order` VARCHAR(64) NOT NULL,

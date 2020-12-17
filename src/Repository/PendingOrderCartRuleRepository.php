@@ -43,58 +43,58 @@ use Order;
 
 final class PendingOrderCartRuleRepository
 {
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     *
-     * @return array
-     */
-    public function getPendingOrderCartRule($order, CartRule $cartRule)
-    {
-        $dbQuery = new DbQuery();
-        $dbQuery->select('*');
-        $dbQuery->from('mol_pending_order_cart_rule');
-        $dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
+	/**
+	 * @param Order $order
+	 * @param CartRule $cartRule
+	 *
+	 * @return array
+	 */
+	public function getPendingOrderCartRule($order, CartRule $cartRule)
+	{
+		$dbQuery = new DbQuery();
+		$dbQuery->select('*');
+		$dbQuery->from('mol_pending_order_cart_rule');
+		$dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
 
-        return Db::getInstance()->getRow($dbQuery);
-    }
+		return Db::getInstance()->getRow($dbQuery);
+	}
 
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     */
-    public function removePreviousPendingOrderCartRule($order, CartRule $cartRule)
-    {
-        Db::getInstance()->delete('mol_pending_order_cart_rule',
-            'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id
-        );
-    }
+	/**
+	 * @param Order $order
+	 * @param CartRule $cartRule
+	 */
+	public function removePreviousPendingOrderCartRule($order, CartRule $cartRule)
+	{
+		Db::getInstance()->delete('mol_pending_order_cart_rule',
+			'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id
+		);
+	}
 
-    /**
-     * Creating pending order cart rule to be used later on successful payment.
-     *
-     * @param Order $order
-     * @param CartRule $cartRule
-     * @param array $orderCartRule
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function createPendingOrderCartRule($order, CartRule $cartRule, $orderCartRule)
-    {
-        if (empty($orderCartRule)) {
-            return;
-        }
+	/**
+	 * Creating pending order cart rule to be used later on successful payment.
+	 *
+	 * @param Order $order
+	 * @param CartRule $cartRule
+	 * @param array $orderCartRule
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 */
+	public function createPendingOrderCartRule($order, CartRule $cartRule, $orderCartRule)
+	{
+		if (empty($orderCartRule)) {
+			return;
+		}
 
-        Db::getInstance()->insert('mol_pending_order_cart_rule', [
-            'id_order' => (int) $order->id,
-            'id_cart_rule' => (int) $cartRule->id,
-            'name' => $orderCartRule['name'],
-            'value_tax_incl' => $orderCartRule['value_tax_incl'] ?: 0,
-            'value_tax_excl' => $orderCartRule['value_tax_excl'] ?: 0,
-            'free_shipping' => (int) $orderCartRule['free_shipping'] ?: 0,
-            'id_order_invoice' => (int) $orderCartRule['id_order_invoice'] ?: 0,
-        ]);
-    }
+		Db::getInstance()->insert('mol_pending_order_cart_rule', [
+			'id_order' => (int) $order->id,
+			'id_cart_rule' => (int) $cartRule->id,
+			'name' => $orderCartRule['name'],
+			'value_tax_incl' => $orderCartRule['value_tax_incl'] ?: 0,
+			'value_tax_excl' => $orderCartRule['value_tax_excl'] ?: 0,
+			'free_shipping' => (int) $orderCartRule['free_shipping'] ?: 0,
+			'id_order_invoice' => (int) $orderCartRule['id_order_invoice'] ?: 0,
+		]);
+	}
 
     /**
      * @param Order $order

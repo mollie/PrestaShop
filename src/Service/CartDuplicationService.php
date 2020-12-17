@@ -38,44 +38,43 @@ namespace Mollie\Service;
 use Cart;
 use CartRule;
 use Context;
-use Mollie\Config\Config;
 use Mollie\Handler\CartRule\CartRuleHandler;
 
 class CartDuplicationService
 {
-    /**
-     * @var CartRuleDuplicationService
-     */
-    private $cartRuleDuplicationService;
+	/**
+	 * @var CartRuleDuplicationService
+	 */
+	private $cartRuleDuplicationService;
 
-    /**
-     * @var CartRuleHandler
-     */
-    private $cartRuleHandler;
+	/**
+	 * @var CartRuleHandler
+	 */
+	private $cartRuleHandler;
 
-    public function __construct(
-        CartRuleDuplicationService $cartRuleDuplicationService,
-        CartRuleHandler $cartRuleHandler
-    ) {
-        $this->cartRuleDuplicationService = $cartRuleDuplicationService;
-        $this->cartRuleHandler = $cartRuleHandler;
-    }
+	public function __construct(
+		CartRuleDuplicationService $cartRuleDuplicationService,
+		CartRuleHandler $cartRuleHandler
+	) {
+		$this->cartRuleDuplicationService = $cartRuleDuplicationService;
+		$this->cartRuleHandler = $cartRuleHandler;
+	}
 
-    /**
-     * @param int $cartId
-     * @param string $backtraceLocation
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
+	/**
+	 * @param int $cartId
+	 * @param string $backtraceLocation
+	 *
+	 * @return int
+	 *
+	 * @throws \Exception
+	 */
 	public function restoreCart($cartId, $backtraceLocation)
 	{
 		$context = Context::getContext();
 		$cart = new Cart($cartId);
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
-        $this->cartRuleHandler->handle($cart, $backtraceLocation, false, $cartRules);
+		$this->cartRuleHandler->handle($cart, $backtraceLocation, false, $cartRules);
 		$duplication = $cart->duplicate();
 		if ($duplication['success']) {
 			/** @var Cart $duplicatedCart */
@@ -84,7 +83,7 @@ class CartDuplicationService
 			$context->cookie->__set('id_cart', $duplicatedCart->id);
 			$context->cart = $duplicatedCart;
 			$context->cookie->write();
-            $this->cartRuleDuplicationService->restoreCartRules($cartRules);
+			$this->cartRuleDuplicationService->restoreCartRules($cartRules);
 
 			return $duplicatedCart->id;
 		}
