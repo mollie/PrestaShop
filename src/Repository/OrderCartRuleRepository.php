@@ -31,64 +31,46 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service;
+namespace Mollie\Repository;
 
-use Cart;
 use CartRule;
-use Context;
-use Mollie\Config\Config;
-use Mollie\Handler\CartRule\CartRuleHandler;
+use Db;
+use DbQuery;
+use Order;
 
-class CartDuplicationService
+final class OrderCartRuleRepository
 {
     /**
-     * @var CartRuleDuplicationService
+     * @param Order $order
+     * @param CartRule $cartRule
+     *
+     * @return array|bool|object|null
      */
-    private $cartRuleDuplicationService;
+    public function getOrderCartRule($order, CartRule $cartRule)
+    {
+        $dbQuery = new DbQuery();
+        $dbQuery->select('`value` as value_tax_incl, `value_tax_excl`, `name`, `free_shipping`, `id_order_invoice`');
+        $dbQuery->from('order_cart_rule');
+        $dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
 
-    /**
-     * @var CartRuleHandler
-     */
-    private $cartRuleHandler;
-
-    public function __construct(
-        CartRuleDuplicationService $cartRuleDuplicationService,
-        CartRuleHandler $cartRuleHandler
-    ) {
-        $this->cartRuleDuplicationService = $cartRuleDuplicationService;
-        $this->cartRuleHandler = $cartRuleHandler;
+        return Db::getInstance()->getRow($dbQuery);
     }
 
     /**
-     * @param int $cartId
-     * @param string $backtraceLocation
+     * @param Order $order
+     * @param CartRule $cartRule
      *
-     * @return int
-     *
-     * @throws \Exception
+     * @return bool
      */
-	public function restoreCart($cartId, $backtraceLocation)
-	{
-		$context = Context::getContext();
-		$cart = new Cart($cartId);
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-
-        $this->cartRuleHandler->handle($cart, $backtraceLocation, false, $cartRules);
-		$duplication = $cart->duplicate();
-		if ($duplication['success']) {
-			/** @var Cart $duplicatedCart */
-			$duplicatedCart = $duplication['cart'];
-
-			$context->cookie->__set('id_cart', $duplicatedCart->id);
-			$context->cart = $duplicatedCart;
-			$context->cookie->write();
-            $this->cartRuleDuplicationService->restoreCartRules($cartRules);
-
-			return $duplicatedCart->id;
-		}
-
-		return 0;
-	}
+    public function decreaseCustomerUsedCartRuleQuantity($order, CartRule $cartRule)
+    {
+        return (bool) Db::getInstance()->delete(
+            'order_cart_rule',
+            'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id,
+            1
+        );
+    }
 }

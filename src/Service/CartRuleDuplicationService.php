@@ -27,68 +27,39 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- *
  * @category   Mollie
- *
- * @see       https://www.mollie.nl
+ * @package    Mollie
+ * @link       https://www.mollie.nl
  */
 
 namespace Mollie\Service;
 
-use Cart;
 use CartRule;
 use Context;
-use Mollie\Config\Config;
-use Mollie\Handler\CartRule\CartRuleHandler;
 
-class CartDuplicationService
+class CartRuleDuplicationService
 {
     /**
-     * @var CartRuleDuplicationService
+     * @param array $cartRules
+     *
+     * @return bool
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
-    private $cartRuleDuplicationService;
+    public function restoreCartRules($cartRules = [])
+    {
+        if (empty($cartRules)) {
+            return true;
+        }
+        $context = Context::getContext();
 
-    /**
-     * @var CartRuleHandler
-     */
-    private $cartRuleHandler;
+        foreach ($cartRules as $cartRuleContent) {
+            $cartRule = new CartRule($cartRuleContent['id_cart_rule']);
+            if ($cartRule->checkValidity($context, false, false)) {
+                $context->cart->addCartRule($cartRule->id);
+            }
+        }
 
-    public function __construct(
-        CartRuleDuplicationService $cartRuleDuplicationService,
-        CartRuleHandler $cartRuleHandler
-    ) {
-        $this->cartRuleDuplicationService = $cartRuleDuplicationService;
-        $this->cartRuleHandler = $cartRuleHandler;
+        return true;
     }
-
-    /**
-     * @param int $cartId
-     * @param string $backtraceLocation
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
-	public function restoreCart($cartId, $backtraceLocation)
-	{
-		$context = Context::getContext();
-		$cart = new Cart($cartId);
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-
-        $this->cartRuleHandler->handle($cart, $backtraceLocation, false, $cartRules);
-		$duplication = $cart->duplicate();
-		if ($duplication['success']) {
-			/** @var Cart $duplicatedCart */
-			$duplicatedCart = $duplication['cart'];
-
-			$context->cookie->__set('id_cart', $duplicatedCart->id);
-			$context->cart = $duplicatedCart;
-			$context->cookie->write();
-            $this->cartRuleDuplicationService->restoreCartRules($cartRules);
-
-			return $duplicatedCart->id;
-		}
-
-		return 0;
-	}
 }

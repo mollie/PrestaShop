@@ -106,6 +106,15 @@ services:
       - '@mollie'
 
   Mollie\Service\CartDuplicationService:
+    class: Mollie\Service\CartDuplicationService
+    arguments:
+      - '@Mollie\Service\CartRuleDuplicationService'
+      - '@Mollie\Handler\CartRule\CartRuleHandler'
+
+  Mollie\Service\CartRuleDuplicationService:
+    class: Mollie\Service\CartRuleDuplicationService
+    arguments:
+      - '@Mollie\Handler\CartRule\CartRuleHandler'
 
   Mollie\Service\OrderCartAssociationService:
     arguments:
@@ -152,6 +161,7 @@ services:
     - '@Mollie\Repository\PaymentMethodRepository'
     - '@Mollie\Service\RepeatOrderLinkFactory'
     - '@Mollie\Service\TransactionService'
+    - '@Mollie\Handler\CartRule\CartRuleHandler'
 
   Mollie\Service\UpgradeNoticeService:
 
@@ -163,3 +173,15 @@ services:
     - '@mollie'
 
   Mollie\Service\ApiKeyService:
+
+  Mollie\Handler\CartRule\CartRuleHandler:
+    class: Mollie\Handler\CartRule\CartRuleHandler
+    arguments:
+      - '@Mollie\Repository\OrderCartRuleRepository'
+      - '@Mollie\Repository\PendingOrderCartRuleRepository'
+
+  Mollie\Repository\OrderCartRuleRepository:
+    class: Mollie\Repository\OrderCartRuleRepository
+
+  Mollie\Repository\PendingOrderCartRuleRepository:
+    class: Mollie\Repository\PendingOrderCartRuleRepository
