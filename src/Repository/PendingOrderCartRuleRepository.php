@@ -41,12 +41,16 @@ use MolPendingOrderCartRule;
 use Order;
 use OrderCartRule;
 
-final class PendingOrderCartRuleRepository extends AbstractRepository
+final class PendingOrderCartRuleRepository extends AbstractRepository implements PendingOrderCartRuleRepositoryInterface
 {
-	/**
-	 * @param int $orderId
-	 * @param int $cartRuleId
-	 */
+    public function __construct()
+    {
+        parent::__construct(MolPendingOrderCartRule::class);
+    }
+
+    /**
+     * @inheritDoc
+     */
 	public function removePreviousPendingOrderCartRule($orderId, $cartRuleId)
 	{
 		Db::getInstance()->delete('mol_pending_order_cart_rule',
@@ -54,16 +58,9 @@ final class PendingOrderCartRuleRepository extends AbstractRepository
 		);
 	}
 
-	/**
-	 * Creating pending order cart rule to be used later on successful payment.
-	 *
-	 * @param int $orderId
-	 * @param int $cartRuleId
-	 * @param OrderCartRule $orderCartRule
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
+    /**
+     * @inheritDoc
+     */
 	public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule)
 	{
 		if (empty($orderCartRule)) {
@@ -82,7 +79,10 @@ final class PendingOrderCartRuleRepository extends AbstractRepository
 		$pendingOrderCartRule->add();
 	}
 
-	public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
+    /**
+     * @inheritDoc
+     */
+    public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
 	{
 		if (empty($pendingOrderCartRule)) {
 			return;

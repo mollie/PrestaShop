@@ -36,25 +36,13 @@
 
 namespace Mollie\Repository;
 
-use Db;
-use OrderCartRule;
-
-final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
+interface OrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(OrderCartRule::class);
-    }
-
     /**
-     * @inheritDoc
+     * @param int $orderId
+     * @param int $cartRuleId
+     *
+     * @return bool
      */
-	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
-	{
-		return (bool) Db::getInstance()->delete(
-			'order_cart_rule',
-			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
-			1
-		);
-	}
+    public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId);
 }

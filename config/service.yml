@@ -163,7 +163,6 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\RepeatOrderLinkFactory'
       - '@Mollie\Service\TransactionService'
-      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
       - '@Mollie\Handler\CartRule\CartRuleQuantityChangeHandler'
 
   Mollie\Service\UpgradeNoticeService:

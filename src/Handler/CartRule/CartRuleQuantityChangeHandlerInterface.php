@@ -34,27 +34,15 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Repository;
+namespace Mollie\Handler\CartRule;
 
-use Db;
-use OrderCartRule;
+use Cart;
 
-final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
+interface CartRuleQuantityChangeHandlerInterface
 {
-    public function __construct()
-    {
-        parent::__construct(OrderCartRule::class);
-    }
-
     /**
-     * @inheritDoc
+     * @param Cart $cart
+     * @param array $cartRules
      */
-	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
-	{
-		return (bool) Db::getInstance()->delete(
-			'order_cart_rule',
-			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
-			1
-		);
-	}
+    public function handle(Cart $cart, $cartRules = []);
 }

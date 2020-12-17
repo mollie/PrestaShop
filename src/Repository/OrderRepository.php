@@ -36,9 +36,16 @@
 
 namespace Mollie\Repository;
 
-final class OrderRepository extends AbstractRepository
+use Order;
+
+final class OrderRepository extends AbstractRepository implements OrderRepositoryInterface
 {
-	/**
+    public function __construct()
+    {
+        parent::__construct(Order::class);
+    }
+
+    /**
 	 * @param int $id_cart
 	 *
 	 * @return \ObjectModel|null

@@ -39,7 +39,7 @@ use Cart;
 use CartRule;
 use Context;
 use Mollie\Config\Config;
-use Mollie\Handler\CartRule\CartRuleQuantityResetHandler;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandlerInterface;
 
 class CartDuplicationService
 {
@@ -49,16 +49,16 @@ class CartDuplicationService
 	private $cartRuleDuplicationService;
 
 	/**
-	 * @var CartRuleQuantityResetHandler
+	 * @var CartRuleQuantityResetHandlerInterface
 	 */
-	private $cartRuleQuantityResetHandler;
+	private $cartRuleQuantityResetHandlerInterface;
 
 	public function __construct(
 		CartRuleDuplicationService $cartRuleDuplicationService,
-		CartRuleQuantityResetHandler $cartRuleQuantityResetHandler
+        CartRuleQuantityResetHandlerInterface $cartRuleQuantityResetHandlerInterface
 	) {
 		$this->cartRuleDuplicationService = $cartRuleDuplicationService;
-		$this->cartRuleQuantityResetHandler = $cartRuleQuantityResetHandler;
+		$this->cartRuleQuantityResetHandlerInterface = $cartRuleQuantityResetHandlerInterface;
 	}
 
 	/**
@@ -77,7 +77,7 @@ class CartDuplicationService
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
 		if ($backtraceLocation === Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE) {
-			$this->cartRuleQuantityResetHandler->handle($cart, $cartRules);
+			$this->cartRuleQuantityResetHandlerInterface->handle($cart, $cartRules);
 		}
 		$duplication = $cart->duplicate();
 		if ($duplication['success']) {

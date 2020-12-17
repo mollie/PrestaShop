@@ -34,15 +34,8 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Handler\CartRule;
+namespace Mollie\Repository;
 
-use Cart;
-
-interface CartRuleHandlerInterface
+interface CartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-	/**
-	 * @param Cart $cart
-	 * @param array $cartRules
-	 */
-	public function handle(Cart $cart, $cartRules = []);
 }

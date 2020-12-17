@@ -38,51 +38,51 @@ namespace Mollie\Handler\CartRule;
 
 use Cart;
 use CartRule;
-use Mollie\Repository\CartRuleRepository;
-use Mollie\Repository\OrderCartRuleRepository;
-use Mollie\Repository\OrderRepository;
-use Mollie\Repository\PendingOrderCartRuleRepository;
+use Mollie\Repository\CartRuleRepositoryInterface;
+use Mollie\Repository\OrderCartRuleRepositoryInterface;
+use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Order;
 use OrderCartRule;
 
-class CartRuleQuantityResetHandler implements CartRuleHandlerInterface
+class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterface
 {
-	/**
-	 * @var PendingOrderCartRuleRepository
-	 */
-	private $pendingOrderCartRuleRepository;
+    /**
+     * @var PendingOrderCartRuleRepositoryInterface
+     */
+    private $pendingOrderCartRuleRepository;
 
-	/**
-	 * @var OrderCartRuleRepository
-	 */
-	private $orderCartRuleRepository;
+    /**
+     * @var OrderCartRuleRepositoryInterface
+     */
+    private $orderCartRuleRepository;
 
-	/**
-	 * @var CartRuleRepository
-	 */
-	private $cartRuleRepository;
+    /**
+     * @var CartRuleRepositoryInterface
+     */
+    private $cartRuleRepository;
 
-	/**
-	 * @var OrderRepository
-	 */
-	private $orderRepository;
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
 
-	public function __construct(
-		PendingOrderCartRuleRepository $pendingOrderCartRuleRepository,
-		OrderCartRuleRepository $orderCartRuleRepository,
-		CartRuleRepository $cartRuleRepository,
-		OrderRepository $orderRepository
-	) {
-		$this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
-		$this->orderCartRuleRepository = $orderCartRuleRepository;
-		$this->cartRuleRepository = $cartRuleRepository;
-		$this->orderRepository = $orderRepository;
-	}
+    public function __construct(
+        PendingOrderCartRuleRepositoryInterface $pendingOrderCartRuleRepository,
+        OrderCartRuleRepositoryInterface $orderCartRuleRepository,
+        CartRuleRepositoryInterface $cartRuleRepository,
+        OrderRepositoryInterface $orderRepository
+    ) {
+        $this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
+        $this->orderCartRuleRepository = $orderCartRuleRepository;
+        $this->cartRuleRepository = $cartRuleRepository;
+        $this->orderRepository = $orderRepository;
+    }
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function handle(Cart $cart, $cartRules = [])
+	public function handle(Cart $cart, $cartRules = [], $paymentSuccessful = false)
 	{
 		/** @var Order $order */
 		$order = $this->orderRepository->findOneByCartId($cart->id);

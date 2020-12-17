@@ -36,25 +36,32 @@
 
 namespace Mollie\Repository;
 
-use Db;
+use MolPendingOrderCartRule;
+use Order;
 use OrderCartRule;
 
-final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
+interface PendingOrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(OrderCartRule::class);
-    }
+    /**
+     * @param int $orderId
+     * @param int $cartRuleId
+     */
+    public function removePreviousPendingOrderCartRule($orderId, $cartRuleId);
 
     /**
-     * @inheritDoc
+     * Used to create MolPendingOrderCartRule from OrderCartRule to be used later on successful payment to increase customer used cart rule quantity.
+     *
+     * @param int $orderId
+     * @param int $cartRuleId
+     * @param OrderCartRule $orderCartRule
      */
-	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
-	{
-		return (bool) Db::getInstance()->delete(
-			'order_cart_rule',
-			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
-			1
-		);
-	}
+    public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule);
+
+    /**
+     * Used to create OrderCartRule from MolPendingOrderCartRule
+     *
+     * @param Order $order
+     * @param MolPendingOrderCartRule $pendingOrderCartRule
+     */
+    public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule);
 }

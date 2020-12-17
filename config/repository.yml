@@ -30,20 +30,12 @@ services:
 
   Mollie\Repository\OrderRepository:
     class: Mollie\Repository\OrderRepository
-    arguments:
-      - 'Order'
 
   Mollie\Repository\OrderCartRuleRepository:
     class: Mollie\Repository\OrderCartRuleRepository
-    arguments:
-      - 'OrderCartRule'
 
   Mollie\Repository\CartRuleRepository:
     class: Mollie\Repository\CartRuleRepository
-    arguments:
-      - 'CartRule'
 
   Mollie\Repository\PendingOrderCartRuleRepository:
     class: Mollie\Repository\PendingOrderCartRuleRepository
-    arguments:
-      - 'MolPendingOrderCartRule'

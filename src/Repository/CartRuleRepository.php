@@ -36,6 +36,12 @@
 
 namespace Mollie\Repository;
 
-final class CartRuleRepository extends AbstractRepository
+use CartRule;
+
+final class CartRuleRepository extends AbstractRepository implements CartRuleRepositoryInterface
 {
+    public function __construct()
+    {
+        parent::__construct(CartRule::class);
+    }
 }
