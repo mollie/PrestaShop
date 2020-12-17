@@ -552,7 +552,7 @@ class Mollie extends PaymentModule
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/menu.css');
 
 		$html = '';
-		if ($this->context->controller->controller_name === 'AdminOrders' || $this->context->controller instanceof AdminOrdersController) {
+		if ($this->context->controller->controller_name === 'AdminOrders') {
 			$this->context->smarty->assign([
 				'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
 				'mollieCheckMethods' => Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int) Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
