@@ -117,7 +117,7 @@ class CartRuleHandler implements CartRuleHandlerInterface
 
 		foreach ($cartRules as $cartRuleContent) {
 			$cartRule = new CartRule($cartRuleContent['id_cart_rule']);
-            $orderCartRuleData = $this->pendingOrderCartRuleRepository->getPendingOrderCartRule($order, $cartRule);
+			$orderCartRuleData = $this->pendingOrderCartRuleRepository->getPendingOrderCartRule($order, $cartRule);
 
 			$this->decreaseAvailableCartRuleQuantity($cartRule);
 			$this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $orderCartRuleData);

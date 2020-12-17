@@ -96,25 +96,25 @@ final class PendingOrderCartRuleRepository
 		]);
 	}
 
-    /**
-     * @param Order $order
-     * @param array $orderCartRuleData
-     */
-    public function usePendingOrderCartRule($order, $orderCartRuleData)
-    {
-        if (empty($orderCartRuleData)) {
-            return;
-        }
+	/**
+	 * @param Order $order
+	 * @param array $orderCartRuleData
+	 */
+	public function usePendingOrderCartRule($order, $orderCartRuleData)
+	{
+		if (empty($orderCartRuleData)) {
+			return;
+		}
 
-        $order->addCartRule(
-            $orderCartRuleData['id_cart_rule'],
-            $orderCartRuleData['name'],
-            [
-                'tax_incl' => $orderCartRuleData['value_tax_incl'],
-                'tax_excl' => $orderCartRuleData['value_tax_excl']
-            ],
-            $orderCartRuleData['id_order_invoice'],
-            $orderCartRuleData['free_shipping']
-        );
-    }
+		$order->addCartRule(
+			$orderCartRuleData['id_cart_rule'],
+			$orderCartRuleData['name'],
+			[
+				'tax_incl' => $orderCartRuleData['value_tax_incl'],
+				'tax_excl' => $orderCartRuleData['value_tax_excl'],
+			],
+			$orderCartRuleData['id_order_invoice'],
+			$orderCartRuleData['free_shipping']
+		);
+	}
 }
