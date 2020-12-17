@@ -70,14 +70,14 @@ final class PendingOrderCartRuleRepository extends AbstractRepository
 			return;
 		}
 
-        $pendingOrderCartRule = new MolPendingOrderCartRule();
-        $pendingOrderCartRule->name = $orderCartRule->name;
-        $pendingOrderCartRule->id_order = (int) $orderId;
-        $pendingOrderCartRule->id_cart_rule = (int) $cartRuleId;
-        $pendingOrderCartRule->id_order_invoice = (int) $orderCartRule->id_order_invoice;
-        $pendingOrderCartRule->free_shipping = (bool) $orderCartRule->free_shipping;
-        $pendingOrderCartRule->value_tax_excl = $orderCartRule->value_tax_excl;
-        $pendingOrderCartRule->value_tax_incl = $orderCartRule->value;
+		$pendingOrderCartRule = new MolPendingOrderCartRule();
+		$pendingOrderCartRule->name = $orderCartRule->name;
+		$pendingOrderCartRule->id_order = (int) $orderId;
+		$pendingOrderCartRule->id_cart_rule = (int) $cartRuleId;
+		$pendingOrderCartRule->id_order_invoice = (int) $orderCartRule->id_order_invoice;
+		$pendingOrderCartRule->free_shipping = (bool) $orderCartRule->free_shipping;
+		$pendingOrderCartRule->value_tax_excl = $orderCartRule->value_tax_excl;
+		$pendingOrderCartRule->value_tax_incl = $orderCartRule->value;
 
 		$pendingOrderCartRule->add();
 	}
