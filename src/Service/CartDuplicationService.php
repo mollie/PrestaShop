@@ -76,9 +76,9 @@ class CartDuplicationService
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
-        if ($backtraceLocation === Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE) {
-            $this->cartRuleQuantityResetHandler->handle($cart, $cartRules);
-        }
+		if ($backtraceLocation === Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE) {
+			$this->cartRuleQuantityResetHandler->handle($cart, $cartRules);
+		}
 		$duplication = $cart->duplicate();
 		if ($duplication['success']) {
 			/** @var Cart $duplicatedCart */

@@ -40,9 +40,9 @@ use Cart;
 
 interface CartRuleHandlerInterface
 {
-    /**
-     * @param Cart $cart
-     * @param array $cartRules
-     */
+	/**
+	 * @param Cart $cart
+	 * @param array $cartRules
+	 */
 	public function handle(Cart $cart, $cartRules = []);
 }

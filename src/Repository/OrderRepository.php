@@ -38,15 +38,15 @@ namespace Mollie\Repository;
 
 final class OrderRepository extends AbstractRepository
 {
-    /**
-     * @param int $id_cart
-     *
-     * @return \ObjectModel|null
-     * @throws \PrestaShopException
-     */
-    public function findOneByCartId($id_cart)
-    {
-        return $this->findOneBy(['id_cart' => (int) $id_cart]);
-    }
-
+	/**
+	 * @param int $id_cart
+	 *
+	 * @return \ObjectModel|null
+	 *
+	 * @throws \PrestaShopException
+	 */
+	public function findOneByCartId($id_cart)
+	{
+		return $this->findOneBy(['id_cart' => (int) $id_cart]);
+	}
 }

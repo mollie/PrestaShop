@@ -41,13 +41,13 @@ use CartRule;
 use Context;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\OrderStatusUtility;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use Order;
 use OrderDetail;
-use Mollie\Handler\CartRule\CartRuleQuantityResetHandler;
-use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
 
 class PaymentReturnService
 {
@@ -85,25 +85,24 @@ class PaymentReturnService
 	 */
 	private $transactionService;
 
-    /**
-     * @var CartRuleQuantityResetHandler
-     */
-    private $cartRuleQuantityResetHandler;
+	/**
+	 * @var CartRuleQuantityResetHandler
+	 */
+	private $cartRuleQuantityResetHandler;
 
-    /**
-     * @var CartRuleQuantityChangeHandler
-     */
-    private $cartRuleQuantityChangeHandler;
+	/**
+	 * @var CartRuleQuantityChangeHandler
+	 */
+	private $cartRuleQuantityChangeHandler;
 
-
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		CartDuplicationService $cartDuplicationService,
 		PaymentMethodRepository $paymentMethodRepository,
 		RepeatOrderLinkFactory $orderLinkFactory,
 		TransactionService $transactionService,
-        CartRuleQuantityResetHandler $cartRuleQuantityResetHandler,
-        CartRuleQuantityChangeHandler $cartRuleQuantityChangeHandler
+		CartRuleQuantityResetHandler $cartRuleQuantityResetHandler,
+		CartRuleQuantityChangeHandler $cartRuleQuantityChangeHandler
 	) {
 		$this->module = $module;
 		$this->context = Context::getContext();
@@ -111,9 +110,9 @@ class PaymentReturnService
 		$this->paymentMethodRepository = $paymentMethodRepository;
 		$this->orderLinkFactory = $orderLinkFactory;
 		$this->transactionService = $transactionService;
-        $this->cartRuleQuantityResetHandler = $cartRuleQuantityResetHandler;
-        $this->cartRuleQuantityChangeHandler = $cartRuleQuantityChangeHandler;
-    }
+		$this->cartRuleQuantityResetHandler = $cartRuleQuantityResetHandler;
+		$this->cartRuleQuantityChangeHandler = $cartRuleQuantityChangeHandler;
+	}
 
 	public function handlePendingStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
 	{
@@ -135,9 +134,9 @@ class PaymentReturnService
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-        $this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
+		$this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
 
-        return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
+		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
 
 	public function handlePaidStatus(Order $order, $transaction, $paymentMethod, $stockManagement)
@@ -165,7 +164,7 @@ class PaymentReturnService
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-        $this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
+		$this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
 
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
@@ -190,9 +189,9 @@ class PaymentReturnService
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-        $this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
+		$this->cartRuleQuantityChangeHandler->handle($cart, $cartRules);
 
-        return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
+		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
 
 	public function handleFailedStatus(Order $order, $transaction, $orderStatus, $paymentMethod)

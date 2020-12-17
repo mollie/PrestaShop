@@ -33,7 +33,6 @@
  * @see       https://www.mollie.nl
  * @codingStandardsIgnoreStart
  */
-
 class MolPendingOrderCartRule extends ObjectModel
 {
 	/**
@@ -41,35 +40,35 @@ class MolPendingOrderCartRule extends ObjectModel
 	 */
 	public $id_order;
 
-    /**
-     * @var int
-     */
-    public $id_cart_rule;
+	/**
+	 * @var int
+	 */
+	public $id_cart_rule;
 
-    /**
-     * @var int
-     */
-    public $id_order_invoice;
+	/**
+	 * @var int
+	 */
+	public $id_order_invoice;
 
-    /**
-     * @var string
-     */
-    public $name;
+	/**
+	 * @var string
+	 */
+	public $name;
 
-    /**
-     * @var float
-     */
-    public $value_tax_incl;
+	/**
+	 * @var float
+	 */
+	public $value_tax_incl;
 
-    /**
-     * @var float
-     */
-    public $value_tax_excl;
+	/**
+	 * @var float
+	 */
+	public $value_tax_excl;
 
-    /**
-     * @var bool
-     */
-    public $free_shipping;
+	/**
+	 * @var bool
+	 */
+	public $free_shipping;
 
 	/**
 	 * @var array
@@ -80,11 +79,11 @@ class MolPendingOrderCartRule extends ObjectModel
 		'fields' => [
 			'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
 			'id_cart_rule' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'id_order_invoice' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'name' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
-            'value_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
-            'value_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
-            'free_shipping' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+			'id_order_invoice' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'name' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+			'value_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+			'value_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+			'free_shipping' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
 		],
 	];
 }

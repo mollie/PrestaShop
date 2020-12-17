@@ -40,12 +40,12 @@ use Db;
 
 final class OrderCartRuleRepository extends AbstractRepository
 {
-    /**
-     * @param int $orderId
-     * @param int $cartRuleId
-     *
-     * @return bool
-     */
+	/**
+	 * @param int $orderId
+	 * @param int $cartRuleId
+	 *
+	 * @return bool
+	 */
 	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
 	{
 		return (bool) Db::getInstance()->delete(

@@ -36,9 +36,6 @@
 
 namespace Mollie\Repository;
 
-use Db;
-use DbQuery;
-
 final class CartRuleRepository extends AbstractRepository
 {
 }
