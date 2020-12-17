@@ -88,12 +88,12 @@ class CartRuleHandler implements CartRuleHandlerInterface
 		if (empty($cartRules)) {
 			return;
 		}
-        $orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
-        $order = new Order((int) $orderId);
+		$orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
+		$order = new Order((int) $orderId);
 
-        if (empty($order)) {
-            return;
-        }
+		if (empty($order)) {
+			return;
+		}
 
 		foreach ($cartRules as $cartRuleContent) {
 			$cartRule = new CartRule($cartRuleContent['id_cart_rule']);
@@ -118,12 +118,12 @@ class CartRuleHandler implements CartRuleHandlerInterface
 		if (empty($cartRules)) {
 			return;
 		}
-        $orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
-        $order = new Order((int) $orderId);
+		$orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
+		$order = new Order((int) $orderId);
 
-        if (empty($order)) {
-            return;
-        }
+		if (empty($order)) {
+			return;
+		}
 
 		foreach ($cartRules as $cartRuleContent) {
 			$cartRule = new CartRule($cartRuleContent['id_cart_rule']);
