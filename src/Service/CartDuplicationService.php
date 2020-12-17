@@ -72,7 +72,7 @@ class CartDuplicationService
 	{
 		$context = Context::getContext();
 		$cart = new Cart($cartId);
-        /* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
 		$this->cartRuleHandler->handle($cart, $backtraceLocation, false, $cartRules);
