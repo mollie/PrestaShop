@@ -36,22 +36,17 @@
 
 namespace Mollie\Repository;
 
-use Db;
-
-final class OrderCartRuleRepository extends AbstractRepository
+final class OrderRepository extends AbstractRepository
 {
     /**
-     * @param int $orderId
-     * @param int $cartRuleId
+     * @param int $id_cart
      *
-     * @return bool
+     * @return \ObjectModel|null
+     * @throws \PrestaShopException
      */
-	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
-	{
-		return (bool) Db::getInstance()->delete(
-			'order_cart_rule',
-			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
-			1
-		);
-	}
+    public function findOneByCartId($id_cart)
+    {
+        return $this->findOneBy(['id_cart' => (int) $id_cart]);
+    }
+
 }

@@ -109,12 +109,12 @@ services:
     class: Mollie\Service\CartDuplicationService
     arguments:
       - '@Mollie\Service\CartRuleDuplicationService'
-      - '@Mollie\Handler\CartRule\CartRuleHandler'
+      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
 
   Mollie\Service\CartRuleDuplicationService:
     class: Mollie\Service\CartRuleDuplicationService
     arguments:
-      - '@Mollie\Handler\CartRule\CartRuleHandler'
+      - '@Mollie\Repository\CartRuleRepository'
 
   Mollie\Service\OrderCartAssociationService:
     arguments:
@@ -156,12 +156,15 @@ services:
     - '@Mollie\Service\LanguageService'
 
   Mollie\Service\PaymentReturnService:
-    - '@mollie'
-    - '@Mollie\Service\CartDuplicationService'
-    - '@Mollie\Repository\PaymentMethodRepository'
-    - '@Mollie\Service\RepeatOrderLinkFactory'
-    - '@Mollie\Service\TransactionService'
-    - '@Mollie\Handler\CartRule\CartRuleHandler'
+    class: Mollie\Service\PaymentReturnService
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\CartDuplicationService'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\RepeatOrderLinkFactory'
+      - '@Mollie\Service\TransactionService'
+      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
+      - '@Mollie\Handler\CartRule\CartRuleQuantityChangeHandler'
 
   Mollie\Service\UpgradeNoticeService:
 
@@ -174,14 +177,18 @@ services:
 
   Mollie\Service\ApiKeyService:
 
-  Mollie\Handler\CartRule\CartRuleHandler:
-    class: Mollie\Handler\CartRule\CartRuleHandler
+  Mollie\Handler\CartRule\CartRuleQuantityChangeHandler:
+    class: Mollie\Handler\CartRule\CartRuleQuantityChangeHandler
     arguments:
-      - '@Mollie\Repository\OrderCartRuleRepository'
       - '@Mollie\Repository\PendingOrderCartRuleRepository'
+      - '@Mollie\Repository\OrderCartRuleRepository'
+      - '@Mollie\Repository\CartRuleRepository'
+      - '@Mollie\Repository\OrderRepository'
 
-  Mollie\Repository\OrderCartRuleRepository:
-    class: Mollie\Repository\OrderCartRuleRepository
-
-  Mollie\Repository\PendingOrderCartRuleRepository:
-    class: Mollie\Repository\PendingOrderCartRuleRepository
+  Mollie\Handler\CartRule\CartRuleQuantityResetHandler:
+    class: Mollie\Handler\CartRule\CartRuleQuantityResetHandler
+    arguments:
+      - '@Mollie\Repository\PendingOrderCartRuleRepository'
+      - '@Mollie\Repository\OrderCartRuleRepository'
+      - '@Mollie\Repository\CartRuleRepository'
+      - '@Mollie\Repository\OrderRepository'

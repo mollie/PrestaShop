@@ -37,21 +37,8 @@
 namespace Mollie\Repository;
 
 use Db;
+use DbQuery;
 
-final class OrderCartRuleRepository extends AbstractRepository
+final class CartRuleRepository extends AbstractRepository
 {
-    /**
-     * @param int $orderId
-     * @param int $cartRuleId
-     *
-     * @return bool
-     */
-	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
-	{
-		return (bool) Db::getInstance()->delete(
-			'order_cart_rule',
-			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
-			1
-		);
-	}
 }

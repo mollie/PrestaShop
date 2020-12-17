@@ -36,85 +36,67 @@
 
 namespace Mollie\Repository;
 
-use CartRule;
 use Db;
-use DbQuery;
+use MolPendingOrderCartRule;
 use Order;
+use OrderCartRule;
 
-final class PendingOrderCartRuleRepository
+final class PendingOrderCartRuleRepository extends AbstractRepository
 {
-	/**
-	 * @param Order $order
-	 * @param CartRule $cartRule
-	 *
-	 * @return array
-	 */
-	public function getPendingOrderCartRule($order, CartRule $cartRule)
-	{
-		$dbQuery = new DbQuery();
-		$dbQuery->select('*');
-		$dbQuery->from('mol_pending_order_cart_rule');
-		$dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
-
-		return Db::getInstance()->getRow($dbQuery);
-	}
-
-	/**
-	 * @param Order $order
-	 * @param CartRule $cartRule
-	 */
-	public function removePreviousPendingOrderCartRule($order, CartRule $cartRule)
+    /**
+     * @param int $orderId
+     * @param int $cartRuleId
+     */
+	public function removePreviousPendingOrderCartRule($orderId, $cartRuleId)
 	{
 		Db::getInstance()->delete('mol_pending_order_cart_rule',
-			'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id
+			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId
 		);
 	}
 
-	/**
-	 * Creating pending order cart rule to be used later on successful payment.
-	 *
-	 * @param Order $order
-	 * @param CartRule $cartRule
-	 * @param array $orderCartRule
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 */
-	public function createPendingOrderCartRule($order, CartRule $cartRule, $orderCartRule)
-	{
-		if (empty($orderCartRule)) {
-			return;
-		}
+    /**
+     * Creating pending order cart rule to be used later on successful payment.
+     *
+     * @param int $orderId
+     * @param int $cartRuleId
+     * @param OrderCartRule $orderCartRule
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+	public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule)
+    {
+        if (empty($orderCartRule)) {
+            return;
+        }
 
-		Db::getInstance()->insert('mol_pending_order_cart_rule', [
-			'id_order' => (int) $order->id,
-			'id_cart_rule' => (int) $cartRule->id,
-			'name' => $orderCartRule['name'],
-			'value_tax_incl' => $orderCartRule['value_tax_incl'] ?: 0,
-			'value_tax_excl' => $orderCartRule['value_tax_excl'] ?: 0,
-			'free_shipping' => (int) $orderCartRule['free_shipping'] ?: 0,
-			'id_order_invoice' => (int) $orderCartRule['id_order_invoice'] ?: 0,
-		]);
-	}
+        $pendingOrderCartRule = new MolPendingOrderCartRule();
+        $pendingOrderCartRule->name = $orderCartRule->name;
+        $pendingOrderCartRule->id_order = (int) $orderId;
+        $pendingOrderCartRule->id_cart_rule = (int) $cartRuleId;
+        $pendingOrderCartRule->id_order_invoice = (int) $orderCartRule->id_order_invoice;
+        $pendingOrderCartRule->free_shipping = (int) $orderCartRule->free_shipping;
+        $pendingOrderCartRule->value_tax_excl = $orderCartRule->value_tax_excl;
+        $pendingOrderCartRule->value_tax_incl = $orderCartRule->value;
 
-	/**
-	 * @param Order $order
-	 * @param array $orderCartRuleData
-	 */
-	public function usePendingOrderCartRule($order, $orderCartRuleData)
+        $pendingOrderCartRule->add();
+    }
+
+	public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
 	{
-		if (empty($orderCartRuleData)) {
+		if (empty($pendingOrderCartRule)) {
 			return;
 		}
 
 		$order->addCartRule(
-			$orderCartRuleData['id_cart_rule'],
-			$orderCartRuleData['name'],
+            $pendingOrderCartRule->id_cart_rule,
+			$pendingOrderCartRule->name,
 			[
-				'tax_incl' => $orderCartRuleData['value_tax_incl'],
-				'tax_excl' => $orderCartRuleData['value_tax_excl'],
-			],
-			$orderCartRuleData['id_order_invoice'],
-			$orderCartRuleData['free_shipping']
-		);
+			    'tax_incl' => $pendingOrderCartRule->value_tax_incl,
+                'tax_excl' => $pendingOrderCartRule->value_tax_excl
+            ],
+			$pendingOrderCartRule->id_order_invoice,
+			$pendingOrderCartRule->free_shipping
+        );
 	}
 }

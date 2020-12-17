@@ -37,16 +37,26 @@ namespace Mollie\Service;
 
 use CartRule;
 use Context;
+use Mollie\Repository\CartRuleRepository;
 
 class CartRuleDuplicationService
 {
-	/**
+    /**
+     * @var CartRuleRepository
+     */
+    private $cartRuleRepository;
+
+    public function __construct(CartRuleRepository $cartRuleRepository)
+    {
+        $this->cartRuleRepository = $cartRuleRepository;
+    }
+
+    /**
 	 * @param array $cartRules
 	 *
 	 * @return bool
 	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
+     * @throws \PrestaShopException
 	 */
 	public function restoreCartRules($cartRules = [])
 	{
@@ -56,7 +66,8 @@ class CartRuleDuplicationService
 		$context = Context::getContext();
 
 		foreach ($cartRules as $cartRuleContent) {
-			$cartRule = new CartRule($cartRuleContent['id_cart_rule']);
+            $cartRule = $this->cartRuleRepository->findOneBy(['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]);
+
 			if ($cartRule->checkValidity($context, false, false)) {
 				$context->cart->addCartRule($cartRule->id);
 			}
