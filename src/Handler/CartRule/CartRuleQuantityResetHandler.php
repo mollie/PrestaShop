@@ -157,4 +157,3 @@ class CartRuleQuantityResetHandler implements CartRuleHandlerInterface
         $cartRule->update();
     }
 }
->>>>>>> Stashed changes
