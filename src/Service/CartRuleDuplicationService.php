@@ -35,6 +35,7 @@
 
 namespace Mollie\Service;
 
+use CartRule;
 use Context;
 use Mollie\Repository\CartRuleRepository;
 
@@ -65,7 +66,8 @@ class CartRuleDuplicationService
 		$context = Context::getContext();
 
 		foreach ($cartRules as $cartRuleContent) {
-			$cartRule = $this->cartRuleRepository->findOneBy(['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]);
+		    /** @var CartRule $cartRule */
+            $cartRule = $this->cartRuleRepository->findOneBy(['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]);
 
 			if ($cartRule->checkValidity($context, false, false)) {
 				$context->cart->addCartRule($cartRule->id);

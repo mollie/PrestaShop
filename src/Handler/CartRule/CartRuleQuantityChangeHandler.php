@@ -47,106 +47,108 @@ use Order;
 
 class CartRuleQuantityChangeHandler implements CartRuleHandlerInterface
 {
-	/**
-	 * @var PendingOrderCartRuleRepository
-	 */
-	private $pendingOrderCartRuleRepository;
+    /**
+     * @var PendingOrderCartRuleRepository
+     */
+    private $pendingOrderCartRuleRepository;
 
-	/**
-	 * @var OrderCartRuleRepository
-	 */
-	private $orderCartRuleRepository;
+    /**
+     * @var OrderCartRuleRepository
+     */
+    private $orderCartRuleRepository;
 
-	/**
-	 * @var CartRuleRepository
-	 */
-	private $cartRuleRepository;
+    /**
+     * @var CartRuleRepository
+     */
+    private $cartRuleRepository;
 
-	/**
-	 * @var OrderRepository
-	 */
-	private $orderRepository;
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
 
-	public function __construct(
-		PendingOrderCartRuleRepository $pendingOrderCartRuleRepository,
-		OrderCartRuleRepository $orderCartRuleRepository,
-		CartRuleRepository $cartRuleRepository,
-		OrderRepository $orderRepository
-	) {
-		$this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
-		$this->orderCartRuleRepository = $orderCartRuleRepository;
-		$this->cartRuleRepository = $cartRuleRepository;
-		$this->orderRepository = $orderRepository;
-	}
+    public function __construct(
+        PendingOrderCartRuleRepository $pendingOrderCartRuleRepository,
+        OrderCartRuleRepository $orderCartRuleRepository,
+        CartRuleRepository $cartRuleRepository,
+        OrderRepository $orderRepository
+    ) {
+        $this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
+        $this->orderCartRuleRepository = $orderCartRuleRepository;
+        $this->cartRuleRepository = $cartRuleRepository;
+        $this->orderRepository = $orderRepository;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function handle(Cart $cart, $cartRules = [])
-	{
-		$order = $this->orderRepository->findOneByCartId($cart->id);
+    /**
+     * @inheritDoc
+     */
+    public function handle(Cart $cart, $cartRules = [])
+    {
+        /** @var Order $order */
+        $order = $this->orderRepository->findOneByCartId($cart->id);
 
-		if (empty($order)) {
-			return;
-		}
+        if (empty($order)) {
+            return;
+        }
 
-		foreach ($cartRules as $cartRuleContent) {
-			$cartRule = $this->cartRuleRepository->findOneBy(
-				['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]
-			);
+        foreach ($cartRules as $cartRuleContent) {
+            /** @var CartRule $cartRule */
+            $cartRule = $this->cartRuleRepository->findOneBy(
+                ['id_cart_rule' => (int)$cartRuleContent['id_cart_rule']]
+            );
 
-			if (empty($cartRule)) {
-				continue;
-			}
+            if (empty($cartRule)) {
+                continue;
+            }
+            /** @var MolPendingOrderCartRule $pendingOrderCartRule */
+            $pendingOrderCartRule = $this->pendingOrderCartRuleRepository->findOneBy([
+                'id_order' => (int)$order->id,
+                'id_cart_rule' => (int)$cartRule->id
+            ]);
 
-			$pendingOrderCartRule = $this->pendingOrderCartRuleRepository->findOneBy([
-				'id_order' => (int) $order->id,
-				'id_cart_rule' => (int) $cartRule->id,
-			]);
+            if (empty($pendingOrderCartRule)) {
+                continue;
+            }
 
-			if (empty($pendingOrderCartRule)) {
-				continue;
-			}
+            /** On successful payment decrease quantities because it is only done on initialization of payment (First cart) */
+            $this->setQuantities($order, $cartRule, $pendingOrderCartRule);
+        }
+    }
 
-			/* On successful payment decrease quantities because it is only done on initialization of payment (First cart) */
-			$this->setQuantities($order, $cartRule, $pendingOrderCartRule);
-		}
-	}
+    /**
+     * @param Order $order
+     * @param CartRule $cartRule
+     * @param MolPendingOrderCartRule $pendingOrderCartRule
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function setQuantities(Order $order, CartRule $cartRule, $pendingOrderCartRule)
+    {
+        $this->decreaseAvailableCartRuleQuantity($cartRule);
+        $this->increaseCustomerUsedCartRuleQuantity($order, $cartRule, $pendingOrderCartRule);
+    }
 
-	/**
-	 * @param Order $order
-	 * @param CartRule $cartRule
-	 * @param MolPendingOrderCartRule $pendingOrderCartRule
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
-	private function setQuantities(Order $order, CartRule $cartRule, $pendingOrderCartRule)
-	{
-		$this->decreaseAvailableCartRuleQuantity($cartRule);
-		$this->increaseCustomerUsedCartRuleQuantity($order, $cartRule, $pendingOrderCartRule);
-	}
+    /**
+     * @param CartRule $cartRule
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function decreaseAvailableCartRuleQuantity(CartRule $cartRule)
+    {
+        $cartRule->quantity = max(0, $cartRule->quantity - 1);
+        $cartRule->update();
+    }
 
-	/**
-	 * @param CartRule $cartRule
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
-	private function decreaseAvailableCartRuleQuantity(CartRule $cartRule)
-	{
-		$cartRule->quantity = max(0, $cartRule->quantity - 1);
-		$cartRule->update();
-	}
-
-	/**
-	 * @param Order $order
-	 * @param CartRule $cartRule
-	 * @param MolPendingOrderCartRule $pendingOrderCartRule
-	 */
-	private function increaseCustomerUsedCartRuleQuantity(Order $order, CartRule $cartRule, MolPendingOrderCartRule $pendingOrderCartRule)
-	{
-		$this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $pendingOrderCartRule);
-		$this->pendingOrderCartRuleRepository->removePreviousPendingOrderCartRule($order->id, $cartRule->id);
-	}
+    /**
+     * @param Order $order
+     * @param CartRule $cartRule
+     * @param MolPendingOrderCartRule $pendingOrderCartRule
+     */
+    private function increaseCustomerUsedCartRuleQuantity(Order $order, CartRule $cartRule, MolPendingOrderCartRule $pendingOrderCartRule)
+    {
+        $this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $pendingOrderCartRule);
+        $this->pendingOrderCartRuleRepository->removePreviousPendingOrderCartRule($order->id, $cartRule->id);
+    }
 }
