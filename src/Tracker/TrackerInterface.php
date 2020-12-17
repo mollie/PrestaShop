@@ -38,8 +38,8 @@ namespace Mollie\Tracker;
 
 interface TrackerInterface
 {
-    /**
-     * @return void
-     */
-    public function track();
+	/**
+	 * @return void
+	 */
+	public function track();
 }

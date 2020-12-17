@@ -79,28 +79,28 @@ class Installer implements InstallerInterface
 	 */
 	private $databaseTableInstaller;
 
-    /**
-     * @var Segment
-     */
-    private $segment;
+	/**
+	 * @var Segment
+	 */
+	private $segment;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		ImageService $imageService,
 		InstallerInterface $databaseTableInstaller,
-        Segment $segment
+		Segment $segment
 	) {
 		$this->module = $module;
 		$this->imageService = $imageService;
 		$this->databaseTableInstaller = $databaseTableInstaller;
-        $this->segment = $segment;
-    }
+		$this->segment = $segment;
+	}
 
 	public function install()
 	{
-        $this->segment->setMessage('Mollie installed');
-        $this->segment->setOptions(['version' => $this->module->version]);
-        $this->segment->track();
+		$this->segment->setMessage('Mollie installed');
+		$this->segment->setOptions(['version' => $this->module->version]);
+		$this->segment->track();
 
 		foreach (self::getHooks() as $hook) {
 			if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && 'displayPaymentEU' === $hook) {
