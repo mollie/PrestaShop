@@ -43,7 +43,16 @@ final class MyTest extends \\PHPUnit\\Framework\\TestCase
         $this->assertInternalType("boolean", $var);
     }
 }
-')], null, 'Risky when PHPUnit methods are overridden or when project has PHPUnit incompatibilities.');
+'), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+final class MyTest extends \\PHPUnit\\Framework\\TestCase
+{
+    public function testMe()
+    {
+        $this->assertInternalType("array", $var);
+        $this->assertInternalType("boolean", $var);
+    }
+}
+', ['target' => \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_7_5])], null, 'Risky when PHPUnit methods are overridden or when project has PHPUnit incompatibilities.');
     }
     /**
      * {@inheritdoc}
@@ -66,8 +75,7 @@ final class MyTest extends \\PHPUnit\\Framework\\TestCase
      */
     protected function createConfigurationDefinition()
     {
-        // @todo 3.0 drop `ConfigurationDefinitionFixerInterface`
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('target', 'Target version of PHPUnit.'))->setAllowedTypes(['string'])->setAllowedValues([\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_7_5, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST])->setDefault(\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST)->setDeprecationMessage('Option was not used.')->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('target', 'Target version of PHPUnit.'))->setAllowedTypes(['string'])->setAllowedValues([\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_7_5, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST])->setDefault(\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST)->getOption()]);
     }
     /**
      * {@inheritdoc}

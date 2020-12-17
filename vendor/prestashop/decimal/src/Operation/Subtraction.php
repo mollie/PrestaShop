@@ -54,7 +54,7 @@ class Subtraction
     {
         $precision1 = $a->getPrecision();
         $precision2 = $b->getPrecision();
-        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) \MolliePrefix\bcsub($a, $b, \max($precision1, $precision2)));
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) bcsub($a, $b, \max($precision1, $precision2)));
     }
     /**
      * Performs the subtraction without using BC Math

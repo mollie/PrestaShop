@@ -289,5 +289,5 @@ class ValidatePEARPackageXML
 /**
  * Validate the PHP_CodeSniffer PEAR package.xml file.
  */
-\class_alias('MolliePrefix\\ValidatePEARPackageXML', 'MolliePrefix\\ValidatePEARPackageXML', \false);
+\class_alias('MolliePrefix\\ValidatePEARPackageXML', 'ValidatePEARPackageXML', \false);
 //end class

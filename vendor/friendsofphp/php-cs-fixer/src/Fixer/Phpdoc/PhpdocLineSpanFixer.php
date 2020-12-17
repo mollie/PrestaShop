@@ -19,6 +19,7 @@ use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\CT;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
@@ -71,7 +72,7 @@ final class PhpdocLineSpanFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer i
             $docIndex = $this->getDocBlockIndex($tokens, $index);
             $doc = new \MolliePrefix\PhpCsFixer\DocBlock\DocBlock($tokens[$docIndex]->getContent());
             if ('multi' === $this->configuration[$type]) {
-                $doc->makeMultiLine($originalIndent = $this->detectIndent($tokens, $docIndex), $this->whitespacesConfig->getLineEnding());
+                $doc->makeMultiLine($originalIndent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $docIndex), $this->whitespacesConfig->getLineEnding());
             } else {
                 $doc->makeSingleLine();
             }
@@ -99,19 +100,5 @@ final class PhpdocLineSpanFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer i
             $index = $tokens->getPrevNonWhitespace($index);
         } while ($tokens[$index]->isGivenKind([\T_PUBLIC, \T_PROTECTED, \T_PRIVATE, \T_FINAL, \T_ABSTRACT, \T_COMMENT, \T_VAR, \T_STATIC, \T_STRING, \T_NS_SEPARATOR, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_TYPEHINT, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_NULLABLE_TYPE]));
         return $index;
-    }
-    /**
-     * @param int $index
-     *
-     * @return string
-     */
-    private function detectIndent(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
-    {
-        if (!$tokens[$index - 1]->isWhitespace()) {
-            return '';
-            // cannot detect indent
-        }
-        $explodedContent = \explode($this->whitespacesConfig->getLineEnding(), $tokens[$index - 1]->getContent());
-        return \end($explodedContent);
     }
 }

@@ -47,13 +47,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
-    /** @var Mollie\Tracker\Segment $segment */
-    $segment = $module->getMollieContainer(Mollie\Tracker\Segment::class);
-
-    $segment->setMessage('Mollie upgrade 4.2.0');
-    $segment->setOptions(['version' => $module->version]);
-    $segment->track();
-
 	/** @var Installer $installer */
 	$installer = $module->getMollieContainer(Installer::class);
 

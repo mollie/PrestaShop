@@ -16,4 +16,4 @@ class TestAmbiguousCommandRegistering extends \MolliePrefix\Symfony\Component\Co
         $output->write('test-ambiguous');
     }
 }
-\class_alias('MolliePrefix\\TestAmbiguousCommandRegistering', 'MolliePrefix\\TestAmbiguousCommandRegistering', \false);
+\class_alias('MolliePrefix\\TestAmbiguousCommandRegistering', 'TestAmbiguousCommandRegistering', \false);

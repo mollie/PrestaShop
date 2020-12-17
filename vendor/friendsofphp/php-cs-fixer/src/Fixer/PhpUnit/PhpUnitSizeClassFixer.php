@@ -21,6 +21,7 @@ use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
@@ -71,7 +72,7 @@ final class PhpUnitSizeClassFixer extends \MolliePrefix\PhpCsFixer\Fixer\Abstrac
     private function createDocBlock(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $docBlockIndex)
     {
         $lineEnd = $this->whitespacesConfig->getLineEnding();
-        $originalIndent = $this->detectIndent($tokens, $tokens->getNextNonWhitespace($docBlockIndex));
+        $originalIndent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $tokens->getNextNonWhitespace($docBlockIndex));
         $group = $this->configuration['group'];
         $toInsert = [new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, '/**' . $lineEnd . "{$originalIndent} * @" . $group . $lineEnd . "{$originalIndent} */"]), new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $lineEnd . $originalIndent])];
         $index = $tokens->getNextMeaningfulToken($docBlockIndex);
@@ -89,20 +90,6 @@ final class PhpUnitSizeClassFixer extends \MolliePrefix\PhpCsFixer\Fixer\Abstrac
         $tokens[$docBlockIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, $lines]);
     }
     /**
-     * @param int $index
-     *
-     * @return string
-     */
-    private function detectIndent(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
-    {
-        if (!$tokens[$index - 1]->isWhitespace()) {
-            return '';
-            // cannot detect indent
-        }
-        $explodedContent = \explode($this->whitespacesConfig->getLineEnding(), $tokens[$index - 1]->getContent());
-        return \end($explodedContent);
-    }
-    /**
      * @param int $docBlockIndex
      *
      * @return Line[]
@@ -110,7 +97,7 @@ final class PhpUnitSizeClassFixer extends \MolliePrefix\PhpCsFixer\Fixer\Abstrac
     private function addSizeAnnotation(\MolliePrefix\PhpCsFixer\DocBlock\DocBlock $docBlock, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $docBlockIndex)
     {
         $lines = $docBlock->getLines();
-        $originalIndent = $this->detectIndent($tokens, $docBlockIndex);
+        $originalIndent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $docBlockIndex);
         $lineEnd = $this->whitespacesConfig->getLineEnding();
         $group = $this->configuration['group'];
         \array_splice($lines, -1, 0, $originalIndent . ' *' . $lineEnd . $originalIndent . ' * @' . $group . $lineEnd);
@@ -142,7 +129,7 @@ final class PhpUnitSizeClassFixer extends \MolliePrefix\PhpCsFixer\Fixer\Abstrac
     {
         $lineContent = $this->getSingleLineDocBlockEntry($lines);
         $lineEnd = $this->whitespacesConfig->getLineEnding();
-        $originalIndent = $this->detectIndent($tokens, $tokens->getNextNonWhitespace($docBlockIndex));
+        $originalIndent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $tokens->getNextNonWhitespace($docBlockIndex));
         return [new \MolliePrefix\PhpCsFixer\DocBlock\Line('/**' . $lineEnd), new \MolliePrefix\PhpCsFixer\DocBlock\Line($originalIndent . ' * ' . $lineContent . $lineEnd), new \MolliePrefix\PhpCsFixer\DocBlock\Line($originalIndent . ' */')];
     }
     /**

@@ -41,7 +41,7 @@ class Multiplication
     {
         $precision1 = $a->getPrecision();
         $precision2 = $b->getPrecision();
-        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) \MolliePrefix\bcmul($a, $b, $precision1 + $precision2));
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) bcmul($a, $b, $precision1 + $precision2));
     }
     /**
      * Performs the multiplication without BC Math

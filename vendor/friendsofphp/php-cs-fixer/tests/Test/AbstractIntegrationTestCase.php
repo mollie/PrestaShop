@@ -70,9 +70,9 @@ abstract class AbstractIntegrationTestCase extends \MolliePrefix\PhpCsFixer\Test
      * @var null|FileRemoval
      */
     private static $fileRemoval;
-    public static function setUpBeforeClass()
+    public static function doSetUpBeforeClass()
     {
-        parent::setUpBeforeClass();
+        parent::doSetUpBeforeClass();
         $tmpFile = static::getTempFile();
         self::$fileRemoval = new \MolliePrefix\PhpCsFixer\FileRemoval();
         self::$fileRemoval->observe($tmpFile);
@@ -84,25 +84,25 @@ abstract class AbstractIntegrationTestCase extends \MolliePrefix\PhpCsFixer\Test
             }
         }
     }
-    public static function tearDownAfterClass()
+    public static function doTearDownAfterClass()
     {
-        parent::tearDownAfterClass();
+        parent::doTearDownAfterClass();
         $tmpFile = static::getTempFile();
         self::$fileRemoval->delete($tmpFile);
         self::$fileRemoval = null;
     }
-    protected function setUp()
+    protected function doSetUp()
     {
-        parent::setUp();
+        parent::doSetUp();
         $this->linter = $this->getLinter();
         // @todo remove at 3.0 together with env var itself
         if (\getenv('PHP_CS_FIXER_TEST_USE_LEGACY_TOKENIZER')) {
             \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::setLegacyMode(\true);
         }
     }
-    protected function tearDown()
+    protected function doTearDown()
     {
-        parent::tearDown();
+        parent::doTearDown();
         $this->linter = null;
         // @todo remove at 3.0
         \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::setLegacyMode(\false);

@@ -1,16 +1,16 @@
 
 services:
     service_container:
-        class: MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
     foo:
         class: Foo
         public: true
         autowire: true
-    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Psr\Container\ContainerInterface:
+    MolliePrefix\Psr\Container\ContainerInterface:
         alias: service_container
         public: false
-    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface:
+    MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface:
         alias: service_container
         public: false

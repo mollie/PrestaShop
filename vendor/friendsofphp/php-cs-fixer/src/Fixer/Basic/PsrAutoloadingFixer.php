@@ -127,7 +127,7 @@ class InvalidName {}
         if (null === $classyName) {
             return;
         }
-        if (null === $namespace) {
+        if (null === $namespace && null !== $this->configuration['dir']) {
             $expectedClassyName = \substr(\str_replace('/', '_', $file->getRealPath()), -\strlen($classyName) - 4, -4);
         } else {
             $expectedClassyName = $file->getBasename('.php');

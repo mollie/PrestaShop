@@ -23,6 +23,6 @@ final class PHPUnit52MigrationRiskySet extends \MolliePrefix\PhpCsFixer\RuleSet\
     }
     public function getDescription()
     {
-        return 'Rules to improve tests code for PHPUnit 5.2 compatibility';
+        return 'Rules to improve tests code for PHPUnit 5.2 compatibility.';
     }
 }

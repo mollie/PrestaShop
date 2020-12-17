@@ -23,6 +23,6 @@ final class PHPUnit48MigrationRiskySet extends \MolliePrefix\PhpCsFixer\RuleSet\
     }
     public function getDescription()
     {
-        return 'Rules to improve tests code for PHPUnit 4.8 compatibility';
+        return 'Rules to improve tests code for PHPUnit 4.8 compatibility.';
     }
 }

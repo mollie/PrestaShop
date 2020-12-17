@@ -54,7 +54,7 @@ class Division
         if ((string) $b === '0') {
             throw new \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException();
         }
-        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) \MolliePrefix\bcdiv($a, $b, $precision));
+        return new \MolliePrefix\PrestaShop\Decimal\DecimalNumber((string) bcdiv($a, $b, $precision));
     }
     /**
      * Performs the division without BC Math

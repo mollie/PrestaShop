@@ -54,9 +54,9 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
     private $allowedRequiredOptions = ['header_comment' => ['header' => \true]];
     // do not modify this structure without prior discussion
     private $allowedFixersWithoutDefaultCodeSample = ['general_phpdoc_annotation_remove' => \true, 'general_phpdoc_tag_rename' => \true];
-    protected function setUp()
+    protected function doSetUp()
     {
-        parent::setUp();
+        parent::doSetUp();
         $this->linter = $this->getLinter();
         $this->fixer = $this->createFixer();
         // @todo remove at 3.0 together with env var itself
@@ -64,9 +64,9 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::setLegacyMode(\true);
         }
     }
-    protected function tearDown()
+    protected function doTearDown()
     {
-        parent::tearDown();
+        parent::doTearDown();
         $this->linter = null;
         $this->fixer = null;
         // @todo remove at 3.0
@@ -143,8 +143,6 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             $fixerNamesWithKnownMissingSamplesWithConfig = [
                 // @TODO 3.0 - remove this
                 'is_null',
-                // has only one option which is deprecated
-                'php_unit_dedicate_assert_internal_type',
             ];
             if (\count($configSamplesProvided) < 2) {
                 if (\in_array($fixerName, $fixerNamesWithKnownMissingSamplesWithConfig, \true)) {
@@ -156,10 +154,6 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             }
             $options = $this->fixer->getConfigurationDefinition()->getOptions();
             foreach ($options as $option) {
-                // @TODO 2.17 adjust fixers to use new casing and deprecate old one
-                if (\in_array($fixerName, ['final_internal_class', 'ordered_class_elements'], \true)) {
-                    static::markTestIncomplete(\sprintf('Rule "%s" is not following new option casing yet, please help.', $fixerName));
-                }
                 static::assertMatchesRegularExpression('/^[a-z_]+[a-z]$/', $option->getName(), \sprintf('[%s] Option %s is not snake_case.', $fixerName, $option->getName()));
             }
         }

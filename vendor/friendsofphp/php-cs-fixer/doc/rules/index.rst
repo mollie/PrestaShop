@@ -127,7 +127,7 @@ Class Notation
     Orders the elements of classes/interfaces/traits.
 - `ordered_interfaces <./class_notation/ordered_interfaces.rst>`_ *(risky)*
     Orders the interfaces in an ``implements`` or ``interface extends`` clause.
-- `ordered_traits <./class_notation/ordered_traits.rst>`_
+- `ordered_traits <./class_notation/ordered_traits.rst>`_ *(risky)*
     Trait ``use`` statements must be sorted alphabetically.
 - `protected_to_private <./class_notation/protected_to_private.rst>`_
     Converts ``protected`` variables and methods to ``private`` where possible.
@@ -518,7 +518,7 @@ Semicolon
 - `multiline_whitespace_before_semicolons <./semicolon/multiline_whitespace_before_semicolons.rst>`_
     Forbid multi-line whitespace before the closing semicolon or move the semicolon to the new line for chained calls.
 - `no_empty_statement <./semicolon/no_empty_statement.rst>`_
-    Remove useless semicolon statements.
+    Remove useless (semicolon) statements.
 - `no_multiline_whitespace_before_semicolons <./semicolon/no_multiline_whitespace_before_semicolons.rst>`_ *(deprecated)*
     Multi-line whitespace before closing semicolon are prohibited.
 - `no_singleline_whitespace_before_semicolons <./semicolon/no_singleline_whitespace_before_semicolons.rst>`_

@@ -4,4 +4,4 @@ services:
             $quz: overridden
 
     bar:
-        class: MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar

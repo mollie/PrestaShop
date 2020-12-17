@@ -10,5 +10,5 @@ data:
         empty line:
         
         baz
-    multi_line_with_carriage_return: "MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\foo\nbar\r\nbaz"
-    nested_inlined_multi_line_string: { inlined_multi_line: "MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\foo\nbar\r\nempty line:\MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\n\nbaz" }
+    multi_line_with_carriage_return: "MolliePrefix\foo\nbar\r\nbaz"
+    nested_inlined_multi_line_string: { inlined_multi_line: "MolliePrefix\foo\nbar\r\nempty line:\MolliePrefix\n\nbaz" }

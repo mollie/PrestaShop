@@ -2,5 +2,5 @@ services:
     _defaults:
         tags: ['foo']
 
-    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Foo\Bar:
+    MolliePrefix\Foo\Bar:
         tags: invalid

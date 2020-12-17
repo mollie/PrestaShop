@@ -43,11 +43,11 @@ final class NoUselessSprintfFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
     /**
      * {@inheritdoc}
      *
-     * Must run before MethodArgumentSpaceFixer, NativeFunctionCasingFixer, NoExtraBlankLinesFixer, NoSpacesInsideParenthesisFixer.
+     * Must run before MethodArgumentSpaceFixer, NativeFunctionCasingFixer, NoEmptyStatementFixer, NoExtraBlankLinesFixer, NoSpacesInsideParenthesisFixer.
      */
     public function getPriority()
     {
-        return 3;
+        return 27;
     }
     /**
      * {@inheritdoc}

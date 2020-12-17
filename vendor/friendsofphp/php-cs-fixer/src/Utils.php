@@ -142,7 +142,7 @@ final class Utils
     public static function naturalLanguageJoinWithBackticks(array $names)
     {
         if (empty($names)) {
-            throw new \InvalidArgumentException('Array of names cannot be empty');
+            throw new \InvalidArgumentException('Array of names cannot be empty.');
         }
         $names = \array_map(static function ($name) {
             return \sprintf('`%s`', $name);

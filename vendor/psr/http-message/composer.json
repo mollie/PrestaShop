@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
+            "MolliePrefix\\Psr\\Http\\Message\\": "src\/"
         }
     },
     "extra": {

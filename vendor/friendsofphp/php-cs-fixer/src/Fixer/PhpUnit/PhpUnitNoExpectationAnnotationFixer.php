@@ -21,6 +21,7 @@ use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Preg;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -142,7 +143,7 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
             if (!$this->fixMessageRegExp && isset($annotations['expectedExceptionMessageRegExp'])) {
                 continue;
             }
-            $originalIndent = $this->detectIndent($tokens, $docBlockIndex);
+            $originalIndent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $docBlockIndex);
             $paramList = $this->annotationsToParamList($annotations);
             $newMethodsCode = '<?php $this->' . (isset($annotations['expectedExceptionMessageRegExp']) ? 'setExpectedExceptionRegExp' : 'setExpectedException') . '(' . \implode(', ', $paramList) . ');';
             $newMethods = \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::fromCode($newMethodsCode);
@@ -158,20 +159,6 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
             $tokens[$whitespaceIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $this->whitespacesConfig->getLineEnding() . $tokens[$whitespaceIndex]->getContent()]);
             $i = $docBlockIndex;
         }
-    }
-    /**
-     * @param int $index
-     *
-     * @return string
-     */
-    private function detectIndent(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
-    {
-        if (!$tokens[$index - 1]->isWhitespace()) {
-            return '';
-            // cannot detect indent
-        }
-        $explodedContent = \explode("\n", $tokens[$index - 1]->getContent());
-        return \end($explodedContent);
     }
     /**
      * @return string

@@ -151,9 +151,8 @@ Cache can be disabled via ``--using-cache`` option or config file:
 
     <?php
 
-    return PhpCsFixer\Config::create()
-        ->setUsingCache(false)
-    ;
+    $config = new PhpCsFixer\Config();
+    return $config->setUsingCache(false);
 
 Cache file can be specified via ``--cache-file`` option or config file:
 
@@ -161,9 +160,8 @@ Cache file can be specified via ``--cache-file`` option or config file:
 
     <?php
 
-    return PhpCsFixer\Config::create()
-        ->setCacheFile(__DIR__.'/.php_cs.cache')
-    ;
+    $config = new PhpCsFixer\Config();
+    return $config->setCacheFile(__DIR__.'/.php_cs.cache');
 
 Using PHP CS Fixer on CI
 ------------------------
@@ -185,6 +183,18 @@ Then, add the following command to your CI:
     $ vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no ${EXTRA_ARGS}
 
 Where ``$COMMIT_RANGE`` is your range of commits, e.g. ``$TRAVIS_COMMIT_RANGE`` or ``HEAD~..HEAD``.
+
+Environment options
+-------------------
+
+The ``PHP_CS_FIXER_IGNORE_ENV`` environment variable can be used to ignore any environment requirements.
+This includes requirements like missing PHP extensions, unsupported PHP versions or by using HHVM.
+
+NOTE: Execution may be unstable when used.
+
+.. code-block:: console
+
+    $ PHP_CS_FIXER_IGNORE_ENV=1 php php-cs-fixer.phar fix /path/to/dir
 
 Exit code
 ---------

@@ -36,6 +36,7 @@ use MolliePrefix\Symfony\Component\Console\Command\Command;
 use MolliePrefix\Symfony\Component\Console\Formatter\OutputFormatter;
 use MolliePrefix\Symfony\Component\Console\Input\InputArgument;
 use MolliePrefix\Symfony\Component\Console\Input\InputInterface;
+use MolliePrefix\Symfony\Component\Console\Output\ConsoleOutputInterface;
 use MolliePrefix\Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -79,6 +80,11 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
      */
     protected function execute(\MolliePrefix\Symfony\Component\Console\Input\InputInterface $input, \MolliePrefix\Symfony\Component\Console\Output\OutputInterface $output)
     {
+        if (\MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity() && $output instanceof \MolliePrefix\Symfony\Component\Console\Output\ConsoleOutputInterface) {
+            $stdErr = $output->getErrorOutput();
+            $stdErr->writeln($this->getApplication()->getLongVersion());
+            $stdErr->writeln(\sprintf('Runtime: <info>PHP %s</info>', \PHP_VERSION));
+        }
         $name = $input->getArgument('name');
         try {
             if ('@' === $name[0]) {
@@ -214,8 +220,7 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
                 } else {
                     $output->writeln(\sprintf(' * Example #%d.', $index + 1));
                 }
-                $output->writeln($diffFormatter->format($diff, '   %s'));
-                $output->writeln('');
+                $output->writeln([$diffFormatter->format($diff, '   %s'), '']);
             }
         }
     }
@@ -244,7 +249,7 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
             }
             $fixer = $fixers[$rule];
             if (!$fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\DefinedFixerInterface) {
-                throw new \RuntimeException(\sprintf('Cannot describe rule %s, the fixer does not implement %s', $rule, \MolliePrefix\PhpCsFixer\Fixer\DefinedFixerInterface::class));
+                throw new \RuntimeException(\sprintf('Cannot describe rule %s, the fixer does not implement "%s".', $rule, \MolliePrefix\PhpCsFixer\Fixer\DefinedFixerInterface::class));
             }
             $definition = $fixer->getDefinition();
             $help .= \sprintf(" * <info>%s</info>%s\n   | %s\n%s\n", $rule, $fixer->isRisky() ? ' <error>risky</error>' : '', $definition->getSummary(), \true !== $config ? \sprintf("   <comment>| Configuration: %s</comment>\n", \MolliePrefix\PhpCsFixer\Console\Command\HelpCommand::toString($config)) : '');
@@ -284,9 +289,9 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
     private function describeList(\MolliePrefix\Symfony\Component\Console\Output\OutputInterface $output, $type)
     {
         if ($output->getVerbosity() >= \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE) {
-            $describe = ['set' => $this->getSetNames(), 'rules' => $this->getFixers()];
+            $describe = ['sets' => $this->getSetNames(), 'rules' => $this->getFixers()];
         } elseif ($output->getVerbosity() >= \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE) {
-            $describe = 'set' === $type ? ['set' => $this->getSetNames()] : ['rules' => $this->getFixers()];
+            $describe = 'set' === $type ? ['sets' => $this->getSetNames()] : ['rules' => $this->getFixers()];
         } else {
             return;
         }

@@ -19,6 +19,7 @@ use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Preg;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -183,7 +184,7 @@ switch ($foo) {
         }
         if ($nbNewlines > 1) {
             \MolliePrefix\PhpCsFixer\Preg::match('/^(.*?)(\\R\\h*)$/s', $newlineToken->getContent(), $matches);
-            $indent = $this->getIndentAt($tokens, $newlinePosition - 1);
+            $indent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $newlinePosition - 1);
             $tokens[$newlinePosition] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([$newlineToken->getId(), $matches[1] . $lineEnding . $indent]);
             $tokens->insertAt(++$newlinePosition, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $matches[2]]));
         }
@@ -198,7 +199,7 @@ switch ($foo) {
     private function ensureNewLineAt(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $position)
     {
         $lineEnding = $this->whitespacesConfig->getLineEnding();
-        $content = $lineEnding . $this->getIndentAt($tokens, $position);
+        $content = $lineEnding . \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $position);
         $whitespaceToken = $tokens[$position - 1];
         if (!$whitespaceToken->isGivenKind(\T_WHITESPACE)) {
             if ($whitespaceToken->isGivenKind(\T_OPEN_TAG)) {
@@ -243,29 +244,6 @@ switch ($foo) {
             }
         }
         $tokens->clearTokenAndMergeSurroundingWhitespace($commentPosition);
-    }
-    /**
-     * @param int $position
-     *
-     * @return string
-     */
-    private function getIndentAt(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $position)
-    {
-        while (\true) {
-            $position = $tokens->getPrevTokenOfKind($position, [[\T_WHITESPACE]]);
-            if (null === $position) {
-                break;
-            }
-            $content = $tokens[$position]->getContent();
-            $prevToken = $tokens[$position - 1];
-            if ($prevToken->isGivenKind(\T_OPEN_TAG) && \MolliePrefix\PhpCsFixer\Preg::match('/\\R$/', $prevToken->getContent())) {
-                $content = $this->whitespacesConfig->getLineEnding() . $content;
-            }
-            if (\MolliePrefix\PhpCsFixer\Preg::match('/\\R(\\h*)$/', $content, $matches)) {
-                return $matches[1];
-            }
-        }
-        return '';
     }
     /**
      * @param int $position
