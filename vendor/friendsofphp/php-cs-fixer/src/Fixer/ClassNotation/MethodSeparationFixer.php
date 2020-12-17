@@ -65,7 +65,7 @@ final class Sample
     protected function createProxyFixers()
     {
         $fixer = new \MolliePrefix\PhpCsFixer\Fixer\ClassNotation\ClassAttributesSeparationFixer();
-        $fixer->configure(['elements' => ['method']]);
+        $fixer->configure(['elements' => ['method' => \MolliePrefix\PhpCsFixer\Fixer\ClassNotation\ClassAttributesSeparationFixer::SPACING_ONE]]);
         return [$fixer];
     }
 }

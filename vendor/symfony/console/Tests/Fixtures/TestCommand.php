@@ -20,4 +20,4 @@ class TestCommand extends \MolliePrefix\Symfony\Component\Console\Command\Comman
         $output->writeln('interact called');
     }
 }
-\class_alias('MolliePrefix\\TestCommand', 'TestCommand', \false);
+\class_alias('MolliePrefix\\TestCommand', 'MolliePrefix\\TestCommand', \false);

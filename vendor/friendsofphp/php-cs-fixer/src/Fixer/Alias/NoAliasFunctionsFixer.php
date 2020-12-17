@@ -28,7 +28,7 @@ use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
  */
 final class NoAliasFunctionsFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface
 {
-    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    /** @var array<string, array<int|string>|string> stores alias (key) - master (value) functions mapping */
     private $aliases = [];
     /** @var array<string, string> stores alias (key) - master (value) functions mapping */
     private static $internalSet = ['chop' => 'rtrim', 'close' => 'closedir', 'doubleval' => 'floatval', 'fputs' => 'fwrite', 'get_required_files' => 'get_included_files', 'ini_alter' => 'ini_set', 'is_double' => 'is_float', 'is_integer' => 'is_int', 'is_long' => 'is_int', 'is_real' => 'is_float', 'is_writeable' => 'is_writable', 'join' => 'implode', 'key_exists' => 'array_key_exists', 'magic_quotes_runtime' => 'set_magic_quotes_runtime', 'pos' => 'current', 'show_source' => 'highlight_file', 'sizeof' => 'count', 'strchr' => 'strstr', 'user_error' => 'trigger_error'];

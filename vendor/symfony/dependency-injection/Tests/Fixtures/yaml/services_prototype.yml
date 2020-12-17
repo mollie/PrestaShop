@@ -1,4 +1,4 @@
 services:
-    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\:
+    MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\:
         resource: ../Prototype
         exclude: '../Prototype/{OtherDir,BadClasses}'

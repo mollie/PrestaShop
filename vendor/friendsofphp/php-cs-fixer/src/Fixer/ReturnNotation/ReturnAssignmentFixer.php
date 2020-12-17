@@ -17,11 +17,16 @@ use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Tokenizer\CT;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
+use MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer;
 /**
  * @author SpacePossum
  */
 final class ReturnAssignmentFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
 {
+    /**
+     * @var TokensAnalyzer
+     */
+    private $tokensAnalyzer;
     /**
      * {@inheritdoc}
      */
@@ -52,6 +57,7 @@ final class ReturnAssignmentFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
     protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
         $tokenCount = \count($tokens);
+        $this->tokensAnalyzer = new \MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer($tokens);
         for ($index = 1; $index < $tokenCount; ++$index) {
             if (!$tokens[$index]->isGivenKind(\T_FUNCTION)) {
                 continue;
@@ -152,7 +158,7 @@ final class ReturnAssignmentFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
                     continue;
                 }
             }
-            if ($this->isSuperGlobal($tokens[$index])) {
+            if ($this->tokensAnalyzer->isSuperGlobal($index)) {
                 $isRisky = \true;
                 continue;
             }
@@ -262,16 +268,5 @@ final class ReturnAssignmentFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
             return;
         }
         $tokens->clearTokenAndMergeSurroundingWhitespace($index);
-    }
-    /**
-     * @return bool
-     */
-    private function isSuperGlobal(\MolliePrefix\PhpCsFixer\Tokenizer\Token $token)
-    {
-        static $superNames = ['$_COOKIE' => \true, '$_ENV' => \true, '$_FILES' => \true, '$_GET' => \true, '$_POST' => \true, '$_REQUEST' => \true, '$_SERVER' => \true, '$_SESSION' => \true, '$GLOBALS' => \true];
-        if (!$token->isGivenKind(\T_VARIABLE)) {
-            return \false;
-        }
-        return isset($superNames[\strtoupper($token->getContent())]);
     }
 }

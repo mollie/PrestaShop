@@ -35,7 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
+            "MolliePrefix\\MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

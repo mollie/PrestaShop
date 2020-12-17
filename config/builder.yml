@@ -7,15 +7,15 @@ services:
       - '@Mollie\Repository\CountryRepository'
       - '@Mollie\Service\ConfigFieldService'
       - '@Mollie\Service\MolCarrierInformationService'
-      - '@language'
-      - '@smarty'
-      - '@link'
+      - '@mollie.language'
+      - '@mollie.smarty'
+      - '@mollie.link'
       - '@Mollie\Provider\CreditCardLogoProvider'
 
   Mollie\Builder\ApiTestFeedbackBuilder:
     arguments:
       - '@=service("mollie.factory.module_factory").getModuleVersion()'
-      - '@Mollie\Service\ApiService'
+      - '@Mollie\Service\ApiKeyService'
 
   Mollie\Builder\InvoicePdfTemplateBuilder:
     arguments:

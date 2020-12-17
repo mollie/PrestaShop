@@ -119,7 +119,11 @@ final class StrictParamFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
                 $tokensToInsert[] = clone $param;
             }
         }
-        $beforeEndBraceIndex = $tokens->getTokenNotOfKindSibling($endBraceIndex, -1, [[\T_WHITESPACE], ',']);
+        $beforeEndBraceIndex = $tokens->getPrevMeaningfulToken($endBraceIndex);
+        if ($tokens[$beforeEndBraceIndex]->equals(',')) {
+            \array_shift($tokensToInsert);
+            $tokensToInsert[] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token(',');
+        }
         $tokens->insertAt($beforeEndBraceIndex + 1, $tokensToInsert);
     }
 }

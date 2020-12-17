@@ -14,7 +14,6 @@ namespace MolliePrefix\PhpCsFixer\Fixer\ClassNotation;
 use MolliePrefix\PhpCsFixer\AbstractFixer;
 use MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
-use MolliePrefix\PhpCsFixer\FixerConfiguration\AllowedValueSubset;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
@@ -24,7 +23,8 @@ use MolliePrefix\PhpCsFixer\Tokenizer\CT;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer;
-use SplFileInfo;
+use MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use MolliePrefix\Symfony\Component\OptionsResolver\Options;
 /**
  * Make sure there is one blank line above and below class elements.
  *
@@ -35,7 +35,23 @@ use SplFileInfo;
 final class ClassAttributesSeparationFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface, \MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface
 {
     /**
-     * @var array<string, true>
+     * @internal
+     */
+    const SPACING_NONE = 'none';
+    /**
+     * @internal
+     */
+    const SPACING_ONE = 'one';
+    /**
+     * @internal
+     */
+    const SUPPORTED_SPACINGS = [self::SPACING_NONE, self::SPACING_ONE];
+    /**
+     * @internal
+     */
+    const SUPPORTED_TYPES = ['const', 'method', 'property'];
+    /**
+     * @var array<string, string>
      */
     private $classElementTypes = [];
     /**
@@ -46,8 +62,8 @@ final class ClassAttributesSeparationFixer extends \MolliePrefix\PhpCsFixer\Abst
         parent::configure($configuration);
         $this->classElementTypes = [];
         // reset previous configuration
-        foreach ($this->configuration['elements'] as $element) {
-            $this->classElementTypes[$element] = \true;
+        foreach ($this->configuration['elements'] as $elementType => $spacing) {
+            $this->classElementTypes[$elementType] = $spacing;
         }
     }
     /**
@@ -55,7 +71,7 @@ final class ClassAttributesSeparationFixer extends \MolliePrefix\PhpCsFixer\Abst
      */
     public function getDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Class, trait and interface elements must be separated with one blank line.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Class, trait and interface elements must be separated with one or none blank line.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
 final class Sample
 {
     protected function foo()
@@ -73,14 +89,14 @@ class Sample
     /** second in a hour */
     private $b;
 }
-', ['elements' => ['property']]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+', ['elements' => ['property' => self::SPACING_ONE]]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
 class Sample
 {
     const A = 1;
     /** seconds in some hours */
     const B = 3600;
 }
-', ['elements' => ['const']])]);
+', ['elements' => ['const' => self::SPACING_ONE]])]);
     }
     /**
      * {@inheritdoc}
@@ -111,6 +127,7 @@ class Sample
                 continue;
                 // not configured to be fixed
             }
+            $spacing = $this->classElementTypes[$element['type']];
             if ($element['classIndex'] !== $class) {
                 $class = $element['classIndex'];
                 $classStart = $tokens->getNextTokenOfKind($class, ['{']);
@@ -120,13 +137,13 @@ class Sample
                 // method of class or trait
                 $attributes = $tokensAnalyzer->getMethodAttributes($index);
                 $methodEnd = \true === $attributes['abstract'] ? $tokens->getNextTokenOfKind($index, [';']) : $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $tokens->getNextTokenOfKind($index, ['{']));
-                $this->fixSpaceBelowClassMethod($tokens, $classEnd, $methodEnd);
-                $this->fixSpaceAboveClassElement($tokens, $classStart, $index);
+                $this->fixSpaceBelowClassMethod($tokens, $classEnd, $methodEnd, $spacing);
+                $this->fixSpaceAboveClassElement($tokens, $classStart, $index, $spacing);
                 continue;
             }
             // `const`, `property` or `method` of an `interface`
-            $this->fixSpaceBelowClassElement($tokens, $classEnd, $tokens->getNextTokenOfKind($index, [';']));
-            $this->fixSpaceAboveClassElement($tokens, $classStart, $index);
+            $this->fixSpaceBelowClassElement($tokens, $classEnd, $tokens->getNextTokenOfKind($index, [';']), $spacing);
+            $this->fixSpaceAboveClassElement($tokens, $classStart, $index, $spacing);
         }
     }
     /**
@@ -134,8 +151,29 @@ class Sample
      */
     protected function createConfigurationDefinition()
     {
-        $types = ['const', 'method', 'property'];
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('elements', \sprintf('List of classy elements; \'%s\'.', \implode("', '", $types))))->setAllowedTypes(['array'])->setAllowedValues([new \MolliePrefix\PhpCsFixer\FixerConfiguration\AllowedValueSubset($types)])->setDefault(['const', 'method', 'property'])->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('elements', 'Dictionary of `const|method|property` => `none|one` values.'))->setNormalizer(static function (\MolliePrefix\Symfony\Component\OptionsResolver\Options $options, $values) {
+            $deprecated = \array_intersect($values, self::SUPPORTED_TYPES);
+            if (\count($deprecated) > 0) {
+                $message = 'A list of elements is deprecated, use a dictionary of `const|method|property` => `none|one` instead.';
+                @\trigger_error($message, \E_USER_DEPRECATED);
+                return \array_fill_keys($deprecated, self::SPACING_ONE);
+            }
+            return $values;
+        })->setAllowedTypes(['array'])->setAllowedValues([static function ($option) {
+            $deprecated = \array_intersect($option, self::SUPPORTED_TYPES);
+            if (\count($deprecated) > 0) {
+                $option = \array_fill_keys($deprecated, self::SPACING_ONE);
+            }
+            foreach ($option as $type => $spacing) {
+                if (!\in_array($type, self::SUPPORTED_TYPES, \true)) {
+                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException(\sprintf('Unexpected element type, expected any of "%s", got "%s".', \implode('", "', self::SUPPORTED_TYPES), \is_object($type) ? \get_class($type) : \gettype($type) . '#' . $type));
+                }
+                if (!\in_array($spacing, self::SUPPORTED_SPACINGS, \true)) {
+                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException(\sprintf('Unexpected spacing for element type "%s", expected any of "%s", got "%s".', $spacing, \implode('", "', self::SUPPORTED_SPACINGS), \is_object($spacing) ? \get_class($spacing) : (null === $spacing ? 'null' : \gettype($spacing) . '#' . $spacing)));
+                }
+            }
+            return \true;
+        }])->setDefault(['const' => self::SPACING_ONE, 'method' => self::SPACING_ONE, 'property' => self::SPACING_ONE])->getOption()]);
     }
     /**
      * Fix spacing below an element of a class, interface or trait.
@@ -143,10 +181,11 @@ class Sample
      * Deals with comments, PHPDocs and spaces above the element with respect to the position of the
      * element within the class, interface or trait.
      *
-     * @param int $classEndIndex
-     * @param int $elementEndIndex
+     * @param int    $classEndIndex
+     * @param int    $elementEndIndex
+     * @param string $spacing
      */
-    private function fixSpaceBelowClassElement(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classEndIndex, $elementEndIndex)
+    private function fixSpaceBelowClassElement(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classEndIndex, $elementEndIndex, $spacing)
     {
         for ($nextNotWhite = $elementEndIndex + 1;; ++$nextNotWhite) {
             if (($tokens[$nextNotWhite]->isComment() || $tokens[$nextNotWhite]->isWhitespace()) && \false === \strpos($tokens[$nextNotWhite]->getContent(), "\n")) {
@@ -157,7 +196,11 @@ class Sample
         if ($tokens[$nextNotWhite]->isWhitespace()) {
             $nextNotWhite = $tokens->getNextNonWhitespace($nextNotWhite);
         }
-        $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, $nextNotWhite === $classEndIndex ? 1 : 2);
+        if ($tokens[$nextNotWhite]->isGivenKind(\T_FUNCTION)) {
+            $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, 2);
+            return;
+        }
+        $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, $nextNotWhite === $classEndIndex || self::SPACING_NONE === $spacing ? 1 : 2);
     }
     /**
      * Fix spacing below a method of a class or trait.
@@ -165,13 +208,14 @@ class Sample
      * Deals with comments, PHPDocs and spaces above the method with respect to the position of the
      * method within the class or trait.
      *
-     * @param int $classEndIndex
-     * @param int $elementEndIndex
+     * @param int    $classEndIndex
+     * @param int    $elementEndIndex
+     * @param string $spacing
      */
-    private function fixSpaceBelowClassMethod(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classEndIndex, $elementEndIndex)
+    private function fixSpaceBelowClassMethod(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classEndIndex, $elementEndIndex, $spacing)
     {
         $nextNotWhite = $tokens->getNextNonWhitespace($elementEndIndex);
-        $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, $nextNotWhite === $classEndIndex ? 1 : 2);
+        $this->correctLineBreaks($tokens, $elementEndIndex, $nextNotWhite, $nextNotWhite === $classEndIndex || self::SPACING_NONE === $spacing ? 1 : 2);
     }
     /**
      * Fix spacing above an element of a class, interface or trait.
@@ -179,10 +223,11 @@ class Sample
      * Deals with comments, PHPDocs and spaces above the element with respect to the position of the
      * element within the class, interface or trait.
      *
-     * @param int $classStartIndex index of the class Token the element is in
-     * @param int $elementIndex    index of the element to fix
+     * @param int    $classStartIndex index of the class Token the element is in
+     * @param int    $elementIndex    index of the element to fix
+     * @param string $spacing
      */
-    private function fixSpaceAboveClassElement(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classStartIndex, $elementIndex)
+    private function fixSpaceAboveClassElement(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $classStartIndex, $elementIndex, $spacing)
     {
         static $methodAttr = [\T_PRIVATE, \T_PROTECTED, \T_PUBLIC, \T_ABSTRACT, \T_FINAL, \T_STATIC, \T_STRING, \T_NS_SEPARATOR, \T_VAR, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_NULLABLE_TYPE, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_TYPEHINT];
         $nonWhiteAbove = null;
@@ -225,16 +270,26 @@ class Sample
             }
             return;
         }
-        // deal with element without a PHPDoc above it
-        if (\false === $tokens[$nonWhiteAbove]->isGivenKind(\T_DOC_COMMENT)) {
-            $this->correctLineBreaks($tokens, $nonWhiteAbove, $firstElementAttributeIndex, $nonWhiteAbove === $classStartIndex ? 1 : 2);
+        // deal with element with a PHPDoc above it
+        if ($tokens[$nonWhiteAbove]->isGivenKind(\T_DOC_COMMENT)) {
+            // there should be one linebreak between the element and the PHPDoc above it
+            $this->correctLineBreaks($tokens, $nonWhiteAbove, $firstElementAttributeIndex, 1);
+            // there should be one blank line between the PHPDoc and whatever is above (with the exception when it is directly after a class opening)
+            $nonWhiteAbovePHPDoc = $tokens->getNonWhitespaceSibling($nonWhiteAbove, -1);
+            $this->correctLineBreaks($tokens, $nonWhiteAbovePHPDoc, $nonWhiteAbove, $nonWhiteAbovePHPDoc === $classStartIndex ? 1 : 2);
             return;
         }
-        // there should be one linebreak between the element and the PHPDoc above it
-        $this->correctLineBreaks($tokens, $nonWhiteAbove, $firstElementAttributeIndex, 1);
-        // there should be one blank line between the PHPDoc and whatever is above (with the exception when it is directly after a class opening)
-        $nonWhiteAbovePHPDoc = $tokens->getNonWhitespaceSibling($nonWhiteAbove, -1);
-        $this->correctLineBreaks($tokens, $nonWhiteAbovePHPDoc, $nonWhiteAbove, $nonWhiteAbovePHPDoc === $classStartIndex ? 1 : 2);
+        // deal with element with an attribute above it
+        if ($tokens[$nonWhiteAbove]->isGivenKind(\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ATTRIBUTE_CLOSE)) {
+            // there should be one linebreak between the element and the attribute above it
+            $this->correctLineBreaks($tokens, $nonWhiteAbove, $firstElementAttributeIndex, 1);
+            // make sure there is blank line above the comment (with the exception when it is directly after a class opening)
+            $nonWhiteAbove = $this->findAttributeBlockStart($tokens, $nonWhiteAbove);
+            $nonWhiteAboveComment = $tokens->getNonWhitespaceSibling($nonWhiteAbove, -1);
+            $this->correctLineBreaks($tokens, $nonWhiteAboveComment, $nonWhiteAbove, $nonWhiteAboveComment === $classStartIndex ? 1 : 2);
+            return;
+        }
+        $this->correctLineBreaks($tokens, $nonWhiteAbove, $firstElementAttributeIndex, $nonWhiteAbove === $classStartIndex || self::SPACING_NONE === $spacing ? 1 : 2);
     }
     /**
      * @param int $startIndex
@@ -298,6 +353,25 @@ class Sample
         for ($i = $commentIndex - 1; $i > 0; --$i) {
             if ($tokens[$i]->isComment()) {
                 $start = $i;
+                continue;
+            }
+            if (!$tokens[$i]->isWhitespace() || $this->getLineBreakCount($tokens, $i, $i + 1) > 1) {
+                break;
+            }
+        }
+        return $start;
+    }
+    /**
+     * @param int $index attribute close index
+     *
+     * @return int
+     */
+    private function findAttributeBlockStart(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
+    {
+        $start = $index = $tokens->findBlockStart(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_ATTRIBUTE, $index);
+        for ($i = $index - 1; $i > 0; --$i) {
+            if ($tokens[$i]->isGivenKind(\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ATTRIBUTE_CLOSE)) {
+                $start = $i = $tokens->findBlockStart(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_ATTRIBUTE, $i);
                 continue;
             }
             if (!$tokens[$i]->isWhitespace() || $this->getLineBreakCount($tokens, $i, $i + 1) > 1) {

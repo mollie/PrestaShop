@@ -273,7 +273,7 @@ class OrderLine extends \MolliePrefix\Mollie\Api\Resources\BaseResource
      */
     public function getUpdateData()
     {
-        $data = array("name" => $this->name, 'imageUrl' => $this->imageUrl, 'productUrl' => $this->productUrl, 'metadata' => $this->metadata, 'quantity' => $this->quantity, 'unitPrice' => $this->unitPrice, 'discountAmount' => $this->discountAmount, 'totalAmount' => $this->totalAmount, 'vatAmount' => $this->vatAmount, 'vatRate' => $this->vatRate);
+        $data = ["name" => $this->name, 'imageUrl' => $this->imageUrl, 'productUrl' => $this->productUrl, 'metadata' => $this->metadata, 'quantity' => $this->quantity, 'unitPrice' => $this->unitPrice, 'discountAmount' => $this->discountAmount, 'totalAmount' => $this->totalAmount, 'vatAmount' => $this->vatAmount, 'vatRate' => $this->vatRate];
         // Explicitly filter only NULL values to keep "vatRate => 0" intact
         return \array_filter($data, function ($value) {
             return $value !== null;

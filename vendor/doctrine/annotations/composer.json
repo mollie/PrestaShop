@@ -41,12 +41,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
+            "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\Doctrine\\Tests\\Common\\Annotations\\": "tests\/Doctrine\/Tests\/Common\/Annotations"
+            "MolliePrefix\\MolliePrefix\\Doctrine\\Tests\\Common\\Annotations\\": "tests\/Doctrine\/Tests\/Common\/Annotations"
         }
     },
     "extra": {

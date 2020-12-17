@@ -2,6 +2,10 @@
 Rule ``final_static_access``
 ============================
 
+.. warning:: This rule is deprecated and will be removed on next major version.
+
+   You should use ``self_static_accessor`` instead.
+
 Converts ``static`` access to ``self`` access in ``final`` classes.
 
 Examples

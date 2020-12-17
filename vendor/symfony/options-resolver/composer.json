@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
+            "MolliePrefix\\MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

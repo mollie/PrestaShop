@@ -26,4 +26,4 @@ class FooOptCommand extends \MolliePrefix\Symfony\Component\Console\Command\Comm
         $output->writeln($this->input->getOption('fooopt'));
     }
 }
-\class_alias('MolliePrefix\\FooOptCommand', 'FooOptCommand', \false);
+\class_alias('MolliePrefix\\FooOptCommand', 'MolliePrefix\\FooOptCommand', \false);

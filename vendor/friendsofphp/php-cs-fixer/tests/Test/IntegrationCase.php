@@ -11,7 +11,7 @@
  */
 namespace MolliePrefix\PhpCsFixer\Tests\Test;
 
-use MolliePrefix\PhpCsFixer\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSet;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
@@ -58,7 +58,7 @@ final class IntegrationCase
      * @param string      $expectedCode
      * @param null|string $inputCode
      */
-    public function __construct($fileName, $title, array $settings, array $requirements, array $config, \MolliePrefix\PhpCsFixer\RuleSet $ruleset, $expectedCode, $inputCode)
+    public function __construct($fileName, $title, array $settings, array $requirements, array $config, \MolliePrefix\PhpCsFixer\RuleSet\RuleSet $ruleset, $expectedCode, $inputCode)
     {
         $this->fileName = $fileName;
         $this->title = $title;

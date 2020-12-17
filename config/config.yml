@@ -11,6 +11,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
+  - { resource: segment.yml }
 
 services:
   mollie:
@@ -24,11 +25,14 @@ services:
       - '@mollie'
       - '@Mollie\Service\ImageService'
       - '@Mollie\Install\DatabaseTableInstaller'
+      - '@Mollie\Tracker\Segment'
 
   Mollie\Install\Uninstall:
     arguments:
       - '@Mollie\Install\DatabaseTableUninstaller'
       - '@Mollie\Repository\OrderStateRepository'
+      - '@Mollie\Tracker\Segment'
+      - '@mollie'
 
   Mollie\Install\DatabaseTableInstaller:
 

@@ -92,7 +92,7 @@ class Profile extends \MolliePrefix\Mollie\Api\Resources\BaseResource
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = \json_encode(array("name" => $this->name, "website" => $this->website, "email" => $this->email, "phone" => $this->phone, "categoryCode" => $this->categoryCode, "mode" => $this->mode));
+        $body = \json_encode(["name" => $this->name, "website" => $this->website, "email" => $this->email, "phone" => $this->phone, "categoryCode" => $this->categoryCode, "mode" => $this->mode]);
         $result = $this->client->performHttpCallToFullUrl(\MolliePrefix\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
         return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \MolliePrefix\Mollie\Api\Resources\Profile($this->client));
     }

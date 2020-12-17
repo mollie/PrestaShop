@@ -24,4 +24,4 @@ class Foo3Command extends \MolliePrefix\Symfony\Component\Console\Command\Comman
         }
     }
 }
-\class_alias('MolliePrefix\\Foo3Command', 'Foo3Command', \false);
+\class_alias('MolliePrefix\\Foo3Command', 'MolliePrefix\\Foo3Command', \false);

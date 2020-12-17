@@ -46,6 +46,7 @@ use Language;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Service\ImageService;
+use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -78,18 +79,29 @@ class Installer implements InstallerInterface
 	 */
 	private $databaseTableInstaller;
 
-	public function __construct(
+    /**
+     * @var Segment
+     */
+    private $segment;
+
+    public function __construct(
 		Mollie $module,
 		ImageService $imageService,
-		InstallerInterface $databaseTableInstaller
+		InstallerInterface $databaseTableInstaller,
+        Segment $segment
 	) {
 		$this->module = $module;
 		$this->imageService = $imageService;
 		$this->databaseTableInstaller = $databaseTableInstaller;
-	}
+        $this->segment = $segment;
+    }
 
 	public function install()
 	{
+        $this->segment->setMessage('Mollie installed');
+        $this->segment->setOptions(['version' => $this->module->version]);
+        $this->segment->track();
+
 		foreach (self::getHooks() as $hook) {
 			if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && 'displayPaymentEU' === $hook) {
 				continue;

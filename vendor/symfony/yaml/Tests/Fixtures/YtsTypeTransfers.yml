@@ -88,10 +88,10 @@ brief: >
     to use escapings to represent ASCII and
     Unicode characters.
 yaml: |
-    i know where i want my line breaks: "one MolliePrefix\MolliePrefix\MolliePrefix\here\nand another MolliePrefix\MolliePrefix\MolliePrefix\here\n"
+    i know where i want my line breaks: "one MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\here\nand another MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\here\n"
 php: |
     [
-      'i know where i want my line breaks' => "one MolliePrefix\MolliePrefix\MolliePrefix\here\nand another MolliePrefix\MolliePrefix\MolliePrefix\here\n"
+      'i know where i want my line breaks' => "one MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\here\nand another MolliePrefix\MolliePrefix\MolliePrefix\MolliePrefix\here\n"
     ]
 ---
 test: Multi-line Quoted Strings

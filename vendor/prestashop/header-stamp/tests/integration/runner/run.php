@@ -9,7 +9,7 @@ use MolliePrefix\PrestaShop\HeaderStamp\Command\UpdateLicensesCommand;
 use MolliePrefix\Symfony\Component\Console\Input\ArrayInput;
 use MolliePrefix\Symfony\Component\Console\Output\BufferedOutput;
 use MolliePrefix\Symfony\Component\Filesystem\Filesystem;
-$modulesToTest = ['gsitemap', 'dashproducts', 'fakemodule'];
+$modulesToTest = ['gsitemap', 'dashproducts', 'fakemodule', 'existing-headers-discrimination'];
 $workspaceID = 100;
 $filesystem = new \MolliePrefix\Symfony\Component\Filesystem\Filesystem();
 $folderComparator = new \MolliePrefix\FolderComparator();
@@ -22,7 +22,11 @@ foreach ($modulesToTest as $moduleName) {
     // copy module into workspace
     $filesystem->mirror($moduleFolderpath, $workspaceFolderpath);
     // run UpdateLicensesCommand on workspace
-    $input = new \MolliePrefix\Symfony\Component\Console\Input\ArrayInput(['command' => 'prestashop:licenses:update', '--license' => __DIR__ . '/../../../assets/afl.txt', '--target' => $workspaceFolderpath]);
+    $commandParameters = ['command' => 'prestashop:licenses:update', '--license' => __DIR__ . '/../../../assets/afl.txt', '--target' => $workspaceFolderpath];
+    if ('existing-headers-discrimination' === $moduleName) {
+        $commandParameters['--header-discrimination-string'] = 'friendsofpresta';
+    }
+    $input = new \MolliePrefix\Symfony\Component\Console\Input\ArrayInput($commandParameters);
     $output = new \MolliePrefix\Symfony\Component\Console\Output\BufferedOutput();
     $application->run($input, $output);
     // compare workspace with expected

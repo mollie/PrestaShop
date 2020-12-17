@@ -15,6 +15,7 @@ use MolliePrefix\PhpCsFixer\AbstractFixer;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\Analysis\CaseAnalysis;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\GotoLabelAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\SwitchAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
@@ -33,7 +34,7 @@ final class TernaryOperatorSpacesFixer extends \MolliePrefix\PhpCsFixer\Abstract
     /**
      * {@inheritdoc}
      *
-     * Must run after ArraySyntaxFixer, ListSyntaxFixer.
+     * Must run after ArraySyntaxFixer, ListSyntaxFixer, TernaryToElvisOperatorFixer.
      */
     public function getPriority()
     {
@@ -51,6 +52,7 @@ final class TernaryOperatorSpacesFixer extends \MolliePrefix\PhpCsFixer\Abstract
      */
     protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
+        $gotoLabelAnalyzer = new \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\GotoLabelAnalyzer();
         $ternaryOperatorIndices = [];
         $excludedIndices = [];
         foreach ($tokens as $index => $token) {
@@ -64,7 +66,10 @@ final class TernaryOperatorSpacesFixer extends \MolliePrefix\PhpCsFixer\Abstract
             if (\in_array($index, $excludedIndices, \true)) {
                 continue;
             }
-            if ($this->belongsToGoToLabel($tokens, $index)) {
+            if ($this->belongsToAlternativeSyntax($tokens, $index)) {
+                continue;
+            }
+            if ($gotoLabelAnalyzer->belongsToGoToLabel($tokens, $index)) {
                 continue;
             }
             $ternaryOperatorIndices[] = $index;
@@ -100,17 +105,21 @@ final class TernaryOperatorSpacesFixer extends \MolliePrefix\PhpCsFixer\Abstract
      *
      * @return bool
      */
-    private function belongsToGoToLabel(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
+    private function belongsToAlternativeSyntax(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
     {
         if (!$tokens[$index]->equals(':')) {
             return \false;
         }
-        $prevMeaningfulTokenIndex = $tokens->getPrevMeaningfulToken($index);
-        if (!$tokens[$prevMeaningfulTokenIndex]->isGivenKind(\T_STRING)) {
+        $closeParenthesisIndex = $tokens->getPrevMeaningfulToken($index);
+        if ($tokens[$closeParenthesisIndex]->isGivenKind(\T_ELSE)) {
+            return \true;
+        }
+        if (!$tokens[$closeParenthesisIndex]->equals(')')) {
             return \false;
         }
-        $prevMeaningfulTokenIndex = $tokens->getPrevMeaningfulToken($prevMeaningfulTokenIndex);
-        return $tokens[$prevMeaningfulTokenIndex]->equalsAny([';', '{', '}', [\T_OPEN_TAG]]);
+        $openParenthesisIndex = $tokens->findBlockStart(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $closeParenthesisIndex);
+        $alternativeControlStructureIndex = $tokens->getPrevMeaningfulToken($openParenthesisIndex);
+        return $tokens[$alternativeControlStructureIndex]->isGivenKind([\T_DECLARE, \T_ELSEIF, \T_FOR, \T_FOREACH, \T_IF, \T_SWITCH, \T_WHILE]);
     }
     /**
      * @param int $switchIndex

@@ -46,7 +46,16 @@ abstract class AbstractNoUselessElseFixer extends \MolliePrefix\PhpCsFixer\Abstr
                 return \false;
             }
             $candidateIndex = $tokens->getPrevTokenOfKind($previous, [';', [\T_BREAK], [\T_CLOSE_TAG], [\T_CONTINUE], [\T_EXIT], [\T_GOTO], [\T_IF], [\T_RETURN], [\T_THROW]]);
-            if (null === $candidateIndex || $tokens[$candidateIndex]->equalsAny([';', [\T_CLOSE_TAG], [\T_IF]]) || $this->isInConditional($tokens, $candidateIndex, $previousBlockStart) || $this->isInConditionWithoutBraces($tokens, $candidateIndex, $previousBlockStart)) {
+            if (null === $candidateIndex || $tokens[$candidateIndex]->equalsAny([';', [\T_CLOSE_TAG], [\T_IF]])) {
+                return \false;
+            }
+            if ($tokens[$candidateIndex]->equals([\T_THROW])) {
+                $previousIndex = $tokens->getPrevMeaningfulToken($candidateIndex);
+                if (!$tokens[$previousIndex]->equalsAny([';', '{'])) {
+                    return \false;
+                }
+            }
+            if ($this->isInConditional($tokens, $candidateIndex, $previousBlockStart) || $this->isInConditionWithoutBraces($tokens, $candidateIndex, $previousBlockStart)) {
                 return \false;
             }
             // implicit continue, i.e. delete candidate

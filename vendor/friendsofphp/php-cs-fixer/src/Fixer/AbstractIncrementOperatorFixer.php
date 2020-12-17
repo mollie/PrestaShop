@@ -44,7 +44,7 @@ abstract class AbstractIncrementOperatorFixer extends \MolliePrefix\PhpCsFixer\A
             if (!$tokens[$prevPrevIndex]->isGivenKind([\T_STATIC, \T_STRING])) {
                 return $this->findStart($tokens, $prevIndex);
             }
-            $index = $tokens->getTokenNotOfKindSibling($prevIndex, -1, [[\T_NS_SEPARATOR], [\T_STATIC], [\T_STRING]]);
+            $index = $tokens->getTokenNotOfKindsSibling($prevIndex, -1, [\T_NS_SEPARATOR, \T_STATIC, \T_STRING]);
             $index = $tokens->getNextMeaningfulToken($index);
         }
         return $index;

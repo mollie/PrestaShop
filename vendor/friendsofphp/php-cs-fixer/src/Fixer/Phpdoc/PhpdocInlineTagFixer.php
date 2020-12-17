@@ -11,17 +11,26 @@
  */
 namespace MolliePrefix\PhpCsFixer\Fixer\Phpdoc;
 
-use MolliePrefix\PhpCsFixer\AbstractFixer;
+use MolliePrefix\PhpCsFixer\AbstractProxyFixer;
+use MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
-use MolliePrefix\PhpCsFixer\Preg;
-use MolliePrefix\PhpCsFixer\Tokenizer\Token;
-use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
  * Fix inline tags and make inheritdoc tag always inline.
+ *
+ * @deprecated since 2.9, replaced by PhpdocInlineTagNormalizerFixer GeneralPhpdocTagRenameFixer
+ *
+ * @TODO To be removed at 3.0
  */
-final class PhpdocInlineTagFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
+final class PhpdocInlineTagFixer extends \MolliePrefix\PhpCsFixer\AbstractProxyFixer implements \MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getSuccessorsNames()
+    {
+        return \array_keys($this->proxyFixers);
+    }
     /**
      * {@inheritdoc}
      */
@@ -49,35 +58,13 @@ final class PhpdocInlineTagFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
     /**
      * {@inheritdoc}
      */
-    public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
+    protected function createProxyFixers()
     {
-        return $tokens->isTokenKindFound(\T_DOC_COMMENT);
-    }
-    /**
-     * {@inheritdoc}
-     */
-    protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
-    {
-        foreach ($tokens as $index => $token) {
-            if (!$token->isGivenKind(\T_DOC_COMMENT)) {
-                continue;
-            }
-            $content = $token->getContent();
-            // Move `@` inside tag, for example @{tag} -> {@tag}, replace multiple curly brackets,
-            // remove spaces between '{' and '@', remove 's' at the end of tag.
-            // Make sure the tags are written in lower case, remove white space between end
-            // of text and closing bracket and between the tag and inline comment.
-            $content = \MolliePrefix\PhpCsFixer\Preg::replaceCallback('#(?:@{+|{+\\h*@)[ \\t]*(example|id|internal|inheritdoc|link|source|toc|tutorial)s?([^}]*)(?:}+)#i', static function (array $matches) {
-                $doc = \trim($matches[2]);
-                if ('' === $doc) {
-                    return '{@' . \strtolower($matches[1]) . '}';
-                }
-                return '{@' . \strtolower($matches[1]) . ' ' . $doc . '}';
-            }, $content);
-            // Always make inheritdoc inline using with '{' '}' when needed,
-            // make sure lowercase.
-            $content = \MolliePrefix\PhpCsFixer\Preg::replace('#(?<!{)@inheritdocs?(?!})#i', '{@inheritdoc}', $content);
-            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, $content]);
-        }
+        $inlineNormalizerFixer = new \MolliePrefix\PhpCsFixer\Fixer\Phpdoc\PhpdocInlineTagNormalizerFixer();
+        $renameFixer = new \MolliePrefix\PhpCsFixer\Fixer\Phpdoc\GeneralPhpdocTagRenameFixer();
+        $renameFixer->configure(['fix_annotation' => \true, 'fix_inline' => \true, 'replacements' => ['inheritdoc' => 'inheritdoc', 'inheritdocs' => 'inheritdoc'], 'case_sensitive' => \false]);
+        $tagTypeFixer = new \MolliePrefix\PhpCsFixer\Fixer\Phpdoc\PhpdocTagTypeFixer();
+        $tagTypeFixer->configure(['tags' => ['inheritdoc' => 'inline']]);
+        return [$inlineNormalizerFixer, $renameFixer, $tagTypeFixer];
     }
 }

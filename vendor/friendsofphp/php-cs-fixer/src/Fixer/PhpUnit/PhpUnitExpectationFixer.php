@@ -40,6 +40,10 @@ final class PhpUnitExpectationFixer extends \MolliePrefix\PhpCsFixer\Fixer\Abstr
         if (\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::fulfills($this->configuration['target'], \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_5_6)) {
             $this->methodMap['setExpectedExceptionRegExp'] = 'expectExceptionMessageRegExp';
         }
+        if (\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::fulfills($this->configuration['target'], \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_8_4)) {
+            $this->methodMap['setExpectedExceptionRegExp'] = 'expectExceptionMessageMatches';
+            $this->methodMap['expectExceptionMessageRegExp'] = 'expectExceptionMessageMatches';
+        }
     }
     /**
      * {@inheritdoc}
@@ -62,6 +66,21 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
     }
 }
 '), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+final class MyTest extends \\PHPUnit_Framework_TestCase
+{
+    public function testFoo()
+    {
+        $this->setExpectedException("RuntimeException", null, 123);
+        foo();
+    }
+
+    public function testBar()
+    {
+        $this->setExpectedExceptionRegExp("RuntimeException", "/Msg.*/", 123);
+        bar();
+    }
+}
+', ['target' => \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_8_4]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
 final class MyTest extends \\PHPUnit_Framework_TestCase
 {
     public function testFoo()
@@ -114,7 +133,7 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
      */
     protected function createConfigurationDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('target', 'Target version of PHPUnit.'))->setAllowedTypes(['string'])->setAllowedValues([\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_5_2, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_5_6, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST])->setDefault(\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST)->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('target', 'Target version of PHPUnit.'))->setAllowedTypes(['string'])->setAllowedValues([\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_5_2, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_5_6, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_8_4, \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST])->setDefault(\MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_NEWEST)->getOption()]);
     }
     /**
      * {@inheritdoc}
@@ -163,7 +182,7 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
                 $tokensOverrideArgStart = [new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $indent]), new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_VARIABLE, '$this']), new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_OBJECT_OPERATOR, '->']), new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_STRING, $argumentsReplacements[$cnt]]), new \MolliePrefix\PhpCsFixer\Tokenizer\Token('(')];
                 $tokensOverrideArgBefore = [new \MolliePrefix\PhpCsFixer\Tokenizer\Token(')'), new \MolliePrefix\PhpCsFixer\Tokenizer\Token(';')];
                 if ($isMultilineWhitespace) {
-                    \array_push($tokensOverrideArgStart, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $indent . $this->whitespacesConfig->getIndent()]));
+                    $tokensOverrideArgStart[] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $indent . $this->whitespacesConfig->getIndent()]);
                     \array_unshift($tokensOverrideArgBefore, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $indent]));
                 }
                 if ($tokens[$argStart]->isWhitespace()) {
@@ -173,7 +192,11 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
                 }
                 $tokens->overrideRange($argBefore, $argBefore, $tokensOverrideArgBefore);
             }
-            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_STRING, 'expectException']);
+            $methodName = 'expectException';
+            if ('expectExceptionMessageRegExp' === $tokens[$index]->getContent()) {
+                $methodName = $this->methodMap[$tokens[$index]->getContent()];
+            }
+            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_STRING, $methodName]);
         }
     }
     /**

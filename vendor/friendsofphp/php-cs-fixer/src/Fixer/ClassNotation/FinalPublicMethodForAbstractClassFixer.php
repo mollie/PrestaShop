@@ -61,7 +61,7 @@ abstract class AbstractMachine
         $classes = \array_keys($tokens->findGivenKind(\T_CLASS));
         while ($classIndex = \array_pop($classes)) {
             $prevToken = $tokens[$tokens->getPrevMeaningfulToken($classIndex)];
-            if (!$prevToken->isGivenKind([\T_ABSTRACT])) {
+            if (!$prevToken->isGivenKind(\T_ABSTRACT)) {
                 continue;
             }
             $classOpen = $tokens->getNextTokenOfKind($classIndex, ['{']);

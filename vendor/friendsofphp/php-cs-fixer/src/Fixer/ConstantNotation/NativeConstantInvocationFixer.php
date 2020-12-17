@@ -142,13 +142,13 @@ namespace {
             }
             return \true;
         };
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('fix_built_in', 'Whether to fix constants returned by `get_defined_constants`. User constants are not accounted in this list and must be specified in the include one.'))->setAllowedTypes(['bool'])->setDefault(\true)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('include', 'List of additional constants to fix.'))->setAllowedTypes(['array'])->setAllowedValues([$constantChecker])->setDefault([])->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('exclude', 'List of constants to ignore.'))->setAllowedTypes(['array'])->setAllowedValues([$constantChecker])->setDefault(['null', 'false', 'true'])->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('scope', 'Only fix constant invocations that are made within a namespace or fix all.'))->setAllowedValues(['all', 'namespaced'])->setDefault('all')->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('fix_built_in', 'Whether to fix constants returned by `get_defined_constants`. User constants are not accounted in this list and must be specified in the include one.'))->setAllowedTypes(['bool'])->setDefault(\true)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('include', 'List of additional constants to fix.'))->setAllowedTypes(['array'])->setAllowedValues([$constantChecker])->setDefault([])->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('exclude', 'List of constants to ignore.'))->setAllowedTypes(['array'])->setAllowedValues([$constantChecker])->setDefault(['null', 'false', 'true'])->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('scope', 'Only fix constant invocations that are made within a namespace or fix all.'))->setAllowedValues(['all', 'namespaced'])->setDefault('all')->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('strict', 'Whether leading `\\` of constant invocation not meant to have it should be removed.'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption()]);
     }
     /**
-     * @param int $start
-     * @param int $end
+     * @param int $startIndex
+     * @param int $endIndex
      */
-    private function fixConstantInvocations(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $start, $end)
+    private function fixConstantInvocations(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $startIndex, $endIndex)
     {
         $useDeclarations = (new \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\NamespaceUsesAnalyzer())->getDeclarationsFromTokens($tokens);
         $useConstantDeclarations = [];
@@ -158,31 +158,37 @@ namespace {
             }
         }
         $tokenAnalyzer = new \MolliePrefix\PhpCsFixer\Tokenizer\TokensAnalyzer($tokens);
-        $indexes = [];
-        for ($index = $start; $index < $end; ++$index) {
+        for ($index = $endIndex; $index > $startIndex; --$index) {
             $token = $tokens[$index];
             // test if we are at a constant call
             if (!$token->isGivenKind(\T_STRING)) {
                 continue;
             }
+            if (!$tokenAnalyzer->isConstantInvocation($index)) {
+                continue;
+            }
             $tokenContent = $token->getContent();
+            $prevIndex = $tokens->getPrevMeaningfulToken($index);
             if (!isset($this->constantsToEscape[$tokenContent]) && !isset($this->caseInsensitiveConstantsToEscape[\strtolower($tokenContent)])) {
+                if (!$this->configuration['strict']) {
+                    continue;
+                }
+                if (!$tokens[$prevIndex]->isGivenKind(\T_NS_SEPARATOR)) {
+                    continue;
+                }
+                $prevPrevIndex = $tokens->getPrevMeaningfulToken($prevIndex);
+                if ($tokens[$prevPrevIndex]->isGivenKind(\T_STRING)) {
+                    continue;
+                }
+                $tokens->clearTokenAndMergeSurroundingWhitespace($prevIndex);
                 continue;
             }
             if (isset($useConstantDeclarations[$tokenContent])) {
                 continue;
             }
-            $prevIndex = $tokens->getPrevMeaningfulToken($index);
             if ($tokens[$prevIndex]->isGivenKind(\T_NS_SEPARATOR)) {
                 continue;
             }
-            if (!$tokenAnalyzer->isConstantInvocation($index)) {
-                continue;
-            }
-            $indexes[] = $index;
-        }
-        $indexes = \array_reverse($indexes);
-        foreach ($indexes as $index) {
             $tokens->insertAt($index, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_NS_SEPARATOR, '\\']));
         }
     }

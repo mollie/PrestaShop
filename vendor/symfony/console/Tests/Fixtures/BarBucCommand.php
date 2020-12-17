@@ -10,4 +10,4 @@ class BarBucCommand extends \MolliePrefix\Symfony\Component\Console\Command\Comm
         $this->setName('bar:buc');
     }
 }
-\class_alias('MolliePrefix\\BarBucCommand', 'BarBucCommand', \false);
+\class_alias('MolliePrefix\\BarBucCommand', 'MolliePrefix\\BarBucCommand', \false);

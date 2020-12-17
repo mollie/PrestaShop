@@ -27,7 +27,7 @@ use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use MolliePrefix\PhpCsFixer\FixerFactory;
 use MolliePrefix\PhpCsFixer\Preg;
-use MolliePrefix\PhpCsFixer\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSets;
 use MolliePrefix\PhpCsFixer\StdinFileInfo;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\PhpCsFixer\Utils;
@@ -227,14 +227,21 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
         if (!\in_array($name, $this->getSetNames(), \true)) {
             throw new \MolliePrefix\PhpCsFixer\Console\Command\DescribeNameNotFoundException($name, 'set');
         }
-        $ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet([$name => \true]);
-        $rules = $ruleSet->getRules();
-        \ksort($rules);
+        $ruleSetDefinitions = \MolliePrefix\PhpCsFixer\RuleSet\RuleSets::getSetDefinitions();
         $fixers = $this->getFixers();
-        $output->writeln(\sprintf('<info>Description of</info> %s <info>set.</info>', $name));
+        $output->writeln(\sprintf('<info>Description of the</info> %s <info>set.</info>', $ruleSetDefinitions[$name]->getName()));
+        $output->writeln($this->replaceRstLinks($ruleSetDefinitions[$name]->getDescription()));
+        if ($ruleSetDefinitions[$name]->isRisky()) {
+            $output->writeln('This set contains <error>risky</error> rules.');
+        }
         $output->writeln('');
         $help = '';
-        foreach ($rules as $rule => $config) {
+        foreach ($ruleSetDefinitions[$name]->getRules() as $rule => $config) {
+            if ('@' === $rule[0]) {
+                $set = $ruleSetDefinitions[$rule];
+                $help .= \sprintf(" * <info>%s</info>%s\n   | %s\n\n", $rule, $set->isRisky() ? ' <error>risky</error>' : '', $this->replaceRstLinks($set->getDescription()));
+                continue;
+            }
             $fixer = $fixers[$rule];
             if (!$fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\DefinedFixerInterface) {
                 throw new \RuntimeException(\sprintf('Cannot describe rule %s, the fixer does not implement %s', $rule, \MolliePrefix\PhpCsFixer\Fixer\DefinedFixerInterface::class));
@@ -268,9 +275,7 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
         if (null !== $this->setNames) {
             return $this->setNames;
         }
-        $set = new \MolliePrefix\PhpCsFixer\RuleSet();
-        $this->setNames = $set->getSetDefinitionNames();
-        \sort($this->setNames);
+        $this->setNames = \MolliePrefix\PhpCsFixer\RuleSet\RuleSets::getSetDefinitionNames();
         return $this->setNames;
     }
     /**
@@ -292,5 +297,18 @@ final class DescribeCommand extends \MolliePrefix\Symfony\Component\Console\Comm
                 $output->writeln(\sprintf('* <info>%s</info>', \is_string($name) ? $name : $item));
             }
         }
+    }
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
+    private function replaceRstLinks($content)
+    {
+        return \MolliePrefix\PhpCsFixer\Preg::replaceCallback('/(`[^<]+<[^>]+>`_)/', static function (array $matches) {
+            return \MolliePrefix\PhpCsFixer\Preg::replaceCallback('/`(.*)<(.*)>`_/', static function (array $matches) {
+                return $matches[1] . '(' . $matches[2] . ')';
+            }, $matches[1]);
+        }, $content);
     }
 }

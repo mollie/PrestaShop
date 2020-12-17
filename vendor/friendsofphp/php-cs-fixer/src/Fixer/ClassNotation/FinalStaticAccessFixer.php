@@ -11,15 +11,16 @@
  */
 namespace MolliePrefix\PhpCsFixer\Fixer\ClassNotation;
 
-use MolliePrefix\PhpCsFixer\AbstractFixer;
+use MolliePrefix\PhpCsFixer\AbstractProxyFixer;
+use MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
-use MolliePrefix\PhpCsFixer\Tokenizer\Token;
-use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author ntzm
+ *
+ * @deprecated in 2.17
  */
-final class FinalStaticAccessFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
+final class FinalStaticAccessFixer extends \MolliePrefix\PhpCsFixer\AbstractProxyFixer implements \MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface
 {
     /**
      * {@inheritdoc}
@@ -43,67 +44,20 @@ final class Sample
      */
     public function getPriority()
     {
-        return -1;
+        return parent::getPriority();
     }
     /**
      * {@inheritdoc}
      */
-    public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
+    public function getSuccessorsNames()
     {
-        return $tokens->isAllTokenKindsFound([\T_FINAL, \T_CLASS, \T_STATIC]);
+        return \array_keys($this->proxyFixers);
     }
     /**
      * {@inheritdoc}
      */
-    protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
+    protected function createProxyFixers()
     {
-        for ($index = $tokens->count() - 1; 0 <= $index; --$index) {
-            if (!$tokens[$index]->isGivenKind(\T_FINAL)) {
-                continue;
-            }
-            $classTokenIndex = $tokens->getNextMeaningfulToken($index);
-            if (!$tokens[$classTokenIndex]->isGivenKind(\T_CLASS)) {
-                continue;
-            }
-            $startClassIndex = $tokens->getNextTokenOfKind($classTokenIndex, ['{']);
-            $endClassIndex = $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $startClassIndex);
-            $this->replaceStaticAccessWithSelfAccessBetween($tokens, $startClassIndex, $endClassIndex);
-        }
-    }
-    /**
-     * @param int $startIndex
-     * @param int $endIndex
-     */
-    private function replaceStaticAccessWithSelfAccessBetween(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $startIndex, $endIndex)
-    {
-        for ($index = $startIndex; $index <= $endIndex; ++$index) {
-            if ($tokens[$index]->isGivenKind(\T_CLASS)) {
-                $index = $this->getEndOfAnonymousClass($tokens, $index);
-                continue;
-            }
-            if (!$tokens[$index]->isGivenKind(\T_STATIC)) {
-                continue;
-            }
-            $newIndex = $tokens->getPrevMeaningfulToken($index);
-            $doubleColonIndex = $tokens->getNextMeaningfulToken($index);
-            if (!$tokens[$newIndex]->isGivenKind(\T_NEW) && !$tokens[$doubleColonIndex]->isGivenKind(\T_DOUBLE_COLON)) {
-                continue;
-            }
-            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_STRING, 'self']);
-        }
-    }
-    /**
-     * @param int $index
-     *
-     * @return int
-     */
-    private function getEndOfAnonymousClass(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
-    {
-        $instantiationBraceStart = $tokens->getNextMeaningfulToken($index);
-        if ($tokens[$instantiationBraceStart]->equals('(')) {
-            $index = $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $instantiationBraceStart);
-        }
-        $bodyBraceStart = $tokens->getNextTokenOfKind($index, ['{']);
-        return $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $bodyBraceStart);
+        return [new \MolliePrefix\PhpCsFixer\Fixer\ClassNotation\SelfStaticAccessorFixer()];
     }
 }

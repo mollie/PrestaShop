@@ -15,6 +15,7 @@ use MolliePrefix\PhpCsFixer\AbstractFixer;
 use MolliePrefix\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
 use MolliePrefix\PhpCsFixer\DocBlock\DocBlock;
 use MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use MolliePrefix\PhpCsFixer\FixerConfiguration\AliasedFixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
@@ -35,7 +36,7 @@ final class FinalInternalClassFixer extends \MolliePrefix\PhpCsFixer\AbstractFix
     public function configure(array $configuration = null)
     {
         parent::configure($configuration);
-        $intersect = \array_intersect_assoc($this->configuration['annotation-white-list'], $this->configuration['annotation-black-list']);
+        $intersect = \array_intersect_assoc($this->configuration['annotation_include'], $this->configuration['annotation_exclude']);
         if (\count($intersect)) {
             throw new \MolliePrefix\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException($this->getName(), \sprintf('Annotation cannot be used in both the include and exclude list, got duplicates: "%s".', \implode('", "', \array_keys($intersect))));
         }
@@ -45,7 +46,7 @@ final class FinalInternalClassFixer extends \MolliePrefix\PhpCsFixer\AbstractFix
      */
     public function getDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Internal classes should be `final`.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample("<?php\n/**\n * @internal\n */\nclass Sample\n{\n}\n"), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample("<?php\n/** @CUSTOM */class A{}\n", ['annotation-white-list' => ['@Custom']])], null, 'Changing classes to `final` might cause code execution to break.');
+        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Internal classes should be `final`.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample("<?php\n/**\n * @internal\n */\nclass Sample\n{\n}\n"), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample("<?php\n/**\n * @CUSTOM\n */\nclass A{}\n\n/**\n * @CUSTOM\n * @not-fix\n */\nclass B{}\n", ['annotation_include' => ['@Custom'], 'annotation_exclude' => ['@not-fix']])], null, 'Changing classes to `final` might cause code execution to break.');
     }
     /**
      * {@inheritdoc}
@@ -107,7 +108,7 @@ final class FinalInternalClassFixer extends \MolliePrefix\PhpCsFixer\AbstractFix
             }
             return $newValue;
         };
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('annotation-white-list', 'Class level annotations tags that must be set in order to fix the class. (case insensitive)'))->setAllowedTypes(['array'])->setAllowedValues($annotationsAsserts)->setDefault(['@internal'])->setNormalizer($annotationsNormalizer)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('annotation-black-list', 'Class level annotations tags that must be omitted to fix the class, even if all of the excluded ones are used as well. (case insensitive)'))->setAllowedTypes(['array'])->setAllowedValues($annotationsAsserts)->setDefault(['@final', '@Entity', 'MolliePrefix\\@ORM\\Entity', 'MolliePrefix\\@ORM\\Mapping\\Entity', 'MolliePrefix\\@Mapping\\Entity'])->setNormalizer($annotationsNormalizer)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('consider-absent-docblock-as-internal-class', 'Should classes without any DocBlock be fixed to final?'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\AliasedFixerOptionBuilder(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('annotation_include', 'Class level annotations tags that must be set in order to fix the class. (case insensitive)'), 'annotation-white-list'))->setAllowedTypes(['array'])->setAllowedValues($annotationsAsserts)->setDefault(['@internal'])->setNormalizer($annotationsNormalizer)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\AliasedFixerOptionBuilder(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('annotation_exclude', 'Class level annotations tags that must be omitted to fix the class, even if all of the white list ones are used as well. (case insensitive)'), 'annotation-black-list'))->setAllowedTypes(['array'])->setAllowedValues($annotationsAsserts)->setDefault(['@final', '@Entity', 'MolliePrefix\\@ORM\\Entity', 'MolliePrefix\\@ORM\\Mapping\\Entity', 'MolliePrefix\\@Mapping\\Entity'])->setNormalizer($annotationsNormalizer)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\AliasedFixerOptionBuilder(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('consider_absent_docblock_as_internal_class', 'Should classes without any DocBlock be fixed to final?'), 'consider-absent-docblock-as-internal-class'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption()]);
     }
     /**
      * @param int $index T_CLASS index
@@ -122,14 +123,14 @@ final class FinalInternalClassFixer extends \MolliePrefix\PhpCsFixer\AbstractFix
         }
         $docToken = $tokens[$tokens->getPrevNonWhitespace($index)];
         if (!$docToken->isGivenKind(\T_DOC_COMMENT)) {
-            return $this->configuration['consider-absent-docblock-as-internal-class'];
+            return $this->configuration['consider_absent_docblock_as_internal_class'];
         }
         $doc = new \MolliePrefix\PhpCsFixer\DocBlock\DocBlock($docToken->getContent());
         $tags = [];
         foreach ($doc->getAnnotations() as $annotation) {
             \MolliePrefix\PhpCsFixer\Preg::match('/@\\S+(?=\\s|$)/', $annotation->getContent(), $matches);
             $tag = \strtolower(\substr(\array_shift($matches), 1));
-            foreach ($this->configuration['annotation-black-list'] as $tagStart => $true) {
+            foreach ($this->configuration['annotation_exclude'] as $tagStart => $true) {
                 if (0 === \strpos($tag, $tagStart)) {
                     return \false;
                     // ignore class: class-level PHPDoc contains tag that has been excluded through configuration
@@ -137,7 +138,7 @@ final class FinalInternalClassFixer extends \MolliePrefix\PhpCsFixer\AbstractFix
             }
             $tags[$tag] = \true;
         }
-        foreach ($this->configuration['annotation-white-list'] as $tag => $true) {
+        foreach ($this->configuration['annotation_include'] as $tag => $true) {
             if (!isset($tags[$tag])) {
                 return \false;
                 // ignore class: class-level PHPDoc does not contain all tags that has been included through configuration

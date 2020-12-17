@@ -97,7 +97,7 @@ final class PhpdocLineSpanFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer i
     {
         do {
             $index = $tokens->getPrevNonWhitespace($index);
-        } while ($tokens[$index]->isGivenKind([\T_PUBLIC, \T_PROTECTED, \T_PRIVATE, \T_FINAL, \T_ABSTRACT, \T_COMMENT, \T_VAR, \T_STATIC, \T_STRING, \T_NS_SEPARATOR, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_NULLABLE_TYPE]));
+        } while ($tokens[$index]->isGivenKind([\T_PUBLIC, \T_PROTECTED, \T_PRIVATE, \T_FINAL, \T_ABSTRACT, \T_COMMENT, \T_VAR, \T_STATIC, \T_STRING, \T_NS_SEPARATOR, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_TYPEHINT, \MolliePrefix\PhpCsFixer\Tokenizer\CT::T_NULLABLE_TYPE]));
         return $index;
     }
     /**

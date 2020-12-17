@@ -38,7 +38,7 @@ final class NoAlternativeSyntaxFixer extends \MolliePrefix\PhpCsFixer\AbstractFi
     /**
      * {@inheritdoc}
      *
-     * Must run before BracesFixer, ElseifFixer, NoSuperfluousElseifFixer, NoUselessElseFixer.
+     * Must run before BracesFixer, ElseifFixer, NoSuperfluousElseifFixer, NoUselessElseFixer, SwitchContinueToBreakFixer.
      */
     public function getPriority()
     {

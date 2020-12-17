@@ -20,5 +20,6 @@ class CsFixerInitCommand extends \MolliePrefix\PrestaShop\CodingStandards\Comman
         foreach (['php_cs.dist', 'prettyci.composer.json'] as $template) {
             $this->copyFile($input, $output, $directory . $template, $destination . '/.' . $template);
         }
+        return 0;
     }
 }

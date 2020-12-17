@@ -53,7 +53,7 @@ final class YodaStyleFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implem
      */
     public function getDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Write conditions in Yoda style (`true`), non-Yoda style (`false`) or ignore those conditions (`null`) based on configuration.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+        return new \MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition('Write conditions in Yoda style (`true`), non-Yoda style (`[\'equal\' => false, \'identical\' => false, \'less_and_greater\' => false]`) or ignore those conditions (`null`) based on configuration.', [new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
     if ($a === null) {
         echo "null";
     }
@@ -63,7 +63,12 @@ final class YodaStyleFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implem
     $c = $c > 3;   // less than
 ', ['equal' => \true, 'identical' => \false, 'less_and_greater' => null]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
 return $foo === count($bar);
-', ['always_move_variable' => \true])]);
+', ['always_move_variable' => \true]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+    // Enforce non-Yoda style.
+    if (null === $a) {
+        echo "null";
+    }
+', ['equal' => \false, 'identical' => \false, 'less_and_greater' => \false])]);
     }
     /**
      * {@inheritdoc}

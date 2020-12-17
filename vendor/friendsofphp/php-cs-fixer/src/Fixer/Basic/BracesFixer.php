@@ -135,7 +135,7 @@ class Foo
      */
     protected function createConfigurationDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('allow_single_line_closure', 'Whether single line lambda notation should be allowed.'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_functions_and_oop_constructs', 'whether the opening brace should be placed on "next" or "same" line after classy constructs (non-anonymous classes, interfaces, traits, methods and non-lambda functions).'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_NEXT)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_control_structures', 'whether the opening brace should be placed on "next" or "same" line after control structures.'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_SAME)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_anonymous_constructs', 'whether the opening brace should be placed on "next" or "same" line after anonymous constructs (anonymous classes and lambda functions).'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_SAME)->getOption()]);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('allow_single_line_anonymous_class_with_empty_body', 'Whether single line anonymous class with empty body notation should be allowed.'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('allow_single_line_closure', 'Whether single line lambda notation should be allowed.'))->setAllowedTypes(['bool'])->setDefault(\false)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_functions_and_oop_constructs', 'whether the opening brace should be placed on "next" or "same" line after classy constructs (non-anonymous classes, interfaces, traits, methods and non-lambda functions).'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_NEXT)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_control_structures', 'whether the opening brace should be placed on "next" or "same" line after control structures.'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_SAME)->getOption(), (new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('position_after_anonymous_constructs', 'whether the opening brace should be placed on "next" or "same" line after anonymous constructs (anonymous classes and lambda functions).'))->setAllowedValues([self::LINE_NEXT, self::LINE_SAME])->setDefault(self::LINE_SAME)->getOption()]);
     }
     private function fixCommentBeforeBrace(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
@@ -234,6 +234,17 @@ class Foo
             // do not change indent for `while` in `do ... while ...`
             if ($token->isGivenKind(\T_WHILE) && $tokensAnalyzer->isWhilePartOfDoWhile($index)) {
                 continue;
+            }
+            if ($this->configuration['allow_single_line_anonymous_class_with_empty_body'] && $token->isGivenKind(\T_CLASS)) {
+                $prevIndex = $tokens->getPrevMeaningfulToken($index);
+                if ($tokens[$prevIndex]->isGivenKind(\T_NEW)) {
+                    $braceStartIndex = $tokens->getNextTokenOfKind($index, ['{']);
+                    $braceEndIndex = $tokens->getNextMeaningfulToken($braceStartIndex);
+                    if ('}' === $tokens[$braceEndIndex]->getContent() && !$this->isMultilined($tokens, $index, $braceEndIndex)) {
+                        $index = $braceEndIndex;
+                        continue;
+                    }
+                }
             }
             if ($this->configuration['allow_single_line_closure'] && $token->isGivenKind(\T_FUNCTION) && $tokensAnalyzer->isLambda($index)) {
                 $braceEndIndex = $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $tokens->getNextTokenOfKind($index, ['{']));
@@ -714,11 +725,7 @@ class Foo
     {
         $siblingIndex = $index;
         do {
-            if ($after) {
-                $siblingIndex = $tokens->getNextTokenOfKind($siblingIndex, [[\T_COMMENT]]);
-            } else {
-                $siblingIndex = $tokens->getPrevTokenOfKind($siblingIndex, [[\T_COMMENT]]);
-            }
+            $siblingIndex = $tokens->getTokenOfKindSibling($siblingIndex, $after ? 1 : -1, [[\T_COMMENT]]);
             if (null === $siblingIndex) {
                 return null;
             }

@@ -39,12 +39,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\Composer\\Semver\\": "src"
+            "MolliePrefix\\MolliePrefix\\Composer\\Semver\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\Composer\\Semver\\": "tests"
+            "MolliePrefix\\MolliePrefix\\Composer\\Semver\\": "tests"
         }
     },
     "extra": {

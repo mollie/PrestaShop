@@ -27,4 +27,4 @@ class UseTest extends \MolliePrefix\PHPUnit_Framework_TestCase
         $builder->foo();
     }
 }
-\class_alias('MolliePrefix\\UseTest', 'UseTest', \false);
+\class_alias('MolliePrefix\\UseTest', 'MolliePrefix\\UseTest', \false);

@@ -15,4 +15,4 @@ class Foo2Command extends \MolliePrefix\Symfony\Component\Console\Command\Comman
     {
     }
 }
-\class_alias('MolliePrefix\\Foo2Command', 'Foo2Command', \false);
+\class_alias('MolliePrefix\\Foo2Command', 'MolliePrefix\\Foo2Command', \false);

@@ -34,7 +34,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -89,7 +89,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Composer\\Semver\\": "src"
+                "MolliePrefix\\MolliePrefix\\Composer\\Semver\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -162,7 +162,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Composer\\XdebugHandler\\": "src"
+                "MolliePrefix\\MolliePrefix\\Composer\\XdebugHandler\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -228,7 +228,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
+                "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Annotations\\": "lib\/Doctrine\/Common\/Annotations"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -296,7 +296,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
+                "MolliePrefix\\MolliePrefix\\Doctrine\\Common\\Lexer\\": "lib\/Doctrine\/Common\/Lexer"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -329,17 +329,17 @@
     },
     {
         "name": "friendsofphp\/php-cs-fixer",
-        "version": "v2.16.5",
-        "version_normalized": "2.16.5.0",
+        "version": "v2.17.1",
+        "version_normalized": "2.17.1.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/FriendsOfPHP\/PHP-CS-Fixer.git",
-            "reference": "38042b599a6ff03cf4559798a79792d724d1ebf4"
+            "reference": "5198b7308ed63f26799387fd7f3901c3db6bd7fd"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/FriendsOfPHP\/PHP-CS-Fixer\/zipball\/38042b599a6ff03cf4559798a79792d724d1ebf4",
-            "reference": "38042b599a6ff03cf4559798a79792d724d1ebf4",
+            "url": "https:\/\/api.github.com\/repos\/FriendsOfPHP\/PHP-CS-Fixer\/zipball\/5198b7308ed63f26799387fd7f3901c3db6bd7fd",
+            "reference": "5198b7308ed63f26799387fd7f3901c3db6bd7fd",
             "shasum": ""
         },
         "require": {
@@ -348,7 +348,7 @@
             "doctrine\/annotations": "^1.2",
             "ext-json": "*",
             "ext-tokenizer": "*",
-            "php": "^5.6 || ^7.0",
+            "php": "^5.6 || ^7.0 || ^8.0",
             "php-cs-fixer\/diff": "^1.3",
             "symfony\/console": "^3.4.43 || ^4.1.6 || ^5.0",
             "symfony\/event-dispatcher": "^3.0 || ^4.0 || ^5.0",
@@ -370,6 +370,7 @@
             "php-cs-fixer\/phpunit-constraint-isidenticalstring": "^1.2",
             "php-cs-fixer\/phpunit-constraint-xmlmatchesxsd": "^1.2.1",
             "phpunit\/phpunit": "^5.7.27 || ^6.5.14 || ^7.1",
+            "phpunitgoodpractices\/polyfill": "^1.5",
             "phpunitgoodpractices\/traits": "^1.9.1",
             "symfony\/phpunit-bridge": "^5.1",
             "symfony\/yaml": "^3.0 || ^4.0 || ^5.0"
@@ -381,7 +382,7 @@
             "php-cs-fixer\/phpunit-constraint-xmlmatchesxsd": "For XmlMatchesXsd constraint.",
             "symfony\/polyfill-mbstring": "When enabling `ext-mbstring` is not possible."
         },
-        "time": "2020-10-27T22:17:01+00:00",
+        "time": "2020-12-08T13:47:02+00:00",
         "bin": [
             "php-cs-fixer"
         ],
@@ -466,7 +467,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -526,7 +527,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Promise\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -588,7 +589,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\GuzzleHttp\\Psr7\\": "src\/"
             },
             "files": [
                 "src\/functions_include.php"
@@ -623,17 +624,17 @@
     },
     {
         "name": "mollie\/mollie-api-php",
-        "version": "v2.25.0",
-        "version_normalized": "2.25.0.0",
+        "version": "v2.27.1",
+        "version_normalized": "2.27.1.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/mollie\/mollie-api-php.git",
-            "reference": "ae0ff0229b2f616997c224270eb50ed1b224239c"
+            "reference": "84ce19b6ab73392592ac1f1e13e37caabb69482a"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/mollie\/mollie-api-php\/zipball\/ae0ff0229b2f616997c224270eb50ed1b224239c",
-            "reference": "ae0ff0229b2f616997c224270eb50ed1b224239c",
+            "url": "https:\/\/api.github.com\/repos\/mollie\/mollie-api-php\/zipball\/84ce19b6ab73392592ac1f1e13e37caabb69482a",
+            "reference": "84ce19b6ab73392592ac1f1e13e37caabb69482a",
             "shasum": ""
         },
         "require": {
@@ -646,17 +647,18 @@
         },
         "require-dev": {
             "eloquent\/liberator": "^2.0",
-            "phpunit\/phpunit": "^5.7 || ^6.5 || ^7.1"
+            "friendsofphp\/php-cs-fixer": "^v2.17",
+            "phpunit\/phpunit": "^5.7 || ^6.5 || ^7.1 || ^8.5"
         },
         "suggest": {
             "mollie\/oauth2-mollie-php": "Use OAuth to authenticate with the Mollie API. This is needed for some endpoints. Visit https:\/\/docs.mollie.com\/ for more information."
         },
-        "time": "2020-11-24T14:17:48+00:00",
+        "time": "2020-12-15T09:00:48+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
+                "MolliePrefix\\Mollie\\Api\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -744,7 +746,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\PhpParser\\": "lib\/PhpParser"
+                "MolliePrefix\\MolliePrefix\\PhpParser\\": "lib\/PhpParser"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -893,7 +895,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\PrestaShop\\Decimal\\": "src"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -922,17 +924,17 @@
     },
     {
         "name": "prestashop\/header-stamp",
-        "version": "v1.6",
-        "version_normalized": "1.6.0.0",
+        "version": "v1.7",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/PrestaShopCorp\/header-stamp.git",
-            "reference": "c13190c00594ea55f595b1b1c1dc832ecf4faaa0"
+            "reference": "d77ce6d0a7f066670a4774be88f05e5f07b4b6fc"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/PrestaShopCorp\/header-stamp\/zipball\/c13190c00594ea55f595b1b1c1dc832ecf4faaa0",
-            "reference": "c13190c00594ea55f595b1b1c1dc832ecf4faaa0",
+            "url": "https:\/\/api.github.com\/repos\/PrestaShopCorp\/header-stamp\/zipball\/d77ce6d0a7f066670a4774be88f05e5f07b4b6fc",
+            "reference": "d77ce6d0a7f066670a4774be88f05e5f07b4b6fc",
             "shasum": ""
         },
         "require": {
@@ -944,7 +946,7 @@
         "require-dev": {
             "prestashop\/php-dev-tools": "1.*"
         },
-        "time": "2020-10-14T16:53:05+00:00",
+        "time": "2020-12-09T16:40:38+00:00",
         "bin": [
             "bin\/header-stamp"
         ],
@@ -970,17 +972,17 @@
     },
     {
         "name": "prestashop\/php-dev-tools",
-        "version": "v3.11",
-        "version_normalized": "3.11.0.0",
+        "version": "v3.12",
+        "version_normalized": "3.12.0.0",
         "source": {
             "type": "git",
             "url": "https:\/\/github.com\/PrestaShop\/php-dev-tools.git",
-            "reference": "4406828ed591e2d2bd03718a46fbdf888646fb65"
+            "reference": "4459c09fbe6116bb7c1c6cc54ce3ba3f4de65b62"
         },
         "dist": {
             "type": "zip",
-            "url": "https:\/\/api.github.com\/repos\/PrestaShop\/php-dev-tools\/zipball\/4406828ed591e2d2bd03718a46fbdf888646fb65",
-            "reference": "4406828ed591e2d2bd03718a46fbdf888646fb65",
+            "url": "https:\/\/api.github.com\/repos\/PrestaShop\/php-dev-tools\/zipball\/4459c09fbe6116bb7c1c6cc54ce3ba3f4de65b62",
+            "reference": "4459c09fbe6116bb7c1c6cc54ce3ba3f4de65b62",
             "shasum": ""
         },
         "require": {
@@ -991,7 +993,7 @@
             "symfony\/console": "~3.2 || ~4.0 || ~5.0",
             "symfony\/filesystem": "~3.2 || ~4.0 || ~5.0"
         },
-        "time": "2020-11-24T08:15:01+00:00",
+        "time": "2020-12-10T08:15:43+00:00",
         "bin": [
             "bin\/prestashop-coding-standards"
         ],
@@ -1036,7 +1038,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Cache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1084,7 +1086,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Container\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1135,7 +1137,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Http\\Message\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1187,7 +1189,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\Log\\": "Psr\/Log\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1236,7 +1238,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Psr\\SimpleCache\\": "src\/"
             }
         },
         "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1299,6 +1301,57 @@
             }
         ],
         "description": "A polyfill for getallheaders."
+    },
+    {
+        "name": "segmentio\/analytics-php",
+        "version": "1.5.2",
+        "version_normalized": "1.5.2.0",
+        "source": {
+            "type": "git",
+            "url": "https:\/\/github.com\/segmentio\/analytics-php.git",
+            "reference": "9513e3762ab24c9abd00078b0fb9e185aec10e07"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https:\/\/api.github.com\/repos\/segmentio\/analytics-php\/zipball\/9513e3762ab24c9abd00078b0fb9e185aec10e07",
+            "reference": "9513e3762ab24c9abd00078b0fb9e185aec10e07",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phpunit\/phpunit": "~4.0"
+        },
+        "time": "2017-08-18T22:13:00+00:00",
+        "bin": [
+            "bin\/analytics"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib\/Segment.php"
+            ]
+        },
+        "notification-url": "https:\/\/packagist.org\/downloads\/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Segment.io <friends@segment.com>",
+                "homepage": "https:\/\/segment.com\/"
+            }
+        ],
+        "description": "Segment Analytics PHP Library",
+        "homepage": "https:\/\/segment.com\/libraries\/php",
+        "keywords": [
+            "analytics",
+            "analytics.js",
+            "segment",
+            "segmentio"
+        ]
     },
     {
         "name": "squizlabs\/php_codesniffer",
@@ -1393,7 +1446,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Cache\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1472,7 +1525,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Config\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1555,7 +1608,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\Console\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Console\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1622,7 +1675,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\Debug\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Debug\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1704,7 +1757,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\DependencyInjection\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1779,7 +1832,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\EventDispatcher\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1841,7 +1894,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\ExpressionLanguage\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1902,7 +1955,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Filesystem\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -1962,7 +2015,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\Finder\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Finder\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2022,7 +2075,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\OptionsResolver\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2096,7 +2149,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2161,7 +2214,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Ctype\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2228,7 +2281,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Idn\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2298,7 +2351,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Intl\\Normalizer\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2367,7 +2420,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Mbstring\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2430,7 +2483,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php70\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2494,7 +2547,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Php72\\": ""
             },
             "files": [
                 "bootstrap.php"
@@ -2546,7 +2599,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\Process\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Process\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2606,7 +2659,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\Symfony\\Component\\Stopwatch\\": ""
+                "MolliePrefix\\MolliePrefix\\Symfony\\Component\\Stopwatch\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"
@@ -2676,7 +2729,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Yaml\\": ""
+                "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Component\\Yaml\\": ""
             },
             "exclude-from-classmap": [
                 "\/Tests\/"

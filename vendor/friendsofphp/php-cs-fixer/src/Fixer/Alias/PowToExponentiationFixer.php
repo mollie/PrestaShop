@@ -28,7 +28,7 @@ final class PowToExponentiationFixer extends \MolliePrefix\PhpCsFixer\AbstractFu
      */
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
-        // minimal candidate to fix is seven tokens: pow(x,x);
+        // minimal candidate to fix is seven tokens: pow(x,y);
         return $tokens->count() > 7 && $tokens->isTokenKindFound(\T_STRING);
     }
     /**
@@ -71,6 +71,11 @@ final class PowToExponentiationFixer extends \MolliePrefix\PhpCsFixer\AbstractFu
             if (2 !== \count($arguments)) {
                 continue;
             }
+            for ($i = $candidate[1]; $i < $candidate[2]; ++$i) {
+                if ($tokens[$i]->isGivenKind(\T_ELLIPSIS)) {
+                    continue 2;
+                }
+            }
             $numberOfTokensAdded += $this->fixPowToExponentiation(
                 $tokens,
                 $candidate[0],
@@ -89,7 +94,7 @@ final class PowToExponentiationFixer extends \MolliePrefix\PhpCsFixer\AbstractFu
     private function findPowCalls(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
         $candidates = [];
-        // Minimal candidate to fix is seven tokens: pow(x,x);
+        // Minimal candidate to fix is seven tokens: pow(x,y);
         $end = \count($tokens) - 6;
         // First possible location is after the open token: 1
         for ($i = 1; $i < $end; ++$i) {
@@ -135,9 +140,9 @@ final class PowToExponentiationFixer extends \MolliePrefix\PhpCsFixer\AbstractFu
         // clean up the function call tokens prt. II
         $tokens->clearAt($openParenthesisIndex);
         $tokens->clearAt($functionNameIndex);
-        $prev = $tokens->getPrevMeaningfulToken($functionNameIndex);
-        if ($tokens[$prev]->isGivenKind(\T_NS_SEPARATOR)) {
-            $tokens->clearAt($prev);
+        $prevMeaningfulTokenIndex = $tokens->getPrevMeaningfulToken($functionNameIndex);
+        if ($tokens[$prevMeaningfulTokenIndex]->isGivenKind(\T_NS_SEPARATOR)) {
+            $tokens->clearAt($prevMeaningfulTokenIndex);
         }
         return $added;
     }

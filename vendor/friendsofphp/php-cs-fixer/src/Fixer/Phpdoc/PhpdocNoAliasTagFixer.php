@@ -11,18 +11,15 @@
  */
 namespace MolliePrefix\PhpCsFixer\Fixer\Phpdoc;
 
-use MolliePrefix\PhpCsFixer\AbstractFixer;
-use MolliePrefix\PhpCsFixer\DocBlock\DocBlock;
+use MolliePrefix\PhpCsFixer\AbstractProxyFixer;
+use MolliePrefix\PhpCsFixer\ConfigurationException\InvalidConfigurationException;
+use MolliePrefix\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
 use MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Preg;
-use MolliePrefix\PhpCsFixer\Tokenizer\Token;
-use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
-use MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use MolliePrefix\Symfony\Component\OptionsResolver\Options;
 /**
  * Case sensitive tag replace fixer (does not process inline tags like {@inheritdoc}).
  *
@@ -30,15 +27,8 @@ use MolliePrefix\Symfony\Component\OptionsResolver\Options;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class PhpdocNoAliasTagFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface
+final class PhpdocNoAliasTagFixer extends \MolliePrefix\PhpCsFixer\AbstractProxyFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
-    {
-        return $tokens->isTokenKindFound(\T_DOC_COMMENT);
-    }
     /**
      * {@inheritdoc}
      */
@@ -74,27 +64,17 @@ final class Example
      */
     public function getPriority()
     {
-        return 11;
+        return parent::getPriority();
     }
-    /**
-     * {@inheritdoc}
-     */
-    protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
+    public function configure(array $configuration = null)
     {
-        $searchFor = \array_keys($this->configuration['replacements']);
-        foreach ($tokens as $index => $token) {
-            if (!$token->isGivenKind(\T_DOC_COMMENT)) {
-                continue;
-            }
-            $doc = new \MolliePrefix\PhpCsFixer\DocBlock\DocBlock($token->getContent());
-            $annotations = $doc->getAnnotationsOfType($searchFor);
-            if (empty($annotations)) {
-                continue;
-            }
-            foreach ($annotations as $annotation) {
-                $annotation->getTag()->setName($this->configuration['replacements'][$annotation->getTag()->getName()]);
-            }
-            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, $doc->getContent()]);
+        parent::configure($configuration);
+        /** @var GeneralPhpdocTagRenameFixer $generalPhpdocTagRenameFixer */
+        $generalPhpdocTagRenameFixer = $this->proxyFixers['general_phpdoc_tag_rename'];
+        try {
+            $generalPhpdocTagRenameFixer->configure(['fix_annotation' => \true, 'fix_inline' => \false, 'replacements' => $this->configuration['replacements'], 'case_sensitive' => \true]);
+        } catch (\MolliePrefix\PhpCsFixer\ConfigurationException\InvalidConfigurationException $exception) {
+            throw new \MolliePrefix\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException($this->getName(), \MolliePrefix\PhpCsFixer\Preg::replace('/^\\[.+?\\] /', '', $exception->getMessage()), $exception);
         }
     }
     /**
@@ -102,26 +82,13 @@ final class Example
      */
     protected function createConfigurationDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless('replacements', [(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('replacements', 'Mapping between replaced annotations with new ones.'))->setAllowedTypes(['array'])->setNormalizer(static function (\MolliePrefix\Symfony\Component\OptionsResolver\Options $options, $value) {
-            $normalizedValue = [];
-            foreach ($value as $from => $to) {
-                if (!\is_string($from)) {
-                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException('Tag to replace must be a string.');
-                }
-                if (!\is_string($to)) {
-                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException(\sprintf('Tag to replace to from "%s" must be a string.', $from));
-                }
-                if (1 !== \MolliePrefix\PhpCsFixer\Preg::match('#^\\S+$#', $to) || \false !== \strpos($to, '*/')) {
-                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException(\sprintf('Tag "%s" cannot be replaced by invalid tag "%s".', $from, $to));
-                }
-                $normalizedValue[\trim($from)] = \trim($to);
-            }
-            foreach ($normalizedValue as $from => $to) {
-                if (isset($normalizedValue[$to])) {
-                    throw new \MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException(\sprintf('Cannot change tag "%1$s" to tag "%2$s", as the tag "%2$s" is configured to be replaced to "%3$s".', $from, $to, $normalizedValue[$to]));
-                }
-            }
-            return $normalizedValue;
-        })->setDefault(['property-read' => 'property', 'property-write' => 'property', 'type' => 'var', 'link' => 'see'])->getOption()], $this->getName());
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless('replacements', [(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('replacements', 'Mapping between replaced annotations with new ones.'))->setAllowedTypes(['array'])->setDefault(['property-read' => 'property', 'property-write' => 'property', 'type' => 'var', 'link' => 'see'])->getOption()], $this->getName());
+    }
+    /**
+     * {@inheritdoc}
+     */
+    protected function createProxyFixers()
+    {
+        return [new \MolliePrefix\PhpCsFixer\Fixer\Phpdoc\GeneralPhpdocTagRenameFixer()];
     }
 }

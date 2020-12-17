@@ -32,11 +32,46 @@ final class BlankLineBeforeStatementFixer extends \MolliePrefix\PhpCsFixer\Abstr
     /**
      * @var array
      */
-    private static $tokenMap = ['break' => \T_BREAK, 'case' => \T_CASE, 'continue' => \T_CONTINUE, 'declare' => \T_DECLARE, 'default' => \T_DEFAULT, 'die' => \T_EXIT, 'do' => \T_DO, 'exit' => \T_EXIT, 'for' => \T_FOR, 'foreach' => \T_FOREACH, 'goto' => \T_GOTO, 'if' => \T_IF, 'include' => \T_INCLUDE, 'include_once' => \T_INCLUDE_ONCE, 'require' => \T_REQUIRE, 'require_once' => \T_REQUIRE_ONCE, 'return' => \T_RETURN, 'switch' => \T_SWITCH, 'throw' => \T_THROW, 'try' => \T_TRY, 'while' => \T_WHILE, 'yield' => \T_YIELD];
+    private static $tokenMap = [
+        'break' => \T_BREAK,
+        'case' => \T_CASE,
+        'continue' => \T_CONTINUE,
+        'declare' => \T_DECLARE,
+        'default' => \T_DEFAULT,
+        'die' => \T_EXIT,
+        // TODO remove this alias 3.0, use `exit`
+        'do' => \T_DO,
+        'exit' => \T_EXIT,
+        'for' => \T_FOR,
+        'foreach' => \T_FOREACH,
+        'goto' => \T_GOTO,
+        'if' => \T_IF,
+        'include' => \T_INCLUDE,
+        'include_once' => \T_INCLUDE_ONCE,
+        'require' => \T_REQUIRE,
+        'require_once' => \T_REQUIRE_ONCE,
+        'return' => \T_RETURN,
+        'switch' => \T_SWITCH,
+        'throw' => \T_THROW,
+        'try' => \T_TRY,
+        'while' => \T_WHILE,
+        'yield' => \T_YIELD,
+    ];
     /**
      * @var array
      */
     private $fixTokenMap = [];
+    /**
+     * Dynamic yield from option set on constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        // To be moved back to compile time property declaration when PHP support of PHP CS Fixer will be 7.0+
+        if (\defined('T_YIELD_FROM')) {
+            self::$tokenMap['yield_from'] = \T_YIELD_FROM;
+        }
+    }
     /**
      * {@inheritdoc}
      */
@@ -45,6 +80,9 @@ final class BlankLineBeforeStatementFixer extends \MolliePrefix\PhpCsFixer\Abstr
         parent::configure($configuration);
         $this->fixTokenMap = [];
         foreach ($this->configuration['statements'] as $key) {
+            if ('die' === $key) {
+                @\trigger_error('Option "die" is deprecated, use "exit" instead.', \E_USER_DEPRECATED);
+            }
             $this->fixTokenMap[$key] = self::$tokenMap[$key];
         }
         $this->fixTokenMap = \array_values($this->fixTokenMap);
@@ -75,13 +113,6 @@ foreach ($foo as $bar) {
     }
 }
 ', ['statements' => ['continue']]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
-if ($foo === false) {
-    die(0);
-} else {
-    $bar = 9000;
-    die(1);
-}
-', ['statements' => ['die']]), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
 $i = 0;
 do {
     echo $i;
@@ -181,7 +212,12 @@ if (true) {
      */
     protected function createConfigurationDefinition()
     {
-        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('statements', 'List of statements which must be preceded by an empty line.'))->setAllowedTypes(['array'])->setAllowedValues([new \MolliePrefix\PhpCsFixer\FixerConfiguration\AllowedValueSubset(\array_keys(self::$tokenMap))])->setDefault(['break', 'continue', 'declare', 'return', 'throw', 'try'])->getOption()]);
+        $allowed = self::$tokenMap;
+        $allowed['yield_from'] = \true;
+        // TODO remove this when update to PHP7.0
+        \ksort($allowed);
+        $allowed = \array_keys($allowed);
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('statements', 'List of statements which must be preceded by an empty line.'))->setAllowedTypes(['array'])->setAllowedValues([new \MolliePrefix\PhpCsFixer\FixerConfiguration\AllowedValueSubset($allowed)])->setDefault(['break', 'continue', 'declare', 'return', 'throw', 'try'])->getOption()]);
     }
     /**
      * @param int $prevNonWhitespace

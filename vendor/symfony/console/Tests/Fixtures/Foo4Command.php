@@ -10,4 +10,4 @@ class Foo4Command extends \MolliePrefix\Symfony\Component\Console\Command\Comman
         $this->setName('foo3:bar:toh');
     }
 }
-\class_alias('MolliePrefix\\Foo4Command', 'Foo4Command', \false);
+\class_alias('MolliePrefix\\Foo4Command', 'MolliePrefix\\Foo4Command', \false);

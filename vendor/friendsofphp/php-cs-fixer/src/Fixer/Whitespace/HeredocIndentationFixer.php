@@ -12,7 +12,10 @@
 namespace MolliePrefix\PhpCsFixer\Fixer\Whitespace;
 
 use MolliePrefix\PhpCsFixer\AbstractFixer;
+use MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecification;
 use MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
@@ -22,7 +25,7 @@ use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Gregor Harlan
  */
-final class HeredocIndentationFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface
+final class HeredocIndentationFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface, \MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface
 {
     /**
      * {@inheritdoc}
@@ -53,7 +56,19 @@ EOD
 ;
 
 SAMPLE
-, new \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecification(70300))]);
+, new \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecification(70300)), new \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSample(<<<'SAMPLE'
+<?php
+
+namespace MolliePrefix;
+
+$a = <<<'EOD'
+abc
+    def
+EOD
+;
+
+SAMPLE
+, new \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecification(70300), ['indentation' => 'same_as_start'])]);
     }
     /**
      * {@inheritdoc}
@@ -61,6 +76,13 @@ SAMPLE
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
         return \PHP_VERSION_ID >= 70300 && $tokens->isTokenKindFound(\T_START_HEREDOC);
+    }
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('indentation', 'Whether the indentation should be the same as in the start token line or one level more.'))->setAllowedValues(['start_plus_one', 'same_as_start'])->setDefault('start_plus_one')->getOption()]);
     }
     protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
@@ -79,7 +101,10 @@ SAMPLE
      */
     private function fixIndentation(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $start, $end)
     {
-        $indent = $this->getIndentAt($tokens, $start) . $this->whitespacesConfig->getIndent();
+        $indent = $this->getIndentAt($tokens, $start);
+        if ('start_plus_one' === $this->configuration['indentation']) {
+            $indent .= $this->whitespacesConfig->getIndent();
+        }
         \MolliePrefix\PhpCsFixer\Preg::match('/^\\h*/', $tokens[$end]->getContent(), $matches);
         $currentIndent = $matches[0];
         $currentIndentLength = \strlen($currentIndent);

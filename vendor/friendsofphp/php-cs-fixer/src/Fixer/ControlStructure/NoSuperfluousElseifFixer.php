@@ -36,6 +36,7 @@ final class NoSuperfluousElseifFixer extends \MolliePrefix\PhpCsFixer\AbstractNo
     /**
      * {@inheritdoc}
      *
+     * Must run before SimplifiedIfReturnFixer.
      * Must run after NoAlternativeSyntaxFixer.
      */
     public function getPriority()
@@ -60,10 +61,7 @@ final class NoSuperfluousElseifFixer extends \MolliePrefix\PhpCsFixer\AbstractNo
      */
     private function isElseif(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
     {
-        if ($tokens[$index]->isGivenKind(\T_ELSEIF)) {
-            return \true;
-        }
-        return $tokens[$index]->isGivenKind(\T_ELSE) && $tokens[$tokens->getNextMeaningfulToken($index)]->isGivenKind(\T_IF);
+        return $tokens[$index]->isGivenKind(\T_ELSEIF) || $tokens[$index]->isGivenKind(\T_ELSE) && $tokens[$tokens->getNextMeaningfulToken($index)]->isGivenKind(\T_IF);
     }
     /**
      * @param int $index

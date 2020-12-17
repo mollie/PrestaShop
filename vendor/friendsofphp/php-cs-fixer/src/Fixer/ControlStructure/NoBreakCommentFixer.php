@@ -102,14 +102,22 @@ switch ($foo) {
         $empty = \true;
         $fallThrough = \true;
         $commentPosition = null;
-        for ($i = $tokens->getNextTokenOfKind($casePosition, [':', ';']) + 1, $max = \count($tokens); $i < $max; ++$i) {
+        $caseColonIndex = $tokens->getNextTokenOfKind($casePosition, [':', ';']);
+        for ($i = $caseColonIndex + 1, $max = \count($tokens); $i < $max; ++$i) {
             if ($tokens[$i]->isGivenKind([\T_SWITCH, \T_IF, \T_ELSE, \T_ELSEIF, \T_FOR, \T_FOREACH, \T_WHILE, \T_DO, \T_FUNCTION, \T_CLASS])) {
                 $empty = \false;
                 $i = $this->getStructureEnd($tokens, $i);
                 continue;
             }
-            if ($tokens[$i]->isGivenKind([\T_BREAK, \T_CONTINUE, \T_RETURN, \T_EXIT, \T_THROW, \T_GOTO])) {
+            if ($tokens[$i]->isGivenKind([\T_BREAK, \T_CONTINUE, \T_RETURN, \T_EXIT, \T_GOTO])) {
                 $fallThrough = \false;
+                continue;
+            }
+            if ($tokens[$i]->isGivenKind([\T_THROW])) {
+                $previousIndex = $tokens->getPrevMeaningfulToken($i);
+                if ($previousIndex === $caseColonIndex || $tokens[$previousIndex]->equalsAny(['{', ';', '}', [\T_OPEN_TAG]])) {
+                    $fallThrough = \false;
+                }
                 continue;
             }
             if ($tokens[$i]->equals('}') || $tokens[$i]->isGivenKind(\T_ENDSWITCH)) {

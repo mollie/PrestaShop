@@ -89,9 +89,13 @@ class UpdateLicensesCommand extends \MolliePrefix\Symfony\Component\Console\Comm
      * @var Reporter
      */
     private $reporter;
+    /**
+     * @var string
+     */
+    private $discriminationString;
     protected function configure()
     {
-        $this->setName('prestashop:licenses:update')->setDescription('Rewrite your file headers to add the license or to make them up-to-date')->addOption('license', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'License file to apply', \realpath(static::DEFAULT_LICENSE_FILE))->addOption('target', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Folder to work in (default: current dir)')->addOption('exclude', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Comma-separated list of folders and files to exclude from the update', \implode(',', static::DEFAULT_FILTERS))->addOption('extensions', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Comma-separated list of file extensions to update', \implode(',', static::DEFAULT_EXTENSIONS))->addOption('display-report', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Whether or not to display a report')->addOption('dry-run', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Dry-run mode does not modify files');
+        $this->setName('prestashop:licenses:update')->setDescription('Rewrite your file headers to add the license or to make them up-to-date')->addOption('license', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'License file to apply', \realpath(static::DEFAULT_LICENSE_FILE))->addOption('target', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Folder to work in (default: current dir)')->addOption('exclude', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Comma-separated list of folders and files to exclude from the update', \implode(',', static::DEFAULT_FILTERS))->addOption('extensions', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED, 'Comma-separated list of file extensions to update', \implode(',', static::DEFAULT_EXTENSIONS))->addOption('display-report', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Whether or not to display a report')->addOption('dry-run', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Dry-run mode does not modify files')->addOption('header-discrimination-string', null, \MolliePrefix\Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL, 'Fix existing licenses only if they contain that string', 'prestashop');
     }
     protected function initialize(\MolliePrefix\Symfony\Component\Console\Input\InputInterface $input, \MolliePrefix\Symfony\Component\Console\Output\OutputInterface $output)
     {
@@ -105,6 +109,7 @@ class UpdateLicensesCommand extends \MolliePrefix\Symfony\Component\Console\Comm
         }
         $this->runAsDry = $input->getOption('dry-run') === \true;
         $this->displayReport = $input->getOption('display-report') === \true;
+        $this->discriminationString = $input->getOption('header-discrimination-string');
     }
     protected function execute(\MolliePrefix\Symfony\Component\Console\Input\InputInterface $input, \MolliePrefix\Symfony\Component\Console\Output\OutputInterface $output)
     {
@@ -192,7 +197,7 @@ class UpdateLicensesCommand extends \MolliePrefix\Symfony\Component\Console\Comm
         if (\count($matches)) {
             // Found - Replace it if prestashop one
             foreach ($matches as $match) {
-                if (\stripos($match, 'prestashop') !== \false) {
+                if (\stripos($match, $this->discriminationString) !== \false) {
                     $content = \str_replace($match, $text, $content);
                 }
             }
@@ -227,7 +232,7 @@ class UpdateLicensesCommand extends \MolliePrefix\Symfony\Component\Console\Comm
         }
         $comments = $node->getAttribute('comments');
         foreach ($comments as $comment) {
-            if ($comment instanceof \MolliePrefix\PhpParser\Comment && \strpos($comment->getText(), 'prestashop') !== \false) {
+            if ($comment instanceof \MolliePrefix\PhpParser\Comment && \strpos($comment->getText(), $this->discriminationString) !== \false) {
                 $newContent = \str_replace($comment->getText(), $this->text, $file->getContents());
                 if (!$this->runAsDry) {
                     \file_put_contents($this->targetDirectory . '/' . $file->getRelativePathname(), $newContent);

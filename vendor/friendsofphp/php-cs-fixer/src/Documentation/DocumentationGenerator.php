@@ -28,7 +28,9 @@ use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSampleInterface;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FileSpecificCodeSampleInterface;
 use MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use MolliePrefix\PhpCsFixer\Preg;
-use MolliePrefix\PhpCsFixer\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSetDescriptionInterface;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSets;
 use MolliePrefix\PhpCsFixer\StdinFileInfo;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\PhpCsFixer\Utils;
@@ -45,21 +47,21 @@ final class DocumentationGenerator
     public function __construct()
     {
         $this->differ = new \MolliePrefix\PhpCsFixer\Diff\v2_0\Differ(new \MolliePrefix\PhpCsFixer\Diff\GeckoPackages\DiffOutputBuilder\UnifiedDiffOutputBuilder(['fromFile' => 'Original', 'toFile' => 'New']));
-        $this->path = \dirname(\dirname(__DIR__)) . '/doc/rules';
+        $this->path = \dirname(__DIR__, 2) . '/doc';
     }
     /**
      * @return string
      */
     public function getFixersDocumentationDirectoryPath()
     {
-        return $this->path;
+        return $this->path . '/rules';
     }
     /**
      * @return string
      */
     public function getFixersDocumentationIndexFilePath()
     {
-        return "{$this->path}/index.rst";
+        return $this->getFixersDocumentationDirectoryPath() . '/index.rst';
     }
     /**
      * @param AbstractFixer[] $fixers
@@ -103,7 +105,7 @@ RST;
             } else {
                 $attributes = '';
             }
-            $path = \MolliePrefix\PhpCsFixer\Preg::replace('#^' . \preg_quote($this->path, '#') . '/#', './', $this->getFixerDocumentationFilePath($fixer));
+            $path = './' . $this->getFixerDocumentationFileRelativePath($fixer);
             $documentation .= <<<RST
 
 - `{$fixer->getName()} <{$path}>`_{$attributes}
@@ -117,9 +119,16 @@ RST;
      */
     public function getFixerDocumentationFilePath(\MolliePrefix\PhpCsFixer\Fixer\FixerInterface $fixer)
     {
-        return $this->path . '/' . \MolliePrefix\PhpCsFixer\Preg::replaceCallback('/^.*\\\\(.+)\\\\(.+)Fixer$/', function (array $matches) {
+        return $this->getFixersDocumentationDirectoryPath() . '/' . \MolliePrefix\PhpCsFixer\Preg::replaceCallback('/^.*\\\\(.+)\\\\(.+)Fixer$/', function (array $matches) {
             return \MolliePrefix\PhpCsFixer\Utils::camelCaseToUnderscore($matches[1]) . '/' . \MolliePrefix\PhpCsFixer\Utils::camelCaseToUnderscore($matches[2]);
         }, \get_class($fixer)) . '.rst';
+    }
+    /**
+     * @return string
+     */
+    public function getFixerDocumentationFileRelativePath(\MolliePrefix\PhpCsFixer\Fixer\FixerInterface $fixer)
+    {
+        return \MolliePrefix\PhpCsFixer\Preg::replace('#^' . \preg_quote($this->getFixersDocumentationDirectoryPath(), '#') . '/#', '', $this->getFixerDocumentationFilePath($fixer));
     }
     /**
      * @return string
@@ -236,12 +245,12 @@ RST;
                         $doc .= \sprintf("\n\nWith configuration: ``%s``.", \MolliePrefix\PhpCsFixer\Console\Command\HelpCommand::toString($sample->getConfiguration()));
                     }
                 }
-                $doc .= "\n" . $this->generateSampleDiff($fixer, $sample, $index, $name);
+                $doc .= "\n" . $this->generateSampleDiff($fixer, $sample, $index + 1, $name);
             }
         }
         $ruleSetConfigs = [];
-        foreach ((new \MolliePrefix\PhpCsFixer\RuleSet())->getSetDefinitionNames() as $set) {
-            $ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet([$set => \true]);
+        foreach (\MolliePrefix\PhpCsFixer\RuleSet\RuleSets::getSetDefinitionNames() as $set) {
+            $ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet\RuleSet([$set => \true]);
             if ($ruleSet->hasRule($name)) {
                 $ruleSetConfigs[$set] = $ruleSet->getRuleConfiguration($name);
             }
@@ -257,11 +266,13 @@ Rule sets
 The rule is part of the following rule set{$plural}:
 RST;
             foreach ($ruleSetConfigs as $set => $config) {
+                $ruleSetPath = $this->getRuleSetsDocumentationFilePath($set);
+                $ruleSetPath = \substr($ruleSetPath, \strrpos($ruleSetPath, '/'));
                 $doc .= <<<RST
 
 
 {$set}
-  Using the ``{$set}`` rule set will enable the ``{$name}`` rule
+  Using the `{$set} <./../../ruleSets{$ruleSetPath}>`_ rule set will enable the ``{$name}`` rule
 RST;
                 if (null !== $config) {
                     $doc .= " with the config below:\n\n  ``" . \MolliePrefix\PhpCsFixer\Console\Command\HelpCommand::toString($config) . '``';
@@ -274,13 +285,104 @@ RST;
         }
         return "{$doc}\n";
     }
-    private function generateSampleDiff(\MolliePrefix\PhpCsFixer\Fixer\FixerInterface $fixer, \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSampleInterface $sample, $sampleIndex, $ruleName)
+    /**
+     * @return string
+     */
+    public function getRuleSetsDocumentationDirectoryPath()
+    {
+        return $this->path . '/ruleSets';
+    }
+    /**
+     * @return string
+     */
+    public function getRuleSetsDocumentationIndexFilePath()
+    {
+        return $this->getRuleSetsDocumentationDirectoryPath() . '/index.rst';
+    }
+    /**
+     * @param AbstractFixer[] $fixers
+     *
+     * @return string
+     */
+    public function generateRuleSetsDocumentation(\MolliePrefix\PhpCsFixer\RuleSet\RuleSetDescriptionInterface $definition, array $fixers)
+    {
+        $fixerNames = [];
+        foreach ($fixers as $fixer) {
+            $fixerNames[$fixer->getName()] = $fixer;
+        }
+        $title = "Rule set ``{$definition->getName()}``";
+        $titleLine = \str_repeat('=', \strlen($title));
+        $doc = "{$titleLine}\n{$title}\n{$titleLine}\n\n" . $definition->getDescription();
+        if ($definition->isRisky()) {
+            $doc .= ' This set contains rules that are risky.';
+        }
+        $doc .= "\n\n";
+        $rules = $definition->getRules();
+        if (\count($rules) < 1) {
+            $doc .= 'This is an empty set.';
+        } else {
+            $doc .= "Rules\n-----\n";
+            foreach ($rules as $rule => $config) {
+                if ('@' === $rule[0]) {
+                    $ruleSetPath = $this->getRuleSetsDocumentationFilePath($rule);
+                    $ruleSetPath = \substr($ruleSetPath, \strrpos($ruleSetPath, '/'));
+                    $doc .= "\n- `{$rule} <.{$ruleSetPath}>`_";
+                } else {
+                    $path = \MolliePrefix\PhpCsFixer\Preg::replace('#^' . \preg_quote($this->getFixersDocumentationDirectoryPath(), '#') . '/#', './../rules/', $this->getFixerDocumentationFilePath($fixerNames[$rule]));
+                    $doc .= "\n- `{$rule} <{$path}>`_";
+                }
+                if (!\is_bool($config)) {
+                    $doc .= "\n  config:\n  ``" . \MolliePrefix\PhpCsFixer\Console\Command\HelpCommand::toString($config) . '``';
+                }
+            }
+        }
+        return $doc . "\n";
+    }
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    public function getRuleSetsDocumentationFilePath($name)
+    {
+        return $this->getRuleSetsDocumentationDirectoryPath() . '/' . \str_replace(':risky', 'Risky', \ucfirst(\substr($name, 1))) . '.rst';
+    }
+    /**
+     * @return string
+     */
+    public function generateRuleSetsDocumentationIndex(array $setDefinitions)
+    {
+        $documentation = <<<'RST'
+===========================
+List of Available Rule sets
+===========================
+RST;
+        foreach ($setDefinitions as $name => $path) {
+            $path = \substr($path, \strrpos($path, '/'));
+            $documentation .= "\n- `{$name} <.{$path}>`_";
+        }
+        return $documentation . "\n";
+    }
+    /**
+     * @param int    $sampleNumber
+     * @param string $ruleName
+     *
+     * @return string
+     */
+    private function generateSampleDiff(\MolliePrefix\PhpCsFixer\Fixer\FixerInterface $fixer, \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSampleInterface $sample, $sampleNumber, $ruleName)
     {
         if ($sample instanceof \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface && !$sample->isSuitableFor(\PHP_VERSION_ID)) {
+            $existingFile = @\file_get_contents($this->getFixerDocumentationFilePath($fixer));
+            if (\false !== $existingFile) {
+                \MolliePrefix\PhpCsFixer\Preg::match("/\\RExample #{$sampleNumber}\\R.+?(?<diff>\\R\\.\\. code-block:: diff\\R\\R.*?)\\R(?:\\R\\S|\$)/s", $existingFile, $matches);
+                if (isset($matches['diff'])) {
+                    return $matches['diff'];
+                }
+            }
             $error = <<<RST
 
 .. error::
-   Cannot generate diff for code sample #{$sampleIndex} of rule {$ruleName}:
+   Cannot generate diff for code sample #{$sampleNumber} of rule {$ruleName}:
    the sample is not suitable for current version of PHP (%s).
 RST;
             return \sprintf($error, \PHP_VERSION);
@@ -297,7 +399,7 @@ RST;
                 // Psr0Fixer relies on realpath() which fails for directories
                 // relative to some path when the working directory is a
                 // different path. Using an absolute path prevents this issue.
-                $configuration['dir'] = \dirname(\dirname(__DIR__)) . \substr($configuration['dir'], 1);
+                $configuration['dir'] = \dirname(__DIR__, 2) . \substr($configuration['dir'], 1);
             }
             $fixer->configure($configuration);
         }
@@ -313,6 +415,12 @@ RST;
    {$this->indent($diff, 3)}
 RST;
     }
+    /**
+     * @param string $string
+     * @param int    $indent
+     *
+     * @return string
+     */
     private function toRst($string, $indent = 0)
     {
         $string = \wordwrap(\MolliePrefix\PhpCsFixer\Preg::replace('/(?<!`)(`.*?`)(?!`)/', '`$1`', $string), 80 - $indent);
@@ -321,6 +429,12 @@ RST;
         }
         return $string;
     }
+    /**
+     * @param string $string
+     * @param int    $indent
+     *
+     * @return string
+     */
     private function indent($string, $indent)
     {
         return \MolliePrefix\PhpCsFixer\Preg::replace('/(\\n)(?!\\n|$)/', '$1' . \str_repeat(' ', $indent), $string);

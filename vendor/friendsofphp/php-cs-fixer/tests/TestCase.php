@@ -12,6 +12,7 @@
 namespace MolliePrefix\PhpCsFixer\Tests;
 
 use MolliePrefix\PHPUnit\Framework\TestCase as BaseTestCase;
+use MolliePrefix\PHPUnitGoodPractices\Polyfill\PolyfillTrait;
 use MolliePrefix\PHPUnitGoodPractices\Traits\ExpectationViaCodeOverAnnotationTrait;
 use MolliePrefix\PHPUnitGoodPractices\Traits\ExpectOverSetExceptionTrait;
 use MolliePrefix\PHPUnitGoodPractices\Traits\IdentityOverEqualityTrait;
@@ -28,6 +29,7 @@ if (\trait_exists(\MolliePrefix\PHPUnitGoodPractices\Traits\ProphesizeOnlyInterf
         use ExpectationViaCodeOverAnnotationTrait;
         use ExpectOverSetExceptionTrait;
         use IdentityOverEqualityTrait;
+        use PolyfillTrait;
         use ProphecyOverMockObjectTrait;
         use ProphesizeOnlyInterfaceTrait;
     }
