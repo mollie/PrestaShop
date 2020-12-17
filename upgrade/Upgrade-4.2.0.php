@@ -69,7 +69,7 @@ function upgrade_module_4_2_0($module)
             `free_shipping` TINYINT(1) NOT NULL,
             `id_order_invoice` INT(64) NOT NULL
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-    );
+	);
 
 	return true;
 }

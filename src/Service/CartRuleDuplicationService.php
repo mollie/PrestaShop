@@ -27,9 +27,10 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
 
 namespace Mollie\Service;
@@ -39,27 +40,28 @@ use Context;
 
 class CartRuleDuplicationService
 {
-    /**
-     * @param array $cartRules
-     *
-     * @return bool
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function restoreCartRules($cartRules = [])
-    {
-        if (empty($cartRules)) {
-            return true;
-        }
-        $context = Context::getContext();
+	/**
+	 * @param array $cartRules
+	 *
+	 * @return bool
+	 *
+	 * @throws \PrestaShopDatabaseException
+	 * @throws \PrestaShopException
+	 */
+	public function restoreCartRules($cartRules = [])
+	{
+		if (empty($cartRules)) {
+			return true;
+		}
+		$context = Context::getContext();
 
-        foreach ($cartRules as $cartRuleContent) {
-            $cartRule = new CartRule($cartRuleContent['id_cart_rule']);
-            if ($cartRule->checkValidity($context, false, false)) {
-                $context->cart->addCartRule($cartRule->id);
-            }
-        }
+		foreach ($cartRules as $cartRuleContent) {
+			$cartRule = new CartRule($cartRuleContent['id_cart_rule']);
+			if ($cartRule->checkValidity($context, false, false)) {
+				$context->cart->addCartRule($cartRule->id);
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

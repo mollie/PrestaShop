@@ -43,34 +43,34 @@ use Order;
 
 final class OrderCartRuleRepository
 {
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     *
-     * @return array|bool|object|null
-     */
-    public function getOrderCartRule($order, CartRule $cartRule)
-    {
-        $dbQuery = new DbQuery();
-        $dbQuery->select('`value` as value_tax_incl, `value_tax_excl`, `name`, `free_shipping`, `id_order_invoice`');
-        $dbQuery->from('order_cart_rule');
-        $dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
+	/**
+	 * @param Order $order
+	 * @param CartRule $cartRule
+	 *
+	 * @return array|bool|object|null
+	 */
+	public function getOrderCartRule($order, CartRule $cartRule)
+	{
+		$dbQuery = new DbQuery();
+		$dbQuery->select('`value` as value_tax_incl, `value_tax_excl`, `name`, `free_shipping`, `id_order_invoice`');
+		$dbQuery->from('order_cart_rule');
+		$dbQuery->where('id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id);
 
-        return Db::getInstance()->getRow($dbQuery);
-    }
+		return Db::getInstance()->getRow($dbQuery);
+	}
 
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     *
-     * @return bool
-     */
-    public function decreaseCustomerUsedCartRuleQuantity($order, CartRule $cartRule)
-    {
-        return (bool) Db::getInstance()->delete(
-            'order_cart_rule',
-            'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id,
-            1
-        );
-    }
+	/**
+	 * @param Order $order
+	 * @param CartRule $cartRule
+	 *
+	 * @return bool
+	 */
+	public function decreaseCustomerUsedCartRuleQuantity($order, CartRule $cartRule)
+	{
+		return (bool) Db::getInstance()->delete(
+			'order_cart_rule',
+			'id_order= ' . (int) $order->id . ' AND id_cart_rule= ' . (int) $cartRule->id,
+			1
+		);
+	}
 }

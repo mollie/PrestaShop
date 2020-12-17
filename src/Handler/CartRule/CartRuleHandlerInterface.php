@@ -40,5 +40,5 @@ use Cart;
 
 interface CartRuleHandlerInterface
 {
-    public function handle(Cart $cart, $backtraceLocation, $paymentSuccess = false, $cartRules = []);
+	public function handle(Cart $cart, $backtraceLocation, $paymentSuccess = false, $cartRules = []);
 }
