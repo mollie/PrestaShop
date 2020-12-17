@@ -89,7 +89,7 @@ class CartRuleHandler implements CartRuleHandlerInterface
 			return;
 		}
 		$orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
-		$order = new Order((int) $orderId);
+		$order = new Order($orderId);
 
 		if (empty($order)) {
 			return;
@@ -119,7 +119,7 @@ class CartRuleHandler implements CartRuleHandlerInterface
 			return;
 		}
 		$orderId = Order::getOrderByCartId($cart->id); /* @phpstan-ignore-line */
-		$order = new Order((int) $orderId);
+		$order = new Order($orderId);
 
 		if (empty($order)) {
 			return;
