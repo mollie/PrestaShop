@@ -38,11 +38,11 @@ namespace Mollie\Repository;
 
 interface OrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    /**
-     * @param int $orderId
-     * @param int $cartRuleId
-     *
-     * @return bool
-     */
-    public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId);
+	/**
+	 * @param int $orderId
+	 * @param int $cartRuleId
+	 *
+	 * @return bool
+	 */
+	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId);
 }

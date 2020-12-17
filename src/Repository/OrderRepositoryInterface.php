@@ -40,12 +40,12 @@ use Order;
 
 interface OrderRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    /**
-     * @param int $id_cart
-     *
-     * @return Order|null
-     *
-     * @throws \PrestaShopException
-     */
-    public function findOneByCartId($id_cart);
+	/**
+	 * @param int $id_cart
+	 *
+	 * @return Order|null
+	 *
+	 * @throws \PrestaShopException
+	 */
+	public function findOneByCartId($id_cart);
 }

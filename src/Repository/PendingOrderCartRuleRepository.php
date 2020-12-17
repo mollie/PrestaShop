@@ -43,14 +43,14 @@ use OrderCartRule;
 
 final class PendingOrderCartRuleRepository extends AbstractRepository implements PendingOrderCartRuleRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(MolPendingOrderCartRule::class);
-    }
+	public function __construct()
+	{
+		parent::__construct(MolPendingOrderCartRule::class);
+	}
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public function removePreviousPendingOrderCartRule($orderId, $cartRuleId)
 	{
 		Db::getInstance()->delete('mol_pending_order_cart_rule',
@@ -58,9 +58,9 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
 		);
 	}
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule)
 	{
 		if (empty($orderCartRule)) {
@@ -79,10 +79,10 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
 		$pendingOrderCartRule->add();
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
+	/**
+	 * {@inheritDoc}
+	 */
+	public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
 	{
 		if (empty($pendingOrderCartRule)) {
 			return;

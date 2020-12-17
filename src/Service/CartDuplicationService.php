@@ -55,7 +55,7 @@ class CartDuplicationService
 
 	public function __construct(
 		CartRuleDuplicationService $cartRuleDuplicationService,
-        CartRuleQuantityResetHandlerInterface $cartRuleQuantityResetHandlerInterface
+		CartRuleQuantityResetHandlerInterface $cartRuleQuantityResetHandlerInterface
 	) {
 		$this->cartRuleDuplicationService = $cartRuleDuplicationService;
 		$this->cartRuleQuantityResetHandlerInterface = $cartRuleQuantityResetHandlerInterface;

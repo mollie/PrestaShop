@@ -47,37 +47,37 @@ use Order;
 
 class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInterface
 {
-    /**
-     * @var PendingOrderCartRuleRepositoryInterface
-     */
-    private $pendingOrderCartRuleRepository;
+	/**
+	 * @var PendingOrderCartRuleRepositoryInterface
+	 */
+	private $pendingOrderCartRuleRepository;
 
-    /**
-     * @var OrderCartRuleRepositoryInterface
-     */
-    private $orderCartRuleRepository;
+	/**
+	 * @var OrderCartRuleRepositoryInterface
+	 */
+	private $orderCartRuleRepository;
 
-    /**
-     * @var CartRuleRepositoryInterface
-     */
-    private $cartRuleRepository;
+	/**
+	 * @var CartRuleRepositoryInterface
+	 */
+	private $cartRuleRepository;
 
-    /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
+	/**
+	 * @var OrderRepositoryInterface
+	 */
+	private $orderRepository;
 
-    public function __construct(
-        PendingOrderCartRuleRepositoryInterface $pendingOrderCartRuleRepository,
-        OrderCartRuleRepositoryInterface $orderCartRuleRepository,
-        CartRuleRepositoryInterface $cartRuleRepository,
-        OrderRepositoryInterface $orderRepository
+	public function __construct(
+		PendingOrderCartRuleRepositoryInterface $pendingOrderCartRuleRepository,
+		OrderCartRuleRepositoryInterface $orderCartRuleRepository,
+		CartRuleRepositoryInterface $cartRuleRepository,
+		OrderRepositoryInterface $orderRepository
 	) {
-        $this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
-        $this->orderCartRuleRepository = $orderCartRuleRepository;
-        $this->cartRuleRepository = $cartRuleRepository;
-        $this->orderRepository = $orderRepository;
-    }
+		$this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
+		$this->orderCartRuleRepository = $orderCartRuleRepository;
+		$this->cartRuleRepository = $cartRuleRepository;
+		$this->orderRepository = $orderRepository;
+	}
 
 	/**
 	 * {@inheritDoc}

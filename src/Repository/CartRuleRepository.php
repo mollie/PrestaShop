@@ -40,8 +40,8 @@ use CartRule;
 
 final class CartRuleRepository extends AbstractRepository implements CartRuleRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(CartRule::class);
-    }
+	public function __construct()
+	{
+		parent::__construct(CartRule::class);
+	}
 }

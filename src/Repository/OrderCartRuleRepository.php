@@ -41,14 +41,14 @@ use OrderCartRule;
 
 final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(OrderCartRule::class);
-    }
+	public function __construct()
+	{
+		parent::__construct(OrderCartRule::class);
+	}
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
 	{
 		return (bool) Db::getInstance()->delete(

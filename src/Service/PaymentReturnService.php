@@ -95,7 +95,7 @@ class PaymentReturnService
 		PaymentMethodRepository $paymentMethodRepository,
 		RepeatOrderLinkFactory $orderLinkFactory,
 		TransactionService $transactionService,
-        CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
+		CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
 	) {
 		$this->module = $module;
 		$this->context = Context::getContext();

@@ -40,9 +40,9 @@ use Cart;
 
 interface CartRuleQuantityResetHandlerInterface
 {
-    /**
-     * @param Cart $cart
-     * @param array $cartRules
-     */
-    public function handle(Cart $cart, $cartRules = []);
+	/**
+	 * @param Cart $cart
+	 * @param array $cartRules
+	 */
+	public function handle(Cart $cart, $cartRules = []);
 }
