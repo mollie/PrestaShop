@@ -117,34 +117,12 @@ class CartRuleHandler implements CartRuleHandlerInterface
 
         foreach ($cartRules as $cartRuleContent) {
             $cartRule = new CartRule($cartRuleContent['id_cart_rule']);
-            $orderCartRuleData = $this->orderCartRuleRepository->getOrderCartRule($order, $cartRule);
+            $orderCartRuleData = $this->pendingOrderCartRuleRepository->getPendingOrderCartRule($order, $cartRule);
 
             $this->decreaseAvailableCartRuleQuantity($cartRule);
-            $this->usePendingOrderCartRule($order, $orderCartRuleData);
+            $this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $orderCartRuleData);
             $this->pendingOrderCartRuleRepository->removePreviousPendingOrderCartRule($order, $cartRule);
         }
-    }
-
-    /**
-     * @param Order $order
-     * @param array $orderCartRuleData
-     */
-    private function usePendingOrderCartRule($order, $orderCartRuleData)
-    {
-        if (empty($orderCartRuleData)) {
-            return;
-        }
-
-        $order->addCartRule(
-            $orderCartRuleData['id_cart_rule'],
-            $orderCartRuleData['name'],
-            [
-                'tax_incl' => $orderCartRuleData['value_tax_incl'],
-                'tax_excl' => $orderCartRuleData['value_tax_excl']
-            ],
-            $orderCartRuleData['id_order_invoice'],
-            $orderCartRuleData['free_shipping']
-        );
     }
 
     /**
