@@ -189,9 +189,8 @@ class PaymentReturnService
 			}
 		}
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
-
-		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-		/* @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
+        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 		$this->cartRuleHandler->handle(
 			$cart,
 			Config::RESTORE_CART_BACKTRACE_RETURN_CONTROLLER,
