@@ -97,7 +97,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		$this->ajaxDie(json_encode(
 			[
 				'success' => true,
-				'paymentStatus' => $method->enabled,
+				'paymentStatus' => (int) $method->enabled,
 			]
 		));
 	}
