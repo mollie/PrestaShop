@@ -338,7 +338,7 @@ class Mollie extends PaymentModule
 		Media::addJsDef([
 			'description_message' => $this->l('Description cannot be empty'),
 			'profile_id_message' => $this->l('Wrong profile ID'),
-			'profile_id_message_empty' => $this->l('Profile ID cannot be empty'),
+			'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
 			'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
 			'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
 		]);
