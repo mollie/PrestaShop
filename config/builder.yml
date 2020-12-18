@@ -15,7 +15,7 @@ services:
   Mollie\Builder\ApiTestFeedbackBuilder:
     arguments:
       - '@=service("mollie.factory.module_factory").getModuleVersion()'
-      - '@Mollie\Service\ApiService'
+      - '@Mollie\Service\ApiKeyService'
 
   Mollie\Builder\InvoicePdfTemplateBuilder:
     arguments:
