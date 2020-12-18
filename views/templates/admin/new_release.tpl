@@ -35,7 +35,7 @@
         <div class="alert alert-warning">
             <button type="button" class="close js-mollie-upgrade-tip-close" data-dismiss="alert">×</button>
             <ul class="list-unstyled">
-                {$github_url|escape:'html':'UTF-8'}
+                {$github_url}
             </ul>
         </div>
     </div>
