@@ -27,3 +27,15 @@ services:
   Mollie\Repository\AttributeRepository:
 
   Mollie\Repository\OrderStateRepository:
+
+  Mollie\Repository\OrderRepository:
+    class: Mollie\Repository\OrderRepository
+
+  Mollie\Repository\OrderCartRuleRepository:
+    class: Mollie\Repository\OrderCartRuleRepository
+
+  Mollie\Repository\CartRuleRepository:
+    class: Mollie\Repository\CartRuleRepository
+
+  Mollie\Repository\PendingOrderCartRuleRepository:
+    class: Mollie\Repository\PendingOrderCartRuleRepository

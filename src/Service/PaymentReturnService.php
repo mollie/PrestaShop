@@ -37,9 +37,11 @@
 namespace Mollie\Service;
 
 use Cart;
+use CartRule;
 use Context;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\OrderStatusUtility;
 use MolliePrefix\Mollie\Api\Types\OrderStatus;
@@ -82,12 +84,18 @@ class PaymentReturnService
 	 */
 	private $transactionService;
 
+	/**
+	 * @var CartRuleQuantityChangeHandlerInterface
+	 */
+	private $cartRuleQuantityChangeHandlerInterface;
+
 	public function __construct(
 		Mollie $module,
 		CartDuplicationService $cartDuplicationService,
 		PaymentMethodRepository $paymentMethodRepository,
 		RepeatOrderLinkFactory $orderLinkFactory,
-		TransactionService $transactionService
+		TransactionService $transactionService,
+		CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
 	) {
 		$this->module = $module;
 		$this->context = Context::getContext();
@@ -95,6 +103,7 @@ class PaymentReturnService
 		$this->paymentMethodRepository = $paymentMethodRepository;
 		$this->orderLinkFactory = $orderLinkFactory;
 		$this->transactionService = $transactionService;
+		$this->cartRuleQuantityChangeHandlerInterface = $cartRuleQuantityChangeHandlerInterface;
 	}
 
 	public function handlePendingStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
@@ -115,6 +124,9 @@ class PaymentReturnService
 		}
 
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
@@ -142,6 +154,9 @@ class PaymentReturnService
 		}
 
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
@@ -164,6 +179,9 @@ class PaymentReturnService
 			}
 		}
 		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
@@ -171,7 +189,7 @@ class PaymentReturnService
 	public function handleFailedStatus(Order $order, $transaction, $orderStatus, $paymentMethod)
 	{
 		if (null !== $paymentMethod) {
-			$this->cartDuplicationService->restoreCart($order->id_cart);
+			$this->cartDuplicationService->restoreCart($order->id_cart, Config::RESTORE_CART_BACKTRACE_RETURN_CONTROLLER);
 
 			$warning[] = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
 

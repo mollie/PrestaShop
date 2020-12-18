@@ -33,43 +33,47 @@
  * @see       https://www.mollie.nl
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Service;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use CartRule;
+use Context;
+use Mollie\Repository\CartRuleRepository;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class CartRuleDuplicationService
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	/**
+	 * @var CartRuleRepository
+	 */
+	private $cartRuleRepository;
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
+	public function __construct(CartRuleRepository $cartRuleRepository)
+	{
+		$this->cartRuleRepository = $cartRuleRepository;
+	}
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+	/**
+	 * @param array $cartRules
+	 *
+	 * @return bool
+	 *
+	 * @throws \PrestaShopException
+	 */
+	public function restoreCartRules($cartRules = [])
+	{
+		if (empty($cartRules)) {
+			return true;
+		}
+		$context = Context::getContext();
 
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
+		foreach ($cartRules as $cartRuleContent) {
+			/** @var CartRule $cartRule */
+			$cartRule = $this->cartRuleRepository->findOneBy(['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]);
 
-	Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
-            `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            `id_order` VARCHAR(64) NOT NULL,
-            `id_cart_rule` VARCHAR(64) NOT NULL,
-            `name` VARCHAR(64) NOT NULL,
-            `value_tax_incl` decimal(20,6) NOT NULL,
-            `value_tax_excl` decimal(20,6) NOT NULL,
-            `free_shipping` TINYINT(1) NOT NULL,
-            `id_order_invoice` INT(64) NOT NULL
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-	);
+			if ($cartRule->checkValidity($context, false, false)) {
+				$context->cart->addCartRule($cartRule->id);
+			}
+		}
 
-	return true;
+		return true;
+	}
 }

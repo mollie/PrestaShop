@@ -31,45 +31,30 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Repository;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use Db;
+use OrderCartRule;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	public function __construct()
+	{
+		parent::__construct(OrderCartRule::class);
+	}
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
-
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
-            `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            `id_order` VARCHAR(64) NOT NULL,
-            `id_cart_rule` VARCHAR(64) NOT NULL,
-            `name` VARCHAR(64) NOT NULL,
-            `value_tax_incl` decimal(20,6) NOT NULL,
-            `value_tax_excl` decimal(20,6) NOT NULL,
-            `free_shipping` TINYINT(1) NOT NULL,
-            `id_order_invoice` INT(64) NOT NULL
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-	);
-
-	return true;
+	/**
+	 * {@inheritDoc}
+	 */
+	public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
+	{
+		return (bool) Db::getInstance()->delete(
+			'order_cart_rule',
+			'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
+			1
+		);
+	}
 }

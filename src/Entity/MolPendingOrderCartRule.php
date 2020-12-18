@@ -31,45 +31,59 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
-
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
-
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+class MolPendingOrderCartRule extends ObjectModel
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	/**
+	 * @var int
+	 */
+	public $id_order;
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
+	/**
+	 * @var int
+	 */
+	public $id_cart_rule;
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+	/**
+	 * @var int
+	 */
+	public $id_order_invoice;
 
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
+	/**
+	 * @var string
+	 */
+	public $name;
 
-	Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
-            `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            `id_order` VARCHAR(64) NOT NULL,
-            `id_cart_rule` VARCHAR(64) NOT NULL,
-            `name` VARCHAR(64) NOT NULL,
-            `value_tax_incl` decimal(20,6) NOT NULL,
-            `value_tax_excl` decimal(20,6) NOT NULL,
-            `free_shipping` TINYINT(1) NOT NULL,
-            `id_order_invoice` INT(64) NOT NULL
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-	);
+	/**
+	 * @var float
+	 */
+	public $value_tax_incl;
 
-	return true;
+	/**
+	 * @var float
+	 */
+	public $value_tax_excl;
+
+	/**
+	 * @var bool
+	 */
+	public $free_shipping;
+
+	/**
+	 * @var array
+	 */
+	public static $definition = [
+		'table' => 'mol_pending_order_cart_rule',
+		'primary' => 'id_mol_pending_order_cart_rule',
+		'fields' => [
+			'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'id_cart_rule' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'id_order_invoice' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+			'name' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+			'value_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+			'value_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+			'free_shipping' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+		],
+	];
 }

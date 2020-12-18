@@ -31,45 +31,37 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
+namespace Mollie\Repository;
 
-if (!defined('_PS_VERSION_')) {
-	exit;
-}
+use MolPendingOrderCartRule;
+use Order;
+use OrderCartRule;
 
-/**
- * @param Mollie $module
- *
- * @return bool
- */
-function upgrade_module_4_2_0($module)
+interface PendingOrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-	/** @var Installer $installer */
-	$installer = $module->getMollieContainer(Installer::class);
+	/**
+	 * @param int $orderId
+	 * @param int $cartRuleId
+	 */
+	public function removePreviousPendingOrderCartRule($orderId, $cartRuleId);
 
-	$installer->klarnaPaymentAuthorizedState();
-	$installer->klarnaPaymentShippedState();
+	/**
+	 * Used to create MolPendingOrderCartRule from OrderCartRule to be used later on successful payment to increase customer used cart rule quantity.
+	 *
+	 * @param int $orderId
+	 * @param int $cartRuleId
+	 * @param OrderCartRule $orderCartRule
+	 */
+	public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule);
 
-	$acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-	Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
-
-	$module->registerHook('actionOrderGridQueryBuilderModifier');
-	$module->registerHook('actionOrderGridDefinitionModifier');
-
-	Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
-            `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            `id_order` VARCHAR(64) NOT NULL,
-            `id_cart_rule` VARCHAR(64) NOT NULL,
-            `name` VARCHAR(64) NOT NULL,
-            `value_tax_incl` decimal(20,6) NOT NULL,
-            `value_tax_excl` decimal(20,6) NOT NULL,
-            `free_shipping` TINYINT(1) NOT NULL,
-            `id_order_invoice` INT(64) NOT NULL
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-	);
-
-	return true;
+	/**
+	 * Used to create OrderCartRule from MolPendingOrderCartRule
+	 *
+	 * @param Order $order
+	 * @param MolPendingOrderCartRule $pendingOrderCartRule
+	 */
+	public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule);
 }

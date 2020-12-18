@@ -133,6 +133,19 @@ final class DatabaseTableInstaller implements InstallerInterface
                     ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
+		$sql[] = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
+                `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                `id_order` VARCHAR(64) NOT NULL,
+                `id_cart_rule` VARCHAR(64) NOT NULL,
+                `name` VARCHAR(64) NOT NULL,
+                `value_tax_incl` decimal(20,6) NOT NULL,
+                `value_tax_excl` decimal(20,6) NOT NULL,
+                `free_shipping` TINYINT(1) NOT NULL,
+                `id_order_invoice` INT(64) NOT NULL
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
+        ';
+
 		return $sql;
 	}
 }
