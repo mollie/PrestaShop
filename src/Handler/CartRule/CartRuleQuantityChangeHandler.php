@@ -84,7 +84,7 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
 	 */
 	public function handle(Cart $cart, $cartRules = [])
 	{
-		/** @var Order $order */
+		/** @var Order|null $order */
 		$order = $this->orderRepository->findOneByCartId($cart->id);
 
 		if (empty($order)) {
@@ -92,7 +92,7 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
 		}
 
 		foreach ($cartRules as $cartRuleContent) {
-			/** @var CartRule $cartRule */
+			/** @var CartRule|null $cartRule */
 			$cartRule = $this->cartRuleRepository->findOneBy(
 				['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]
 			);
@@ -100,7 +100,7 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
 			if (empty($cartRule)) {
 				continue;
 			}
-			/** @var MolPendingOrderCartRule $pendingOrderCartRule */
+			/** @var MolPendingOrderCartRule|null $pendingOrderCartRule */
 			$pendingOrderCartRule = $this->pendingOrderCartRuleRepository->findOneBy([
 				'id_order' => (int) $order->id,
 				'id_cart_rule' => (int) $cartRule->id,

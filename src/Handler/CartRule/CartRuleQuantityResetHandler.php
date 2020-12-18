@@ -84,7 +84,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 	 */
 	public function handle(Cart $cart, $cartRules = [], $paymentSuccessful = false)
 	{
-		/** @var Order $order */
+		/** @var Order|null $order */
 		$order = $this->orderRepository->findOneByCartId($cart->id);
 
 		if (empty($order)) {
@@ -92,7 +92,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 		}
 
 		foreach ($cartRules as $cartRuleContent) {
-			/** @var CartRule $cartRule */
+			/** @var CartRule|null $cartRule */
 			$cartRule = $this->cartRuleRepository->findOneBy(
 				['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]
 			);
@@ -101,7 +101,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 				continue;
 			}
 
-			/** @var OrderCartRule $orderCartRule */
+			/** @var OrderCartRule|null $orderCartRule */
 			$orderCartRule = $this->orderCartRuleRepository->findOneBy([
 				'id_order' => (int) $order->id,
 				'id_cart_rule' => (int) $cartRule->id,
