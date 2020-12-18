@@ -30,5 +30,5 @@
 * @package    Mollie
 * @link       https://www.mollie.nl
 *}
-<script src="{$mollieIFrameJS}"></script>
+<script src="{$mollieIFrameJS|escape:'html':'UTF-8'}"></script>
 
