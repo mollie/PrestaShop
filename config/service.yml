@@ -54,7 +54,7 @@ services:
 
   Mollie\Service\ErrorDisplayService:
 
-  Mollie\Service\ImageService:
+  Mollie\Service\OrderStateImageService:
 
   Mollie\Service\CountryService:
     arguments:

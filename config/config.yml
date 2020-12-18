@@ -22,7 +22,7 @@ services:
   Mollie\Install\Installer:
     arguments:
       - '@mollie'
-      - '@Mollie\Service\ImageService'
+      - '@Mollie\Service\OrderStateImageService'
       - '@Mollie\Install\DatabaseTableInstaller'
 
   Mollie\Install\Uninstall:

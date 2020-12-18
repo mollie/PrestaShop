@@ -35,6 +35,7 @@
 
 use Mollie\Config\Config;
 use Mollie\Install\Installer;
+use Mollie\Service\OrderStateImageService;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -70,6 +71,23 @@ function upgrade_module_4_2_0($module)
             `id_order_invoice` INT(64) NOT NULL
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
 	);
+
+	/**
+	 * @var OrderStateImageService $imageService
+	 */
+	$imageService = $module->getMollieContainer(OrderStateImageService::class);
+	$mollieOrderStatuses = Config::getMollieOrderStatuses();
+
+	foreach ($mollieOrderStatuses as $mollieOrderStatus) {
+		$orderStatusId = Configuration::get($mollieOrderStatus);
+
+		if ($orderStatusId) {
+			$imageService->deleteOrderStateLogo($orderStatusId);
+			$imageService->deleteTemporaryOrderStateLogo($orderStatusId);
+			$imageService->createOrderStateLogo($orderStatusId);
+			$imageService->createTemporaryOrderStateLogo($orderStatusId);
+		}
+	}
 
 	return true;
 }
