@@ -52,6 +52,7 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
@@ -110,7 +111,12 @@ class PaymentMethodService
 
 	private $phoneNumberProvider;
 
-	public function __construct(
+    /**
+     * @var PaymentMethodRestrictionValidationInterface
+     */
+    private $paymentMethodRestrictionValidation;
+
+    public function __construct(
 		Mollie $module,
 		PaymentMethodRepository $methodRepository,
 		MethodCountryRepository $methodCountryRepository,
@@ -119,7 +125,8 @@ class PaymentMethodService
 		CustomerService $customerService,
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
-		PhoneNumberProviderInterface $phoneNumberProvider
+		PhoneNumberProviderInterface $phoneNumberProvider,
+        PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -130,7 +137,8 @@ class PaymentMethodService
 		$this->creditCardLogoProvider = $creditCardLogoProvider;
 		$this->paymentMethodSortProvider = $paymentMethodSortProvider;
 		$this->phoneNumberProvider = $phoneNumberProvider;
-	}
+        $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
+    }
 
 	public function savePaymentMethod($method)
 	{
@@ -174,92 +182,62 @@ class PaymentMethodService
 	 *
 	 * @public ✓ This method is part of the public API
 	 */
-	public function getMethodsForCheckout()
-	{
-		$apiKey = EnvironmentUtility::getApiKey();
-		if (!$apiKey) {
-			return [];
-		}
-		/* @phpstan-ignore-next-line */
-		if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
-			return [];
-		}
-		$context = Context::getContext();
-		$iso = Tools::strtolower($context->currency->iso_code);
-		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment);
-		if (empty($methods)) {
-			$methods = [];
-		}
-		$countryCode = Tools::strtolower($context->country->iso_code);
-		$unavailableMethods = [];
+    public function getMethodsForCheckout()
+    {
+        $apiKey = EnvironmentUtility::getApiKey();
+        if (!$apiKey) {
+            return [];
+        }
+        /* @phpstan-ignore-next-line */
+        if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
+            return [];
+        }
+        $context = Context::getContext();
+        $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment);
+        if (empty($methods)) {
+            $methods = [];
+        }
+        $countryCode = Tools::strtolower($context->country->iso_code);
 
-		foreach (Mollie\Config\Config::$defaultMethodAvailability as $methodName => $countries) {
-			if (!in_array($methodName, ['klarnapaylater', 'klarnasliceit'])
-				|| empty($countries)
-			) {
-				continue;
-			}
-			if (!in_array($countryCode, $countries)) {
-				$unavailableMethods[] = $methodName;
-			}
-		}
+        foreach ($methods as $index => $method) {
+            $methodObj = new MolPaymentMethod($method['id_payment_method']);
+            if (!$this->paymentMethodRestrictionValidation->isPaymentMethodValid($methodObj)) {
+                unset($methods[$index]);
+            }
+        }
 
-		foreach ($methods as $index => $method) {
-			$methodObj = new MolPaymentMethod($method['id_payment_method']);
-			if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
-				|| !in_array($iso, Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])
-				|| !$methodObj->enabled
-				|| in_array($methodObj->id_method, $unavailableMethods)
-			) {
-				unset($methods[$index]);
-			}
-			if (Mollie\Config\Config::APPLEPAY === $methodObj->id_method) {
-				if (!Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-					unset($methods[$index]);
-				} elseif ('0' === $_COOKIE['isApplePayMethod']) {
-					unset($methods[$index]);
-				}
-			}
-			if (Config::MOLLIE_VOUCHER_METHOD_ID === $methodObj->id_method) {
-				$totalOrderCost = $context->cart->getOrderTotal(true);
-				if (!$this->isVoucherPaymentAvailable($totalOrderCost)) {
-					unset($methods[$index]);
-				}
-			}
-		}
+        if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
+            foreach ($methods as $index => $methodId) {
+                $methodObj = new MolPaymentMethod($methodId['id_payment_method']);
+                if ($methodObj->is_countries_applicable) {
+                    if (!$this->methodCountryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                        unset($methods[$index]);
+                    }
+                } else {
+                    if ($this->methodCountryRepository->checkIfCountryIsExcluded($methodObj->id_method, $country = Country::getByIso($countryCode))) {
+                        unset($methods[$index]);
+                    }
+                }
+            }
+        }
 
-		if (version_compare(_PS_VERSION_, '1.6.0.9', '>')) {
-			foreach ($methods as $index => $methodId) {
-				$methodObj = new MolPaymentMethod($methodId['id_payment_method']);
-				if ($methodObj->is_countries_applicable) {
-					if (!$this->methodCountryRepository->checkIfMethodIsAvailableInCountry($methodObj->id_method, $country = Country::getByIso($countryCode))) {
-						unset($methods[$index]);
-					}
-				} else {
-					if ($this->methodCountryRepository->checkIfCountryIsExcluded($methodObj->id_method, $country = Country::getByIso($countryCode))) {
-						unset($methods[$index]);
-					}
-				}
-			}
-		}
+        $methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
 
-		$methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
+        foreach ($methods as $key => $method) {
+            $image = json_decode($method['images_json'], true);
+            $methods[$key]['image'] = $image;
+            if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
+                if ($this->creditCardLogoProvider->logoExists()) {
+                    $methods[$key]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
+                }
+            }
+        }
 
-		foreach ($methods as $key => $method) {
-			$image = json_decode($method['images_json'], true);
-			$methods[$key]['image'] = $image;
-			if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
-				if ($this->creditCardLogoProvider->logoExists()) {
-					$methods[$key]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
-				}
-			}
-		}
+        $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
 
-		$methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
-
-		return $methods;
-	}
+        return $methods;
+    }
 
 	/**
 	 * Get payment data.

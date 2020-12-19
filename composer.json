@@ -17,6 +17,11 @@
   "require-dev": {
     "prestashop/php-dev-tools": "^3.0"
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Mollie\\Tests\\": "tests/"
+    }
+  },
   "autoload": {
     "psr-4": {
       "Mollie\\": "src/"

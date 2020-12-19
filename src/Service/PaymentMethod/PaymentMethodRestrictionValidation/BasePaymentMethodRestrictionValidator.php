@@ -58,7 +58,7 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 
 	public function __construct(
 		LegacyContext $context,
-		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider,
+		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider
 	) {
 		$this->context = $context;
 		$this->paymentMethodCurrenciesProvider = $paymentMethodCurrenciesProvider;

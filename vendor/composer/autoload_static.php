@@ -24,6 +24,7 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
     public static $prefixLengthsPsr4 = array (
         'M' => 
         array (
+            'Mollie\\Tests\\' => 13,
             'Mollie\\' => 7,
             'MolliePrefix\\Symfony\\Component\\Stopwatch\\' => 41,
             'MolliePrefix\\Symfony\\Component\\Process\\' => 39,
@@ -68,6 +69,10 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
     );
 
     public static $prefixDirsPsr4 = array (
+        'Mollie\\Tests\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
+        ),
         'Mollie\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
@@ -236,7 +241,6 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'ComposerAutoloaderInit5ff99363f3a94bfd1a9a51f90cf5ccfc' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
         'Composer\\Autoload\\ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc' => __DIR__ . '/..' . '/composer/autoload_static.php',
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'MolCarrierInformation' => __DIR__ . '/../..' . '/src/Entity/MolCarrierInformation.php',
         'MolCustomer' => __DIR__ . '/../..' . '/src/Entity/MolCustomer.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
@@ -273,9 +277,9 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'MolliePrefix\\Constant_Check' => __DIR__ . '/..' . '/prestashop/php-dev-tools/tests/modules_samples/constant_check/constant_check.php',
         'MolliePrefix\\DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
         'MolliePrefix\\Error' => __DIR__ . '/..' . '/paragonie/random_compat/lib/error_polyfill.php',
-        'MolliePrefix\\Fakemodule' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/module-samples/fakemodule/fakemodule.php',
+        'MolliePrefix\\Fakemodule' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/expected/fakemodule/fakemodule.php',
         'MolliePrefix\\FolderComparator' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/runner/FolderComparator.php',
-        'MolliePrefix\\Gsitemap' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/module-samples/gsitemap/gsitemap.php',
+        'MolliePrefix\\Gsitemap' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/expected/gsitemap/gsitemap.php',
         'MolliePrefix\\GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'MolliePrefix\\GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
         'MolliePrefix\\GuzzleHttp\\Cookie\\CookieJar' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -1050,11 +1054,12 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'MolliePrefix\\Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         'MolliePrefix\\Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'MolliePrefix\\TypeError' => __DIR__ . '/..' . '/paragonie/random_compat/lib/error_polyfill.php',
-        'MolliePrefix\\dashproducts' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/module-samples/dashproducts/dashproducts.php',
+        'MolliePrefix\\dashproducts' => __DIR__ . '/..' . '/prestashop/header-stamp/tests/integration/expected/dashproducts/dashproducts.php',
         'MollieQrcodeModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/qrcode.php',
         'MollieReturnModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/return.php',
         'MollieWebhookModuleFrontController' => __DIR__ . '/../..' . '/controllers/front/webhook.php',
         'Mollie\\Adapter\\ConfigurationAdapter' => __DIR__ . '/../..' . '/src/Adapter/ConfigurationAdapter.php',
+        'Mollie\\Adapter\\LegacyContext' => __DIR__ . '/../..' . '/src/Adapter/LegacyContext.php',
         'Mollie\\Adapter\\ToolsAdapter' => __DIR__ . '/../..' . '/src/Adapter/ToolsAdapter.php',
         'Mollie\\Builder\\ApiTestFeedbackBuilder' => __DIR__ . '/../..' . '/src/Builder/ApiTestFeedbackBuilder.php',
         'Mollie\\Builder\\FormBuilder' => __DIR__ . '/../..' . '/src/Builder/FormBuilder.php',
@@ -1101,6 +1106,10 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'Mollie\\Provider\\AbstractCustomLogoProvider' => __DIR__ . '/../..' . '/src/Provider/AbstractCustomLogoProvider.php',
         'Mollie\\Provider\\CreditCardLogoProvider' => __DIR__ . '/../..' . '/src/Provider/CreditCardLogoProvider.php',
         'Mollie\\Provider\\CustomLogoProviderInterface' => __DIR__ . '/../..' . '/src/Provider/CustomLogoProviderInterface.php',
+        'Mollie\\Provider\\PaymentMethod\\PaymentMethodCountryProvider' => __DIR__ . '/../..' . '/src/Provider/PaymentMethod/PaymentMethodCountryProvider.php',
+        'Mollie\\Provider\\PaymentMethod\\PaymentMethodCountryProviderInterface' => __DIR__ . '/../..' . '/src/Provider/PaymentMethod/PaymentMethodCountryProviderInterface.php',
+        'Mollie\\Provider\\PaymentMethod\\PaymentMethodCurrencyProvider' => __DIR__ . '/../..' . '/src/Provider/PaymentMethod/PaymentMethodCurrencyProvider.php',
+        'Mollie\\Provider\\PaymentMethod\\PaymentMethodCurrencyProviderInterface' => __DIR__ . '/../..' . '/src/Provider/PaymentMethod/PaymentMethodCurrencyProviderInterface.php',
         'Mollie\\Provider\\PhoneNumberProvider' => __DIR__ . '/../..' . '/src/Provider/PhoneNumberProvider.php',
         'Mollie\\Provider\\PhoneNumberProviderInterface' => __DIR__ . '/../..' . '/src/Provider/PhoneNumberProviderInterface.php',
         'Mollie\\Repository\\AbstractRepository' => __DIR__ . '/../..' . '/src/Repository/AbstractRepository.php',
@@ -1149,6 +1158,13 @@ class ComposerStaticInit5ff99363f3a94bfd1a9a51f90cf5ccfc
         'Mollie\\Service\\OrderStateImageService' => __DIR__ . '/../..' . '/src/Service/OrderStateImageService.php',
         'Mollie\\Service\\OrderStatusService' => __DIR__ . '/../..' . '/src/Service/OrderStatusService.php',
         'Mollie\\Service\\PaymentMethodService' => __DIR__ . '/../..' . '/src/Service/PaymentMethodService.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidationInterface' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidationInterface.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation\\ApplePayPaymentMethodRestrictionValidator' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation/ApplePayPaymentMethodRestrictionValidator.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation\\BasePaymentMethodRestrictionValidator' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation/BasePaymentMethodRestrictionValidator.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation\\KlarnaPayLaterPaymentMethodRestrictionValidator' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation/KlarnaPayLaterPaymentMethodRestrictionValidator.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation\\KlarnaSliceItPaymentMethodRestrictionValidator' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation/KlarnaSliceItPaymentMethodRestrictionValidator.php',
+        'Mollie\\Service\\PaymentMethod\\PaymentMethodRestrictionValidation\\PaymentMethodRestrictionValidatorInterface' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodRestrictionValidation/PaymentMethodRestrictionValidatorInterface.php',
         'Mollie\\Service\\PaymentMethod\\PaymentMethodSortProvider' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodSortProvider.php',
         'Mollie\\Service\\PaymentMethod\\PaymentMethodSortProviderInterface' => __DIR__ . '/../..' . '/src/Service/PaymentMethod/PaymentMethodSortProviderInterface.php',
         'Mollie\\Service\\PaymentReturnService' => __DIR__ . '/../..' . '/src/Service/PaymentReturnService.php',

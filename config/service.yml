@@ -12,6 +12,7 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
 
   Mollie\Service\ApiService:
     arguments:

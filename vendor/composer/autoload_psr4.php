@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Mollie\\Tests\\' => array($baseDir . '/tests'),
     'Mollie\\' => array($baseDir . '/src'),
     'MolliePrefix\\Symfony\\Component\\Stopwatch\\' => array($vendorDir . '/symfony/stopwatch'),
     'MolliePrefix\\Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),
