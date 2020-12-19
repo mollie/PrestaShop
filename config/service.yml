@@ -192,3 +192,9 @@ services:
       - '@Mollie\Repository\OrderCartRuleRepository'
       - '@Mollie\Repository\CartRuleRepository'
       - '@Mollie\Repository\OrderRepository'
+
+  Mollie\Service\OrderTotal\OrderTotalService:
+    class: Mollie\Service\OrderTotal\OrderTotalService
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\OrderTotalRestrictionProvider'

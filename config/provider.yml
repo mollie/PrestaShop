@@ -13,3 +13,8 @@ services:
 
   Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider:
     class: Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider
+
+  Mollie\Provider\OrderTotalRestrictionProvider:
+    class: Mollie\Provider\OrderTotalRestrictionProvider
+    arguments:
+      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
