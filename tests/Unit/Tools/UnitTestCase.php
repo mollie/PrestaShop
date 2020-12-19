@@ -4,12 +4,9 @@ namespace Mollie\Tests\Unit\Tools;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
-use Mollie\Provider\OrderTotalProvider;
-use Mollie\Provider\OrderTotalRestrictionProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Service\OrderTotal\OrderTotalService;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 
