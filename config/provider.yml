@@ -7,3 +7,9 @@ services:
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
 
   Mollie\Provider\PhoneNumberProvider:
+
+  Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider
+
+  Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider
