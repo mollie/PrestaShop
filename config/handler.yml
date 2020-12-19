@@ -6,3 +6,10 @@ services:
   Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface: '@Mollie\Handler\Settings\PaymentMethodPositionHandler'
 
   Mollie\Handler\Exception\OrderExceptionHandler:
+
+  Mollie\Handler\PaymentOption\PaymentOptionHandler:
+    class: Mollie\Handler\PaymentOption\PaymentOptionHandler
+    arguments:
+      - '@Mollie\Provider\PaymentOption\BasePaymentOptionProvider'
+      - '@Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider'
+      - '@Mollie\Provider\PaymentOption\IdealPaymentOptionProvider'
