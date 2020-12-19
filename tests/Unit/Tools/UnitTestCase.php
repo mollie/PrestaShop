@@ -130,55 +130,55 @@ class UnitTestCase extends TestCase
 		return $configurationAdapter;
 	}
 
-    public function mockOrderTotalRestrictionProvider($minimumValue, $maximumValue)
-    {
-        $orderTotalRestrictionProvider = $this->getMockBuilder(OrderTotalRestrictionProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+	public function mockOrderTotalRestrictionProvider($minimumValue, $maximumValue)
+	{
+		$orderTotalRestrictionProvider = $this->getMockBuilder(OrderTotalRestrictionProvider::class)
+			->disableOriginalConstructor()
+			->getMock();
 
-        $orderTotalRestrictionProvider
-            ->method('provideOrderTotalMinimumRestriction')
-            ->willReturn($minimumValue)
-        ;
+		$orderTotalRestrictionProvider
+			->method('provideOrderTotalMinimumRestriction')
+			->willReturn($minimumValue)
+		;
 
-        $orderTotalRestrictionProvider
-            ->method('provideOrderTotalMaximumRestriction')
-            ->willReturn($maximumValue)
-        ;
+		$orderTotalRestrictionProvider
+			->method('provideOrderTotalMaximumRestriction')
+			->willReturn($maximumValue)
+		;
 
-        return $orderTotalRestrictionProvider;
-    }
+		return $orderTotalRestrictionProvider;
+	}
 
-    public function mockOrderTotalService($isOrderTotalHigherThanMaximum, $isOrderTotalLowerThanMinimum)
-    {
-        $orderTotalService = $this->getMockBuilder(OrderTotalService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+	public function mockOrderTotalService($isOrderTotalHigherThanMaximum, $isOrderTotalLowerThanMinimum)
+	{
+		$orderTotalService = $this->getMockBuilder(OrderTotalService::class)
+			->disableOriginalConstructor()
+			->getMock();
 
-        $orderTotalService
-            ->method('isOrderTotalLowerThanMinimumAllowed')
-            ->willReturn($isOrderTotalLowerThanMinimum)
-        ;
+		$orderTotalService
+			->method('isOrderTotalLowerThanMinimumAllowed')
+			->willReturn($isOrderTotalLowerThanMinimum)
+		;
 
-        $orderTotalService
-            ->method('isOrderTotalHigherThanMaximumAllowed')
-            ->willReturn($isOrderTotalHigherThanMaximum)
-        ;
+		$orderTotalService
+			->method('isOrderTotalHigherThanMaximumAllowed')
+			->willReturn($isOrderTotalHigherThanMaximum)
+		;
 
-        return $orderTotalService;
-    }
+		return $orderTotalService;
+	}
 
-    public function mockOrderTotalProvider($orderTotal)
-    {
-        $orderTotalProvider = $this->getMockBuilder(OrderTotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+	public function mockOrderTotalProvider($orderTotal)
+	{
+		$orderTotalProvider = $this->getMockBuilder(OrderTotalProvider::class)
+			->disableOriginalConstructor()
+			->getMock();
 
-        $orderTotalProvider
-            ->method('provideOrderTotal')
-            ->willReturn($orderTotal)
-        ;
+		$orderTotalProvider
+			->method('provideOrderTotal')
+			->willReturn($orderTotal)
+		;
 
-        return $orderTotalProvider;
-    }
+		return $orderTotalProvider;
+	}
 }

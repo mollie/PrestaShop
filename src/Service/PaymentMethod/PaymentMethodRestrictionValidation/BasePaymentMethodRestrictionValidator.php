@@ -55,27 +55,27 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private $paymentMethodCurrenciesProvider;
 
-    /**
-     * @var OrderTotalServiceInterface
-     */
-    private $orderTotalService;
+	/**
+	 * @var OrderTotalServiceInterface
+	 */
+	private $orderTotalService;
 
-    /**
-     * @var OrderTotalProviderInterface
-     */
-    private $orderTotalProvider;
+	/**
+	 * @var OrderTotalProviderInterface
+	 */
+	private $orderTotalProvider;
 
-    public function __construct(
+	public function __construct(
 		LegacyContext $context,
 		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider,
-        OrderTotalServiceInterface $orderTotalService,
-        OrderTotalProviderInterface $orderTotalProvider
+		OrderTotalServiceInterface $orderTotalService,
+		OrderTotalProviderInterface $orderTotalProvider
 	) {
 		$this->context = $context;
 		$this->paymentMethodCurrenciesProvider = $paymentMethodCurrenciesProvider;
-        $this->orderTotalService = $orderTotalService;
-        $this->orderTotalProvider = $orderTotalProvider;
-    }
+		$this->orderTotalService = $orderTotalService;
+		$this->orderTotalProvider = $orderTotalProvider;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -94,13 +94,13 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 			return false;
 		}
 
-        if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
-            return false;
-        }
+		if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
+			return false;
+		}
 
-        if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
-            return false;
-        }
+		if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
+			return false;
+		}
 
 		return true;
 	}
@@ -149,27 +149,27 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 		);
 	}
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
-    private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
-    {
-        $orderTotal = $this->orderTotalProvider->provideOrderTotal();
+	/**
+	 * @param MolPaymentMethod $paymentMethod
+	 *
+	 * @return bool
+	 */
+	private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
+	{
+		$orderTotal = $this->orderTotalProvider->provideOrderTotal();
 
-        return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
-    }
+		return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
+	}
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
-    private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
-    {
-        $orderTotal = $this->orderTotalProvider->provideOrderTotal();
+	/**
+	 * @param MolPaymentMethod $paymentMethod
+	 *
+	 * @return bool
+	 */
+	private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
+	{
+		$orderTotal = $this->orderTotalProvider->provideOrderTotal();
 
-        return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
-    }
+		return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
+	}
 }
