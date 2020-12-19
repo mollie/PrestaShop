@@ -13,6 +13,8 @@ parameters:
     - ../../src/Command
     - ../../src/Grid/*
     - ../../src/Controller/AdminMollieEmailController
+    - ../../src/Provider/PaymentOption/*
+    - ../../src/Handler/PaymentOption/*
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -56,6 +58,10 @@ parameters:
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
     - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setAdditionalInformation\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setAction\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setModuleName\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setLogo\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Class PrestaShopBundle\\Controller\\Admin\\FrameworkBundleAdminController not found.#'
 
   level: 5
