@@ -404,16 +404,16 @@ class FormBuilder
 			]
 		);
 
-        $input[] = [
-            'type' => 'mollie-button-update-order-total-restriction',
-            'label' => '',
-            'tab' => $generalSettings,
-            'name' => Config::MOLLIE_BUTTON_ORDER_TOTAL_REFRESH,
-            'text' => $this->module->l('Refresh order total restriction values', self::FILE_NAME),
-            'class' => 'js-refresh-order-total-values',
-            'form_group_class' => 'js-refresh-order-total',
-            'help' => $this->module->l('Will refresh all available payment method order total restriction values by all currencies', self::FILE_NAME),
-        ];
+		$input[] = [
+			'type' => 'mollie-button-update-order-total-restriction',
+			'label' => '',
+			'tab' => $generalSettings,
+			'name' => Config::MOLLIE_BUTTON_ORDER_TOTAL_REFRESH,
+			'text' => $this->module->l('Refresh order total restriction values', self::FILE_NAME),
+			'class' => 'js-refresh-order-total-values',
+			'form_group_class' => 'js-refresh-order-total',
+			'help' => $this->module->l('Will refresh all available payment method order total restriction values by all currencies', self::FILE_NAME),
+		];
 
 		$input[] = [
 			'type' => 'mollie-h2',

@@ -309,7 +309,7 @@ class Config
 		'voucher' => 'Voucher',
 	];
 
-    const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
+	const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
 	public static function getStatuses()
 	{

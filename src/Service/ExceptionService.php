@@ -64,17 +64,17 @@ class ExceptionService
 					OrderCreationException::ORDER_TOTAL_LOWER_THAN_MINIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
 					OrderCreationException::ORDER_TOTAL_HIGHER_THAN_MAXIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
 			],
-            OrderTotalRestrictionException::class => [
-                OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND => $this->module->l(
-                    'Failed to refresh order total restriction values: None available payment methods were found', self::SHORT_CLASS_NAME
-                ),
-                OrderTotalRestrictionException::NO_AVAILABLE_CURRENCIES_FOUND => $this->module->l(
-                    'Failed to refresh order total restriction values: None available currencies were found', self::SHORT_CLASS_NAME
-                ),
-                OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED => $this->module->l(
-                    'Failed to save payment method order restriction', self::SHORT_CLASS_NAME
-                ),
-            ],
+			OrderTotalRestrictionException::class => [
+				OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND => $this->module->l(
+					'Failed to refresh order total restriction values: None available payment methods were found', self::SHORT_CLASS_NAME
+				),
+				OrderTotalRestrictionException::NO_AVAILABLE_CURRENCIES_FOUND => $this->module->l(
+					'Failed to refresh order total restriction values: None available currencies were found', self::SHORT_CLASS_NAME
+				),
+				OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED => $this->module->l(
+					'Failed to save payment method order restriction', self::SHORT_CLASS_NAME
+				),
+			],
 		];
 	}
 

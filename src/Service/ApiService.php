@@ -107,28 +107,28 @@ class ApiService
 		$this->transactionService = $transactionService;
 	}
 
-    /**
-     * @param MollieApiClient $api
-     * @param string $paymentId
-     * @param string $currencyIso
-     *
-     * @return Method|null
-     */
-    public function getPaymentMethodOrderTotalRestriction(MollieApiClient $api, $paymentId, $currencyIso)
-    {
-        try {
-            /** @var Method $paymentMethodConfig */
-            $paymentMethodConfig = $api->methods->get($paymentId, [
-                'currency' => $currencyIso,
-            ]);
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog('Mollie returned error on getPaymentMethodOrderTotalRestriction: ' . $e->getMessage());
+	/**
+	 * @param MollieApiClient $api
+	 * @param string $paymentId
+	 * @param string $currencyIso
+	 *
+	 * @return Method|null
+	 */
+	public function getPaymentMethodOrderTotalRestriction(MollieApiClient $api, $paymentId, $currencyIso)
+	{
+		try {
+			/** @var Method $paymentMethodConfig */
+			$paymentMethodConfig = $api->methods->get($paymentId, [
+				'currency' => $currencyIso,
+			]);
+		} catch (Exception $e) {
+			PrestaShopLogger::addLog('Mollie returned error on getPaymentMethodOrderTotalRestriction: ' . $e->getMessage());
 
-            return null;
-        }
+			return null;
+		}
 
-        return $paymentMethodConfig;
-    }
+		return $paymentMethodConfig;
+	}
 
 	/**
 	 * Get payment methods to show on the configuration page.
