@@ -741,64 +741,64 @@ class Mollie extends PaymentModule
 	 */
 	public function hookPaymentOptions($params)
 	{
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
-            return [];
-        }
+		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
+			return [];
+		}
 
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
+		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+		$paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
 
-        /** @var \Mollie\Service\IssuerService $issuerService */
-        $issuerService = $this->getMollieContainer(\Mollie\Service\IssuerService::class);
+		/** @var \Mollie\Service\IssuerService $issuerService */
+		$issuerService = $this->getMollieContainer(\Mollie\Service\IssuerService::class);
 
-        /** @var \Mollie\Validator\VoucherValidator $voucherValidator */
-        $voucherValidator = $this->getMollieContainer(\Mollie\Validator\VoucherValidator::class);
+		/** @var \Mollie\Validator\VoucherValidator $voucherValidator */
+		$voucherValidator = $this->getMollieContainer(\Mollie\Validator\VoucherValidator::class);
 
-        $methods = $paymentMethodService->getMethodsForCheckout();
-        $issuerList = [];
+		$methods = $paymentMethodService->getMethodsForCheckout();
+		$issuerList = [];
 
-        foreach ($methods as $method) {
-            $methodObj = new MolPaymentMethod($method['id_payment_method']);
-            if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $methodObj->id_method) {
-                $issuerList = $issuerService->getIdealIssuers();
-            }
-        }
+		foreach ($methods as $method) {
+			$methodObj = new MolPaymentMethod($method['id_payment_method']);
+			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $methodObj->id_method) {
+				$issuerList = $issuerService->getIdealIssuers();
+			}
+		}
 
-        $context = Context::getContext();
-        $cart = $context->cart;
+		$context = Context::getContext();
+		$cart = $context->cart;
 
-        $context->smarty->assign([
-            'idealIssuers' => isset($issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL])
-                ? $issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL]
-                : [],
-            'link' => $this->context->link,
-            'qrCodeEnabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
-            'qrAlign' => 'left',
-            'cartAmount' => (int) ($cart->getOrderTotal(true) * 100),
-            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-        ]);
-        $paymentOptions = [];
+		$context->smarty->assign([
+			'idealIssuers' => isset($issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL])
+				? $issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL]
+				: [],
+			'link' => $this->context->link,
+			'qrCodeEnabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
+			'qrAlign' => 'left',
+			'cartAmount' => (int) ($cart->getOrderTotal(true) * 100),
+			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+		]);
+		$paymentOptions = [];
 
-        /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandler $paymentOptionsHandler */
-        $paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandler::class);
+		/** @var \Mollie\Handler\PaymentOption\PaymentOptionHandler $paymentOptionsHandler */
+		$paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandler::class);
 
-        foreach ($methods as $method) {
-            $methodObj = new MolPaymentMethod($method['id_payment_method']);
+		foreach ($methods as $method) {
+			$methodObj = new MolPaymentMethod($method['id_payment_method']);
 
-            $isVoucherMethod = \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID === $methodObj->getPaymentMethodName();
-            $hasVoucherProducts = $voucherValidator->validate($cart->getProducts());
-            if ($isVoucherMethod && !$hasVoucherProducts) {
-                continue;
-            }
-            $paymentOption = $paymentOptionsHandler->handle($methodObj);
+			$isVoucherMethod = \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID === $methodObj->getPaymentMethodName();
+			$hasVoucherProducts = $voucherValidator->validate($cart->getProducts());
+			if ($isVoucherMethod && !$hasVoucherProducts) {
+				continue;
+			}
+			$paymentOption = $paymentOptionsHandler->handle($methodObj);
 
-            if (empty($paymentOption)) {
-                continue;
-            }
-            $paymentOptions[] = $paymentOption;
-        }
+			if (empty($paymentOption)) {
+				continue;
+			}
+			$paymentOptions[] = $paymentOption;
+		}
 
-        return $paymentOptions;
+		return $paymentOptions;
 	}
 
 	/**
