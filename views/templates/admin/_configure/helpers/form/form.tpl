@@ -732,6 +732,17 @@
                 {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
             </div>
         </div>
+
+    {elseif $input.type === 'mollie-button-update-order-total-restriction'}
+        <div>
+            <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+        </div>
+        <div>
+            <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
+        </div>
+        <div>
+            <span class="order-total-restriction-refresh-message"></span>
+        </div>
     {else}
         {$smarty.block.parent}
     {/if}

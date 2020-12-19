@@ -355,6 +355,7 @@ class Mollie extends PaymentModule
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_total_restriction_refresh.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
