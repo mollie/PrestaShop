@@ -8,6 +8,11 @@ parameters:
     - ../../src
     - ../../controllers
     - ../../mollie.php
+  excludes_analyse:
+    - ../../controllers/front/ajax.php
+    - ../../src/Command
+    - ../../src/Grid/*
+    - ../../src/Controller/AdminMollieEmailController
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
@@ -25,5 +30,9 @@ parameters:
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
     - '#Variable \$order in PHPDoc tag \@var does not match assigned variable \$mollieOrder.#'
     - '#PHPDoc tag \@var for variable \$emailAlertsModule contains unknown class Ps_EmailAlerts.#'
+    - '#Access to an undefined property AdminController\|FrontController::\$warning.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
+    - '#Parameter \#4 \$template_vars of static method MailCore::Send\(\) expects string, array given.#'
 
   level: 5
