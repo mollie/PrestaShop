@@ -191,3 +191,11 @@ services:
       - '@Mollie\Repository\OrderCartRuleRepository'
       - '@Mollie\Repository\CartRuleRepository'
       - '@Mollie\Repository\OrderRepository'
+
+  Mollie\Service\Shipment\ShipmentInformationSender:
+    class: Mollie\Service\Shipment\ShipmentInformationSender
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Service\ShipmentService'
+
+  Mollie\Service\Shipment\ShipmentInformationSenderInterface: '@Mollie\Service\Shipment\ShipmentInformationSender'

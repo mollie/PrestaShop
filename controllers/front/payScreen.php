@@ -6,7 +6,6 @@
  * @copyright   Mollie B.V.
  *
  * @see        https://github.com/mollie/PrestaShop
- *
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */

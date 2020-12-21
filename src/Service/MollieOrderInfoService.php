@@ -36,9 +36,9 @@ class MollieOrderInfoService
 	 * @var CancelService
 	 */
 	private $cancelService;
-	/**
-	 * @var ShipmentService
-	 */
+    /**
+     * @var ShipmentServiceInterface
+     */
 	private $shipmentService;
 	/**
 	 * @var Mollie
@@ -50,13 +50,13 @@ class MollieOrderInfoService
 	private $apiService;
 
 	public function __construct(
-		Mollie $module,
-		PaymentMethodRepository $paymentMethodRepository,
-		RefundService $refundService,
-		ShipService $shipService,
-		CancelService $cancelService,
-		ShipmentService $shipmentService,
-		ApiService $apiService
+        Mollie $module,
+        PaymentMethodRepository $paymentMethodRepository,
+        RefundService $refundService,
+        ShipService $shipService,
+        CancelService $cancelService,
+        ShipmentServiceInterface $shipmentService,
+        ApiService $apiService
 	) {
 		$this->module = $module;
 		$this->paymentMethodRepository = $paymentMethodRepository;

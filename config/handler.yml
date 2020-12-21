@@ -6,3 +6,19 @@ services:
   Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface: '@Mollie\Handler\Settings\PaymentMethodPositionHandler'
 
   Mollie\Handler\Exception\OrderExceptionHandler:
+
+  Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandler:
+    class: Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandler
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProvider'
+      - '@Mollie\Handler\Api\OrderEndpointPaymentTypeHandler'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Service\ShipmentService'
+
+  Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface: '@Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandler'
+
+  Mollie\Handler\Api\OrderEndpointPaymentTypeHandler:
+    class: Mollie\Handler\Api\OrderEndpointPaymentTypeHandler
+    arguments:
+      - '@Mollie\Adapter\ToolsAdapter'
