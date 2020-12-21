@@ -22,9 +22,9 @@ jobs:
     strategy:
       matrix:
         php-versions: ['7.1']
-
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Install PHP
       uses: shivammathur/setup-php@v2

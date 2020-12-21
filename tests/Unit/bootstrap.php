@@ -3,5 +3,5 @@
 $projectDir = __DIR__ . '/../../';
 require_once $projectDir . 'vendor/autoload.php';
 
-$rootDirectory = __DIR__ . '/../../../../';
-require_once $rootDirectory . 'config/config.inc.php';
+require_once $projectDir . '../../config/defines.inc.php';
+require_once _PS_CONFIG_DIR_ . 'config.inc.php';
