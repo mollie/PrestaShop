@@ -31,7 +31,7 @@ jobs:
         run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
 
       - name: Run PHPunit
-        run: docker run --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
+        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 tests/Unit -c tests/Unit/
 
   phpstan:
     name: PHPStan
