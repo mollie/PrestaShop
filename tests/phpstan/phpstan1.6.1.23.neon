@@ -8,5 +8,14 @@ parameters:
     - ../../src/Command
     - ../../src/Grid/*
     - ../../src/Controller/AdminMollieEmailController
-
-  level: 5
+  ignoreErrors:
+    - '#Access to an undefined property AdminController\|FrontController::\$warning.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
+    - '#Parameter \#4 \$template_vars of static method MailCore::Send\(\) expects string, array given.#'
+    - '#Parameter \#4 \$template_vars of static method MailCore::Send\(\) expects string, array<string, mixed> given.#'
+    - '#Call to an undefined method AdminController\|FrontController::registerJavascript\(\).#'
+    - '#PHPDoc tag \@throws with type PrestaShop\\PrestaShop\\Core\\Localization\\Exception\\LocalizationException\|PrestaShopException is not subtype of Throwable#'
+    - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
