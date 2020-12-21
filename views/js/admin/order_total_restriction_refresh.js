@@ -44,7 +44,9 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     response = JSON.parse(response);
-                    $('.order-total-restriction-refresh-message').text(response.message);
+                    var $mollieOrderTotalRestrictionUpdate = $('.mollie-order-total-restriction-update');
+                    $('.js-order-total-refresh-results').remove();
+                    $mollieOrderTotalRestrictionUpdate.after(response.template);
                 }
             }
         )

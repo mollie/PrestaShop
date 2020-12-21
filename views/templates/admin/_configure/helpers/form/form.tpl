@@ -711,14 +711,13 @@
         </div>
 
     {elseif $input.type === 'mollie-button-update-order-total-restriction'}
-        <div>
-            <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
-        </div>
-        <div>
-            <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
-        </div>
-        <div>
-            <span class="order-total-restriction-refresh-message"></span>
+        <div class="mollie-order-total-restriction-update">
+            <div>
+                <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+            </div>
+            <div>
+                <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
+            </div>
         </div>
     {else}
         {$smarty.block.parent}

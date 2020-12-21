@@ -128,11 +128,16 @@ class AdminMollieAjaxController extends ModuleAdminController
 	 */
 	private function refreshOrderTotalRestriction()
 	{
-		/** @var OrderTotalRestrictionServiceInterface $orderTotalRestrictionService */
+        /** @var OrderTotalRestrictionServiceInterface $orderTotalRestrictionService */
 		$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalRestrictionServiceInterface::class);
 
 		/** @var ExceptionService $exceptionService */
 		$exceptionService = $this->module->getMollieContainer(ExceptionService::class);
+
+        $this->context->smarty->assign([
+            'refreshOrderTotalInfoStatus' => true,
+            'errorMessage' => ''
+        ]);
 
 		try {
 			$orderTotalRestrictionService->deleteOrderTotalRestrictions();
@@ -143,18 +148,17 @@ class AdminMollieAjaxController extends ModuleAdminController
 				$exceptionService->getErrorMessages()
 			);
 
-			$this->ajaxDie(json_encode(
-				[
-					'message' => $errorMessage,
-				]
-			));
+            $this->context->smarty->assign([
+                'refreshOrderTotalInfoStatus' => false,
+                'errorMessage' => $errorMessage
+            ]);
 		}
 
-		$this->ajaxDie(json_encode(
-			[
-				'message' => $this->module->l('Successfully updated order total restriction values'),
-			]
-		));
+        $this->ajaxDie(json_encode([
+            'template' => $this->context->smarty->fetch(
+                $this->module->getLocalPath() . 'views/templates/admin/order_total_refresh_results.tpl'
+            ),
+        ]));
 	}
 
 	private function closeUpgradeNotice()
