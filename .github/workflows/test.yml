@@ -19,8 +19,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container:
-      image: prestashop/prestashop:1.7.7.0
     strategy:
       matrix:
         php-versions: ['7.1']
@@ -32,6 +30,8 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
+        bootstrap: vendor/autoload.php
+        configuration: tests/Unit/phpunit.xml
 
     - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
 
