@@ -10,7 +10,6 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
-
 if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
@@ -557,7 +556,7 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
 
-        /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
+		/** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
 		$shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
 
 		$cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
@@ -948,7 +947,8 @@ class Mollie extends PaymentModule
 		return '';
 	}
 
-    //TODO Pretty sure this is not used anywhere
+	//TODO Pretty sure this is not used anywhere
+
 	/**
 	 * @return array
 	 *
@@ -1034,6 +1034,7 @@ class Mollie extends PaymentModule
 	}
 
 	//TODO Pretty sure this is not used anywhere
+
 	/**
 	 * @return array
 	 *
@@ -1087,29 +1088,29 @@ class Mollie extends PaymentModule
 		} else {
 			$orderStatus = new OrderState((int) $params['newOrderStatus']);
 		}
-        $order = new Order($params['id_order']);
+		$order = new Order($params['id_order']);
 
 		if (!Validate::isLoadedObject($orderStatus)) {
-		    return;
-        }
+			return;
+		}
 
-        if (!Validate::isLoadedObject($order)) {
-            return;
-        }
+		if (!Validate::isLoadedObject($order)) {
+			return;
+		}
 
-        /** @var \Mollie\Service\Shipment\ShipmentInformationSenderInterface $shipmentSender */
-        $shipmentSender = $this->getMollieContainer(
-            \Mollie\Service\Shipment\ShipmentInformationSenderInterface::class
-        );
+		/** @var \Mollie\Service\Shipment\ShipmentInformationSenderInterface $shipmentSender */
+		$shipmentSender = $this->getMollieContainer(
+			\Mollie\Service\Shipment\ShipmentInformationSenderInterface::class
+		);
 
-        /** @var \Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface $shipmentDecisionHandler */
-        $shipmentDecisionHandler = $this->getMollieContainer(
-            \Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface::class
-        );
+		/** @var \Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface $shipmentDecisionHandler */
+		$shipmentDecisionHandler = $this->getMollieContainer(
+			\Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface::class
+		);
 
-        if ($shipmentDecisionHandler->canShipmentDataBeSent($order, $orderStatus)) {
-            $shipmentSender->sendShipmentInformation($this->api, $order);
-        }
+		if ($shipmentDecisionHandler->canShipmentDataBeSent($order, $orderStatus)) {
+			$shipmentSender->sendShipmentInformation($this->api, $order);
+		}
 	}
 
 	/**
