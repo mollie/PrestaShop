@@ -28,7 +28,7 @@ jobs:
         run: composer install
 
       - name: PHPUnit tests
-        uses: php-actions/phpunit@v2
+        uses: php-actions/phpunit@v1
         with:
           bootstrap: ./bootstrap.php
           configuration: ./phpunit.xml
