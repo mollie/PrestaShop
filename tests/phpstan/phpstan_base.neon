@@ -1,7 +1,3 @@
-includes:
-  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
-  - %currentWorkingDirectory%/phpstan_base.neon
-
 parameters:
   scanDirectories:
     - %currentWorkingDirectory%/vendor
