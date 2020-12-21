@@ -28,10 +28,10 @@ jobs:
         uses: actions/checkout@v2.0.0
 
       - name: Pull PrestaShop files (Tag 1.7.7.0)
-        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:1.7.7.0
+        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
 
       - name: Run PHPunit
-        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module php:7.1-cli /web/module/tests/phpunit.phar /web/module/tests/Unit/ --bootstrap=/web/module/tests/Unit/bootstrap.php
+        run: docker run --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
 
   phpstan:
     name: PHPStan
