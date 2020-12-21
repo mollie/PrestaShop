@@ -17,36 +17,21 @@ jobs:
         with:
           commit_message: Apply php-cs-fixer changes
 
-  phpunit:
-    name: PHPUNIT
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: [ '7.1' ]
+
     steps:
-      - name: checkout project
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: composer install missing files
-        run: composer install
-
-      - name: PHPUnit tests
-        uses: php-actions/phpunit@v1
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
         with:
-          bootstrap: ./bootstrap.php
-          configuration: ./phpunit.xml
-          memory_limit: 256M
+          php-version: ${{ matrix.php-versions }}
 
-#  test:
-#    name: Unit tests
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      -   name: Checkout
-#          uses: actions/checkout@v2.0.0
-#
-#      -   name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
-#          run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:1.7.7.0
-#
-#      -   name: Run PHPunit tests
-#          run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module  php web/module/tests/phpunit.phar web/module/tests/Unit/ --bootstrap=/web/module/tests/Unit/bootstrap.php
+      - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
 
   phpstan:
     name: PHPStan
