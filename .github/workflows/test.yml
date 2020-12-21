@@ -19,6 +19,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    container:
+      image: prestashop/prestashop:1.7.7.0
     strategy:
       matrix:
         php-versions: ['7.1']
