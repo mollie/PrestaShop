@@ -24,14 +24,14 @@ jobs:
         php-versions: [ '7.1' ]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
+      - name: Pull PrestaShop files (Tag 1.7.7.0)
+        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:1.7.7.0
 
-      - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
+      - name: Run PHPunit
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module php:7.1-cli web/module/tests/phpunit.phar web/module/tests/Unit/ --bootstrap web/module/tests/Unit/bootstrap.php
 
   phpstan:
     name: PHPStan
