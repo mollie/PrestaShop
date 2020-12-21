@@ -1,0 +1,3 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+  - %currentWorkingDirectory%/tests/phpstan/phpstan_base.neon
