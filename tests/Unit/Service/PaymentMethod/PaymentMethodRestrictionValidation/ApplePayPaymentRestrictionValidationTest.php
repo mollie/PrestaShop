@@ -30,7 +30,7 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
 				'configurationAdapter' => $this->mockConfigurationAdapter([
 					'PS_SSL_ENABLED_EVERYWHERE' => true,
 				]),
-				'expectedResult' => false,
+				'expectedResult' => true,
 			],
 			'SSL is not enabled' => [
 				'context' => $this->mockContextWithCookie(1),
