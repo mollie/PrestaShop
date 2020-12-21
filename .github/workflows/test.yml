@@ -33,7 +33,7 @@ jobs:
         bootstrap: vendor/autoload.php
         configuration: tests/Unit/phpunit.xml
 
-    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
+#    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
 
   phpstan:
     name: PHPStan
