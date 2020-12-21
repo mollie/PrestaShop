@@ -1,5 +1,5 @@
 includes:
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
-  - %currentWorkingDirectory%/phpstan_base.neon
+  - %currentWorkingDirectory%/tests/phpstan/phpstan_base.neon
 
   level: 5
