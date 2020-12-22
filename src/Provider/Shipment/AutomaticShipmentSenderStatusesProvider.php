@@ -5,7 +5,7 @@ namespace Mollie\Provider\OrderState;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 
-class OrderStateAutomaticShipmentSenderStatusesProvider implements OrderStateAutomaticShipmentSenderStatusesProviderInterface
+class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSenderStatusesProviderInterface
 {
 	/**
 	 * @var ConfigurationAdapter

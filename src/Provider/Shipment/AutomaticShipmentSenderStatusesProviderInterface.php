@@ -2,7 +2,7 @@
 
 namespace Mollie\Provider\OrderState;
 
-interface OrderStateAutomaticShipmentSenderStatusesProviderInterface
+interface AutomaticShipmentSenderStatusesProviderInterface
 {
 	/**
 	 * @return array
