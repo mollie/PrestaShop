@@ -56,7 +56,7 @@ class OrderTotalProvider implements OrderTotalProviderInterface
 	 *
 	 * @throws Exception
 	 */
-	public function provideOrderTotal()
+	public function getOrderTotal()
 	{
 		return (float) $this->context->getCart()->getOrderTotal();
 	}

@@ -46,7 +46,7 @@ interface OrderTotalRestrictionProviderInterface
 	 *
 	 * @return float
 	 */
-	public function provideOrderTotalMinimumRestriction(MolPaymentMethod $paymentMethod, $currencyIso);
+	public function getOrderTotalMinimumRestriction(MolPaymentMethod $paymentMethod, $currencyIso);
 
 	/**
 	 * @param MolPaymentMethod $paymentMethod
@@ -54,5 +54,5 @@ interface OrderTotalRestrictionProviderInterface
 	 *
 	 * @return float
 	 */
-	public function provideOrderTotalMaximumRestriction(MolPaymentMethod $paymentMethod, $currencyIso);
+	public function getOrderTotalMaximumRestriction(MolPaymentMethod $paymentMethod, $currencyIso);
 }
