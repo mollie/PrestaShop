@@ -8,7 +8,11 @@ services:
 
   Mollie\Provider\PhoneNumberProvider:
 
-  Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProvider:
-    class: Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProvider
+  Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider:
+    class: Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider
     arguments:
       - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Utility\Decoder\JsonDecoder'
+
+  Mollie\Provider\PaymentType\RegularPaymentTypeIdentification:
+    class: Mollie\Provider\PaymentType\RegularPaymentTypeIdentification

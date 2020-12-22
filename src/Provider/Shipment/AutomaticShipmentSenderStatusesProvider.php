@@ -1,9 +1,10 @@
 <?php
 
-namespace Mollie\Provider\OrderState;
+namespace Mollie\Provider\Shipment;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Utility\Decoder\DecoderInterface;
 
 class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSenderStatusesProviderInterface
 {
@@ -12,10 +13,18 @@ class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSender
 	 */
 	private $configurationAdapter;
 
-	public function __construct(ConfigurationAdapter $configurationAdapter)
-	{
+    /**
+     * @var DecoderInterface
+     */
+    private $decoder;
+
+    public function __construct(
+	    ConfigurationAdapter $configurationAdapter,
+        DecoderInterface $decoder
+    ) {
 		$this->configurationAdapter = $configurationAdapter;
-	}
+        $this->decoder = $decoder;
+    }
 
 	/**
 	 * @return array
@@ -23,18 +32,11 @@ class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSender
 	public function provideAutomaticShipmentSenderStatuses()
 	{
 		$autoShipStatuses = $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_STATUSES);
-		$statuses = $this->decodeJson($autoShipStatuses);
 
-		return $statuses ?: [];
-	}
+		if (empty($autoShipStatuses)) {
+		    return [];
+        }
 
-	/**
-	 * @param string $autoShipStatuses
-	 *
-	 * @return array|null
-	 */
-	private function decodeJson($autoShipStatuses)
-	{
-		return json_decode($autoShipStatuses);
+		return $this->decoder->decode($autoShipStatuses) ?: [];
 	}
 }

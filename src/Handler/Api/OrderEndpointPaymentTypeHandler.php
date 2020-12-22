@@ -2,54 +2,32 @@
 
 namespace Mollie\Handler\Api;
 
-use Mollie\Adapter\ToolsAdapter;
 use Mollie\Enum\PaymentTypeEnum;
-use MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint;
+use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 
 class OrderEndpointPaymentTypeHandler implements OrderEndpointPaymentTypeHandlerInterface
 {
-	/**
-	 * @var ToolsAdapter
-	 */
-	private $toolsAdapter;
+    /**
+     * @var PaymentTypeVerificationInterface
+     */
+    private $canBeRegularPaymentTypeVerification;
 
-	public function __construct(ToolsAdapter $toolsAdapter)
+    public function __construct(PaymentTypeVerificationInterface $canBeRegularPaymentTypeVerification)
 	{
-		$this->toolsAdapter = $toolsAdapter;
-	}
+        $this->canBeRegularPaymentTypeVerification = $canBeRegularPaymentTypeVerification;
+    }
 
 	/**
-	 * @param int $transactionId
+	 * @param string $transactionId
 	 *
-	 * @return int
+	 * @return string
 	 */
 	public function retrievePaymentTypeFromTransactionId($transactionId)
 	{
-		if ($this->isRegularPayment($transactionId)) {
-			return PaymentTypeEnum::PAYMENT_TYPE_REGULAR;
-		}
+	    if ($this->canBeRegularPaymentTypeVerification->verify($transactionId)) {
+            return PaymentTypeEnum::PAYMENT_TYPE_REGULAR;
+        }
 
 		return PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND;
-	}
-
-	/**
-	 * @param int $transactionId
-	 *
-	 * @return bool
-	 */
-	private function isRegularPayment($transactionId)
-	{
-		$resourceIdPrefix = OrderEndpoint::RESOURCE_ID_PREFIX;
-		$length = $this->toolsAdapter->strlen($resourceIdPrefix);
-
-		if (!$length) {
-			return false;
-		}
-
-		if ($resourceIdPrefix === $this->toolsAdapter->substr($transactionId, 0, $length)) {
-			return false;
-		}
-
-		return true;
 	}
 }

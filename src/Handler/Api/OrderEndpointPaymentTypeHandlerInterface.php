@@ -5,9 +5,9 @@ namespace Mollie\Handler\Api;
 interface OrderEndpointPaymentTypeHandlerInterface
 {
 	/**
-	 * @param int $transactionId
+	 * @param string $transactionId
 	 *
-	 * @return int
+	 * @return string
 	 */
 	public function retrievePaymentTypeFromTransactionId($transactionId);
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Provider\OrderState;
+namespace Mollie\Provider\Shipment;
 
 interface AutomaticShipmentSenderStatusesProviderInterface
 {

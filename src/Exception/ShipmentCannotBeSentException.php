@@ -15,7 +15,7 @@ class ShipmentCannotBeSentException extends Exception
     const PAYMENT_IS_REGULAR = 4;
 
     /**
-     * @var int
+     * @var string
      */
     private $orderReference;
 

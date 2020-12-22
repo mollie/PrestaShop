@@ -2,18 +2,20 @@
 
 namespace Mollie\Verification\Shipment;
 
+use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
-use Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProviderInterface;
+use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
 use Order;
 use OrderState;
+use PrestaShopLogger;
 
-class CanShipmentBeSent implements ShipmentVerificationInterface
+class CanSendShipment implements ShipmentVerificationInterface
 {
     /**
      * @var ConfigurationAdapter
@@ -21,7 +23,7 @@ class CanShipmentBeSent implements ShipmentVerificationInterface
     private $configurationAdapter;
 
     /**
-     * @var OrderStateAutomaticShipmentSenderStatusesProviderInterface
+     * @var AutomaticShipmentSenderStatusesProviderInterface
      */
     private $automaticShipmentSenderStatusesProvider;
 
@@ -42,7 +44,7 @@ class CanShipmentBeSent implements ShipmentVerificationInterface
 
     public function __construct(
         ConfigurationAdapter $configurationAdapter,
-        OrderStateAutomaticShipmentSenderStatusesProviderInterface $automaticShipmentSenderStatusesProvider,
+        AutomaticShipmentSenderStatusesProviderInterface $automaticShipmentSenderStatusesProvider,
         OrderEndpointPaymentTypeHandlerInterface $endpointPaymentTypeHandler,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         ShipmentServiceInterface $shipmentService
@@ -163,8 +165,8 @@ class CanShipmentBeSent implements ShipmentVerificationInterface
     {
         try {
             return !empty($this->shipmentService->getShipmentInformation($orderReference));
-        } catch (\Exception $e) {
-            \PrestaShopLogger::addLog($e);
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog($e);
 
             return false;
         }
