@@ -1,5 +1,0 @@
-services:
-  Mollie\Logger\BasicLogger:
-    class: Mollie\Logger\BasicLogger
-    tags:
-      - { name: 'module.logger' }

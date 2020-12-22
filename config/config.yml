@@ -12,7 +12,6 @@ imports:
   - { resource: handler.yml }
   - { resource: grid.yml }
   - { resource: verification.yml }
-  - { resource: logger.yml }
   - { resource: decoder.yml }
 
 services:

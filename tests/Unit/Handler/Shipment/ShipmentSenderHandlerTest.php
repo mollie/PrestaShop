@@ -2,7 +2,7 @@
 
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
-use Mollie\Logger\BasicLogger;
+use Mollie\Logger\PrestaLogger;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -43,7 +43,7 @@ class ShipmentSenderHandlerTest extends TestCase
 	private $exceptionService;
 
 	/**
-	 * @var BasicLogger|MockObject
+	 * @var PrestaLogger|MockObject
 	 */
 	private $moduleLogger;
 
@@ -88,7 +88,7 @@ class ShipmentSenderHandlerTest extends TestCase
 		;
 
 		$this->moduleLogger = $this
-			->getMockBuilder(BasicLogger::class)
+			->getMockBuilder(PrestaLogger::class)
 			->disableOriginalConstructor()
 			->getMock()
 		;
@@ -115,7 +115,7 @@ class ShipmentSenderHandlerTest extends TestCase
 
 		$this->moduleLogger
 			->expects($this->never())
-			->method('logException')
+			->method('error')
 		;
 
 		$shipmentSenderHandler = new ShipmentSenderHandler(
@@ -156,7 +156,7 @@ class ShipmentSenderHandlerTest extends TestCase
 
 		$this->moduleLogger
 			->expects($this->once())
-			->method('logException')
+			->method('error')
 		;
 
 		$shipmentSenderHandler = new ShipmentSenderHandler(

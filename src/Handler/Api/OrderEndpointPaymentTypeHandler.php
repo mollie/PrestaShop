@@ -22,7 +22,7 @@ class OrderEndpointPaymentTypeHandler implements OrderEndpointPaymentTypeHandler
 	 *
 	 * @return int
 	 */
-	public function retrievePaymentTypeFromTransactionId($transactionId)
+	public function getPaymentTypeFromTransactionId($transactionId)
 	{
 		if ($this->canBeRegularPaymentTypeVerification->verify($transactionId)) {
 			return PaymentTypeEnum::PAYMENT_TYPE_REGULAR;

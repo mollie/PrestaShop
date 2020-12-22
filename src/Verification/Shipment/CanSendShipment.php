@@ -92,7 +92,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 		if (empty($payment)) {
 			return false;
 		}
-		$paymentType = $this->endpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId($payment['transaction_id']);
+		$paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
 		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_REGULAR) {
 			return false;

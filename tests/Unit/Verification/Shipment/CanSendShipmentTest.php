@@ -132,7 +132,7 @@ class CanSendShipmentTest extends TestCase
 
 		$this->orderEndpointPaymentTypeHandler
 			->expects($this->any())
-			->method('retrievePaymentTypeFromTransactionId')
+			->method('getPaymentTypeFromTransactionId')
 			->willReturn($paymentType)
 		;
 

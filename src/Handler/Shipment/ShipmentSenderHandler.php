@@ -9,6 +9,7 @@ use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use MolliePrefix\Mollie\Api\MollieApiClient;
+use MolliePrefix\Psr\Log\LoggerInterface;
 use Order;
 use OrderState;
 
@@ -30,7 +31,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 	private $exceptionService;
 
 	/**
-	 * @var ModuleLoggerInterface
+	 * @var LoggerInterface
 	 */
 	private $moduleLogger;
 
@@ -38,7 +39,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 		ShipmentVerificationInterface $canSendShipment,
 		ShipmentInformationSenderInterface $shipmentInformationSender,
 		ExceptionService $exceptionService,
-		ModuleLoggerInterface $moduleLogger
+        LoggerInterface $moduleLogger
 	) {
 		$this->canSendShipment = $canSendShipment;
 		$this->shipmentInformationSender = $shipmentInformationSender;
@@ -65,7 +66,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 				$this->exceptionService->getErrorMessages(),
 				['orderReference' => $order->reference]
 			);
-			$this->moduleLogger->logException($exception, $message, Config::DEBUG_LOG_ALL);
+			$this->moduleLogger->error($message);
 
 			return false;
 		}
