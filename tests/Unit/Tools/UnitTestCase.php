@@ -16,16 +16,16 @@ use PHPUnit\Framework\TestCase;
 
 class UnitTestCase extends TestCase
 {
-    public function mockMethodResponse()
-    {
-        $method = $this
-            ->getMockBuilder(Method::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+	public function mockMethodResponse()
+	{
+		$method = $this
+			->getMockBuilder(Method::class)
+			->disableOriginalConstructor()
+			->getMock()
+		;
 
-        return $method;
-    }
+		return $method;
+	}
 
 	public function mockContext($countryCode, $currencyCode)
 	{

@@ -13,57 +13,57 @@ use PrestaShopCollection;
 
 class OrderTotalUpdaterHandler implements OrderTotalUpdaterHandlerInterface
 {
-    /**
-     * @var OrderTotalVerificationInterface
-     */
-    private $canOrderTotalBeUpdated;
+	/**
+	 * @var OrderTotalVerificationInterface
+	 */
+	private $canOrderTotalBeUpdated;
 
-    /**
-     * @var OrderTotalRestrictionServiceInterface
-     */
-    private $orderTotalRestrictionService;
+	/**
+	 * @var OrderTotalRestrictionServiceInterface
+	 */
+	private $orderTotalRestrictionService;
 
-    /**
-     * @var PaymentMethodRepositoryInterface
-     */
-    private $paymentMethodRepository;
+	/**
+	 * @var PaymentMethodRepositoryInterface
+	 */
+	private $paymentMethodRepository;
 
-    /**
-     * @var CurrencyRepositoryInterface
-     */
-    private $currencyRepository;
+	/**
+	 * @var CurrencyRepositoryInterface
+	 */
+	private $currencyRepository;
 
+	public function __construct(
+		OrderTotalVerificationInterface $canOrderTotalBeUpdated,
+		OrderTotalRestrictionServiceInterface $orderTotalRestrictionService,
+		PaymentMethodRepositoryInterface $paymentMethodRepository,
+		CurrencyRepositoryInterface $currencyRepository
+	) {
+		$this->canOrderTotalBeUpdated = $canOrderTotalBeUpdated;
+		$this->orderTotalRestrictionService = $orderTotalRestrictionService;
+		$this->paymentMethodRepository = $paymentMethodRepository;
+		$this->currencyRepository = $currencyRepository;
+	}
 
-    public function __construct(
-        OrderTotalVerificationInterface $canOrderTotalBeUpdated,
-        OrderTotalRestrictionServiceInterface $orderTotalRestrictionService,
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
-        CurrencyRepositoryInterface $currencyRepository
-    ) {
-        $this->canOrderTotalBeUpdated = $canOrderTotalBeUpdated;
-        $this->orderTotalRestrictionService = $orderTotalRestrictionService;
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->currencyRepository = $currencyRepository;
-    }
+	/**
+	 * @return bool
+	 *
+	 * @throws OrderTotalRestrictionException
+	 */
+	public function handleOrderTotalUpdate()
+	{
+		if (!$this->canOrderTotalBeUpdated->verify()) {
+			return false;
+		}
+		$this->orderTotalRestrictionService->deleteOrderTotalRestrictions();
 
-    /**
-     * @return bool
-     * @throws OrderTotalRestrictionException
-     */
-    public function handleOrderTotalUpdate()
-    {
-        if (!$this->canOrderTotalBeUpdated->verify()) {
-            return false;
-        }
-        $this->orderTotalRestrictionService->deleteOrderTotalRestrictions();
+		/** @var PrestaShopCollection $paymentMethods */
+		$paymentMethods = $this->paymentMethodRepository->findAll();
 
-        /** @var PrestaShopCollection $paymentMethods */
-        $paymentMethods = $this->paymentMethodRepository->findAll();
+		/** @var PrestaShopCollection $currencies */
+		$currencies = $this->currencyRepository->findAll();
 
-        /** @var PrestaShopCollection $currencies */
-        $currencies = $this->currencyRepository->findAll();
-
-        /** @var Currency $currency */
+		/** @var Currency $currency */
 		foreach ($currencies as $currency) {
 			/** @var MolPaymentMethod $paymentMethod */
 			foreach ($paymentMethods as $paymentMethod) {
@@ -72,5 +72,5 @@ class OrderTotalUpdaterHandler implements OrderTotalUpdaterHandlerInterface
 		}
 
 		return true;
-    }
+	}
 }

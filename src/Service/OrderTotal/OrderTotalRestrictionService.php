@@ -39,12 +39,9 @@ namespace Mollie\Service\OrderTotal;
 use Currency;
 use Db;
 use Mollie\Exception\OrderTotalRestrictionException;
-use Mollie\Repository\CurrencyRepositoryInterface;
-use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdaterInterface;
 use MolPaymentMethod;
 use MolPaymentMethodOrderTotalRestriction;
-use PrestaShopCollection;
 
 class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterface
 {
@@ -59,18 +56,18 @@ class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterf
 		$this->paymentMethodOrderRestrictionUpdater = $paymentMethodOrderRestrictionUpdater;
 	}
 
-    /**
-     * @param Currency $currency
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @throws OrderTotalRestrictionException
-     */
+	/**
+	 * @param Currency $currency
+	 * @param MolPaymentMethod $paymentMethod
+	 *
+	 * @throws OrderTotalRestrictionException
+	 */
 	public function updateOrderTotalRestrictions(Currency $currency, MolPaymentMethod $paymentMethod)
 	{
-        $this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
-            $paymentMethod,
-            $currency->iso_code
-        );
+		$this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
+			$paymentMethod,
+			$currency->iso_code
+		);
 	}
 
 	public function deleteOrderTotalRestrictions()

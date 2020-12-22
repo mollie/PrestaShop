@@ -128,7 +128,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 	 */
 	private function refreshOrderTotalRestriction()
 	{
-	    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
+		/** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
 		$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
 
 		/** @var ExceptionService $exceptionService */
@@ -140,7 +140,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		]);
 
 		try {
-            $orderTotalRestrictionService->handleOrderTotalUpdate();
+			$orderTotalRestrictionService->handleOrderTotalUpdate();
 		} catch (OrderTotalRestrictionException $orderTotalRestrictionException) {
 			$errorMessage = $exceptionService->getErrorMessageForException(
 				$orderTotalRestrictionException,

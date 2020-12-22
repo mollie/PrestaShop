@@ -36,15 +36,12 @@
 
 namespace Mollie\Service\PaymentMethod;
 
-use Mollie\Config\Config;
 use Mollie\Exception\OrderTotalRestrictionException;
 use Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProviderInterface;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use MolPaymentMethod;
 use MolPaymentMethodOrderTotalRestriction;
 use PrestaShopException;
-use PrestaShopLogger;
-use Psr\Log\LoggerInterface;
 
 class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrictionUpdaterInterface
 {
@@ -53,18 +50,18 @@ class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrict
 	 */
 	private $paymentMethodOrderTotalRestrictionProvider;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+	/**
+	 * @var EntityManagerInterface
+	 */
+	private $entityManager;
 
-    public function __construct(
+	public function __construct(
 		PaymentMethodOrderTotalRestrictionProviderInterface $paymentMethodOrderTotalRestrictionProvider,
-        EntityManagerInterface $entityManager
+		EntityManagerInterface $entityManager
 	) {
 		$this->paymentMethodOrderTotalRestrictionProvider = $paymentMethodOrderTotalRestrictionProvider;
-        $this->entityManager = $entityManager;
-    }
+		$this->entityManager = $entityManager;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -94,12 +91,9 @@ class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrict
 		}
 
 		try {
-		    return $this->entityManager->flush($paymentMethodOrderRestriction);
+			return $this->entityManager->flush($paymentMethodOrderRestriction);
 		} catch (PrestaShopException $e) {
-			throw new OrderTotalRestrictionException(
-			    'Failed to save payment method order restriction',
-                OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED
-            );
+			throw new OrderTotalRestrictionException('Failed to save payment method order restriction', OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED);
 		}
 	}
 }
