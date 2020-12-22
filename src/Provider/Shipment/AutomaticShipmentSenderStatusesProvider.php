@@ -13,18 +13,18 @@ class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSender
 	 */
 	private $configurationAdapter;
 
-    /**
-     * @var DecoderInterface
-     */
-    private $decoder;
+	/**
+	 * @var DecoderInterface
+	 */
+	private $decoder;
 
-    public function __construct(
-	    ConfigurationAdapter $configurationAdapter,
-        DecoderInterface $decoder
-    ) {
+	public function __construct(
+		ConfigurationAdapter $configurationAdapter,
+		DecoderInterface $decoder
+	) {
 		$this->configurationAdapter = $configurationAdapter;
-        $this->decoder = $decoder;
-    }
+		$this->decoder = $decoder;
+	}
 
 	/**
 	 * @return array
@@ -34,8 +34,8 @@ class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSender
 		$autoShipStatuses = $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_STATUSES);
 
 		if (empty($autoShipStatuses)) {
-		    return [];
-        }
+			return [];
+		}
 
 		return $this->decoder->decode($autoShipStatuses) ?: [];
 	}

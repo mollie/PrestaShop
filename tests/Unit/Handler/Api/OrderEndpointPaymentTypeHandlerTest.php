@@ -7,47 +7,47 @@ use PHPUnit\Framework\TestCase;
 
 class OrderEndpointPaymentTypeHandlerTest extends TestCase
 {
-    /**
-     * @var \Mollie\Verification\PaymentType\CanBeRegularPaymentType|MockObject
-     */
-    private $canBeRegularPaymentType;
+	/**
+	 * @var \Mollie\Verification\PaymentType\CanBeRegularPaymentType|MockObject
+	 */
+	private $canBeRegularPaymentType;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+	protected function setUp(): void
+	{
+		parent::setUp();
 
-        $this->canBeRegularPaymentType = $this
-            ->getMockBuilder(\Mollie\Verification\PaymentType\CanBeRegularPaymentType::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-    }
+		$this->canBeRegularPaymentType = $this
+			->getMockBuilder(\Mollie\Verification\PaymentType\CanBeRegularPaymentType::class)
+			->disableOriginalConstructor()
+			->getMock()
+		;
+	}
 
-    public function testPaymentTypeNotFoundByDefault()
-    {
-        $this->canBeRegularPaymentType
-            ->expects($this->once())
-            ->method('verify')
-            ->willReturn(false)
-        ;
+	public function testPaymentTypeNotFoundByDefault()
+	{
+		$this->canBeRegularPaymentType
+			->expects($this->once())
+			->method('verify')
+			->willReturn(false)
+		;
 
-        $orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
-        $result = $orderEndpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId('test');
+		$orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
+		$result = $orderEndpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId('test');
 
-        $this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND, $result);
-    }
+		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND, $result);
+	}
 
-    public function testPaymentTypeRegular()
-    {
-        $this->canBeRegularPaymentType
-            ->expects($this->once())
-            ->method('verify')
-            ->willReturn(true)
-        ;
+	public function testPaymentTypeRegular()
+	{
+		$this->canBeRegularPaymentType
+			->expects($this->once())
+			->method('verify')
+			->willReturn(true)
+		;
 
-        $orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
-        $result = $orderEndpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId('test');
+		$orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
+		$result = $orderEndpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId('test');
 
-        $this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_REGULAR, $result);
-    }
+		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_REGULAR, $result);
+	}
 }

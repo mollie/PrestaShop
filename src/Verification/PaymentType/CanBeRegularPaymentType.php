@@ -7,49 +7,48 @@ use Mollie\Provider\PaymentType\PaymentTypeIdentificationProvider;
 
 class CanBeRegularPaymentType implements PaymentTypeVerificationInterface
 {
-    /**
-     * @var PaymentTypeIdentificationProvider
-     */
-    private $regularPaymentTypeIdentification;
+	/**
+	 * @var PaymentTypeIdentificationProvider
+	 */
+	private $regularPaymentTypeIdentification;
 
-    /**
-     * @var ToolsAdapter
-     */
-    private $toolsAdapter;
+	/**
+	 * @var ToolsAdapter
+	 */
+	private $toolsAdapter;
 
-    public function __construct(
-        ToolsAdapter $toolsAdapter,
-        PaymentTypeIdentificationProvider $regularPaymentTypeIdentification
-    ) {
-        $this->regularPaymentTypeIdentification = $regularPaymentTypeIdentification;
-        $this->toolsAdapter = $toolsAdapter;
-    }
+	public function __construct(
+		ToolsAdapter $toolsAdapter,
+		PaymentTypeIdentificationProvider $regularPaymentTypeIdentification
+	) {
+		$this->regularPaymentTypeIdentification = $regularPaymentTypeIdentification;
+		$this->toolsAdapter = $toolsAdapter;
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public function verify($transactionId)
-    {
-        if (!$transactionId) {
-            return false;
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function verify($transactionId)
+	{
+		if (!$transactionId) {
+			return false;
+		}
 
-        $regularPaymentTypeIdentification = $this->regularPaymentTypeIdentification->provideRegularPaymentIdentification();
+		$regularPaymentTypeIdentification = $this->regularPaymentTypeIdentification->provideRegularPaymentIdentification();
 
-        if (!$regularPaymentTypeIdentification) {
-            return false;
-        }
-        $length = $this->toolsAdapter->strlen($regularPaymentTypeIdentification);
+		if (!$regularPaymentTypeIdentification) {
+			return false;
+		}
+		$length = $this->toolsAdapter->strlen($regularPaymentTypeIdentification);
 
-        if (!$length) {
-            return false;
-        }
+		if (!$length) {
+			return false;
+		}
 
-        if ($regularPaymentTypeIdentification !== $this->toolsAdapter->substr($transactionId, 0, $length)) {
-            return false;
-        }
+		if ($regularPaymentTypeIdentification !== $this->toolsAdapter->substr($transactionId, 0, $length)) {
+			return false;
+		}
 
-        return true;
-    }
-
+		return true;
+	}
 }
