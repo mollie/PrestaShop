@@ -62,7 +62,6 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 	public function testUpdatePaymentMethodOrderTotalRestriction(
 		$method,
 		$savingStatus,
-		$exception,
 		$expected
 	) {
 		$this->paymentMethodOrderTotalRestrictionProvider
@@ -74,7 +73,7 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 		$this->entityManager
 			->expects($this->any())
 			->method('flush')
-			->willReturn(true)
+			->willReturn($savingStatus)
 		;
 
 		$paymentMethodOrderRestrictionUpdated = new PaymentMethodOrderRestrictionUpdater(
@@ -95,7 +94,7 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 		$this->paymentMethodOrderTotalRestrictionProvider
 			->expects($this->any())
 			->method('providePaymentMethodOrderTotalRestriction')
-			->willReturn($this->mockMethodResponse())
+			->willReturn($this->mockMethodResponse(0, 0))
 		;
 
 		$this->entityManager
@@ -124,17 +123,35 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 	{
 		return [
 			'All checks pass' => [
-				'method' => $this->mockMethodResponse(),
+				'method' => $this->mockMethodResponse(0, 0),
 				'savingStatus' => true,
-				'exception' => [],
 				'expected' => true,
 			],
 			'Empty method response' => [
 				'method' => null,
 				'savingStatus' => true,
-				'exception' => [],
 				'expected' => false,
 			],
+            'Saving unsuccessful' => [
+                'method' => null,
+                'savingStatus' => false,
+                'expected' => false,
+            ],
+            'Works with minimum value from response' => [
+                'method' => $this->mockMethodResponse(50, 0),
+                'savingStatus' => true,
+                'expected' => true,
+            ],
+            'Works with maximum value from response' => [
+                'method' => $this->mockMethodResponse(0, 50),
+                'savingStatus' => true,
+                'expected' => true,
+            ],
+            'Works with values from response' => [
+                'method' => $this->mockMethodResponse(50, 50),
+                'savingStatus' => true,
+                'expected' => true,
+            ],
 		];
 	}
 }

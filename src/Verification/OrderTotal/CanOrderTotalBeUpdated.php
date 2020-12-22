@@ -53,7 +53,7 @@ class CanOrderTotalBeUpdated implements OrderTotalVerificationInterface
 		/** @var PrestaShopCollection $paymentMethods */
 		$paymentMethods = $this->paymentMethodRepository->findAll();
 
-		return $paymentMethods->count();
+		return (bool) $paymentMethods->count();
 	}
 
 	/**
@@ -64,6 +64,6 @@ class CanOrderTotalBeUpdated implements OrderTotalVerificationInterface
 		/** @var PrestaShopCollection $currencies */
 		$currencies = $this->currencyRepository->findAll();
 
-		return $currencies->count();
+		return (bool) $currencies->count();
 	}
 }

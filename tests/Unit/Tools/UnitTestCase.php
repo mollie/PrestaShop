@@ -13,16 +13,22 @@ use Mollie\Service\OrderTotal\OrderTotalService;
 use MolliePrefix\Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class UnitTestCase extends TestCase
 {
-	public function mockMethodResponse()
+	public function mockMethodResponse($minimumAmountValue, $maximumAmountValue)
 	{
 		$method = $this
 			->getMockBuilder(Method::class)
 			->disableOriginalConstructor()
 			->getMock()
 		;
+
+		$method->minimumAmount = new stdClass();
+		$method->maximumAmount = new stdClass();
+		$method->minimumAmount->value = $minimumAmountValue;
+        $method->maximumAmount->value = $maximumAmountValue;
 
 		return $method;
 	}
