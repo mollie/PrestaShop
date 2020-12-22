@@ -2,9 +2,7 @@
 
 namespace Mollie\Handler\Shipment;
 
-use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
-use Mollie\Logger\ModuleLoggerInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
@@ -39,7 +37,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 		ShipmentVerificationInterface $canSendShipment,
 		ShipmentInformationSenderInterface $shipmentInformationSender,
 		ExceptionService $exceptionService,
-        LoggerInterface $moduleLogger
+		LoggerInterface $moduleLogger
 	) {
 		$this->canSendShipment = $canSendShipment;
 		$this->shipmentInformationSender = $shipmentInformationSender;
