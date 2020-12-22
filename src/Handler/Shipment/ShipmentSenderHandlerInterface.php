@@ -8,10 +8,10 @@ use OrderState;
 
 interface ShipmentSenderHandlerInterface
 {
-    /**
-     * @param MollieApiClient $apiClient
-     * @param Order $order
-     * @param OrderState $orderState
-     */
-    public function handleShipmentSender(MollieApiClient $apiClient, Order $order, OrderState $orderState);
+	/**
+	 * @param MollieApiClient $apiClient
+	 * @param Order $order
+	 * @param OrderState $orderState
+	 */
+	public function handleShipmentSender(MollieApiClient $apiClient, Order $order, OrderState $orderState);
 }

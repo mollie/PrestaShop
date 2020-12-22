@@ -8,11 +8,11 @@ use OrderState;
 
 interface ShipmentVerificationInterface
 {
-    /**
-     * @param Order $order
-     * @param OrderState $orderState
-     *
-     * @throws ShipmentCannotBeSentException
-     */
-    public function verify(Order $order, OrderState $orderState);
+	/**
+	 * @param Order $order
+	 * @param OrderState $orderState
+	 *
+	 * @throws ShipmentCannotBeSentException
+	 */
+	public function verify(Order $order, OrderState $orderState);
 }
