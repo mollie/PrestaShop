@@ -20,7 +20,7 @@ class OrderEndpointPaymentTypeHandler implements OrderEndpointPaymentTypeHandler
 	/**
 	 * @param string $transactionId
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function retrievePaymentTypeFromTransactionId($transactionId)
 	{

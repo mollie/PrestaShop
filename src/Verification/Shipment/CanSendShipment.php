@@ -94,7 +94,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 		}
 		$paymentType = $this->endpointPaymentTypeHandler->retrievePaymentTypeFromTransactionId($payment['transaction_id']);
 
-		if ($paymentType !== PaymentTypeEnum::PAYMENT_TYPE_REGULAR) {
+		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_REGULAR) {
 			return false;
 		}
 
@@ -172,7 +172,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 	{
 		return in_array(
 			(int) $orderStateId,
-			array_map('intval', $this->automaticShipmentSenderStatusesProvider->provideAutomaticShipmentSenderStatuses())
+			array_map('intval', $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses())
 		);
 	}
 }

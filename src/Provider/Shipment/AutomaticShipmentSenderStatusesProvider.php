@@ -29,7 +29,7 @@ class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSender
 	/**
 	 * @return array
 	 */
-	public function provideAutomaticShipmentSenderStatuses()
+	public function getAutomaticShipmentSenderStatuses()
 	{
 		$autoShipStatuses = $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_STATUSES);
 

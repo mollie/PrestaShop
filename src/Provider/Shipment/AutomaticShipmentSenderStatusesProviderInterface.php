@@ -7,5 +7,5 @@ interface AutomaticShipmentSenderStatusesProviderInterface
 	/**
 	 * @return array
 	 */
-	public function provideAutomaticShipmentSenderStatuses();
+	public function getAutomaticShipmentSenderStatuses();
 }

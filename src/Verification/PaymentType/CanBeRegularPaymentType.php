@@ -34,7 +34,7 @@ class CanBeRegularPaymentType implements PaymentTypeVerificationInterface
 			return false;
 		}
 
-		$regularPaymentTypeIdentification = $this->regularPaymentTypeIdentification->provideRegularPaymentIdentification();
+		$regularPaymentTypeIdentification = $this->regularPaymentTypeIdentification->getRegularPaymentIdentification();
 
 		if (!$regularPaymentTypeIdentification) {
 			return false;

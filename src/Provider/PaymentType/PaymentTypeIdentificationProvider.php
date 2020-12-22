@@ -7,5 +7,5 @@ interface PaymentTypeIdentificationProvider
 	/**
 	 * @return string
 	 */
-	public function provideRegularPaymentIdentification();
+	public function getRegularPaymentIdentification();
 }

@@ -7,7 +7,7 @@ interface OrderEndpointPaymentTypeHandlerInterface
 	/**
 	 * @param string $transactionId
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function retrievePaymentTypeFromTransactionId($transactionId);
 }

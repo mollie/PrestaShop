@@ -41,7 +41,7 @@ class CanBeRegularPaymentTypeTest extends TestCase
 	) {
 		$this->regularPaymentTypeIdentification
 			->expects($this->any())
-			->method('provideRegularPaymentIdentification')
+			->method('getRegularPaymentIdentification')
 			->willReturn($paymentTypeIdentification)
 		;
 

@@ -9,7 +9,7 @@ class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProvi
 	/**
 	 * @return string
 	 */
-	public function provideRegularPaymentIdentification()
+	public function getRegularPaymentIdentification()
 	{
 		return OrderEndpoint::RESOURCE_ID_PREFIX;
 	}

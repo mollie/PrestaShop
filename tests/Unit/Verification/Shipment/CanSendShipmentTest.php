@@ -120,7 +120,7 @@ class CanSendShipmentTest extends TestCase
 
 		$this->automaticShipmentSenderStatusesProvider
 			->expects($this->any())
-			->method('provideAutomaticShipmentSenderStatuses')
+			->method('getAutomaticShipmentSenderStatuses')
 			->willReturn($automaticShipmentSenderStatuses)
 		;
 

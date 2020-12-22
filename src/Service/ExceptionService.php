@@ -71,7 +71,7 @@ class ExceptionService
 			}
 
 			if (is_array($message) && isset($message[$exceptionCode])) {
-				if (str_contains($message[$exceptionCode], '%')) {
+				if (strpos($message[$exceptionCode], '%') !== false) {
 					return sprintf($message[$exceptionCode], implode(',', $params));
 				}
 
