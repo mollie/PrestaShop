@@ -202,8 +202,9 @@ services:
   Mollie\Service\OrderTotal\OrderTotalRestrictionService:
     class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
     arguments:
-      - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Repository\CurrencyRepository'
       - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
 
   Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
+
+  Mollie\Service\EntityManager\ObjectModelManager:
+    class: Mollie\Service\EntityManager\ObjectModelManager

@@ -14,11 +14,11 @@
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\OrderTotalRestrictionException;
+use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MolliePaymentMailService;
-use Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface;
 use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
@@ -128,8 +128,8 @@ class AdminMollieAjaxController extends ModuleAdminController
 	 */
 	private function refreshOrderTotalRestriction()
 	{
-		/** @var OrderTotalRestrictionServiceInterface $orderTotalRestrictionService */
-		$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalRestrictionServiceInterface::class);
+	    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
+		$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
 
 		/** @var ExceptionService $exceptionService */
 		$exceptionService = $this->module->getMollieContainer(ExceptionService::class);
@@ -140,8 +140,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 		]);
 
 		try {
-			$orderTotalRestrictionService->deleteOrderTotalRestrictions();
-			$orderTotalRestrictionService->updateOrderTotalRestrictions();
+            $orderTotalRestrictionService->handleOrderTotalUpdate();
 		} catch (OrderTotalRestrictionException $orderTotalRestrictionException) {
 			$errorMessage = $exceptionService->getErrorMessageForException(
 				$orderTotalRestrictionException,

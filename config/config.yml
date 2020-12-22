@@ -11,6 +11,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
+  - { resource: verification.yml }
 
 services:
   mollie:

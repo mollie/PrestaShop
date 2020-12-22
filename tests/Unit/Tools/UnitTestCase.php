@@ -10,11 +10,23 @@ use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
+use MolliePrefix\Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 
 class UnitTestCase extends TestCase
 {
+    public function mockMethodResponse()
+    {
+        $method = $this
+            ->getMockBuilder(Method::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        return $method;
+    }
+
 	public function mockContext($countryCode, $currencyCode)
 	{
 		$contextMock = $this->getMockBuilder(LegacyContext::class)

@@ -23,6 +23,7 @@ services:
     class: Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater
     arguments:
       - '@Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider'
+      - '@Mollie\Service\EntityManager\ObjectModelManager'
 
   Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider:
     class: Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider

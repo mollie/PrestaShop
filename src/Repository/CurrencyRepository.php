@@ -38,7 +38,7 @@ namespace Mollie\Repository;
 
 use Currency;
 
-final class CurrencyRepository extends AbstractRepository implements CurrencyRepositoryInterface
+class CurrencyRepository extends AbstractRepository implements CurrencyRepositoryInterface
 {
 	public function __construct()
 	{

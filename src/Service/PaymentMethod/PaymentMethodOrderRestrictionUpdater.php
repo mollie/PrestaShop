@@ -39,10 +39,12 @@ namespace Mollie\Service\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Exception\OrderTotalRestrictionException;
 use Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProviderInterface;
+use Mollie\Service\EntityManager\EntityManagerInterface;
 use MolPaymentMethod;
 use MolPaymentMethodOrderTotalRestriction;
 use PrestaShopException;
 use PrestaShopLogger;
+use Psr\Log\LoggerInterface;
 
 class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrictionUpdaterInterface
 {
@@ -51,11 +53,18 @@ class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrict
 	 */
 	private $paymentMethodOrderTotalRestrictionProvider;
 
-	public function __construct(
-		PaymentMethodOrderTotalRestrictionProviderInterface $paymentMethodOrderTotalRestrictionProvider
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(
+		PaymentMethodOrderTotalRestrictionProviderInterface $paymentMethodOrderTotalRestrictionProvider,
+        EntityManagerInterface $entityManager
 	) {
 		$this->paymentMethodOrderTotalRestrictionProvider = $paymentMethodOrderTotalRestrictionProvider;
-	}
+        $this->entityManager = $entityManager;
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -85,11 +94,12 @@ class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrict
 		}
 
 		try {
-			return $paymentMethodOrderRestriction->save();
+		    return $this->entityManager->flush($paymentMethodOrderRestriction);
 		} catch (PrestaShopException $e) {
-			PrestaShopLogger::addLog(__METHOD__ . ' returned exception: ' . $e->getMessage(), Config::ERROR, 0, null, null, true);
-
-			throw new OrderTotalRestrictionException('Failed to save payment method order restriction', OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED);
+			throw new OrderTotalRestrictionException(
+			    'Failed to save payment method order restriction',
+                OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED
+            );
 		}
 	}
 }

@@ -36,14 +36,19 @@
 
 namespace Mollie\Service\OrderTotal;
 
+use Currency;
 use Mollie\Exception\OrderTotalRestrictionException;
+use MolPaymentMethod;
 
 interface OrderTotalRestrictionServiceInterface
 {
-	/**
-	 * @throws OrderTotalRestrictionException
-	 */
-	public function updateOrderTotalRestrictions();
+    /**
+     * @param Currency $currency
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @throws OrderTotalRestrictionException
+     */
+    public function updateOrderTotalRestrictions(Currency $currency, MolPaymentMethod $paymentMethod);
 
 	public function deleteOrderTotalRestrictions();
 }

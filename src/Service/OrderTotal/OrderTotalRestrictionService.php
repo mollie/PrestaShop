@@ -49,59 +49,28 @@ use PrestaShopCollection;
 class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterface
 {
 	/**
-	 * @var PaymentMethodRepositoryInterface
-	 */
-	private $paymentMethodRepository;
-
-	/**
-	 * @var CurrencyRepositoryInterface
-	 */
-	private $currencyRepository;
-
-	/**
 	 * @var PaymentMethodOrderRestrictionUpdaterInterface
 	 */
 	private $paymentMethodOrderRestrictionUpdater;
 
 	public function __construct(
-		PaymentMethodRepositoryInterface $paymentMethodRepository,
-		CurrencyRepositoryInterface $currencyRepository,
 		PaymentMethodOrderRestrictionUpdaterInterface $paymentMethodOrderRestrictionUpdater
 	) {
-		$this->paymentMethodRepository = $paymentMethodRepository;
-		$this->currencyRepository = $currencyRepository;
 		$this->paymentMethodOrderRestrictionUpdater = $paymentMethodOrderRestrictionUpdater;
 	}
 
-	/**
-	 * @throws OrderTotalRestrictionException
-	 */
-	public function updateOrderTotalRestrictions()
+    /**
+     * @param Currency $currency
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @throws OrderTotalRestrictionException
+     */
+	public function updateOrderTotalRestrictions(Currency $currency, MolPaymentMethod $paymentMethod)
 	{
-		/** @var PrestaShopCollection $paymentMethods */
-		$paymentMethods = $this->paymentMethodRepository->findAll();
-
-		if (!$paymentMethods->count()) {
-			throw new OrderTotalRestrictionException('Failed to refresh order total restriction values: None available payment methods were found', OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND);
-		}
-
-		/** @var PrestaShopCollection $currencies */
-		$currencies = $this->currencyRepository->findAll();
-
-		if (!$currencies->count()) {
-			throw new OrderTotalRestrictionException('Failed to refresh order total restriction values: None available currencies were found', OrderTotalRestrictionException::NO_AVAILABLE_CURRENCIES_FOUND);
-		}
-
-		/** @var Currency $currency */
-		foreach ($currencies as $currency) {
-			/** @var MolPaymentMethod $paymentMethod */
-			foreach ($paymentMethods as $paymentMethod) {
-				$this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
-					$paymentMethod,
-					$currency->iso_code
-				);
-			}
-		}
+        $this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
+            $paymentMethod,
+            $currency->iso_code
+        );
 	}
 
 	public function deleteOrderTotalRestrictions()
