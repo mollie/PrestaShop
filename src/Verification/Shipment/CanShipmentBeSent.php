@@ -1,10 +1,11 @@
 <?php
 
-namespace Mollie\Handler\OrderState;
+namespace Mollie\Verification\Shipment;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Enum\PaymentTypeEnum;
+use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -12,7 +13,7 @@ use Mollie\Service\ShipmentServiceInterface;
 use Order;
 use OrderState;
 
-class OrderStateShipmentSenderDecisionHandler implements OrderStateShipmentSenderDecisionHandlerInterface
+class CanShipmentBeSent implements ShipmentVerificationInterface
 {
     /**
      * @var ConfigurationAdapter
@@ -39,7 +40,6 @@ class OrderStateShipmentSenderDecisionHandler implements OrderStateShipmentSende
      */
     private $shipmentService;
 
-
     public function __construct(
         ConfigurationAdapter $configurationAdapter,
         OrderStateAutomaticShipmentSenderStatusesProviderInterface $automaticShipmentSenderStatusesProvider,
@@ -57,22 +57,38 @@ class OrderStateShipmentSenderDecisionHandler implements OrderStateShipmentSende
     /**
      * @inheritDoc
      */
-    public function canShipmentDataBeSent(Order $order, OrderState $orderState)
+    public function verify(Order $order, OrderState $orderState)
     {
         if (!$this->hasShipmentInformation($order->reference)) {
-            return false;
+            throw new ShipmentCannotBeSentException(
+                'Shipment information cannot be sent. No shipment information found by order reference',
+                ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION,
+                $order->reference
+            );
         }
 
         if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
-            return false;
+            throw new ShipmentCannotBeSentException(
+                'Shipment information cannot be sent. Automatic shipment sender is not available',
+                ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE,
+                $order->reference
+            );
         }
 
         if (!$this->hasPaymentInformation($order->id)) {
-            return false;
+            throw new ShipmentCannotBeSentException(
+                'Shipment information cannot be sent. Order has no payment information',
+                ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION,
+                $order->reference
+            );
         }
 
         if ($this->isRegularPayment($order->id)) {
-            return false;
+            throw new ShipmentCannotBeSentException(
+                'Shipment information cannot be sent. Order has no payment information',
+                ShipmentCannotBeSentException::PAYMENT_IS_REGULAR,
+                $order->reference
+            );
         }
 
         return true;
@@ -100,7 +116,7 @@ class OrderStateShipmentSenderDecisionHandler implements OrderStateShipmentSende
     }
 
     /**
-     * @param $orderStateId
+     * @param int $orderStateId
      *
      * @return bool
      */
@@ -142,12 +158,16 @@ class OrderStateShipmentSenderDecisionHandler implements OrderStateShipmentSende
      * @param string $orderReference
      *
      * @return bool
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     private function hasShipmentInformation($orderReference)
     {
-        return !empty($this->shipmentService->getShipmentInformation($orderReference));
+        try {
+            return !empty($this->shipmentService->getShipmentInformation($orderReference));
+        } catch (\Exception $e) {
+            \PrestaShopLogger::addLog($e);
+
+            return false;
+        }
     }
 
     /**

@@ -1097,19 +1097,12 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var \Mollie\Service\Shipment\ShipmentInformationSenderInterface $shipmentSender */
-        $shipmentSender = $this->getMollieContainer(
-            \Mollie\Service\Shipment\ShipmentInformationSenderInterface::class
+        /** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
+        $shipmentSenderHandler = $this->getMollieContainer(
+            Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
         );
 
-        /** @var \Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface $shipmentDecisionHandler */
-        $shipmentDecisionHandler = $this->getMollieContainer(
-            \Mollie\Handler\OrderState\OrderStateShipmentSenderDecisionHandlerInterface::class
-        );
-
-        if ($shipmentDecisionHandler->canShipmentDataBeSent($order, $orderStatus)) {
-            $shipmentSender->sendShipmentInformation($this->api, $order);
-        }
+        $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
 	}
 
 	/**

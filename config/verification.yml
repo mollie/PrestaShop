@@ -1,0 +1,11 @@
+services:
+  Mollie\Verification\Shipment\CanShipmentBeSent:
+    class: Mollie\Verification\Shipment\CanShipmentBeSent
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Provider\OrderState\OrderStateAutomaticShipmentSenderStatusesProvider'
+      - '@Mollie\Handler\Api\OrderEndpointPaymentTypeHandler'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Service\ShipmentService'
+    tags:
+      - { name: 'shipment.information.verification' }
