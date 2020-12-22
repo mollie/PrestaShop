@@ -15,7 +15,8 @@
     "mollie/mollie-api-php": "^2.17"
   },
   "require-dev": {
-    "prestashop/php-dev-tools": "^3.0"
+    "prestashop/php-dev-tools": "^3.0",
+    "phpunit/phpunit": "5.7.12"
   },
   "autoload-dev": {
     "psr-4": {
