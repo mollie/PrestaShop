@@ -7,10 +7,9 @@ use Order;
 
 interface ShipmentInformationSenderInterface
 {
-    /**
-     * @param MollieApiClient|null $apiGateway
-     * @param Order $order
-     *
-     */
-    public function sendShipmentInformation($apiGateway, Order $order);
+	/**
+	 * @param MollieApiClient|null $apiGateway
+	 * @param Order $order
+	 */
+	public function sendShipmentInformation($apiGateway, Order $order);
 }
