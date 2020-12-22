@@ -132,26 +132,26 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 				'savingStatus' => true,
 				'expected' => false,
 			],
-            'Saving unsuccessful' => [
-                'method' => null,
-                'savingStatus' => false,
-                'expected' => false,
-            ],
-            'Works with minimum value from response' => [
-                'method' => $this->mockMethodResponse(50, 0),
-                'savingStatus' => true,
-                'expected' => true,
-            ],
-            'Works with maximum value from response' => [
-                'method' => $this->mockMethodResponse(0, 50),
-                'savingStatus' => true,
-                'expected' => true,
-            ],
-            'Works with values from response' => [
-                'method' => $this->mockMethodResponse(50, 50),
-                'savingStatus' => true,
-                'expected' => true,
-            ],
+			'Saving unsuccessful' => [
+				'method' => null,
+				'savingStatus' => false,
+				'expected' => false,
+			],
+			'Works with minimum value from response' => [
+				'method' => $this->mockMethodResponse(50, 0),
+				'savingStatus' => true,
+				'expected' => true,
+			],
+			'Works with maximum value from response' => [
+				'method' => $this->mockMethodResponse(0, 50),
+				'savingStatus' => true,
+				'expected' => true,
+			],
+			'Works with values from response' => [
+				'method' => $this->mockMethodResponse(50, 50),
+				'savingStatus' => true,
+				'expected' => true,
+			],
 		];
 	}
 }

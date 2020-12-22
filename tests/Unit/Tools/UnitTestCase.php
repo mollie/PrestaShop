@@ -28,7 +28,7 @@ class UnitTestCase extends TestCase
 		$method->minimumAmount = new stdClass();
 		$method->maximumAmount = new stdClass();
 		$method->minimumAmount->value = $minimumAmountValue;
-        $method->maximumAmount->value = $maximumAmountValue;
+		$method->maximumAmount->value = $maximumAmountValue;
 
 		return $method;
 	}
