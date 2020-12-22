@@ -102,21 +102,21 @@ class ShipmentSenderHandlerTest extends TestCase
 			->willReturn(true)
 		;
 
-        $this->exceptionService
-            ->expects($this->never())
-            ->method('getErrorMessages')
-            ->willReturn([])
-        ;
+		$this->exceptionService
+			->expects($this->never())
+			->method('getErrorMessages')
+			->willReturn([])
+		;
 
-        $this->exceptionService
-            ->expects($this->never())
-            ->method('getErrorMessageForException')
-        ;
+		$this->exceptionService
+			->expects($this->never())
+			->method('getErrorMessageForException')
+		;
 
-        $this->moduleLogger
-            ->expects($this->never())
-            ->method('logException')
-        ;
+		$this->moduleLogger
+			->expects($this->never())
+			->method('logException')
+		;
 
 		$shipmentSenderHandler = new ShipmentSenderHandler(
 			$this->canSendShipment,
