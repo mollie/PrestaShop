@@ -156,7 +156,7 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
 	{
-		$orderTotal = $this->orderTotalProvider->provideOrderTotal();
+		$orderTotal = $this->orderTotalProvider->getOrderTotal();
 
 		return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
 	}
@@ -168,7 +168,7 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
 	{
-		$orderTotal = $this->orderTotalProvider->provideOrderTotal();
+		$orderTotal = $this->orderTotalProvider->getOrderTotal();
 
 		return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
 	}

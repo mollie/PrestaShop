@@ -137,12 +137,12 @@ class UnitTestCase extends TestCase
 			->getMock();
 
 		$orderTotalRestrictionProvider
-			->method('provideOrderTotalMinimumRestriction')
+			->method('getOrderTotalMinimumRestriction')
 			->willReturn($minimumValue)
 		;
 
 		$orderTotalRestrictionProvider
-			->method('provideOrderTotalMaximumRestriction')
+			->method('getOrderTotalMaximumRestriction')
 			->willReturn($maximumValue)
 		;
 

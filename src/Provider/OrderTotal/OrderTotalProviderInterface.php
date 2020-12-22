@@ -38,5 +38,5 @@ namespace Mollie\Provider;
 
 interface OrderTotalProviderInterface
 {
-	public function provideOrderTotal();
+	public function getOrderTotal();
 }

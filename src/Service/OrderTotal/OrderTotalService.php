@@ -69,7 +69,7 @@ class OrderTotalService implements OrderTotalServiceInterface
 	 */
 	public function isOrderTotalLowerThanMinimumAllowed(MolPaymentMethod $paymentMethod, $orderTotal)
 	{
-		$minimumOrderTotal = $this->orderTotalRestrictionProvider->provideOrderTotalMinimumRestriction(
+		$minimumOrderTotal = $this->orderTotalRestrictionProvider->getOrderTotalMinimumRestriction(
 			$paymentMethod,
 			$this->legacyContext->getCurrencyIsoCode()
 		);
@@ -89,7 +89,7 @@ class OrderTotalService implements OrderTotalServiceInterface
 	 */
 	public function isOrderTotalHigherThanMaximumAllowed(MolPaymentMethod $paymentMethod, $orderTotal)
 	{
-		$maximumOrderTotal = $this->orderTotalRestrictionProvider->provideOrderTotalMaximumRestriction(
+		$maximumOrderTotal = $this->orderTotalRestrictionProvider->getOrderTotalMaximumRestriction(
 			$paymentMethod,
 			$this->legacyContext->getCurrencyIsoCode()
 		);
