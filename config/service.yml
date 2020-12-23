@@ -193,6 +193,11 @@ services:
       - '@Mollie\Repository\CartRuleRepository'
       - '@Mollie\Repository\OrderRepository'
 
+  Mollie\Service\Content\SmartyTemplateParser:
+    class: Mollie\Service\Content\SmartyTemplateParser
+
+  Mollie\Service\Content\TemplateParserInterface: '@Mollie\Service\Content\SmartyTemplateParser'
+
   Mollie\Service\OrderTotal\OrderTotalService:
     class: Mollie\Service\OrderTotal\OrderTotalService
     arguments:
