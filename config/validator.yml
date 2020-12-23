@@ -16,7 +16,7 @@ services:
       - '@Mollie\Service\OrderTotal\OrderTotalService'
       - '@Mollie\Provider\OrderTotalProvider'
     tags:
-      - { name: mollie.paymentmethodrestriction }
+      - { name: mollie.paymentmethodrestriction, priority: 10}
 
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator
@@ -49,6 +49,15 @@ services:
       - '@Mollie\Validator\VoucherValidator'
     tags:
       - { name: mollie.paymentmethodrestriction }
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\EnvironmentVersionProvider'
+      - '@Mollie\Repository\MethodCountryRepository'
+    tags:
+      - { name: mollie.paymentmethodrestriction, priority: 9}
 
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation

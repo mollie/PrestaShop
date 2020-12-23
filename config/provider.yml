@@ -44,3 +44,6 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Service\ApiService'
+
+  Mollie\Provider\EnvironmentVersionProvider:
+    class: Mollie\Provider\EnvironmentVersionProvider
