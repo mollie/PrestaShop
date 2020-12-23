@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  cypress:
+    # the Docker image to use from https://github.com/cypress-io/cypress-docker-images
+    image: "cypress/included:6.0.1"
+    environment:
+      # pass base url to test pointing at the web application
+      - CYPRESS_baseUrl=http://172.17.0.1:8001
+    # share the current folder as volume to avoid copying
+    working_dir: /e2e
+    volumes:
+      - ./:/e2e
+    networks:
+      - prestashop_mollie_net_e2e
+
+networks:
+  prestashop_mollie_net_e2e:
+    external:
+      name: 'prestashop_mollie_net'

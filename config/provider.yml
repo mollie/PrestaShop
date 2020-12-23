@@ -17,6 +17,11 @@ services:
   Mollie\Provider\PaymentType\RegularPaymentTypeIdentification:
     class: Mollie\Provider\PaymentType\RegularPaymentTypeIdentification
 
+  Mollie\Provider\UpdateMessageProvider:
+    class: Mollie\Provider\UpdateMessageProvider
+    arguments:
+      - '@mollie'
+
   Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider:
     class: Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider
 
