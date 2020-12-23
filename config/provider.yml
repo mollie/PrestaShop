@@ -8,6 +8,11 @@ services:
 
   Mollie\Provider\PhoneNumberProvider:
 
+  Mollie\Provider\UpdateMessageProvider:
+    class: Mollie\Provider\UpdateMessageProvider
+    arguments:
+      - '@mollie'
+
   Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider:
     class: Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider
 
