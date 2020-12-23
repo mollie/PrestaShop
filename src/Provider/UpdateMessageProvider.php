@@ -72,7 +72,7 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
 
 	/**
 	 * @param string $url
-	 * @param $addons
+	 * @param mixed $addons
 	 *
 	 * @return bool|string
 	 */
