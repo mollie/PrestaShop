@@ -554,7 +554,6 @@ class Mollie extends PaymentModule
 			'msg_bankselect' => $this->l('Select your bank:'),
 			'module' => $this,
 			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-			'IsQREnabled' => Mollie\Config\Config::MOLLIE_QRENABLED,
 			'CARTES_BANCAIRES' => Mollie\Config\Config::CARTES_BANCAIRES,
 			'ISSUERS_ON_CLICK' => Mollie\Config\Config::ISSUERS_ON_CLICK,
 			'web_pack_chunks' => Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
@@ -610,7 +609,7 @@ class Mollie extends PaymentModule
 			}
 			$images = json_decode($method['images_json'], true);
 			$paymentOptions[] = [
-				'cta_text' => $this->lang($method['method_name']),
+				'cta_text' => $this->l($method['method_name'], \Mollie\Service\LanguageService::FILE_NAME),
 				'logo' => Mollie\Config\Config::LOGOS_NORMAL === Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES)
 					? $images['size1x']
 					: $images['size2x'],
@@ -633,214 +632,33 @@ class Mollie extends PaymentModule
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
 	 */
 	public function hookPaymentOptions($params)
 	{
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
 			return [];
 		}
+		$paymentOptions = [];
+
+		/** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepository */
+		$paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+
+		/** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
+		$paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
 
 		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
 		$paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
 
-		/** @var \Mollie\Service\IssuerService $issuerService */
-		$issuerService = $this->getMollieContainer(\Mollie\Service\IssuerService::class);
-
-		/** @var \Mollie\Provider\CreditCardLogoProvider $creditCardProvider */
-		$creditCardProvider = $this->getMollieContainer(\Mollie\Provider\CreditCardLogoProvider::class);
-
-		/** @var \Mollie\Validator\VoucherValidator $voucherValidator */
-		$voucherValidator = $this->getMollieContainer(\Mollie\Validator\VoucherValidator::class);
-
 		$methods = $paymentMethodService->getMethodsForCheckout();
-		$issuerList = [];
-		$methodObj = new MolPaymentMethod();
+
 		foreach ($methods as $method) {
-			$methodObj = new MolPaymentMethod($method['id_payment_method']);
-			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $methodObj->id_method) {
-				$issuerList = $issuerService->getIdealIssuers();
-			}
-		}
+			/** @var MolPaymentMethod|null $paymentMethod */
+			$paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
-		$context = Context::getContext();
-		$cart = $context->cart;
-
-		$context->smarty->assign([
-			'idealIssuers' => isset($issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL])
-				? $issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL]
-				: [],
-			'link' => $this->context->link,
-			'qrCodeEnabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
-			'qrAlign' => 'left',
-			'cartAmount' => (int) ($cart->getOrderTotal(true) * 100),
-			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-		]);
-
-		$iso = Tools::strtolower($context->currency->iso_code);
-		$paymentOptions = [];
-		foreach ($methods as $method) {
-			if (!isset(Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])) {
+			if (!$paymentMethod) {
 				continue;
 			}
-			if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$methodObj->id_method])) {
-				continue;
-			}
-
-			$methodObj = new MolPaymentMethod($method['id_payment_method']);
-
-			$isVoucherMethod = \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID === $methodObj->id_method;
-			$hasVoucherProducts = $voucherValidator->validate($cart->getProducts());
-			if ($isVoucherMethod && !$hasVoucherProducts) {
-				continue;
-			}
-			$paymentFee = \Mollie\Utility\PaymentFeeUtility::getPaymentFee($methodObj, $cart->getOrderTotal());
-			$isIdealMethod = MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $methodObj->id_method;
-			$isIssuersOnClick = Mollie\Config\Config::ISSUERS_ON_CLICK === Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS);
-			$isCreditCardMethod = MolliePrefix\Mollie\Api\Types\PaymentMethod::CREDITCARD === $methodObj->id_method;
-
-			if ($isIdealMethod && $isIssuersOnClick) {
-				$newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-				$newOption
-					->setCallToActionText($this->lang($methodObj->method_name)) /* @phpstan-ignore-line */
-					->setModuleName($this->name)
-					->setAction(Context::getContext()->link->getModuleLink(
-						$this->name,
-						'payment',
-						['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
-						true
-					))
-					->setInputs([
-						'token' => [
-							'name' => 'issuer',
-							'type' => 'hidden',
-							'value' => '',
-						],
-					])
-					->setAdditionalInformation($this->display(__FILE__, 'ideal_dropdown.tpl'));
-
-				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image); /* @phpstan-ignore-line */
-
-				if ($paymentFee) {
-					$newOption->setInputs(
-						[
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price',
-								'value' => $paymentFee,
-							],
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price-display',
-								'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
-							],
-						]
-					);
-				}
-
-				$paymentOptions[] = $newOption;
-			} elseif (
-				($isCreditCardMethod || \Mollie\Config\Config::CARTES_BANCAIRES === $methodObj->id_method) &&
-				Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME)
-			) {
-				$this->context->smarty->assign([
-					'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
-					'price' => $this->context->cart->getOrderTotal(),
-					'priceSign' => $this->context->currency->getSign(),
-					'methodId' => $methodObj->id_method,
-				]);
-				$newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-				$newOption
-					->setCallToActionText($this->lang($methodObj->method_name))
-					->setModuleName($this->name)
-					->setAdditionalInformation($this->display(__FILE__, 'mollie_iframe.tpl'))
-					->setInputs(
-						[
-							[
-								'type' => 'hidden',
-								'name' => "mollieCardToken{$methodObj->id_method}",
-								'value' => '',
-							],
-						]
-					)
-					->setAction(Context::getContext()->link->getModuleLink(
-						'mollie',
-						'payScreen',
-						['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp(), 'cardToken' => ''],
-						true
-					));
-
-				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image); /* @phpstan-ignore-line */
-
-				if ($paymentFee) {
-					$newOption->setInputs(
-						[
-							[
-								'type' => 'hidden',
-								'name' => "mollieCardToken{$methodObj->id_method}",
-								'value' => '',
-							],
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price',
-								'value' => $paymentFee,
-							],
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price-display',
-								'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
-							],
-						]
-					);
-				} else {
-					$newOption->setInputs(
-						[
-							[
-								'type' => 'hidden',
-								'name' => "mollieCardToken{$methodObj->id_method}",
-								'value' => '',
-							],
-						]
-					);
-				}
-
-				$paymentOptions[] = $newOption;
-			} else {
-				$newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-				$newOption
-					->setCallToActionText($this->lang($methodObj->method_name))
-					->setModuleName($this->name)
-					->setAction(Context::getContext()->link->getModuleLink(
-						'mollie',
-						'payment',
-						['method' => $methodObj->id_method, 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
-						true
-					));
-
-				$image = $creditCardProvider->getMethodOptionLogo($methodObj);
-				$newOption->setLogo($image); /* @phpstan-ignore-line */
-
-				if ($paymentFee) {
-					$newOption->setInputs(
-						[
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price',
-								'value' => $paymentFee,
-							],
-							[
-								'type' => 'hidden',
-								'name' => 'payment-fee-price-display',
-								'value' => sprintf($this->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
-							],
-						]
-					);
-				}
-
-				$paymentOptions[] = $newOption;
-			}
+			$paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
 		}
 
 		return $paymentOptions;

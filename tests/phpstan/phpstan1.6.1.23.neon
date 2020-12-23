@@ -8,6 +8,8 @@ parameters:
     - ../../src/Command
     - ../../src/Grid/*
     - ../../src/Controller/AdminMollieEmailController
+    - ../../src/Handler/PaymentOption
+    - ../../src/Provider/PaymentOption
   ignoreErrors:
     - '#Access to an undefined property AdminController\|FrontController::\$warning.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
@@ -19,3 +21,7 @@ parameters:
     - '#Call to method setCallToActionText\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Call to method setInputs\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Instantiated class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption not found.#'
+    - '#Call to method setAdditionalInformation\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setAction\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setModuleName\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
+    - '#Call to method setLogo\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'

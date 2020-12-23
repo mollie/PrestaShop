@@ -55,4 +55,3 @@
     initBanks();
   }());
 </script>
-{include file="./qr_code.tpl"}

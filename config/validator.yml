@@ -42,6 +42,14 @@ services:
     tags:
       - { name: mollie.paymentmethodrestriction }
 
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Validator\VoucherValidator'
+    tags:
+      - { name: mollie.paymentmethodrestriction }
+
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation
     arguments:

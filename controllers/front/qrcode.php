@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 require_once dirname(__FILE__) . '/../../mollie.php';
 
 /**
+ * TODO check if this is even used as IDEAL QRcode has not worked for a long time.
  * Class MollieQrcodeModuleFrontController.
  *
  * @property Mollie $module

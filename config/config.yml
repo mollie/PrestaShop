@@ -12,6 +12,7 @@ imports:
   - { resource: handler.yml }
   - { resource: grid.yml }
   - { resource: verification.yml }
+  - { resource: payment_option_provider.yml }
   - { resource: decoder.yml }
 
 services:

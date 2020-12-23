@@ -31,3 +31,12 @@ services:
       - '@Mollie\Repository\CurrencyRepositoryInterface'
 
   Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface: '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
+
+  Mollie\Handler\PaymentOption\PaymentOptionHandler:
+    class: Mollie\Handler\PaymentOption\PaymentOptionHandler
+    arguments:
+      - '@Mollie\Provider\PaymentOption\BasePaymentOptionProvider'
+      - '@Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider'
+      - '@Mollie\Provider\PaymentOption\IdealPaymentOptionProvider'
+
+  Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface: '@Mollie\Handler\PaymentOption\PaymentOptionHandler'

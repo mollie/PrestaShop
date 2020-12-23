@@ -179,7 +179,6 @@ class SettingsSaveService
 		}
 		$mollieLogger = Tools::getValue(Config::MOLLIE_DEBUG_LOG);
 		$mollieApi = Tools::getValue(Config::MOLLIE_API);
-		$mollieQrEnabled = (bool) Tools::getValue(Config::MOLLIE_QRENABLED);
 		$mollieMethodCountriesEnabled = (bool) Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES);
 		$mollieMethodCountriesDisplayEnabled = (bool) Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
 		$mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
@@ -223,7 +222,6 @@ class SettingsSaveService
 			Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
 			Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
 			Configuration::updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
-			Configuration::updateValue(Config::MOLLIE_QRENABLED, (bool) $mollieQrEnabled);
 			Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
 			Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);
 			Configuration::updateValue(Config::MOLLIE_CSS, $mollieCss);

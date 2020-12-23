@@ -63,7 +63,6 @@ class ConfigFieldService
 			Config::MOLLIE_IMAGES => Configuration::get(Config::MOLLIE_IMAGES),
 			Config::MOLLIE_ISSUERS => Configuration::get(Config::MOLLIE_ISSUERS),
 
-			Config::MOLLIE_QRENABLED => Configuration::get(Config::MOLLIE_QRENABLED),
 			Config::MOLLIE_METHOD_COUNTRIES => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES),
 			Config::MOLLIE_METHOD_COUNTRIES_DISPLAY => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY),
 
