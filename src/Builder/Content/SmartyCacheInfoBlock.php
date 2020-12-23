@@ -22,8 +22,6 @@ class SmartyCacheInfoBlock implements TemplateBuilderInterface
 	 */
 	public function buildParams()
 	{
-		$this->controllerBlock->setError($this->module->display(__FILE__, 'smarty_error.tpl'));
-
 		return [
 			'settingKey' => $this->module->l('Clear cache'),
 			'settingValue' => $this->module->l('Never clear cache files'),
