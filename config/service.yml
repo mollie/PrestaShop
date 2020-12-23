@@ -198,3 +198,13 @@ services:
     arguments:
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\OrderTotalRestrictionProvider'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionService:
+    class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
+    arguments:
+      - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
+
+  Mollie\Service\EntityManager\ObjectModelManager:
+    class: Mollie\Service\EntityManager\ObjectModelManager

@@ -10,11 +10,29 @@ use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
+use MolliePrefix\Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class UnitTestCase extends TestCase
 {
+	public function mockMethodResponse($minimumAmountValue, $maximumAmountValue)
+	{
+		$method = $this
+			->getMockBuilder(Method::class)
+			->disableOriginalConstructor()
+			->getMock()
+		;
+
+		$method->minimumAmount = new stdClass();
+		$method->maximumAmount = new stdClass();
+		$method->minimumAmount->value = $minimumAmountValue;
+		$method->maximumAmount->value = $maximumAmountValue;
+
+		return $method;
+	}
+
 	public function mockContext($countryCode, $currencyCode)
 	{
 		$contextMock = $this->getMockBuilder(LegacyContext::class)
