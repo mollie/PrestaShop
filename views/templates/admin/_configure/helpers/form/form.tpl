@@ -1,34 +1,11 @@
 {**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+* Mollie       https://www.mollie.nl
+*
+* @author      Mollie B.V. <info@mollie.nl>
+* @copyright   Mollie B.V.
+* @link        https://github.com/mollie/PrestaShop
+* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+* @codingStandardsIgnoreStart
 *}
 {extends file="helpers/form/form.tpl"}
 
@@ -730,6 +707,16 @@
             <div class="alert alert-info">
                 {l s='You haven\'t enabled any of the Mollie payments.' mod='mollie'}<br>
                 {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
+            </div>
+        </div>
+
+    {elseif $input.type === 'mollie-button-update-order-total-restriction'}
+        <div class="mollie-order-total-restriction-update">
+            <div>
+                <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+            </div>
+            <div>
+                <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
             </div>
         </div>
     {else}

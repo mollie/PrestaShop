@@ -11,6 +11,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
+  - { resource: verification.yml }
   - { resource: payment_option_provider.yml }
 
 services:
@@ -34,3 +35,6 @@ services:
   Mollie\Install\DatabaseTableInstaller:
 
   Mollie\Install\DatabaseTableUninstaller:
+
+  mollie.adapter.context:
+    class: Mollie\Adapter\LegacyContext
