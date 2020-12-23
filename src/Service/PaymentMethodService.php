@@ -33,7 +33,6 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
-use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
