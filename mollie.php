@@ -244,7 +244,7 @@ class Mollie extends PaymentModule
             $this->context->controller->errors[] = $templateParser->parseTemplate(
                 $this->context->smarty,
                 $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/smarty_error.tpl'
+                $this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
             );
 		}
 
@@ -252,7 +252,7 @@ class Mollie extends PaymentModule
             $this->context->controller->errors[] = $templateParser->parseTemplate(
                 $this->context->smarty,
                 $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/rounding_error.tpl'
+                $this->getLocalPath() . 'views/templates/hook/rounding_error.tpl'
             );
 		}
 
@@ -263,7 +263,6 @@ class Mollie extends PaymentModule
 			$this->context->controller->errors[] = $this->l('Please select order status for the "Status for Awaiting payments" field in the "Advanced settings" tab');
 		}
 
-		$resultMessages = '';
 		$errors = [];
 
 		if (Tools::isSubmit("submit{$this->name}")) {
@@ -276,32 +275,6 @@ class Mollie extends PaymentModule
 				$this->context->controller->confirmations = $resultMessages;
 			}
 		}
-
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock
-            ->setResultMessages($resultMessages)
-            ->buildParams()
-        );
-
-        /** @var \Mollie\Builder\Content\ModuleLinkInfoBlock $moduleLinkInfoBlock */
-        $moduleLinkInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class);
-        $this->context->smarty->assign($moduleLinkInfoBlock->buildParams());
-
-		/** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-		$updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock
-            ->setAddons(self::ADDONS)
-            ->buildParams()
-        ;
-        $this->context->smarty->assign($updateMessageInfoBlockData);
-
-		$html = '';
-		$html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-		$html .= $updateMessageInfoBlockData['updateMessage'];
-
-		/** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-		$settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
 
 		Media::addJsDef([
 			'description_message' => $this->l('Description cannot be empty'),
@@ -326,6 +299,29 @@ class Mollie extends PaymentModule
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
+
+        $html = $templateParser->parseTemplate(
+            $this->context->smarty,
+            $this->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
+            $this->getLocalPath() . 'views/templates/admin/logo.tpl'
+        );
+
+        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
+        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
+        $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
+
+        $html .= $templateParser->parseTemplate(
+            $this->context->smarty,
+            $updateMessageInfoBlockData,
+            $this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
+        );
+
+        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+        $this->context->smarty->assign($baseInfoBlock->buildParams());
+
+        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
+        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
 
 		try {
 			$html .= $settingsFormBuilder->buildSettingsForm();

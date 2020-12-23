@@ -6,7 +6,7 @@ use Context;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 
-class ModuleLinkInfoBlock implements TemplateBuilderInterface
+class LogoInfoBlock implements TemplateBuilderInterface
 {
 	/**
 	 * @var Mollie
@@ -24,9 +24,7 @@ class ModuleLinkInfoBlock implements TemplateBuilderInterface
 	public function buildParams()
 	{
 		return [
-			'link' => Context::getContext()->link,
-			'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
-			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+            'logo_url' => $this->module->getPathUri() . 'views/img/mollie_logo.png',
 		];
 	}
 }

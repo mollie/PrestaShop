@@ -25,13 +25,6 @@ services:
     class: Mollie\Builder\Content\BaseInfoBlock
     arguments:
       - '@mollie'
-      - '@Mollie\Service\LanguageService'
-      - '@Mollie\Adapter\ConfigurationAdapter'
-
-  Mollie\Builder\Content\ModuleLinkInfoBlock:
-    class: Mollie\Builder\Content\ModuleLinkInfoBlock
-    arguments:
-      - '@mollie'
 
   Mollie\Builder\Content\RoundingModeInfoBlock:
     class: Mollie\Builder\Content\RoundingModeInfoBlock
@@ -45,6 +38,11 @@ services:
 
   Mollie\Builder\Content\SmartyForceCompileInfoBlock:
     class: Mollie\Builder\Content\SmartyForceCompileInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\LogoInfoBlock:
+    class: Mollie\Builder\Content\LogoInfoBlock
     arguments:
       - '@mollie'
 
