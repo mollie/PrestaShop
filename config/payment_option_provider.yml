@@ -19,6 +19,8 @@ services:
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\Content\TemplateParserInterface'
+      - '@Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock'
 
   Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider

@@ -54,3 +54,9 @@ services:
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Provider\UpdateMessageProvider'
 
+  Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock:
+    class: Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\IssuerService'
+
