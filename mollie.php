@@ -224,24 +224,24 @@ class Mollie extends PaymentModule
 		}
 
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-		    /** @var \Mollie\Builder\Content\SmartyForceCompileInfoBlock $smartyForceCompileInfoBlock */
-            $smartyForceCompileInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class);
-		    $this->context->smarty->assign($smartyForceCompileInfoBlock->buildParams());
+			/** @var \Mollie\Builder\Content\SmartyForceCompileInfoBlock $smartyForceCompileInfoBlock */
+			$smartyForceCompileInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class);
+			$this->context->smarty->assign($smartyForceCompileInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 			$this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
 		}
 
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-		    /** @var \Mollie\Builder\Content\SmartyCacheInfoBlock $smartyCacheInfoBlock */
-		    $smartyCacheInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class);
-            $this->context->smarty->assign($smartyCacheInfoBlock->buildParams());
+			/** @var \Mollie\Builder\Content\SmartyCacheInfoBlock $smartyCacheInfoBlock */
+			$smartyCacheInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class);
+			$this->context->smarty->assign($smartyCacheInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 		}
 
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-            /** @var \Mollie\Builder\Content\RoundingModeInfoBlock $roundingModeInfoBlock */
-		    $roundingModeInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class);
-            $this->context->smarty->assign($roundingModeInfoBlock->buildParams());
+			/** @var \Mollie\Builder\Content\RoundingModeInfoBlock $roundingModeInfoBlock */
+			$roundingModeInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class);
+			$this->context->smarty->assign($roundingModeInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
 		}
 
@@ -266,24 +266,24 @@ class Mollie extends PaymentModule
 			}
 		}
 
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock
-            ->setResultMessages($resultMessages)
-            ->buildParams()
-        );
+		/** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+		$baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+		$this->context->smarty->assign($baseInfoBlock
+			->setResultMessages($resultMessages)
+			->buildParams()
+		);
 
-        /** @var \Mollie\Builder\Content\ModuleLinkInfoBlock $moduleLinkInfoBlock */
-        $moduleLinkInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class);
-        $this->context->smarty->assign($moduleLinkInfoBlock->buildParams());
+		/** @var \Mollie\Builder\Content\ModuleLinkInfoBlock $moduleLinkInfoBlock */
+		$moduleLinkInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class);
+		$this->context->smarty->assign($moduleLinkInfoBlock->buildParams());
 
 		/** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
 		$updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock
-            ->setAddons(self::ADDONS)
-            ->buildParams()
-        ;
-        $this->context->smarty->assign($updateMessageInfoBlockData);
+		$updateMessageInfoBlockData = $updateMessageInfoBlock
+			->setAddons(self::ADDONS)
+			->buildParams()
+		;
+		$this->context->smarty->assign($updateMessageInfoBlockData);
 
 		$html = '';
 		$html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
