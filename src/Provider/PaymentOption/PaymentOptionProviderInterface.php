@@ -46,5 +46,5 @@ interface PaymentOptionProviderInterface
 	 *
 	 * @return PaymentOption
 	 */
-	public function providePaymentOption(MolPaymentMethod $paymentMethod);
+	public function getPaymentOption(MolPaymentMethod $paymentMethod);
 }

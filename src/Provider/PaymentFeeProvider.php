@@ -51,8 +51,8 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
 		$this->orderTotalProvider = $orderTotalProvider;
 	}
 
-	public function providePaymentFee(MolPaymentMethod $paymentMethod)
+	public function getPaymentFee(MolPaymentMethod $paymentMethod)
 	{
-		return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->provideOrderTotal());
+		return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 	}
 }

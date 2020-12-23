@@ -40,6 +40,7 @@ use Mollie;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -81,10 +82,10 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function providePaymentOption(MolPaymentMethod $paymentMethod)
+	public function getPaymentOption(MolPaymentMethod $paymentMethod)
 	{
 		$paymentOption = new PaymentOption();
-		$paymentOption->setCallToActionText($this->module->l($paymentMethod->method_name));
+		$paymentOption->setCallToActionText($this->module->l($paymentMethod->method_name, LanguageService::FILE_NAME));
 		$paymentOption->setModuleName($this->module->name);
 		$paymentOption->setAction($this->context->getLink()->getModuleLink(
 			'mollie',
@@ -93,7 +94,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
 			true
 		));
 		$paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
-		$paymentFee = $this->paymentFeeProvider->providePaymentFee($paymentMethod);
+		$paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
 		if ($paymentFee) {
 			$paymentOption->setInputs(

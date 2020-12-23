@@ -77,14 +77,14 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 	public function handle(MolPaymentMethod $paymentMethod)
 	{
 		if ($this->isIdealPaymentMethod($paymentMethod)) {
-			return $this->idealPaymentOptionProvider->providePaymentOption($paymentMethod);
+			return $this->idealPaymentOptionProvider->getPaymentOption($paymentMethod);
 		}
 
 		if ($this->isCreditCardPaymentMethod($paymentMethod)) {
-			return $this->creditCardPaymentOptionProvider->providePaymentOption($paymentMethod);
+			return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
 		}
 
-		return $this->basePaymentOptionProvider->providePaymentOption($paymentMethod);
+		return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
 	}
 
 	/**

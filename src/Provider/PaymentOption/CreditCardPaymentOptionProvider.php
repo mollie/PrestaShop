@@ -41,6 +41,7 @@ use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -89,10 +90,10 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function providePaymentOption(MolPaymentMethod $paymentMethod)
+	public function getPaymentOption(MolPaymentMethod $paymentMethod)
 	{
 		$paymentOption = new PaymentOption();
-		$paymentOption->setCallToActionText($this->module->l($paymentMethod->method_name));
+		$paymentOption->setCallToActionText($this->module->l($paymentMethod->method_name, LanguageService::FILE_NAME));
 		$paymentOption->setModuleName($this->module->name);
 		$paymentOption->setAction($this->context->getLink()->getModuleLink(
 			'mollie',
@@ -110,7 +111,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 
 		$this->context->getSmarty()->assign([
 			'mollieIFrameJS' => 'https://js.mollie.com/v1/mollie.js',
-			'price' => $this->orderTotalProvider->provideOrderTotal(),
+			'price' => $this->orderTotalProvider->getOrderTotal(),
 			'priceSign' => $this->context->getCurrencySign(),
 			'methodId' => $paymentMethod->getPaymentMethodName(),
 		]);
@@ -127,7 +128,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 				'value' => '',
 			],
 		]);
-		$paymentFee = $this->paymentFeeProvider->providePaymentFee($paymentMethod);
+		$paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
 		if ($paymentFee) {
 			$paymentOption->setInputs([

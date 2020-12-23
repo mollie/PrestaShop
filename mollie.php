@@ -692,7 +692,7 @@ class Mollie extends PaymentModule
 			}
 			$images = json_decode($method['images_json'], true);
 			$paymentOptions[] = [
-				'cta_text' => $this->lang($method['method_name']),
+				'cta_text' => $this->l($method['method_name'], \Mollie\Service\LanguageService::FILE_NAME),
 				'logo' => Mollie\Config\Config::LOGOS_NORMAL === Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES)
 					? $images['size1x']
 					: $images['size2x'],
@@ -768,12 +768,7 @@ class Mollie extends PaymentModule
 			if ($isVoucherMethod && !$hasVoucherProducts) {
 				continue;
 			}
-			$paymentOption = $paymentOptionsHandler->handle($methodObj);
-
-			if (empty($paymentOption)) {
-				continue;
-			}
-			$paymentOptions[] = $paymentOption;
+			$paymentOptions[] = $paymentOptionsHandler->handle($methodObj);;
 		}
 
 		return $paymentOptions;
