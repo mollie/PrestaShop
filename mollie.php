@@ -222,31 +222,24 @@ class Mollie extends PaymentModule
 
 			return;
 		}
-		/** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-		$settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
+
+        /** @var \Mollie\Builder\ContentBuilder $contentBuilder */
+        $contentBuilder = $this->getMollieContainer(\Mollie\Builder\ContentBuilder::class);
+
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-			$this->context->smarty->assign([
-				'settingKey' => $this->l('Template compilation'),
-				'settingValue' => $this->l('Never recompile template files'),
-				'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
-			]);
-			$this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
+		    $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class));
+            $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+            $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
 		}
+
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-			$this->context->smarty->assign([
-				'settingKey' => $this->l('Clear cache'),
-				'settingValue' => $this->l('Never clear cache files'),
-				'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPerformance'),
-			]);
-			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+            $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class));
+            $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 		}
+
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-			$this->context->smarty->assign([
-				'settingKey' => $this->l('Rounding mode'),
-				'settingValue' => $this->l('Round up away from zero, when it is half way there (recommended)'),
-				'settingsPage' => \Mollie\Utility\MenuLocationUtility::getMenuLocation('AdminPreferences'),
-			]);
-			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
+            $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class));
+            $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
 		}
 
 		$isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
@@ -256,90 +249,64 @@ class Mollie extends PaymentModule
 			$this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
 		}
 
-		$this->context->smarty->assign([
-			'link' => Context::getContext()->link,
-			'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
-			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-		]);
+        $resultMessages = '';
+        $errors = [];
 
-		$updateMessage = '';
-		/** @var \Mollie\Service\UpgradeNoticeService $upgradeNoticeService */
-		$upgradeNoticeService = $this->getMollieContainer(\Mollie\Service\UpgradeNoticeService::class);
-		$noticeCloseTimeStamp = \Configuration::get(Mollie\Config\Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE);
-		if (!static::ADDONS && !$upgradeNoticeService->isUpgradeNoticeClosed((int) \Mollie\Utility\TimeUtility::getNowTs(), (int) $noticeCloseTimeStamp)) {
-			$updateMessage = defined('_TB_VERSION_')
-				? $this->getUpdateMessage('https://github.com/mollie/thirtybees')
-				: $this->getUpdateMessage('https://github.com/mollie/PrestaShop');
-			if ('updateAvailable' === $updateMessage) {
-				$updateMessage = $this->display(__FILE__, 'views/templates/admin/download_update.tpl');
-			}
-		}
+        if (Tools::isSubmit("submit{$this->name}")) {
+            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
+            $saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
+            $resultMessages = $saveSettingsService->saveSettings($errors);
+            if (!empty($errors)) {
+                $this->context->controller->errors = $resultMessages;
+            } else {
+                $this->context->controller->confirmations = $resultMessages;
+            }
+        }
 
-		$resultMessages = '';
-		$errors = [];
+        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
 
-		if (Tools::isSubmit("submit{$this->name}")) {
-			/** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-			$saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
-			$resultMessages = $saveSettingsService->saveSettings($errors);
-			if (!empty($errors)) {
-				$this->context->controller->errors = $resultMessages;
-			} else {
-				$this->context->controller->confirmations = $resultMessages;
-			}
-		}
-		/** @var Mollie\Service\LanguageService $langService */
-		$langService = $this->getMollieContainer(Mollie\Service\LanguageService::class);
-		$data = [
-			'update_message' => $updateMessage,
-			'title_status' => $this->l('%s statuses:'),
-			'title_visual' => $this->l('Visual settings:'),
-			'title_debug' => $this->l('Debug info:'),
-			'msg_result' => $resultMessages,
-			'path' => $this->_path,
-			'payscreen_locale_value' => Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE),
-			'val_images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
-			'val_issuers' => Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS),
-			'val_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
-			'val_errors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
-			'val_qrenabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
-			'val_logger' => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),
-			'val_save' => $this->l('Save'),
-			'lang' => $langService->getLang(),
-			'logo_url' => $this->getPathUri() . 'views/img/mollie_logo.png',
-			'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
-			'description_message' => $this->l('Description cannot be empty'),
-			'Profile_id_message' => $this->l('Wrong profile ID'),
-		];
+        $contentBuilder->addTemplateBlock($baseInfoBlock->setResultMessages($resultMessages));
+        $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class));
 
-		Media::addJsDef([
-			'description_message' => $this->l('Description cannot be empty'),
-			'profile_id_message' => $this->l('Wrong profile ID'),
-			'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
-			'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
-			'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
-		]);
+        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
+        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
 
-		/* Custom logo JS vars*/
-		Media::addJsDef([
-			'image_size_message' => $this->l('Image size must be %s%x%s1%'),
-			'not_valid_file_message' => $this->l('not a valid file: %s%'),
-		]);
+        $contentBuilder->addTemplateBlock($updateMessageInfoBlock->setAddons(self::ADDONS));
+        $contentParams = $contentBuilder->buildParams();
 
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
-		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
-		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
-		$this->context->smarty->assign($data);
+        $this->context->smarty->assign($contentParams);
 
 		$html = '';
 		$html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-		$html .= $updateMessage;
+		$html .= $contentParams['updateMessage'];
+
+        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
+        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
+
+        Media::addJsDef([
+            'description_message' => $this->l('Description cannot be empty'),
+            'profile_id_message' => $this->l('Wrong profile ID'),
+            'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
+            'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
+            'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+        ]);
+
+        /* Custom logo JS vars*/
+        Media::addJsDef([
+            'image_size_message' => $this->l('Image size must be %s%x%s1%'),
+            'not_valid_file_message' => $this->l('not a valid file: %s%'),
+        ]);
+
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
 
 		try {
 			$html .= $settingsFormBuilder->buildSettingsForm();
@@ -367,70 +334,6 @@ class Mollie extends PaymentModule
 		}
 
 		return $str;
-	}
-
-	/**
-	 * @param string $url
-	 *
-	 * @return string|true
-	 *
-	 * @throws Exception
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
-	protected function getUpdateMessage($url)
-	{
-		$updateMessage = '';
-		$updateXml = $this->getUpdateXML($url);
-		if (false === $updateXml) {
-			$updateMessage = $this->l('Warning: Could not retrieve update xml file from github.');
-		} else {
-			try {
-				/* @var SimpleXMLElement $tags */
-				@$tags = new SimpleXMLElement($updateXml);
-				if (!empty($tags) && isset($tags->entry, $tags->entry[0], $tags->entry[0]->id)) {
-					$title = $tags->entry[0]->id;
-					$latestVersion = preg_replace('/[^0-9,.]/', '', Tools::substr($title, strrpos($title, '/')));
-					if (!version_compare($this->version, $latestVersion, '>=')) {
-						$this->context->smarty->assign([
-							'this_version' => $this->version,
-							'release_version' => $latestVersion,
-							'github_url' => \Mollie\Utility\TagsUtility::ppTags(
-								sprintf(
-									$this->l('You are currently using version \'%s\' of this plugin. The latest version is \'%s\'. We advice you to [1]update[/1] to enjoy the latest features. '),
-									$this->version,
-									$latestVersion
-								),
-								[
-									$this->display($this->getPathUri(), 'views/templates/admin/github_redirect.tpl'),
-								]
-							),
-						]);
-						$updateMessage = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'mollie/views/templates/admin/new_release.tpl');
-					}
-				} else {
-					$updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
-				}
-			} catch (Exception $e) {
-				$updateMessage = $this->l('Warning: Update xml file from github follows an unexpected format.');
-			}
-		}
-
-		return $updateMessage;
-	}
-
-	/**
-	 * @param string $url
-	 *
-	 * @return bool|string
-	 */
-	protected function getUpdateXML($url)
-	{
-		if (static::ADDONS) {
-			return '';
-		}
-
-		return @Tools::file_get_contents($url . '/releases.atom');
 	}
 
 	/**

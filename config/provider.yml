@@ -7,3 +7,8 @@ services:
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
 
   Mollie\Provider\PhoneNumberProvider:
+
+  Mollie\Provider\UpdateMessageProvider:
+    class: Mollie\Provider\UpdateMessageProvider
+    arguments:
+      - '@mollie'
