@@ -115,4 +115,9 @@ class MolPaymentMethod extends ObjectModel
 			'position' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
 		],
 	];
+
+	public function getPaymentMethodName()
+	{
+		return $this->id_method;
+	}
 }

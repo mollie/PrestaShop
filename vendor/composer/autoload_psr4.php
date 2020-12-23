@@ -9,6 +9,7 @@ return array(
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src/Prophecy'),
+    'Mollie\\Tests\\' => array($baseDir . '/tests'),
     'Mollie\\' => array($baseDir . '/src'),
     'MolliePrefix\\Symfony\\Component\\Stopwatch\\' => array($vendorDir . '/symfony/stopwatch'),
     'MolliePrefix\\Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),
