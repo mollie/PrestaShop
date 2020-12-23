@@ -16,6 +16,7 @@ use Exception;
 use Mollie;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\OrderTotalRestrictionException;
+use Mollie\Exception\ShipmentCannotBeSentException;
 
 class ExceptionService
 {
@@ -41,6 +42,20 @@ class ExceptionService
 					OrderCreationException::ORDER_TOTAL_LOWER_THAN_MINIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
 					OrderCreationException::ORDER_TOTAL_HIGHER_THAN_MAXIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
 			],
+			ShipmentCannotBeSentException::class => [
+				ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION => $this->module->l(
+					'Shipment information cannot be sent. Order reference (%s) has no shipping information.'
+				),
+				ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE => $this->module->l(
+					'Shipment information cannot be sent. Order reference (%s) does not have automatic shipment sender available.'
+				),
+				ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION => $this->module->l(
+					'Shipment information cannot be sent. Order reference (%s) has no payment information.'
+				),
+				ShipmentCannotBeSentException::PAYMENT_IS_REGULAR => $this->module->l(
+					'Shipment information cannot be sent. Order reference (%s) is a regular payment.'
+				),
+			],
 			OrderTotalRestrictionException::class => [
 				OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND => $this->module->l(
 					'Failed to refresh order total restriction values: None available payment methods were found', self::SHORT_CLASS_NAME
@@ -55,7 +70,7 @@ class ExceptionService
 		];
 	}
 
-	public function getErrorMessageForException(Exception $exception, array $messages)
+	public function getErrorMessageForException(Exception $exception, array $messages, array $params = [])
 	{
 		$exceptionType = get_class($exception);
 		$exceptionCode = $exception->getCode();
@@ -68,6 +83,10 @@ class ExceptionService
 			}
 
 			if (is_array($message) && isset($message[$exceptionCode])) {
+				if (strpos($message[$exceptionCode], '%') !== false) {
+					return sprintf($message[$exceptionCode], implode(',', $params));
+				}
+
 				return $message[$exceptionCode];
 			}
 		}

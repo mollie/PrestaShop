@@ -7,6 +7,21 @@ services:
 
   Mollie\Handler\Exception\OrderExceptionHandler:
 
+  Mollie\Handler\Api\OrderEndpointPaymentTypeHandler:
+    class: Mollie\Handler\Api\OrderEndpointPaymentTypeHandler
+    arguments:
+      - '@Mollie\Verification\PaymentType\CanBeRegularPaymentType'
+
+  Mollie\Handler\Shipment\ShipmentSenderHandler:
+    class: Mollie\Handler\Shipment\ShipmentSenderHandler
+    arguments:
+      - '@Mollie\Verification\Shipment\CanSendShipment'
+      - '@Mollie\Service\Shipment\ShipmentInformationSender'
+      - '@Mollie\Service\ExceptionService'
+      - '@Mollie\Logger\PrestaLogger'
+
+  Mollie\Handler\Shipment\ShipmentSenderHandlerInterface: '@Mollie\Handler\Shipment\ShipmentSenderHandler'
+
   Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler:
     class: Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler
     arguments:
