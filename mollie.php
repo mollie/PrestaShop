@@ -768,7 +768,7 @@ class Mollie extends PaymentModule
 			if ($isVoucherMethod && !$hasVoucherProducts) {
 				continue;
 			}
-			$paymentOptions[] = $paymentOptionsHandler->handle($methodObj);;
+			$paymentOptions[] = $paymentOptionsHandler->handle($methodObj);
 		}
 
 		return $paymentOptions;
