@@ -46,11 +46,11 @@ class UpdateMessageInfoBlock implements TemplateBuilderInterface
 		$this->updateMessageProvider = $updateMessageProvider;
 	}
 
-    /**
-     * @param mixed $addons
-     *
-     * @return $this
-     */
+	/**
+	 * @param mixed $addons
+	 *
+	 * @return $this
+	 */
 	public function setAddons($addons)
 	{
 		$this->addons = $addons;
