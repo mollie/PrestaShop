@@ -223,26 +223,37 @@ class Mollie extends PaymentModule
 			return;
 		}
 
+		/** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
+        $templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
+
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-		    /** @var \Mollie\Builder\Content\SmartyForceCompileInfoBlock $smartyForceCompileInfoBlock */
-            $smartyForceCompileInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class);
-		    $this->context->smarty->assign($smartyForceCompileInfoBlock->buildParams());
-			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
-			$this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
+            $this->context->controller->errors[] = $templateParser->parseTemplate(
+                $this->context->smarty,
+                $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
+                $this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
+            );
+
+            $this->context->controller->warnings[] = $templateParser->parseTemplate(
+                $this->context->smarty,
+                $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
+                $this->getLocalPath() . 'views/templates/hook/smarty_warning.tpl'
+            );
 		}
 
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-		    /** @var \Mollie\Builder\Content\SmartyCacheInfoBlock $smartyCacheInfoBlock */
-		    $smartyCacheInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class);
-            $this->context->smarty->assign($smartyCacheInfoBlock->buildParams());
-			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+            $this->context->controller->errors[] = $templateParser->parseTemplate(
+                $this->context->smarty,
+                $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class),
+                $this->getLocalPath() . 'views/templates/smarty_error.tpl'
+            );
 		}
 
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-            /** @var \Mollie\Builder\Content\RoundingModeInfoBlock $roundingModeInfoBlock */
-		    $roundingModeInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class);
-            $this->context->smarty->assign($roundingModeInfoBlock->buildParams());
-			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
+            $this->context->controller->errors[] = $templateParser->parseTemplate(
+                $this->context->smarty,
+                $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class),
+                $this->getLocalPath() . 'views/templates/rounding_error.tpl'
+            );
 		}
 
 		$isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
