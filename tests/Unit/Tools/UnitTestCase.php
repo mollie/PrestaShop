@@ -4,14 +4,35 @@ namespace Mollie\Tests\Unit\Tools;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Provider\OrderTotalProvider;
+use Mollie\Provider\OrderTotalRestrictionProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\OrderTotal\OrderTotalService;
+use MolliePrefix\Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class UnitTestCase extends TestCase
 {
+	public function mockMethodResponse($minimumAmountValue, $maximumAmountValue)
+	{
+		$method = $this
+			->getMockBuilder(Method::class)
+			->disableOriginalConstructor()
+			->getMock()
+		;
+
+		$method->minimumAmount = new stdClass();
+		$method->maximumAmount = new stdClass();
+		$method->minimumAmount->value = $minimumAmountValue;
+		$method->maximumAmount->value = $maximumAmountValue;
+
+		return $method;
+	}
+
 	public function mockContext($countryCode, $currencyCode)
 	{
 		$contextMock = $this->getMockBuilder(LegacyContext::class)
@@ -125,5 +146,57 @@ class UnitTestCase extends TestCase
 		;
 
 		return $configurationAdapter;
+	}
+
+	public function mockOrderTotalRestrictionProvider($minimumValue, $maximumValue)
+	{
+		$orderTotalRestrictionProvider = $this->getMockBuilder(OrderTotalRestrictionProvider::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$orderTotalRestrictionProvider
+			->method('getOrderTotalMinimumRestriction')
+			->willReturn($minimumValue)
+		;
+
+		$orderTotalRestrictionProvider
+			->method('getOrderTotalMaximumRestriction')
+			->willReturn($maximumValue)
+		;
+
+		return $orderTotalRestrictionProvider;
+	}
+
+	public function mockOrderTotalService($isOrderTotalHigherThanMaximum, $isOrderTotalLowerThanMinimum)
+	{
+		$orderTotalService = $this->getMockBuilder(OrderTotalService::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$orderTotalService
+			->method('isOrderTotalLowerThanMinimumAllowed')
+			->willReturn($isOrderTotalLowerThanMinimum)
+		;
+
+		$orderTotalService
+			->method('isOrderTotalHigherThanMaximumAllowed')
+			->willReturn($isOrderTotalHigherThanMaximum)
+		;
+
+		return $orderTotalService;
+	}
+
+	public function mockOrderTotalProvider($orderTotal)
+	{
+		$orderTotalProvider = $this->getMockBuilder(OrderTotalProvider::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$orderTotalProvider
+			->method('provideOrderTotal')
+			->willReturn($orderTotal)
+		;
+
+		return $orderTotalProvider;
 	}
 }

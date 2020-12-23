@@ -13,6 +13,8 @@ services:
     arguments:
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider'
+      - '@Mollie\Service\OrderTotal\OrderTotalService'
+      - '@Mollie\Provider\OrderTotalProvider'
     tags:
       - { name: mollie.paymentmethodrestriction }
 
@@ -46,3 +48,8 @@ services:
       - !tagged mollie.paymentmethodrestriction
 
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface: '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
+
+  Mollie\Provider\OrderTotalProvider:
+    class: Mollie\Provider\OrderTotalProvider
+    arguments:
+      - '@=service("mollie.adapter.context")'

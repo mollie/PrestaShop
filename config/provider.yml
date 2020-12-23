@@ -13,3 +13,20 @@ services:
 
   Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider:
     class: Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider
+
+  Mollie\Provider\OrderTotalRestrictionProvider:
+    class: Mollie\Provider\OrderTotalRestrictionProvider
+    arguments:
+      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
+
+  Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater:
+    class: Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater
+    arguments:
+      - '@Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider'
+      - '@Mollie\Service\EntityManager\ObjectModelManager'
+
+  Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\ApiService'

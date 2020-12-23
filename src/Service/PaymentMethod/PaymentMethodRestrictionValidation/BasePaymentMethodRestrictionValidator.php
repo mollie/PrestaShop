@@ -37,7 +37,9 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
+use Mollie\Provider\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProviderInterface;
+use Mollie\Service\OrderTotal\OrderTotalServiceInterface;
 use MolPaymentMethod;
 use Tools;
 
@@ -53,12 +55,26 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private $paymentMethodCurrenciesProvider;
 
+	/**
+	 * @var OrderTotalServiceInterface
+	 */
+	private $orderTotalService;
+
+	/**
+	 * @var OrderTotalProviderInterface
+	 */
+	private $orderTotalProvider;
+
 	public function __construct(
 		LegacyContext $context,
-		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider
+		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider,
+		OrderTotalServiceInterface $orderTotalService,
+		OrderTotalProviderInterface $orderTotalProvider
 	) {
 		$this->context = $context;
 		$this->paymentMethodCurrenciesProvider = $paymentMethodCurrenciesProvider;
+		$this->orderTotalService = $orderTotalService;
+		$this->orderTotalProvider = $orderTotalProvider;
 	}
 
 	/**
@@ -75,6 +91,14 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 		}
 
 		if (!$this->isCurrencySupportedByPaymentMethod($paymentMethod)) {
+			return false;
+		}
+
+		if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
+			return false;
+		}
+
+		if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
 			return false;
 		}
 
@@ -123,5 +147,29 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 			strtolower($currencyCode),
 			array_map('strtolower', $supportedCurrencies)
 		);
+	}
+
+	/**
+	 * @param MolPaymentMethod $paymentMethod
+	 *
+	 * @return bool
+	 */
+	private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
+	{
+		$orderTotal = $this->orderTotalProvider->getOrderTotal();
+
+		return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
+	}
+
+	/**
+	 * @param MolPaymentMethod $paymentMethod
+	 *
+	 * @return bool
+	 */
+	private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
+	{
+		$orderTotal = $this->orderTotalProvider->getOrderTotal();
+
+		return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
 	}
 }

@@ -13,11 +13,15 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 		$paymentMethod,
 		$context,
 		$paymentMethodCurrencyProvider,
+		$orderTotalService,
+		$orderTotalProvider,
 		$expectedResult
 	) {
 		$basePaymentRestrictionValidation = new BasePaymentMethodRestrictionValidator(
 			$context,
-			$paymentMethodCurrencyProvider
+			$paymentMethodCurrencyProvider,
+			$orderTotalService,
+			$orderTotalProvider
 		);
 		$this->assertEquals($expectedResult, $basePaymentRestrictionValidation->isValid($paymentMethod));
 	}
@@ -31,6 +35,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
 					'aud', 'bgn', 'eur',
 				]),
+				'orderTotalService' => $this->mockOrderTotalService(false, false),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'expectedResult' => true,
 			],
 			'Payment method is not enabled' => [
@@ -39,12 +45,18 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
 					'aud', 'bgn', 'eur',
 				]),
+				'orderTotalService' => $this->mockOrderTotalService(false, false),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'expectedResult' => false,
 			],
 			'Available currency option list is not defined' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider(null),
+				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider(
+					null
+				),
+				'orderTotalService' => $this->mockOrderTotalService(false, false),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'expectedResult' => false,
 			],
 			'Currency is not in available currencies' => [
@@ -53,6 +65,28 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
 					'bgn', 'eur',
 				]),
+				'orderTotalService' => $this->mockOrderTotalService(false, false),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
+				'expectedResult' => false,
+			],
+			'Order total is lower than minimum' => [
+				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
+				'context' => $this->mockContext('AT', 'AUD'),
+				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
+					'aud', 'bgn', 'eur',
+				]),
+				'orderTotalService' => $this->mockOrderTotalService(false, true),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
+				'expectedResult' => false,
+			],
+			'Order total is higher than maximum' => [
+				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
+				'context' => $this->mockContext('AT', 'AUD'),
+				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
+					'aud', 'bgn', 'eur',
+				]),
+				'orderTotalService' => $this->mockOrderTotalService(true, false),
+				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'expectedResult' => false,
 			],
 		];
