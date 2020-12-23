@@ -403,13 +403,4 @@ class PaymentMethodService
 
 		return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
 	}
-
-	private function isVoucherPaymentAvailable($totalOrderCost)
-	{
-		if (NumberUtility::isLowerThan($totalOrderCost, Config::MOLLIE_VOUCHER_MINIMAL_AMOUNT)) {
-			return false;
-		}
-
-		return true;
-	}
 }
