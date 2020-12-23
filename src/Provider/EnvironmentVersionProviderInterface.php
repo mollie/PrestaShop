@@ -4,8 +4,8 @@ namespace Mollie\Provider;
 
 interface EnvironmentVersionProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getPrestashopVersion();
+	/**
+	 * @return string
+	 */
+	public function getPrestashopVersion();
 }

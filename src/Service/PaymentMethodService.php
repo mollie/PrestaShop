@@ -17,7 +17,6 @@ use Address;
 use Cart;
 use Configuration;
 use Context;
-use Country;
 use Currency;
 use Customer;
 use Mollie;
@@ -173,20 +172,20 @@ class PaymentMethodService
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
 
 		foreach ($methods as $index => $method) {
-		    $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
+			$paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
 			if (!$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
 				unset($methods[$index]);
 				continue;
 			}
 
-            $image = json_decode($method['images_json'], true);
-            $methods[$index]['image'] = $image;
-            if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
-                if ($this->creditCardLogoProvider->logoExists()) {
-                    $methods[$index]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
-                }
-            }
+			$image = json_decode($method['images_json'], true);
+			$methods[$index]['image'] = $image;
+			if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
+				if ($this->creditCardLogoProvider->logoExists()) {
+					$methods[$index]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
+				}
+			}
 		}
 
 		$methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);

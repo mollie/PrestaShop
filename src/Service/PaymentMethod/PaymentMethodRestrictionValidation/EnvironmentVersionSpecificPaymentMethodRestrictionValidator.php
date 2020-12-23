@@ -36,9 +36,7 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
-use Mollie\Config\Config;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 use MolPaymentMethod;
@@ -51,36 +49,36 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
 	 */
 	private $context;
 
-    /**
-     * @var EnvironmentVersionProviderInterface
-     */
-    private $prestashopVersionProvider;
+	/**
+	 * @var EnvironmentVersionProviderInterface
+	 */
+	private $prestashopVersionProvider;
 
-    /**
-     * @var MethodCountryRepository
-     */
-    private $methodCountryRepository;
+	/**
+	 * @var MethodCountryRepository
+	 */
+	private $methodCountryRepository;
 
-    public function __construct(
-        LegacyContext $context,
-        EnvironmentVersionProviderInterface $prestashopVersionProvider,
-        MethodCountryRepository $methodCountryRepository
+	public function __construct(
+		LegacyContext $context,
+		EnvironmentVersionProviderInterface $prestashopVersionProvider,
+		MethodCountryRepository $methodCountryRepository
 	) {
-        $this->context = $context;
-        $this->prestashopVersionProvider = $prestashopVersionProvider;
-        $this->methodCountryRepository = $methodCountryRepository;
-    }
+		$this->context = $context;
+		$this->prestashopVersionProvider = $prestashopVersionProvider;
+		$this->methodCountryRepository = $methodCountryRepository;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function isValid(MolPaymentMethod $paymentMethod)
 	{
-        if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
-            if (!$this->isCountryAvailable($paymentMethod)) {
-                return false;
-            }
-        }
+		if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
+			if (!$this->isCountryAvailable($paymentMethod)) {
+				return false;
+			}
+		}
 
 		return true;
 	}
@@ -90,21 +88,21 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
 	 */
 	public function supports(MolPaymentMethod $paymentMethod)
 	{
-	    return true;
+		return true;
 	}
 
-    private function isCountryAvailable(MolPaymentMethod $paymentMethod)
-    {
-        if ($paymentMethod->is_countries_applicable) {
-            return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(
-                $paymentMethod->getPaymentMethodName(),
-                $this->context->getCountryIsoCode()
-            );
-        }
+	private function isCountryAvailable(MolPaymentMethod $paymentMethod)
+	{
+		if ($paymentMethod->is_countries_applicable) {
+			return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(
+				$paymentMethod->getPaymentMethodName(),
+				$this->context->getCountryIsoCode()
+			);
+		}
 
-        return !$this->methodCountryRepository->checkIfCountryIsExcluded(
-            $paymentMethod->getPaymentMethodName(),
-            $this->context->getCountryIsoCode()
-        );
-    }
+		return !$this->methodCountryRepository->checkIfCountryIsExcluded(
+			$paymentMethod->getPaymentMethodName(),
+			$this->context->getCountryIsoCode()
+		);
+	}
 }
