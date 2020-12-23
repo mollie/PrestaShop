@@ -224,36 +224,36 @@ class Mollie extends PaymentModule
 		}
 
 		/** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
+		$templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
 
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-            $this->context->controller->errors[] = $templateParser->parseTemplate(
-                $this->context->smarty,
-                $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
-            );
+			$this->context->controller->errors[] = $templateParser->parseTemplate(
+				$this->context->smarty,
+				$this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
+				$this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
+			);
 
-            $this->context->controller->warnings[] = $templateParser->parseTemplate(
-                $this->context->smarty,
-                $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/hook/smarty_warning.tpl'
-            );
+			$this->context->controller->warnings[] = $templateParser->parseTemplate(
+				$this->context->smarty,
+				$this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class),
+				$this->getLocalPath() . 'views/templates/hook/smarty_warning.tpl'
+			);
 		}
 
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-            $this->context->controller->errors[] = $templateParser->parseTemplate(
-                $this->context->smarty,
-                $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
-            );
+			$this->context->controller->errors[] = $templateParser->parseTemplate(
+				$this->context->smarty,
+				$this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class),
+				$this->getLocalPath() . 'views/templates/hook/smarty_error.tpl'
+			);
 		}
 
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-            $this->context->controller->errors[] = $templateParser->parseTemplate(
-                $this->context->smarty,
-                $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class),
-                $this->getLocalPath() . 'views/templates/hook/rounding_error.tpl'
-            );
+			$this->context->controller->errors[] = $templateParser->parseTemplate(
+				$this->context->smarty,
+				$this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class),
+				$this->getLocalPath() . 'views/templates/hook/rounding_error.tpl'
+			);
 		}
 
 		$isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
@@ -300,28 +300,28 @@ class Mollie extends PaymentModule
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
 
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
-            $this->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
+		$html = $templateParser->parseTemplate(
+			$this->context->smarty,
+			$this->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
+			$this->getLocalPath() . 'views/templates/admin/logo.tpl'
+		);
 
-        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
+		/** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
+		$updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
+		$updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
 
-        $html .= $templateParser->parseTemplate(
-            $this->context->smarty,
-            $updateMessageInfoBlockData,
-            $this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
-        );
+		$html .= $templateParser->parseTemplate(
+			$this->context->smarty,
+			$updateMessageInfoBlockData,
+			$this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
+		);
 
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock->buildParams());
+		/** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+		$baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+		$this->context->smarty->assign($baseInfoBlock->buildParams());
 
-        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
+		/** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
+		$settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
 
 		try {
 			$html .= $settingsFormBuilder->buildSettingsForm();

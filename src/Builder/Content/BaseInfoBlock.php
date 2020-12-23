@@ -15,7 +15,7 @@ class BaseInfoBlock implements TemplateBuilderInterface
 	private $module;
 
 	public function __construct(Mollie $module)
-    {
+	{
 		$this->module = $module;
 	}
 
@@ -40,9 +40,9 @@ class BaseInfoBlock implements TemplateBuilderInterface
 			'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
 			'description_message' => $this->module->l('Description cannot be empty'),
 			'Profile_id_message' => $this->module->l('Wrong profile ID'),
-            'link' => Context::getContext()->link,
-            'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
-            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
+			'link' => Context::getContext()->link,
+			'module_dir' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/',
+			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
 		];
 	}
 }

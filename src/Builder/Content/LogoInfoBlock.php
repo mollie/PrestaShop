@@ -2,7 +2,6 @@
 
 namespace Mollie\Builder\Content;
 
-use Context;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 
@@ -24,7 +23,7 @@ class LogoInfoBlock implements TemplateBuilderInterface
 	public function buildParams()
 	{
 		return [
-            'logo_url' => $this->module->getPathUri() . 'views/img/mollie_logo.png',
+			'logo_url' => $this->module->getPathUri() . 'views/img/mollie_logo.png',
 		];
 	}
 }
