@@ -36,7 +36,6 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use Context;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock;
@@ -70,31 +69,31 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 	 */
 	private $paymentFeeProvider;
 
-    /**
-     * @var TemplateParserInterface
-     */
-    private $templateParser;
+	/**
+	 * @var TemplateParserInterface
+	 */
+	private $templateParser;
 
-    /**
-     * @var IdealDropdownInfoBlock
-     */
-    private $idealDropdownInfoBlock;
+	/**
+	 * @var IdealDropdownInfoBlock
+	 */
+	private $idealDropdownInfoBlock;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		LegacyContext $context,
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentFeeProviderInterface $paymentFeeProvider,
-        TemplateParserInterface $templateParser,
-        IdealDropdownInfoBlock $idealDropdownInfoBlock
+		TemplateParserInterface $templateParser,
+		IdealDropdownInfoBlock $idealDropdownInfoBlock
 	) {
 		$this->module = $module;
 		$this->context = $context;
 		$this->creditCardLogoProvider = $creditCardLogoProvider;
 		$this->paymentFeeProvider = $paymentFeeProvider;
-        $this->templateParser = $templateParser;
-        $this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
-    }
+		$this->templateParser = $templateParser;
+		$this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -119,10 +118,10 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 		]);
 
 		$paymentOption->setAdditionalInformation($this->templateParser->parseTemplate(
-            $this->context->getSmarty(),
-            $this->idealDropdownInfoBlock,
-            $this->module->getLocalPath() . 'views/templates/hook/ideal_dropdown.tpl'
-        ));
+			$this->context->getSmarty(),
+			$this->idealDropdownInfoBlock,
+			$this->module->getLocalPath() . 'views/templates/hook/ideal_dropdown.tpl'
+		));
 		$paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
 		$paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);

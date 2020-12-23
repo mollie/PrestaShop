@@ -632,7 +632,7 @@ class Mollie extends PaymentModule
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-     */
+	 */
 	public function hookPaymentOptions($params)
 	{
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
@@ -646,18 +646,18 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
 		$paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
 
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
+		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+		$paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
 
-        $methods = $paymentMethodService->getMethodsForCheckout();
+		$methods = $paymentMethodService->getMethodsForCheckout();
 
 		foreach ($methods as $method) {
-		    /** @var MolPaymentMethod|null $paymentMethod */
-            $paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int)$method['id_payment_method']]);
+			/** @var MolPaymentMethod|null $paymentMethod */
+			$paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
-            if (!$paymentMethod) {
-                continue;
-            }
+			if (!$paymentMethod) {
+				continue;
+			}
 			$paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
 		}
 

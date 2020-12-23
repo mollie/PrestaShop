@@ -36,7 +36,6 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Validator\VoucherValidator;
@@ -49,28 +48,28 @@ class VoucherPaymentMethodRestrictionValidator implements PaymentMethodRestricti
 	 */
 	private $context;
 
-    /**
-     * @var VoucherValidator
-     */
-    private $voucherValidator;
+	/**
+	 * @var VoucherValidator
+	 */
+	private $voucherValidator;
 
-    public function __construct(LegacyContext $context, VoucherValidator $voucherValidator)
-    {
+	public function __construct(LegacyContext $context, VoucherValidator $voucherValidator)
+	{
 		$this->context = $context;
-        $this->voucherValidator = $voucherValidator;
-    }
+		$this->voucherValidator = $voucherValidator;
+	}
 
 	/**
-     * TODO extract voucher validator internals into this class + tests.
+	 * TODO extract voucher validator internals into this class + tests.
 	 * {@inheritDoc}
 	 */
 	public function isValid(MolPaymentMethod $paymentMethod)
 	{
-	    if (!$this->voucherValidator->validate($this->context->getCart()->getProducts())) {
-	        return false;
-        }
+		if (!$this->voucherValidator->validate($this->context->getCart()->getProducts())) {
+			return false;
+		}
 
-	    return true;
+		return true;
 	}
 
 	/**

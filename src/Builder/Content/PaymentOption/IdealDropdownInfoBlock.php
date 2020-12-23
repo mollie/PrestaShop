@@ -9,39 +9,39 @@ use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 
 class IdealDropdownInfoBlock implements TemplateBuilderInterface
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
+	/**
+	 * @var Mollie
+	 */
+	private $module;
 
-    /**
-     * @var IssuerService
-     */
-    private $issuerService;
+	/**
+	 * @var IssuerService
+	 */
+	private $issuerService;
 
-    public function __construct(Mollie $module, IssuerService $issuerService)
-    {
-        $this->module = $module;
-        $this->issuerService = $issuerService;
-    }
+	public function __construct(Mollie $module, IssuerService $issuerService)
+	{
+		$this->module = $module;
+		$this->issuerService = $issuerService;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function buildParams()
-    {
-        return [
-            'idealIssuers' => $this->getIdealIssuers(),
-        ];
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function buildParams()
+	{
+		return [
+			'idealIssuers' => $this->getIdealIssuers(),
+		];
+	}
 
-    /**
-     * @return array
-     */
-    private function getIdealIssuers()
-    {
-        $issuers = $this->issuerService->getIdealIssuers();
+	/**
+	 * @return array
+	 */
+	private function getIdealIssuers()
+	{
+		$issuers = $this->issuerService->getIdealIssuers();
 
-        return isset($issuers[PaymentMethod::IDEAL]) ? $issuers[PaymentMethod::IDEAL] : [];
-    }
+		return isset($issuers[PaymentMethod::IDEAL]) ? $issuers[PaymentMethod::IDEAL] : [];
+	}
 }
