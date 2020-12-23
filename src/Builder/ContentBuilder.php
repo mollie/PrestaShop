@@ -4,23 +4,23 @@ namespace Mollie\Builder;
 
 class ContentBuilder implements \Mollie\Builder\TemplateBuilderInterface
 {
-    /**
-     * @var array
-     */
-    private $templateBlocks = [];
+	/**
+	 * @var array
+	 */
+	private $templateBlocks = [];
 
-    public function addTemplateBlock(TemplateBuilderInterface $templateBuilder)
-    {
-        $this->templateBlocks = array_merge($this->templateBlocks, $templateBuilder->buildParams());
+	public function addTemplateBlock(TemplateBuilderInterface $templateBuilder)
+	{
+		$this->templateBlocks = array_merge($this->templateBlocks, $templateBuilder->buildParams());
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public function buildParams()
-    {
-        return $this->templateBlocks;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function buildParams()
+	{
+		return $this->templateBlocks;
+	}
 }

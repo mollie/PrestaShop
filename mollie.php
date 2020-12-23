@@ -223,23 +223,23 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-        /** @var \Mollie\Builder\ContentBuilder $contentBuilder */
-        $contentBuilder = $this->getMollieContainer(\Mollie\Builder\ContentBuilder::class);
+		/** @var \Mollie\Builder\ContentBuilder $contentBuilder */
+		$contentBuilder = $this->getMollieContainer(\Mollie\Builder\ContentBuilder::class);
 
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-		    $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class));
-            $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
-            $this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
+			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class));
+			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+			$this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
 		}
 
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-            $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class));
-            $this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
+			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class));
+			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 		}
 
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-            $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class));
-            $this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
+			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class));
+			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
 		}
 
 		$isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
@@ -249,64 +249,64 @@ class Mollie extends PaymentModule
 			$this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
 		}
 
-        $resultMessages = '';
-        $errors = [];
+		$resultMessages = '';
+		$errors = [];
 
-        if (Tools::isSubmit("submit{$this->name}")) {
-            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
-            $resultMessages = $saveSettingsService->saveSettings($errors);
-            if (!empty($errors)) {
-                $this->context->controller->errors = $resultMessages;
-            } else {
-                $this->context->controller->confirmations = $resultMessages;
-            }
-        }
+		if (Tools::isSubmit("submit{$this->name}")) {
+			/** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
+			$saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
+			$resultMessages = $saveSettingsService->saveSettings($errors);
+			if (!empty($errors)) {
+				$this->context->controller->errors = $resultMessages;
+			} else {
+				$this->context->controller->confirmations = $resultMessages;
+			}
+		}
 
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+		/** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+		$baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
 
-        $contentBuilder->addTemplateBlock($baseInfoBlock->setResultMessages($resultMessages));
-        $contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class));
+		$contentBuilder->addTemplateBlock($baseInfoBlock->setResultMessages($resultMessages));
+		$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class));
 
-        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
+		/** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
+		$updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
 
-        $contentBuilder->addTemplateBlock($updateMessageInfoBlock->setAddons(self::ADDONS));
-        $contentParams = $contentBuilder->buildParams();
+		$contentBuilder->addTemplateBlock($updateMessageInfoBlock->setAddons(self::ADDONS));
+		$contentParams = $contentBuilder->buildParams();
 
-        $this->context->smarty->assign($contentParams);
+		$this->context->smarty->assign($contentParams);
 
 		$html = '';
 		$html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
 		$html .= $contentParams['updateMessage'];
 
-        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
+		/** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
+		$settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
 
-        Media::addJsDef([
-            'description_message' => $this->l('Description cannot be empty'),
-            'profile_id_message' => $this->l('Wrong profile ID'),
-            'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
-            'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
-            'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
-        ]);
+		Media::addJsDef([
+			'description_message' => $this->l('Description cannot be empty'),
+			'profile_id_message' => $this->l('Wrong profile ID'),
+			'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
+			'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
+			'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+		]);
 
-        /* Custom logo JS vars*/
-        Media::addJsDef([
-            'image_size_message' => $this->l('Image size must be %s%x%s1%'),
-            'not_valid_file_message' => $this->l('not a valid file: %s%'),
-        ]);
+		/* Custom logo JS vars*/
+		Media::addJsDef([
+			'image_size_message' => $this->l('Image size must be %s%x%s1%'),
+			'not_valid_file_message' => $this->l('not a valid file: %s%'),
+		]);
 
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
+		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
+		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
+		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
 
 		try {
 			$html .= $settingsFormBuilder->buildSettingsForm();

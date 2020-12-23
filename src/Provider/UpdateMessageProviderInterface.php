@@ -4,5 +4,4 @@ namespace Mollie\Provider;
 
 interface UpdateMessageProviderInterface
 {
-
 }
