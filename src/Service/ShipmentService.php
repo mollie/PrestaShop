@@ -29,7 +29,7 @@ use PrestaShopException;
 use Tools;
 use Validate;
 
-class ShipmentService
+class ShipmentService implements ShipmentServiceInterface
 {
 	/**
 	 * @var OrderShipmentRepository

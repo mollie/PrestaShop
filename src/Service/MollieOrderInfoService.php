@@ -37,7 +37,7 @@ class MollieOrderInfoService
 	 */
 	private $cancelService;
 	/**
-	 * @var ShipmentService
+	 * @var ShipmentServiceInterface
 	 */
 	private $shipmentService;
 	/**
@@ -55,7 +55,7 @@ class MollieOrderInfoService
 		RefundService $refundService,
 		ShipService $shipService,
 		CancelService $cancelService,
-		ShipmentService $shipmentService,
+		ShipmentServiceInterface $shipmentService,
 		ApiService $apiService
 	) {
 		$this->module = $module;

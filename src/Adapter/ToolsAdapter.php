@@ -21,4 +21,14 @@ class ToolsAdapter
 	{
 		return Tools::strtoupper($str);
 	}
+
+	public function strlen($str)
+	{
+		return Tools::strlen($str);
+	}
+
+	public function substr($str, $start, $length = false)
+	{
+		return Tools::substr($str, $start, $length);
+	}
 }

@@ -475,7 +475,7 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
 
-		/** @var \Mollie\Service\ShipmentService $shipmentService */
+		/** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
 		$shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
 
 		$cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
@@ -866,6 +866,8 @@ class Mollie extends PaymentModule
 		return '';
 	}
 
+	//TODO Pretty sure this is not used anywhere
+
 	/**
 	 * @return array
 	 *
@@ -950,6 +952,8 @@ class Mollie extends PaymentModule
 		];
 	}
 
+	//TODO Pretty sure this is not used anywhere
+
 	/**
 	 * @return array
 	 *
@@ -1000,83 +1004,25 @@ class Mollie extends PaymentModule
 
 		if ($params['newOrderStatus'] instanceof OrderState) {
 			$orderStatus = $params['newOrderStatus'];
-		} elseif (is_int($params['newOrderStatus']) || is_string($params['newOrderStatus'])) {
-			$orderStatus = new OrderState($params['newOrderStatus']);
-		}
-		if (isset($orderStatus)
-			&& $orderStatus instanceof OrderState
-			&& Validate::isLoadedObject($orderStatus)
-		) {
-			$orderStatusNumber = $orderStatus->id;
 		} else {
+			$orderStatus = new OrderState((int) $params['newOrderStatus']);
+		}
+		$order = new Order($params['id_order']);
+
+		if (!Validate::isLoadedObject($orderStatus)) {
 			return;
 		}
 
-		$idOrder = $params['id_order'];
-		$order = new Order($idOrder);
-		$checkStatuses = [];
-		if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-			$checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
-		}
-		if (!is_array($checkStatuses)) {
-			$checkStatuses = [];
-		}
-
-		/** @var \Mollie\Service\ShipmentService $shipmentService */
-		$shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
-		$shipmentInfo = $shipmentService->getShipmentInformation($order->reference);
-
-		if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatusNumber, $checkStatuses)
-			) || null === $shipmentInfo
-		) {
+		if (!Validate::isLoadedObject($order)) {
 			return;
 		}
 
-		try {
-			/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-			$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
-			$dbPayment = $paymentMethodRepo->getPaymentBy('order_id', (string) $idOrder);
-		} catch (PrestaShopDatabaseException $e) {
-			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+		/** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
+		$shipmentSenderHandler = $this->getMollieContainer(
+			Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
+		);
 
-			return;
-		} catch (PrestaShopException $e) {
-			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-
-			return;
-		}
-		if (empty($dbPayment) || !isset($dbPayment['transaction_id'])) {
-			// No transaction found
-			return;
-		}
-
-		$length = Tools::strlen(MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX);
-		if (MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint::RESOURCE_ID_PREFIX !== Tools::substr($dbPayment['transaction_id'], 0, $length)
-		) {
-			// No need to check regular payments
-			return;
-		}
-
-		try {
-			$apiOrder = $this->api->orders->get($dbPayment['transaction_id']);
-			$shippableItems = 0;
-			foreach ($apiOrder->lines as $line) {
-				$shippableItems += $line->shippableQuantity;
-			}
-			if ($shippableItems <= 0) {
-				return;
-			}
-
-			$apiOrder->shipAll($shipmentInfo);
-		} catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
-			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-
-			return;
-		} catch (Exception $e) {
-			PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
-
-			return;
-		}
+		$shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
 	}
 
 	/**
