@@ -85,7 +85,10 @@ class ShipmentService
      */
     public function getShipmentInformation($orderReference)
     {
-        $order = Order::getByReference($orderReference)[0];
+        $order = Order::getByReference($orderReference)->getFirst();
+        if (is_bool($order) && !$order) {
+            return null;
+        }
         if (!Validate::isLoadedObject($order)) {
             return null;
         }
