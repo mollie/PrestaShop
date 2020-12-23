@@ -40,7 +40,7 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
 		$tags = new SimpleXMLElement($updateXml);
 
 		if (!$this->xmlFileFollowsExpectedFormat($tags)) {
-			return $this->module->l('Warning: Update xml file from github follows an unexpected format.');
+			return $this->module->l('Warning: Update xml file from github follows an unexpected format.', $this->module->name);
 		}
 
 		$title = $tags->entry[0]->id;

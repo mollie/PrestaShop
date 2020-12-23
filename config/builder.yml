@@ -56,7 +56,3 @@ services:
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Provider\UpdateMessageProvider'
 
-  Mollie\Builder\ContentBuilder:
-    class: Mollie\Builder\ContentBuilder
-
-

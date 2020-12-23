@@ -223,22 +223,25 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-		/** @var \Mollie\Builder\ContentBuilder $contentBuilder */
-		$contentBuilder = $this->getMollieContainer(\Mollie\Builder\ContentBuilder::class);
-
 		if (!Configuration::get('PS_SMARTY_FORCE_COMPILE')) {
-			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class));
+		    /** @var \Mollie\Builder\Content\SmartyForceCompileInfoBlock $smartyForceCompileInfoBlock */
+            $smartyForceCompileInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyForceCompileInfoBlock::class);
+		    $this->context->smarty->assign($smartyForceCompileInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 			$this->context->controller->warnings[] = $this->display(__FILE__, 'smarty_warning.tpl');
 		}
 
 		if (Configuration::get('PS_SMARTY_CACHE') && 'never' === Configuration::get('PS_SMARTY_CLEAR_CACHE')) {
-			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class));
+		    /** @var \Mollie\Builder\Content\SmartyCacheInfoBlock $smartyCacheInfoBlock */
+		    $smartyCacheInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\SmartyCacheInfoBlock::class);
+            $this->context->smarty->assign($smartyCacheInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'smarty_error.tpl');
 		}
 
 		if (\Mollie\Utility\CartPriceUtility::checkRoundingMode()) {
-			$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class));
+            /** @var \Mollie\Builder\Content\RoundingModeInfoBlock $roundingModeInfoBlock */
+		    $roundingModeInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\RoundingModeInfoBlock::class);
+            $this->context->smarty->assign($roundingModeInfoBlock->buildParams());
 			$this->context->controller->errors[] = $this->display(__FILE__, 'rounding_error.tpl');
 		}
 
@@ -246,7 +249,7 @@ class Mollie extends PaymentModule
 
 		/* @phpstan-ignore-next-line */
 		if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
-			$this->context->controller->errors[] = $this->display(__FILE__, 'mollie_awaiting_order_status_error.tpl');
+			$this->context->controller->errors[] = $this->l('Please select order status for the "Status for Awaiting payments" field in the "Advanced settings" tab');
 		}
 
 		$resultMessages = '';
@@ -263,23 +266,28 @@ class Mollie extends PaymentModule
 			}
 		}
 
-		/** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-		$baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
+        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+        $this->context->smarty->assign($baseInfoBlock
+            ->setResultMessages($resultMessages)
+            ->buildParams()
+        );
 
-		$contentBuilder->addTemplateBlock($baseInfoBlock->setResultMessages($resultMessages));
-		$contentBuilder->addTemplateBlock($this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class));
+        /** @var \Mollie\Builder\Content\ModuleLinkInfoBlock $moduleLinkInfoBlock */
+        $moduleLinkInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\ModuleLinkInfoBlock::class);
+        $this->context->smarty->assign($moduleLinkInfoBlock->buildParams());
 
 		/** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
 		$updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-
-		$contentBuilder->addTemplateBlock($updateMessageInfoBlock->setAddons(self::ADDONS));
-		$contentParams = $contentBuilder->buildParams();
-
-		$this->context->smarty->assign($contentParams);
+        $updateMessageInfoBlockData = $updateMessageInfoBlock
+            ->setAddons(self::ADDONS)
+            ->buildParams()
+        ;
+        $this->context->smarty->assign($updateMessageInfoBlockData);
 
 		$html = '';
 		$html .= $this->display(__FILE__, 'views/templates/admin/logo.tpl');
-		$html .= $contentParams['updateMessage'];
+		$html .= $updateMessageInfoBlockData['updateMessage'];
 
 		/** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
 		$settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
