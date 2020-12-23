@@ -355,7 +355,6 @@ class Installer implements InstallerInterface
 		Configuration::updateValue(Config::MOLLIE_CSS, '');
 		Configuration::updateValue(Config::MOLLIE_TRACKING_URLS, '');
 		Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, Config::DEBUG_LOG_ERRORS);
-		Configuration::updateValue(Config::MOLLIE_QRENABLED, false);
 		Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, 0);
 		Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
 		Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);

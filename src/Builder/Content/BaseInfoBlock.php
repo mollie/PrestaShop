@@ -34,7 +34,6 @@ class BaseInfoBlock implements TemplateBuilderInterface
 			'val_issuers' => Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS),
 			'val_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
 			'val_errors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
-			'val_qrenabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
 			'val_logger' => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),
 			'val_save' => $this->module->l('Save'),
 			'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),

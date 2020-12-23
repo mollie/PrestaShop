@@ -554,7 +554,6 @@ class Mollie extends PaymentModule
 			'msg_bankselect' => $this->l('Select your bank:'),
 			'module' => $this,
 			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-			'IsQREnabled' => Mollie\Config\Config::MOLLIE_QRENABLED,
 			'CARTES_BANCAIRES' => Mollie\Config\Config::CARTES_BANCAIRES,
 			'ISSUERS_ON_CLICK' => Mollie\Config\Config::ISSUERS_ON_CLICK,
 			'web_pack_chunks' => Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
@@ -668,8 +667,6 @@ class Mollie extends PaymentModule
 				? $issuerList[MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL]
 				: [],
 			'link' => $this->context->link,
-			'qrCodeEnabled' => Configuration::get(Mollie\Config\Config::MOLLIE_QRENABLED),
-			'qrAlign' => 'left',
 			'cartAmount' => (int) ($cart->getOrderTotal(true) * 100),
 			'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
 		]);

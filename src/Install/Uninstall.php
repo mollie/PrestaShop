@@ -74,7 +74,6 @@ class Uninstall implements UninstallerInterface
 			Config::MOLLIE_ISSUERS,
 			Config::MOLLIE_CSS,
 			Config::MOLLIE_DEBUG_LOG,
-			Config::MOLLIE_QRENABLED,
 			Config::MOLLIE_DISPLAY_ERRORS,
 			Config::MOLLIE_STATUS_OPEN,
 			Config::MOLLIE_STATUS_PAID,
