@@ -11,6 +11,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
+  - { resource: verification.yml }
 
 services:
   mollie:
@@ -33,3 +34,6 @@ services:
   Mollie\Install\DatabaseTableInstaller:
 
   Mollie\Install\DatabaseTableUninstaller:
+
+  mollie.adapter.context:
+    class: Mollie\Adapter\LegacyContext

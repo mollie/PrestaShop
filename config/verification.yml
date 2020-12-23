@@ -1,0 +1,6 @@
+services:
+  Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated:
+    class: Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\CurrencyRepository'
