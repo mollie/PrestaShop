@@ -12,6 +12,7 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
 
   Mollie\Service\ApiService:
     arguments:
@@ -199,3 +200,19 @@ services:
       - '@Mollie\Service\ShipmentService'
 
   Mollie\Service\Shipment\ShipmentInformationSenderInterface: '@Mollie\Service\Shipment\ShipmentInformationSender'
+
+  Mollie\Service\OrderTotal\OrderTotalService:
+    class: Mollie\Service\OrderTotal\OrderTotalService
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\OrderTotalRestrictionProvider'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionService:
+    class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
+    arguments:
+      - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
+
+  Mollie\Service\EntityManager\ObjectModelManager:
+    class: Mollie\Service\EntityManager\ObjectModelManager

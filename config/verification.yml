@@ -18,5 +18,8 @@ services:
     tags:
       - { name: 'payment.type.verification' }
 
-
-
+  Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated:
+    class: Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\CurrencyRepository'

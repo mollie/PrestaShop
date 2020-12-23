@@ -21,3 +21,13 @@ services:
       - '@Mollie\Logger\PrestaLogger'
 
   Mollie\Handler\Shipment\ShipmentSenderHandlerInterface: '@Mollie\Handler\Shipment\ShipmentSenderHandler'
+
+  Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler:
+    class: Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler
+    arguments:
+      - '@Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated'
+      - '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Repository\CurrencyRepositoryInterface'
+
+  Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface: '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
