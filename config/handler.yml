@@ -23,3 +23,5 @@ services:
       - '@Mollie\Provider\PaymentOption\BasePaymentOptionProvider'
       - '@Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider'
       - '@Mollie\Provider\PaymentOption\IdealPaymentOptionProvider'
+
+  Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface: '@Mollie\Handler\PaymentOption\PaymentOptionHandler'

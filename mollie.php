@@ -632,39 +632,33 @@ class Mollie extends PaymentModule
 	 *
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
-	 * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
-	 */
+     */
 	public function hookPaymentOptions($params)
 	{
 		if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
 			return [];
 		}
-
-		/** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-		$paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
-
-		/** @var \Mollie\Validator\VoucherValidator $voucherValidator */
-		$voucherValidator = $this->getMollieContainer(\Mollie\Validator\VoucherValidator::class);
-
-		$methods = $paymentMethodService->getMethodsForCheckout();
-
-		$context = Context::getContext();
-		$cart = $context->cart;
-
 		$paymentOptions = [];
 
-		/** @var \Mollie\Handler\PaymentOption\PaymentOptionHandler $paymentOptionsHandler */
-		$paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandler::class);
+		/** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepository */
+		$paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+
+		/** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
+		$paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
+
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
+
+        $methods = $paymentMethodService->getMethodsForCheckout();
 
 		foreach ($methods as $method) {
-			$methodObj = new MolPaymentMethod($method['id_payment_method']);
+		    /** @var MolPaymentMethod|null $paymentMethod */
+            $paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int)$method['id_payment_method']]);
 
-			$isVoucherMethod = \Mollie\Config\Config::MOLLIE_VOUCHER_METHOD_ID === $methodObj->getPaymentMethodName();
-			$hasVoucherProducts = $voucherValidator->validate($cart->getProducts());
-			if ($isVoucherMethod && !$hasVoucherProducts) {
-				continue;
-			}
-			$paymentOptions[] = $paymentOptionsHandler->handle($methodObj);
+            if (!$paymentMethod) {
+                continue;
+            }
+			$paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
 		}
 
 		return $paymentOptions;
