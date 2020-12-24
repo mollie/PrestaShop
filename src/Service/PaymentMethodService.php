@@ -171,7 +171,7 @@ class PaymentMethodService
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
 
 		foreach ($methods as $index => $method) {
-		    /** @var MolPaymentMethod|null $paymentMethod */
+			/** @var MolPaymentMethod|null $paymentMethod */
 			$paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
 			if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
