@@ -193,7 +193,7 @@ class UnitTestCase extends TestCase
 			->getMock();
 
 		$orderTotalProvider
-			->method('provideOrderTotal')
+			->method('getOrderTotal')
 			->willReturn($orderTotal)
 		;
 
