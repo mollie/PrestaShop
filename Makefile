@@ -8,6 +8,7 @@ build-vendor:
 	composer dumpautoload
 	find vendor/prestashop/ -type f -exec sed -i 's/MolliePrefix\\Composer\\Autoload\\ClassLoader/Composer\\Autoload\\ClassLoader/g' {} \;
 	find vendor/sentry/sentry/lib/Raven/Client.php -type f -exec sed -i 's/Raven_Processor_SanitizeDataProcessor/MolliePrefix\\\\Raven_Processor_SanitizeDataProcessor/g' {} \;
+	find vendor/sentry/sentry/lib/Raven/Client.php -type f -exec sed -i 's/MolliePrefix\\\\Y-m-d\\\\TH:i:s\\\\Z/Y-m-d\\TH:i:s\\Z/g' {} \;
 
 bvn: build-vendor-no-dev
 build-vendor-no-dev:
@@ -19,6 +20,7 @@ build-vendor-no-dev:
 	composer dumpautoload
 	find vendor/prestashop/ -type f -exec sed -i 's/MolliePrefix\\Composer\\Autoload\\ClassLoader/Composer\\Autoload\\ClassLoader/g' {} \;
 	find vendor/sentry/sentry/lib/Raven/Client.php -type f -exec sed -i 's/Raven_Processor_SanitizeDataProcessor/MolliePrefix\\\\Raven_Processor_SanitizeDataProcessor/g' {} \;
+	find vendor/sentry/sentry/lib/Raven/Client.php -type f -exec sed -i 's/MolliePrefix\\\\Y-m-d\\\\TH:i:s\\\\Z/Y-m-d\\TH:i:s\\Z/g' {} \;
 
 fl: fix-lint
 fix-lint:

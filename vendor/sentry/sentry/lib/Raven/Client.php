@@ -687,7 +687,7 @@ class Raven_Client
     public function capture($data, $stack = null, $vars = null)
     {
         if (!isset($data['timestamp'])) {
-            $data['timestamp'] = \gmdate('MolliePrefix\\Y-m-d\\TH:i:s\\Z');
+            $data['timestamp'] = \gmdate('Y-m-d\TH:i:s\Z');
         }
         if (!isset($data['level'])) {
             $data['level'] = self::ERROR;
