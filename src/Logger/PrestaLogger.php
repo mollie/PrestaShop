@@ -35,8 +35,10 @@ class PrestaLogger implements LoggerInterface
 
 	public function error($message, array $context = [])
 	{
+		$uniqueMessage = sprintf('Log ID (%s) | %s', uniqid(), $message);
+
 		\PrestaShopLogger::addLog(
-			$this->getMessageWithContext($message, $context),
+			$this->getMessageWithContext($uniqueMessage, $context),
 			2
 		);
 	}
@@ -53,8 +55,10 @@ class PrestaLogger implements LoggerInterface
 
 	public function info($message, array $context = [])
 	{
+		$uniqueMessage = sprintf('Log ID (%s) | %s', uniqid(), $message);
+
 		\PrestaShopLogger::addLog(
-			$this->getMessageWithContext($message, $context)
+			$this->getMessageWithContext($uniqueMessage, $context)
 		);
 	}
 
