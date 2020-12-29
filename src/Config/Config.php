@@ -22,9 +22,9 @@ use MolliePrefix\Mollie\Api\Types\RefundStatus;
 
 class Config
 {
-	const SEGMENT_KEY = 'GnGf1m503biLVjo3a52nplV1becA0kiv';
+	const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-	const SENTRY_KEY = 'https://4e43802a3d454d7c8adadfbb29aec8c0@o471790.ingest.sentry.io/5573609';
+	const SENTRY_KEY = 'https://7a3813de240345da84847fc88d63a9cc@o497594.ingest.sentry.io/5573860';
 
 	/**
 	 * Currency restrictions per payment method.

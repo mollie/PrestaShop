@@ -44,7 +44,7 @@ class ErrorHandler
 				'level' => 'warning',
 				'tags' => [
 					'php_version' => phpversion(),
-					'ps_facebook_version' => $module->version,
+					'mollie_version' => $module->version,
 					'prestashop_version' => _PS_VERSION_,
 					'mollie_is_enabled' => \Module::isEnabled('mollie'),
 					'mollie_is_installed' => \Module::isInstalled('mollie'),
