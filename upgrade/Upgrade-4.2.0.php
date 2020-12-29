@@ -57,24 +57,24 @@ function upgrade_module_4_2_0($module)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
 	);
 
-    Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction` (
+	Db::getInstance()->execute(' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction` (
             `id_payment_method_order_total_restriction` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
             `id_payment_method` INT(10) NOT NULL,
             `currency_iso` VARCHAR(64) NOT NULL,
             `minimum_order_total` decimal(20,6),
             `maximum_order_total` decimal(20,6)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
-    );
+	);
 
-    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-    $orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
-    try {
-        $orderTotalRestrictionService->handleOrderTotalUpdate();
-    } catch (OrderTotalRestrictionException $e) {
-        //Do nothing as most likely mollie is not configured.
-    }
+	/** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
+	$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
+	try {
+		$orderTotalRestrictionService->handleOrderTotalUpdate();
+	} catch (OrderTotalRestrictionException $e) {
+		//Do nothing as most likely mollie is not configured.
+	}
 
-    /**
+	/**
 	 * @var OrderStateImageService $imageService
 	 */
 	$imageService = $module->getMollieContainer(OrderStateImageService::class);
