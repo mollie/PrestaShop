@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Builder interface for parameter matchers.
  *
  * @since Interface available since Release 1.0.0
  */
-interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends PHPUnit_Framework_MockObject_Builder_Match
+interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends \MolliePrefix\PHPUnit_Framework_MockObject_Builder_Match
 {
     /**
      * Sets the parameters to match for, each parameter to this funtion will
@@ -33,7 +35,6 @@ interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends PHPUnit_F
      * @return PHPUnit_Framework_MockObject_Builder_ParametersMatch
      */
     public function with(...$arguments);
-
     /**
      * Sets a matcher which allows any kind of parameters.
      *
@@ -47,3 +48,17 @@ interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends PHPUnit_F
      */
     public function withAnyParameters();
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Builder interface for parameter matchers.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_ParametersMatch', 'PHPUnit_Framework_MockObject_Builder_ParametersMatch', \false);

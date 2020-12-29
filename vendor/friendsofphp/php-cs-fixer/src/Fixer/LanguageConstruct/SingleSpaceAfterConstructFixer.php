@@ -113,7 +113,7 @@ yield  from  baz();
             if ($token->isGivenKind(\T_CLASS) && $tokens[$tokens->getNextMeaningfulToken($index)]->equals('(')) {
                 continue;
             }
-            if ($token->isGivenKind(\T_EXTENDS) && $this->isMultilineExtendsWithMoreThanOneAncestor($tokens, $index)) {
+            if ($token->isGivenKind([\T_EXTENDS, \T_IMPLEMENTS]) && $this->isMultilineExtendsOrImplementsWithMoreThanOneAncestor($tokens, $index)) {
                 continue;
             }
             if ($token->isGivenKind(\T_RETURN) && $this->isMultiLineReturn($tokens, $index)) {
@@ -165,7 +165,7 @@ yield  from  baz();
      *
      * @return bool
      */
-    private function isMultilineExtendsWithMoreThanOneAncestor(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
+    private function isMultilineExtendsOrImplementsWithMoreThanOneAncestor(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
     {
         $hasMoreThanOneAncestor = \false;
         while (++$index) {

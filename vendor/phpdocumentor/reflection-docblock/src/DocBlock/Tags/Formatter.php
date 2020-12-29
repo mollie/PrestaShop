@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,11 +10,9 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\DocBlock\Tag;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag;
 interface Formatter
 {
     /**
@@ -23,5 +22,5 @@ interface Formatter
      *
      * @return string
      */
-    public function format(Tag $tag);
+    public function format(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag $tag);
 }

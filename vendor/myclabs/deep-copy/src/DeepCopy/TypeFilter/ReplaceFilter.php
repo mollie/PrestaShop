@@ -1,17 +1,16 @@
 <?php
 
-namespace DeepCopy\TypeFilter;
+namespace MolliePrefix\DeepCopy\TypeFilter;
 
 /**
  * @final
  */
-class ReplaceFilter implements TypeFilter
+class ReplaceFilter implements \MolliePrefix\DeepCopy\TypeFilter\TypeFilter
 {
     /**
      * @var callable
      */
     protected $callback;
-
     /**
      * @param callable $callable Will be called to get the new value for each element to replace
      */
@@ -19,12 +18,11 @@ class ReplaceFilter implements TypeFilter
     {
         $this->callback = $callable;
     }
-
     /**
      * {@inheritdoc}
      */
     public function apply($element)
     {
-        return call_user_func($this->callback, $element);
+        return \call_user_func($this->callback, $element);
     }
 }

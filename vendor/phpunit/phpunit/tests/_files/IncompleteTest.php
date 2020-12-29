@@ -1,8 +1,12 @@
 <?php
-class IncompleteTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class IncompleteTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testIncomplete()
     {
         $this->markTestIncomplete('Test incomplete');
     }
 }
+\class_alias('MolliePrefix\\IncompleteTest', 'IncompleteTest', \false);

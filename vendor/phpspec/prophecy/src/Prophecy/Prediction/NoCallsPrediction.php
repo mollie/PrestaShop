@@ -8,34 +8,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Prediction;
 
-namespace Prophecy\Prediction;
-
-use Prophecy\Call\Call;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophecy\MethodProphecy;
-use Prophecy\Util\StringUtil;
-use Prophecy\Exception\Prediction\UnexpectedCallsException;
-
+use MolliePrefix\Prophecy\Call\Call;
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
+use MolliePrefix\Prophecy\Util\StringUtil;
+use MolliePrefix\Prophecy\Exception\Prediction\UnexpectedCallsException;
 /**
  * No calls prediction.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class NoCallsPrediction implements PredictionInterface
+class NoCallsPrediction implements \MolliePrefix\Prophecy\Prediction\PredictionInterface
 {
     private $util;
-
     /**
      * Initializes prediction.
      *
      * @param null|StringUtil $util
      */
-    public function __construct(StringUtil $util = null)
+    public function __construct(\MolliePrefix\Prophecy\Util\StringUtil $util = null)
     {
-        $this->util = $util ?: new StringUtil;
+        $this->util = $util ?: new \MolliePrefix\Prophecy\Util\StringUtil();
     }
-
     /**
      * Tests that there were no calls made.
      *
@@ -45,24 +41,12 @@ class NoCallsPrediction implements PredictionInterface
      *
      * @throws \Prophecy\Exception\Prediction\UnexpectedCallsException
      */
-    public function check(array $calls, ObjectProphecy $object, MethodProphecy $method)
+    public function check(array $calls, \MolliePrefix\Prophecy\Prophecy\ObjectProphecy $object, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $method)
     {
-        if (!count($calls)) {
+        if (!\count($calls)) {
             return;
         }
-
-        $verb = count($calls) === 1 ? 'was' : 'were';
-
-        throw new UnexpectedCallsException(sprintf(
-            "No calls expected that match:\n".
-            "  %s->%s(%s)\n".
-            "but %d %s made:\n%s",
-            get_class($object->reveal()),
-            $method->getMethodName(),
-            $method->getArgumentsWildcard(),
-            count($calls),
-            $verb,
-            $this->util->stringifyCalls($calls)
-        ), $method, $calls);
+        $verb = \count($calls) === 1 ? 'was' : 'were';
+        throw new \MolliePrefix\Prophecy\Exception\Prediction\UnexpectedCallsException(\sprintf("No calls expected that match:\n" . "  %s->%s(%s)\n" . "but %d %s made:\n%s", \get_class($object->reveal()), $method->getMethodName(), $method->getArgumentsWildcard(), \count($calls), $verb, $this->util->stringifyCalls($calls)), $method, $calls);
     }
 }

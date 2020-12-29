@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,8 +10,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-
-namespace phpDocumentor\Reflection\Types;
+namespace MolliePrefix\phpDocumentor\Reflection\Types;
 
 /**
  * Provides information about the Context in which the DocBlock occurs that receives this context.
@@ -30,10 +30,8 @@ final class Context
 {
     /** @var string The current namespace. */
     private $namespace;
-
     /** @var array List of namespace aliases => Fully Qualified Namespace. */
     private $namespaceAliases;
-
     /**
      * Initializes the new context and normalizes all passed namespaces to be in Qualified Namespace Name (QNN)
      * format (without a preceding `\`).
@@ -43,24 +41,18 @@ final class Context
      */
     public function __construct($namespace, array $namespaceAliases = [])
     {
-        $this->namespace = ('global' !== $namespace && 'default' !== $namespace)
-            ? trim((string)$namespace, '\\')
-            : '';
-
+        $this->namespace = 'global' !== $namespace && 'default' !== $namespace ? \trim((string) $namespace, '\\') : '';
         foreach ($namespaceAliases as $alias => $fqnn) {
             if ($fqnn[0] === '\\') {
-                $fqnn = substr($fqnn, 1);
+                $fqnn = \substr($fqnn, 1);
             }
-            if ($fqnn[strlen($fqnn) - 1] === '\\') {
-                $fqnn = substr($fqnn, 0, -1);
+            if ($fqnn[\strlen($fqnn) - 1] === '\\') {
+                $fqnn = \substr($fqnn, 0, -1);
             }
-
             $namespaceAliases[$alias] = $fqnn;
         }
-
         $this->namespaceAliases = $namespaceAliases;
     }
-
     /**
      * Returns the Qualified Namespace Name (thus without `\` in front) where the associated element is in.
      *
@@ -70,7 +62,6 @@ final class Context
     {
         return $this->namespace;
     }
-
     /**
      * Returns a list of Qualified Namespace Names (thus without `\` in front) that are imported, the keys represent
      * the alias for the imported Namespace.

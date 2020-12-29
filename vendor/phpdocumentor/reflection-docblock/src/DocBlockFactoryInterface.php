@@ -1,5 +1,6 @@
 <?php
-namespace phpDocumentor\Reflection;
+
+namespace MolliePrefix\phpDocumentor\Reflection;
 
 interface DocBlockFactoryInterface
 {
@@ -11,7 +12,6 @@ interface DocBlockFactoryInterface
      * @return DocBlockFactory
      */
     public static function createInstance(array $additionalTags = []);
-
     /**
      * @param string $docblock
      * @param Types\Context $context
@@ -19,5 +19,5 @@ interface DocBlockFactoryInterface
      *
      * @return DocBlock
      */
-    public function create($docblock, Types\Context $context = null, Location $location = null);
+    public function create($docblock, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null, \MolliePrefix\phpDocumentor\Reflection\Location $location = null);
 }

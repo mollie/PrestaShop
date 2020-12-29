@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,69 +10,49 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\DocBlock\Description;
-use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
-use phpDocumentor\Reflection\Type;
-use phpDocumentor\Reflection\TypeResolver;
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-use phpDocumentor\Reflection\Types\Void_;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Description;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory;
+use MolliePrefix\phpDocumentor\Reflection\Type;
+use MolliePrefix\phpDocumentor\Reflection\TypeResolver;
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
+use MolliePrefix\phpDocumentor\Reflection\Types\Void_;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Reflection class for an {@}method in a Docblock.
  */
-final class Method extends BaseTag implements Factory\StaticMethod
+final class Method extends \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\BaseTag implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod
 {
     protected $name = 'method';
-
     /** @var string */
     private $methodName = '';
-
     /** @var string[] */
     private $arguments = [];
-
     /** @var bool */
-    private $isStatic = false;
-
+    private $isStatic = \false;
     /** @var Type */
     private $returnType;
-
-    public function __construct(
-        $methodName,
-        array $arguments = [],
-        Type $returnType = null,
-        $static = false,
-        Description $description = null
-    ) {
-        Assert::stringNotEmpty($methodName);
-        Assert::boolean($static);
-
+    public function __construct($methodName, array $arguments = [], \MolliePrefix\phpDocumentor\Reflection\Type $returnType = null, $static = \false, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description $description = null)
+    {
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($methodName);
+        \MolliePrefix\Webmozart\Assert\Assert::boolean($static);
         if ($returnType === null) {
-            $returnType = new Void_();
+            $returnType = new \MolliePrefix\phpDocumentor\Reflection\Types\Void_();
         }
-
-        $this->methodName  = $methodName;
-        $this->arguments   = $this->filterArguments($arguments);
-        $this->returnType  = $returnType;
-        $this->isStatic    = $static;
+        $this->methodName = $methodName;
+        $this->arguments = $this->filterArguments($arguments);
+        $this->returnType = $returnType;
+        $this->isStatic = $static;
         $this->description = $description;
     }
-
     /**
      * {@inheritdoc}
      */
-    public static function create(
-        $body,
-        TypeResolver $typeResolver = null,
-        DescriptionFactory $descriptionFactory = null,
-        TypeContext $context = null
-    ) {
-        Assert::stringNotEmpty($body);
-        Assert::allNotNull([ $typeResolver, $descriptionFactory ]);
-
+    public static function create($body, \MolliePrefix\phpDocumentor\Reflection\TypeResolver $typeResolver = null, \MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory $descriptionFactory = null, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
+    {
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($body);
+        \MolliePrefix\Webmozart\Assert\Assert::allNotNull([$typeResolver, $descriptionFactory]);
         // 1. none or more whitespace
         // 2. optionally the keyword "static" followed by whitespace
         // 3. optionally a word with underscores followed by whitespace : as
@@ -81,83 +62,71 @@ final class Method extends BaseTag implements Factory\StaticMethod
         // 5. then a word with underscores, followed by ( and any character
         //    until a ) and whitespace : as method name with signature
         // 6. any remaining text : as description
-        if (!preg_match(
-            '/^
+        if (!\preg_match('/^
                 # Static keyword
                 # Declares a static method ONLY if type is also present
                 (?:
                     (static)
-                    \s+
+                    \\s+
                 )?
                 # Return type
                 (?:
                     (   
-                        (?:[\w\|_\\\\]*\$this[\w\|_\\\\]*)
+                        (?:[\\w\\|_\\\\]*\\$this[\\w\\|_\\\\]*)
                         |
                         (?:
-                            (?:[\w\|_\\\\]+)
+                            (?:[\\w\\|_\\\\]+)
                             # array notation           
-                            (?:\[\])*
+                            (?:\\[\\])*
                         )*
                     )
-                    \s+
+                    \\s+
                 )?
                 # Legacy method name (not captured)
                 (?:
-                    [\w_]+\(\)\s+
+                    [\\w_]+\\(\\)\\s+
                 )?
                 # Method name
-                ([\w\|_\\\\]+)
+                ([\\w\\|_\\\\]+)
                 # Arguments
                 (?:
-                    \(([^\)]*)\)
+                    \\(([^\\)]*)\\)
                 )?
-                \s*
+                \\s*
                 # Description
                 (.*)
-            $/sux',
-            $body,
-            $matches
-        )) {
+            $/sux', $body, $matches)) {
             return null;
         }
-
         list(, $static, $returnType, $methodName, $arguments, $description) = $matches;
-
-        $static      = $static === 'static';
-
+        $static = $static === 'static';
         if ($returnType === '') {
             $returnType = 'void';
         }
-
-        $returnType  = $typeResolver->resolve($returnType, $context);
+        $returnType = $typeResolver->resolve($returnType, $context);
         $description = $descriptionFactory->create($description, $context);
-
-        if (is_string($arguments) && strlen($arguments) > 0) {
-            $arguments = explode(',', $arguments);
-            foreach($arguments as &$argument) {
-                $argument = explode(' ', self::stripRestArg(trim($argument)), 2);
+        if (\is_string($arguments) && \strlen($arguments) > 0) {
+            $arguments = \explode(',', $arguments);
+            foreach ($arguments as &$argument) {
+                $argument = \explode(' ', self::stripRestArg(\trim($argument)), 2);
                 if ($argument[0][0] === '$') {
-                    $argumentName = substr($argument[0], 1);
-                    $argumentType = new Void_();
+                    $argumentName = \substr($argument[0], 1);
+                    $argumentType = new \MolliePrefix\phpDocumentor\Reflection\Types\Void_();
                 } else {
                     $argumentType = $typeResolver->resolve($argument[0], $context);
                     $argumentName = '';
                     if (isset($argument[1])) {
                         $argument[1] = self::stripRestArg($argument[1]);
-                        $argumentName = substr($argument[1], 1);
+                        $argumentName = \substr($argument[1], 1);
                     }
                 }
-
-                $argument = [ 'name' => $argumentName, 'type' => $argumentType];
+                $argument = ['name' => $argumentName, 'type' => $argumentType];
             }
         } else {
             $arguments = [];
         }
-
         return new static($methodName, $arguments, $returnType, $static, $description);
     }
-
     /**
      * Retrieves the method name.
      *
@@ -167,7 +136,6 @@ final class Method extends BaseTag implements Factory\StaticMethod
     {
         return $this->methodName;
     }
-
     /**
      * @return string[]
      */
@@ -175,7 +143,6 @@ final class Method extends BaseTag implements Factory\StaticMethod
     {
         return $this->arguments;
     }
-
     /**
      * Checks whether the method tag describes a static method or not.
      *
@@ -185,7 +152,6 @@ final class Method extends BaseTag implements Factory\StaticMethod
     {
         return $this->isStatic;
     }
-
     /**
      * @return Type
      */
@@ -193,47 +159,35 @@ final class Method extends BaseTag implements Factory\StaticMethod
     {
         return $this->returnType;
     }
-
     public function __toString()
     {
         $arguments = [];
         foreach ($this->arguments as $argument) {
             $arguments[] = $argument['type'] . ' $' . $argument['name'];
         }
-
-        return trim(($this->isStatic() ? 'static ' : '')
-            . (string)$this->returnType . ' '
-            . $this->methodName
-            . '(' . implode(', ', $arguments) . ')'
-            . ($this->description ? ' ' . $this->description->render() : ''));
+        return \trim(($this->isStatic() ? 'static ' : '') . (string) $this->returnType . ' ' . $this->methodName . '(' . \implode(', ', $arguments) . ')' . ($this->description ? ' ' . $this->description->render() : ''));
     }
-
     private function filterArguments($arguments)
     {
         foreach ($arguments as &$argument) {
-            if (is_string($argument)) {
-                $argument = [ 'name' => $argument ];
+            if (\is_string($argument)) {
+                $argument = ['name' => $argument];
             }
-            if (! isset($argument['type'])) {
-                $argument['type'] = new Void_();
+            if (!isset($argument['type'])) {
+                $argument['type'] = new \MolliePrefix\phpDocumentor\Reflection\Types\Void_();
             }
-            $keys = array_keys($argument);
-            if ($keys !== [ 'name', 'type' ]) {
-                throw new \InvalidArgumentException(
-                    'Arguments can only have the "name" and "type" fields, found: ' . var_export($keys, true)
-                );
+            $keys = \array_keys($argument);
+            if ($keys !== ['name', 'type']) {
+                throw new \InvalidArgumentException('Arguments can only have the "name" and "type" fields, found: ' . \var_export($keys, \true));
             }
         }
-
         return $arguments;
     }
-
     private static function stripRestArg($argument)
     {
-        if (strpos($argument, '...') === 0) {
-            $argument = trim(substr($argument, 3));
+        if (\strpos($argument, '...') === 0) {
+            $argument = \trim(\substr($argument, 3));
         }
-
         return $argument;
     }
 }

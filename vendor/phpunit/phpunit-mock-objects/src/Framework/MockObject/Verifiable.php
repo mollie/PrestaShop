@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Interface for classes which must verify a given expectation.
  *
@@ -23,3 +25,17 @@ interface PHPUnit_Framework_MockObject_Verifiable
      */
     public function verify();
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Interface for classes which must verify a given expectation.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Verifiable', 'PHPUnit_Framework_MockObject_Verifiable', \false);

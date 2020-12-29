@@ -1,4 +1,8 @@
 <?php
-class EmptyTestCaseTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class EmptyTestCaseTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
 }
+\class_alias('MolliePrefix\\EmptyTestCaseTest', 'EmptyTestCaseTest', \false);

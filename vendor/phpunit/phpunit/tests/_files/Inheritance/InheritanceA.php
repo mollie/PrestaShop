@@ -1,7 +1,9 @@
 <?php
 
-require_once(__DIR__ . '/InheritanceB.php');
+namespace MolliePrefix;
 
-class InheritanceA extends InheritanceB
+require_once __DIR__ . '/InheritanceB.php';
+class InheritanceA extends \MolliePrefix\InheritanceB
 {
 }
+\class_alias('MolliePrefix\\InheritanceA', 'InheritanceA', \false);

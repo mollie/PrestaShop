@@ -1,7 +1,9 @@
 <?php
-use PHPUnit\Framework\TestCase;
 
-class Issue2380Test extends TestCase
+namespace MolliePrefix;
+
+use MolliePrefix\PHPUnit\Framework\TestCase;
+class Issue2380Test extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider generatorData
@@ -10,12 +12,12 @@ class Issue2380Test extends TestCase
     {
         $this->assertNotEmpty($data);
     }
-
     /**
      * @return Generator
      */
     public function generatorData()
     {
-        yield ['testing'];
+        (yield ['testing']);
     }
 }
+\class_alias('MolliePrefix\\Issue2380Test', 'Issue2380Test', \false);

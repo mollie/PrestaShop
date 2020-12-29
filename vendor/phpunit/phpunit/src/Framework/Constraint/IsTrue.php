@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that accepts true.
  *
  * @since Class available since Release 3.3.0
  */
-class PHPUnit_Framework_Constraint_IsTrue extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_IsTrue extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
@@ -25,9 +27,8 @@ class PHPUnit_Framework_Constraint_IsTrue extends PHPUnit_Framework_Constraint
      */
     protected function matches($other)
     {
-        return $other === true;
+        return $other === \true;
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -38,3 +39,17 @@ class PHPUnit_Framework_Constraint_IsTrue extends PHPUnit_Framework_Constraint
         return 'is true';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that accepts true.
+ *
+ * @since Class available since Release 3.3.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsTrue', 'PHPUnit_Framework_Constraint_IsTrue', \false);

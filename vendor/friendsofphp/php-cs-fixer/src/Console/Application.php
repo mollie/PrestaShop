@@ -32,7 +32,7 @@ use MolliePrefix\Symfony\Component\Console\Output\OutputInterface;
  */
 final class Application extends \MolliePrefix\Symfony\Component\Console\Application
 {
-    const VERSION = '2.17.2';
+    const VERSION = '2.17.3';
     const VERSION_CODENAME = 'Desert Beast';
     /**
      * @var ToolInfo

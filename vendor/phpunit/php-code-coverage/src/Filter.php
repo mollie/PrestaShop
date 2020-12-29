@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\CodeCoverage;
+namespace MolliePrefix\SebastianBergmann\CodeCoverage;
 
 /**
  * Filter for whitelisting of code coverage information.
@@ -21,7 +21,6 @@ class Filter
      * @var array
      */
     private $whitelistedFiles = [];
-
     /**
      * Adds a directory to the whitelist (recursively).
      *
@@ -31,14 +30,12 @@ class Filter
      */
     public function addDirectoryToWhitelist($directory, $suffix = '.php', $prefix = '')
     {
-        $facade = new \File_Iterator_Facade;
-        $files  = $facade->getFilesAsArray($directory, $suffix, $prefix);
-
+        $facade = new \MolliePrefix\File_Iterator_Facade();
+        $files = $facade->getFilesAsArray($directory, $suffix, $prefix);
         foreach ($files as $file) {
             $this->addFileToWhitelist($file);
         }
     }
-
     /**
      * Adds a file to the whitelist.
      *
@@ -46,9 +43,8 @@ class Filter
      */
     public function addFileToWhitelist($filename)
     {
-        $this->whitelistedFiles[realpath($filename)] = true;
+        $this->whitelistedFiles[\realpath($filename)] = \true;
     }
-
     /**
      * Adds files to the whitelist.
      *
@@ -60,7 +56,6 @@ class Filter
             $this->addFileToWhitelist($file);
         }
     }
-
     /**
      * Removes a directory from the whitelist (recursively).
      *
@@ -70,14 +65,12 @@ class Filter
      */
     public function removeDirectoryFromWhitelist($directory, $suffix = '.php', $prefix = '')
     {
-        $facade = new \File_Iterator_Facade;
-        $files  = $facade->getFilesAsArray($directory, $suffix, $prefix);
-
+        $facade = new \MolliePrefix\File_Iterator_Facade();
+        $files = $facade->getFilesAsArray($directory, $suffix, $prefix);
         foreach ($files as $file) {
             $this->removeFileFromWhitelist($file);
         }
     }
-
     /**
      * Removes a file from the whitelist.
      *
@@ -85,11 +78,9 @@ class Filter
      */
     public function removeFileFromWhitelist($filename)
     {
-        $filename = realpath($filename);
-
+        $filename = \realpath($filename);
         unset($this->whitelistedFiles[$filename]);
     }
-
     /**
      * Checks whether a filename is a real filename.
      *
@@ -99,20 +90,11 @@ class Filter
      */
     public function isFile($filename)
     {
-        if ($filename == '-' ||
-            strpos($filename, 'vfs://') === 0 ||
-            strpos($filename, 'xdebug://debug-eval') !== false ||
-            strpos($filename, 'eval()\'d code') !== false ||
-            strpos($filename, 'runtime-created function') !== false ||
-            strpos($filename, 'runkit created function') !== false ||
-            strpos($filename, 'assert code') !== false ||
-            strpos($filename, 'regexp code') !== false) {
-            return false;
+        if ($filename == '-' || \strpos($filename, 'vfs://') === 0 || \strpos($filename, 'xdebug://debug-eval') !== \false || \strpos($filename, 'eval()\'d code') !== \false || \strpos($filename, 'runtime-created function') !== \false || \strpos($filename, 'runkit created function') !== \false || \strpos($filename, 'assert code') !== \false || \strpos($filename, 'regexp code') !== \false) {
+            return \false;
         }
-
-        return file_exists($filename);
+        return \file_exists($filename);
     }
-
     /**
      * Checks whether or not a file is filtered.
      *
@@ -123,14 +105,11 @@ class Filter
     public function isFiltered($filename)
     {
         if (!$this->isFile($filename)) {
-            return true;
+            return \true;
         }
-
-        $filename = realpath($filename);
-
+        $filename = \realpath($filename);
         return !isset($this->whitelistedFiles[$filename]);
     }
-
     /**
      * Returns the list of whitelisted files.
      *
@@ -138,9 +117,8 @@ class Filter
      */
     public function getWhitelist()
     {
-        return array_keys($this->whitelistedFiles);
+        return \array_keys($this->whitelistedFiles);
     }
-
     /**
      * Returns whether this filter has a whitelist.
      *
@@ -150,7 +128,6 @@ class Filter
     {
         return !empty($this->whitelistedFiles);
     }
-
     /**
      * Returns the whitelisted files.
      *
@@ -160,7 +137,6 @@ class Filter
     {
         return $this->whitelistedFiles;
     }
-
     /**
      * Sets the whitelisted files.
      *

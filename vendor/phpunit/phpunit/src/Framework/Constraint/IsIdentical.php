@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that one value is identical to another.
  *
@@ -21,18 +23,16 @@
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_IsIdentical extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_IsIdentical extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var float
      */
-    const EPSILON = 0.0000000001;
-
+    const EPSILON = 1.0E-10;
     /**
      * @var mixed
      */
     protected $value;
-
     /**
      * @param mixed $value
      */
@@ -41,7 +41,6 @@ class PHPUnit_Framework_Constraint_IsIdentical extends PHPUnit_Framework_Constra
         parent::__construct();
         $this->value = $value;
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -60,37 +59,25 @@ class PHPUnit_Framework_Constraint_IsIdentical extends PHPUnit_Framework_Constra
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        if (is_float($this->value) && is_float($other) &&
-            !is_infinite($this->value) && !is_infinite($other) &&
-            !is_nan($this->value) && !is_nan($other)) {
-            $success = abs($this->value - $other) < self::EPSILON;
+        if (\is_float($this->value) && \is_float($other) && !\is_infinite($this->value) && !\is_infinite($other) && !\is_nan($this->value) && !\is_nan($other)) {
+            $success = \abs($this->value - $other) < self::EPSILON;
         } else {
             $success = $this->value === $other;
         }
-
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $f = null;
-
             // if both values are strings, make sure a diff is generated
-            if (is_string($this->value) && is_string($other)) {
-                $f = new SebastianBergmann\Comparator\ComparisonFailure(
-                    $this->value,
-                    $other,
-                    $this->value,
-                    $other
-                );
+            if (\is_string($this->value) && \is_string($other)) {
+                $f = new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure($this->value, $other, $this->value, $other);
             }
-
             $this->fail($other, $description, $f);
         }
     }
-
     /**
      * Returns the description of the failure
      *
@@ -103,17 +90,14 @@ class PHPUnit_Framework_Constraint_IsIdentical extends PHPUnit_Framework_Constra
      */
     protected function failureDescription($other)
     {
-        if (is_object($this->value) && is_object($other)) {
+        if (\is_object($this->value) && \is_object($other)) {
             return 'two variables reference the same object';
         }
-
-        if (is_string($this->value) && is_string($other)) {
+        if (\is_string($this->value) && \is_string($other)) {
             return 'two strings are identical';
         }
-
         return parent::failureDescription($other);
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -121,12 +105,32 @@ class PHPUnit_Framework_Constraint_IsIdentical extends PHPUnit_Framework_Constra
      */
     public function toString()
     {
-        if (is_object($this->value)) {
-            return 'is identical to an object of class "' .
-                   get_class($this->value) . '"';
+        if (\is_object($this->value)) {
+            return 'is identical to an object of class "' . \get_class($this->value) . '"';
         } else {
-            return 'is identical to ' .
-                   $this->exporter->export($this->value);
+            return 'is identical to ' . $this->exporter->export($this->value);
         }
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that one value is identical to another.
+ *
+ * Identical check is performed with PHP's === operator, the operator is
+ * explained in detail at
+ * {@url http://www.php.net/manual/en/types.comparisons.php}.
+ * Two values are identical if they have the same value and are of the same
+ * type.
+ *
+ * The expected value is passed in the constructor.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsIdentical', 'PHPUnit_Framework_Constraint_IsIdentical', \false);

@@ -1,8 +1,12 @@
 <?php
-class Issue1265Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue1265Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testTrue()
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
 }
+\class_alias('MolliePrefix\\Issue1265Test', 'Issue1265Test', \false);

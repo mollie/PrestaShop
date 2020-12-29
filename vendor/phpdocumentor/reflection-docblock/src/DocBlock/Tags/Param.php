@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,93 +10,73 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\DocBlock\Description;
-use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
-use phpDocumentor\Reflection\Type;
-use phpDocumentor\Reflection\TypeResolver;
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Description;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory;
+use MolliePrefix\phpDocumentor\Reflection\Type;
+use MolliePrefix\phpDocumentor\Reflection\TypeResolver;
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Reflection class for the {@}param tag in a Docblock.
  */
-final class Param extends BaseTag implements Factory\StaticMethod
+final class Param extends \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\BaseTag implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod
 {
     /** @var string */
     protected $name = 'param';
-
     /** @var Type */
     private $type;
-
     /** @var string */
     private $variableName = '';
-
     /** @var bool determines whether this is a variadic argument */
-    private $isVariadic = false;
-
+    private $isVariadic = \false;
     /**
      * @param string $variableName
      * @param Type $type
      * @param bool $isVariadic
      * @param Description $description
      */
-    public function __construct($variableName, Type $type = null, $isVariadic = false, Description $description = null)
+    public function __construct($variableName, \MolliePrefix\phpDocumentor\Reflection\Type $type = null, $isVariadic = \false, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description $description = null)
     {
-        Assert::string($variableName);
-        Assert::boolean($isVariadic);
-
+        \MolliePrefix\Webmozart\Assert\Assert::string($variableName);
+        \MolliePrefix\Webmozart\Assert\Assert::boolean($isVariadic);
         $this->variableName = $variableName;
         $this->type = $type;
         $this->isVariadic = $isVariadic;
         $this->description = $description;
     }
-
     /**
      * {@inheritdoc}
      */
-    public static function create(
-        $body,
-        TypeResolver $typeResolver = null,
-        DescriptionFactory $descriptionFactory = null,
-        TypeContext $context = null
-    ) {
-        Assert::stringNotEmpty($body);
-        Assert::allNotNull([$typeResolver, $descriptionFactory]);
-
-        $parts = preg_split('/(\s+)/Su', $body, 3, PREG_SPLIT_DELIM_CAPTURE);
+    public static function create($body, \MolliePrefix\phpDocumentor\Reflection\TypeResolver $typeResolver = null, \MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory $descriptionFactory = null, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
+    {
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($body);
+        \MolliePrefix\Webmozart\Assert\Assert::allNotNull([$typeResolver, $descriptionFactory]);
+        $parts = \preg_split('/(\\s+)/Su', $body, 3, \PREG_SPLIT_DELIM_CAPTURE);
         $type = null;
         $variableName = '';
-        $isVariadic = false;
-
+        $isVariadic = \false;
         // if the first item that is encountered is not a variable; it is a type
-        if (isset($parts[0]) && (strlen($parts[0]) > 0) && ($parts[0][0] !== '$')) {
-            $type = $typeResolver->resolve(array_shift($parts), $context);
-            array_shift($parts);
+        if (isset($parts[0]) && \strlen($parts[0]) > 0 && $parts[0][0] !== '$') {
+            $type = $typeResolver->resolve(\array_shift($parts), $context);
+            \array_shift($parts);
         }
-
         // if the next item starts with a $ or ...$ it must be the variable name
-        if (isset($parts[0]) && (strlen($parts[0]) > 0) && ($parts[0][0] == '$' || substr($parts[0], 0, 4) === '...$')) {
-            $variableName = array_shift($parts);
-            array_shift($parts);
-
-            if (substr($variableName, 0, 3) === '...') {
-                $isVariadic = true;
-                $variableName = substr($variableName, 3);
+        if (isset($parts[0]) && \strlen($parts[0]) > 0 && ($parts[0][0] == '$' || \substr($parts[0], 0, 4) === '...$')) {
+            $variableName = \array_shift($parts);
+            \array_shift($parts);
+            if (\substr($variableName, 0, 3) === '...') {
+                $isVariadic = \true;
+                $variableName = \substr($variableName, 3);
             }
-
-            if (substr($variableName, 0, 1) === '$') {
-                $variableName = substr($variableName, 1);
+            if (\substr($variableName, 0, 1) === '$') {
+                $variableName = \substr($variableName, 1);
             }
         }
-
-        $description = $descriptionFactory->create(implode('', $parts), $context);
-
+        $description = $descriptionFactory->create(\implode('', $parts), $context);
         return new static($variableName, $type, $isVariadic, $description);
     }
-
     /**
      * Returns the variable's name.
      *
@@ -105,7 +86,6 @@ final class Param extends BaseTag implements Factory\StaticMethod
     {
         return $this->variableName;
     }
-
     /**
      * Returns the variable's type or null if unknown.
      *
@@ -115,7 +95,6 @@ final class Param extends BaseTag implements Factory\StaticMethod
     {
         return $this->type;
     }
-
     /**
      * Returns whether this tag is variadic.
      *
@@ -125,7 +104,6 @@ final class Param extends BaseTag implements Factory\StaticMethod
     {
         return $this->isVariadic;
     }
-
     /**
      * Returns a string representation for this tag.
      *
@@ -133,9 +111,6 @@ final class Param extends BaseTag implements Factory\StaticMethod
      */
     public function __toString()
     {
-        return ($this->type ? $this->type . ' ' : '')
-        . ($this->isVariadic() ? '...' : '')
-        . '$' . $this->variableName
-        . ($this->description ? ' ' . $this->description : '');
+        return ($this->type ? $this->type . ' ' : '') . ($this->isVariadic() ? '...' : '') . '$' . $this->variableName . ($this->description ? ' ' . $this->description : '');
     }
 }

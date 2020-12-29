@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that accepts any input value.
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_IsAnything extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_IsAnything extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * Evaluates the constraint for parameter $other
@@ -33,11 +35,10 @@ class PHPUnit_Framework_Constraint_IsAnything extends PHPUnit_Framework_Constrai
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        return $returnResult ? true : null;
+        return $returnResult ? \true : null;
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -47,7 +48,6 @@ class PHPUnit_Framework_Constraint_IsAnything extends PHPUnit_Framework_Constrai
     {
         return 'is anything';
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -60,3 +60,17 @@ class PHPUnit_Framework_Constraint_IsAnything extends PHPUnit_Framework_Constrai
         return 0;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that accepts any input value.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsAnything', 'PHPUnit_Framework_Constraint_IsAnything', \false);

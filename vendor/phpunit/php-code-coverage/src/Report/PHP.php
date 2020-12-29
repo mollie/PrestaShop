@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\CodeCoverage\Report;
 
-namespace SebastianBergmann\CodeCoverage\Report;
-
-use SebastianBergmann\CodeCoverage\CodeCoverage;
-
+use MolliePrefix\SebastianBergmann\CodeCoverage\CodeCoverage;
 /**
  * Uses var_export() to write a SebastianBergmann\CodeCoverage\CodeCoverage object to a file.
  */
@@ -23,27 +22,20 @@ class PHP
      *
      * @return string
      */
-    public function process(CodeCoverage $coverage, $target = null)
+    public function process(\MolliePrefix\SebastianBergmann\CodeCoverage\CodeCoverage $coverage, $target = null)
     {
         $filter = $coverage->filter();
-
-        $output = sprintf(
-            '<?php
-$coverage = new SebastianBergmann\CodeCoverage\CodeCoverage;
+        $output = \sprintf('<?php
+$coverage = new SebastianBergmann\\CodeCoverage\\CodeCoverage;
 $coverage->setData(%s);
 $coverage->setTests(%s);
 
 $filter = $coverage->filter();
 $filter->setWhitelistedFiles(%s);
 
-return $coverage;',
-            var_export($coverage->getData(true), 1),
-            var_export($coverage->getTests(), 1),
-            var_export($filter->getWhitelistedFiles(), 1)
-        );
-
+return $coverage;', \var_export($coverage->getData(\true), 1), \var_export($coverage->getTests(), 1), \var_export($filter->getWhitelistedFiles(), 1));
         if ($target !== null) {
-            return file_put_contents($target, $output);
+            return \file_put_contents($target, $output);
         } else {
             return $output;
         }

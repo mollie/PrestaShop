@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,21 +10,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Tests for the BankAccount class.
  *
  * @since      Class available since Release 2.3.0
  */
-class BankAccountTest extends PHPUnit_Framework_TestCase
+class BankAccountTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     protected $ba;
-
     protected function setUp()
     {
-        $this->ba = new BankAccount;
+        $this->ba = new \MolliePrefix\BankAccount();
     }
-
     /**
      * @covers BankAccount::getBalance
      * @group balanceIsInitiallyZero
@@ -30,15 +30,12 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     public function testBalanceIsInitiallyZero()
     {
         /* @Given a fresh bank account */
-        $ba = new BankAccount;
-
+        $ba = new \MolliePrefix\BankAccount();
         /* @When I ask it for its balance */
         $balance = $ba->getBalance();
-
         /* @Then I should get 0 */
         $this->assertEquals(0, $balance);
     }
-
     /**
      * @covers BankAccount::withdrawMoney
      * @group balanceCannotBecomeNegative
@@ -48,15 +45,12 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     {
         try {
             $this->ba->withdrawMoney(1);
-        } catch (BankAccountException $e) {
+        } catch (\MolliePrefix\BankAccountException $e) {
             $this->assertEquals(0, $this->ba->getBalance());
-
             return;
         }
-
         $this->fail();
     }
-
     /**
      * @covers BankAccount::depositMoney
      * @group balanceCannotBecomeNegative
@@ -66,15 +60,12 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     {
         try {
             $this->ba->depositMoney(-1);
-        } catch (BankAccountException $e) {
+        } catch (\MolliePrefix\BankAccountException $e) {
             $this->assertEquals(0, $this->ba->getBalance());
-
             return;
         }
-
         $this->fail();
     }
-
     /*
      * @covers BankAccount::getBalance
      * @covers BankAccount::depositMoney
@@ -92,3 +83,17 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     }
     */
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Tests for the BankAccount class.
+ *
+ * @since      Class available since Release 2.3.0
+ */
+\class_alias('MolliePrefix\\BankAccountTest', 'BankAccountTest', \false);

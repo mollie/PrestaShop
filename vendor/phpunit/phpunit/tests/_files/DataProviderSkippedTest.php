@@ -1,14 +1,16 @@
 <?php
-class DataProviderSkippedTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DataProviderSkippedTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider skippedTestProviderMethod
      */
     public function testSkipped($a, $b, $c)
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
-
     /**
      * @dataProvider providerMethod
      */
@@ -16,22 +18,14 @@ class DataProviderSkippedTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals($c, $a + $b);
     }
-
     public function skippedTestProviderMethod()
     {
         $this->markTestSkipped('skipped');
-
-        return [
-          [0, 0, 0],
-          [0, 1, 1],
-        ];
+        return [[0, 0, 0], [0, 1, 1]];
     }
-
     public static function providerMethod()
     {
-        return [
-          [0, 0, 0],
-          [0, 1, 1],
-        ];
+        return [[0, 0, 0], [0, 1, 1]];
     }
 }
+\class_alias('MolliePrefix\\DataProviderSkippedTest', 'DataProviderSkippedTest', \false);

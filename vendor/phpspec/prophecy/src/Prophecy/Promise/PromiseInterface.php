@@ -8,12 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Promise;
 
-namespace Prophecy\Promise;
-
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophecy\MethodProphecy;
-
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
 /**
  * Promise interface.
  * Promises are logical blocks, tied to `will...` keyword.
@@ -31,5 +29,5 @@ interface PromiseInterface
      *
      * @return mixed
      */
-    public function execute(array $args, ObjectProphecy $object, MethodProphecy $method);
+    public function execute(array $args, \MolliePrefix\Prophecy\Prophecy\ObjectProphecy $object, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $method);
 }

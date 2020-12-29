@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\CodeCoverage\Node;
 
-namespace SebastianBergmann\CodeCoverage\Node;
-
-use SebastianBergmann\CodeCoverage\Util;
-
+use MolliePrefix\SebastianBergmann\CodeCoverage\Util;
 /**
  * Base class for nodes in the code coverage information tree.
  */
@@ -21,43 +20,36 @@ abstract class AbstractNode implements \Countable
      * @var string
      */
     private $name;
-
     /**
      * @var string
      */
     private $path;
-
     /**
      * @var array
      */
     private $pathArray;
-
     /**
      * @var AbstractNode
      */
     private $parent;
-
     /**
      * @var string
      */
     private $id;
-
     /**
      * Constructor.
      *
      * @param string       $name
      * @param AbstractNode $parent
      */
-    public function __construct($name, AbstractNode $parent = null)
+    public function __construct($name, \MolliePrefix\SebastianBergmann\CodeCoverage\Node\AbstractNode $parent = null)
     {
-        if (substr($name, -1) == '/') {
-            $name = substr($name, 0, -1);
+        if (\substr($name, -1) == '/') {
+            $name = \substr($name, 0, -1);
         }
-
-        $this->name   = $name;
+        $this->name = $name;
         $this->parent = $parent;
     }
-
     /**
      * @return string
      */
@@ -65,7 +57,6 @@ abstract class AbstractNode implements \Countable
     {
         return $this->name;
     }
-
     /**
      * @return string
      */
@@ -73,39 +64,33 @@ abstract class AbstractNode implements \Countable
     {
         if ($this->id === null) {
             $parent = $this->getParent();
-
             if ($parent === null) {
                 $this->id = 'index';
             } else {
                 $parentId = $parent->getId();
-
                 if ($parentId == 'index') {
-                    $this->id = str_replace(':', '_', $this->name);
+                    $this->id = \str_replace(':', '_', $this->name);
                 } else {
                     $this->id = $parentId . '/' . $this->name;
                 }
             }
         }
-
         return $this->id;
     }
-
     /**
      * @return string
      */
     public function getPath()
     {
         if ($this->path === null) {
-            if ($this->parent === null || $this->parent->getPath() === null || $this->parent->getPath() === false) {
+            if ($this->parent === null || $this->parent->getPath() === null || $this->parent->getPath() === \false) {
                 $this->path = $this->name;
             } else {
                 $this->path = $this->parent->getPath() . '/' . $this->name;
             }
         }
-
         return $this->path;
     }
-
     /**
      * @return array
      */
@@ -117,13 +102,10 @@ abstract class AbstractNode implements \Countable
             } else {
                 $this->pathArray = $this->parent->getPathAsArray();
             }
-
             $this->pathArray[] = $this;
         }
-
         return $this->pathArray;
     }
-
     /**
      * @return AbstractNode
      */
@@ -131,7 +113,6 @@ abstract class AbstractNode implements \Countable
     {
         return $this->parent;
     }
-
     /**
      * Returns the percentage of classes that has been tested.
      *
@@ -139,15 +120,10 @@ abstract class AbstractNode implements \Countable
      *
      * @return int
      */
-    public function getTestedClassesPercent($asString = true)
+    public function getTestedClassesPercent($asString = \true)
     {
-        return Util::percent(
-            $this->getNumTestedClasses(),
-            $this->getNumClasses(),
-            $asString
-        );
+        return \MolliePrefix\SebastianBergmann\CodeCoverage\Util::percent($this->getNumTestedClasses(), $this->getNumClasses(), $asString);
     }
-
     /**
      * Returns the percentage of traits that has been tested.
      *
@@ -155,15 +131,10 @@ abstract class AbstractNode implements \Countable
      *
      * @return int
      */
-    public function getTestedTraitsPercent($asString = true)
+    public function getTestedTraitsPercent($asString = \true)
     {
-        return Util::percent(
-            $this->getNumTestedTraits(),
-            $this->getNumTraits(),
-            $asString
-        );
+        return \MolliePrefix\SebastianBergmann\CodeCoverage\Util::percent($this->getNumTestedTraits(), $this->getNumTraits(), $asString);
     }
-
     /**
      * Returns the percentage of traits that has been tested.
      *
@@ -171,15 +142,10 @@ abstract class AbstractNode implements \Countable
      *
      * @return int
      */
-    public function getTestedClassesAndTraitsPercent($asString = true)
+    public function getTestedClassesAndTraitsPercent($asString = \true)
     {
-        return Util::percent(
-            $this->getNumTestedClassesAndTraits(),
-            $this->getNumClassesAndTraits(),
-            $asString
-        );
+        return \MolliePrefix\SebastianBergmann\CodeCoverage\Util::percent($this->getNumTestedClassesAndTraits(), $this->getNumClassesAndTraits(), $asString);
     }
-
     /**
      * Returns the percentage of methods that has been tested.
      *
@@ -187,15 +153,10 @@ abstract class AbstractNode implements \Countable
      *
      * @return int
      */
-    public function getTestedMethodsPercent($asString = true)
+    public function getTestedMethodsPercent($asString = \true)
     {
-        return Util::percent(
-            $this->getNumTestedMethods(),
-            $this->getNumMethods(),
-            $asString
-        );
+        return \MolliePrefix\SebastianBergmann\CodeCoverage\Util::percent($this->getNumTestedMethods(), $this->getNumMethods(), $asString);
     }
-
     /**
      * Returns the percentage of executed lines.
      *
@@ -203,15 +164,10 @@ abstract class AbstractNode implements \Countable
      *
      * @return int
      */
-    public function getLineExecutedPercent($asString = true)
+    public function getLineExecutedPercent($asString = \true)
     {
-        return Util::percent(
-            $this->getNumExecutedLines(),
-            $this->getNumExecutableLines(),
-            $asString
-        );
+        return \MolliePrefix\SebastianBergmann\CodeCoverage\Util::percent($this->getNumExecutedLines(), $this->getNumExecutableLines(), $asString);
     }
-
     /**
      * Returns the number of classes and traits.
      *
@@ -221,7 +177,6 @@ abstract class AbstractNode implements \Countable
     {
         return $this->getNumClasses() + $this->getNumTraits();
     }
-
     /**
      * Returns the number of tested classes and traits.
      *
@@ -231,7 +186,6 @@ abstract class AbstractNode implements \Countable
     {
         return $this->getNumTestedClasses() + $this->getNumTestedTraits();
     }
-
     /**
      * Returns the classes and traits of this node.
      *
@@ -239,104 +193,90 @@ abstract class AbstractNode implements \Countable
      */
     public function getClassesAndTraits()
     {
-        return array_merge($this->getClasses(), $this->getTraits());
+        return \array_merge($this->getClasses(), $this->getTraits());
     }
-
     /**
      * Returns the classes of this node.
      *
      * @return array
      */
-    abstract public function getClasses();
-
+    public abstract function getClasses();
     /**
      * Returns the traits of this node.
      *
      * @return array
      */
-    abstract public function getTraits();
-
+    public abstract function getTraits();
     /**
      * Returns the functions of this node.
      *
      * @return array
      */
-    abstract public function getFunctions();
-
+    public abstract function getFunctions();
     /**
      * Returns the LOC/CLOC/NCLOC of this node.
      *
      * @return array
      */
-    abstract public function getLinesOfCode();
-
+    public abstract function getLinesOfCode();
     /**
      * Returns the number of executable lines.
      *
      * @return int
      */
-    abstract public function getNumExecutableLines();
-
+    public abstract function getNumExecutableLines();
     /**
      * Returns the number of executed lines.
      *
      * @return int
      */
-    abstract public function getNumExecutedLines();
-
+    public abstract function getNumExecutedLines();
     /**
      * Returns the number of classes.
      *
      * @return int
      */
-    abstract public function getNumClasses();
-
+    public abstract function getNumClasses();
     /**
      * Returns the number of tested classes.
      *
      * @return int
      */
-    abstract public function getNumTestedClasses();
-
+    public abstract function getNumTestedClasses();
     /**
      * Returns the number of traits.
      *
      * @return int
      */
-    abstract public function getNumTraits();
-
+    public abstract function getNumTraits();
     /**
      * Returns the number of tested traits.
      *
      * @return int
      */
-    abstract public function getNumTestedTraits();
-
+    public abstract function getNumTestedTraits();
     /**
      * Returns the number of methods.
      *
      * @return int
      */
-    abstract public function getNumMethods();
-
+    public abstract function getNumMethods();
     /**
      * Returns the number of tested methods.
      *
      * @return int
      */
-    abstract public function getNumTestedMethods();
-
+    public abstract function getNumTestedMethods();
     /**
      * Returns the number of functions.
      *
      * @return int
      */
-    abstract public function getNumFunctions();
-
+    public abstract function getNumFunctions();
     /**
      * Returns the number of tested functions.
      *
      * @return int
      */
-    abstract public function getNumTestedFunctions();
+    public abstract function getNumTestedFunctions();
 }

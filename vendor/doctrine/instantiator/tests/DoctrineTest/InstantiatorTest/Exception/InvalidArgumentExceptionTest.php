@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,13 +17,11 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+namespace MolliePrefix\DoctrineTest\InstantiatorTest\Exception;
 
-namespace DoctrineTest\InstantiatorTest\Exception;
-
-use Doctrine\Instantiator\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use MolliePrefix\Doctrine\Instantiator\Exception\InvalidArgumentException;
+use MolliePrefix\PHPUnit_Framework_TestCase;
 use ReflectionClass;
-
 /**
  * Tests for {@see \Doctrine\Instantiator\Exception\InvalidArgumentException}
  *
@@ -30,54 +29,32 @@ use ReflectionClass;
  *
  * @covers \Doctrine\Instantiator\Exception\InvalidArgumentException
  */
-class InvalidArgumentExceptionTest extends PHPUnit_Framework_TestCase
+class InvalidArgumentExceptionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testFromNonExistingTypeWithNonExistingClass()
     {
-        $className = __CLASS__ . uniqid();
-        $exception = InvalidArgumentException::fromNonExistingClass($className);
-
-        $this->assertInstanceOf('Doctrine\\Instantiator\\Exception\\InvalidArgumentException', $exception);
+        $className = __CLASS__ . \uniqid();
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\InvalidArgumentException::fromNonExistingClass($className);
+        $this->assertInstanceOf('MolliePrefix\\Doctrine\\Instantiator\\Exception\\InvalidArgumentException', $exception);
         $this->assertSame('The provided class "' . $className . '" does not exist', $exception->getMessage());
     }
-
     public function testFromNonExistingTypeWithTrait()
     {
-        if (PHP_VERSION_ID < 50400) {
+        if (\PHP_VERSION_ID < 50400) {
             $this->markTestSkipped('Need at least PHP 5.4.0, as this test requires traits support to run');
         }
-
-        $exception = InvalidArgumentException::fromNonExistingClass(
-            'DoctrineTest\\InstantiatorTestAsset\\SimpleTraitAsset'
-        );
-
-        $this->assertSame(
-            'The provided type "DoctrineTest\\InstantiatorTestAsset\\SimpleTraitAsset" is a trait, '
-            . 'and can not be instantiated',
-            $exception->getMessage()
-        );
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\InvalidArgumentException::fromNonExistingClass('MolliePrefix\\DoctrineTest\\InstantiatorTestAsset\\SimpleTraitAsset');
+        $this->assertSame('The provided type "DoctrineTest\\InstantiatorTestAsset\\SimpleTraitAsset" is a trait, ' . 'and can not be instantiated', $exception->getMessage());
     }
-
     public function testFromNonExistingTypeWithInterface()
     {
-        $exception = InvalidArgumentException::fromNonExistingClass('Doctrine\\Instantiator\\InstantiatorInterface');
-
-        $this->assertSame(
-            'The provided type "Doctrine\\Instantiator\\InstantiatorInterface" is an interface, '
-            . 'and can not be instantiated',
-            $exception->getMessage()
-        );
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\InvalidArgumentException::fromNonExistingClass('MolliePrefix\\Doctrine\\Instantiator\\InstantiatorInterface');
+        $this->assertSame('The provided type "Doctrine\\Instantiator\\InstantiatorInterface" is an interface, ' . 'and can not be instantiated', $exception->getMessage());
     }
-
     public function testFromAbstractClass()
     {
-        $reflection = new ReflectionClass('DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset');
-        $exception  = InvalidArgumentException::fromAbstractClass($reflection);
-
-        $this->assertSame(
-            'The provided class "DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset" is abstract, '
-            . 'and can not be instantiated',
-            $exception->getMessage()
-        );
+        $reflection = new \ReflectionClass('MolliePrefix\\DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset');
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\InvalidArgumentException::fromAbstractClass($reflection);
+        $this->assertSame('The provided class "DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset" is abstract, ' . 'and can not be instantiated', $exception->getMessage());
     }
 }

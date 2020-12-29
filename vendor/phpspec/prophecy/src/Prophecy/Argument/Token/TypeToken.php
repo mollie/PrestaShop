@@ -8,35 +8,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Argument\Token;
 
-namespace Prophecy\Argument\Token;
-
-use Prophecy\Exception\InvalidArgumentException;
-
+use MolliePrefix\Prophecy\Exception\InvalidArgumentException;
 /**
  * Value type token.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class TypeToken implements TokenInterface
+class TypeToken implements \MolliePrefix\Prophecy\Argument\Token\TokenInterface
 {
     private $type;
-
     /**
      * @param string $type
      */
     public function __construct($type)
     {
         $checker = "is_{$type}";
-        if (!function_exists($checker) && !interface_exists($type) && !class_exists($type)) {
-            throw new InvalidArgumentException(sprintf(
-                'Type or class name expected as an argument to TypeToken, but got %s.', $type
-            ));
+        if (!\function_exists($checker) && !\interface_exists($type) && !\class_exists($type)) {
+            throw new \MolliePrefix\Prophecy\Exception\InvalidArgumentException(\sprintf('Type or class name expected as an argument to TypeToken, but got %s.', $type));
         }
-
         $this->type = $type;
     }
-
     /**
      * Scores 5 if argument has the same type this token was constructed with.
      *
@@ -47,13 +40,11 @@ class TypeToken implements TokenInterface
     public function scoreArgument($argument)
     {
         $checker = "is_{$this->type}";
-        if (function_exists($checker)) {
-            return call_user_func($checker, $argument) ? 5 : false;
+        if (\function_exists($checker)) {
+            return \call_user_func($checker, $argument) ? 5 : \false;
         }
-
-        return $argument instanceof $this->type ? 5 : false;
+        return $argument instanceof $this->type ? 5 : \false;
     }
-
     /**
      * Returns false.
      *
@@ -61,9 +52,8 @@ class TypeToken implements TokenInterface
      */
     public function isLast()
     {
-        return false;
+        return \false;
     }
-
     /**
      * Returns string representation for token.
      *
@@ -71,6 +61,6 @@ class TypeToken implements TokenInterface
      */
     public function __toString()
     {
-        return sprintf('type(%s)', $this->type);
+        return \sprintf('type(%s)', $this->type);
     }
 }

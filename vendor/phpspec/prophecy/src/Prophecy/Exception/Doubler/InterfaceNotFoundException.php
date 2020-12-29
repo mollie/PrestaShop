@@ -8,10 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Exception\Doubler;
 
-namespace Prophecy\Exception\Doubler;
-
-class InterfaceNotFoundException extends ClassNotFoundException
+class InterfaceNotFoundException extends \MolliePrefix\Prophecy\Exception\Doubler\ClassNotFoundException
 {
     public function getInterfaceName()
     {

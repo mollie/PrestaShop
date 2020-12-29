@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,17 +10,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 3.6.6
  */
-class PHPUnit_Framework_Constraint_ExceptionCode extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_ExceptionCode extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var int
      */
     protected $expectedCode;
-
     /**
      * @param int $expected
      */
@@ -26,7 +27,6 @@ class PHPUnit_Framework_Constraint_ExceptionCode extends PHPUnit_Framework_Const
         parent::__construct();
         $this->expectedCode = $expected;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -39,7 +39,6 @@ class PHPUnit_Framework_Constraint_ExceptionCode extends PHPUnit_Framework_Const
     {
         return (string) $other->getCode() == (string) $this->expectedCode;
     }
-
     /**
      * Returns the description of the failure
      *
@@ -52,13 +51,8 @@ class PHPUnit_Framework_Constraint_ExceptionCode extends PHPUnit_Framework_Const
      */
     protected function failureDescription($other)
     {
-        return sprintf(
-            '%s is equal to expected exception code %s',
-            $this->exporter->export($other->getCode()),
-            $this->exporter->export($this->expectedCode)
-        );
+        return \sprintf('%s is equal to expected exception code %s', $this->exporter->export($other->getCode()), $this->exporter->export($this->expectedCode));
     }
-
     /**
      * @return string
      */
@@ -67,3 +61,15 @@ class PHPUnit_Framework_Constraint_ExceptionCode extends PHPUnit_Framework_Const
         return 'exception code is ';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 3.6.6
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ExceptionCode', 'PHPUnit_Framework_Constraint_ExceptionCode', \false);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,31 +10,27 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\Types;
 
-namespace phpDocumentor\Reflection\Types;
-
-use phpDocumentor\Reflection\Type;
-
+use MolliePrefix\phpDocumentor\Reflection\Type;
 /**
  * Value Object representing a nullable type. The real type is wrapped.
  */
-final class Nullable implements Type
+final class Nullable implements \MolliePrefix\phpDocumentor\Reflection\Type
 {
     /**
      * @var Type
      */
     private $realType;
-
     /**
      * Initialises this nullable type using the real type embedded
      *
      * @param Type $realType
      */
-    public function __construct(Type $realType)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\Type $realType)
     {
         $this->realType = $realType;
     }
-
     /**
      * Provide access to the actual type directly, if needed.
      *
@@ -43,7 +40,6 @@ final class Nullable implements Type
     {
         return $this->realType;
     }
-
     /**
      * Returns a rendered output of the Type as it would be used in a DocBlock.
      *

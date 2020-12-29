@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the File_Iterator package.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Factory Method implementation that creates a File_Iterator that operates on
  * an AppendIterator that contains an RecursiveDirectoryIterator for each given
@@ -26,50 +28,33 @@ class File_Iterator_Factory
      */
     public function getFileIterator($paths, $suffixes = '', $prefixes = '', array $exclude = array())
     {
-        if (is_string($paths)) {
+        if (\is_string($paths)) {
             $paths = array($paths);
         }
-
-        $paths   = $this->getPathsAfterResolvingWildcards($paths);
+        $paths = $this->getPathsAfterResolvingWildcards($paths);
         $exclude = $this->getPathsAfterResolvingWildcards($exclude);
-
-        if (is_string($prefixes)) {
+        if (\is_string($prefixes)) {
             if ($prefixes != '') {
                 $prefixes = array($prefixes);
             } else {
                 $prefixes = array();
             }
         }
-
-        if (is_string($suffixes)) {
+        if (\is_string($suffixes)) {
             if ($suffixes != '') {
                 $suffixes = array($suffixes);
             } else {
                 $suffixes = array();
             }
         }
-
-        $iterator = new AppendIterator;
-
+        $iterator = new \AppendIterator();
         foreach ($paths as $path) {
-            if (is_dir($path)) {
-                $iterator->append(
-                  new File_Iterator(
-                    new RecursiveIteratorIterator(
-                      new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::FOLLOW_SYMLINKS)
-                    ),
-                    $suffixes,
-                    $prefixes,
-                    $exclude,
-                    $path
-                  )
-                );
+            if (\is_dir($path)) {
+                $iterator->append(new \MolliePrefix\File_Iterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::FOLLOW_SYMLINKS)), $suffixes, $prefixes, $exclude, $path));
             }
         }
-
         return $iterator;
     }
-
     /**
      * @param  array $paths
      * @return array
@@ -77,15 +62,29 @@ class File_Iterator_Factory
     protected function getPathsAfterResolvingWildcards(array $paths)
     {
         $_paths = array();
-
         foreach ($paths as $path) {
-            if ($locals = glob($path, GLOB_ONLYDIR)) {
-                $_paths = array_merge($_paths, array_map('realpath', $locals));
+            if ($locals = \glob($path, \GLOB_ONLYDIR)) {
+                $_paths = \array_merge($_paths, \array_map('realpath', $locals));
             } else {
-                $_paths[] = realpath($path);
+                $_paths[] = \realpath($path);
             }
         }
-
         return $_paths;
     }
 }
+/*
+ * This file is part of the File_Iterator package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Factory Method implementation that creates a File_Iterator that operates on
+ * an AppendIterator that contains an RecursiveDirectoryIterator for each given
+ * path.
+ *
+ * @since     Class available since Release 1.1.0
+ */
+\class_alias('MolliePrefix\\File_Iterator_Factory', 'File_Iterator_Factory', \false);

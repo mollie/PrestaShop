@@ -1,13 +1,14 @@
 <?php
 
-class DataProviderDependencyTest extends PHPUnit_Framework_TestCase
+namespace MolliePrefix;
+
+class DataProviderDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testReference()
     {
         $this->markTestSkipped('This test should be skipped.');
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
-
     /**
      * @see https://github.com/sebastianbergmann/phpunit/issues/1896
      * @depends testReference
@@ -16,10 +17,10 @@ class DataProviderDependencyTest extends PHPUnit_Framework_TestCase
     public function testDependency($param)
     {
     }
-
     public function provider()
     {
         $this->markTestSkipped('Any test with this data provider should be skipped.');
         return [];
     }
 }
+\class_alias('MolliePrefix\\DataProviderDependencyTest', 'DataProviderDependencyTest', \false);

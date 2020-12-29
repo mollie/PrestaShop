@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Environment package.
  *
@@ -7,23 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\Environment;
 
-namespace SebastianBergmann\Environment;
-
-use PHPUnit_Framework_TestCase;
-
-class RuntimeTest extends PHPUnit_Framework_TestCase
+use MolliePrefix\PHPUnit_Framework_TestCase;
+class RuntimeTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @var \SebastianBergmann\Environment\Runtime
      */
     private $env;
-
     protected function setUp()
     {
-        $this->env = new Runtime;
+        $this->env = new \MolliePrefix\SebastianBergmann\Environment\Runtime();
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::canCollectCodeCoverage
      *
@@ -35,7 +32,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->env->canCollectCodeCoverage());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::getBinary
      *
@@ -45,7 +41,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('string', $this->env->getBinary());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::isHHVM
      */
@@ -53,7 +48,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->env->isHHVM());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::isPHP
      *
@@ -63,7 +57,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->env->isPHP());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::hasXdebug
      *
@@ -74,7 +67,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->env->hasXdebug());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::getNameWithVersion
      *
@@ -87,7 +79,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('string', $this->env->getNameWithVersion());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::getName
      *
@@ -97,7 +88,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('string', $this->env->getName());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::getVersion
      *
@@ -107,7 +97,6 @@ class RuntimeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('string', $this->env->getVersion());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Runtime::getVendorUrl
      *

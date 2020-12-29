@@ -30,6 +30,7 @@ require_once \realpath(__DIR__ . '/../../../autoload.php');
 \MolliePrefix\requireFileIfItExists($rootDir . '/tools/smarty/Smarty.class.php');
 \MolliePrefix\requireFileIfItExists($rootDir . '/config/defines.inc.php');
 \MolliePrefix\requireFileIfItExists($rootDir . '/config/autoload.php');
+\MolliePrefix\requireFileIfItExists($rootDir . '/config/defines_uri.inc.php');
 \MolliePrefix\requireFileIfItExists($rootDir . '/config/bootstrap.php');
 // Make sure loader php-parser is coming from php stan composer
 // 1- Use module vendors

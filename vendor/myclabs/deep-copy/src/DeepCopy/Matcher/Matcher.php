@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepCopy\Matcher;
+namespace MolliePrefix\DeepCopy\Matcher;
 
 interface Matcher
 {

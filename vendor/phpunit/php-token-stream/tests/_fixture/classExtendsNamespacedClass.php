@@ -1,10 +1,12 @@
 <?php
 
-namespace Foo\Bar;
+namespace MolliePrefix\Foo\Bar;
 
-class Baz {}
+class Baz
+{
+}
+namespace MolliePrefix\Other\Space;
 
-namespace Other\Space;
-
-class Extender extends \Foo\Bar\Baz {}
-
+class Extender extends \MolliePrefix\Foo\Bar\Baz
+{
+}

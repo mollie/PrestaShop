@@ -8,13 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Prediction;
 
-namespace Prophecy\Prediction;
-
-use Prophecy\Call\Call;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophecy\MethodProphecy;
-
+use MolliePrefix\Prophecy\Call\Call;
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
 /**
  * Prediction interface.
  * Predictions are logical test blocks, tied to `should...` keyword.
@@ -33,5 +31,5 @@ interface PredictionInterface
      * @throws object
      * @return void
      */
-    public function check(array $calls, ObjectProphecy $object, MethodProphecy $method);
+    public function check(array $calls, \MolliePrefix\Prophecy\Prophecy\ObjectProphecy $object, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $method);
 }

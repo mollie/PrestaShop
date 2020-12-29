@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,44 +10,36 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that the Traversable it is applied to contains
  * only values of a given type.
  *
  * @since Class available since Release 3.1.4
  */
-class PHPUnit_Framework_Constraint_TraversableContainsOnly extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_TraversableContainsOnly extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var PHPUnit_Framework_Constraint
      */
     protected $constraint;
-
     /**
      * @var string
      */
     protected $type;
-
     /**
      * @param string $type
      * @param bool   $isNativeType
      */
-    public function __construct($type, $isNativeType = true)
+    public function __construct($type, $isNativeType = \true)
     {
         parent::__construct();
-
         if ($isNativeType) {
-            $this->constraint = new PHPUnit_Framework_Constraint_IsType($type);
+            $this->constraint = new \MolliePrefix\PHPUnit_Framework_Constraint_IsType($type);
         } else {
-            $this->constraint = new PHPUnit_Framework_Constraint_IsInstanceOf(
-                $type
-            );
+            $this->constraint = new \MolliePrefix\PHPUnit_Framework_Constraint_IsInstanceOf($type);
         }
-
         $this->type = $type;
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -63,26 +58,22 @@ class PHPUnit_Framework_Constraint_TraversableContainsOnly extends PHPUnit_Frame
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        $success = true;
-
+        $success = \true;
         foreach ($other as $item) {
-            if (!$this->constraint->evaluate($item, '', true)) {
-                $success = false;
+            if (!$this->constraint->evaluate($item, '', \true)) {
+                $success = \false;
                 break;
             }
         }
-
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -93,3 +84,18 @@ class PHPUnit_Framework_Constraint_TraversableContainsOnly extends PHPUnit_Frame
         return 'contains only values of type "' . $this->type . '"';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that the Traversable it is applied to contains
+ * only values of a given type.
+ *
+ * @since Class available since Release 3.1.4
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_TraversableContainsOnly', 'PHPUnit_Framework_Constraint_TraversableContainsOnly', \false);

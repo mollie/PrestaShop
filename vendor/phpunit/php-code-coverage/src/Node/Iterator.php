@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\CodeCoverage\Node;
+namespace MolliePrefix\SebastianBergmann\CodeCoverage\Node;
 
 /**
  * Recursive iterator for node object graphs.
@@ -19,20 +19,17 @@ class Iterator implements \RecursiveIterator
      * @var int
      */
     private $position;
-
     /**
      * @var AbstractNode[]
      */
     private $nodes;
-
     /**
      * @param Directory $node
      */
-    public function __construct(Directory $node)
+    public function __construct(\MolliePrefix\SebastianBergmann\CodeCoverage\Node\Directory $node)
     {
         $this->nodes = $node->getChildNodes();
     }
-
     /**
      * Rewinds the Iterator to the first element.
      */
@@ -40,7 +37,6 @@ class Iterator implements \RecursiveIterator
     {
         $this->position = 0;
     }
-
     /**
      * Checks if there is a current element after calls to rewind() or next().
      *
@@ -48,9 +44,8 @@ class Iterator implements \RecursiveIterator
      */
     public function valid()
     {
-        return $this->position < count($this->nodes);
+        return $this->position < \count($this->nodes);
     }
-
     /**
      * Returns the key of the current element.
      *
@@ -60,7 +55,6 @@ class Iterator implements \RecursiveIterator
     {
         return $this->position;
     }
-
     /**
      * Returns the current element.
      *
@@ -70,7 +64,6 @@ class Iterator implements \RecursiveIterator
     {
         return $this->valid() ? $this->nodes[$this->position] : null;
     }
-
     /**
      * Moves forward to next element.
      */
@@ -78,7 +71,6 @@ class Iterator implements \RecursiveIterator
     {
         $this->position++;
     }
-
     /**
      * Returns the sub iterator for the current element.
      *
@@ -86,11 +78,8 @@ class Iterator implements \RecursiveIterator
      */
     public function getChildren()
     {
-        return new self(
-            $this->nodes[$this->position]
-        );
+        return new self($this->nodes[$this->position]);
     }
-
     /**
      * Checks whether the current element has children.
      *
@@ -98,6 +87,6 @@ class Iterator implements \RecursiveIterator
      */
     public function hasChildren()
     {
-        return $this->nodes[$this->position] instanceof Directory;
+        return $this->nodes[$this->position] instanceof \MolliePrefix\SebastianBergmann\CodeCoverage\Node\Directory;
     }
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,32 +10,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Iterator for test suites.
  *
  * @since Class available since Release 3.1.0
  */
-class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
+class PHPUnit_Util_TestSuiteIterator implements \RecursiveIterator
 {
     /**
      * @var int
      */
     protected $position;
-
     /**
      * @var PHPUnit_Framework_Test[]
      */
     protected $tests;
-
     /**
      * @param PHPUnit_Framework_TestSuite $testSuite
      */
-    public function __construct(PHPUnit_Framework_TestSuite $testSuite)
+    public function __construct(\MolliePrefix\PHPUnit_Framework_TestSuite $testSuite)
     {
         $this->tests = $testSuite->tests();
     }
-
     /**
      * Rewinds the Iterator to the first element.
      */
@@ -40,7 +39,6 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
     {
         $this->position = 0;
     }
-
     /**
      * Checks if there is a current element after calls to rewind() or next().
      *
@@ -48,9 +46,8 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
      */
     public function valid()
     {
-        return $this->position < count($this->tests);
+        return $this->position < \count($this->tests);
     }
-
     /**
      * Returns the key of the current element.
      *
@@ -60,7 +57,6 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
     {
         return $this->position;
     }
-
     /**
      * Returns the current element.
      *
@@ -70,7 +66,6 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
     {
         return $this->valid() ? $this->tests[$this->position] : null;
     }
-
     /**
      * Moves forward to next element.
      */
@@ -78,7 +73,6 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
     {
         $this->position++;
     }
-
     /**
      * Returns the sub iterator for the current element.
      *
@@ -86,11 +80,8 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
      */
     public function getChildren()
     {
-        return new self(
-            $this->tests[$this->position]
-        );
+        return new self($this->tests[$this->position]);
     }
-
     /**
      * Checks whether the current element has children.
      *
@@ -98,6 +89,20 @@ class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
      */
     public function hasChildren()
     {
-        return $this->tests[$this->position] instanceof PHPUnit_Framework_TestSuite;
+        return $this->tests[$this->position] instanceof \MolliePrefix\PHPUnit_Framework_TestSuite;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Iterator for test suites.
+ *
+ * @since Class available since Release 3.1.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Util_TestSuiteIterator', 'PHPUnit_Util_TestSuiteIterator', \false);

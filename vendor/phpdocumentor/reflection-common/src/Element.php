@@ -1,4 +1,5 @@
 <?php
+
 /**
  * phpDocumentor
  *
@@ -8,8 +9,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-
-namespace phpDocumentor\Reflection;
+namespace MolliePrefix\phpDocumentor\Reflection;
 
 /**
  * Interface for Api Elements
@@ -22,7 +22,6 @@ interface Element
      * @return Fqsen
      */
     public function getFqsen();
-
     /**
      * Returns the name of the element.
      *

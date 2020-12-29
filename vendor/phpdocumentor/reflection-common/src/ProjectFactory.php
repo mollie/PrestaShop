@@ -1,4 +1,5 @@
 <?php
+
 /**
  * phpDocumentor
  *
@@ -8,7 +9,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-namespace phpDocumentor\Reflection;
+namespace MolliePrefix\phpDocumentor\Reflection;
 
 /**
  * Interface for project factories. A project factory shall convert a set of files

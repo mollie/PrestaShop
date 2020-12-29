@@ -1,14 +1,13 @@
 <?php
 
-namespace DeepCopy\Matcher\Doctrine;
+namespace MolliePrefix\DeepCopy\Matcher\Doctrine;
 
-use DeepCopy\Matcher\Matcher;
-use Doctrine\Common\Persistence\Proxy;
-
+use MolliePrefix\DeepCopy\Matcher\Matcher;
+use MolliePrefix\Doctrine\Common\Persistence\Proxy;
 /**
  * @final
  */
-class DoctrineProxyMatcher implements Matcher
+class DoctrineProxyMatcher implements \MolliePrefix\DeepCopy\Matcher\Matcher
 {
     /**
      * Matches a Doctrine Proxy class.
@@ -17,6 +16,6 @@ class DoctrineProxyMatcher implements Matcher
      */
     public function matches($object, $property)
     {
-        return $object instanceof Proxy;
+        return $object instanceof \MolliePrefix\Doctrine\Common\Persistence\Proxy;
     }
 }

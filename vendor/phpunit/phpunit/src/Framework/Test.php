@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * A Test can be run and collect its results.
  *
  * @since Interface available since Release 2.0.0
  */
-interface PHPUnit_Framework_Test extends Countable
+interface PHPUnit_Framework_Test extends \Countable
 {
     /**
      * Runs a test and collects its result in a TestResult instance.
@@ -22,5 +24,19 @@ interface PHPUnit_Framework_Test extends Countable
      *
      * @return PHPUnit_Framework_TestResult
      */
-    public function run(PHPUnit_Framework_TestResult $result = null);
+    public function run(\MolliePrefix\PHPUnit_Framework_TestResult $result = null);
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * A Test can be run and collect its results.
+ *
+ * @since Interface available since Release 2.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Test', 'PHPUnit_Framework_Test', \false);

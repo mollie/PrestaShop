@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that checks if the file(name) that it is evaluated for exists.
  *
@@ -15,7 +17,7 @@
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_FileExists extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_FileExists extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
@@ -27,9 +29,8 @@ class PHPUnit_Framework_Constraint_FileExists extends PHPUnit_Framework_Constrai
      */
     protected function matches($other)
     {
-        return file_exists($other);
+        return \file_exists($other);
     }
-
     /**
      * Returns the description of the failure
      *
@@ -42,12 +43,8 @@ class PHPUnit_Framework_Constraint_FileExists extends PHPUnit_Framework_Constrai
      */
     protected function failureDescription($other)
     {
-        return sprintf(
-            'file "%s" exists',
-            $other
-        );
+        return \sprintf('file "%s" exists', $other);
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -58,3 +55,19 @@ class PHPUnit_Framework_Constraint_FileExists extends PHPUnit_Framework_Constrai
         return 'file exists';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that checks if the file(name) that it is evaluated for exists.
+ *
+ * The file path to check is passed as $other in evaluate().
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_FileExists', 'PHPUnit_Framework_Constraint_FileExists', \false);

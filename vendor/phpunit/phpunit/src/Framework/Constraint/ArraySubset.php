@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that the array it is evaluated for has a specified subset.
  *
@@ -16,29 +18,26 @@
  *
  * @since Class available since Release 4.4.0
  */
-class PHPUnit_Framework_Constraint_ArraySubset extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_ArraySubset extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var array|ArrayAccess
      */
     protected $subset;
-
     /**
      * @var bool
      */
     protected $strict;
-
     /**
      * @param array|ArrayAccess $subset
      * @param bool              $strict Check for object identity
      */
-    public function __construct($subset, $strict = false)
+    public function __construct($subset, $strict = \false)
     {
         parent::__construct();
         $this->strict = $strict;
         $this->subset = $subset;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -51,23 +50,19 @@ class PHPUnit_Framework_Constraint_ArraySubset extends PHPUnit_Framework_Constra
     {
         //type cast $other & $this->subset as an array to allow
         //support in standard array functions.
-        if ($other instanceof ArrayAccess) {
+        if ($other instanceof \ArrayAccess) {
             $other = (array) $other;
         }
-
-        if ($this->subset instanceof ArrayAccess) {
+        if ($this->subset instanceof \ArrayAccess) {
             $this->subset = (array) $this->subset;
         }
-
-        $patched = array_replace_recursive($other, $this->subset);
-
+        $patched = \array_replace_recursive($other, $this->subset);
         if ($this->strict) {
             return $other === $patched;
         } else {
             return $other == $patched;
         }
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -77,7 +72,6 @@ class PHPUnit_Framework_Constraint_ArraySubset extends PHPUnit_Framework_Constra
     {
         return 'has the subset ' . $this->exporter->export($this->subset);
     }
-
     /**
      * Returns the description of the failure
      *
@@ -93,3 +87,20 @@ class PHPUnit_Framework_Constraint_ArraySubset extends PHPUnit_Framework_Constra
         return 'an array ' . $this->toString();
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that the array it is evaluated for has a specified subset.
+ *
+ * Uses array_replace_recursive() to check if a key value subset is part of the
+ * subject array.
+ *
+ * @since Class available since Release 4.4.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArraySubset', 'PHPUnit_Framework_Constraint_ArraySubset', \false);

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,18 +17,16 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace DoctrineTest\InstantiatorTestAsset;
+namespace MolliePrefix\DoctrineTest\InstantiatorTestAsset;
 
 use BadMethodCallException;
 use XMLReader;
-
 /**
  * Test asset that extends an internal PHP class
  *
  * @author Dave Marshall <dave@atst.io>
  */
-class XMLReaderAsset extends XMLReader
+class XMLReaderAsset extends \XMLReader
 {
     /**
      * Constructor - should not be called
@@ -36,6 +35,6 @@ class XMLReaderAsset extends XMLReader
      */
     public function __construct()
     {
-        throw new BadMethodCallException('Not supposed to be called!');
+        throw new \BadMethodCallException('Not supposed to be called!');
     }
 }

@@ -8,35 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Comparator;
 
-namespace Prophecy\Comparator;
-
-use SebastianBergmann\Comparator\Comparator;
-use SebastianBergmann\Comparator\ComparisonFailure;
-
+use MolliePrefix\SebastianBergmann\Comparator\Comparator;
+use MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure;
 /**
  * Closure comparator.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class ClosureComparator extends Comparator
+final class ClosureComparator extends \MolliePrefix\SebastianBergmann\Comparator\Comparator
 {
     public function accepts($expected, $actual)
     {
-        return is_object($expected) && $expected instanceof \Closure
-            && is_object($actual) && $actual instanceof \Closure;
+        return \is_object($expected) && $expected instanceof \Closure && \is_object($actual) && $actual instanceof \Closure;
     }
-
-    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false, array &$processed = array())
+    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = \false, $ignoreCase = \false, array &$processed = array())
     {
         if ($expected !== $actual) {
-            throw new ComparisonFailure(
+            throw new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure(
                 $expected,
                 $actual,
                 // we don't need a diff
                 '',
                 '',
-                false,
+                \false,
                 'all closures are different if not identical'
             );
         }

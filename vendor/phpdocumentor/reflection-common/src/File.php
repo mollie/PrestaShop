@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,8 +10,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-
-namespace phpDocumentor\Reflection;
+namespace MolliePrefix\phpDocumentor\Reflection;
 
 /**
  * Interface for files processed by the ProjectFactory
@@ -23,14 +23,12 @@ interface File
      * @return string
      */
     public function getContents();
-
     /**
      * Returns md5 hash of the file.
      *
      * @return string
      */
     public function md5();
-
     /**
      * Returns an relative path to the file.
      *

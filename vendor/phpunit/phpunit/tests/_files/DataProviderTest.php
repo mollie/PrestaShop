@@ -1,5 +1,8 @@
 <?php
-class DataProviderTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DataProviderTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider providerMethod
@@ -8,14 +11,9 @@ class DataProviderTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals($c, $a + $b);
     }
-
     public static function providerMethod()
     {
-        return [
-          [0, 0, 0],
-          [0, 1, 1],
-          [1, 1, 3],
-          [1, 0, 1]
-        ];
+        return [[0, 0, 0], [0, 1, 1], [1, 1, 3], [1, 0, 1]];
     }
 }
+\class_alias('MolliePrefix\\DataProviderTest', 'DataProviderTest', \false);

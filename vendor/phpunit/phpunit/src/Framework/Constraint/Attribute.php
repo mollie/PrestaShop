@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,28 +10,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 3.1.0
  */
-class PHPUnit_Framework_Constraint_Attribute extends PHPUnit_Framework_Constraint_Composite
+class PHPUnit_Framework_Constraint_Attribute extends \MolliePrefix\PHPUnit_Framework_Constraint_Composite
 {
     /**
      * @var string
      */
     protected $attributeName;
-
     /**
      * @param PHPUnit_Framework_Constraint $constraint
      * @param string                       $attributeName
      */
-    public function __construct(PHPUnit_Framework_Constraint $constraint, $attributeName)
+    public function __construct(\MolliePrefix\PHPUnit_Framework_Constraint $constraint, $attributeName)
     {
         parent::__construct($constraint);
-
         $this->attributeName = $attributeName;
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -47,18 +46,10 @@ class PHPUnit_Framework_Constraint_Attribute extends PHPUnit_Framework_Constrain
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        return parent::evaluate(
-            PHPUnit_Framework_Assert::readAttribute(
-                $other,
-                $this->attributeName
-            ),
-            $description,
-            $returnResult
-        );
+        return parent::evaluate(\MolliePrefix\PHPUnit_Framework_Assert::readAttribute($other, $this->attributeName), $description, $returnResult);
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -66,10 +57,8 @@ class PHPUnit_Framework_Constraint_Attribute extends PHPUnit_Framework_Constrain
      */
     public function toString()
     {
-        return 'attribute "' . $this->attributeName . '" ' .
-               $this->innerConstraint->toString();
+        return 'attribute "' . $this->attributeName . '" ' . $this->innerConstraint->toString();
     }
-
     /**
      * Returns the description of the failure
      *
@@ -85,3 +74,15 @@ class PHPUnit_Framework_Constraint_Attribute extends PHPUnit_Framework_Constrain
         return $this->toString();
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 3.1.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Attribute', 'PHPUnit_Framework_Constraint_Attribute', \false);

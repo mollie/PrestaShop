@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,17 +10,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 3.6.0
  */
-class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_Count extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var int
      */
     protected $expectedCount = 0;
-
     /**
      * @param int $expected
      */
@@ -26,7 +27,6 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
         parent::__construct();
         $this->expectedCount = $expected;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -39,7 +39,6 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
     {
         return $this->expectedCount === $this->getCountOf($other);
     }
-
     /**
      * @param mixed $other
      *
@@ -47,18 +46,16 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
      */
     protected function getCountOf($other)
     {
-        if ($other instanceof Countable || is_array($other)) {
-            return count($other);
-        } elseif ($other instanceof Traversable) {
-            if ($other instanceof IteratorAggregate) {
+        if ($other instanceof \Countable || \is_array($other)) {
+            return \count($other);
+        } elseif ($other instanceof \Traversable) {
+            if ($other instanceof \IteratorAggregate) {
                 $iterator = $other->getIterator();
             } else {
                 $iterator = $other;
             }
-
-            $key   = $iterator->key();
-            $count = iterator_count($iterator);
-
+            $key = $iterator->key();
+            $count = \iterator_count($iterator);
             // manually rewind $iterator to previous key, since iterator_count
             // moves pointer
             if ($key !== null) {
@@ -67,11 +64,9 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
                     $iterator->next();
                 }
             }
-
             return $count;
         }
     }
-
     /**
      * Returns the description of the failure
      *
@@ -84,21 +79,25 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
      */
     protected function failureDescription($other)
     {
-        return sprintf(
-            'actual size %d matches expected size %d',
-            $this->getCountOf($other),
-            $this->expectedCount
-        );
+        return \sprintf('actual size %d matches expected size %d', $this->getCountOf($other), $this->expectedCount);
     }
-
     /**
      * @return string
      */
     public function toString()
     {
-        return sprintf(
-            'count matches %d',
-            $this->expectedCount
-        );
+        return \sprintf('count matches %d', $this->expectedCount);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 3.6.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Count', 'PHPUnit_Framework_Constraint_Count', \false);

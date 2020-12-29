@@ -1,37 +1,35 @@
 <?php
-class StatusTest extends \PHPUnit\Framework\TestCase
+
+namespace MolliePrefix;
+
+class StatusTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     public function testSuccess()
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
-
     public function testFailure()
     {
-        $this->assertTrue(false);
+        $this->assertTrue(\false);
     }
-
     public function testError()
     {
-        throw new \Exception;
+        throw new \Exception();
     }
-
     public function testIncomplete()
     {
         $this->markTestIncomplete();
     }
-
     public function testSkipped()
     {
         $this->markTestSkipped();
     }
-
     public function testRisky()
     {
     }
-
     public function testWarning()
     {
-        throw new PHPUnit_Framework_Warning;
+        throw new \MolliePrefix\PHPUnit_Framework_Warning();
     }
 }
+\class_alias('MolliePrefix\\StatusTest', 'StatusTest', \false);

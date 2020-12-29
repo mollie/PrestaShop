@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /**
  * @codeCoverageIgnore
  */
@@ -6,11 +9,14 @@ class IgnoreCodeCoverageClass
 {
     public function returnTrue()
     {
-        return true;
+        return \true;
     }
-
     public function returnFalse()
     {
-        return false;
+        return \false;
     }
 }
+/**
+ * @codeCoverageIgnore
+ */
+\class_alias('MolliePrefix\\IgnoreCodeCoverageClass', 'IgnoreCodeCoverageClass', \false);

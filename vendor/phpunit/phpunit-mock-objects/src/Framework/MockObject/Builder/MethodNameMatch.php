@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Builder interface for matcher of method names.
  *
  * @since Interface available since Release 1.0.0
  */
-interface PHPUnit_Framework_MockObject_Builder_MethodNameMatch extends PHPUnit_Framework_MockObject_Builder_ParametersMatch
+interface PHPUnit_Framework_MockObject_Builder_MethodNameMatch extends \MolliePrefix\PHPUnit_Framework_MockObject_Builder_ParametersMatch
 {
     /**
      * Adds a new method name match and returns the parameter match object for
@@ -25,3 +27,17 @@ interface PHPUnit_Framework_MockObject_Builder_MethodNameMatch extends PHPUnit_F
      */
     public function method($name);
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Builder interface for matcher of method names.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_MethodNameMatch', 'PHPUnit_Framework_MockObject_Builder_MethodNameMatch', \false);

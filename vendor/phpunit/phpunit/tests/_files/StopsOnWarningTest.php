@@ -1,7 +1,11 @@
 <?php
-class StopsOnWarningTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class StopsOnWarningTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testOne()
     {
     }
 }
+\class_alias('MolliePrefix\\StopsOnWarningTest', 'StopsOnWarningTest', \false);

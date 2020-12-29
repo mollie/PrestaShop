@@ -78,6 +78,15 @@ $c = 3;
     }
     /**
      * {@inheritdoc}
+     *
+     * Must run after NoUselessReturnFixer.
+     */
+    public function getPriority()
+    {
+        return -19;
+    }
+    /**
+     * {@inheritdoc}
      */
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {

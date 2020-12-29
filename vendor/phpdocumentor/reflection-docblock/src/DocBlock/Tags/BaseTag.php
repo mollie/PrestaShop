@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,23 +10,19 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\DocBlock;
-use phpDocumentor\Reflection\DocBlock\Description;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Description;
 /**
  * Parses a tag definition for a DocBlock.
  */
-abstract class BaseTag implements DocBlock\Tag
+abstract class BaseTag implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag
 {
     /** @var string Name of the tag */
     protected $name = '';
-
     /** @var Description|null Description of the tag. */
     protected $description;
-
     /**
      * Gets the name of this tag.
      *
@@ -35,18 +32,15 @@ abstract class BaseTag implements DocBlock\Tag
     {
         return $this->name;
     }
-
     public function getDescription()
     {
         return $this->description;
     }
-
-    public function render(Formatter $formatter = null)
+    public function render(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter $formatter = null)
     {
         if ($formatter === null) {
-            $formatter = new Formatter\PassthroughFormatter();
+            $formatter = new \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter\PassthroughFormatter();
         }
-
         return $formatter->format($this);
     }
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,26 +10,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 3.1.0
  */
-abstract class PHPUnit_Framework_Constraint_Composite extends PHPUnit_Framework_Constraint
+abstract class PHPUnit_Framework_Constraint_Composite extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var PHPUnit_Framework_Constraint
      */
     protected $innerConstraint;
-
     /**
      * @param PHPUnit_Framework_Constraint $innerConstraint
      */
-    public function __construct(PHPUnit_Framework_Constraint $innerConstraint)
+    public function __construct(\MolliePrefix\PHPUnit_Framework_Constraint $innerConstraint)
     {
         parent::__construct();
         $this->innerConstraint = $innerConstraint;
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -45,19 +45,14 @@ abstract class PHPUnit_Framework_Constraint_Composite extends PHPUnit_Framework_
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
         try {
-            return $this->innerConstraint->evaluate(
-                $other,
-                $description,
-                $returnResult
-            );
-        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+            return $this->innerConstraint->evaluate($other, $description, $returnResult);
+        } catch (\MolliePrefix\PHPUnit_Framework_ExpectationFailedException $e) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -65,6 +60,18 @@ abstract class PHPUnit_Framework_Constraint_Composite extends PHPUnit_Framework_
      */
     public function count()
     {
-        return count($this->innerConstraint);
+        return \count($this->innerConstraint);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 3.1.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Composite', 'PHPUnit_Framework_Constraint_Composite', \false);

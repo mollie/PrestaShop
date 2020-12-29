@@ -8,18 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Doubler\ClassPatch;
 
-namespace Prophecy\Doubler\ClassPatch;
-
-use Prophecy\Doubler\Generator\Node\ClassNode;
-
+use MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode;
 /**
  * ReflectionClass::newInstance patch.
  * Makes first argument of newInstance optional, since it works but signature is misleading
  *
  * @author Florian Klein <florian.klein@free.fr>
  */
-class ReflectionClassNewInstancePatch implements ClassPatchInterface
+class ReflectionClassNewInstancePatch implements \MolliePrefix\Prophecy\Doubler\ClassPatch\ClassPatchInterface
 {
     /**
      * Supports ReflectionClass
@@ -28,23 +26,21 @@ class ReflectionClassNewInstancePatch implements ClassPatchInterface
      *
      * @return bool
      */
-    public function supports(ClassNode $node)
+    public function supports(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         return 'ReflectionClass' === $node->getParentClass();
     }
-
     /**
      * Updates newInstance's first argument to make it optional
      *
      * @param ClassNode $node
      */
-    public function apply(ClassNode $node)
+    public function apply(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         foreach ($node->getMethod('newInstance')->getArguments() as $argument) {
             $argument->setDefault(null);
         }
     }
-
     /**
      * Returns patch priority, which determines when patch will be applied.
      *

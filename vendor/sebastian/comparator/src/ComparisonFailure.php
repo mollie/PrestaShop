@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
-namespace SebastianBergmann\Comparator;
-
-use SebastianBergmann\Diff\Differ;
-
+use MolliePrefix\SebastianBergmann\Diff\Differ;
 /**
  * Thrown when an assertion for string equality failed.
  */
@@ -22,37 +21,31 @@ class ComparisonFailure extends \RuntimeException
      * @var mixed
      */
     protected $expected;
-
     /**
      * Actually retrieved value which does not match $expected.
      * @var mixed
      */
     protected $actual;
-
     /**
      * The string representation of the expected value
      * @var string
      */
     protected $expectedAsString;
-
     /**
      * The string representation of the actual value
      * @var string
      */
     protected $actualAsString;
-
     /**
      * @var bool
      */
     protected $identical;
-
     /**
      * Optional message which is placed in front of the first line
      * returned by toString().
      * @var string
      */
     protected $message;
-
     /**
      * Initialises with the expected value and the actual value.
      *
@@ -64,15 +57,14 @@ class ComparisonFailure extends \RuntimeException
      * @param string $message          A string which is prefixed on all returned lines
      *                                 in the difference output.
      */
-    public function __construct($expected, $actual, $expectedAsString, $actualAsString, $identical = false, $message = '')
+    public function __construct($expected, $actual, $expectedAsString, $actualAsString, $identical = \false, $message = '')
     {
-        $this->expected         = $expected;
-        $this->actual           = $actual;
+        $this->expected = $expected;
+        $this->actual = $actual;
         $this->expectedAsString = $expectedAsString;
-        $this->actualAsString   = $actualAsString;
-        $this->message          = $message;
+        $this->actualAsString = $actualAsString;
+        $this->message = $message;
     }
-
     /**
      * @return mixed
      */
@@ -80,7 +72,6 @@ class ComparisonFailure extends \RuntimeException
     {
         return $this->actual;
     }
-
     /**
      * @return mixed
      */
@@ -88,7 +79,6 @@ class ComparisonFailure extends \RuntimeException
     {
         return $this->expected;
     }
-
     /**
      * @return string
      */
@@ -96,7 +86,6 @@ class ComparisonFailure extends \RuntimeException
     {
         return $this->actualAsString;
     }
-
     /**
      * @return string
      */
@@ -104,7 +93,6 @@ class ComparisonFailure extends \RuntimeException
     {
         return $this->expectedAsString;
     }
-
     /**
      * @return string
      */
@@ -113,12 +101,9 @@ class ComparisonFailure extends \RuntimeException
         if (!$this->actualAsString && !$this->expectedAsString) {
             return '';
         }
-
-        $differ = new Differ("\n--- Expected\n+++ Actual\n");
-
+        $differ = new \MolliePrefix\SebastianBergmann\Diff\Differ("\n--- Expected\n+++ Actual\n");
         return $differ->diff($this->expectedAsString, $this->actualAsString);
     }
-
     /**
      * @return string
      */

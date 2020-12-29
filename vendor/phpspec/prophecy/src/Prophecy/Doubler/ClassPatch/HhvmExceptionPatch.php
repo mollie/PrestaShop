@@ -8,17 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Doubler\ClassPatch;
 
-namespace Prophecy\Doubler\ClassPatch;
-
-use Prophecy\Doubler\Generator\Node\ClassNode;
-
+use MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode;
 /**
  * Exception patch for HHVM to remove the stubs from special methods
  *
  * @author Christophe Coevoet <stof@notk.org>
  */
-class HhvmExceptionPatch implements ClassPatchInterface
+class HhvmExceptionPatch implements \MolliePrefix\Prophecy\Doubler\ClassPatch\ClassPatchInterface
 {
     /**
      * Supports exceptions on HHVM.
@@ -27,15 +25,13 @@ class HhvmExceptionPatch implements ClassPatchInterface
      *
      * @return bool
      */
-    public function supports(ClassNode $node)
+    public function supports(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
-        if (!defined('HHVM_VERSION')) {
-            return false;
+        if (!\defined('HHVM_VERSION')) {
+            return \false;
         }
-
-        return 'Exception' === $node->getParentClass() || is_subclass_of($node->getParentClass(), 'Exception');
+        return 'Exception' === $node->getParentClass() || \is_subclass_of($node->getParentClass(), 'Exception');
     }
-
     /**
      * Removes special exception static methods from the doubled methods.
      *
@@ -43,7 +39,7 @@ class HhvmExceptionPatch implements ClassPatchInterface
      *
      * @return void
      */
-    public function apply(ClassNode $node)
+    public function apply(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         if ($node->hasMethod('setTraceOptions')) {
             $node->getMethod('setTraceOptions')->useParentCode();
@@ -52,7 +48,6 @@ class HhvmExceptionPatch implements ClassPatchInterface
             $node->getMethod('getTraceOptions')->useParentCode();
         }
     }
-
     /**
      * {@inheritdoc}
      */

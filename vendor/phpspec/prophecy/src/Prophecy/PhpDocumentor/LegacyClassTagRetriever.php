@@ -8,18 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\PhpDocumentor;
 
-namespace Prophecy\PhpDocumentor;
-
-use phpDocumentor\Reflection\DocBlock;
-use phpDocumentor\Reflection\DocBlock\Tag\MethodTag as LegacyMethodTag;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag\MethodTag as LegacyMethodTag;
 /**
  * @author Théo FIDRY <theo.fidry@gmail.com>
  *
  * @internal
  */
-final class LegacyClassTagRetriever implements MethodTagRetrieverInterface
+final class LegacyClassTagRetriever implements \MolliePrefix\Prophecy\PhpDocumentor\MethodTagRetrieverInterface
 {
     /**
      * @param \ReflectionClass $reflectionClass
@@ -28,8 +26,7 @@ final class LegacyClassTagRetriever implements MethodTagRetrieverInterface
      */
     public function getTagList(\ReflectionClass $reflectionClass)
     {
-        $phpdoc = new DocBlock($reflectionClass->getDocComment());
-
+        $phpdoc = new \MolliePrefix\phpDocumentor\Reflection\DocBlock($reflectionClass->getDocComment());
         return $phpdoc->getTagsByName('method');
     }
 }

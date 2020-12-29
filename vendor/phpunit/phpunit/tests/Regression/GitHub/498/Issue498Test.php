@@ -1,6 +1,8 @@
 <?php
 
-class Issue498Test extends PHPUnit_Framework_TestCase
+namespace MolliePrefix;
+
+class Issue498Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -9,9 +11,8 @@ class Issue498Test extends PHPUnit_Framework_TestCase
      */
     public function shouldBeTrue($testData)
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
-
     /**
      * @test
      * @dataProvider shouldBeFalseDataProvider
@@ -19,26 +20,17 @@ class Issue498Test extends PHPUnit_Framework_TestCase
      */
     public function shouldBeFalse($testData)
     {
-        $this->assertFalse(false);
+        $this->assertFalse(\false);
     }
-
     public function shouldBeTrueDataProvider()
     {
-
         //throw new Exception("Can't create the data");
-        return [
-            [true],
-            [false]
-        ];
+        return [[\true], [\false]];
     }
-
     public function shouldBeFalseDataProvider()
     {
-        throw new Exception("Can't create the data");
-
-        return [
-            [true],
-            [false]
-        ];
+        throw new \Exception("Can't create the data");
+        return [[\true], [\false]];
     }
 }
+\class_alias('MolliePrefix\\Issue498Test', 'Issue498Test', \false);

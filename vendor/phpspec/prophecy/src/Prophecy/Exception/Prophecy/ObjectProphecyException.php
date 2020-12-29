@@ -8,22 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Exception\Prophecy;
 
-namespace Prophecy\Exception\Prophecy;
-
-use Prophecy\Prophecy\ObjectProphecy;
-
-class ObjectProphecyException extends \RuntimeException implements ProphecyException
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+class ObjectProphecyException extends \RuntimeException implements \MolliePrefix\Prophecy\Exception\Prophecy\ProphecyException
 {
     private $objectProphecy;
-
-    public function __construct($message, ObjectProphecy $objectProphecy)
+    public function __construct($message, \MolliePrefix\Prophecy\Prophecy\ObjectProphecy $objectProphecy)
     {
         parent::__construct($message);
-
         $this->objectProphecy = $objectProphecy;
     }
-
     /**
      * @return ObjectProphecy
      */

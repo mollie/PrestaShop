@@ -1,5 +1,8 @@
 <?php
-class Issue244Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue244Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException Issue244Exception
@@ -7,49 +10,47 @@ class Issue244Test extends PHPUnit_Framework_TestCase
      */
     public function testWorks()
     {
-        throw new Issue244Exception;
+        throw new \MolliePrefix\Issue244Exception();
     }
-
     /**
      * @expectedException Issue244Exception
      * @expectedExceptionCode OtherString
      */
     public function testFails()
     {
-        throw new Issue244Exception;
+        throw new \MolliePrefix\Issue244Exception();
     }
-
     /**
      * @expectedException Issue244Exception
      * @expectedExceptionCode 123
      */
     public function testFailsTooIfExpectationIsANumber()
     {
-        throw new Issue244Exception;
+        throw new \MolliePrefix\Issue244Exception();
     }
-
     /**
      * @expectedException Issue244ExceptionIntCode
      * @expectedExceptionCode 123String
      */
     public function testFailsTooIfExceptionCodeIsANumber()
     {
-        throw new Issue244ExceptionIntCode;
+        throw new \MolliePrefix\Issue244ExceptionIntCode();
     }
 }
-
-class Issue244Exception extends Exception
+\class_alias('MolliePrefix\\Issue244Test', 'Issue244Test', \false);
+class Issue244Exception extends \Exception
 {
     public function __construct()
     {
         $this->code = '123StringCode';
     }
 }
-
-class Issue244ExceptionIntCode extends Exception
+\class_alias('MolliePrefix\\Issue244Exception', 'Issue244Exception', \false);
+class Issue244ExceptionIntCode extends \Exception
 {
     public function __construct()
     {
         $this->code = 123;
     }
 }
+\class_alias('MolliePrefix\\Issue244ExceptionIntCode', 'Issue244ExceptionIntCode', \false);

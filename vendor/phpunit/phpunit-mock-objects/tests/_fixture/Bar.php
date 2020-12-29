@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 class Bar
 {
     public function doSomethingElse()
@@ -6,3 +9,4 @@ class Bar
         return 'result';
     }
 }
+\class_alias('MolliePrefix\\Bar', 'Bar', \false);

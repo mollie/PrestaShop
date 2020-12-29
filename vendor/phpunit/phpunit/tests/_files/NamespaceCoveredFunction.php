@@ -1,7 +1,8 @@
 <?php
-namespace foo;
+
+namespace MolliePrefix\foo;
 
 function func()
 {
-    return true;
+    return \true;
 }

@@ -1,12 +1,15 @@
 <?php
+
+namespace MolliePrefix;
+
 class Issue2366
 {
     public function foo()
     {
     }
 }
-
-class Issue2366Test extends PHPUnit\Framework\TestCase
+\class_alias('MolliePrefix\\Issue2366', 'Issue2366', \false);
+class Issue2366Test extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider provider
@@ -15,16 +18,11 @@ class Issue2366Test extends PHPUnit\Framework\TestCase
     {
         $this->assertEquals(1, $o->foo());
     }
-
     public function provider()
     {
-        $o = $this->createMock(Issue2366::class);
-
+        $o = $this->createMock(\MolliePrefix\Issue2366::class);
         $o->method('foo')->willReturn(1);
-
-        return [
-            [$o],
-            [$o]
-        ];
+        return [[$o], [$o]];
     }
 }
+\class_alias('MolliePrefix\\Issue2366Test', 'Issue2366Test', \false);

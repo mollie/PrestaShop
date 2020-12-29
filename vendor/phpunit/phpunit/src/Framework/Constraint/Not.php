@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,33 +10,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Logical NOT.
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_Not extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var PHPUnit_Framework_Constraint
      */
     protected $constraint;
-
     /**
      * @param PHPUnit_Framework_Constraint $constraint
      */
     public function __construct($constraint)
     {
         parent::__construct();
-
-        if (!($constraint instanceof PHPUnit_Framework_Constraint)) {
-            $constraint = new PHPUnit_Framework_Constraint_IsEqual($constraint);
+        if (!$constraint instanceof \MolliePrefix\PHPUnit_Framework_Constraint) {
+            $constraint = new \MolliePrefix\PHPUnit_Framework_Constraint_IsEqual($constraint);
         }
-
         $this->constraint = $constraint;
     }
-
     /**
      * @param string $string
      *
@@ -41,35 +39,8 @@ class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
      */
     public static function negate($string)
     {
-        return str_replace(
-            [
-            'contains ',
-            'exists',
-            'has ',
-            'is ',
-            'are ',
-            'matches ',
-            'starts with ',
-            'ends with ',
-            'reference ',
-            'not not '
-            ],
-            [
-            'does not contain ',
-            'does not exist',
-            'does not have ',
-            'is not ',
-            'are not ',
-            'does not match ',
-            'starts not with ',
-            'ends not with ',
-            'don\'t reference ',
-            'not '
-            ],
-            $string
-        );
+        return \str_replace(['contains ', 'exists', 'has ', 'is ', 'are ', 'matches ', 'starts with ', 'ends with ', 'reference ', 'not not '], ['does not contain ', 'does not exist', 'does not have ', 'is not ', 'are not ', 'does not match ', 'starts not with ', 'ends not with ', 'don\'t reference ', 'not '], $string);
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -88,19 +59,16 @@ class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        $success = !$this->constraint->evaluate($other, $description, true);
-
+        $success = !$this->constraint->evaluate($other, $description, \true);
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Returns the description of the failure
      *
@@ -113,19 +81,15 @@ class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
      */
     protected function failureDescription($other)
     {
-        switch (get_class($this->constraint)) {
+        switch (\get_class($this->constraint)) {
             case 'PHPUnit_Framework_Constraint_And':
             case 'PHPUnit_Framework_Constraint_Not':
             case 'PHPUnit_Framework_Constraint_Or':
                 return 'not( ' . $this->constraint->failureDescription($other) . ' )';
-
             default:
-                return self::negate(
-                    $this->constraint->failureDescription($other)
-                );
+                return self::negate($this->constraint->failureDescription($other));
         }
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -133,19 +97,15 @@ class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
      */
     public function toString()
     {
-        switch (get_class($this->constraint)) {
+        switch (\get_class($this->constraint)) {
             case 'PHPUnit_Framework_Constraint_And':
             case 'PHPUnit_Framework_Constraint_Not':
             case 'PHPUnit_Framework_Constraint_Or':
                 return 'not( ' . $this->constraint->toString() . ' )';
-
             default:
-                return self::negate(
-                    $this->constraint->toString()
-                );
+                return self::negate($this->constraint->toString());
         }
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -155,6 +115,20 @@ class PHPUnit_Framework_Constraint_Not extends PHPUnit_Framework_Constraint
      */
     public function count()
     {
-        return count($this->constraint);
+        return \count($this->constraint);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Logical NOT.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Not', 'PHPUnit_Framework_Constraint_Not', \false);

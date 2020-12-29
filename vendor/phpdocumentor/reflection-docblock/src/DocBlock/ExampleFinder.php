@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,11 +10,9 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock;
 
-namespace phpDocumentor\Reflection\DocBlock;
-
-use phpDocumentor\Reflection\DocBlock\Tags\Example;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Example;
 /**
  * Class used to find an example file's location based on a given ExampleDescriptor.
  */
@@ -21,10 +20,8 @@ class ExampleFinder
 {
     /** @var string */
     private $sourceDirectory = '';
-
     /** @var string[] */
     private $exampleDirectories = array();
-
     /**
      * Attempts to find the example contents for the given descriptor.
      *
@@ -32,18 +29,15 @@ class ExampleFinder
      *
      * @return string
      */
-    public function find(Example $example)
+    public function find(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Example $example)
     {
         $filename = $example->getFilePath();
-
         $file = $this->getExampleFileContents($filename);
         if (!$file) {
             return "** File not found : {$filename} **";
         }
-
-        return implode('', array_slice($file, $example->getStartingLine() - 1, $example->getLineCount()));
+        return \implode('', \array_slice($file, $example->getStartingLine() - 1, $example->getLineCount()));
     }
-
     /**
      * Registers the project's root directory where an 'examples' folder can be expected.
      *
@@ -55,7 +49,6 @@ class ExampleFinder
     {
         $this->sourceDirectory = $directory;
     }
-
     /**
      * Returns the project's root directory where an 'examples' folder can be expected.
      *
@@ -65,7 +58,6 @@ class ExampleFinder
     {
         return $this->sourceDirectory;
     }
-
     /**
      * Registers a series of directories that may contain examples.
      *
@@ -75,7 +67,6 @@ class ExampleFinder
     {
         $this->exampleDirectories = $directories;
     }
-
     /**
      * Returns a series of directories that may contain examples.
      *
@@ -85,7 +76,6 @@ class ExampleFinder
     {
         return $this->exampleDirectories;
     }
-
     /**
      * Attempts to find the requested example file and returns its contents or null if no file was found.
      *
@@ -104,28 +94,24 @@ class ExampleFinder
     private function getExampleFileContents($filename)
     {
         $normalizedPath = null;
-
         foreach ($this->exampleDirectories as $directory) {
             $exampleFileFromConfig = $this->constructExamplePath($directory, $filename);
-            if (is_readable($exampleFileFromConfig)) {
+            if (\is_readable($exampleFileFromConfig)) {
                 $normalizedPath = $exampleFileFromConfig;
                 break;
             }
         }
-
         if (!$normalizedPath) {
-            if (is_readable($this->getExamplePathFromSource($filename))) {
+            if (\is_readable($this->getExamplePathFromSource($filename))) {
                 $normalizedPath = $this->getExamplePathFromSource($filename);
-            } elseif (is_readable($this->getExamplePathFromExampleDirectory($filename))) {
+            } elseif (\is_readable($this->getExamplePathFromExampleDirectory($filename))) {
                 $normalizedPath = $this->getExamplePathFromExampleDirectory($filename);
-            } elseif (is_readable($filename)) {
+            } elseif (\is_readable($filename)) {
                 $normalizedPath = $filename;
             }
         }
-
-        return $normalizedPath && is_readable($normalizedPath) ? file($normalizedPath) : null;
+        return $normalizedPath && \is_readable($normalizedPath) ? \file($normalizedPath) : null;
     }
-
     /**
      * Get example filepath based on the example directory inside your project.
      *
@@ -135,9 +121,8 @@ class ExampleFinder
      */
     private function getExamplePathFromExampleDirectory($file)
     {
-        return getcwd() . DIRECTORY_SEPARATOR . 'examples' . DIRECTORY_SEPARATOR . $file;
+        return \getcwd() . \DIRECTORY_SEPARATOR . 'examples' . \DIRECTORY_SEPARATOR . $file;
     }
-
     /**
      * Returns a path to the example file in the given directory..
      *
@@ -148,9 +133,8 @@ class ExampleFinder
      */
     private function constructExamplePath($directory, $file)
     {
-        return rtrim($directory, '\\/') . DIRECTORY_SEPARATOR . $file;
+        return \rtrim($directory, '\\/') . \DIRECTORY_SEPARATOR . $file;
     }
-
     /**
      * Get example filepath based on sourcecode.
      *
@@ -160,11 +144,6 @@ class ExampleFinder
      */
     private function getExamplePathFromSource($file)
     {
-        return sprintf(
-            '%s%s%s',
-            trim($this->getSourceDirectory(), '\\/'),
-            DIRECTORY_SEPARATOR,
-            trim($file, '"')
-        );
+        return \sprintf('%s%s%s', \trim($this->getSourceDirectory(), '\\/'), \DIRECTORY_SEPARATOR, \trim($file, '"'));
     }
 }

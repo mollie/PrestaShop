@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,20 +10,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that the value it is evaluated for is greater
  * than a given value.
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_GreaterThan extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_GreaterThan extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var numeric
      */
     protected $value;
-
     /**
      * @param numeric $value
      */
@@ -29,7 +30,6 @@ class PHPUnit_Framework_Constraint_GreaterThan extends PHPUnit_Framework_Constra
         parent::__construct();
         $this->value = $value;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -42,7 +42,6 @@ class PHPUnit_Framework_Constraint_GreaterThan extends PHPUnit_Framework_Constra
     {
         return $this->value < $other;
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -53,3 +52,18 @@ class PHPUnit_Framework_Constraint_GreaterThan extends PHPUnit_Framework_Constra
         return 'is greater than ' . $this->exporter->export($this->value);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that the value it is evaluated for is greater
+ * than a given value.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_GreaterThan', 'PHPUnit_Framework_Constraint_GreaterThan', \false);

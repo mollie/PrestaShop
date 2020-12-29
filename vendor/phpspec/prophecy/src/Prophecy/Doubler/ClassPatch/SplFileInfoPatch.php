@@ -8,19 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Doubler\ClassPatch;
 
-namespace Prophecy\Doubler\ClassPatch;
-
-use Prophecy\Doubler\Generator\Node\ClassNode;
-use Prophecy\Doubler\Generator\Node\MethodNode;
-
+use MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode;
+use MolliePrefix\Prophecy\Doubler\Generator\Node\MethodNode;
 /**
  * SplFileInfo patch.
  * Makes SplFileInfo and derivative classes usable with Prophecy.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class SplFileInfoPatch implements ClassPatchInterface
+class SplFileInfoPatch implements \MolliePrefix\Prophecy\Doubler\ClassPatch\ClassPatchInterface
 {
     /**
      * Supports everything that extends SplFileInfo.
@@ -29,53 +27,42 @@ class SplFileInfoPatch implements ClassPatchInterface
      *
      * @return bool
      */
-    public function supports(ClassNode $node)
+    public function supports(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         if (null === $node->getParentClass()) {
-            return false;
+            return \false;
         }
-        return 'SplFileInfo' === $node->getParentClass()
-            || is_subclass_of($node->getParentClass(), 'SplFileInfo')
-        ;
+        return 'SplFileInfo' === $node->getParentClass() || \is_subclass_of($node->getParentClass(), 'SplFileInfo');
     }
-
     /**
      * Updated constructor code to call parent one with dummy file argument.
      *
      * @param ClassNode $node
      */
-    public function apply(ClassNode $node)
+    public function apply(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         if ($node->hasMethod('__construct')) {
             $constructor = $node->getMethod('__construct');
         } else {
-            $constructor = new MethodNode('__construct');
+            $constructor = new \MolliePrefix\Prophecy\Doubler\Generator\Node\MethodNode('__construct');
             $node->addMethod($constructor);
         }
-
         if ($this->nodeIsDirectoryIterator($node)) {
             $constructor->setCode('return parent::__construct("' . __DIR__ . '");');
-
             return;
         }
-
         if ($this->nodeIsSplFileObject($node)) {
-            $filePath = str_replace('\\','\\\\',__FILE__);
-            $constructor->setCode('return parent::__construct("' . $filePath .'");');
-
+            $filePath = \str_replace('\\', '\\\\', __FILE__);
+            $constructor->setCode('return parent::__construct("' . $filePath . '");');
             return;
         }
-
         if ($this->nodeIsSymfonySplFileInfo($node)) {
-            $filePath = str_replace('\\','\\\\',__FILE__);
-            $constructor->setCode('return parent::__construct("' . $filePath .'", "", "");');
-
+            $filePath = \str_replace('\\', '\\\\', __FILE__);
+            $constructor->setCode('return parent::__construct("' . $filePath . '", "", "");');
             return;
         }
-
         $constructor->useParentCode();
     }
-
     /**
      * Returns patch priority, which determines when patch will be applied.
      *
@@ -85,39 +72,31 @@ class SplFileInfoPatch implements ClassPatchInterface
     {
         return 50;
     }
-
     /**
      * @param ClassNode $node
      * @return boolean
      */
-    private function nodeIsDirectoryIterator(ClassNode $node)
+    private function nodeIsDirectoryIterator(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         $parent = $node->getParentClass();
-
-        return 'DirectoryIterator' === $parent
-            || is_subclass_of($parent, 'DirectoryIterator');
+        return 'DirectoryIterator' === $parent || \is_subclass_of($parent, 'DirectoryIterator');
     }
-
     /**
      * @param ClassNode $node
      * @return boolean
      */
-    private function nodeIsSplFileObject(ClassNode $node)
+    private function nodeIsSplFileObject(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         $parent = $node->getParentClass();
-
-        return 'SplFileObject' === $parent
-            || is_subclass_of($parent, 'SplFileObject');
+        return 'SplFileObject' === $parent || \is_subclass_of($parent, 'SplFileObject');
     }
-
     /**
      * @param ClassNode $node
      * @return boolean
      */
-    private function nodeIsSymfonySplFileInfo(ClassNode $node)
+    private function nodeIsSymfonySplFileInfo(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node)
     {
         $parent = $node->getParentClass();
-
         return 'Symfony\\Component\\Finder\\SplFileInfo' === $parent;
     }
 }

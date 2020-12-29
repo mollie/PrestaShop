@@ -1,18 +1,18 @@
 <?php
-class ClonedDependencyTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class ClonedDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     private static $dependency;
-
     public static function setUpBeforeClass()
     {
-        self::$dependency = new StdClass;
+        self::$dependency = new \StdClass();
     }
-
     public function testOne()
     {
         return self::$dependency;
     }
-
     /**
      * @depends testOne
      */
@@ -20,7 +20,6 @@ class ClonedDependencyTest extends PHPUnit_Framework_TestCase
     {
         $this->assertSame(self::$dependency, $dependency);
     }
-
     /**
      * @depends !clone testOne
      */
@@ -28,7 +27,6 @@ class ClonedDependencyTest extends PHPUnit_Framework_TestCase
     {
         $this->assertSame(self::$dependency, $dependency);
     }
-
     /**
      * @depends clone testOne
      */
@@ -37,3 +35,4 @@ class ClonedDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame(self::$dependency, $dependency);
     }
 }
+\class_alias('MolliePrefix\\ClonedDependencyTest', 'ClonedDependencyTest', \false);

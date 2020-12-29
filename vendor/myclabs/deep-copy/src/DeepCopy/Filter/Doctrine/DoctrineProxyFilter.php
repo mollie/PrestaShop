@@ -1,13 +1,12 @@
 <?php
 
-namespace DeepCopy\Filter\Doctrine;
+namespace MolliePrefix\DeepCopy\Filter\Doctrine;
 
-use DeepCopy\Filter\Filter;
-
+use MolliePrefix\DeepCopy\Filter\Filter;
 /**
  * @final
  */
-class DoctrineProxyFilter implements Filter
+class DoctrineProxyFilter implements \MolliePrefix\DeepCopy\Filter\Filter
 {
     /**
      * Triggers the magic method __load() on a Doctrine Proxy class to load the

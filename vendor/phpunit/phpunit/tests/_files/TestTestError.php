@@ -1,8 +1,12 @@
 <?php
-class TestError extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class TestError extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     protected function runTest()
     {
-        throw new Exception;
+        throw new \Exception();
     }
 }
+\class_alias('MolliePrefix\\TestError', 'TestError', \false);

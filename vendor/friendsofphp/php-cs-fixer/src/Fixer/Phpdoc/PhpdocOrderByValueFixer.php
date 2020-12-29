@@ -104,7 +104,7 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
     }
     protected function createConfigurationDefinition()
     {
-        $allowedValues = ['author', 'covers', 'coversNothing', 'dataProvider', 'depends', 'group', 'internal', 'requires', 'uses'];
+        $allowedValues = ['author', 'covers', 'coversNothing', 'dataProvider', 'depends', 'group', 'internal', 'requires', 'throws', 'uses'];
         return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('annotations', 'List of annotations to order, e.g. `["covers"]`.'))->setAllowedTypes(['array'])->setAllowedValues([new \MolliePrefix\PhpCsFixer\FixerConfiguration\AllowedValueSubset($allowedValues)])->setDefault(['covers'])->getOption()]);
     }
 }

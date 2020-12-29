@@ -1,8 +1,8 @@
 <?php
 
-namespace My\Space;
+namespace MolliePrefix\My\Space;
 
-class ExceptionNamespaceTest extends \PHPUnit_Framework_TestCase
+class ExceptionNamespaceTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * Exception message
@@ -10,14 +10,12 @@ class ExceptionNamespaceTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     const ERROR_MESSAGE = 'Exception namespace message';
-
     /**
      * Exception code
      *
      * @var int
      */
     const ERROR_CODE = 200;
-
     /**
      * @expectedException Class
      * @expectedExceptionMessage My\Space\ExceptionNamespaceTest::ERROR_MESSAGE
@@ -26,7 +24,6 @@ class ExceptionNamespaceTest extends \PHPUnit_Framework_TestCase
     public function testConstants()
     {
     }
-
     /**
      * @expectedException Class
      * @expectedExceptionCode My\Space\ExceptionNamespaceTest::UNKNOWN_CODE_CONSTANT

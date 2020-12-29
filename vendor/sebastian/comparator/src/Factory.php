@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\Comparator;
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
 /**
  * Factory for comparators which compare values for equality.
@@ -19,43 +19,38 @@ class Factory
      * @var Comparator[]
      */
     private $comparators = array();
-
     /**
      * @var Factory
      */
     private static $instance;
-
     /**
      * Constructs a new factory.
      */
     public function __construct()
     {
-        $this->register(new TypeComparator);
-        $this->register(new ScalarComparator);
-        $this->register(new NumericComparator);
-        $this->register(new DoubleComparator);
-        $this->register(new ArrayComparator);
-        $this->register(new ResourceComparator);
-        $this->register(new ObjectComparator);
-        $this->register(new ExceptionComparator);
-        $this->register(new SplObjectStorageComparator);
-        $this->register(new DOMNodeComparator);
-        $this->register(new MockObjectComparator);
-        $this->register(new DateTimeComparator);
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\TypeComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\ScalarComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\NumericComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\DoubleComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\ArrayComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\ResourceComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\ObjectComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\ExceptionComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\SplObjectStorageComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\DOMNodeComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\MockObjectComparator());
+        $this->register(new \MolliePrefix\SebastianBergmann\Comparator\DateTimeComparator());
     }
-
     /**
      * @return Factory
      */
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new self;
+            self::$instance = new self();
         }
-
         return self::$instance;
     }
-
     /**
      * Returns the correct comparator for comparing two values.
      *
@@ -71,7 +66,6 @@ class Factory
             }
         }
     }
-
     /**
      * Registers a new comparator.
      *
@@ -82,13 +76,11 @@ class Factory
      *
      * @param Comparator $comparator The registered comparator
      */
-    public function register(Comparator $comparator)
+    public function register(\MolliePrefix\SebastianBergmann\Comparator\Comparator $comparator)
     {
-        array_unshift($this->comparators, $comparator);
-
+        \array_unshift($this->comparators, $comparator);
         $comparator->setFactory($this);
     }
-
     /**
      * Unregisters a comparator.
      *
@@ -96,7 +88,7 @@ class Factory
      *
      * @param Comparator $comparator The unregistered comparator
      */
-    public function unregister(Comparator $comparator)
+    public function unregister(\MolliePrefix\SebastianBergmann\Comparator\Comparator $comparator)
     {
         foreach ($this->comparators as $key => $_comparator) {
             if ($comparator === $_comparator) {

@@ -1,20 +1,17 @@
 <?php
 
-namespace DeepCopy\f001;
+namespace MolliePrefix\DeepCopy\f001;
 
-class B extends A
+class B extends \MolliePrefix\DeepCopy\f001\A
 {
     private $bProp;
-
     public function getBProp()
     {
         return $this->bProp;
     }
-
     public function setBProp($prop)
     {
         $this->bProp = $prop;
-
         return $this;
     }
 }

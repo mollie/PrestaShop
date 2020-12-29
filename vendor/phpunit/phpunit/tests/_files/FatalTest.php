@@ -1,13 +1,15 @@
 <?php
 
-class FatalTest extends PHPUnit_Framework_TestCase
+namespace MolliePrefix;
+
+class FatalTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testFatalError()
     {
-        if (extension_loaded('xdebug')) {
-            xdebug_disable();
+        if (\extension_loaded('xdebug')) {
+            \xdebug_disable();
         }
-
         eval('class FatalTest {}');
     }
 }
+\class_alias('MolliePrefix\\FatalTest', 'FatalTest', \false);

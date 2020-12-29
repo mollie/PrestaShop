@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 class Calculator
 {
     /**
@@ -12,3 +15,4 @@ class Calculator
         return $a + $b;
     }
 }
+\class_alias('MolliePrefix\\Calculator', 'Calculator', \false);

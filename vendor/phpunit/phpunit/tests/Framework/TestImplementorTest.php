@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,24 +10,33 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since      Class available since Release 2.0.0
  */
-class Framework_TestImplementorTest extends PHPUnit_Framework_TestCase
+class Framework_TestImplementorTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @covers PHPUnit_Framework_TestCase
      */
     public function testSuccessfulRun()
     {
-        $result = new PHPUnit_Framework_TestResult;
-
-        $test = new DoubleTestCase(new Success);
+        $result = new \MolliePrefix\PHPUnit_Framework_TestResult();
+        $test = new \MolliePrefix\DoubleTestCase(new \MolliePrefix\Success());
         $test->run($result);
-
-        $this->assertCount(count($test), $result);
+        $this->assertCount(\count($test), $result);
         $this->assertEquals(0, $result->errorCount());
         $this->assertEquals(0, $result->failureCount());
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since      Class available since Release 2.0.0
+ */
+\class_alias('MolliePrefix\\Framework_TestImplementorTest', 'Framework_TestImplementorTest', \false);

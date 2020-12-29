@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,8 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-class Framework_Constraint_IsJsonTest extends PHPUnit_Framework_TestCase
+class Framework_Constraint_IsJsonTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider evaluateDataprovider
@@ -18,15 +20,20 @@ class Framework_Constraint_IsJsonTest extends PHPUnit_Framework_TestCase
      */
     public function testEvaluate($expected, $jsonOther)
     {
-        $constraint = new PHPUnit_Framework_Constraint_IsJson();
-        $this->assertEquals($expected, $constraint->evaluate($jsonOther, '', true));
+        $constraint = new \MolliePrefix\PHPUnit_Framework_Constraint_IsJson();
+        $this->assertEquals($expected, $constraint->evaluate($jsonOther, '', \true));
     }
-
     public static function evaluateDataprovider()
     {
-        return [
-            'valid JSON'                                     => [true, '{}'],
-            'empty string should be treated as invalid JSON' => [false, ''],
-        ];
+        return ['valid JSON' => [\true, '{}'], 'empty string should be treated as invalid JSON' => [\false, '']];
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+\class_alias('MolliePrefix\\Framework_Constraint_IsJsonTest', 'Framework_Constraint_IsJsonTest', \false);

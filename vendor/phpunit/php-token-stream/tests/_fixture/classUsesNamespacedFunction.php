@@ -1,8 +1,8 @@
 <?php
-namespace foo;
 
-use function bar\baz;
+namespace MolliePrefix\foo;
 
+use function MolliePrefix\bar\baz;
 class Foo
 {
 }

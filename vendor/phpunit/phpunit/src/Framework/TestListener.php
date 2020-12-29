@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * A Listener for test progress.
  *
@@ -22,8 +24,7 @@ interface PHPUnit_Framework_TestListener
      * @param Exception              $e
      * @param float                  $time
      */
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time);
-
+    public function addError(\MolliePrefix\PHPUnit_Framework_Test $test, \Exception $e, $time);
     /**
      * A warning occurred.
      *
@@ -37,8 +38,7 @@ interface PHPUnit_Framework_TestListener
      *
      * @see   https://github.com/sebastianbergmann/phpunit/pull/1840#issuecomment-162535997
      */
-//  public function addWarning(PHPUnit_Framework_Test $test, PHPUnit_Framework_Warning $e, $time);
-
+    //  public function addWarning(PHPUnit_Framework_Test $test, PHPUnit_Framework_Warning $e, $time);
     /**
      * A failure occurred.
      *
@@ -46,8 +46,7 @@ interface PHPUnit_Framework_TestListener
      * @param PHPUnit_Framework_AssertionFailedError $e
      * @param float                                  $time
      */
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time);
-
+    public function addFailure(\MolliePrefix\PHPUnit_Framework_Test $test, \MolliePrefix\PHPUnit_Framework_AssertionFailedError $e, $time);
     /**
      * Incomplete test.
      *
@@ -55,8 +54,7 @@ interface PHPUnit_Framework_TestListener
      * @param Exception              $e
      * @param float                  $time
      */
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time);
-
+    public function addIncompleteTest(\MolliePrefix\PHPUnit_Framework_Test $test, \Exception $e, $time);
     /**
      * Risky test.
      *
@@ -66,8 +64,7 @@ interface PHPUnit_Framework_TestListener
      *
      * @since Method available since Release 4.0.0
      */
-    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time);
-
+    public function addRiskyTest(\MolliePrefix\PHPUnit_Framework_Test $test, \Exception $e, $time);
     /**
      * Skipped test.
      *
@@ -77,8 +74,7 @@ interface PHPUnit_Framework_TestListener
      *
      * @since Method available since Release 3.0.0
      */
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time);
-
+    public function addSkippedTest(\MolliePrefix\PHPUnit_Framework_Test $test, \Exception $e, $time);
     /**
      * A test suite started.
      *
@@ -86,8 +82,7 @@ interface PHPUnit_Framework_TestListener
      *
      * @since Method available since Release 2.2.0
      */
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite);
-
+    public function startTestSuite(\MolliePrefix\PHPUnit_Framework_TestSuite $suite);
     /**
      * A test suite ended.
      *
@@ -95,20 +90,32 @@ interface PHPUnit_Framework_TestListener
      *
      * @since Method available since Release 2.2.0
      */
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite);
-
+    public function endTestSuite(\MolliePrefix\PHPUnit_Framework_TestSuite $suite);
     /**
      * A test started.
      *
      * @param PHPUnit_Framework_Test $test
      */
-    public function startTest(PHPUnit_Framework_Test $test);
-
+    public function startTest(\MolliePrefix\PHPUnit_Framework_Test $test);
     /**
      * A test ended.
      *
      * @param PHPUnit_Framework_Test $test
      * @param float                  $time
      */
-    public function endTest(PHPUnit_Framework_Test $test, $time);
+    public function endTest(\MolliePrefix\PHPUnit_Framework_Test $test, $time);
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * A Listener for test progress.
+ *
+ * @since Interface available since Release 2.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_TestListener', 'PHPUnit_Framework_TestListener', \false);

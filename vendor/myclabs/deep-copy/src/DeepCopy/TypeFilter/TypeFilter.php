@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepCopy\TypeFilter;
+namespace MolliePrefix\DeepCopy\TypeFilter;
 
 interface TypeFilter
 {

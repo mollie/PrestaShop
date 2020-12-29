@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Interface for classes which can be invoked.
  *
@@ -16,7 +18,7 @@
  *
  * @since Interface available since Release 1.0.0
  */
-interface PHPUnit_Framework_MockObject_Invokable extends PHPUnit_Framework_MockObject_Verifiable
+interface PHPUnit_Framework_MockObject_Invokable extends \MolliePrefix\PHPUnit_Framework_MockObject_Verifiable
 {
     /**
      * Invokes the invocation object $invocation so that it can be checked for
@@ -26,8 +28,7 @@ interface PHPUnit_Framework_MockObject_Invokable extends PHPUnit_Framework_MockO
      *
      * @return object
      */
-    public function invoke(PHPUnit_Framework_MockObject_Invocation $invocation);
-
+    public function invoke(\MolliePrefix\PHPUnit_Framework_MockObject_Invocation $invocation);
     /**
      * Checks if the invocation matches.
      *
@@ -35,5 +36,22 @@ interface PHPUnit_Framework_MockObject_Invokable extends PHPUnit_Framework_MockO
      *
      * @return bool
      */
-    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation);
+    public function matches(\MolliePrefix\PHPUnit_Framework_MockObject_Invocation $invocation);
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Interface for classes which can be invoked.
+ *
+ * The invocation will be taken from a mock object and passed to an object
+ * of this class.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Invokable', 'PHPUnit_Framework_MockObject_Invokable', \false);

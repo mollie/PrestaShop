@@ -1,15 +1,16 @@
 <?php
+
+namespace MolliePrefix;
+
 trait AbstractTrait
 {
-    abstract public function doSomething();
-
+    public abstract function doSomething();
     public function mockableMethod()
     {
-        return true;
+        return \true;
     }
-
     public function anotherMockableMethod()
     {
-        return true;
+        return \true;
     }
 }
