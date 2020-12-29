@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,23 +17,21 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace DoctrineTest\InstantiatorTestAsset;
+namespace MolliePrefix\DoctrineTest\InstantiatorTestAsset;
 
 use ArrayObject;
-
 /**
  * A simple asset for an abstract class
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class WakeUpNoticesAsset extends ArrayObject
+class WakeUpNoticesAsset extends \ArrayObject
 {
     /**
      * Wakeup method called after un-serialization
      */
     public function __wakeup()
     {
-        trigger_error('Something went bananas while un-serializing this instance');
+        \trigger_error('Something went bananas while un-serializing this instance');
     }
 }

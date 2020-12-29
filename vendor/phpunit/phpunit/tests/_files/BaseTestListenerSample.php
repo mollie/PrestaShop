@@ -1,11 +1,13 @@
 <?php
 
-class BaseTestListenerSample extends PHPUnit_Framework_BaseTestListener
+namespace MolliePrefix;
+
+class BaseTestListenerSample extends \MolliePrefix\PHPUnit_Framework_BaseTestListener
 {
     public $endCount = 0;
-
-    public function endTest(PHPUnit_Framework_Test $test, $time)
+    public function endTest(\MolliePrefix\PHPUnit_Framework_Test $test, $time)
     {
         $this->endCount++;
     }
 }
+\class_alias('MolliePrefix\\BaseTestListenerSample', 'BaseTestListenerSample', \false);

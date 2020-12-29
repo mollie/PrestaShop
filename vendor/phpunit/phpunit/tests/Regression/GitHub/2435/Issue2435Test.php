@@ -1,12 +1,18 @@
 <?php
 
+namespace MolliePrefix;
+
 /**
  * @group
  */
-class Issue2435Test extends PHPUnit_Framework_TestCase
+class Issue2435Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testOne()
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
 }
+/**
+ * @group
+ */
+\class_alias('MolliePrefix\\Issue2435Test', 'Issue2435Test', \false);

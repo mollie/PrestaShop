@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 class StringableClass
 {
     public function __toString()
@@ -6,3 +9,4 @@ class StringableClass
         return '12345';
     }
 }
+\class_alias('MolliePrefix\\StringableClass', 'StringableClass', \false);

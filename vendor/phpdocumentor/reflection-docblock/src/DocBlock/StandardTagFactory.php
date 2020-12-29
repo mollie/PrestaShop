@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,15 +10,13 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock;
 
-namespace phpDocumentor\Reflection\DocBlock;
-
-use phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod;
-use phpDocumentor\Reflection\DocBlock\Tags\Generic;
-use phpDocumentor\Reflection\FqsenResolver;
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Generic;
+use MolliePrefix\phpDocumentor\Reflection\FqsenResolver;
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Creates a Tag object given the contents of a tag.
  *
@@ -35,52 +34,47 @@ use Webmozart\Assert\Assert;
  * When you want to use a Tag of your own with custom handling you need to call the `registerTagHandler` method, pass
  * the name of the tag and a Fully Qualified Class Name pointing to a class that implements the Tag interface.
  */
-final class StandardTagFactory implements TagFactory
+final class StandardTagFactory implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\TagFactory
 {
     /** PCRE regular expression matching a tag name. */
-    const REGEX_TAGNAME = '[\w\-\_\\\\]+';
-
+    const REGEX_TAGNAME = '[\\w\\-\\_\\\\]+';
     /**
      * @var string[] An array with a tag as a key, and an FQCN to a class that handles it as an array value.
      */
     private $tagHandlerMappings = [
-        'author'         => '\phpDocumentor\Reflection\DocBlock\Tags\Author',
-        'covers'         => '\phpDocumentor\Reflection\DocBlock\Tags\Covers',
-        'deprecated'     => '\phpDocumentor\Reflection\DocBlock\Tags\Deprecated',
+        'author' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Author',
+        'covers' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Covers',
+        'deprecated' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Deprecated',
         // 'example'        => '\phpDocumentor\Reflection\DocBlock\Tags\Example',
-        'link'           => '\phpDocumentor\Reflection\DocBlock\Tags\Link',
-        'method'         => '\phpDocumentor\Reflection\DocBlock\Tags\Method',
-        'param'          => '\phpDocumentor\Reflection\DocBlock\Tags\Param',
-        'property-read'  => '\phpDocumentor\Reflection\DocBlock\Tags\PropertyRead',
-        'property'       => '\phpDocumentor\Reflection\DocBlock\Tags\Property',
-        'property-write' => '\phpDocumentor\Reflection\DocBlock\Tags\PropertyWrite',
-        'return'         => '\phpDocumentor\Reflection\DocBlock\Tags\Return_',
-        'see'            => '\phpDocumentor\Reflection\DocBlock\Tags\See',
-        'since'          => '\phpDocumentor\Reflection\DocBlock\Tags\Since',
-        'source'         => '\phpDocumentor\Reflection\DocBlock\Tags\Source',
-        'throw'          => '\phpDocumentor\Reflection\DocBlock\Tags\Throws',
-        'throws'         => '\phpDocumentor\Reflection\DocBlock\Tags\Throws',
-        'uses'           => '\phpDocumentor\Reflection\DocBlock\Tags\Uses',
-        'var'            => '\phpDocumentor\Reflection\DocBlock\Tags\Var_',
-        'version'        => '\phpDocumentor\Reflection\DocBlock\Tags\Version'
+        'link' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Link',
+        'method' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Method',
+        'param' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Param',
+        'property-read' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\PropertyRead',
+        'property' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Property',
+        'property-write' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\PropertyWrite',
+        'return' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Return_',
+        'see' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\See',
+        'since' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Since',
+        'source' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Source',
+        'throw' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Throws',
+        'throws' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Throws',
+        'uses' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Uses',
+        'var' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Var_',
+        'version' => 'MolliePrefix\\phpDocumentor\\Reflection\\DocBlock\\Tags\\Version',
     ];
-
     /**
      * @var \ReflectionParameter[][] a lazy-loading cache containing parameters for each tagHandler that has been used.
      */
     private $tagHandlerParameterCache = [];
-
     /**
      * @var FqsenResolver
      */
     private $fqsenResolver;
-
     /**
      * @var mixed[] an array representing a simple Service Locator where we can store parameters and
      *     services that can be inserted into the Factory Methods of Tag Handlers.
      */
     private $serviceLocator = [];
-
     /**
      * Initialize this tag factory with the means to resolve an FQSEN and optionally a list of tag handlers.
      *
@@ -92,36 +86,28 @@ final class StandardTagFactory implements TagFactory
      *
      * @see self::registerTagHandler() to add a new tag handler to the existing default list.
      */
-    public function __construct(FqsenResolver $fqsenResolver, array $tagHandlers = null)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\FqsenResolver $fqsenResolver, array $tagHandlers = null)
     {
         $this->fqsenResolver = $fqsenResolver;
         if ($tagHandlers !== null) {
             $this->tagHandlerMappings = $tagHandlers;
         }
-
-        $this->addService($fqsenResolver, FqsenResolver::class);
+        $this->addService($fqsenResolver, \MolliePrefix\phpDocumentor\Reflection\FqsenResolver::class);
     }
-
     /**
      * {@inheritDoc}
      */
-    public function create($tagLine, TypeContext $context = null)
+    public function create($tagLine, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
     {
-        if (! $context) {
-            $context = new TypeContext('');
+        if (!$context) {
+            $context = new \MolliePrefix\phpDocumentor\Reflection\Types\Context('');
         }
-
         list($tagName, $tagBody) = $this->extractTagParts($tagLine);
-
         if ($tagBody !== '' && $tagBody[0] === '[') {
-            throw new \InvalidArgumentException(
-                'The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors'
-            );
+            throw new \InvalidArgumentException('The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors');
         }
-
         return $this->createTag($tagBody, $tagName, $context);
     }
-
     /**
      * {@inheritDoc}
      */
@@ -129,34 +115,27 @@ final class StandardTagFactory implements TagFactory
     {
         $this->serviceLocator[$name] = $value;
     }
-
     /**
      * {@inheritDoc}
      */
     public function addService($service, $alias = null)
     {
-        $this->serviceLocator[$alias ?: get_class($service)] = $service;
+        $this->serviceLocator[$alias ?: \get_class($service)] = $service;
     }
-
     /**
      * {@inheritDoc}
      */
     public function registerTagHandler($tagName, $handler)
     {
-        Assert::stringNotEmpty($tagName);
-        Assert::stringNotEmpty($handler);
-        Assert::classExists($handler);
-        Assert::implementsInterface($handler, StaticMethod::class);
-
-        if (strpos($tagName, '\\') && $tagName[0] !== '\\') {
-            throw new \InvalidArgumentException(
-                'A namespaced tag must have a leading backslash as it must be fully qualified'
-            );
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($tagName);
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($handler);
+        \MolliePrefix\Webmozart\Assert\Assert::classExists($handler);
+        \MolliePrefix\Webmozart\Assert\Assert::implementsInterface($handler, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod::class);
+        if (\strpos($tagName, '\\') && $tagName[0] !== '\\') {
+            throw new \InvalidArgumentException('A namespaced tag must have a leading backslash as it must be fully qualified');
         }
-
         $this->tagHandlerMappings[$tagName] = $handler;
     }
-
     /**
      * Extracts all components for a tag.
      *
@@ -167,19 +146,14 @@ final class StandardTagFactory implements TagFactory
     private function extractTagParts($tagLine)
     {
         $matches = array();
-        if (! preg_match('/^@(' . self::REGEX_TAGNAME . ')(?:\s*([^\s].*)|$)/us', $tagLine, $matches)) {
-            throw new \InvalidArgumentException(
-                'The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors'
-            );
+        if (!\preg_match('/^@(' . self::REGEX_TAGNAME . ')(?:\\s*([^\\s].*)|$)/us', $tagLine, $matches)) {
+            throw new \InvalidArgumentException('The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors');
         }
-
-        if (count($matches) < 3) {
+        if (\count($matches) < 3) {
             $matches[] = '';
         }
-
-        return array_slice($matches, 1);
+        return \array_slice($matches, 1);
     }
-
     /**
      * Creates a new tag object with the given name and body or returns null if the tag name was recognized but the
      * body was invalid.
@@ -190,18 +164,12 @@ final class StandardTagFactory implements TagFactory
      *
      * @return Tag|null
      */
-    private function createTag($body, $name, TypeContext $context)
+    private function createTag($body, $name, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context)
     {
         $handlerClassName = $this->findHandlerClassName($name, $context);
-        $arguments        = $this->getArgumentsForParametersFromWiring(
-            $this->fetchParametersForHandlerFactoryMethod($handlerClassName),
-            $this->getServiceLocatorWithDynamicParameters($context, $name, $body)
-        )
-        ;
-
-        return call_user_func_array([$handlerClassName, 'create'], $arguments);
+        $arguments = $this->getArgumentsForParametersFromWiring($this->fetchParametersForHandlerFactoryMethod($handlerClassName), $this->getServiceLocatorWithDynamicParameters($context, $name, $body));
+        return \call_user_func_array([$handlerClassName, 'create'], $arguments);
     }
-
     /**
      * Determines the Fully Qualified Class Name of the Factory or Tag (containing a Factory Method `create`).
      *
@@ -210,9 +178,9 @@ final class StandardTagFactory implements TagFactory
      *
      * @return string
      */
-    private function findHandlerClassName($tagName, TypeContext $context)
+    private function findHandlerClassName($tagName, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context)
     {
-        $handlerClassName = Generic::class;
+        $handlerClassName = \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Generic::class;
         if (isset($this->tagHandlerMappings[$tagName])) {
             $handlerClassName = $this->tagHandlerMappings[$tagName];
         } elseif ($this->isAnnotation($tagName)) {
@@ -222,10 +190,8 @@ final class StandardTagFactory implements TagFactory
             //     $handlerClassName = $this->annotationMappings[$tagName];
             // }
         }
-
         return $handlerClassName;
     }
-
     /**
      * Retrieves the arguments that need to be passed to the Factory Method with the given Parameters.
      *
@@ -244,19 +210,15 @@ final class StandardTagFactory implements TagFactory
                 $arguments[] = $locator[$typeHint];
                 continue;
             }
-
             $parameterName = $parameter->getName();
             if (isset($locator[$parameterName])) {
                 $arguments[] = $locator[$parameterName];
                 continue;
             }
-
             $arguments[] = null;
         }
-
         return $arguments;
     }
-
     /**
      * Retrieves a series of ReflectionParameter objects for the static 'create' method of the given
      * tag handler class name.
@@ -267,14 +229,12 @@ final class StandardTagFactory implements TagFactory
      */
     private function fetchParametersForHandlerFactoryMethod($handlerClassName)
     {
-        if (! isset($this->tagHandlerParameterCache[$handlerClassName])) {
-            $methodReflection                                  = new \ReflectionMethod($handlerClassName, 'create');
+        if (!isset($this->tagHandlerParameterCache[$handlerClassName])) {
+            $methodReflection = new \ReflectionMethod($handlerClassName, 'create');
             $this->tagHandlerParameterCache[$handlerClassName] = $methodReflection->getParameters();
         }
-
         return $this->tagHandlerParameterCache[$handlerClassName];
     }
-
     /**
      * Returns a copy of this class' Service Locator with added dynamic parameters, such as the tag's name, body and
      * Context.
@@ -285,20 +245,11 @@ final class StandardTagFactory implements TagFactory
      *
      * @return mixed[]
      */
-    private function getServiceLocatorWithDynamicParameters(TypeContext $context, $tagName, $tagBody)
+    private function getServiceLocatorWithDynamicParameters(\MolliePrefix\phpDocumentor\Reflection\Types\Context $context, $tagName, $tagBody)
     {
-        $locator = array_merge(
-            $this->serviceLocator,
-            [
-                'name'             => $tagName,
-                'body'             => $tagBody,
-                TypeContext::class => $context
-            ]
-        );
-
+        $locator = \array_merge($this->serviceLocator, ['name' => $tagName, 'body' => $tagBody, \MolliePrefix\phpDocumentor\Reflection\Types\Context::class => $context]);
         return $locator;
     }
-
     /**
      * Returns whether the given tag belongs to an annotation.
      *
@@ -314,7 +265,6 @@ final class StandardTagFactory implements TagFactory
         // 2. Contains parenthesis
         // 3. Is present in a list of known annotations (make the algorithm smart by first checking is the last part
         //    of the annotation class name matches the found tag name
-
-        return false;
+        return \false;
     }
 }

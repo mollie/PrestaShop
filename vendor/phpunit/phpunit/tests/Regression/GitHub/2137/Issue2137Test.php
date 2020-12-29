@@ -1,5 +1,8 @@
 <?php
-class Issue2137Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue2137Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provideBrandService
@@ -10,17 +13,13 @@ class Issue2137Test extends PHPUnit_Framework_TestCase
     {
         $this->assertSame($provided, $expected);
     }
-
-
     public function provideBrandService()
     {
         return [
             //[true, true]
-            new stdClass() // not valid
+            new \stdClass(),
         ];
     }
-
-
     /**
      * @dataProvider provideBrandService
      * @param $provided
@@ -31,3 +30,4 @@ class Issue2137Test extends PHPUnit_Framework_TestCase
         $this->assertSame($provided, $expected);
     }
 }
+\class_alias('MolliePrefix\\Issue2137Test', 'Issue2137Test', \false);

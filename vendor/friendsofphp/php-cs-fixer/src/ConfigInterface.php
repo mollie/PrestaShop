@@ -94,6 +94,8 @@ interface ConfigInterface
      * Name of custom fixer should follow `VendorName/rule_name` convention.
      *
      * @param FixerInterface[]|iterable|\Traversable $fixers
+     *
+     * @return self
      */
     public function registerCustomFixers($fixers);
     /**

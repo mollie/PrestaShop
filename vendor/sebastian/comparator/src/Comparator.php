@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
-namespace SebastianBergmann\Comparator;
-
-use SebastianBergmann\Exporter\Exporter;
-
+use MolliePrefix\SebastianBergmann\Exporter\Exporter;
 /**
  * Abstract base class for comparators which compare values for equality.
  */
@@ -21,25 +20,21 @@ abstract class Comparator
      * @var Factory
      */
     protected $factory;
-
     /**
      * @var Exporter
      */
     protected $exporter;
-
     public function __construct()
     {
-        $this->exporter = new Exporter;
+        $this->exporter = new \MolliePrefix\SebastianBergmann\Exporter\Exporter();
     }
-
     /**
      * @param Factory $factory
      */
-    public function setFactory(Factory $factory)
+    public function setFactory(\MolliePrefix\SebastianBergmann\Comparator\Factory $factory)
     {
         $this->factory = $factory;
     }
-
     /**
      * Returns whether the comparator can compare two values.
      *
@@ -47,8 +42,7 @@ abstract class Comparator
      * @param  mixed $actual   The second value to compare
      * @return bool
      */
-    abstract public function accepts($expected, $actual);
-
+    public abstract function accepts($expected, $actual);
     /**
      * Asserts that two values are equal.
      *
@@ -60,5 +54,5 @@ abstract class Comparator
      *
      * @throws ComparisonFailure
      */
-    abstract public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false);
+    public abstract function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = \false, $ignoreCase = \false);
 }

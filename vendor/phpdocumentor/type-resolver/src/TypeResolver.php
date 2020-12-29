@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,64 +10,33 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection;
 
-namespace phpDocumentor\Reflection;
-
-use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Compound;
-use phpDocumentor\Reflection\Types\Context;
-use phpDocumentor\Reflection\Types\Iterable_;
-use phpDocumentor\Reflection\Types\Nullable;
-use phpDocumentor\Reflection\Types\Object_;
-
+use MolliePrefix\phpDocumentor\Reflection\Types\Array_;
+use MolliePrefix\phpDocumentor\Reflection\Types\Compound;
+use MolliePrefix\phpDocumentor\Reflection\Types\Context;
+use MolliePrefix\phpDocumentor\Reflection\Types\Iterable_;
+use MolliePrefix\phpDocumentor\Reflection\Types\Nullable;
+use MolliePrefix\phpDocumentor\Reflection\Types\Object_;
 final class TypeResolver
 {
     /** @var string Definition of the ARRAY operator for types */
     const OPERATOR_ARRAY = '[]';
-
     /** @var string Definition of the NAMESPACE operator in PHP */
     const OPERATOR_NAMESPACE = '\\';
-
     /** @var string[] List of recognized keywords and unto which Value Object they map */
-    private $keywords = array(
-        'string' => Types\String_::class,
-        'int' => Types\Integer::class,
-        'integer' => Types\Integer::class,
-        'bool' => Types\Boolean::class,
-        'boolean' => Types\Boolean::class,
-        'float' => Types\Float_::class,
-        'double' => Types\Float_::class,
-        'object' => Object_::class,
-        'mixed' => Types\Mixed_::class,
-        'array' => Array_::class,
-        'resource' => Types\Resource_::class,
-        'void' => Types\Void_::class,
-        'null' => Types\Null_::class,
-        'scalar' => Types\Scalar::class,
-        'callback' => Types\Callable_::class,
-        'callable' => Types\Callable_::class,
-        'false' => Types\Boolean::class,
-        'true' => Types\Boolean::class,
-        'self' => Types\Self_::class,
-        '$this' => Types\This::class,
-        'static' => Types\Static_::class,
-        'parent' => Types\Parent_::class,
-        'iterable' => Iterable_::class,
-    );
-
+    private $keywords = array('string' => \MolliePrefix\phpDocumentor\Reflection\Types\String_::class, 'int' => \MolliePrefix\phpDocumentor\Reflection\Types\Integer::class, 'integer' => \MolliePrefix\phpDocumentor\Reflection\Types\Integer::class, 'bool' => \MolliePrefix\phpDocumentor\Reflection\Types\Boolean::class, 'boolean' => \MolliePrefix\phpDocumentor\Reflection\Types\Boolean::class, 'float' => \MolliePrefix\phpDocumentor\Reflection\Types\Float_::class, 'double' => \MolliePrefix\phpDocumentor\Reflection\Types\Float_::class, 'object' => \MolliePrefix\phpDocumentor\Reflection\Types\Object_::class, 'mixed' => \MolliePrefix\phpDocumentor\Reflection\Types\Mixed_::class, 'array' => \MolliePrefix\phpDocumentor\Reflection\Types\Array_::class, 'resource' => \MolliePrefix\phpDocumentor\Reflection\Types\Resource_::class, 'void' => \MolliePrefix\phpDocumentor\Reflection\Types\Void_::class, 'null' => \MolliePrefix\phpDocumentor\Reflection\Types\Null_::class, 'scalar' => \MolliePrefix\phpDocumentor\Reflection\Types\Scalar::class, 'callback' => \MolliePrefix\phpDocumentor\Reflection\Types\Callable_::class, 'callable' => \MolliePrefix\phpDocumentor\Reflection\Types\Callable_::class, 'false' => \MolliePrefix\phpDocumentor\Reflection\Types\Boolean::class, 'true' => \MolliePrefix\phpDocumentor\Reflection\Types\Boolean::class, 'self' => \MolliePrefix\phpDocumentor\Reflection\Types\Self_::class, '$this' => \MolliePrefix\phpDocumentor\Reflection\Types\This::class, 'static' => \MolliePrefix\phpDocumentor\Reflection\Types\Static_::class, 'parent' => \MolliePrefix\phpDocumentor\Reflection\Types\Parent_::class, 'iterable' => \MolliePrefix\phpDocumentor\Reflection\Types\Iterable_::class);
     /** @var FqsenResolver */
     private $fqsenResolver;
-
     /**
      * Initializes this TypeResolver with the means to create and resolve Fqsen objects.
      *
      * @param FqsenResolver $fqsenResolver
      */
-    public function __construct(FqsenResolver $fqsenResolver = null)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\FqsenResolver $fqsenResolver = null)
     {
-        $this->fqsenResolver = $fqsenResolver ?: new FqsenResolver();
+        $this->fqsenResolver = $fqsenResolver ?: new \MolliePrefix\phpDocumentor\Reflection\FqsenResolver();
     }
-
     /**
      * Analyzes the given type and returns the FQCN variant.
      *
@@ -86,29 +56,24 @@ final class TypeResolver
      *
      * @return Type|null
      */
-    public function resolve($type, Context $context = null)
+    public function resolve($type, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
     {
-        if (!is_string($type)) {
-            throw new \InvalidArgumentException(
-                'Attempted to resolve type but it appeared not to be a string, received: ' . var_export($type, true)
-            );
+        if (!\is_string($type)) {
+            throw new \InvalidArgumentException('Attempted to resolve type but it appeared not to be a string, received: ' . \var_export($type, \true));
         }
-
-        $type = trim($type);
+        $type = \trim($type);
         if (!$type) {
             throw new \InvalidArgumentException('Attempted to resolve "' . $type . '" but it appears to be empty');
         }
-
         if ($context === null) {
-            $context = new Context('');
+            $context = new \MolliePrefix\phpDocumentor\Reflection\Types\Context('');
         }
-
-        switch (true) {
+        switch (\true) {
             case $this->isNullableType($type):
                 return $this->resolveNullableType($type, $context);
             case $this->isKeyword($type):
                 return $this->resolveKeyword($type);
-            case ($this->isCompoundType($type)):
+            case $this->isCompoundType($type):
                 return $this->resolveCompoundType($type, $context);
             case $this->isTypedArray($type):
                 return $this->resolveTypedArray($type, $context);
@@ -119,13 +84,10 @@ final class TypeResolver
             // @codeCoverageIgnoreStart
             default:
                 // I haven't got the foggiest how the logic would come here but added this as a defense.
-                throw new \RuntimeException(
-                    'Unable to resolve type "' . $type . '", there is no known method to resolve it'
-                );
+                throw new \RuntimeException('Unable to resolve type "' . $type . '", there is no known method to resolve it');
         }
         // @codeCoverageIgnoreEnd
     }
-
     /**
      * Adds a keyword to the list of Keywords and associates it with a specific Value Object.
      *
@@ -136,22 +98,14 @@ final class TypeResolver
      */
     public function addKeyword($keyword, $typeClassName)
     {
-        if (!class_exists($typeClassName)) {
-            throw new \InvalidArgumentException(
-                'The Value Object that needs to be created with a keyword "' . $keyword . '" must be an existing class'
-                . ' but we could not find the class ' . $typeClassName
-            );
+        if (!\class_exists($typeClassName)) {
+            throw new \InvalidArgumentException('The Value Object that needs to be created with a keyword "' . $keyword . '" must be an existing class' . ' but we could not find the class ' . $typeClassName);
         }
-
-        if (!in_array(Type::class, class_implements($typeClassName))) {
-            throw new \InvalidArgumentException(
-                'The class "' . $typeClassName . '" must implement the interface "phpDocumentor\Reflection\Type"'
-            );
+        if (!\in_array(\MolliePrefix\phpDocumentor\Reflection\Type::class, \class_implements($typeClassName))) {
+            throw new \InvalidArgumentException('The class "' . $typeClassName . '" must implement the interface "phpDocumentor\\Reflection\\Type"');
         }
-
         $this->keywords[$keyword] = $typeClassName;
     }
-
     /**
      * Detects whether the given type represents an array.
      *
@@ -161,9 +115,8 @@ final class TypeResolver
      */
     private function isTypedArray($type)
     {
-        return substr($type, -2) === self::OPERATOR_ARRAY;
+        return \substr($type, -2) === self::OPERATOR_ARRAY;
     }
-
     /**
      * Detects whether the given type represents a PHPDoc keyword.
      *
@@ -173,9 +126,8 @@ final class TypeResolver
      */
     private function isKeyword($type)
     {
-        return in_array(strtolower($type), array_keys($this->keywords), true);
+        return \in_array(\strtolower($type), \array_keys($this->keywords), \true);
     }
-
     /**
      * Detects whether the given type represents a relative structural element name.
      *
@@ -185,9 +137,8 @@ final class TypeResolver
      */
     private function isPartialStructuralElementName($type)
     {
-        return ($type[0] !== self::OPERATOR_NAMESPACE) && !$this->isKeyword($type);
+        return $type[0] !== self::OPERATOR_NAMESPACE && !$this->isKeyword($type);
     }
-
     /**
      * Tests whether the given type is a Fully Qualified Structural Element Name.
      *
@@ -197,9 +148,8 @@ final class TypeResolver
      */
     private function isFqsen($type)
     {
-        return strpos($type, self::OPERATOR_NAMESPACE) === 0;
+        return \strpos($type, self::OPERATOR_NAMESPACE) === 0;
     }
-
     /**
      * Tests whether the given type is a compound type (i.e. `string|int`).
      *
@@ -209,9 +159,8 @@ final class TypeResolver
      */
     private function isCompoundType($type)
     {
-        return strpos($type, '|') !== false;
+        return \strpos($type, '|') !== \false;
     }
-
     /**
      * Test whether the given type is a nullable type (i.e. `?string`)
      *
@@ -223,7 +172,6 @@ final class TypeResolver
     {
         return $type[0] === '?';
     }
-
     /**
      * Resolves the given typed array string (i.e. `string[]`) into an Array object with the right types set.
      *
@@ -232,11 +180,10 @@ final class TypeResolver
      *
      * @return Array_
      */
-    private function resolveTypedArray($type, Context $context)
+    private function resolveTypedArray($type, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context)
     {
-        return new Array_($this->resolve(substr($type, 0, -2), $context));
+        return new \MolliePrefix\phpDocumentor\Reflection\Types\Array_($this->resolve(\substr($type, 0, -2), $context));
     }
-
     /**
      * Resolves the given keyword (such as `string`) into a Type object representing that keyword.
      *
@@ -246,11 +193,9 @@ final class TypeResolver
      */
     private function resolveKeyword($type)
     {
-        $className = $this->keywords[strtolower($type)];
-
+        $className = $this->keywords[\strtolower($type)];
         return new $className();
     }
-
     /**
      * Resolves the given FQSEN string into an FQSEN object.
      *
@@ -259,11 +204,10 @@ final class TypeResolver
      *
      * @return Object_
      */
-    private function resolveTypedObject($type, Context $context = null)
+    private function resolveTypedObject($type, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
     {
-        return new Object_($this->fqsenResolver->resolve($type, $context));
+        return new \MolliePrefix\phpDocumentor\Reflection\Types\Object_($this->fqsenResolver->resolve($type, $context));
     }
-
     /**
      * Resolves a compound type (i.e. `string|int`) into the appropriate Type objects or FQSEN.
      *
@@ -272,17 +216,14 @@ final class TypeResolver
      *
      * @return Compound
      */
-    private function resolveCompoundType($type, Context $context)
+    private function resolveCompoundType($type, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context)
     {
         $types = [];
-
-        foreach (explode('|', $type) as $part) {
+        foreach (\explode('|', $type) as $part) {
             $types[] = $this->resolve($part, $context);
         }
-
-        return new Compound($types);
+        return new \MolliePrefix\phpDocumentor\Reflection\Types\Compound($types);
     }
-
     /**
      * Resolve nullable types (i.e. `?string`) into a Nullable type wrapper
      *
@@ -291,8 +232,8 @@ final class TypeResolver
      *
      * @return Nullable
      */
-    private function resolveNullableType($type, Context $context)
+    private function resolveNullableType($type, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context)
     {
-        return new Nullable($this->resolve(ltrim($type, '?'), $context));
+        return new \MolliePrefix\phpDocumentor\Reflection\Types\Nullable($this->resolve(\ltrim($type, '?'), $context));
     }
 }

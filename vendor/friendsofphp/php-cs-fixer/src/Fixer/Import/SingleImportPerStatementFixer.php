@@ -15,6 +15,7 @@ use MolliePrefix\PhpCsFixer\AbstractFixer;
 use MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\CT;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
@@ -66,20 +67,6 @@ final class SingleImportPerStatementFixer extends \MolliePrefix\PhpCsFixer\Abstr
                 $this->fixMultipleUse($tokens, $index, $endIndex);
             }
         }
-    }
-    /**
-     * @param int $index
-     *
-     * @return string
-     */
-    private function detectIndent(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
-    {
-        if (!$tokens[$index - 1]->isWhitespace()) {
-            return '';
-            // cannot detect indent
-        }
-        $explodedContent = \explode("\n", $tokens[$index - 1]->getContent());
-        return \end($explodedContent);
     }
     /**
      * @param int $index
@@ -192,7 +179,7 @@ final class SingleImportPerStatementFixer extends \MolliePrefix\PhpCsFixer\Abstr
             $i = $tokens->getNextMeaningfulToken($i);
             $tokens->insertAt($i, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_USE, 'use']));
             $tokens->insertAt($i + 1, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, ' ']));
-            $indent = $this->detectIndent($tokens, $index);
+            $indent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $index);
             if ($tokens[$i - 1]->isWhitespace()) {
                 $tokens[$i - 1] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $ending . $indent]);
                 continue;

@@ -40,7 +40,10 @@ Example #1
 Rule sets
 ---------
 
-The rule is part of the following rule set:
+The rule is part of the following rule sets:
 
 @PhpCsFixer:risky
-  Using the ``@PhpCsFixer:risky`` rule set will enable the ``php_unit_set_up_tear_down_visibility`` rule.
+  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``php_unit_set_up_tear_down_visibility`` rule.
+
+@Symfony:risky
+  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``php_unit_set_up_tear_down_visibility`` rule.

@@ -1,4 +1,8 @@
 <?php
-class Foo_Bar_Issue684Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Foo_Bar_Issue684Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
 }
+\class_alias('MolliePrefix\\Foo_Bar_Issue684Test', 'Foo_Bar_Issue684Test', \false);

@@ -8,21 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy;
 
-namespace Prophecy;
-
-use Prophecy\Doubler\CachedDoubler;
-use Prophecy\Doubler\Doubler;
-use Prophecy\Doubler\LazyDouble;
-use Prophecy\Doubler\ClassPatch;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophecy\RevealerInterface;
-use Prophecy\Prophecy\Revealer;
-use Prophecy\Call\CallCenter;
-use Prophecy\Util\StringUtil;
-use Prophecy\Exception\Prediction\PredictionException;
-use Prophecy\Exception\Prediction\AggregateException;
-
+use MolliePrefix\Prophecy\Doubler\CachedDoubler;
+use MolliePrefix\Prophecy\Doubler\Doubler;
+use MolliePrefix\Prophecy\Doubler\LazyDouble;
+use MolliePrefix\Prophecy\Doubler\ClassPatch;
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+use MolliePrefix\Prophecy\Prophecy\RevealerInterface;
+use MolliePrefix\Prophecy\Prophecy\Revealer;
+use MolliePrefix\Prophecy\Call\CallCenter;
+use MolliePrefix\Prophecy\Util\StringUtil;
+use MolliePrefix\Prophecy\Exception\Prediction\PredictionException;
+use MolliePrefix\Prophecy\Exception\Prediction\AggregateException;
 /**
  * Prophet creates prophecies.
  *
@@ -33,12 +31,10 @@ class Prophet
     private $doubler;
     private $revealer;
     private $util;
-
     /**
      * @var ObjectProphecy[]
      */
     private $prophecies = array();
-
     /**
      * Initializes Prophet.
      *
@@ -46,29 +42,24 @@ class Prophet
      * @param null|RevealerInterface $revealer
      * @param null|StringUtil        $util
      */
-    public function __construct(
-        Doubler $doubler = null,
-        RevealerInterface $revealer = null,
-        StringUtil $util = null
-    ) {
+    public function __construct(\MolliePrefix\Prophecy\Doubler\Doubler $doubler = null, \MolliePrefix\Prophecy\Prophecy\RevealerInterface $revealer = null, \MolliePrefix\Prophecy\Util\StringUtil $util = null)
+    {
         if (null === $doubler) {
-            $doubler = new CachedDoubler();
-            $doubler->registerClassPatch(new ClassPatch\SplFileInfoPatch);
-            $doubler->registerClassPatch(new ClassPatch\TraversablePatch);
-            $doubler->registerClassPatch(new ClassPatch\ThrowablePatch);
-            $doubler->registerClassPatch(new ClassPatch\DisableConstructorPatch);
-            $doubler->registerClassPatch(new ClassPatch\ProphecySubjectPatch);
-            $doubler->registerClassPatch(new ClassPatch\ReflectionClassNewInstancePatch);
-            $doubler->registerClassPatch(new ClassPatch\HhvmExceptionPatch());
-            $doubler->registerClassPatch(new ClassPatch\MagicCallPatch);
-            $doubler->registerClassPatch(new ClassPatch\KeywordPatch);
+            $doubler = new \MolliePrefix\Prophecy\Doubler\CachedDoubler();
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\SplFileInfoPatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\TraversablePatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\ThrowablePatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\DisableConstructorPatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\ProphecySubjectPatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\ReflectionClassNewInstancePatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\HhvmExceptionPatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\MagicCallPatch());
+            $doubler->registerClassPatch(new \MolliePrefix\Prophecy\Doubler\ClassPatch\KeywordPatch());
         }
-
-        $this->doubler  = $doubler;
-        $this->revealer = $revealer ?: new Revealer;
-        $this->util     = $util ?: new StringUtil;
+        $this->doubler = $doubler;
+        $this->revealer = $revealer ?: new \MolliePrefix\Prophecy\Prophecy\Revealer();
+        $this->util = $util ?: new \MolliePrefix\Prophecy\Util\StringUtil();
     }
-
     /**
      * Creates new object prophecy.
      *
@@ -78,23 +69,15 @@ class Prophet
      */
     public function prophesize($classOrInterface = null)
     {
-        $this->prophecies[] = $prophecy = new ObjectProphecy(
-            new LazyDouble($this->doubler),
-            new CallCenter($this->util),
-            $this->revealer
-        );
-
-        if ($classOrInterface && class_exists($classOrInterface)) {
+        $this->prophecies[] = $prophecy = new \MolliePrefix\Prophecy\Prophecy\ObjectProphecy(new \MolliePrefix\Prophecy\Doubler\LazyDouble($this->doubler), new \MolliePrefix\Prophecy\Call\CallCenter($this->util), $this->revealer);
+        if ($classOrInterface && \class_exists($classOrInterface)) {
             return $prophecy->willExtend($classOrInterface);
         }
-
-        if ($classOrInterface && interface_exists($classOrInterface)) {
+        if ($classOrInterface && \interface_exists($classOrInterface)) {
             return $prophecy->willImplement($classOrInterface);
         }
-
         return $prophecy;
     }
-
     /**
      * Returns all created object prophecies.
      *
@@ -104,7 +87,6 @@ class Prophet
     {
         return $this->prophecies;
     }
-
     /**
      * Returns Doubler instance assigned to this Prophet.
      *
@@ -114,7 +96,6 @@ class Prophet
     {
         return $this->doubler;
     }
-
     /**
      * Checks all predictions defined by prophecies of this Prophet.
      *
@@ -122,16 +103,15 @@ class Prophet
      */
     public function checkPredictions()
     {
-        $exception = new AggregateException("Some predictions failed:\n");
+        $exception = new \MolliePrefix\Prophecy\Exception\Prediction\AggregateException("Some predictions failed:\n");
         foreach ($this->prophecies as $prophecy) {
             try {
                 $prophecy->checkProphecyMethodsPredictions();
-            } catch (PredictionException $e) {
+            } catch (\MolliePrefix\Prophecy\Exception\Prediction\PredictionException $e) {
                 $exception->append($e);
             }
         }
-
-        if (count($exception->getExceptions())) {
+        if (\count($exception->getExceptions())) {
             throw $exception;
         }
     }

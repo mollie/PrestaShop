@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\Comparator;
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
 /**
  * Compares DateTimeInterface instances for equality.
  */
-class DateTimeComparator extends ObjectComparator
+class DateTimeComparator extends \MolliePrefix\SebastianBergmann\Comparator\ObjectComparator
 {
     /**
      * Returns whether the comparator can compare two values.
@@ -24,10 +24,8 @@ class DateTimeComparator extends ObjectComparator
      */
     public function accepts($expected, $actual)
     {
-        return ($expected instanceof \DateTime || $expected instanceof \DateTimeInterface) &&
-            ($actual instanceof \DateTime || $actual instanceof \DateTimeInterface);
+        return ($expected instanceof \DateTime || $expected instanceof \DateTimeInterface) && ($actual instanceof \DateTime || $actual instanceof \DateTimeInterface);
     }
-
     /**
      * Asserts that two values are equal.
      *
@@ -40,26 +38,15 @@ class DateTimeComparator extends ObjectComparator
      *
      * @throws ComparisonFailure
      */
-    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false, array &$processed = array())
+    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = \false, $ignoreCase = \false, array &$processed = array())
     {
-        $delta = new \DateInterval(sprintf('PT%sS', abs($delta)));
-
+        $delta = new \DateInterval(\sprintf('PT%sS', \abs($delta)));
         $expectedLower = clone $expected;
         $expectedUpper = clone $expected;
-
-        if ($actual < $expectedLower->sub($delta) ||
-            $actual > $expectedUpper->add($delta)) {
-            throw new ComparisonFailure(
-                $expected,
-                $actual,
-                $this->dateTimeToString($expected),
-                $this->dateTimeToString($actual),
-                false,
-                'Failed asserting that two DateTime objects are equal.'
-            );
+        if ($actual < $expectedLower->sub($delta) || $actual > $expectedUpper->add($delta)) {
+            throw new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure($expected, $actual, $this->dateTimeToString($expected), $this->dateTimeToString($actual), \false, 'Failed asserting that two DateTime objects are equal.');
         }
     }
-
     /**
      * Returns an ISO 8601 formatted string representation of a datetime or
      * 'Invalid DateTimeInterface object' if the provided DateTimeInterface was not properly
@@ -70,8 +57,7 @@ class DateTimeComparator extends ObjectComparator
      */
     private function dateTimeToString($datetime)
     {
-        $string = $datetime->format('Y-m-d\TH:i:s.uO');
-
+        $string = $datetime->format('Y-m-d\\TH:i:s.uO');
         return $string ? $string : 'Invalid DateTimeInterface object';
     }
 }

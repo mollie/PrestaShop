@@ -1,5 +1,8 @@
 <?php
-class NotExistingCoveredElementTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class NotExistingCoveredElementTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @covers NotExistingClass
@@ -7,14 +10,12 @@ class NotExistingCoveredElementTest extends PHPUnit_Framework_TestCase
     public function testOne()
     {
     }
-
     /**
      * @covers NotExistingClass::notExistingMethod
      */
     public function testTwo()
     {
     }
-
     /**
      * @covers NotExistingClass::<public>
      */
@@ -22,3 +23,4 @@ class NotExistingCoveredElementTest extends PHPUnit_Framework_TestCase
     {
     }
 }
+\class_alias('MolliePrefix\\NotExistingCoveredElementTest', 'NotExistingCoveredElementTest', \false);

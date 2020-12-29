@@ -109,8 +109,9 @@ final class ArrayIndentationFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
         $endIndex = null;
         for ($searchEndIndex = $index + 1; $searchEndIndex < $parentScopeEndIndex; ++$searchEndIndex) {
             $searchEndToken = $tokens[$searchEndIndex];
-            if ($searchEndToken->equalsAny(['(', '{'])) {
-                $searchEndIndex = $tokens->findBlockEnd($searchEndToken->equals('{') ? \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE : \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $searchEndIndex);
+            if ($searchEndToken->equalsAny(['(', '{']) || $searchEndToken->isGivenKind(\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_SQUARE_BRACE_OPEN)) {
+                $type = \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::detectBlockType($searchEndToken);
+                $searchEndIndex = $tokens->findBlockEnd($type['type'], $searchEndIndex);
                 continue;
             }
             if ($searchEndToken->equals(',')) {
@@ -153,7 +154,7 @@ final class ArrayIndentationFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
     }
     private function isNewLineToken(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
     {
-        if (!$tokens[$index]->equalsAny([[\T_WHITESPACE], [\T_INLINE_HTML]])) {
+        if (!$tokens[$index]->isGivenKind([\T_WHITESPACE, \T_INLINE_HTML])) {
             return \false;
         }
         return (bool) \MolliePrefix\PhpCsFixer\Preg::match('/\\R/', $this->computeNewLineContent($tokens, $index));

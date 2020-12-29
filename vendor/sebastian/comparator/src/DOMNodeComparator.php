@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,16 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\Comparator;
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
 use DOMDocument;
 use DOMNode;
-
 /**
  * Compares DOMNode instances for equality.
  */
-class DOMNodeComparator extends ObjectComparator
+class DOMNodeComparator extends \MolliePrefix\SebastianBergmann\Comparator\ObjectComparator
 {
     /**
      * Returns whether the comparator can compare two values.
@@ -27,9 +26,8 @@ class DOMNodeComparator extends ObjectComparator
      */
     public function accepts($expected, $actual)
     {
-        return $expected instanceof DOMNode && $actual instanceof DOMNode;
+        return $expected instanceof \DOMNode && $actual instanceof \DOMNode;
     }
-
     /**
      * Asserts that two values are equal.
      *
@@ -42,29 +40,19 @@ class DOMNodeComparator extends ObjectComparator
      *
      * @throws ComparisonFailure
      */
-    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false, array &$processed = array())
+    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = \false, $ignoreCase = \false, array &$processed = array())
     {
-        $expectedAsString = $this->nodeToText($expected, true, $ignoreCase);
-        $actualAsString   = $this->nodeToText($actual, true, $ignoreCase);
-
+        $expectedAsString = $this->nodeToText($expected, \true, $ignoreCase);
+        $actualAsString = $this->nodeToText($actual, \true, $ignoreCase);
         if ($expectedAsString !== $actualAsString) {
-            if ($expected instanceof DOMDocument) {
+            if ($expected instanceof \DOMDocument) {
                 $type = 'documents';
             } else {
                 $type = 'nodes';
             }
-
-            throw new ComparisonFailure(
-                $expected,
-                $actual,
-                $expectedAsString,
-                $actualAsString,
-                false,
-                sprintf("Failed asserting that two DOM %s are equal.\n", $type)
-            );
+            throw new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure($expected, $actual, $expectedAsString, $actualAsString, \false, \sprintf("Failed asserting that two DOM %s are equal.\n", $type));
         }
     }
-
     /**
      * Returns the normalized, whitespace-cleaned, and indented textual
      * representation of a DOMNode.
@@ -74,34 +62,28 @@ class DOMNodeComparator extends ObjectComparator
      * @param  bool    $ignoreCase
      * @return string
      */
-    private function nodeToText(DOMNode $node, $canonicalize, $ignoreCase)
+    private function nodeToText(\DOMNode $node, $canonicalize, $ignoreCase)
     {
         if ($canonicalize) {
-            $document = new DOMDocument;
+            $document = new \DOMDocument();
             $document->loadXML($node->C14N());
-
             $node = $document;
         }
-
-        if ($node instanceof DOMDocument) {
+        if ($node instanceof \DOMDocument) {
             $document = $node;
         } else {
             $document = $node->ownerDocument;
         }
-
-        $document->formatOutput = true;
+        $document->formatOutput = \true;
         $document->normalizeDocument();
-
-        if ($node instanceof DOMDocument) {
+        if ($node instanceof \DOMDocument) {
             $text = $node->saveXML();
         } else {
             $text = $document->saveXML($node);
         }
-
         if ($ignoreCase) {
-            $text = strtolower($text);
+            $text = \strtolower($text);
         }
-
         return $text;
     }
 }

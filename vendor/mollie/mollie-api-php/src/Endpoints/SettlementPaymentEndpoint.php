@@ -2,7 +2,6 @@
 
 namespace MolliePrefix\Mollie\Api\Endpoints;
 
-use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\Resources\BaseCollection;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Resources\PaymentCollection;

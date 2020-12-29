@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 4.0.0
  */
@@ -17,35 +19,38 @@ class PHPUnit_Runner_Filter_Factory
      * @var array
      */
     private $filters = [];
-
     /**
      * @param ReflectionClass $filter
      * @param mixed           $args
      */
-    public function addFilter(ReflectionClass $filter, $args)
+    public function addFilter(\ReflectionClass $filter, $args)
     {
         if (!$filter->isSubclassOf('RecursiveFilterIterator')) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Class "%s" does not extend RecursiveFilterIterator',
-                    $filter->name
-                )
-            );
+            throw new \InvalidArgumentException(\sprintf('Class "%s" does not extend RecursiveFilterIterator', $filter->name));
         }
-
         $this->filters[] = [$filter, $args];
     }
-
     /**
      * @return FilterIterator
      */
-    public function factory(Iterator $iterator, PHPUnit_Framework_TestSuite $suite)
+    public function factory(\Iterator $iterator, \MolliePrefix\PHPUnit_Framework_TestSuite $suite)
     {
         foreach ($this->filters as $filter) {
             list($class, $args) = $filter;
-            $iterator           = $class->newInstance($iterator, $args, $suite);
+            $iterator = $class->newInstance($iterator, $args, $suite);
         }
-
         return $iterator;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 4.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Runner_Filter_Factory', 'PHPUnit_Runner_Filter_Factory', \false);

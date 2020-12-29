@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepCopy\TypeMatcher;
+namespace MolliePrefix\DeepCopy\TypeMatcher;
 
 class TypeMatcher
 {
@@ -8,7 +8,6 @@ class TypeMatcher
      * @var string
      */
     private $type;
-
     /**
      * @param string $type
      */
@@ -16,7 +15,6 @@ class TypeMatcher
     {
         $this->type = $type;
     }
-
     /**
      * @param mixed $element
      *
@@ -24,6 +22,6 @@ class TypeMatcher
      */
     public function matches($element)
     {
-        return is_object($element) ? is_a($element, $this->type) : gettype($element) === $this->type;
+        return \is_object($element) ? \is_a($element, $this->type) : \gettype($element) === $this->type;
     }
 }

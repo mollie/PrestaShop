@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,24 +10,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Logical AND.
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_And extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_And extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var PHPUnit_Framework_Constraint[]
      */
     protected $constraints = [];
-
     /**
      * @var PHPUnit_Framework_Constraint
      */
     protected $lastConstraint = null;
-
     /**
      * @param PHPUnit_Framework_Constraint[] $constraints
      *
@@ -33,19 +33,13 @@ class PHPUnit_Framework_Constraint_And extends PHPUnit_Framework_Constraint
     public function setConstraints(array $constraints)
     {
         $this->constraints = [];
-
         foreach ($constraints as $constraint) {
-            if (!($constraint instanceof PHPUnit_Framework_Constraint)) {
-                throw new PHPUnit_Framework_Exception(
-                    'All parameters to ' . __CLASS__ .
-                    ' must be a constraint object.'
-                );
+            if (!$constraint instanceof \MolliePrefix\PHPUnit_Framework_Constraint) {
+                throw new \MolliePrefix\PHPUnit_Framework_Exception('All parameters to ' . __CLASS__ . ' must be a constraint object.');
             }
-
             $this->constraints[] = $constraint;
         }
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -64,27 +58,23 @@ class PHPUnit_Framework_Constraint_And extends PHPUnit_Framework_Constraint
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        $success    = true;
+        $success = \true;
         $constraint = null;
-
         foreach ($this->constraints as $constraint) {
-            if (!$constraint->evaluate($other, $description, true)) {
-                $success = false;
+            if (!$constraint->evaluate($other, $description, \true)) {
+                $success = \false;
                 break;
             }
         }
-
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -93,18 +83,14 @@ class PHPUnit_Framework_Constraint_And extends PHPUnit_Framework_Constraint
     public function toString()
     {
         $text = '';
-
         foreach ($this->constraints as $key => $constraint) {
             if ($key > 0) {
                 $text .= ' and ';
             }
-
             $text .= $constraint->toString();
         }
-
         return $text;
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -115,11 +101,23 @@ class PHPUnit_Framework_Constraint_And extends PHPUnit_Framework_Constraint
     public function count()
     {
         $count = 0;
-
         foreach ($this->constraints as $constraint) {
-            $count += count($constraint);
+            $count += \count($constraint);
         }
-
         return $count;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Logical AND.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_And', 'PHPUnit_Framework_Constraint_And', \false);

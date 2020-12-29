@@ -19,6 +19,7 @@ use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Preg;
+use MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer;
 use MolliePrefix\PhpCsFixer\Tokenizer\Token;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 use MolliePrefix\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -102,14 +103,22 @@ switch ($foo) {
         $empty = \true;
         $fallThrough = \true;
         $commentPosition = null;
-        for ($i = $tokens->getNextTokenOfKind($casePosition, [':', ';']) + 1, $max = \count($tokens); $i < $max; ++$i) {
+        $caseColonIndex = $tokens->getNextTokenOfKind($casePosition, [':', ';']);
+        for ($i = $caseColonIndex + 1, $max = \count($tokens); $i < $max; ++$i) {
             if ($tokens[$i]->isGivenKind([\T_SWITCH, \T_IF, \T_ELSE, \T_ELSEIF, \T_FOR, \T_FOREACH, \T_WHILE, \T_DO, \T_FUNCTION, \T_CLASS])) {
                 $empty = \false;
                 $i = $this->getStructureEnd($tokens, $i);
                 continue;
             }
-            if ($tokens[$i]->isGivenKind([\T_BREAK, \T_CONTINUE, \T_RETURN, \T_EXIT, \T_THROW, \T_GOTO])) {
+            if ($tokens[$i]->isGivenKind([\T_BREAK, \T_CONTINUE, \T_RETURN, \T_EXIT, \T_GOTO])) {
                 $fallThrough = \false;
+                continue;
+            }
+            if ($tokens[$i]->isGivenKind([\T_THROW])) {
+                $previousIndex = $tokens->getPrevMeaningfulToken($i);
+                if ($previousIndex === $caseColonIndex || $tokens[$previousIndex]->equalsAny(['{', ';', '}', [\T_OPEN_TAG]])) {
+                    $fallThrough = \false;
+                }
                 continue;
             }
             if ($tokens[$i]->equals('}') || $tokens[$i]->isGivenKind(\T_ENDSWITCH)) {
@@ -175,7 +184,7 @@ switch ($foo) {
         }
         if ($nbNewlines > 1) {
             \MolliePrefix\PhpCsFixer\Preg::match('/^(.*?)(\\R\\h*)$/s', $newlineToken->getContent(), $matches);
-            $indent = $this->getIndentAt($tokens, $newlinePosition - 1);
+            $indent = \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $newlinePosition - 1);
             $tokens[$newlinePosition] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([$newlineToken->getId(), $matches[1] . $lineEnding . $indent]);
             $tokens->insertAt(++$newlinePosition, new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $matches[2]]));
         }
@@ -190,7 +199,7 @@ switch ($foo) {
     private function ensureNewLineAt(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $position)
     {
         $lineEnding = $this->whitespacesConfig->getLineEnding();
-        $content = $lineEnding . $this->getIndentAt($tokens, $position);
+        $content = $lineEnding . \MolliePrefix\PhpCsFixer\Tokenizer\Analyzer\WhitespacesAnalyzer::detectIndent($tokens, $position);
         $whitespaceToken = $tokens[$position - 1];
         if (!$whitespaceToken->isGivenKind(\T_WHITESPACE)) {
             if ($whitespaceToken->isGivenKind(\T_OPEN_TAG)) {
@@ -235,29 +244,6 @@ switch ($foo) {
             }
         }
         $tokens->clearTokenAndMergeSurroundingWhitespace($commentPosition);
-    }
-    /**
-     * @param int $position
-     *
-     * @return string
-     */
-    private function getIndentAt(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $position)
-    {
-        while (\true) {
-            $position = $tokens->getPrevTokenOfKind($position, [[\T_WHITESPACE]]);
-            if (null === $position) {
-                break;
-            }
-            $content = $tokens[$position]->getContent();
-            $prevToken = $tokens[$position - 1];
-            if ($prevToken->isGivenKind(\T_OPEN_TAG) && \MolliePrefix\PhpCsFixer\Preg::match('/\\R$/', $prevToken->getContent())) {
-                $content = $this->whitespacesConfig->getLineEnding() . $content;
-            }
-            if (\MolliePrefix\PhpCsFixer\Preg::match('/\\R(\\h*)$/', $content, $matches)) {
-                return $matches[1];
-            }
-        }
-        return '';
     }
     /**
      * @param int $position

@@ -74,8 +74,12 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@Symfony
-  Using the ``@Symfony`` rule set will enable the ``no_unneeded_control_parentheses`` rule with the default config.
-
 @PhpCsFixer
-  Using the ``@PhpCsFixer`` rule set will enable the ``no_unneeded_control_parentheses`` rule with the default config.
+  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``no_unneeded_control_parentheses`` rule with the config below:
+
+  ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'return', 'switch_case', 'yield', 'yield_from']]``
+
+@Symfony
+  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``no_unneeded_control_parentheses`` rule with the config below:
+
+  ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'return', 'switch_case', 'yield', 'yield_from']]``

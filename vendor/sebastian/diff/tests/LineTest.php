@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of sebastian/diff.
  *
@@ -7,36 +8,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\Diff;
 
-namespace SebastianBergmann\Diff;
-
-use PHPUnit\Framework\TestCase;
-
+use MolliePrefix\PHPUnit\Framework\TestCase;
 /**
  * @covers SebastianBergmann\Diff\Line
  */
-class LineTest extends TestCase
+class LineTest extends \MolliePrefix\PHPUnit\Framework\TestCase
 {
     /**
      * @var Line
      */
     private $line;
-
     protected function setUp()
     {
-        $this->line = new Line;
+        $this->line = new \MolliePrefix\SebastianBergmann\Diff\Line();
     }
-
     public function testCanBeCreatedWithoutArguments()
     {
-        $this->assertInstanceOf('SebastianBergmann\Diff\Line', $this->line);
+        $this->assertInstanceOf('MolliePrefix\\SebastianBergmann\\Diff\\Line', $this->line);
     }
-
     public function testTypeCanBeRetrieved()
     {
-        $this->assertEquals(Line::UNCHANGED, $this->line->getType());
+        $this->assertEquals(\MolliePrefix\SebastianBergmann\Diff\Line::UNCHANGED, $this->line->getType());
     }
-
     public function testContentCanBeRetrieved()
     {
         $this->assertEquals('', $this->line->getContent());

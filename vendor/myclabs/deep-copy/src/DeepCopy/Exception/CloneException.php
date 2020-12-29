@@ -1,9 +1,8 @@
 <?php
 
-namespace DeepCopy\Exception;
+namespace MolliePrefix\DeepCopy\Exception;
 
 use UnexpectedValueException;
-
-class CloneException extends UnexpectedValueException
+class CloneException extends \UnexpectedValueException
 {
-} 
+}

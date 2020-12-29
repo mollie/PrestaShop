@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that accepts finite.
  *
  * @since      Class available since Release 5.0.0
  */
-class PHPUnit_Framework_Constraint_IsFinite extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_IsFinite extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
@@ -25,9 +27,8 @@ class PHPUnit_Framework_Constraint_IsFinite extends PHPUnit_Framework_Constraint
      */
     protected function matches($other)
     {
-        return is_finite($other);
+        return \is_finite($other);
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -38,3 +39,17 @@ class PHPUnit_Framework_Constraint_IsFinite extends PHPUnit_Framework_Constraint
         return 'is finite';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that accepts finite.
+ *
+ * @since      Class available since Release 5.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsFinite', 'PHPUnit_Framework_Constraint_IsFinite', \false);

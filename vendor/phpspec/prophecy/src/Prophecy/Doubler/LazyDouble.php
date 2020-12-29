@@ -8,14 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Doubler;
 
-namespace Prophecy\Doubler;
-
-use Prophecy\Exception\Doubler\DoubleException;
-use Prophecy\Exception\Doubler\ClassNotFoundException;
-use Prophecy\Exception\Doubler\InterfaceNotFoundException;
+use MolliePrefix\Prophecy\Exception\Doubler\DoubleException;
+use MolliePrefix\Prophecy\Exception\Doubler\ClassNotFoundException;
+use MolliePrefix\Prophecy\Exception\Doubler\InterfaceNotFoundException;
 use ReflectionClass;
-
 /**
  * Lazy double.
  * Gives simple interface to describe double before creating it.
@@ -27,19 +25,17 @@ class LazyDouble
     private $doubler;
     private $class;
     private $interfaces = array();
-    private $arguments  = null;
+    private $arguments = null;
     private $double;
-
     /**
      * Initializes lazy double.
      *
      * @param Doubler $doubler
      */
-    public function __construct(Doubler $doubler)
+    public function __construct(\MolliePrefix\Prophecy\Doubler\Doubler $doubler)
     {
         $this->doubler = $doubler;
     }
-
     /**
      * Tells doubler to use specific class as parent one for double.
      *
@@ -51,20 +47,16 @@ class LazyDouble
     public function setParentClass($class)
     {
         if (null !== $this->double) {
-            throw new DoubleException('Can not extend class with already instantiated double.');
+            throw new \MolliePrefix\Prophecy\Exception\Doubler\DoubleException('Can not extend class with already instantiated double.');
         }
-
-        if (!$class instanceof ReflectionClass) {
-            if (!class_exists($class)) {
-                throw new ClassNotFoundException(sprintf('Class %s not found.', $class), $class);
+        if (!$class instanceof \ReflectionClass) {
+            if (!\class_exists($class)) {
+                throw new \MolliePrefix\Prophecy\Exception\Doubler\ClassNotFoundException(\sprintf('Class %s not found.', $class), $class);
             }
-
-            $class = new ReflectionClass($class);
+            $class = new \ReflectionClass($class);
         }
-
         $this->class = $class;
     }
-
     /**
      * Tells doubler to implement specific interface with double.
      *
@@ -76,25 +68,16 @@ class LazyDouble
     public function addInterface($interface)
     {
         if (null !== $this->double) {
-            throw new DoubleException(
-                'Can not implement interface with already instantiated double.'
-            );
+            throw new \MolliePrefix\Prophecy\Exception\Doubler\DoubleException('Can not implement interface with already instantiated double.');
         }
-
-        if (!$interface instanceof ReflectionClass) {
-            if (!interface_exists($interface)) {
-                throw new InterfaceNotFoundException(
-                    sprintf('Interface %s not found.', $interface),
-                    $interface
-                );
+        if (!$interface instanceof \ReflectionClass) {
+            if (!\interface_exists($interface)) {
+                throw new \MolliePrefix\Prophecy\Exception\Doubler\InterfaceNotFoundException(\sprintf('Interface %s not found.', $interface), $interface);
             }
-
-            $interface = new ReflectionClass($interface);
+            $interface = new \ReflectionClass($interface);
         }
-
         $this->interfaces[] = $interface;
     }
-
     /**
      * Sets constructor arguments.
      *
@@ -104,7 +87,6 @@ class LazyDouble
     {
         $this->arguments = $arguments;
     }
-
     /**
      * Creates double instance or returns already created one.
      *
@@ -114,14 +96,10 @@ class LazyDouble
     {
         if (null === $this->double) {
             if (null !== $this->arguments) {
-                return $this->double = $this->doubler->double(
-                    $this->class, $this->interfaces, $this->arguments
-                );
+                return $this->double = $this->doubler->double($this->class, $this->interfaces, $this->arguments);
             }
-
             $this->double = $this->doubler->double($this->class, $this->interfaces);
         }
-
         return $this->double;
     }
 }

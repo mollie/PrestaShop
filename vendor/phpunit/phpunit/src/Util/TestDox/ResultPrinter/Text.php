@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Prints TestDox documentation in text format.
  *
  * @since Class available since Release 2.1.0
  */
-class PHPUnit_Util_TestDox_ResultPrinter_Text extends PHPUnit_Util_TestDox_ResultPrinter
+class PHPUnit_Util_TestDox_ResultPrinter_Text extends \MolliePrefix\PHPUnit_Util_TestDox_ResultPrinter
 {
     /**
      * Handler for 'start class' event.
@@ -24,24 +26,21 @@ class PHPUnit_Util_TestDox_ResultPrinter_Text extends PHPUnit_Util_TestDox_Resul
     {
         $this->write($this->currentTestClassPrettified . "\n");
     }
-
     /**
      * Handler for 'on test' event.
      *
      * @param string $name
      * @param bool   $success
      */
-    protected function onTest($name, $success = true)
+    protected function onTest($name, $success = \true)
     {
         if ($success) {
             $this->write(' [x] ');
         } else {
             $this->write(' [ ] ');
         }
-
         $this->write($name . "\n");
     }
-
     /**
      * Handler for 'end class' event.
      *
@@ -52,3 +51,17 @@ class PHPUnit_Util_TestDox_ResultPrinter_Text extends PHPUnit_Util_TestDox_Resul
         $this->write("\n");
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Prints TestDox documentation in text format.
+ *
+ * @since Class available since Release 2.1.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_Text', 'PHPUnit_Util_TestDox_ResultPrinter_Text', \false);

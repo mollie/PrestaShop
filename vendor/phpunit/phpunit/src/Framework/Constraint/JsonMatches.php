@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,19 +10,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Asserts whether or not two JSON objects are equal.
  *
  * @since Class available since Release 3.7.0
  */
-class PHPUnit_Framework_Constraint_JsonMatches extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_JsonMatches extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var string
      */
     protected $value;
-
     /**
      * Creates a new constraint.
      *
@@ -30,7 +31,6 @@ class PHPUnit_Framework_Constraint_JsonMatches extends PHPUnit_Framework_Constra
         parent::__construct();
         $this->value = $value;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -43,19 +43,16 @@ class PHPUnit_Framework_Constraint_JsonMatches extends PHPUnit_Framework_Constra
      */
     protected function matches($other)
     {
-        $decodedOther = json_decode($other);
-        if (json_last_error()) {
-            return false;
+        $decodedOther = \json_decode($other);
+        if (\json_last_error()) {
+            return \false;
         }
-
-        $decodedValue = json_decode($this->value);
-        if (json_last_error()) {
-            return false;
+        $decodedValue = \json_decode($this->value);
+        if (\json_last_error()) {
+            return \false;
         }
-
         return $decodedOther == $decodedValue;
     }
-
     /**
      * Returns a string representation of the object.
      *
@@ -63,9 +60,20 @@ class PHPUnit_Framework_Constraint_JsonMatches extends PHPUnit_Framework_Constra
      */
     public function toString()
     {
-        return sprintf(
-            'matches JSON string "%s"',
-            $this->value
-        );
+        return \sprintf('matches JSON string "%s"', $this->value);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Asserts whether or not two JSON objects are equal.
+ *
+ * @since Class available since Release 3.7.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_JsonMatches', 'PHPUnit_Framework_Constraint_JsonMatches', \false);

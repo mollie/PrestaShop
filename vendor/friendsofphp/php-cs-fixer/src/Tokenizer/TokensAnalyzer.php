@@ -195,15 +195,13 @@ final class TokensAnalyzer
      */
     public function isAnonymousClass($index)
     {
-        $tokens = $this->tokens;
-        $token = $tokens[$index];
-        if (!$token->isClassy()) {
+        if (!$this->tokens[$index]->isClassy()) {
             throw new \LogicException(\sprintf('No classy token at given index %d.', $index));
         }
-        if (!$token->isGivenKind(\T_CLASS)) {
+        if (!$this->tokens[$index]->isGivenKind(\T_CLASS)) {
             return \false;
         }
-        return $tokens[$tokens->getPrevMeaningfulToken($index)]->isGivenKind(\T_NEW);
+        return $this->tokens[$this->tokens->getPrevMeaningfulToken($index)]->isGivenKind(\T_NEW);
     }
     /**
      * Check if the function under given index is a lambda.
@@ -461,6 +459,20 @@ final class TokensAnalyzer
         $startIndex = $tokens->findBlockStart(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $endIndex);
         $beforeStartIndex = $tokens->getPrevMeaningfulToken($startIndex);
         return $tokens[$beforeStartIndex]->isGivenKind(\T_DO);
+    }
+    /**
+     * @param int $index
+     *
+     * @return bool
+     */
+    public function isSuperGlobal($index)
+    {
+        static $superNames = ['$_COOKIE' => \true, '$_ENV' => \true, '$_FILES' => \true, '$_GET' => \true, '$_POST' => \true, '$_REQUEST' => \true, '$_SERVER' => \true, '$_SESSION' => \true, '$GLOBALS' => \true];
+        $token = $this->tokens[$index];
+        if (!$token->isGivenKind(\T_VARIABLE)) {
+            return \false;
+        }
+        return isset($superNames[\strtoupper($token->getContent())]);
     }
     /**
      * Find classy elements.

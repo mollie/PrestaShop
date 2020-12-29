@@ -8,22 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Exception\Prediction;
 
-namespace Prophecy\Exception\Prediction;
-
-use Prophecy\Prophecy\MethodProphecy;
-
-class UnexpectedCallsCountException extends UnexpectedCallsException
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
+class UnexpectedCallsCountException extends \MolliePrefix\Prophecy\Exception\Prediction\UnexpectedCallsException
 {
     private $expectedCount;
-
-    public function __construct($message, MethodProphecy $methodProphecy, $count, array $calls)
+    public function __construct($message, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $methodProphecy, $count, array $calls)
     {
         parent::__construct($message, $methodProphecy, $calls);
-
-        $this->expectedCount = intval($count);
+        $this->expectedCount = \intval($count);
     }
-
     public function getExpectedCount()
     {
         return $this->expectedCount;

@@ -1,4 +1,8 @@
 <?php
-class NotVoidTestCase extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class NotVoidTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
 }
+\class_alias('MolliePrefix\\NotVoidTestCase', 'NotVoidTestCase', \false);

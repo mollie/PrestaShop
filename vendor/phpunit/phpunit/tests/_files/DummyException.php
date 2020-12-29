@@ -1,5 +1,8 @@
 <?php
 
-class DummyException extends Exception
+namespace MolliePrefix;
+
+class DummyException extends \Exception
 {
 }
+\class_alias('MolliePrefix\\DummyException', 'DummyException', \false);

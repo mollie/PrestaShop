@@ -68,13 +68,14 @@ final class StaticLambdaFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
             }
             $argumentsStartIndex = $tokens->getNextTokenOfKind($index, ['(']);
             $argumentsEndIndex = $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $argumentsStartIndex);
-            // figure out where the lambda starts ...
-            $lambdaOpenIndex = $tokens->getNextTokenOfKind($argumentsEndIndex, ['{', [\T_DOUBLE_ARROW]]);
-            // ... and where it ends
-            if ($tokens[$lambdaOpenIndex]->isGivenKind(\T_DOUBLE_ARROW)) {
-                $lambdaEndIndex = $tokens->getNextTokenOfKind($lambdaOpenIndex, [';']);
-            } else {
+            // figure out where the lambda starts and ends
+            if ($tokens[$index]->isGivenKind(\T_FUNCTION)) {
+                $lambdaOpenIndex = $tokens->getNextTokenOfKind($argumentsEndIndex, ['{']);
                 $lambdaEndIndex = $tokens->findBlockEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens::BLOCK_TYPE_CURLY_BRACE, $lambdaOpenIndex);
+            } else {
+                // T_FN
+                $lambdaOpenIndex = $tokens->getNextTokenOfKind($argumentsEndIndex, [[\T_DOUBLE_ARROW]]);
+                $lambdaEndIndex = $this->findExpressionEnd($tokens, $lambdaOpenIndex);
             }
             if ($this->hasPossibleReferenceToThis($tokens, $lambdaOpenIndex, $lambdaEndIndex)) {
                 continue;
@@ -84,6 +85,30 @@ final class StaticLambdaFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
             $index -= 4;
             // fixed after a lambda, closes candidate is at least 4 tokens before that
         }
+    }
+    /**
+     * @param int $index
+     *
+     * @return int
+     */
+    private function findExpressionEnd(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $index)
+    {
+        $nextIndex = $tokens->getNextMeaningfulToken($index);
+        while (null !== $nextIndex) {
+            /** @var Token $nextToken */
+            $nextToken = $tokens[$nextIndex];
+            if ($nextToken->equalsAny([',', ';', [\T_CLOSE_TAG]])) {
+                break;
+            }
+            /** @var null|array{isStart: bool, type: int} $blockType */
+            $blockType = \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::detectBlockType($nextToken);
+            if (null !== $blockType && $blockType['isStart']) {
+                $nextIndex = $tokens->findBlockEnd($blockType['type'], $nextIndex);
+            }
+            $index = $nextIndex;
+            $nextIndex = $tokens->getNextMeaningfulToken($index);
+        }
+        return $index;
     }
     /**
      * Returns 'true' if there is a possible reference to '$this' within the given tokens index range.

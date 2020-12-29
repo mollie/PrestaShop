@@ -1,14 +1,16 @@
 <?php
-class DataProviderIncompleteTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DataProviderIncompleteTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider incompleteTestProviderMethod
      */
     public function testIncomplete($a, $b, $c)
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\true);
     }
-
     /**
      * @dataProvider providerMethod
      */
@@ -16,22 +18,14 @@ class DataProviderIncompleteTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals($c, $a + $b);
     }
-
     public function incompleteTestProviderMethod()
     {
         $this->markTestIncomplete('incomplete');
-
-        return [
-          [0, 0, 0],
-          [0, 1, 1],
-        ];
+        return [[0, 0, 0], [0, 1, 1]];
     }
-
     public static function providerMethod()
     {
-        return [
-          [0, 0, 0],
-          [0, 1, 1],
-        ];
+        return [[0, 0, 0], [0, 1, 1]];
     }
 }
+\class_alias('MolliePrefix\\DataProviderIncompleteTest', 'DataProviderIncompleteTest', \false);

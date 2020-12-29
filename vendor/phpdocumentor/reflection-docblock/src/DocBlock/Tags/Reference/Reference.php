@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,13 +10,12 @@
  *  @license   http://www.opensource.org/licenses/mit-license.php MIT
  *  @link      http://phpdoc.org
  */
-
-namespace phpDocumentor\Reflection\DocBlock\Tags\Reference;
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Reference;
 
 /**
  * Interface for references in {@see phpDocumentor\Reflection\DocBlock\Tags\See}
  */
 interface Reference
 {
-   public function __toString();
+    public function __toString();
 }

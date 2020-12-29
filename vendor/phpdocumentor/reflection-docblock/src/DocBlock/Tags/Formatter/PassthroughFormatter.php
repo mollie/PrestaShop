@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,13 +10,11 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags\Formatter;
-
-use phpDocumentor\Reflection\DocBlock\Tag;
-use phpDocumentor\Reflection\DocBlock\Tags\Formatter;
-
-class PassthroughFormatter implements Formatter
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter;
+class PassthroughFormatter implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter
 {
     /**
      * Formats the given tag to return a simple plain text version.
@@ -24,8 +23,8 @@ class PassthroughFormatter implements Formatter
      *
      * @return string
      */
-    public function format(Tag $tag)
+    public function format(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag $tag)
     {
-        return trim('@' . $tag->getName() . ' ' . (string)$tag);
+        return \trim('@' . $tag->getName() . ' ' . (string) $tag);
     }
 }

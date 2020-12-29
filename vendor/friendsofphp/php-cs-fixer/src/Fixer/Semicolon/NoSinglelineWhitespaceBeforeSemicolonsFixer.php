@@ -31,7 +31,7 @@ final class NoSinglelineWhitespaceBeforeSemicolonsFixer extends \MolliePrefix\Ph
     /**
      * {@inheritdoc}
      *
-     * Must run after CombineConsecutiveIssetsFixer, FunctionToConstantFixer, NoEmptyStatementFixer, SingleImportPerStatementFixer.
+     * Must run after CombineConsecutiveIssetsFixer, FunctionToConstantFixer, NoEmptyStatementFixer, SimplifiedIfReturnFixer, SingleImportPerStatementFixer.
      */
     public function getPriority()
     {

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,23 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\CodeCoverage\Driver;
+namespace MolliePrefix\SebastianBergmann\CodeCoverage\Driver;
 
 /**
  * Driver for HHVM's code coverage functionality.
  *
  * @codeCoverageIgnore
  */
-class HHVM extends Xdebug
+class HHVM extends \MolliePrefix\SebastianBergmann\CodeCoverage\Driver\Xdebug
 {
     /**
      * Start collection of code coverage information.
      *
      * @param bool $determineUnusedAndDead
      */
-    public function start($determineUnusedAndDead = true)
+    public function start($determineUnusedAndDead = \true)
     {
-        xdebug_start_code_coverage();
+        \xdebug_start_code_coverage();
     }
 }

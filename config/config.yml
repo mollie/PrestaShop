@@ -11,6 +11,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
+  - { resource: segment.yml }
   - { resource: verification.yml }
   - { resource: payment_option_provider.yml }
   - { resource: decoder.yml }
@@ -27,11 +28,13 @@ services:
       - '@mollie'
       - '@Mollie\Service\OrderStateImageService'
       - '@Mollie\Install\DatabaseTableInstaller'
+      - '@Mollie\Tracker\Segment'
 
   Mollie\Install\Uninstall:
     arguments:
       - '@Mollie\Install\DatabaseTableUninstaller'
       - '@Mollie\Repository\OrderStateRepository'
+      - '@Mollie\Tracker\Segment'
 
   Mollie\Install\DatabaseTableInstaller:
 

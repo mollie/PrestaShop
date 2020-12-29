@@ -8,23 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Exception\Prediction;
 
-namespace Prophecy\Exception\Prediction;
-
-use Prophecy\Prophecy\MethodProphecy;
-use Prophecy\Exception\Prophecy\MethodProphecyException;
-
-class UnexpectedCallsException extends MethodProphecyException implements PredictionException
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
+use MolliePrefix\Prophecy\Exception\Prophecy\MethodProphecyException;
+class UnexpectedCallsException extends \MolliePrefix\Prophecy\Exception\Prophecy\MethodProphecyException implements \MolliePrefix\Prophecy\Exception\Prediction\PredictionException
 {
     private $calls = array();
-
-    public function __construct($message, MethodProphecy $methodProphecy, array $calls)
+    public function __construct($message, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $methodProphecy, array $calls)
     {
         parent::__construct($message, $methodProphecy);
-
         $this->calls = $calls;
     }
-
     public function getCalls()
     {
         return $this->calls;

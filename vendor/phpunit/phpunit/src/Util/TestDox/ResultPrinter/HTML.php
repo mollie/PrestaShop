@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Prints TestDox documentation in HTML format.
  *
  * @since Class available since Release 2.1.0
  */
-class PHPUnit_Util_TestDox_ResultPrinter_HTML extends PHPUnit_Util_TestDox_ResultPrinter
+class PHPUnit_Util_TestDox_ResultPrinter_HTML extends \MolliePrefix\PHPUnit_Util_TestDox_ResultPrinter
 {
     /**
      * @var string
@@ -50,7 +52,6 @@ class PHPUnit_Util_TestDox_ResultPrinter_HTML extends PHPUnit_Util_TestDox_Resul
     </head>
     <body>
 EOT;
-
     /**
      * @var string
      */
@@ -60,14 +61,12 @@ EOT;
         <ul>
 
 EOT;
-
     /**
      * @var string
      */
     private $classFooter = <<<EOT
         </ul>
 EOT;
-
     /**
      * @var string
      */
@@ -76,7 +75,6 @@ EOT;
     </body>
 </html>
 EOT;
-
     /**
      * Handler for 'start run' event.
      */
@@ -84,7 +82,6 @@ EOT;
     {
         $this->write($this->pageHeader);
     }
-
     /**
      * Handler for 'start class' event.
      *
@@ -92,33 +89,18 @@ EOT;
      */
     protected function startClass($name)
     {
-        $this->write(
-            sprintf(
-                $this->classHeader,
-                $name,
-                $this->currentTestClassPrettified
-            )
-        );
+        $this->write(\sprintf($this->classHeader, $name, $this->currentTestClassPrettified));
     }
-
     /**
      * Handler for 'on test' event.
      *
      * @param string $name
      * @param bool   $success
      */
-    protected function onTest($name, $success = true)
+    protected function onTest($name, $success = \true)
     {
-        $this->write(
-            sprintf(
-                "            <li style=\"color: %s;\">%s %s</li>\n",
-                $success ? '#555753' : '#ef2929',
-                $success ? '✓' : '❌',
-                $name
-            )
-        );
+        $this->write(\sprintf("            <li style=\"color: %s;\">%s %s</li>\n", $success ? '#555753' : '#ef2929', $success ? '✓' : '❌', $name));
     }
-
     /**
      * Handler for 'end class' event.
      *
@@ -128,7 +110,6 @@ EOT;
     {
         $this->write($this->classFooter);
     }
-
     /**
      * Handler for 'end run' event.
      */
@@ -137,3 +118,17 @@ EOT;
         $this->write($this->pageFooter);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Prints TestDox documentation in HTML format.
+ *
+ * @since Class available since Release 2.1.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Util_TestDox_ResultPrinter_HTML', 'PHPUnit_Util_TestDox_ResultPrinter_HTML', \false);

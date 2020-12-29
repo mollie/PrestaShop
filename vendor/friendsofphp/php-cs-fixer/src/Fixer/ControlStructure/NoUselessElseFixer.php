@@ -37,7 +37,7 @@ final class NoUselessElseFixer extends \MolliePrefix\PhpCsFixer\AbstractNoUseles
     /**
      * {@inheritdoc}
      *
-     * Must run before BracesFixer, CombineConsecutiveUnsetsFixer, NoBreakCommentFixer, NoExtraBlankLinesFixer, NoTrailingWhitespaceFixer, NoUselessReturnFixer, NoWhitespaceInBlankLineFixer.
+     * Must run before BracesFixer, CombineConsecutiveUnsetsFixer, NoBreakCommentFixer, NoExtraBlankLinesFixer, NoTrailingWhitespaceFixer, NoUselessReturnFixer, NoWhitespaceInBlankLineFixer, SimplifiedIfReturnFixer.
      * Must run after NoAlternativeSyntaxFixer, NoEmptyStatementFixer, NoUnneededCurlyBracesFixer.
      */
     public function getPriority()

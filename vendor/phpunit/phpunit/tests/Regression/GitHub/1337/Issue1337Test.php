@@ -1,5 +1,8 @@
 <?php
-class Issue1337Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue1337Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider dataProvider
@@ -8,12 +11,9 @@ class Issue1337Test extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue($a);
     }
-
     public function dataProvider()
     {
-        return [
-          'c:\\'=> [true],
-          0.9   => [true]
-        ];
+        return ['c:\\' => [\true], 0.9 => [\true]];
     }
 }
+\class_alias('MolliePrefix\\Issue1337Test', 'Issue1337Test', \false);

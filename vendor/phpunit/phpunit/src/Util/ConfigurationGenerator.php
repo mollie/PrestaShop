@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 5.3.0
  */
@@ -39,7 +41,6 @@ class PHPUnit_Util_ConfigurationGenerator
 </phpunit>
 
 EOT;
-
     /**
      * @param string $phpunitVersion
      * @param string $bootstrapScript
@@ -50,20 +51,18 @@ EOT;
      */
     public function generateDefaultConfiguration($phpunitVersion, $bootstrapScript, $testsDirectory, $srcDirectory)
     {
-        return str_replace(
-            [
-                '{phpunit_version}',
-                '{bootstrap_script}',
-                '{tests_directory}',
-                '{src_directory}'
-            ],
-            [
-                $phpunitVersion,
-                $bootstrapScript,
-                $testsDirectory,
-                $srcDirectory
-            ],
-            $this->defaultTemplate
-        );
+        return \str_replace(['{phpunit_version}', '{bootstrap_script}', '{tests_directory}', '{src_directory}'], [$phpunitVersion, $bootstrapScript, $testsDirectory, $srcDirectory], $this->defaultTemplate);
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 5.3.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Util_ConfigurationGenerator', 'PHPUnit_Util_ConfigurationGenerator', \false);

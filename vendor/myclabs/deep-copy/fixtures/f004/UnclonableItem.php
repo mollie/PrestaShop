@@ -1,13 +1,12 @@
 <?php
 
-namespace DeepCopy\f004;
+namespace MolliePrefix\DeepCopy\f004;
 
 use BadMethodCallException;
-
 class UnclonableItem
 {
     private function __clone()
     {
-        throw new BadMethodCallException('Unsupported call.');
+        throw new \BadMethodCallException('Unsupported call.');
     }
 }

@@ -8,19 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Prophecy\Argument\Token;
+namespace MolliePrefix\Prophecy\Argument\Token;
 
 /**
  * Array elements count token.
  *
  * @author Boris Mikhaylov <kaguxmail@gmail.com>
  */
-
-class ArrayCountToken implements TokenInterface
+class ArrayCountToken implements \MolliePrefix\Prophecy\Argument\Token\TokenInterface
 {
     private $count;
-
     /**
      * @param integer $value
      */
@@ -28,7 +25,6 @@ class ArrayCountToken implements TokenInterface
     {
         $this->count = $value;
     }
-
     /**
      * Scores 6 when argument has preset number of elements.
      *
@@ -38,9 +34,8 @@ class ArrayCountToken implements TokenInterface
      */
     public function scoreArgument($argument)
     {
-        return $this->isCountable($argument) && $this->hasProperCount($argument) ? 6 : false;
+        return $this->isCountable($argument) && $this->hasProperCount($argument) ? 6 : \false;
     }
-
     /**
      * Returns false.
      *
@@ -48,9 +43,8 @@ class ArrayCountToken implements TokenInterface
      */
     public function isLast()
     {
-        return false;
+        return \false;
     }
-
     /**
      * Returns string representation for token.
      *
@@ -58,9 +52,8 @@ class ArrayCountToken implements TokenInterface
      */
     public function __toString()
     {
-        return sprintf('count(%s)', $this->count);
+        return \sprintf('count(%s)', $this->count);
     }
-
     /**
      * Returns true if object is either array or instance of \Countable
      *
@@ -69,9 +62,8 @@ class ArrayCountToken implements TokenInterface
      */
     private function isCountable($argument)
     {
-        return (is_array($argument) || $argument instanceof \Countable);
+        return \is_array($argument) || $argument instanceof \Countable;
     }
-
     /**
      * Returns true if $argument has expected number of elements
      *
@@ -81,6 +73,6 @@ class ArrayCountToken implements TokenInterface
      */
     private function hasProperCount($argument)
     {
-        return $this->count === count($argument);
+        return $this->count === \count($argument);
     }
 }

@@ -1,5 +1,8 @@
 <?php
-class Issue1468Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue1468Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @todo Implement this test
@@ -9,3 +12,4 @@ class Issue1468Test extends PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
     }
 }
+\class_alias('MolliePrefix\\Issue1468Test', 'Issue1468Test', \false);

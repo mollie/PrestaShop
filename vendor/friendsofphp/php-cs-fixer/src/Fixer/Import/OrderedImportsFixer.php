@@ -235,7 +235,7 @@ use Bar;
         $lineEnding = $this->whitespacesConfig->getLineEnding();
         for ($i = \count($uses) - 1; $i >= 0; --$i) {
             $index = $uses[$i];
-            $startIndex = $tokens->getTokenNotOfKindSibling($index + 1, 1, [[\T_WHITESPACE]]);
+            $startIndex = $tokens->getTokenNotOfKindsSibling($index + 1, 1, [\T_WHITESPACE]);
             $endIndex = $tokens->getNextTokenOfKind($startIndex, [';', [\T_CLOSE_TAG]]);
             $previous = $tokens->getPrevMeaningfulToken($endIndex);
             $group = $tokens[$previous]->isGivenKind(\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_GROUP_IMPORT_BRACE_CLOSE);

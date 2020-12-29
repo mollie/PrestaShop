@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,34 +10,30 @@
  *  @license   http://www.opensource.org/licenses/mit-license.php MIT
  *  @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Reference;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags\Reference;
-
-use phpDocumentor\Reflection\Fqsen as RealFqsen;
-
+use MolliePrefix\phpDocumentor\Reflection\Fqsen as RealFqsen;
 /**
  * Fqsen reference used by {@see phpDocumentor\Reflection\DocBlock\Tags\See}
  */
-final class Fqsen implements Reference
+final class Fqsen implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Reference\Reference
 {
     /**
      * @var RealFqsen
      */
     private $fqsen;
-
     /**
      * Fqsen constructor.
      */
-    public function __construct(RealFqsen $fqsen)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\Fqsen $fqsen)
     {
         $this->fqsen = $fqsen;
     }
-
     /**
      * @return string string representation of the referenced fqsen
      */
     public function __toString()
     {
-        return (string)$this->fqsen;
+        return (string) $this->fqsen;
     }
 }

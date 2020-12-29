@@ -1,11 +1,11 @@
 {
-    "name": "phpunit/php-text-template",
+    "name": "phpunit\/php-text-template",
     "description": "Simple template engine.",
     "type": "library",
     "keywords": [
         "template"
     ],
-    "homepage": "https://github.com/sebastianbergmann/php-text-template/",
+    "homepage": "https:\/\/github.com\/sebastianbergmann\/php-text-template\/",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -15,15 +15,14 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/sebastianbergmann/php-text-template/issues"
+        "issues": "https:\/\/github.com\/sebastianbergmann\/php-text-template\/issues"
     },
     "require": {
         "php": ">=5.3.3"
     },
     "autoload": {
         "classmap": [
-            "src/"
+            "src\/"
         ]
     }
 }
-

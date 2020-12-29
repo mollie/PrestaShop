@@ -36,6 +36,7 @@ class Tokens extends \SplFixedArray
     const BLOCK_TYPE_GROUP_IMPORT_BRACE = 8;
     const BLOCK_TYPE_DESTRUCTURING_SQUARE_BRACE = 9;
     const BLOCK_TYPE_BRACE_CLASS_INSTANTIATION = 10;
+    const BLOCK_TYPE_ATTRIBUTE = 11;
     /**
      * Static class cache.
      *
@@ -202,7 +203,11 @@ class Tokens extends \SplFixedArray
      */
     public static function getBlockEdgeDefinitions()
     {
-        return [self::BLOCK_TYPE_CURLY_BRACE => ['start' => '{', 'end' => '}'], self::BLOCK_TYPE_PARENTHESIS_BRACE => ['start' => '(', 'end' => ')'], self::BLOCK_TYPE_INDEX_SQUARE_BRACE => ['start' => '[', 'end' => ']'], self::BLOCK_TYPE_ARRAY_SQUARE_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_SQUARE_BRACE_OPEN, '['], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_SQUARE_BRACE_CLOSE, ']']], self::BLOCK_TYPE_DYNAMIC_PROP_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_PROP_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_PROP_BRACE_CLOSE, '}']], self::BLOCK_TYPE_DYNAMIC_VAR_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_VAR_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_VAR_BRACE_CLOSE, '}']], self::BLOCK_TYPE_ARRAY_INDEX_CURLY_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE, '}']], self::BLOCK_TYPE_GROUP_IMPORT_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_GROUP_IMPORT_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_GROUP_IMPORT_BRACE_CLOSE, '}']], self::BLOCK_TYPE_DESTRUCTURING_SQUARE_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DESTRUCTURING_SQUARE_BRACE_OPEN, '['], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DESTRUCTURING_SQUARE_BRACE_CLOSE, ']']], self::BLOCK_TYPE_BRACE_CLASS_INSTANTIATION => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_BRACE_CLASS_INSTANTIATION_OPEN, '('], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_BRACE_CLASS_INSTANTIATION_CLOSE, ')']]];
+        $definitions = [self::BLOCK_TYPE_CURLY_BRACE => ['start' => '{', 'end' => '}'], self::BLOCK_TYPE_PARENTHESIS_BRACE => ['start' => '(', 'end' => ')'], self::BLOCK_TYPE_INDEX_SQUARE_BRACE => ['start' => '[', 'end' => ']'], self::BLOCK_TYPE_ARRAY_SQUARE_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_SQUARE_BRACE_OPEN, '['], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_SQUARE_BRACE_CLOSE, ']']], self::BLOCK_TYPE_DYNAMIC_PROP_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_PROP_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_PROP_BRACE_CLOSE, '}']], self::BLOCK_TYPE_DYNAMIC_VAR_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_VAR_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DYNAMIC_VAR_BRACE_CLOSE, '}']], self::BLOCK_TYPE_ARRAY_INDEX_CURLY_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE, '}']], self::BLOCK_TYPE_GROUP_IMPORT_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_GROUP_IMPORT_BRACE_OPEN, '{'], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_GROUP_IMPORT_BRACE_CLOSE, '}']], self::BLOCK_TYPE_DESTRUCTURING_SQUARE_BRACE => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DESTRUCTURING_SQUARE_BRACE_OPEN, '['], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_DESTRUCTURING_SQUARE_BRACE_CLOSE, ']']], self::BLOCK_TYPE_BRACE_CLASS_INSTANTIATION => ['start' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_BRACE_CLASS_INSTANTIATION_OPEN, '('], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_BRACE_CLASS_INSTANTIATION_CLOSE, ')']]];
+        if (\defined('T_ATTRIBUTE')) {
+            $definitions[self::BLOCK_TYPE_ATTRIBUTE] = ['start' => [T_ATTRIBUTE, '#['], 'end' => [\MolliePrefix\PhpCsFixer\Tokenizer\CT::T_ATTRIBUTE_CLOSE, ']']];
+        }
+        return $definitions;
     }
     /**
      * Set new size of collection.
@@ -279,9 +284,7 @@ class Tokens extends \SplFixedArray
         }
         for ($count = $index; $index < $limit; ++$index) {
             if (!$this->isEmptyAt($index)) {
-                /** @var Token $token */
-                $token = $this[$index];
-                $this[$count++] = $token;
+                $this[$count++] = $this[$index];
             }
         }
         $this->setSize($count);
@@ -467,8 +470,7 @@ class Tokens extends \SplFixedArray
             if (!$this->offsetExists($index)) {
                 return null;
             }
-            $token = $this[$index];
-            if (!$token->isWhitespace($whitespaces)) {
+            if (!$this[$index]->isWhitespace($whitespaces)) {
                 return $index;
             }
         }
@@ -526,8 +528,7 @@ class Tokens extends \SplFixedArray
             if (!$this->offsetExists($index)) {
                 return null;
             }
-            $token = $this[$index];
-            if ($token->equalsAny($tokens, $caseSensitive)) {
+            if ($this[$index]->equalsAny($tokens, $caseSensitive)) {
                 return $index;
             }
         }
@@ -543,22 +544,27 @@ class Tokens extends \SplFixedArray
      */
     public function getTokenNotOfKindSibling($index, $direction, array $tokens = [])
     {
-        while (\true) {
-            $index += $direction;
-            if (!$this->offsetExists($index)) {
-                return null;
-            }
-            if ($this->isEmptyAt($index)) {
-                continue;
-            }
-            if ($this[$index]->equalsAny($tokens)) {
-                continue;
-            }
-            return $index;
-        }
+        return $this->getTokenNotOfKind($index, $direction, function ($a) use($tokens) {
+            return $this[$a]->equalsAny($tokens);
+        });
     }
     /**
-     * Get index for closest sibling token that is not a whitespace or comment.
+     * Get index for closest sibling token not of given kind.
+     *
+     * @param int   $index     token index
+     * @param int   $direction direction for looking, +1 or -1
+     * @param array $kinds     possible tokens kinds
+     *
+     * @return null|int
+     */
+    public function getTokenNotOfKindsSibling($index, $direction, array $kinds = [])
+    {
+        return $this->getTokenNotOfKind($index, $direction, function ($index) use($kinds) {
+            return $this[$index]->isGivenKind($kinds);
+        });
+    }
+    /**
+     * Get index for closest sibling token that is not a whitespace, comment or attribute.
      *
      * @param int $index     token index
      * @param int $direction direction for looking, +1 or -1
@@ -567,7 +573,7 @@ class Tokens extends \SplFixedArray
      */
     public function getMeaningfulTokenSibling($index, $direction)
     {
-        return $this->getTokenNotOfKindSibling($index, $direction, [[\T_WHITESPACE], [\T_COMMENT], [\T_DOC_COMMENT]]);
+        return $this->getTokenNotOfKindsSibling($index, $direction, [\T_WHITESPACE, \T_COMMENT, \T_DOC_COMMENT]);
     }
     /**
      * Get index for closest sibling token which is not empty.
@@ -634,6 +640,7 @@ class Tokens extends \SplFixedArray
         if ($start + $sequenceCount - 1 > $end) {
             return null;
         }
+        $nonMeaningFullKind = [\T_COMMENT, \T_DOC_COMMENT, \T_WHITESPACE];
         // make sure the sequence content is "meaningful"
         foreach ($sequence as $key => $token) {
             // if not a Token instance already, we convert it to verify the meaningfulness
@@ -645,8 +652,11 @@ class Tokens extends \SplFixedArray
                 }
                 $token = new \MolliePrefix\PhpCsFixer\Tokenizer\Token($token);
             }
-            if ($token->isWhitespace() || $token->isComment() || '' === $token->getContent()) {
+            if ($token->isGivenKind($nonMeaningFullKind)) {
                 throw new \InvalidArgumentException(\sprintf('Non-meaningful token at position: "%s".', $key));
+            }
+            if ('' === $token->getContent()) {
+                throw new \InvalidArgumentException(\sprintf('Non-meaningful (empty) token at position: "%s".', $key));
             }
         }
         if (!self::isLegacyMode()) {
@@ -1232,5 +1242,25 @@ class Tokens extends \SplFixedArray
     private function extractTokenKind($token)
     {
         return $token instanceof \MolliePrefix\PhpCsFixer\Tokenizer\Token ? $token->isArray() ? $token->getId() : $token->getContent() : (\is_array($token) ? $token[0] : $token);
+    }
+    /**
+     * @param int      $index     token index
+     * @param int      $direction direction for looking, +1 or -1
+     * @param callable $filter
+     *
+     * @return null|int
+     */
+    private function getTokenNotOfKind($index, $direction, $filter)
+    {
+        while (\true) {
+            $index += $direction;
+            if (!$this->offsetExists($index)) {
+                return null;
+            }
+            if ($this->isEmptyAt($index) || $filter($index)) {
+                continue;
+            }
+            return $index;
+        }
     }
 }

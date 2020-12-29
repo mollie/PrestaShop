@@ -12,13 +12,16 @@
 namespace MolliePrefix\PhpCsFixer\Fixer\ClassNotation;
 
 use MolliePrefix\PhpCsFixer\AbstractFixer;
+use MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
 use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Filippo Tessarotto <zoeslam@gmail.com>
  */
-final class NoUnneededFinalMethodFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
+final class NoUnneededFinalMethodFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer implements \MolliePrefix\PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface
 {
     /**
      * {@inheritdoc}
@@ -37,7 +40,17 @@ class Bar
 {
     final private function bar1() {}
 }
-')], null, 'Risky when child class overrides a `private` method.');
+'), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+final class Foo
+{
+    final private function baz() {}
+}
+
+class Bar
+{
+    final private function bar1() {}
+}
+', ['private_methods' => \false])], null, 'Risky when child class overrides a `private` method.');
     }
     /**
      * {@inheritdoc}
@@ -67,6 +80,13 @@ class Bar
         }
     }
     /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        return new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerConfigurationResolver([(new \MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionBuilder('private_methods', 'Private methods of non-`final` classes must not be declared `final`.'))->setAllowedTypes(['bool'])->setDefault(\true)->getOption()]);
+    }
+    /**
      * @param int  $classOpenIndex
      * @param bool $classIsFinal
      */
@@ -86,7 +106,7 @@ class Bar
             if (!$tokens[$index]->isGivenKind(\T_FINAL)) {
                 continue;
             }
-            if (!$classIsFinal && !$this->isPrivateMethodOtherThanConstructor($tokens, $index, $classOpenIndex)) {
+            if (!$classIsFinal && (!$this->isPrivateMethodOtherThanConstructor($tokens, $index, $classOpenIndex) || !$this->configuration['private_methods'])) {
                 continue;
             }
             $tokens->clearAt($index);

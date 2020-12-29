@@ -1,5 +1,5 @@
 {
-    "name": "phpunit/phpunit",
+    "name": "phpunit\/phpunit",
     "description": "The PHP Unit Testing framework.",
     "type": "library",
     "keywords": [
@@ -7,7 +7,7 @@
         "xunit",
         "testing"
     ],
-    "homepage": "https://phpunit.de/",
+    "homepage": "https:\/\/phpunit.de\/",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -17,26 +17,26 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/sebastianbergmann/phpunit/issues"
+        "issues": "https:\/\/github.com\/sebastianbergmann\/phpunit\/issues"
     },
     "require": {
         "php": "^5.6 || ^7.0",
-        "phpunit/php-file-iterator": "~1.4",
-        "phpunit/php-text-template": "~1.2",
-        "phpunit/php-code-coverage": "^4.0.4",
-        "phpunit/php-timer": "^1.0.6",
-        "phpunit/phpunit-mock-objects": "^3.2",
-        "phpspec/prophecy": "^1.6.2",
-        "symfony/yaml": "~2.1|~3.0",
-        "sebastian/comparator": "^1.2.4",
-        "sebastian/diff": "~1.2",
-        "sebastian/environment": "^1.3.4 || ^2.0",
-        "sebastian/exporter": "~2.0",
-        "sebastian/global-state": "^1.1",
-        "sebastian/object-enumerator": "~2.0",
-        "sebastian/resource-operations": "~1.0",
-        "sebastian/version": "~1.0|~2.0",
-        "myclabs/deep-copy": "~1.3",
+        "phpunit\/php-file-iterator": "~1.4",
+        "phpunit\/php-text-template": "~1.2",
+        "phpunit\/php-code-coverage": "^4.0.4",
+        "phpunit\/php-timer": "^1.0.6",
+        "phpunit\/phpunit-mock-objects": "^3.2",
+        "phpspec\/prophecy": "^1.6.2",
+        "symfony\/yaml": "~2.1|~3.0",
+        "sebastian\/comparator": "^1.2.4",
+        "sebastian\/diff": "~1.2",
+        "sebastian\/environment": "^1.3.4 || ^2.0",
+        "sebastian\/exporter": "~2.0",
+        "sebastian\/global-state": "^1.1",
+        "sebastian\/object-enumerator": "~2.0",
+        "sebastian\/resource-operations": "~1.0",
+        "sebastian\/version": "~1.0|~2.0",
+        "myclabs\/deep-copy": "~1.3",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -47,7 +47,7 @@
         "ext-PDO": "*"
     },
     "conflict": {
-        "phpdocumentor/reflection-docblock": "3.0.2"
+        "phpdocumentor\/reflection-docblock": "3.0.2"
     },
     "config": {
         "platform": {
@@ -55,7 +55,7 @@
         }
     },
     "suggest": {
-        "phpunit/php-invoker": "~1.1",
+        "phpunit\/php-invoker": "~1.1",
         "ext-xdebug": "*"
     },
     "bin": [
@@ -63,16 +63,16 @@
     ],
     "autoload": {
         "classmap": [
-            "src/"
+            "src\/"
         ]
     },
     "autoload-dev": {
         "classmap": [
-            "tests/"
+            "tests\/"
         ],
         "files": [
-            "src/Framework/Assert/Functions.php",
-            "tests/_files/CoveredFunction.php"
+            "src\/Framework\/Assert\/Functions.php",
+            "tests\/_files\/CoveredFunction.php"
         ]
     },
     "extra": {

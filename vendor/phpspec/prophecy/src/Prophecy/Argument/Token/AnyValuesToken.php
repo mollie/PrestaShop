@@ -8,15 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Prophecy\Argument\Token;
+namespace MolliePrefix\Prophecy\Argument\Token;
 
 /**
  * Any values token.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class AnyValuesToken implements TokenInterface
+class AnyValuesToken implements \MolliePrefix\Prophecy\Argument\Token\TokenInterface
 {
     /**
      * Always scores 2 for any argument.
@@ -29,7 +28,6 @@ class AnyValuesToken implements TokenInterface
     {
         return 2;
     }
-
     /**
      * Returns true to stop wildcard from processing other tokens.
      *
@@ -37,9 +35,8 @@ class AnyValuesToken implements TokenInterface
      */
     public function isLast()
     {
-        return true;
+        return \true;
     }
-
     /**
      * Returns string representation for token.
      *

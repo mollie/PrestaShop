@@ -32,7 +32,7 @@ use MolliePrefix\PhpCsFixer\Linter\Linter;
 use MolliePrefix\PhpCsFixer\Linter\LinterInterface;
 use MolliePrefix\PhpCsFixer\Report\ReporterFactory;
 use MolliePrefix\PhpCsFixer\Report\ReporterInterface;
-use MolliePrefix\PhpCsFixer\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSet;
 use MolliePrefix\PhpCsFixer\StdinFileInfo;
 use MolliePrefix\PhpCsFixer\ToolInfoInterface;
 use MolliePrefix\PhpCsFixer\Utils;
@@ -152,10 +152,11 @@ final class ConfigurationResolver
     public function getCacheManager()
     {
         if (null === $this->cacheManager) {
-            if ($this->getUsingCache() && ($this->toolInfo->isInstalledAsPhar() || $this->toolInfo->isInstalledByComposer())) {
-                $this->cacheManager = new \MolliePrefix\PhpCsFixer\Cache\FileCacheManager(new \MolliePrefix\PhpCsFixer\Cache\FileHandler($this->getCacheFile()), new \MolliePrefix\PhpCsFixer\Cache\Signature(\PHP_VERSION, $this->toolInfo->getVersion(), $this->getConfig()->getIndent(), $this->getConfig()->getLineEnding(), $this->getRules()), $this->isDryRun(), $this->getDirectory());
-            } else {
+            $cacheFile = $this->getCacheFile();
+            if (null === $cacheFile) {
                 $this->cacheManager = new \MolliePrefix\PhpCsFixer\Cache\NullCacheManager();
+            } else {
+                $this->cacheManager = new \MolliePrefix\PhpCsFixer\Cache\FileCacheManager(new \MolliePrefix\PhpCsFixer\Cache\FileHandler($cacheFile), new \MolliePrefix\PhpCsFixer\Cache\Signature(\PHP_VERSION, $this->toolInfo->getVersion(), $this->getConfig()->getIndent(), $this->getConfig()->getLineEnding(), $this->getRules()), $this->isDryRun(), $this->getDirectory());
             }
         }
         return $this->cacheManager;
@@ -208,20 +209,25 @@ final class ConfigurationResolver
             }, 'udiff' => static function () {
                 return new \MolliePrefix\PhpCsFixer\Differ\UnifiedDiffer();
             }];
-            if ($this->options['diff-format']) {
-                $option = $this->options['diff-format'];
-                if (!isset($mapper[$option])) {
-                    throw new \MolliePrefix\PhpCsFixer\ConfigurationException\InvalidConfigurationException(\sprintf('"diff-format" must be any of "%s", got "%s".', \implode('", "', \array_keys($mapper)), $option));
-                }
+            if (!$this->options['diff']) {
+                $defaultOption = 'null';
+            } elseif (\getenv('PHP_CS_FIXER_FUTURE_MODE')) {
+                $defaultOption = 'udiff';
             } else {
-                $default = 'sbd';
+                $defaultOption = 'sbd';
                 // @TODO: 3.0 change to udiff as default
-                if (\getenv('PHP_CS_FIXER_FUTURE_MODE')) {
-                    $default = 'udiff';
-                }
-                $option = $this->options['diff'] ? $default : 'null';
             }
-            $this->differ = $mapper[$option]();
+            $option = isset($this->options['diff-format']) ? $this->options['diff-format'] : $defaultOption;
+            if (!\is_string($option)) {
+                throw new \MolliePrefix\PhpCsFixer\ConfigurationException\InvalidConfigurationException(\sprintf('"diff-format" must be a string, "%s" given.', \gettype($option)));
+            }
+            if (\is_subclass_of($option, \MolliePrefix\PhpCsFixer\Differ\DifferInterface::class)) {
+                $this->differ = new $option();
+            } elseif (!isset($mapper[$option])) {
+                throw new \MolliePrefix\PhpCsFixer\ConfigurationException\InvalidConfigurationException(\sprintf('"diff-format" must be any of "%s", got "%s".', \implode('", "', \array_keys($mapper)), $option));
+            } else {
+                $this->differ = $mapper[$option]();
+            }
         }
         return $this->differ;
     }
@@ -387,6 +393,7 @@ final class ConfigurationResolver
                 $this->usingCache = $this->resolveOptionBooleanValue('using-cache');
             }
         }
+        $this->usingCache = $this->usingCache && ($this->toolInfo->isInstalledAsPhar() || $this->toolInfo->isInstalledByComposer());
         return $this->usingCache;
     }
     public function getFinder()
@@ -487,7 +494,7 @@ final class ConfigurationResolver
         if (null === $this->ruleSet) {
             $rules = $this->parseRules();
             $this->validateRules($rules);
-            $this->ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet($rules);
+            $this->ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet\RuleSet($rules);
         }
         return $this->ruleSet;
     }
@@ -562,7 +569,7 @@ final class ConfigurationResolver
             }
             $ruleSet[$key] = \true;
         }
-        $ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet($ruleSet);
+        $ruleSet = new \MolliePrefix\PhpCsFixer\RuleSet\RuleSet($ruleSet);
         /** @var string[] $configuredFixers */
         $configuredFixers = \array_keys($ruleSet->getRules());
         $fixers = $this->createFixerFactory()->getFixers();
@@ -584,7 +591,7 @@ final class ConfigurationResolver
             $fixerName = $fixer->getName();
             if (isset($rules[$fixerName]) && $fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface) {
                 $successors = $fixer->getSuccessorsNames();
-                $messageEnd = [] === $successors ? \sprintf(' and will be removed in version %d.0.', \MolliePrefix\PhpCsFixer\Console\Application::getMajorVersion()) : \sprintf('. Use %s instead.', \str_replace('`', '"', \MolliePrefix\PhpCsFixer\Utils::naturalLanguageJoinWithBackticks($successors)));
+                $messageEnd = [] === $successors ? \sprintf(' and will be removed in version %d.0.', \MolliePrefix\PhpCsFixer\Console\Application::getMajorVersion() + 1) : \sprintf('. Use %s instead.', \str_replace('`', '"', \MolliePrefix\PhpCsFixer\Utils::naturalLanguageJoinWithBackticks($successors)));
                 $message = "Rule \"{$fixerName}\" is deprecated{$messageEnd}";
                 if (\getenv('PHP_CS_FIXER_FUTURE_MODE')) {
                     throw new \RuntimeException("{$message} This check was performed as `PHP_CS_FIXER_FUTURE_MODE` env var is set.");

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,35 +10,26 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection;
 
-namespace phpDocumentor\Reflection;
-
-use phpDocumentor\Reflection\DocBlock\Tag;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag;
+use MolliePrefix\Webmozart\Assert\Assert;
 final class DocBlock
 {
     /** @var string The opening line for this docblock. */
     private $summary = '';
-
     /** @var DocBlock\Description The actual description for this docblock. */
     private $description = null;
-
     /** @var Tag[] An array containing all the tags in this docblock; except inline. */
     private $tags = array();
-
     /** @var Types\Context Information about the context of this DocBlock. */
     private $context = null;
-
     /** @var Location Information about the location of this DocBlock. */
     private $location = null;
-
     /** @var bool Is this DocBlock (the start of) a template? */
-    private $isTemplateStart = false;
-
+    private $isTemplateStart = \false;
     /** @var bool Does this DocBlock signify the end of a DocBlock template? */
-    private $isTemplateEnd = false;
-
+    private $isTemplateEnd = \false;
     /**
      * @param string $summary
      * @param DocBlock\Description $description
@@ -47,34 +39,22 @@ final class DocBlock
      * @param bool $isTemplateStart
      * @param bool $isTemplateEnd
      */
-    public function __construct(
-        $summary = '',
-        DocBlock\Description $description = null,
-        array $tags = [],
-        Types\Context $context = null,
-        Location $location = null,
-        $isTemplateStart = false,
-        $isTemplateEnd = false
-    )
+    public function __construct($summary = '', \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description $description = null, array $tags = [], \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null, \MolliePrefix\phpDocumentor\Reflection\Location $location = null, $isTemplateStart = \false, $isTemplateEnd = \false)
     {
-        Assert::string($summary);
-        Assert::boolean($isTemplateStart);
-        Assert::boolean($isTemplateEnd);
-        Assert::allIsInstanceOf($tags, Tag::class);
-
+        \MolliePrefix\Webmozart\Assert\Assert::string($summary);
+        \MolliePrefix\Webmozart\Assert\Assert::boolean($isTemplateStart);
+        \MolliePrefix\Webmozart\Assert\Assert::boolean($isTemplateEnd);
+        \MolliePrefix\Webmozart\Assert\Assert::allIsInstanceOf($tags, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag::class);
         $this->summary = $summary;
-        $this->description = $description ?: new DocBlock\Description('');
+        $this->description = $description ?: new \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description('');
         foreach ($tags as $tag) {
             $this->addTag($tag);
         }
-
         $this->context = $context;
         $this->location = $location;
-
         $this->isTemplateEnd = $isTemplateEnd;
         $this->isTemplateStart = $isTemplateStart;
     }
-
     /**
      * @return string
      */
@@ -82,7 +62,6 @@ final class DocBlock
     {
         return $this->summary;
     }
-
     /**
      * @return DocBlock\Description
      */
@@ -90,7 +69,6 @@ final class DocBlock
     {
         return $this->description;
     }
-
     /**
      * Returns the current context.
      *
@@ -100,7 +78,6 @@ final class DocBlock
     {
         return $this->context;
     }
-
     /**
      * Returns the current location.
      *
@@ -110,7 +87,6 @@ final class DocBlock
     {
         return $this->location;
     }
-
     /**
      * Returns whether this DocBlock is the start of a Template section.
      *
@@ -136,7 +112,6 @@ final class DocBlock
     {
         return $this->isTemplateStart;
     }
-
     /**
      * Returns whether this DocBlock is the end of a Template section.
      *
@@ -148,7 +123,6 @@ final class DocBlock
     {
         return $this->isTemplateEnd;
     }
-
     /**
      * Returns the tags for this DocBlock.
      *
@@ -158,7 +132,6 @@ final class DocBlock
     {
         return $this->tags;
     }
-
     /**
      * Returns an array of tags matching the given name. If no tags are found
      * an empty array is returned.
@@ -169,22 +142,17 @@ final class DocBlock
      */
     public function getTagsByName($name)
     {
-        Assert::string($name);
-
+        \MolliePrefix\Webmozart\Assert\Assert::string($name);
         $result = array();
-
         /** @var Tag $tag */
         foreach ($this->getTags() as $tag) {
             if ($tag->getName() != $name) {
                 continue;
             }
-
             $result[] = $tag;
         }
-
         return $result;
     }
-
     /**
      * Checks if a tag of a certain type is present in this DocBlock.
      *
@@ -194,18 +162,15 @@ final class DocBlock
      */
     public function hasTag($name)
     {
-        Assert::string($name);
-
+        \MolliePrefix\Webmozart\Assert\Assert::string($name);
         /** @var Tag $tag */
         foreach ($this->getTags() as $tag) {
             if ($tag->getName() == $name) {
-                return true;
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Adds a tag to this DocBlock.
      *
@@ -213,7 +178,7 @@ final class DocBlock
      *
      * @return void
      */
-    private function addTag(Tag $tag)
+    private function addTag(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tag $tag)
     {
         $this->tags[] = $tag;
     }

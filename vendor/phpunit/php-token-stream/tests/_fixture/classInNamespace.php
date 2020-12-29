@@ -1,5 +1,6 @@
 <?php
-namespace Foo\Bar;
+
+namespace MolliePrefix\Foo\Bar;
 
 class TestClass
 {

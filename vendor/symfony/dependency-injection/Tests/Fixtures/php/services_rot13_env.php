@@ -151,4 +151,4 @@ class Symfony_DI_PhpDumper_Test_Rot13Parameters extends \MolliePrefix\Symfony\Co
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Rot13Parameters', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Rot13Parameters', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Rot13Parameters', 'Symfony_DI_PhpDumper_Test_Rot13Parameters', \false);

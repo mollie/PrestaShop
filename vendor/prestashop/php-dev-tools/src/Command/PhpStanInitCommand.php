@@ -20,5 +20,6 @@ class PhpStanInitCommand extends \MolliePrefix\PrestaShop\CodingStandards\Comman
         foreach (['phpstan.neon'] as $template) {
             $this->copyFile($input, $output, $directory . $template, $destination . '/' . $template);
         }
+        return 0;
     }
 }

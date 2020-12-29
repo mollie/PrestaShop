@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,11 +10,9 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock;
 
-namespace phpDocumentor\Reflection\DocBlock;
-
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
 interface TagFactory
 {
     /**
@@ -40,7 +39,6 @@ interface TagFactory
      * @return void
      */
     public function addParameter($name, $value);
-
     /**
      * Registers a service with the Service Locator using the FQCN of the class or the alias, if provided.
      *
@@ -56,7 +54,6 @@ interface TagFactory
      * @return void
      */
     public function addService($service);
-
     /**
      * Factory method responsible for instantiating the correct sub type.
      *
@@ -67,8 +64,7 @@ interface TagFactory
      *
      * @return Tag A new tag object.
      */
-    public function create($tagLine, TypeContext $context = null);
-
+    public function create($tagLine, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null);
     /**
      * Registers a handler for tags.
      *

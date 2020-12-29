@@ -1,9 +1,13 @@
 <?php
-class CoverageNoneTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class CoverageNoneTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testSomething()
     {
-        $o = new CoveredClass;
+        $o = new \MolliePrefix\CoveredClass();
         $o->publicMethod();
     }
 }
+\class_alias('MolliePrefix\\CoverageNoneTest', 'CoverageNoneTest', \false);

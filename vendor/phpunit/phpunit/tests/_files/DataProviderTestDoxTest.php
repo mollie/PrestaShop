@@ -1,5 +1,8 @@
 <?php
-class DataProviderTestDoxTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DataProviderTestDoxTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provider
@@ -8,19 +11,15 @@ class DataProviderTestDoxTest extends PHPUnit_Framework_TestCase
     public function testOne()
     {
     }
-
     /**
      * @dataProvider provider
      */
     public function testDoesSomethingElseWith()
     {
     }
-
     public function provider()
     {
-        return [
-            'one' => [1],
-            'two' => [2]
-        ];
+        return ['one' => [1], 'two' => [2]];
     }
 }
+\class_alias('MolliePrefix\\DataProviderTestDoxTest', 'DataProviderTestDoxTest', \false);

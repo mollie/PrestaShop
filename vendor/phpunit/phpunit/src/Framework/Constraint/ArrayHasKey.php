@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that the array it is evaluated for has a given key.
  *
@@ -18,13 +20,12 @@
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_ArrayHasKey extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_ArrayHasKey extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var int|string
      */
     protected $key;
-
     /**
      * @param int|string $key
      */
@@ -33,7 +34,6 @@ class PHPUnit_Framework_Constraint_ArrayHasKey extends PHPUnit_Framework_Constra
         parent::__construct();
         $this->key = $key;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -44,17 +44,14 @@ class PHPUnit_Framework_Constraint_ArrayHasKey extends PHPUnit_Framework_Constra
      */
     protected function matches($other)
     {
-        if (is_array($other)) {
-            return array_key_exists($this->key, $other);
+        if (\is_array($other)) {
+            return \array_key_exists($this->key, $other);
         }
-
-        if ($other instanceof ArrayAccess) {
+        if ($other instanceof \ArrayAccess) {
             return $other->offsetExists($this->key);
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -64,7 +61,6 @@ class PHPUnit_Framework_Constraint_ArrayHasKey extends PHPUnit_Framework_Constra
     {
         return 'has the key ' . $this->exporter->export($this->key);
     }
-
     /**
      * Returns the description of the failure
      *
@@ -80,3 +76,22 @@ class PHPUnit_Framework_Constraint_ArrayHasKey extends PHPUnit_Framework_Constra
         return 'an array ' . $this->toString();
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that the array it is evaluated for has a given key.
+ *
+ * Uses array_key_exists() to check if the key is found in the input array, if
+ * not found the evaluation fails.
+ *
+ * The array key is passed in the constructor.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ArrayHasKey', 'PHPUnit_Framework_Constraint_ArrayHasKey', \false);

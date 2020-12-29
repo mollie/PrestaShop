@@ -1,15 +1,16 @@
 <?php
-class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class BeforeAndAfterTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public static $beforeWasRun;
     public static $afterWasRun;
-
     public static function resetProperties()
     {
         self::$beforeWasRun = 0;
-        self::$afterWasRun  = 0;
+        self::$afterWasRun = 0;
     }
-
     /**
      * @before
      */
@@ -17,7 +18,6 @@ class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
     {
         self::$beforeWasRun++;
     }
-
     /**
      * @after
      */
@@ -25,7 +25,6 @@ class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
     {
         self::$afterWasRun++;
     }
-
     public function test1()
     {
     }
@@ -33,3 +32,4 @@ class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
     {
     }
 }
+\class_alias('MolliePrefix\\BeforeAndAfterTest', 'BeforeAndAfterTest', \false);

@@ -32,7 +32,7 @@ final class NativeFunctionCasingFixer extends \MolliePrefix\PhpCsFixer\AbstractF
     /**
      * {@inheritdoc}
      *
-     * Must run after FunctionToConstantFixer, PowToExponentiationFixer.
+     * Must run after FunctionToConstantFixer, NoUselessSprintfFixer, PowToExponentiationFixer.
      */
     public function getPriority()
     {

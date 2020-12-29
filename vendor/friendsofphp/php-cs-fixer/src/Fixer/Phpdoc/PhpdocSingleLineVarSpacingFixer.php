@@ -55,11 +55,7 @@ final class PhpdocSingleLineVarSpacingFixer extends \MolliePrefix\PhpCsFixer\Abs
     {
         /** @var Token $token */
         foreach ($tokens as $index => $token) {
-            if ($token->isGivenKind(\T_DOC_COMMENT)) {
-                $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, $this->fixTokenContent($token->getContent())]);
-                continue;
-            }
-            if (!$token->isGivenKind(\T_COMMENT)) {
+            if (!$token->isComment()) {
                 continue;
             }
             $content = $token->getContent();
@@ -83,8 +79,7 @@ final class PhpdocSingleLineVarSpacingFixer extends \MolliePrefix\PhpCsFixer\Abs
                     $content .= ' ' . $matches[$i];
                 }
             }
-            $content = \rtrim($content);
-            return $content . ' */';
+            return \rtrim($content) . ' */';
         }, $content);
     }
 }

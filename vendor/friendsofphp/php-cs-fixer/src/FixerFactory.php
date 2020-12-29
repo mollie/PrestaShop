@@ -15,6 +15,7 @@ use MolliePrefix\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationExce
 use MolliePrefix\PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use MolliePrefix\PhpCsFixer\Fixer\FixerInterface;
 use MolliePrefix\PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSetInterface;
 use MolliePrefix\Symfony\Component\Finder\Finder as SymfonyFinder;
 use MolliePrefix\Symfony\Component\Finder\SplFileInfo;
 /**
@@ -131,7 +132,7 @@ final class FixerFactory
      *
      * @return $this
      */
-    public function useRuleSet(\MolliePrefix\PhpCsFixer\RuleSetInterface $ruleSet)
+    public function useRuleSet(\MolliePrefix\PhpCsFixer\RuleSet\RuleSetInterface $ruleSet)
     {
         $fixers = [];
         $fixersByName = [];
@@ -183,7 +184,7 @@ final class FixerFactory
      */
     private function getFixersConflicts(\MolliePrefix\PhpCsFixer\Fixer\FixerInterface $fixer)
     {
-        static $conflictMap = ['no_blank_lines_before_namespace' => ['single_blank_line_before_namespace']];
+        static $conflictMap = ['no_blank_lines_before_namespace' => ['single_blank_line_before_namespace'], 'single_import_per_statement' => ['group_import']];
         $fixerName = $fixer->getName();
         return \array_key_exists($fixerName, $conflictMap) ? $conflictMap[$fixerName] : [];
     }

@@ -1,11 +1,15 @@
 <?php
-class CoverageNamespacedFunctionTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class CoverageNamespacedFunctionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @covers foo\func()
      */
     public function testFunc()
     {
-        foo\func();
+        \MolliePrefix\foo\func();
     }
 }
+\class_alias('MolliePrefix\\CoverageNamespacedFunctionTest', 'CoverageNamespacedFunctionTest', \false);

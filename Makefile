@@ -1,5 +1,6 @@
 bv: build-vendor
 build-vendor:
+	rm -rf vendor
 	composer update
 	cd vendorBuilder && php ./vendor/bin/php-scoper add-prefix
 	rm -rf vendor
@@ -9,6 +10,7 @@ build-vendor:
 
 bvn: build-vendor-no-dev
 build-vendor-no-dev:
+	rm -rf vendor
 	composer update --no-dev --optimize-autoloader --classmap-authoritative
 	cd vendorBuilder && php ./vendor/bin/php-scoper add-prefix
 	rm -rf vendor

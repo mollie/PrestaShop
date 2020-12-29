@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Builder interface for invocation order matches.
  *
  * @since Interface available since Release 1.0.0
  */
-interface PHPUnit_Framework_MockObject_Builder_Match extends PHPUnit_Framework_MockObject_Builder_Stub
+interface PHPUnit_Framework_MockObject_Builder_Match extends \MolliePrefix\PHPUnit_Framework_MockObject_Builder_Stub
 {
     /**
      * Defines the expectation which must occur before the current is valid.
@@ -25,3 +27,17 @@ interface PHPUnit_Framework_MockObject_Builder_Match extends PHPUnit_Framework_M
      */
     public function after($id);
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Builder interface for invocation order matches.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Builder_Match', 'PHPUnit_Framework_MockObject_Builder_Match', \false);

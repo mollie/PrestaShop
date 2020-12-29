@@ -202,8 +202,8 @@ echo 1;
         }
         $index = $tokens->getNextMeaningfulToken(0);
         if (null === $index) {
-            // file without meaningful tokens but an open tag, comment should always be placed directly after the open tag
             return 1;
+            // file without meaningful tokens but an open tag, comment should always be placed directly after the open tag
         }
         if (!$tokens[$index]->isGivenKind(\T_DECLARE)) {
             return 1;
@@ -311,20 +311,20 @@ echo 1;
                 $newlineRemoved = \true;
             }
             $content = \MolliePrefix\PhpCsFixer\Preg::replace('/\\R?\\h*$/', '', $content);
-            if ('' !== $content) {
-                $tokens[$prevIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $content]);
-            } else {
+            if ('' === $content) {
                 $tokens->clearAt($prevIndex);
+            } else {
+                $tokens[$prevIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $content]);
             }
         }
         $nextIndex = $index + 1;
         $nextToken = isset($tokens[$nextIndex]) ? $tokens[$nextIndex] : null;
         if (!$newlineRemoved && null !== $nextToken && $nextToken->isWhitespace()) {
             $content = \MolliePrefix\PhpCsFixer\Preg::replace('/^\\R/', '', $nextToken->getContent());
-            if ('' !== $content) {
-                $tokens[$nextIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $content]);
-            } else {
+            if ('' === $content) {
                 $tokens->clearAt($nextIndex);
+            } else {
+                $tokens[$nextIndex] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_WHITESPACE, $content]);
             }
         }
         $tokens->clearTokenAndMergeSurroundingWhitespace($index);

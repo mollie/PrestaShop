@@ -1,16 +1,17 @@
 <?php
-class MultiDependencyTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class MultiDependencyTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testOne()
     {
         return 'foo';
     }
-
     public function testTwo()
     {
         return 'bar';
     }
-
     /**
      * @depends testOne
      * @depends testTwo
@@ -21,3 +22,4 @@ class MultiDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $b);
     }
 }
+\class_alias('MolliePrefix\\MultiDependencyTest', 'MultiDependencyTest', \false);

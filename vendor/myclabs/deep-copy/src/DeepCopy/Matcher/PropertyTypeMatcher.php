@@ -1,10 +1,9 @@
 <?php
 
-namespace DeepCopy\Matcher;
+namespace MolliePrefix\DeepCopy\Matcher;
 
-use DeepCopy\Reflection\ReflectionHelper;
+use MolliePrefix\DeepCopy\Reflection\ReflectionHelper;
 use ReflectionException;
-
 /**
  * Matches a property by its type.
  *
@@ -13,13 +12,12 @@ use ReflectionException;
  *
  * @final
  */
-class PropertyTypeMatcher implements Matcher
+class PropertyTypeMatcher implements \MolliePrefix\DeepCopy\Matcher\Matcher
 {
     /**
      * @var string
      */
     private $propertyType;
-
     /**
      * @param string $propertyType Property type
      */
@@ -27,20 +25,17 @@ class PropertyTypeMatcher implements Matcher
     {
         $this->propertyType = $propertyType;
     }
-
     /**
      * {@inheritdoc}
      */
     public function matches($object, $property)
     {
         try {
-            $reflectionProperty = ReflectionHelper::getProperty($object, $property);
-        } catch (ReflectionException $exception) {
-            return false;
+            $reflectionProperty = \MolliePrefix\DeepCopy\Reflection\ReflectionHelper::getProperty($object, $property);
+        } catch (\ReflectionException $exception) {
+            return \false;
         }
-
-        $reflectionProperty->setAccessible(true);
-
+        $reflectionProperty->setAccessible(\true);
         return $reflectionProperty->getValue($object) instanceof $this->propertyType;
     }
 }

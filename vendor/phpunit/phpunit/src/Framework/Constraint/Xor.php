@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,37 +10,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Logical XOR.
  *
  * @since Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_Xor extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_Xor extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var PHPUnit_Framework_Constraint[]
      */
     protected $constraints = [];
-
     /**
      * @param PHPUnit_Framework_Constraint[] $constraints
      */
     public function setConstraints(array $constraints)
     {
         $this->constraints = [];
-
         foreach ($constraints as $constraint) {
-            if (!($constraint instanceof PHPUnit_Framework_Constraint)) {
-                $constraint = new PHPUnit_Framework_Constraint_IsEqual(
-                    $constraint
-                );
+            if (!$constraint instanceof \MolliePrefix\PHPUnit_Framework_Constraint) {
+                $constraint = new \MolliePrefix\PHPUnit_Framework_Constraint_IsEqual($constraint);
             }
-
             $this->constraints[] = $constraint;
         }
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -56,32 +52,26 @@ class PHPUnit_Framework_Constraint_Xor extends PHPUnit_Framework_Constraint
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        $success    = true;
+        $success = \true;
         $lastResult = null;
         $constraint = null;
-
         foreach ($this->constraints as $constraint) {
-            $result = $constraint->evaluate($other, $description, true);
-
+            $result = $constraint->evaluate($other, $description, \true);
             if ($result === $lastResult) {
-                $success = false;
+                $success = \false;
                 break;
             }
-
             $lastResult = $result;
         }
-
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -90,18 +80,14 @@ class PHPUnit_Framework_Constraint_Xor extends PHPUnit_Framework_Constraint
     public function toString()
     {
         $text = '';
-
         foreach ($this->constraints as $key => $constraint) {
             if ($key > 0) {
                 $text .= ' xor ';
             }
-
             $text .= $constraint->toString();
         }
-
         return $text;
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -112,11 +98,23 @@ class PHPUnit_Framework_Constraint_Xor extends PHPUnit_Framework_Constraint
     public function count()
     {
         $count = 0;
-
         foreach ($this->constraints as $constraint) {
-            $count += count($constraint);
+            $count += \count($constraint);
         }
-
         return $count;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Logical XOR.
+ *
+ * @since Class available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_Xor', 'PHPUnit_Framework_Constraint_Xor', \false);

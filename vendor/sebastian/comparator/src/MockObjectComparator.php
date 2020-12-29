@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\Comparator;
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
 /**
  * Compares PHPUnit_Framework_MockObject_MockObject instances for equality.
  */
-class MockObjectComparator extends ObjectComparator
+class MockObjectComparator extends \MolliePrefix\SebastianBergmann\Comparator\ObjectComparator
 {
     /**
      * Returns whether the comparator can compare two values.
@@ -24,9 +24,8 @@ class MockObjectComparator extends ObjectComparator
      */
     public function accepts($expected, $actual)
     {
-        return $expected instanceof \PHPUnit_Framework_MockObject_MockObject && $actual instanceof \PHPUnit_Framework_MockObject_MockObject;
+        return $expected instanceof \MolliePrefix\PHPUnit_Framework_MockObject_MockObject && $actual instanceof \MolliePrefix\PHPUnit_Framework_MockObject_MockObject;
     }
-
     /**
      * Converts an object to an array containing all of its private, protected
      * and public properties.
@@ -37,9 +36,7 @@ class MockObjectComparator extends ObjectComparator
     protected function toArray($object)
     {
         $array = parent::toArray($object);
-
         unset($array['__phpunit_invocationMocker']);
-
         return $array;
     }
 }

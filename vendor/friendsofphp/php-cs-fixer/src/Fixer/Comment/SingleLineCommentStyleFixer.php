@@ -78,6 +78,15 @@ $c = 3;
     }
     /**
      * {@inheritdoc}
+     *
+     * Must run after NoUselessReturnFixer.
+     */
+    public function getPriority()
+    {
+        return -19;
+    }
+    /**
+     * {@inheritdoc}
      */
     public function isCandidate(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
@@ -95,6 +104,10 @@ $c = 3;
             $content = $token->getContent();
             $commentContent = \substr($content, 2, -2) ?: '';
             if ($this->hashEnabled && '#' === $content[0]) {
+                if (isset($content[1]) && '[' === $content[1]) {
+                    continue;
+                    // This might be attribute on PHP8, do not change
+                }
                 $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([$token->getId(), '//' . \substr($content, 1)]);
                 continue;
             }

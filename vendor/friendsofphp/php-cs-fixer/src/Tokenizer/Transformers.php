@@ -37,7 +37,7 @@ final class Transformers
         $this->registerBuiltInTransformers();
         \usort($this->items, static function (\MolliePrefix\PhpCsFixer\Tokenizer\TransformerInterface $a, \MolliePrefix\PhpCsFixer\Tokenizer\TransformerInterface $b) {
             return \MolliePrefix\PhpCsFixer\Utils::cmpInt($b->getPriority(), $a->getPriority());
-            // TODO spaceship
+            // TODO: update to use spaceship operator (PHP 7.0 required)
         });
     }
     /**

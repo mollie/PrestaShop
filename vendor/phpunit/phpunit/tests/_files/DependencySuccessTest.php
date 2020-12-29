@@ -1,17 +1,18 @@
 <?php
-class DependencySuccessTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DependencySuccessTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testOne()
     {
     }
-
     /**
      * @depends testOne
      */
     public function testTwo()
     {
     }
-
     /**
      * @depends DependencySuccessTest::testTwo
      */
@@ -19,3 +20,4 @@ class DependencySuccessTest extends PHPUnit_Framework_TestCase
     {
     }
 }
+\class_alias('MolliePrefix\\DependencySuccessTest', 'DependencySuccessTest', \false);

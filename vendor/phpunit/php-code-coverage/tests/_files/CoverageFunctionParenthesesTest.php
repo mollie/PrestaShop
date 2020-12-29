@@ -1,11 +1,15 @@
 <?php
-class CoverageFunctionParenthesesTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class CoverageFunctionParenthesesTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::globalFunction()
      */
     public function testSomething()
     {
-        globalFunction();
+        \MolliePrefix\globalFunction();
     }
 }
+\class_alias('MolliePrefix\\CoverageFunctionParenthesesTest', 'CoverageFunctionParenthesesTest', \false);

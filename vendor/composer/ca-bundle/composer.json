@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "src"
+            "MolliePrefix\\Composer\\CaBundle\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Composer\\CaBundle\\": "tests"
+            "MolliePrefix\\Composer\\CaBundle\\": "tests"
         }
     },
     "extra": {

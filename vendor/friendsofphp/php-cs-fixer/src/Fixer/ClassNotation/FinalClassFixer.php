@@ -34,7 +34,7 @@ class MyApp {}
     protected function createProxyFixers()
     {
         $fixer = new \MolliePrefix\PhpCsFixer\Fixer\ClassNotation\FinalInternalClassFixer();
-        $fixer->configure(['annotation-white-list' => [], 'consider-absent-docblock-as-internal-class' => \true]);
+        $fixer->configure(['annotation_include' => [], 'consider_absent_docblock_as_internal_class' => \true]);
         return [$fixer];
     }
 }

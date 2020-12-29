@@ -1,15 +1,13 @@
 <?php
 
-namespace DeepCopy\f007;
+namespace MolliePrefix\DeepCopy\f007;
 
 use DateTimeZone;
-
-class FooDateTimeZone extends DateTimeZone
+class FooDateTimeZone extends \DateTimeZone
 {
-    public $cloned = false;
-
+    public $cloned = \false;
     public function __clone()
     {
-        $this->cloned = true;
+        $this->cloned = \true;
     }
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,44 +10,37 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * An incomplete test case
  *
  * @since Class available since Release 4.3.0
  */
-class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
+class PHPUnit_Framework_IncompleteTestCase extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @var string
      */
     protected $message = '';
-
     /**
      * @var bool
      */
-    protected $backupGlobals = false;
-
+    protected $backupGlobals = \false;
     /**
      * @var bool
      */
-    protected $backupStaticAttributes = false;
-
+    protected $backupStaticAttributes = \false;
     /**
      * @var bool
      */
-    protected $runTestInSeparateProcess = false;
-
+    protected $runTestInSeparateProcess = \false;
     /**
      * @var bool
      */
-    protected $useErrorHandler = false;
-
+    protected $useErrorHandler = \false;
     /**
      * @var bool
      */
-    protected $useOutputBuffering = false;
-
+    protected $useOutputBuffering = \false;
     /**
      * @param string $className
      * @param string $methodName
@@ -55,7 +51,6 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
         $this->message = $message;
         parent::__construct($className . '::' . $methodName);
     }
-
     /**
      * @throws PHPUnit_Framework_Exception
      */
@@ -63,7 +58,6 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete($this->message);
     }
-
     /**
      * @return string
      */
@@ -71,7 +65,6 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
     {
         return $this->message;
     }
-
     /**
      * Returns a string representation of the test case.
      *
@@ -82,3 +75,17 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
         return $this->getName();
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * An incomplete test case
+ *
+ * @since Class available since Release 4.3.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_IncompleteTestCase', 'PHPUnit_Framework_IncompleteTestCase', \false);

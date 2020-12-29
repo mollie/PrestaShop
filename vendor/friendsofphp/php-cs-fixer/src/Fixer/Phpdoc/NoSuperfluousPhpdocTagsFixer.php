@@ -122,6 +122,9 @@ class Foo {
             } elseif ($token->isGivenKind(\T_VARIABLE)) {
                 $content = $this->fixPropertyDocComment($content, $tokens, $index, $shortNames);
             }
+            if ('' === $content) {
+                $content = '/**  */';
+            }
             if ($content !== $initialContent) {
                 $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, $content]);
             }
@@ -293,7 +296,7 @@ class Foo {
         if ('param' === $annotation->getTag()->getName()) {
             $regex = '/@param\\s+(?:\\S|\\s(?!\\$))++\\s\\$\\S+\\s+\\S/';
         } elseif ('var' === $annotation->getTag()->getName()) {
-            $regex = '/@var\\s+\\S+(\\s+\\$\\S+)?(\\s+)([^$\\s]+)/';
+            $regex = '/@var\\s+\\S+(\\s+\\$\\S+)?(\\s+)(?!\\*+\\/)([^$\\s]+)/';
         } else {
             $regex = '/@return\\s+\\S+\\s+\\S/';
         }

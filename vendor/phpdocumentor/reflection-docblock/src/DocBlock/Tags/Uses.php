@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,58 +10,43 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\DocBlock\Description;
-use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
-use phpDocumentor\Reflection\Fqsen;
-use phpDocumentor\Reflection\FqsenResolver;
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Description;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory;
+use MolliePrefix\phpDocumentor\Reflection\Fqsen;
+use MolliePrefix\phpDocumentor\Reflection\FqsenResolver;
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Reflection class for a {@}uses tag in a Docblock.
  */
-final class Uses extends BaseTag implements Factory\StaticMethod
+final class Uses extends \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\BaseTag implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod
 {
     protected $name = 'uses';
-
     /** @var Fqsen */
     protected $refers = null;
-
     /**
      * Initializes this tag.
      *
      * @param Fqsen       $refers
      * @param Description $description
      */
-    public function __construct(Fqsen $refers, Description $description = null)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\Fqsen $refers, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description $description = null)
     {
-        $this->refers      = $refers;
+        $this->refers = $refers;
         $this->description = $description;
     }
-
     /**
      * {@inheritdoc}
      */
-    public static function create(
-        $body,
-        FqsenResolver $resolver = null,
-        DescriptionFactory $descriptionFactory = null,
-        TypeContext $context = null
-    ) {
-        Assert::string($body);
-        Assert::allNotNull([$resolver, $descriptionFactory]);
-
-        $parts = preg_split('/\s+/Su', $body, 2);
-
-        return new static(
-            $resolver->resolve($parts[0], $context),
-            $descriptionFactory->create(isset($parts[1]) ? $parts[1] : '', $context)
-        );
+    public static function create($body, \MolliePrefix\phpDocumentor\Reflection\FqsenResolver $resolver = null, \MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory $descriptionFactory = null, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
+    {
+        \MolliePrefix\Webmozart\Assert\Assert::string($body);
+        \MolliePrefix\Webmozart\Assert\Assert::allNotNull([$resolver, $descriptionFactory]);
+        $parts = \preg_split('/\\s+/Su', $body, 2);
+        return new static($resolver->resolve($parts[0], $context), $descriptionFactory->create(isset($parts[1]) ? $parts[1] : '', $context));
     }
-
     /**
      * Returns the structural element this tag refers to.
      *
@@ -70,7 +56,6 @@ final class Uses extends BaseTag implements Factory\StaticMethod
     {
         return $this->refers;
     }
-
     /**
      * Returns a string representation of this tag.
      *

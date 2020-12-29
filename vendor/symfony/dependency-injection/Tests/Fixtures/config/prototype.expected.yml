@@ -1,19 +1,19 @@
 
 services:
     service_container:
-        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
+        class: MolliePrefix\Symfony\Component\DependencyInjection\ContainerInterface
         public: true
         synthetic: true
-    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
-        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo:
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Foo
         tags:
             - { name: foo }
             - { name: baz }
         deprecated: '%service_id%'
         arguments: [1]
         factory: f
-    MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar:
-        class: MolliePrefix\MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar
+    MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar:
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\Sub\Bar
         tags:
             - { name: foo }
             - { name: baz }

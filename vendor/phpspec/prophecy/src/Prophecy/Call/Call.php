@@ -8,12 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Prophecy\Call;
+namespace MolliePrefix\Prophecy\Call;
 
 use Exception;
-use Prophecy\Argument\ArgumentsWildcard;
-
+use MolliePrefix\Prophecy\Argument\ArgumentsWildcard;
 /**
  * Call object.
  *
@@ -28,7 +26,6 @@ class Call
     private $file;
     private $line;
     private $scores;
-
     /**
      * Initializes call.
      *
@@ -39,21 +36,18 @@ class Call
      * @param null|string $file
      * @param null|int    $line
      */
-    public function __construct($methodName, array $arguments, $returnValue,
-                                Exception $exception = null, $file, $line)
+    public function __construct($methodName, array $arguments, $returnValue, \Exception $exception = null, $file, $line)
     {
-        $this->methodName  = $methodName;
-        $this->arguments   = $arguments;
+        $this->methodName = $methodName;
+        $this->arguments = $arguments;
         $this->returnValue = $returnValue;
-        $this->exception   = $exception;
-        $this->scores      = new \SplObjectStorage();
-
+        $this->exception = $exception;
+        $this->scores = new \SplObjectStorage();
         if ($file) {
             $this->file = $file;
-            $this->line = intval($line);
+            $this->line = \intval($line);
         }
     }
-
     /**
      * Returns called method name.
      *
@@ -63,7 +57,6 @@ class Call
     {
         return $this->methodName;
     }
-
     /**
      * Returns called method arguments.
      *
@@ -73,7 +66,6 @@ class Call
     {
         return $this->arguments;
     }
-
     /**
      * Returns called method return value.
      *
@@ -83,7 +75,6 @@ class Call
     {
         return $this->returnValue;
     }
-
     /**
      * Returns exception that call thrown.
      *
@@ -93,7 +84,6 @@ class Call
     {
         return $this->exception;
     }
-
     /**
      * Returns callee filename.
      *
@@ -103,7 +93,6 @@ class Call
     {
         return $this->file;
     }
-
     /**
      * Returns callee line number.
      *
@@ -113,7 +102,6 @@ class Call
     {
         return $this->line;
     }
-
     /**
      * Returns short notation for callee place.
      *
@@ -124,10 +112,8 @@ class Call
         if (null === $this->file) {
             return 'unknown';
         }
-
-        return sprintf('%s:%d', $this->file, $this->line);
+        return \sprintf('%s:%d', $this->file, $this->line);
     }
-
     /**
      * Adds the wildcard match score for the provided wildcard.
      *
@@ -136,13 +122,11 @@ class Call
      *
      * @return $this
      */
-    public function addScore(ArgumentsWildcard $wildcard, $score)
+    public function addScore(\MolliePrefix\Prophecy\Argument\ArgumentsWildcard $wildcard, $score)
     {
         $this->scores[$wildcard] = $score;
-
         return $this;
     }
-
     /**
      * Returns wildcard match score for the provided wildcard. The score is
      * calculated if not already done.
@@ -151,12 +135,11 @@ class Call
      *
      * @return false|int False OR integer score (higher - better)
      */
-    public function getScore(ArgumentsWildcard $wildcard)
+    public function getScore(\MolliePrefix\Prophecy\Argument\ArgumentsWildcard $wildcard)
     {
         if (isset($this->scores[$wildcard])) {
             return $this->scores[$wildcard];
         }
-
         return $this->scores[$wildcard] = $wildcard->scoreArguments($this->getArguments());
     }
 }

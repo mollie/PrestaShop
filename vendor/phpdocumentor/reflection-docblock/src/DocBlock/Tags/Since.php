@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,69 +10,56 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags;
-
-use phpDocumentor\Reflection\Types\Context as TypeContext;
-use phpDocumentor\Reflection\DocBlock\Description;
-use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\Types\Context as TypeContext;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Description;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Reflection class for a {@}since tag in a Docblock.
  */
-final class Since extends BaseTag implements Factory\StaticMethod
+final class Since extends \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\BaseTag implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod
 {
     protected $name = 'since';
-
     /**
      * PCRE regular expression matching a version vector.
      * Assumes the "x" modifier.
      */
     const REGEX_VECTOR = '(?:
         # Normal release vectors.
-        \d\S*
+        \\d\\S*
         |
         # VCS version vectors. Per PHPCS, they are expected to
         # follow the form of the VCS name, followed by ":", followed
         # by the version vector itself.
         # By convention, popular VCSes like CVS, SVN and GIT use "$"
         # around the actual version vector.
-        [^\s\:]+\:\s*\$[^\$]+\$
+        [^\\s\\:]+\\:\\s*\\$[^\\$]+\\$
     )';
-
     /** @var string The version vector. */
     private $version = '';
-
-    public function __construct($version = null, Description $description = null)
+    public function __construct($version = null, \MolliePrefix\phpDocumentor\Reflection\DocBlock\Description $description = null)
     {
-        Assert::nullOrStringNotEmpty($version);
-
-        $this->version     = $version;
+        \MolliePrefix\Webmozart\Assert\Assert::nullOrStringNotEmpty($version);
+        $this->version = $version;
         $this->description = $description;
     }
-
     /**
      * @return static
      */
-    public static function create($body, DescriptionFactory $descriptionFactory = null, TypeContext $context = null)
+    public static function create($body, \MolliePrefix\phpDocumentor\Reflection\DocBlock\DescriptionFactory $descriptionFactory = null, \MolliePrefix\phpDocumentor\Reflection\Types\Context $context = null)
     {
-        Assert::nullOrString($body);
+        \MolliePrefix\Webmozart\Assert\Assert::nullOrString($body);
         if (empty($body)) {
             return new static();
         }
-
         $matches = [];
-        if (! preg_match('/^(' . self::REGEX_VECTOR . ')\s*(.+)?$/sux', $body, $matches)) {
+        if (!\preg_match('/^(' . self::REGEX_VECTOR . ')\\s*(.+)?$/sux', $body, $matches)) {
             return null;
         }
-
-        return new static(
-            $matches[1],
-            $descriptionFactory->create(isset($matches[2]) ? $matches[2] : '', $context)
-        );
+        return new static($matches[1], $descriptionFactory->create(isset($matches[2]) ? $matches[2] : '', $context));
     }
-
     /**
      * Gets the version section of the tag.
      *
@@ -81,7 +69,6 @@ final class Since extends BaseTag implements Factory\StaticMethod
     {
         return $this->version;
     }
-
     /**
      * Returns a string representation for this tag.
      *

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,17 +10,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * @since Class available since Release 3.6.6
  */
-class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_ExceptionMessage extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * @var int
      */
     protected $expectedMessage;
-
     /**
      * @param string $expected
      */
@@ -26,7 +27,6 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
         parent::__construct();
         $this->expectedMessage = $expected;
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -37,9 +37,8 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
      */
     protected function matches($other)
     {
-        return strpos($other->getMessage(), $this->expectedMessage) !== false;
+        return \strpos($other->getMessage(), $this->expectedMessage) !== \false;
     }
-
     /**
      * Returns the description of the failure
      *
@@ -52,13 +51,8 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
      */
     protected function failureDescription($other)
     {
-        return sprintf(
-            "exception message '%s' contains '%s'",
-            $other->getMessage(),
-            $this->expectedMessage
-        );
+        return \sprintf("exception message '%s' contains '%s'", $other->getMessage(), $this->expectedMessage);
     }
-
     /**
      * @return string
      */
@@ -67,3 +61,15 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
         return 'exception message contains ';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * @since Class available since Release 3.6.6
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_ExceptionMessage', 'PHPUnit_Framework_Constraint_ExceptionMessage', \false);

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 class NonStatic
 {
     public function suite()
@@ -6,3 +9,4 @@ class NonStatic
         return;
     }
 }
+\class_alias('MolliePrefix\\NonStatic', 'NonStatic', \false);

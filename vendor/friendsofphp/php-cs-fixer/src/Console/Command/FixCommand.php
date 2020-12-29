@@ -97,6 +97,10 @@ final class FixCommand extends \MolliePrefix\Symfony\Component\Console\Command\C
         $reporter = $resolver->getReporter();
         $stdErr = $output instanceof \MolliePrefix\Symfony\Component\Console\Output\ConsoleOutputInterface ? $output->getErrorOutput() : ('txt' === $reporter->getFormat() ? $output : null);
         if (null !== $stdErr) {
+            if (\MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE <= $verbosity) {
+                $stdErr->writeln($this->getApplication()->getLongVersion());
+                $stdErr->writeln(\sprintf('Runtime: <info>PHP %s</info>', \PHP_VERSION));
+            }
             if (null !== $passedConfig && null !== $passedRules) {
                 if (\getenv('PHP_CS_FIXER_FUTURE_MODE')) {
                     throw new \RuntimeException('Passing both `config` and `rules` options is not possible. This check was performed as `PHP_CS_FIXER_FUTURE_MODE` env var is set.');
@@ -105,9 +109,6 @@ final class FixCommand extends \MolliePrefix\Symfony\Component\Console\Command\C
             }
             $configFile = $resolver->getConfigFile();
             $stdErr->writeln(\sprintf('Loaded config <comment>%s</comment>%s.', $resolver->getConfig()->getName(), null === $configFile ? '' : ' from "' . $configFile . '"'));
-            if (\MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
-                $stdErr->writeln(\sprintf('Runtime: <info>PHP %s</info>', \PHP_VERSION));
-            }
             if ($resolver->getUsingCache()) {
                 $cacheFile = $resolver->getCacheFile();
                 if (\is_file($cacheFile)) {
@@ -135,7 +136,7 @@ final class FixCommand extends \MolliePrefix\Symfony\Component\Console\Command\C
         $this->stopwatch->stop('fixFiles');
         $progressOutput->printLegend();
         $fixEvent = $this->stopwatch->getEvent('fixFiles');
-        $reportSummary = new \MolliePrefix\PhpCsFixer\Report\ReportSummary($changed, $fixEvent->getDuration(), $fixEvent->getMemory(), \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity(), $resolver->isDryRun(), $output->isDecorated());
+        $reportSummary = new \MolliePrefix\PhpCsFixer\Report\ReportSummary($changed, $fixEvent->getDuration(), $fixEvent->getMemory(), \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERBOSE <= $verbosity, $resolver->isDryRun(), $output->isDecorated());
         $output->isDecorated() ? $output->write($reporter->generate($reportSummary)) : $output->write($reporter->generate($reportSummary), \false, \MolliePrefix\Symfony\Component\Console\Output\OutputInterface::OUTPUT_RAW);
         $invalidErrors = $this->errorsManager->getInvalidErrors();
         $exceptionErrors = $this->errorsManager->getExceptionErrors();

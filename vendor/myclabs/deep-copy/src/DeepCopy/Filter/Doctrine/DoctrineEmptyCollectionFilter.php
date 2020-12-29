@@ -1,15 +1,14 @@
 <?php
 
-namespace DeepCopy\Filter\Doctrine;
+namespace MolliePrefix\DeepCopy\Filter\Doctrine;
 
-use DeepCopy\Filter\Filter;
-use DeepCopy\Reflection\ReflectionHelper;
-use Doctrine\Common\Collections\ArrayCollection;
-
+use MolliePrefix\DeepCopy\Filter\Filter;
+use MolliePrefix\DeepCopy\Reflection\ReflectionHelper;
+use MolliePrefix\Doctrine\Common\Collections\ArrayCollection;
 /**
  * @final
  */
-class DoctrineEmptyCollectionFilter implements Filter
+class DoctrineEmptyCollectionFilter implements \MolliePrefix\DeepCopy\Filter\Filter
 {
     /**
      * Sets the object property to an empty doctrine collection.
@@ -20,9 +19,8 @@ class DoctrineEmptyCollectionFilter implements Filter
      */
     public function apply($object, $property, $objectCopier)
     {
-        $reflectionProperty = ReflectionHelper::getProperty($object, $property);
-        $reflectionProperty->setAccessible(true);
-
-        $reflectionProperty->setValue($object, new ArrayCollection());
+        $reflectionProperty = \MolliePrefix\DeepCopy\Reflection\ReflectionHelper::getProperty($object, $property);
+        $reflectionProperty->setAccessible(\true);
+        $reflectionProperty->setValue($object, new \MolliePrefix\Doctrine\Common\Collections\ArrayCollection());
     }
-} 
+}

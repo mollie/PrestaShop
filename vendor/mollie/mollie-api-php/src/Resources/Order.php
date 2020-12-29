@@ -418,7 +418,7 @@ class Order extends \MolliePrefix\Mollie\Api\Resources\BaseResource
         if (!isset($this->_links->self->href)) {
             return $this;
         }
-        $body = \json_encode(array("billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl));
+        $body = \json_encode(["billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl]);
         $result = $this->client->performHttpCallToFullUrl(\MolliePrefix\Mollie\Api\MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
         return \MolliePrefix\Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \MolliePrefix\Mollie\Api\Resources\Order($this->client));
     }

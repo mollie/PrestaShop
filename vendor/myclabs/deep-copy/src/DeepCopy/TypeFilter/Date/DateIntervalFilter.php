@@ -1,18 +1,16 @@
 <?php
 
-namespace DeepCopy\TypeFilter\Date;
+namespace MolliePrefix\DeepCopy\TypeFilter\Date;
 
 use DateInterval;
-use DeepCopy\TypeFilter\TypeFilter;
-
+use MolliePrefix\DeepCopy\TypeFilter\TypeFilter;
 /**
  * @final
  *
  * @deprecated Will be removed in 2.0. This filter will no longer be necessary in PHP 7.1+.
  */
-class DateIntervalFilter implements TypeFilter
+class DateIntervalFilter implements \MolliePrefix\DeepCopy\TypeFilter\TypeFilter
 {
-
     /**
      * {@inheritdoc}
      *
@@ -22,12 +20,10 @@ class DateIntervalFilter implements TypeFilter
      */
     public function apply($element)
     {
-        $copy = new DateInterval('P0D');
-
+        $copy = new \DateInterval('P0D');
         foreach ($element as $propertyName => $propertyValue) {
             $copy->{$propertyName} = $propertyValue;
         }
-
         return $copy;
     }
 }

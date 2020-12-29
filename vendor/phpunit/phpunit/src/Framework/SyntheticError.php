@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Creates a synthetic failed assertion.
  *
  * @since Class available since Release 3.5.0
  */
-class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailedError
+class PHPUnit_Framework_SyntheticError extends \MolliePrefix\PHPUnit_Framework_AssertionFailedError
 {
     /**
      * The synthetic file.
@@ -21,21 +23,18 @@ class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailed
      * @var string
      */
     protected $syntheticFile = '';
-
     /**
      * The synthetic line number.
      *
      * @var int
      */
     protected $syntheticLine = 0;
-
     /**
      * The synthetic trace.
      *
      * @var array
      */
     protected $syntheticTrace = [];
-
     /**
      * Constructor.
      *
@@ -48,12 +47,10 @@ class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailed
     public function __construct($message, $code, $file, $line, $trace)
     {
         parent::__construct($message, $code);
-
-        $this->syntheticFile  = $file;
-        $this->syntheticLine  = $line;
+        $this->syntheticFile = $file;
+        $this->syntheticLine = $line;
         $this->syntheticTrace = $trace;
     }
-
     /**
      * @return string
      */
@@ -61,7 +58,6 @@ class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailed
     {
         return $this->syntheticFile;
     }
-
     /**
      * @return int
      */
@@ -69,7 +65,6 @@ class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailed
     {
         return $this->syntheticLine;
     }
-
     /**
      * @return array
      */
@@ -78,3 +73,17 @@ class PHPUnit_Framework_SyntheticError extends PHPUnit_Framework_AssertionFailed
         return $this->syntheticTrace;
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Creates a synthetic failed assertion.
+ *
+ * @since Class available since Release 3.5.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_SyntheticError', 'PHPUnit_Framework_SyntheticError', \false);

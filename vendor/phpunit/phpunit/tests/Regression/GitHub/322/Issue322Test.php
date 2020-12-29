@@ -1,5 +1,8 @@
 <?php
-class Issue322Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue322Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @group one
@@ -7,7 +10,6 @@ class Issue322Test extends PHPUnit_Framework_TestCase
     public function testOne()
     {
     }
-
     /**
      * @group two
      */
@@ -15,3 +17,4 @@ class Issue322Test extends PHPUnit_Framework_TestCase
     {
     }
 }
+\class_alias('MolliePrefix\\Issue322Test', 'Issue322Test', \false);

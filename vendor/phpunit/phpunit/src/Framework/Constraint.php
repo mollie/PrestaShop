@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,23 +10,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-use SebastianBergmann\Exporter\Exporter;
-
+use MolliePrefix\SebastianBergmann\Exporter\Exporter;
 /**
  * Abstract base class for constraints which can be applied to any value.
  *
  * @since Interface available since Release 3.0.0
  */
-abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framework_SelfDescribing
+abstract class PHPUnit_Framework_Constraint implements \Countable, \MolliePrefix\PHPUnit_Framework_SelfDescribing
 {
     protected $exporter;
-
     public function __construct()
     {
-        $this->exporter = new Exporter;
+        $this->exporter = new \MolliePrefix\SebastianBergmann\Exporter\Exporter();
     }
-
     /**
      * Evaluates the constraint for parameter $other
      *
@@ -42,23 +41,19 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, $description = '', $returnResult = \false)
     {
-        $success = false;
-
+        $success = \false;
         if ($this->matches($other)) {
-            $success = true;
+            $success = \true;
         }
-
         if ($returnResult) {
             return $success;
         }
-
         if (!$success) {
             $this->fail($other, $description);
         }
     }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -71,9 +66,8 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
      */
     protected function matches($other)
     {
-        return false;
+        return \false;
     }
-
     /**
      * Counts the number of constraint elements.
      *
@@ -85,7 +79,6 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
     {
         return 1;
     }
-
     /**
      * Throws an exception for the given compared value and test description
      *
@@ -95,29 +88,18 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    protected function fail($other, $description, SebastianBergmann\Comparator\ComparisonFailure $comparisonFailure = null)
+    protected function fail($other, $description, \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure $comparisonFailure = null)
     {
-        $failureDescription = sprintf(
-            'Failed asserting that %s.',
-            $this->failureDescription($other)
-        );
-
+        $failureDescription = \sprintf('Failed asserting that %s.', $this->failureDescription($other));
         $additionalFailureDescription = $this->additionalFailureDescription($other);
-
         if ($additionalFailureDescription) {
             $failureDescription .= "\n" . $additionalFailureDescription;
         }
-
         if (!empty($description)) {
             $failureDescription = $description . "\n" . $failureDescription;
         }
-
-        throw new PHPUnit_Framework_ExpectationFailedException(
-            $failureDescription,
-            $comparisonFailure
-        );
+        throw new \MolliePrefix\PHPUnit_Framework_ExpectationFailedException($failureDescription, $comparisonFailure);
     }
-
     /**
      * Return additional failure description where needed
      *
@@ -132,7 +114,6 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
     {
         return '';
     }
-
     /**
      * Returns the description of the failure
      *
@@ -151,3 +132,9 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
         return $this->exporter->export($other) . ' ' . $this->toString();
     }
 }
+/**
+ * Abstract base class for constraints which can be applied to any value.
+ *
+ * @since Interface available since Release 3.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint', 'PHPUnit_Framework_Constraint', \false);

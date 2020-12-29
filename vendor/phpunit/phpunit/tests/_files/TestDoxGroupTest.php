@@ -1,6 +1,8 @@
 <?php
 
-class TestDoxGroupTest extends PHPUnit_Framework_TestCase
+namespace MolliePrefix;
+
+class TestDoxGroupTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @group one
@@ -8,7 +10,6 @@ class TestDoxGroupTest extends PHPUnit_Framework_TestCase
     public function testOne()
     {
     }
-
     /**
      * @group two
      */
@@ -16,3 +17,4 @@ class TestDoxGroupTest extends PHPUnit_Framework_TestCase
     {
     }
 }
+\class_alias('MolliePrefix\\TestDoxGroupTest', 'TestDoxGroupTest', \false);

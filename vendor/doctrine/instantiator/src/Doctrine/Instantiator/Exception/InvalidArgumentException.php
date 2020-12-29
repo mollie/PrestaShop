@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,18 +17,16 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace Doctrine\Instantiator\Exception;
+namespace MolliePrefix\Doctrine\Instantiator\Exception;
 
 use InvalidArgumentException as BaseInvalidArgumentException;
 use ReflectionClass;
-
 /**
  * Exception for invalid arguments provided to the instantiator
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class InvalidArgumentException extends BaseInvalidArgumentException implements ExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException implements \MolliePrefix\Doctrine\Instantiator\Exception\ExceptionInterface
 {
     /**
      * @param string $className
@@ -36,27 +35,21 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements E
      */
     public static function fromNonExistingClass($className)
     {
-        if (interface_exists($className)) {
-            return new self(sprintf('The provided type "%s" is an interface, and can not be instantiated', $className));
+        if (\interface_exists($className)) {
+            return new self(\sprintf('The provided type "%s" is an interface, and can not be instantiated', $className));
         }
-
-        if (PHP_VERSION_ID >= 50400 && trait_exists($className)) {
-            return new self(sprintf('The provided type "%s" is a trait, and can not be instantiated', $className));
+        if (\PHP_VERSION_ID >= 50400 && \trait_exists($className)) {
+            return new self(\sprintf('The provided type "%s" is a trait, and can not be instantiated', $className));
         }
-
-        return new self(sprintf('The provided class "%s" does not exist', $className));
+        return new self(\sprintf('The provided class "%s" does not exist', $className));
     }
-
     /**
      * @param ReflectionClass $reflectionClass
      *
      * @return self
      */
-    public static function fromAbstractClass(ReflectionClass $reflectionClass)
+    public static function fromAbstractClass(\ReflectionClass $reflectionClass)
     {
-        return new self(sprintf(
-            'The provided class "%s" is abstract, and can not be instantiated',
-            $reflectionClass->getName()
-        ));
+        return new self(\sprintf('The provided class "%s" is abstract, and can not be instantiated', $reflectionClass->getName()));
     }
 }

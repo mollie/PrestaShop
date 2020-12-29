@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepCopy;
+namespace MolliePrefix\DeepCopy;
 
 /**
  * Deep copies the given value.
@@ -10,7 +10,7 @@ namespace DeepCopy;
  *
  * @return mixed
  */
-function deep_copy($value, $useCloneMethod = false)
+function deep_copy($value, $useCloneMethod = \false)
 {
-    return (new DeepCopy($useCloneMethod))->copy($value);
+    return (new \MolliePrefix\DeepCopy\DeepCopy($useCloneMethod))->copy($value);
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,15 +10,13 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\Types;
 
-namespace phpDocumentor\Reflection\Types;
-
-use phpDocumentor\Reflection\Type;
-
+use MolliePrefix\phpDocumentor\Reflection\Type;
 /**
  * Value Object representing a null value or type.
  */
-final class Null_ implements Type
+final class Null_ implements \MolliePrefix\phpDocumentor\Reflection\Type
 {
     /**
      * Returns a rendered output of the Type as it would be used in a DocBlock.

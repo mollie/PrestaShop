@@ -1,5 +1,7 @@
 <?php
 
+namespace MolliePrefix;
+
 /**
  * @requires PHP 5.3
  * @requires PHPUnit 4.0
@@ -20,3 +22,11 @@ class RequirementsClassDocBlockTest
     {
     }
 }
+/**
+ * @requires PHP 5.3
+ * @requires PHPUnit 4.0
+ * @requires OS Linux
+ * @requires function testFuncClass
+ * @requires extension testExtClass
+ */
+\class_alias('MolliePrefix\\RequirementsClassDocBlockTest', 'RequirementsClassDocBlockTest', \false);

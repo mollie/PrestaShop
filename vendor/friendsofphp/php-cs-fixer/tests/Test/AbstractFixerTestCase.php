@@ -53,10 +53,10 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
     // do not modify this structure without prior discussion
     private $allowedRequiredOptions = ['header_comment' => ['header' => \true]];
     // do not modify this structure without prior discussion
-    private $allowedFixersWithoutDefaultCodeSample = ['general_phpdoc_annotation_remove' => \true];
-    protected function setUp()
+    private $allowedFixersWithoutDefaultCodeSample = ['general_phpdoc_annotation_remove' => \true, 'general_phpdoc_tag_rename' => \true];
+    protected function doSetUp()
     {
-        parent::setUp();
+        parent::doSetUp();
         $this->linter = $this->getLinter();
         $this->fixer = $this->createFixer();
         // @todo remove at 3.0 together with env var itself
@@ -64,9 +64,9 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::setLegacyMode(\true);
         }
     }
-    protected function tearDown()
+    protected function doTearDown()
     {
-        parent::tearDown();
+        parent::doTearDown();
         $this->linter = null;
         $this->fixer = null;
         // @todo remove at 3.0
@@ -74,7 +74,7 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
     }
     public final function testIsRisky()
     {
-        static::assertInternalType('bool', $this->fixer->isRisky(), \sprintf('Return type for ::isRisky of "%s" is invalid.', $this->fixer->getName()));
+        static::assertIsBool($this->fixer->isRisky(), \sprintf('Return type for ::isRisky of "%s" is invalid.', $this->fixer->getName()));
         if ($this->fixer->isRisky()) {
             self::assertValidDescription($this->fixer->getName(), 'risky description', $this->fixer->getDefinition()->getRiskyDescription());
         } else {
@@ -100,9 +100,9 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
         $dummyFileInfo = new \MolliePrefix\PhpCsFixer\StdinFileInfo();
         foreach ($samples as $sampleCounter => $sample) {
             static::assertInstanceOf(\MolliePrefix\PhpCsFixer\FixerDefinition\CodeSampleInterface::class, $sample, \sprintf('[%s] Sample #%d', $fixerName, $sampleCounter));
-            static::assertInternalType('int', $sampleCounter);
+            static::assertIsInt($sampleCounter);
             $code = $sample->getCode();
-            static::assertInternalType('string', $code, \sprintf('[%s] Sample #%d', $fixerName, $sampleCounter));
+            static::assertIsString($code, \sprintf('[%s] Sample #%d', $fixerName, $sampleCounter));
             static::assertNotEmpty($code, \sprintf('[%s] Sample #%d', $fixerName, $sampleCounter));
             if (!$this->fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\Whitespace\SingleBlankLineAtEofFixer) {
                 static::assertSame("\n", \substr($code, -1), \sprintf('[%s] Sample #%d must end with linebreak', $fixerName, $sampleCounter));
@@ -110,7 +110,7 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             $config = $sample->getConfiguration();
             if (null !== $config) {
                 static::assertTrue($fixerIsConfigurable, \sprintf('[%s] Sample #%d has configuration, but the fixer is not configurable.', $fixerName, $sampleCounter));
-                static::assertInternalType('array', $config, \sprintf('[%s] Sample #%d configuration must be an array or null.', $fixerName, $sampleCounter));
+                static::assertIsArray($config, \sprintf('[%s] Sample #%d configuration must be an array or null.', $fixerName, $sampleCounter));
                 $configSamplesProvided[$sampleCounter] = $config;
             } elseif ($fixerIsConfigurable) {
                 if (!$sample instanceof \MolliePrefix\PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface) {
@@ -143,8 +143,6 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             $fixerNamesWithKnownMissingSamplesWithConfig = [
                 // @TODO 3.0 - remove this
                 'is_null',
-                // has only one option which is deprecated
-                'php_unit_dedicate_assert_internal_type',
             ];
             if (\count($configSamplesProvided) < 2) {
                 if (\in_array($fixerName, $fixerNamesWithKnownMissingSamplesWithConfig, \true)) {
@@ -156,11 +154,7 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             }
             $options = $this->fixer->getConfigurationDefinition()->getOptions();
             foreach ($options as $option) {
-                // @TODO 2.17 adjust fixers to use new casing and deprecate old one
-                if (\in_array($fixerName, ['final_internal_class', 'ordered_class_elements'], \true)) {
-                    static::markTestIncomplete(\sprintf('Rule "%s" is not following new option casing yet, please help.', $fixerName));
-                }
-                static::assertRegExp('/^[a-z_]+[a-z]$/', $option->getName(), \sprintf('[%s] Option %s is not snake_case.', $fixerName, $option->getName()));
+                static::assertMatchesRegularExpression('/^[a-z_]+[a-z]$/', $option->getName(), \sprintf('[%s] Option %s is not snake_case.', $fixerName, $option->getName()));
             }
         }
     }
@@ -188,11 +182,11 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
     {
         $reflection = new \ReflectionClass($this->fixer);
         $comment = $reflection->getDocComment();
-        static::assertNotContains('DEPRECATED', $this->fixer->getDefinition()->getSummary(), 'Fixer cannot contain word "DEPRECATED" in summary');
+        static::assertStringNotContainsString('DEPRECATED', $this->fixer->getDefinition()->getSummary(), 'Fixer cannot contain word "DEPRECATED" in summary');
         if ($this->fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface) {
-            static::assertContains('@deprecated', $comment);
+            static::assertStringContainsString('@deprecated', $comment);
         } elseif (\is_string($comment)) {
-            static::assertNotContains('@deprecated', $comment);
+            static::assertStringNotContainsString('@deprecated', $comment);
         }
     }
     public final function testFixerConfigurationDefinitions()
@@ -208,18 +202,18 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
             static::assertInstanceOf(\MolliePrefix\PhpCsFixer\FixerConfiguration\FixerOptionInterface::class, $option);
             static::assertNotEmpty($option->getDescription());
             static::assertSame(!isset($this->allowedRequiredOptions[$this->fixer->getName()][$option->getName()]), $option->hasDefault(), \sprintf($option->hasDefault() ? 'Option `%s` of fixer `%s` is wrongly listed in `$allowedRequiredOptions` structure, as it is not required. If you just changed that option to not be required anymore, please adjust mentioned structure.' : 'Option `%s` of fixer `%s` shall not be required. If you want to introduce new required option please adjust `$allowedRequiredOptions` structure.', $option->getName(), $this->fixer->getName()));
-            static::assertNotContains('DEPRECATED', $option->getDescription(), 'Option description cannot contain word "DEPRECATED"');
+            static::assertStringNotContainsString('DEPRECATED', $option->getDescription(), 'Option description cannot contain word "DEPRECATED"');
         }
     }
     public final function testFixersReturnTypes()
     {
         $tokens = \MolliePrefix\PhpCsFixer\Tokenizer\Tokens::fromCode('<?php ');
         $emptyTokens = new \MolliePrefix\PhpCsFixer\Tokenizer\Tokens();
-        static::assertInternalType('int', $this->fixer->getPriority(), \sprintf('Return type for ::getPriority of "%s" is invalid.', $this->fixer->getName()));
-        static::assertInternalType('bool', $this->fixer->supports(new \SplFileInfo(__FILE__)), \sprintf('Return type for ::supports of "%s" is invalid.', $this->fixer->getName()));
-        static::assertInternalType('bool', $this->fixer->isCandidate($emptyTokens), \sprintf('Return type for ::isCandidate with empty tokens of "%s" is invalid.', $this->fixer->getName()));
+        static::assertIsInt($this->fixer->getPriority(), \sprintf('Return type for ::getPriority of "%s" is invalid.', $this->fixer->getName()));
+        static::assertIsBool($this->fixer->supports(new \SplFileInfo(__FILE__)), \sprintf('Return type for ::supports of "%s" is invalid.', $this->fixer->getName()));
+        static::assertIsBool($this->fixer->isCandidate($emptyTokens), \sprintf('Return type for ::isCandidate with empty tokens of "%s" is invalid.', $this->fixer->getName()));
         static::assertFalse($emptyTokens->isChanged());
-        static::assertInternalType('bool', $this->fixer->isCandidate($tokens), \sprintf('Return type for ::isCandidate of "%s" is invalid.', $this->fixer->getName()));
+        static::assertIsBool($this->fixer->isCandidate($tokens), \sprintf('Return type for ::isCandidate of "%s" is invalid.', $this->fixer->getName()));
         static::assertFalse($tokens->isChanged());
         if ($this->fixer instanceof \MolliePrefix\PhpCsFixer\Fixer\Comment\HeaderCommentFixer) {
             $this->fixer->configure(['header' => 'a']);
@@ -338,9 +332,9 @@ abstract class AbstractFixerTestCase extends \MolliePrefix\PhpCsFixer\Tests\Test
      */
     private static function assertValidDescription($fixerName, $descriptionType, $description)
     {
-        static::assertInternalType('string', $description);
-        static::assertRegExp('/^[A-Z`][^"]+\\.$/', $description, \sprintf('[%s] The %s must start with capital letter or a ` and end with dot.', $fixerName, $descriptionType));
-        static::assertNotContains('phpdocs', $description, \sprintf('[%s] `PHPDoc` must not be in the plural in %s.', $fixerName, $descriptionType), \true);
+        static::assertIsString($description);
+        static::assertMatchesRegularExpression('/^[A-Z`][^"]+\\.$/', $description, \sprintf('[%s] The %s must start with capital letter or a ` and end with dot.', $fixerName, $descriptionType));
+        static::assertStringNotContainsString('phpdocs', $description, \sprintf('[%s] `PHPDoc` must not be in the plural in %s.', $fixerName, $descriptionType));
         static::assertCorrectCasing($description, 'PHPDoc', \sprintf('[%s] `PHPDoc` must be in correct casing in %s.', $fixerName, $descriptionType));
         static::assertCorrectCasing($description, 'PHPUnit', \sprintf('[%s] `PHPUnit` must be in correct casing in %s.', $fixerName, $descriptionType));
         static::assertFalse(\strpos($descriptionType, '``'), \sprintf('[%s] The %s must no contain sequential backticks.', $fixerName, $descriptionType));

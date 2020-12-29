@@ -62,7 +62,7 @@ final class NoMixedEchoPrintFixer extends \MolliePrefix\PhpCsFixer\AbstractFixer
     /**
      * {@inheritdoc}
      *
-     * Must run after NoShortEchoTagFixer.
+     * Must run after EchoTagSyntaxFixer, NoShortEchoTagFixer.
      */
     public function getPriority()
     {

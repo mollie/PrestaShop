@@ -1,35 +1,34 @@
 <?php
-class ExceptionInTearDownTest extends PHPUnit_Framework_TestCase
-{
-    public $setUp                = false;
-    public $assertPreConditions  = false;
-    public $assertPostConditions = false;
-    public $tearDown             = false;
-    public $testSomething        = false;
 
+namespace MolliePrefix;
+
+class ExceptionInTearDownTest extends \MolliePrefix\PHPUnit_Framework_TestCase
+{
+    public $setUp = \false;
+    public $assertPreConditions = \false;
+    public $assertPostConditions = \false;
+    public $tearDown = \false;
+    public $testSomething = \false;
     protected function setUp()
     {
-        $this->setUp = true;
+        $this->setUp = \true;
     }
-
     protected function assertPreConditions()
     {
-        $this->assertPreConditions = true;
+        $this->assertPreConditions = \true;
     }
-
     public function testSomething()
     {
-        $this->testSomething = true;
+        $this->testSomething = \true;
     }
-
     protected function assertPostConditions()
     {
-        $this->assertPostConditions = true;
+        $this->assertPostConditions = \true;
     }
-
     protected function tearDown()
     {
-        $this->tearDown = true;
-        throw new Exception;
+        $this->tearDown = \true;
+        throw new \Exception();
     }
 }
+\class_alias('MolliePrefix\\ExceptionInTearDownTest', 'ExceptionInTearDownTest', \false);

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of PHPUnit.
  *
@@ -7,13 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Constraint that asserts that a string is valid JSON.
  *
  * @since Class available since Release 3.7.20
  */
-class PHPUnit_Framework_Constraint_IsJson extends PHPUnit_Framework_Constraint
+class PHPUnit_Framework_Constraint_IsJson extends \MolliePrefix\PHPUnit_Framework_Constraint
 {
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
@@ -26,17 +28,14 @@ class PHPUnit_Framework_Constraint_IsJson extends PHPUnit_Framework_Constraint
     protected function matches($other)
     {
         if ($other === '') {
-            return false;
+            return \false;
         }
-
-        json_decode($other);
-        if (json_last_error()) {
-            return false;
+        \json_decode($other);
+        if (\json_last_error()) {
+            return \false;
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Returns the description of the failure
      *
@@ -52,19 +51,10 @@ class PHPUnit_Framework_Constraint_IsJson extends PHPUnit_Framework_Constraint
         if ($other === '') {
             return 'an empty string is valid JSON';
         }
-
-        json_decode($other);
-        $error = PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider::determineJsonError(
-            json_last_error()
-        );
-
-        return sprintf(
-            '%s is valid JSON (%s)',
-            $this->exporter->shortenedExport($other),
-            $error
-        );
+        \json_decode($other);
+        $error = \MolliePrefix\PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider::determineJsonError(\json_last_error());
+        return \sprintf('%s is valid JSON (%s)', $this->exporter->shortenedExport($other), $error);
     }
-
     /**
      * Returns a string representation of the constraint.
      *
@@ -75,3 +65,17 @@ class PHPUnit_Framework_Constraint_IsJson extends PHPUnit_Framework_Constraint
         return 'is valid JSON';
     }
 }
+/*
+ * This file is part of PHPUnit.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Constraint that asserts that a string is valid JSON.
+ *
+ * @since Class available since Release 3.7.20
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_Constraint_IsJson', 'PHPUnit_Framework_Constraint_IsJson', \false);

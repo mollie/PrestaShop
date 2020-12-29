@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,13 +10,11 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock;
 
-namespace phpDocumentor\Reflection\DocBlock;
-
-use phpDocumentor\Reflection\DocBlock\Tags\Formatter;
-use phpDocumentor\Reflection\DocBlock\Tags\Formatter\PassthroughFormatter;
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter;
+use MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter\PassthroughFormatter;
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Object representing to description for a DocBlock.
  *
@@ -52,10 +51,8 @@ class Description
 {
     /** @var string */
     private $bodyTemplate;
-
     /** @var Tag[] */
     private $tags;
-
     /**
      * Initializes a Description with its body (template) and a listing of the tags used in the body template.
      *
@@ -64,12 +61,10 @@ class Description
      */
     public function __construct($bodyTemplate, array $tags = [])
     {
-        Assert::string($bodyTemplate);
-
+        \MolliePrefix\Webmozart\Assert\Assert::string($bodyTemplate);
         $this->bodyTemplate = $bodyTemplate;
         $this->tags = $tags;
     }
-    
     /**
      * Returns the tags for this DocBlock.
      *
@@ -79,7 +74,6 @@ class Description
     {
         return $this->tags;
     }
-
     /**
      * Renders this description as a string where the provided formatter will format the tags in the expected string
      * format.
@@ -88,19 +82,17 @@ class Description
      *
      * @return string
      */
-    public function render(Formatter $formatter = null)
+    public function render(\MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter $formatter = null)
     {
         if ($formatter === null) {
-            $formatter = new PassthroughFormatter();
+            $formatter = new \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Formatter\PassthroughFormatter();
         }
-
         $tags = [];
         foreach ($this->tags as $tag) {
             $tags[] = '{' . $formatter->format($tag) . '}';
         }
-        return vsprintf($this->bodyTemplate, $tags);
+        return \vsprintf($this->bodyTemplate, $tags);
     }
-
     /**
      * Returns a plain string representation of this description.
      *

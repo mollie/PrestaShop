@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,24 +17,22 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace DoctrineTest\InstantiatorTestAsset;
+namespace MolliePrefix\DoctrineTest\InstantiatorTestAsset;
 
 use ArrayObject;
 use BadMethodCallException;
-
 /**
  * A simple asset for an abstract class
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class UnserializeExceptionArrayObjectAsset extends ArrayObject
+class UnserializeExceptionArrayObjectAsset extends \ArrayObject
 {
     /**
      * {@inheritDoc}
      */
     public function __wakeup()
     {
-        throw new BadMethodCallException();
+        throw new \BadMethodCallException();
     }
 }

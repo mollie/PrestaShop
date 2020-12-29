@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the php-code-coverage package.
  *
@@ -7,29 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\CodeCoverage;
+namespace MolliePrefix\SebastianBergmann\CodeCoverage;
 
 /**
  * Exception that is raised when code is unintentionally covered.
  */
-class UnintentionallyCoveredCodeException extends RuntimeException
+class UnintentionallyCoveredCodeException extends \MolliePrefix\SebastianBergmann\CodeCoverage\RuntimeException
 {
     /**
      * @var array
      */
     private $unintentionallyCoveredUnits = [];
-
     /**
      * @param array $unintentionallyCoveredUnits
      */
     public function __construct(array $unintentionallyCoveredUnits)
     {
         $this->unintentionallyCoveredUnits = $unintentionallyCoveredUnits;
-
         parent::__construct($this->toString());
     }
-
     /**
      * @return array
      */
@@ -37,18 +34,15 @@ class UnintentionallyCoveredCodeException extends RuntimeException
     {
         return $this->unintentionallyCoveredUnits;
     }
-
     /**
      * @return string
      */
     private function toString()
     {
         $message = '';
-
         foreach ($this->unintentionallyCoveredUnits as $unit) {
             $message .= '- ' . $unit . "\n";
         }
-
         return $message;
     }
 }

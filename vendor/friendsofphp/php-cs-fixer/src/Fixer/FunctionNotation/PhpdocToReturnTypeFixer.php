@@ -124,6 +124,9 @@ final class Foo {
      */
     protected function applyFix(\SplFileInfo $file, \MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            unset($this->skippedTypes['mixed']);
+        }
         for ($index = $tokens->count() - 1; 0 < $index; --$index) {
             if (!$tokens[$index]->isGivenKind(\T_FUNCTION) && (\PHP_VERSION_ID < 70400 || !$tokens[$index]->isGivenKind(T_FN))) {
                 continue;

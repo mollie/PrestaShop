@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Comparator package.
  *
@@ -7,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace SebastianBergmann\Comparator;
+namespace MolliePrefix\SebastianBergmann\Comparator;
 
 /**
  * Compares scalar or NULL values for equality.
  */
-class ScalarComparator extends Comparator
+class ScalarComparator extends \MolliePrefix\SebastianBergmann\Comparator\Comparator
 {
     /**
      * Returns whether the comparator can compare two values.
@@ -25,13 +25,8 @@ class ScalarComparator extends Comparator
      */
     public function accepts($expected, $actual)
     {
-        return ((is_scalar($expected) xor null === $expected) &&
-               (is_scalar($actual) xor null === $actual))
-               // allow comparison between strings and objects featuring __toString()
-               || (is_string($expected) && is_object($actual) && method_exists($actual, '__toString'))
-               || (is_object($expected) && method_exists($expected, '__toString') && is_string($actual));
+        return (\is_scalar($expected) xor null === $expected) && (\is_scalar($actual) xor null === $actual) || \is_string($expected) && \is_object($actual) && \method_exists($actual, '__toString') || \is_object($expected) && \method_exists($expected, '__toString') && \is_string($actual);
     }
-
     /**
      * Asserts that two values are equal.
      *
@@ -43,47 +38,32 @@ class ScalarComparator extends Comparator
      *
      * @throws ComparisonFailure
      */
-    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false)
+    public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = \false, $ignoreCase = \false)
     {
         $expectedToCompare = $expected;
-        $actualToCompare   = $actual;
-
+        $actualToCompare = $actual;
         // always compare as strings to avoid strange behaviour
         // otherwise 0 == 'Foobar'
-        if (is_string($expected) || is_string($actual)) {
+        if (\is_string($expected) || \is_string($actual)) {
             $expectedToCompare = (string) $expectedToCompare;
-            $actualToCompare   = (string) $actualToCompare;
-
+            $actualToCompare = (string) $actualToCompare;
             if ($ignoreCase) {
-                $expectedToCompare = strtolower($expectedToCompare);
-                $actualToCompare   = strtolower($actualToCompare);
+                $expectedToCompare = \strtolower($expectedToCompare);
+                $actualToCompare = \strtolower($actualToCompare);
             }
         }
-
         if ($expectedToCompare != $actualToCompare) {
-            if (is_string($expected) && is_string($actual)) {
-                throw new ComparisonFailure(
-                    $expected,
-                    $actual,
-                    $this->exporter->export($expected),
-                    $this->exporter->export($actual),
-                    false,
-                    'Failed asserting that two strings are equal.'
-                );
+            if (\is_string($expected) && \is_string($actual)) {
+                throw new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure($expected, $actual, $this->exporter->export($expected), $this->exporter->export($actual), \false, 'Failed asserting that two strings are equal.');
             }
-
-            throw new ComparisonFailure(
+            throw new \MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure(
                 $expected,
                 $actual,
                 // no diff is required
                 '',
                 '',
-                false,
-                sprintf(
-                    'Failed asserting that %s matches expected %s.',
-                    $this->exporter->export($actual),
-                    $this->exporter->export($expected)
-                )
+                \false,
+                \sprintf('Failed asserting that %s matches expected %s.', $this->exporter->export($actual), $this->exporter->export($expected))
             );
         }
     }

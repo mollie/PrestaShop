@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,30 +10,26 @@
  *  @license   http://www.opensource.org/licenses/mit-license.php MIT
  *  @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Reference;
 
-namespace phpDocumentor\Reflection\DocBlock\Tags\Reference;
-
-use Webmozart\Assert\Assert;
-
+use MolliePrefix\Webmozart\Assert\Assert;
 /**
  * Url reference used by {@see phpDocumentor\Reflection\DocBlock\Tags\See}
  */
-final class Url implements Reference
+final class Url implements \MolliePrefix\phpDocumentor\Reflection\DocBlock\Tags\Reference\Reference
 {
     /**
      * @var string
      */
     private $uri;
-
     /**
      * Url constructor.
      */
     public function __construct($uri)
     {
-        Assert::stringNotEmpty($uri);
+        \MolliePrefix\Webmozart\Assert\Assert::stringNotEmpty($uri);
         $this->uri = $uri;
     }
-
     public function __toString()
     {
         return $this->uri;

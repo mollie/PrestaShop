@@ -43,7 +43,16 @@ final class MyTest extends \\PHPUnit\\Framework\\TestCase
         $this->assertInternalType("boolean", $var);
     }
 }
-')], null, 'Risky when PHPUnit methods are overridden or when project has PHPUnit incompatibilities.');
+'), new \MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample('<?php
+final class MyTest extends \\PHPUnit\\Framework\\TestCase
+{
+    public function testMe()
+    {
+        $this->assertInternalType("array", $var);
+        $this->assertInternalType("boolean", $var);
+    }
+}
+', ['target' => \MolliePrefix\PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion::VERSION_7_5])], null, 'Risky when PHPUnit methods are overridden or when project has PHPUnit incompatibilities.');
     }
     /**
      * {@inheritdoc}

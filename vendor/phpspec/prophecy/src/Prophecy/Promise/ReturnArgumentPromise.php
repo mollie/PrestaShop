@@ -8,25 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Promise;
 
-namespace Prophecy\Promise;
-
-use Prophecy\Exception\InvalidArgumentException;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophecy\MethodProphecy;
-
+use MolliePrefix\Prophecy\Exception\InvalidArgumentException;
+use MolliePrefix\Prophecy\Prophecy\ObjectProphecy;
+use MolliePrefix\Prophecy\Prophecy\MethodProphecy;
 /**
  * Return argument promise.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class ReturnArgumentPromise implements PromiseInterface
+class ReturnArgumentPromise implements \MolliePrefix\Prophecy\Promise\PromiseInterface
 {
     /**
      * @var int
      */
     private $index;
-
     /**
      * Initializes callback promise.
      *
@@ -36,15 +33,11 @@ class ReturnArgumentPromise implements PromiseInterface
      */
     public function __construct($index = 0)
     {
-        if (!is_int($index) || $index < 0) {
-            throw new InvalidArgumentException(sprintf(
-                'Zero-based index expected as argument to ReturnArgumentPromise, but got %s.',
-                $index
-            ));
+        if (!\is_int($index) || $index < 0) {
+            throw new \MolliePrefix\Prophecy\Exception\InvalidArgumentException(\sprintf('Zero-based index expected as argument to ReturnArgumentPromise, but got %s.', $index));
         }
         $this->index = $index;
     }
-
     /**
      * Returns nth argument if has one, null otherwise.
      *
@@ -54,8 +47,8 @@ class ReturnArgumentPromise implements PromiseInterface
      *
      * @return null|mixed
      */
-    public function execute(array $args, ObjectProphecy $object, MethodProphecy $method)
+    public function execute(array $args, \MolliePrefix\Prophecy\Prophecy\ObjectProphecy $object, \MolliePrefix\Prophecy\Prophecy\MethodProphecy $method)
     {
-        return count($args) > $this->index ? $args[$this->index] : null;
+        return \count($args) > $this->index ? $args[$this->index] : null;
     }
 }

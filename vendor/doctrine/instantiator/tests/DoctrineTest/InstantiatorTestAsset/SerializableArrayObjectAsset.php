@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,19 +17,17 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace DoctrineTest\InstantiatorTestAsset;
+namespace MolliePrefix\DoctrineTest\InstantiatorTestAsset;
 
 use ArrayObject;
 use BadMethodCallException;
 use Serializable;
-
 /**
  * Serializable test asset that also extends an internal class
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class SerializableArrayObjectAsset extends ArrayObject implements Serializable
+class SerializableArrayObjectAsset extends \ArrayObject implements \Serializable
 {
     /**
      * Constructor - should not be called
@@ -37,9 +36,8 @@ class SerializableArrayObjectAsset extends ArrayObject implements Serializable
      */
     public function __construct()
     {
-        throw new BadMethodCallException('Not supposed to be called!');
+        throw new \BadMethodCallException('Not supposed to be called!');
     }
-
     /**
      * {@inheritDoc}
      */
@@ -47,7 +45,6 @@ class SerializableArrayObjectAsset extends ArrayObject implements Serializable
     {
         return '';
     }
-
     /**
      * {@inheritDoc}
      *
@@ -57,6 +54,6 @@ class SerializableArrayObjectAsset extends ArrayObject implements Serializable
      */
     public function unserialize($serialized)
     {
-        throw new BadMethodCallException('Not supposed to be called!');
+        throw new \BadMethodCallException('Not supposed to be called!');
     }
 }

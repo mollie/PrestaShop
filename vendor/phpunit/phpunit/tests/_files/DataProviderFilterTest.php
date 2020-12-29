@@ -1,5 +1,8 @@
 <?php
-class DataProviderFilterTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class DataProviderFilterTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider truthProvider
@@ -8,17 +11,10 @@ class DataProviderFilterTest extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue($truth);
     }
-
     public static function truthProvider()
     {
-        return [
-           [true],
-           [true],
-           [true],
-           [true]
-        ];
+        return [[\true], [\true], [\true], [\true]];
     }
-
     /**
      * @dataProvider falseProvider
      */
@@ -26,14 +22,9 @@ class DataProviderFilterTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($false);
     }
-
     public static function falseProvider()
     {
-        return [
-          'false test'       => [false],
-          'false test 2'     => [false],
-          'other false test' => [false],
-          'other false test2'=> [false]
-        ];
+        return ['false test' => [\false], 'false test 2' => [\false], 'other false test' => [\false], 'other false test2' => [\false]];
     }
 }
+\class_alias('MolliePrefix\\DataProviderFilterTest', 'DataProviderFilterTest', \false);

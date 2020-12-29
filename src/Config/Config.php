@@ -22,6 +22,8 @@ use MolliePrefix\Mollie\Api\Types\RefundStatus;
 
 class Config
 {
+	const SEGMENT_KEY = 'GnGf1m503biLVjo3a52nplV1becA0kiv';
+
 	/**
 	 * Currency restrictions per payment method.
 	 *

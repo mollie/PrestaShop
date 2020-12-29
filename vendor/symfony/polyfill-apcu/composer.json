@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
+            "MolliePrefix\\Symfony\\Polyfill\\Apcu\\": ""
         },
         "files": [
             "bootstrap.php"

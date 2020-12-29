@@ -1,7 +1,7 @@
 {
-    "name": "sebastian/resource-operations",
+    "name": "sebastian\/resource-operations",
     "description": "Provides a list of PHP built-in functions that operate on resources",
-    "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
+    "homepage": "https:\/\/www.github.com\/sebastianbergmann\/resource-operations",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "classmap": [
-            "src/"
+            "src\/"
         ]
     },
     "extra": {
@@ -23,4 +23,3 @@
         }
     }
 }
-

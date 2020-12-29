@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,11 +17,9 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-
-namespace DoctrineTest\InstantiatorTestAsset;
+namespace MolliePrefix\DoctrineTest\InstantiatorTestAsset;
 
 use BadMethodCallException;
-
 /**
  * Base un-cloneable asset
  *
@@ -35,9 +34,8 @@ class UnCloneableAsset
      */
     public function __construct()
     {
-        throw new BadMethodCallException('Not supposed to be called!');
+        throw new \BadMethodCallException('Not supposed to be called!');
     }
-
     /**
      * Magic `__clone` - should not be invoked
      *
@@ -45,6 +43,6 @@ class UnCloneableAsset
      */
     public function __clone()
     {
-        throw new BadMethodCallException('Not supposed to be called!');
+        throw new \BadMethodCallException('Not supposed to be called!');
     }
 }

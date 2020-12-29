@@ -11,17 +11,19 @@
  */
 namespace MolliePrefix\PhpCsFixer\Fixer\PhpUnit;
 
-use MolliePrefix\PhpCsFixer\DocBlock\DocBlock;
-use MolliePrefix\PhpCsFixer\Fixer\AbstractPhpUnitFixer;
+use MolliePrefix\PhpCsFixer\AbstractProxyFixer;
+use MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface;
+use MolliePrefix\PhpCsFixer\Fixer\Phpdoc\PhpdocOrderByValueFixer;
 use MolliePrefix\PhpCsFixer\FixerDefinition\CodeSample;
 use MolliePrefix\PhpCsFixer\FixerDefinition\FixerDefinition;
-use MolliePrefix\PhpCsFixer\Preg;
-use MolliePrefix\PhpCsFixer\Tokenizer\Token;
-use MolliePrefix\PhpCsFixer\Tokenizer\Tokens;
 /**
+ * @deprecated since 2.16, replaced by PhpdocOrderByValueFixer
+ *
+ * @todo To be removed at 3.0
+ *
  * @author Filippo Tessarotto <zoeslam@gmail.com>
  */
-final class PhpUnitOrderedCoversFixer extends \MolliePrefix\PhpCsFixer\Fixer\AbstractPhpUnitFixer
+final class PhpUnitOrderedCoversFixer extends \MolliePrefix\PhpCsFixer\AbstractProxyFixer implements \MolliePrefix\PhpCsFixer\Fixer\DeprecatedFixerInterface
 {
     /**
      * {@inheritdoc}
@@ -37,44 +39,14 @@ final class MyTest extends \\PHPUnit_Framework_TestCase
 {}
 ')]);
     }
-    /**
-     * {@inheritdoc}
-     *
-     * Must run after PhpUnitFqcnAnnotationFixer.
-     */
-    public function getPriority()
+    public function getSuccessorsNames()
     {
-        return -10;
+        return \array_keys($this->proxyFixers);
     }
-    /**
-     * {@inheritdoc}
-     */
-    protected function applyPhpUnitClassFix(\MolliePrefix\PhpCsFixer\Tokenizer\Tokens $tokens, $startIndex, $endIndex)
+    protected function createProxyFixers()
     {
-        $classIndex = $tokens->getPrevTokenOfKind($startIndex, [[\T_CLASS]]);
-        $docBlockIndex = $this->getDocBlockIndex($tokens, $classIndex);
-        for ($index = $endIndex; $index >= $docBlockIndex; --$index) {
-            if (!$tokens[$index]->isGivenKind(\T_DOC_COMMENT) || 0 === \MolliePrefix\PhpCsFixer\Preg::match('/@covers\\s.+@covers\\s/s', $tokens[$index]->getContent())) {
-                continue;
-            }
-            $docBlock = new \MolliePrefix\PhpCsFixer\DocBlock\DocBlock($tokens[$index]->getContent());
-            $covers = $docBlock->getAnnotationsOfType('covers');
-            $coversMap = [];
-            foreach ($covers as $annotation) {
-                $rawContent = $annotation->getContent();
-                $comparableContent = \MolliePrefix\PhpCsFixer\Preg::replace('/\\*\\s*@covers\\s+(.+)/', '\\1', \strtolower(\trim($rawContent)));
-                $coversMap[$comparableContent] = $rawContent;
-            }
-            $orderedCoversMap = $coversMap;
-            \ksort($orderedCoversMap, \SORT_STRING);
-            if ($orderedCoversMap === $coversMap) {
-                continue;
-            }
-            $lines = $docBlock->getLines();
-            foreach (\array_reverse($covers) as $annotation) {
-                \array_splice($lines, $annotation->getStart(), $annotation->getEnd() - $annotation->getStart() + 1, \array_pop($orderedCoversMap));
-            }
-            $tokens[$index] = new \MolliePrefix\PhpCsFixer\Tokenizer\Token([\T_DOC_COMMENT, \implode('', $lines)]);
-        }
+        $fixer = new \MolliePrefix\PhpCsFixer\Fixer\Phpdoc\PhpdocOrderByValueFixer();
+        $fixer->configure(['annotations' => ['covers']]);
+        return [$fixer];
     }
 }

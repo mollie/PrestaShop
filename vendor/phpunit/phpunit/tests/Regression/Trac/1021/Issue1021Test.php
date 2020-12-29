@@ -1,5 +1,8 @@
 <?php
-class Issue1021Test extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class Issue1021Test extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provider
@@ -8,16 +11,15 @@ class Issue1021Test extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue($data);
     }
-
     /**
      * @depends testSomething
      */
     public function testSomethingElse()
     {
     }
-
     public function provider()
     {
-        return [[true]];
+        return [[\true]];
     }
 }
+\class_alias('MolliePrefix\\Issue1021Test', 'Issue1021Test', \false);

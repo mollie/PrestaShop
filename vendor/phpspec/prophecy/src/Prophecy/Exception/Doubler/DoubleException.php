@@ -8,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Prophecy\Exception\Doubler;
+namespace MolliePrefix\Prophecy\Exception\Doubler;
 
 use RuntimeException;
-
-class DoubleException extends RuntimeException implements DoublerException
+class DoubleException extends \RuntimeException implements \MolliePrefix\Prophecy\Exception\Doubler\DoublerException
 {
 }

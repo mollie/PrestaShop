@@ -11,9 +11,9 @@
  */
 namespace MolliePrefix\PhpCsFixer\Console\Command;
 
-use MolliePrefix\PhpCsFixer\AbstractFixer;
 use MolliePrefix\PhpCsFixer\Documentation\DocumentationGenerator;
 use MolliePrefix\PhpCsFixer\FixerFactory;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSets;
 use MolliePrefix\Symfony\Component\Console\Command\Command;
 use MolliePrefix\Symfony\Component\Console\Input\InputInterface;
 use MolliePrefix\Symfony\Component\Console\Output\OutputInterface;
@@ -43,25 +43,48 @@ final class DocumentationCommand extends \MolliePrefix\Symfony\Component\Console
     {
         $fixerFactory = new \MolliePrefix\PhpCsFixer\FixerFactory();
         $fixerFactory->registerBuiltInFixers();
-        /** @var AbstractFixer[] $fixers */
         $fixers = $fixerFactory->getFixers();
-        $paths = ['_index' => $this->generator->getFixersDocumentationIndexFilePath()];
+        $this->generateFixersDocs($fixers);
+        $this->generateRuleSetsDocs($fixers);
+        $output->writeln('Docs updated.');
+        return 0;
+    }
+    private function generateFixersDocs(array $fixers)
+    {
         $filesystem = new \MolliePrefix\Symfony\Component\Filesystem\Filesystem();
+        // Array of existing fixer docs.
+        // We first override existing files, and then we will delete files that are no longer needed.
+        // We cannot remove all files first, as generation of docs is re-using existing docs to extract code-samples for
+        // VersionSpecificCodeSample under incompatible PHP version.
+        $docForFixerRelativePaths = [];
         foreach ($fixers as $fixer) {
-            $class = \get_class($fixer);
-            $paths[$class] = $path = $this->generator->getFixerDocumentationFilePath($fixer);
-            $filesystem->dumpFile($path, $this->generator->generateFixerDocumentation($fixer));
+            $docForFixerRelativePaths[] = $this->generator->getFixerDocumentationFileRelativePath($fixer);
+            $filesystem->dumpFile($this->generator->getFixerDocumentationFilePath($fixer), $this->generator->generateFixerDocumentation($fixer));
         }
         /** @var SplFileInfo $file */
-        foreach ((new \MolliePrefix\Symfony\Component\Finder\Finder())->files()->in($this->generator->getFixersDocumentationDirectoryPath()) as $file) {
-            $path = $file->getPathname();
-            if (!\in_array($path, $paths, \true)) {
-                $filesystem->remove($path);
-            }
+        foreach ((new \MolliePrefix\Symfony\Component\Finder\Finder())->files()->in($this->generator->getFixersDocumentationDirectoryPath())->notPath($docForFixerRelativePaths) as $file) {
+            $filesystem->remove($file->getPathname());
         }
-        if (\false === @\file_put_contents($paths['_index'], $this->generator->generateFixersDocumentationIndex($fixers))) {
-            throw new \RuntimeException("Failed updating file {$paths['_index']}.");
+        $index = $this->generator->getFixersDocumentationIndexFilePath();
+        if (\false === @\file_put_contents($index, $this->generator->generateFixersDocumentationIndex($fixers))) {
+            throw new \RuntimeException("Failed updating file {$index}.");
         }
-        return 0;
+    }
+    private function generateRuleSetsDocs(array $fixers)
+    {
+        $filesystem = new \MolliePrefix\Symfony\Component\Filesystem\Filesystem();
+        /** @var SplFileInfo $file */
+        foreach ((new \MolliePrefix\Symfony\Component\Finder\Finder())->files()->in($this->generator->getRuleSetsDocumentationDirectoryPath()) as $file) {
+            $filesystem->remove($file->getPathname());
+        }
+        $index = $this->generator->getRuleSetsDocumentationIndexFilePath();
+        $paths = [];
+        foreach (\MolliePrefix\PhpCsFixer\RuleSet\RuleSets::getSetDefinitions() as $name => $definition) {
+            $paths[$name] = $path = $this->generator->getRuleSetsDocumentationFilePath($name);
+            $filesystem->dumpFile($path, $this->generator->generateRuleSetsDocumentation($definition, $fixers));
+        }
+        if (\false === @\file_put_contents($index, $this->generator->generateRuleSetsDocumentationIndex($paths))) {
+            throw new \RuntimeException("Failed updating file {$index}.");
+        }
     }
 }

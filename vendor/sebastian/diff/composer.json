@@ -1,8 +1,10 @@
 {
-    "name": "sebastian/diff",
+    "name": "sebastian\/diff",
     "description": "Diff implementation",
-    "keywords": ["diff"],
-    "homepage": "https://github.com/sebastianbergmann/diff",
+    "keywords": [
+        "diff"
+    ],
+    "homepage": "https:\/\/github.com\/sebastianbergmann\/diff",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -18,11 +20,11 @@
         "php": "^5.3.3 || ^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0"
+        "phpunit\/phpunit": "^4.8.35 || ^5.7 || ^6.0"
     },
     "autoload": {
         "classmap": [
-            "src/"
+            "src\/"
         ]
     },
     "extra": {

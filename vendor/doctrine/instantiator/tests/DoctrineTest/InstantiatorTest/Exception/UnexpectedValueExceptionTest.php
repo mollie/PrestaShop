@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,14 +17,12 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+namespace MolliePrefix\DoctrineTest\InstantiatorTest\Exception;
 
-namespace DoctrineTest\InstantiatorTest\Exception;
-
-use Doctrine\Instantiator\Exception\UnexpectedValueException;
+use MolliePrefix\Doctrine\Instantiator\Exception\UnexpectedValueException;
 use Exception;
-use PHPUnit_Framework_TestCase;
+use MolliePrefix\PHPUnit_Framework_TestCase;
 use ReflectionClass;
-
 /**
  * Tests for {@see \Doctrine\Instantiator\Exception\UnexpectedValueException}
  *
@@ -31,37 +30,24 @@ use ReflectionClass;
  *
  * @covers \Doctrine\Instantiator\Exception\UnexpectedValueException
  */
-class UnexpectedValueExceptionTest extends PHPUnit_Framework_TestCase
+class UnexpectedValueExceptionTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testFromSerializationTriggeredException()
     {
-        $reflectionClass = new ReflectionClass($this);
-        $previous        = new Exception();
-        $exception       = UnexpectedValueException::fromSerializationTriggeredException($reflectionClass, $previous);
-
-        $this->assertInstanceOf('Doctrine\\Instantiator\\Exception\\UnexpectedValueException', $exception);
+        $reflectionClass = new \ReflectionClass($this);
+        $previous = new \Exception();
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\UnexpectedValueException::fromSerializationTriggeredException($reflectionClass, $previous);
+        $this->assertInstanceOf('MolliePrefix\\Doctrine\\Instantiator\\Exception\\UnexpectedValueException', $exception);
         $this->assertSame($previous, $exception->getPrevious());
-        $this->assertSame(
-            'An exception was raised while trying to instantiate an instance of "'
-            . __CLASS__  . '" via un-serialization',
-            $exception->getMessage()
-        );
+        $this->assertSame('An exception was raised while trying to instantiate an instance of "' . __CLASS__ . '" via un-serialization', $exception->getMessage());
     }
-
     public function testFromUncleanUnSerialization()
     {
-        $reflection = new ReflectionClass('DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset');
-        $exception  = UnexpectedValueException::fromUncleanUnSerialization($reflection, 'foo', 123, 'bar', 456);
-
-        $this->assertInstanceOf('Doctrine\\Instantiator\\Exception\\UnexpectedValueException', $exception);
-        $this->assertSame(
-            'Could not produce an instance of "DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset" '
-            . 'via un-serialization, since an error was triggered in file "bar" at line "456"',
-            $exception->getMessage()
-        );
-
+        $reflection = new \ReflectionClass('MolliePrefix\\DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset');
+        $exception = \MolliePrefix\Doctrine\Instantiator\Exception\UnexpectedValueException::fromUncleanUnSerialization($reflection, 'foo', 123, 'bar', 456);
+        $this->assertInstanceOf('MolliePrefix\\Doctrine\\Instantiator\\Exception\\UnexpectedValueException', $exception);
+        $this->assertSame('Could not produce an instance of "DoctrineTest\\InstantiatorTestAsset\\AbstractClassAsset" ' . 'via un-serialization, since an error was triggered in file "bar" at line "456"', $exception->getMessage());
         $previous = $exception->getPrevious();
-
         $this->assertInstanceOf('Exception', $previous);
         $this->assertSame('foo', $previous->getMessage());
         $this->assertSame(123, $previous->getCode());

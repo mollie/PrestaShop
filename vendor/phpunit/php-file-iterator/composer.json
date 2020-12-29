@@ -1,12 +1,12 @@
 {
-    "name": "phpunit/php-file-iterator",
+    "name": "phpunit\/php-file-iterator",
     "description": "FilterIterator implementation that filters files based on a list of suffixes.",
     "type": "library",
     "keywords": [
         "iterator",
         "filesystem"
     ],
-    "homepage": "https://github.com/sebastianbergmann/php-file-iterator/",
+    "homepage": "https:\/\/github.com\/sebastianbergmann\/php-file-iterator\/",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -16,15 +16,15 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/sebastianbergmann/php-file-iterator/issues",
-        "irc": "irc://irc.freenode.net/phpunit"
+        "issues": "https:\/\/github.com\/sebastianbergmann\/php-file-iterator\/issues",
+        "irc": "irc:\/\/irc.freenode.net\/phpunit"
     },
     "require": {
         "php": ">=5.3.3"
     },
     "autoload": {
         "classmap": [
-            "src/"
+            "src\/"
         ]
     },
     "extra": {
@@ -33,4 +33,3 @@
         }
     }
 }
-

@@ -8,11 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Doubler\ClassPatch;
 
-namespace Prophecy\Doubler\ClassPatch;
-
-use Prophecy\Doubler\Generator\Node\ClassNode;
-
+use MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode;
 /**
  * Class patch interface.
  * Class patches extend doubles functionality or help
@@ -29,16 +27,14 @@ interface ClassPatchInterface
      *
      * @return bool
      */
-    public function supports(ClassNode $node);
-
+    public function supports(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node);
     /**
      * Applies patch to the specific class node.
      *
      * @param ClassNode $node
      * @return void
      */
-    public function apply(ClassNode $node);
-
+    public function apply(\MolliePrefix\Prophecy\Doubler\Generator\Node\ClassNode $node);
     /**
      * Returns patch priority, which determines when patch will be applied.
      *

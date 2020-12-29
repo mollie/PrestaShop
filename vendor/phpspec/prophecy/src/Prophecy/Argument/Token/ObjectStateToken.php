@@ -8,25 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\Prophecy\Argument\Token;
 
-namespace Prophecy\Argument\Token;
-
-use SebastianBergmann\Comparator\ComparisonFailure;
-use Prophecy\Comparator\Factory as ComparatorFactory;
-use Prophecy\Util\StringUtil;
-
+use MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure;
+use MolliePrefix\Prophecy\Comparator\Factory as ComparatorFactory;
+use MolliePrefix\Prophecy\Util\StringUtil;
 /**
  * Object state-checker token.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-class ObjectStateToken implements TokenInterface
+class ObjectStateToken implements \MolliePrefix\Prophecy\Argument\Token\TokenInterface
 {
     private $name;
     private $value;
     private $util;
     private $comparatorFactory;
-
     /**
      * Initializes token.
      *
@@ -35,19 +32,13 @@ class ObjectStateToken implements TokenInterface
      * @param null|StringUtil   $util
      * @param ComparatorFactory $comparatorFactory
      */
-    public function __construct(
-        $methodName,
-        $value,
-        StringUtil $util = null,
-        ComparatorFactory $comparatorFactory = null
-    ) {
-        $this->name  = $methodName;
+    public function __construct($methodName, $value, \MolliePrefix\Prophecy\Util\StringUtil $util = null, \MolliePrefix\Prophecy\Comparator\Factory $comparatorFactory = null)
+    {
+        $this->name = $methodName;
         $this->value = $value;
-        $this->util  = $util ?: new StringUtil;
-
-        $this->comparatorFactory = $comparatorFactory ?: ComparatorFactory::getInstance();
+        $this->util = $util ?: new \MolliePrefix\Prophecy\Util\StringUtil();
+        $this->comparatorFactory = $comparatorFactory ?: \MolliePrefix\Prophecy\Comparator\Factory::getInstance();
     }
-
     /**
      * Scores 8 if argument is an object, which method returns expected value.
      *
@@ -57,28 +48,21 @@ class ObjectStateToken implements TokenInterface
      */
     public function scoreArgument($argument)
     {
-        if (is_object($argument) && method_exists($argument, $this->name)) {
-            $actual = call_user_func(array($argument, $this->name));
-
-            $comparator = $this->comparatorFactory->getComparatorFor(
-                $this->value, $actual
-            );
-
+        if (\is_object($argument) && \method_exists($argument, $this->name)) {
+            $actual = \call_user_func(array($argument, $this->name));
+            $comparator = $this->comparatorFactory->getComparatorFor($this->value, $actual);
             try {
                 $comparator->assertEquals($this->value, $actual);
                 return 8;
-            } catch (ComparisonFailure $failure) {
-                return false;
+            } catch (\MolliePrefix\SebastianBergmann\Comparator\ComparisonFailure $failure) {
+                return \false;
             }
         }
-
-        if (is_object($argument) && property_exists($argument, $this->name)) {
-            return $argument->{$this->name} === $this->value ? 8 : false;
+        if (\is_object($argument) && \property_exists($argument, $this->name)) {
+            return $argument->{$this->name} === $this->value ? 8 : \false;
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Returns false.
      *
@@ -86,9 +70,8 @@ class ObjectStateToken implements TokenInterface
      */
     public function isLast()
     {
-        return false;
+        return \false;
     }
-
     /**
      * Returns string representation for token.
      *
@@ -96,9 +79,6 @@ class ObjectStateToken implements TokenInterface
      */
     public function __toString()
     {
-        return sprintf('state(%s(), %s)',
-            $this->name,
-            $this->util->stringify($this->value)
-        );
+        return \sprintf('state(%s(), %s)', $this->name, $this->util->stringify($this->value));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of phpDocumentor.
  *
@@ -9,12 +10,10 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
+namespace MolliePrefix\phpDocumentor\Reflection\Types;
 
-namespace phpDocumentor\Reflection\Types;
-
-use phpDocumentor\Reflection\Fqsen;
-use phpDocumentor\Reflection\Type;
-
+use MolliePrefix\phpDocumentor\Reflection\Fqsen;
+use MolliePrefix\phpDocumentor\Reflection\Type;
 /**
  * Value Object representing an object.
  *
@@ -22,29 +21,23 @@ use phpDocumentor\Reflection\Type;
  * pointing to an element in PHP. Object types that are untyped do not refer to a specific class but represent objects
  * in general.
  */
-final class Object_ implements Type
+final class Object_ implements \MolliePrefix\phpDocumentor\Reflection\Type
 {
     /** @var Fqsen|null */
     private $fqsen;
-
     /**
      * Initializes this object with an optional FQSEN, if not provided this object is considered 'untyped'.
      *
      * @param Fqsen $fqsen
      * @throws \InvalidArgumentException when provided $fqsen is not a valid type.
      */
-    public function __construct(Fqsen $fqsen = null)
+    public function __construct(\MolliePrefix\phpDocumentor\Reflection\Fqsen $fqsen = null)
     {
-        if (strpos((string)$fqsen, '::') !== false || strpos((string)$fqsen, '()') !== false) {
-            throw new \InvalidArgumentException(
-                'Object types can only refer to a class, interface or trait but a method, function, constant or '
-                . 'property was received: ' . (string)$fqsen
-            );
+        if (\strpos((string) $fqsen, '::') !== \false || \strpos((string) $fqsen, '()') !== \false) {
+            throw new \InvalidArgumentException('Object types can only refer to a class, interface or trait but a method, function, constant or ' . 'property was received: ' . (string) $fqsen);
         }
-
         $this->fqsen = $fqsen;
     }
-
     /**
      * Returns the FQSEN associated with this object.
      *
@@ -54,7 +47,6 @@ final class Object_ implements Type
     {
         return $this->fqsen;
     }
-
     /**
      * Returns a rendered output of the Type as it would be used in a DocBlock.
      *
@@ -63,9 +55,8 @@ final class Object_ implements Type
     public function __toString()
     {
         if ($this->fqsen) {
-            return (string)$this->fqsen;
+            return (string) $this->fqsen;
         }
-
         return 'object';
     }
 }

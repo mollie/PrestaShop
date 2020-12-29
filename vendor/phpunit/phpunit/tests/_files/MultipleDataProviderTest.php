@@ -1,5 +1,8 @@
 <?php
-class MultipleDataProviderTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class MultipleDataProviderTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider providerA
@@ -9,7 +12,6 @@ class MultipleDataProviderTest extends PHPUnit_Framework_TestCase
     public function testOne()
     {
     }
-
     /**
      * @dataProvider providerD
      * @dataProvider providerE
@@ -18,58 +20,34 @@ class MultipleDataProviderTest extends PHPUnit_Framework_TestCase
     public function testTwo()
     {
     }
-
     public static function providerA()
     {
-        return [
-            ['ok', null, null],
-            ['ok', null, null],
-            ['ok', null, null]
-        ];
+        return [['ok', null, null], ['ok', null, null], ['ok', null, null]];
     }
-
     public static function providerB()
     {
-        return [
-            [null, 'ok', null],
-            [null, 'ok', null],
-            [null, 'ok', null]
-        ];
+        return [[null, 'ok', null], [null, 'ok', null], [null, 'ok', null]];
     }
-
     public static function providerC()
     {
-        return [
-            [null, null, 'ok'],
-            [null, null, 'ok'],
-            [null, null, 'ok']
-        ];
+        return [[null, null, 'ok'], [null, null, 'ok'], [null, null, 'ok']];
     }
-
     public static function providerD()
     {
-        yield ['ok', null, null];
-        yield ['ok', null, null];
-        yield ['ok', null, null];
+        (yield ['ok', null, null]);
+        (yield ['ok', null, null]);
+        (yield ['ok', null, null]);
     }
-
     public static function providerE()
     {
-        yield [null, 'ok', null];
-        yield [null, 'ok', null];
-        yield [null, 'ok', null];
+        (yield [null, 'ok', null]);
+        (yield [null, 'ok', null]);
+        (yield [null, 'ok', null]);
     }
-
     public static function providerF()
     {
-        $object = new ArrayObject(
-            [
-                [null, null, 'ok'],
-                [null, null, 'ok'],
-                [null, null, 'ok']
-            ]
-        );
-
+        $object = new \ArrayObject([[null, null, 'ok'], [null, null, 'ok'], [null, null, 'ok']]);
         return $object->getIterator();
     }
 }
+\class_alias('MolliePrefix\\MultipleDataProviderTest', 'MultipleDataProviderTest', \false);

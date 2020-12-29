@@ -1,8 +1,12 @@
 <?php
-class IniTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class IniTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testIni()
     {
-        $this->assertEquals('application/x-test', ini_get('default_mimetype'));
+        $this->assertEquals('application/x-test', \ini_get('default_mimetype'));
     }
 }
+\class_alias('MolliePrefix\\IniTest', 'IniTest', \false);

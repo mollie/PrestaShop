@@ -1,10 +1,13 @@
 <?php
-class AssertionExampleTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class AssertionExampleTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     public function testOne()
     {
-        $e = new AssertionExample;
-
+        $e = new \MolliePrefix\AssertionExample();
         $e->doSomething();
     }
 }
+\class_alias('MolliePrefix\\AssertionExampleTest', 'AssertionExampleTest', \false);

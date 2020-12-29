@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Environment package.
  *
@@ -7,23 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MolliePrefix\SebastianBergmann\Environment;
 
-namespace SebastianBergmann\Environment;
-
-use PHPUnit_Framework_TestCase;
-
-class ConsoleTest extends PHPUnit_Framework_TestCase
+use MolliePrefix\PHPUnit_Framework_TestCase;
+class ConsoleTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @var \SebastianBergmann\Environment\Console
      */
     private $console;
-
     protected function setUp()
     {
-        $this->console = new Console;
+        $this->console = new \MolliePrefix\SebastianBergmann\Environment\Console();
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Console::isInteractive
      */
@@ -31,15 +28,13 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->console->isInteractive());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Console::isInteractive
      */
     public function testCanDetectIfFileDescriptorIsInteractive()
     {
-        $this->assertInternalType('boolean', $this->console->isInteractive(STDOUT));
+        $this->assertInternalType('boolean', $this->console->isInteractive(\STDOUT));
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Console::hasColorSupport
      *
@@ -49,7 +44,6 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('boolean', $this->console->hasColorSupport());
     }
-
     /**
      * @covers \SebastianBergmann\Environment\Console::getNumberOfColumns
      *

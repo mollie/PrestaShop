@@ -1,12 +1,16 @@
 <?php
-class CoverageNotPublicTest extends PHPUnit_Framework_TestCase
+
+namespace MolliePrefix;
+
+class CoverageNotPublicTest extends \MolliePrefix\PHPUnit_Framework_TestCase
 {
     /**
      * @covers CoveredClass::<!public>
      */
     public function testSomething()
     {
-        $o = new CoveredClass;
+        $o = new \MolliePrefix\CoveredClass();
         $o->publicMethod();
     }
 }
+\class_alias('MolliePrefix\\CoverageNotPublicTest', 'CoverageNotPublicTest', \false);

@@ -1,4 +1,7 @@
 <?php
+
+namespace MolliePrefix;
+
 /*
  * This file is part of the PHPUnit_MockObject package.
  *
@@ -7,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 /**
  * Stubs a method by returning a user-defined value.
  *
@@ -21,5 +23,19 @@ interface PHPUnit_Framework_MockObject_Stub_MatcherCollection
      *
      * @param PHPUnit_Framework_MockObject_Matcher_Invocation $matcher Matcher for invocations to mock objects
      */
-    public function addMatcher(PHPUnit_Framework_MockObject_Matcher_Invocation $matcher);
+    public function addMatcher(\MolliePrefix\PHPUnit_Framework_MockObject_Matcher_Invocation $matcher);
 }
+/*
+ * This file is part of the PHPUnit_MockObject package.
+ *
+ * (c) Sebastian Bergmann <sebastian@phpunit.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+/**
+ * Stubs a method by returning a user-defined value.
+ *
+ * @since Interface available since Release 1.0.0
+ */
+\class_alias('MolliePrefix\\PHPUnit_Framework_MockObject_Stub_MatcherCollection', 'PHPUnit_Framework_MockObject_Stub_MatcherCollection', \false);

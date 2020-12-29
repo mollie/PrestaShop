@@ -11,7 +11,7 @@
  */
 namespace MolliePrefix\PhpCsFixer\Tests\Test;
 
-use MolliePrefix\PhpCsFixer\RuleSet;
+use MolliePrefix\PhpCsFixer\RuleSet\RuleSet;
 use MolliePrefix\Symfony\Component\Finder\SplFileInfo;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -85,7 +85,7 @@ abstract class AbstractIntegrationCaseFactory implements \MolliePrefix\PhpCsFixe
      */
     protected function determineRuleset(\MolliePrefix\Symfony\Component\Finder\SplFileInfo $file, $config)
     {
-        return new \MolliePrefix\PhpCsFixer\RuleSet($this->parseJson($config));
+        return new \MolliePrefix\PhpCsFixer\RuleSet\RuleSet($this->parseJson($config));
     }
     /**
      * Parses the '--TEST--' block of a '.test' file and determines title.
