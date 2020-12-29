@@ -99,6 +99,8 @@ class ApiService
 				'currency' => $currencyIso,
 			]);
 		} catch (Exception $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
 			PrestaShopLogger::addLog('Mollie returned error on getPaymentMethodOrderTotalRestriction: ' . $e->getMessage());
 
 			return null;
@@ -128,6 +130,8 @@ class ApiService
 			$apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay']);
 			$apiMethods = $apiMethods->getArrayCopy();
 		} catch (Exception $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $e->getMessage();
 
 			return [];

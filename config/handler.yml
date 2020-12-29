@@ -40,3 +40,7 @@ services:
       - '@Mollie\Provider\PaymentOption\IdealPaymentOptionProvider'
 
   Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface: '@Mollie\Handler\PaymentOption\PaymentOptionHandler'
+
+  Mollie\Handler\ErrorHandler\ErrorHandler:
+    class: Mollie\Handler\ErrorHandler\ErrorHandler
+

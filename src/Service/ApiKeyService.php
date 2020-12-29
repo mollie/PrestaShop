@@ -14,6 +14,7 @@
 namespace Mollie\Service;
 
 use Context;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use MolliePrefix\Mollie\Api\Exceptions\ApiException;
 use MolliePrefix\Mollie\Api\MollieApiClient;
 use Tools;
@@ -36,6 +37,9 @@ class ApiKeyService
 			try {
 				$api->setApiKey($apiKey);
 			} catch (ApiException $e) {
+				$errorHandler = ErrorHandler::getInstance();
+				$errorHandler->handle($e, $e->getCode(), false);
+
 				return null;
 			}
 		} elseif (!empty($context->employee)

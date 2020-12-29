@@ -20,6 +20,7 @@ use Country;
 use Language;
 use MolCarrierInformation;
 use Mollie\Config\Config;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Repository\MolCarrierInformationRepository;
 use Mollie\Repository\OrderShipmentRepository;
 use Order;
@@ -107,6 +108,9 @@ class ShipmentService implements ShipmentServiceInterface
 						];
 					}
 				} catch (PrestaShopDatabaseException $e) {
+					$errorHandler = ErrorHandler::getInstance();
+					$errorHandler->handle($e, $e->getCode(), false);
+
 					return [];
 				}
 			}
