@@ -35,7 +35,6 @@ services:
       - '@Mollie\Install\DatabaseTableUninstaller'
       - '@Mollie\Repository\OrderStateRepository'
       - '@Mollie\Tracker\Segment'
-      - '@mollie'
 
   Mollie\Install\DatabaseTableInstaller:
 

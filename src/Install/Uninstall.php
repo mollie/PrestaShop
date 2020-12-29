@@ -14,7 +14,6 @@
 namespace Mollie\Install;
 
 use Configuration;
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Repository\OrderStateRepository;
 use Mollie\Tracker\Segment;
@@ -42,21 +41,14 @@ class Uninstall implements UninstallerInterface
 	 */
 	private $segment;
 
-	/**
-	 * @var Mollie
-	 */
-	private $module;
-
 	public function __construct(
 		UninstallerInterface $databaseUninstaller,
 		OrderStateRepository $orderStateRepository,
-		Segment $segment,
-		Mollie $module
+		Segment $segment
 	) {
 		$this->databaseUninstaller = $databaseUninstaller;
 		$this->orderStateRepository = $orderStateRepository;
 		$this->segment = $segment;
-		$this->module = $module;
 	}
 
 	public function uninstall()
