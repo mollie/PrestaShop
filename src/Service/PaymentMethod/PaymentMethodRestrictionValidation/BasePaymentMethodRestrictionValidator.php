@@ -43,6 +43,7 @@ use Mollie\Service\OrderTotal\OrderTotalServiceInterface;
 use MolPaymentMethod;
 use Tools;
 
+/** Validator to check all cases for every payment method */
 class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
 	/**
