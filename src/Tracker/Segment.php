@@ -37,6 +37,7 @@
 namespace Mollie\Tracker;
 
 use Context;
+use Module;
 use Mollie\Config\Config;
 
 class Segment implements TrackerInterface
@@ -56,9 +57,10 @@ class Segment implements TrackerInterface
 	 */
 	private $context;
 
-	/**
-	 * Segment constructor.
-	 */
+    /**
+     * Segment constructor.
+     * @param Context $context
+     */
 	public function __construct(Context $context)
 	{
 		$this->context = $context;
@@ -98,6 +100,7 @@ class Segment implements TrackerInterface
 		$ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
 		$referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
 		$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		$module = Module::getInstanceByName('mollie');
 
 		\Segment::track([
 			'userId' => $userId,
@@ -114,6 +117,7 @@ class Segment implements TrackerInterface
 			],
 			'properties' => array_merge([
 				'module' => 'mollie',
+                'version' => $module->version
 			], $this->options),
 		]);
 

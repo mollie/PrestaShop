@@ -99,7 +99,6 @@ class Installer implements InstallerInterface
 	public function install()
 	{
 		$this->segment->setMessage('Mollie installed');
-		$this->segment->setOptions(['version' => $this->module->version]);
 		$this->segment->track();
 
 		foreach (self::getHooks() as $hook) {

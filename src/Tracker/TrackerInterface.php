@@ -42,4 +42,14 @@ interface TrackerInterface
 	 * @return void
 	 */
 	public function track();
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message);
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options);
 }

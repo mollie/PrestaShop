@@ -85,7 +85,6 @@ class Uninstall implements UninstallerInterface
 	public function uninstall()
 	{
 		$this->segment->setMessage('Mollie uninstall');
-		$this->segment->setOptions(['version' => $this->module->version]);
 		$this->segment->track();
 
 		$this->orderStateRepository->deleteStatuses();
