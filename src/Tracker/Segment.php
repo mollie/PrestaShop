@@ -57,10 +57,11 @@ class Segment implements TrackerInterface
 	 */
 	private $context;
 
-    /**
-     * Segment constructor.
-     * @param Context $context
-     */
+	/**
+	 * Segment constructor.
+	 *
+	 * @param Context $context
+	 */
 	public function __construct(Context $context)
 	{
 		$this->context = $context;
@@ -117,7 +118,7 @@ class Segment implements TrackerInterface
 			],
 			'properties' => array_merge([
 				'module' => 'mollie',
-                'version' => $module->version
+				'version' => $module->version,
 			], $this->options),
 		]);
 

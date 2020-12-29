@@ -43,13 +43,13 @@ interface TrackerInterface
 	 */
 	public function track();
 
-    /**
-     * @param string $message
-     */
-    public function setMessage($message);
+	/**
+	 * @param string $message
+	 */
+	public function setMessage($message);
 
-    /**
-     * @param array $options
-     */
-    public function setOptions($options);
+	/**
+	 * @param array $options
+	 */
+	public function setOptions($options);
 }

@@ -23,7 +23,6 @@ use Language;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Service\OrderStateImageService;
-use Mollie\Service\ImageService;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
@@ -66,8 +65,8 @@ class Installer implements InstallerInterface
 		Mollie $module,
 		OrderStateImageService $imageService,
 		InstallerInterface $databaseTableInstaller,
-        Segment $segment
-    ) {
+		Segment $segment
+	) {
 		$this->module = $module;
 		$this->imageService = $imageService;
 		$this->databaseTableInstaller = $databaseTableInstaller;
