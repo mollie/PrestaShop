@@ -20,3 +20,43 @@ services:
   Mollie\Builder\InvoicePdfTemplateBuilder:
     arguments:
       - '@Mollie\Repository\OrderFeeRepository'
+
+  Mollie\Builder\Content\BaseInfoBlock:
+    class: Mollie\Builder\Content\BaseInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\RoundingModeInfoBlock:
+    class: Mollie\Builder\Content\RoundingModeInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\SmartyCacheInfoBlock:
+    class: Mollie\Builder\Content\SmartyCacheInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\SmartyForceCompileInfoBlock:
+    class: Mollie\Builder\Content\SmartyForceCompileInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\LogoInfoBlock:
+    class: Mollie\Builder\Content\LogoInfoBlock
+    arguments:
+      - '@mollie'
+
+  Mollie\Builder\Content\UpdateMessageInfoBlock:
+    class: Mollie\Builder\Content\UpdateMessageInfoBlock
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\UpgradeNoticeService'
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Provider\UpdateMessageProvider'
+
+  Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock:
+    class: Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\IssuerService'
+

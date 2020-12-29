@@ -21,17 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7,1']
+        php-versions: [ '7.1' ]
 
     steps:
-    - uses: actions/checkout@v2
+      -   name: Checkout
+          uses: actions/checkout@v2.0.0
 
-    - name: Install PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-versions }}
+      -   name: Pull PrestaShop files (Tag 1.7.7.0)
+          run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
 
-    - run: php ./tests/phpunit.phar tests/Unit/ --bootstrap ./tests/Unit/bootstrap.php
+      -   name: Run PHPunit
+          run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
 
   phpstan:
     name: PHPStan
@@ -46,5 +46,24 @@ jobs:
       - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
 
-      - name : Run PHPStan
-        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12 analyse --configuration=/web/module/tests/phpstan/phpstan.neon --debug --error-format github
+      - name: Run PHPStan
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12 analyse --configuration=/web/module/tests/phpstan/phpstan${{ matrix.presta-versions }}.neon --debug --error-format github
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: E2E testing
+        run: make e2eh
+
+      - name: Archive videos and screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos_screenshots
+          retention-days: 1
+          path: |
+            cypress/videos
+            cypress/screenshots

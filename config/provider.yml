@@ -7,3 +7,40 @@ services:
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
 
   Mollie\Provider\PhoneNumberProvider:
+
+  Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider:
+    class: Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Utility\Decoder\JsonDecoder'
+
+  Mollie\Provider\PaymentType\RegularPaymentTypeIdentification:
+    class: Mollie\Provider\PaymentType\RegularPaymentTypeIdentification
+
+  Mollie\Provider\UpdateMessageProvider:
+    class: Mollie\Provider\UpdateMessageProvider
+    arguments:
+      - '@mollie'
+
+  Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider
+
+  Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider
+
+  Mollie\Provider\OrderTotalRestrictionProvider:
+    class: Mollie\Provider\OrderTotalRestrictionProvider
+    arguments:
+      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
+
+  Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater:
+    class: Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater
+    arguments:
+      - '@Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider'
+      - '@Mollie\Service\EntityManager\ObjectModelManager'
+
+  Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider:
+    class: Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\ApiService'

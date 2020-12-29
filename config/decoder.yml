@@ -1,0 +1,5 @@
+services:
+  Mollie\Utility\Decoder\JsonDecoder:
+    class: Mollie\Utility\Decoder\JsonDecoder
+
+

@@ -1,34 +1,11 @@
 {**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+* Mollie       https://www.mollie.nl
+*
+* @author      Mollie B.V. <info@mollie.nl>
+* @copyright   Mollie B.V.
+* @link        https://github.com/mollie/PrestaShop
+* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+* @codingStandardsIgnoreStart
 *}
 {extends file="helpers/form/form.tpl"}
 
@@ -77,12 +54,12 @@
             {foreach $input.paymentMethods as $paymentMethod}
                 {assign var = 'methodObj' value=$paymentMethod.obj}
                 <li class="payment-method border border-bottom">
-                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id}]" class="js-payment-option-position">
+                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-          <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id}"
+          <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}"
              role="button"
-             aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id}">
+             aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}">
             <svg class="bi bi-chevron-compact-up mollie-svg" width="1em" height="1em" viewBox="0 0 16 16"
                  fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
@@ -95,25 +72,25 @@
             {if $methodObj->enabled}
                 <a href="#" class="payment-check-link"
                    data-action="deactivate"
-                   onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                   onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-check text-success"></i>
               </a>
             {else}
               <a href="#" class="payment-check-link"
                  data-action="activate"
-                 onclick="togglePaymentMethod(this, '{$paymentMethod.id}'); return false;">
+                 onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-remove text-danger"></i>
               </a>
             {/if}
           </td>
         </span>
-                    <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id}">
+                    <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}">
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Enabled' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id}" class="fixed-width-xl">
+                                <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl">
                                     <option value="0" {if $methodObj->enabled === '0'} selected {/if}>{l s='No' mod='mollie'}</option>
                                     <option value="1" {if $methodObj->enabled === '1'} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                 </select>
@@ -124,8 +101,8 @@
                                 {l s='Title' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id}" class="fixed-width-xl"
-                                       value="{$methodObj->title}">
+                                <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl"
+                                       value="{$methodObj->title|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -133,7 +110,7 @@
                                 {l s='Method' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_API_{$paymentMethod.id}" class="fixed-width-xl">
+                                <select name="MOLLIE_METHOD_API_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl">
                                     {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                         <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                     {/if}
@@ -149,10 +126,10 @@
                                 {l s='Description' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id}"
+                                <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
                                         {if !empty($methodObj->description)}
-                                            value="{$methodObj->description}"
+                                            value="{$methodObj->description|escape:'html':'UTF-8'}"
                                         {else}
                                             value='{literal}{orderNumber}{/literal}'
                                         {/if}
@@ -179,7 +156,7 @@
                                 {l s='Payment allowed from:' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id}"
+                                <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                         class="fixed-width-xl">
                                     <option value="0" {if $methodObj->is_countries_applicable === '0'} selected {/if}>{l s='All countries' mod='mollie'}</option>
                                     <option value="1" {if $methodObj->is_countries_applicable === '1'} selected {/if}>{l s='Selected Countries' mod='mollie'}</option>
@@ -191,11 +168,11 @@
                                 {l s='Allow payment from specific countries:' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
+                                <select name="MOLLIE_METHOD_CERTAIN_COUNTRIES_{$paymentMethod.id|escape:'html':'UTF-8'}[]"
                                         class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                     {foreach $input.countries as $country}
-                                        <option value="{$country.id}"
-                                                {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name}</option>
+                                        <option value="{$country.id|intval}"
+                                                {if {$country.id|in_array:$paymentMethod.countries}}selected{/if}>{$country.name|escape:'html':'UTF-8'}</option>
                                     {/foreach}
                                 </select>
                             </div>
@@ -205,11 +182,11 @@
                                 {l s='Exclude payment from specific countries:' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id}[]"
+                                <select name="MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES_{$paymentMethod.id|escape:'html':'UTF-8'}[]"
                                         class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                     {foreach $input.countries as $excludedCountry}
-                                        <option value="{$excludedCountry.id}"
-                                                {if {$excludedCountry.id|in_array:$paymentMethod.excludedCountries}}selected{/if}>{$excludedCountry.name}</option>
+                                        <option value="{$excludedCountry.id|intval}"
+                                                {if {$excludedCountry.id|in_array:$paymentMethod.excludedCountries}}selected{/if}>{$excludedCountry.name|escape:'html':'UTF-8'}</option>
                                     {/foreach}
                                 </select>
                             </div>
@@ -219,7 +196,7 @@
                                 {l s='Payment Surcharge' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id}"
+                                <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                         class="fixed-width-xl">
                                     <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>
                                         {l s='No fee' mod='mollie'}
@@ -249,8 +226,8 @@
                                 {l s='Payment Surcharge Fixed Amount' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_fixed_amount}">
+                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_fixed_amount|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -258,8 +235,8 @@
                                 {l s='Payment Surcharge percentage' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_percentage}">
+                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_percentage|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -267,11 +244,11 @@
                                 {l s='Payment Surcharge limit' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit}">
+                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
                             </div>
                         </div>
-                        {if $paymentMethod.id === 'creditcard'}
+                        {if $paymentMethod.id|escape:'html':'UTF-8' === 'creditcard'}
                             <div class="form-group">
                                 <label class="control-label col-lg-3">
                                     {l s='Use Custom Logo' mod='mollie'}
@@ -324,14 +301,14 @@
                                     {l s='Your custom logo' mod='mollie'}
                                 </label>
                                 <div class="col-lg-9">
-                                    <img src="{$input.customLogoUrl}"
+                                    <img src="{$input.customLogoUrl|escape:'html':'UTF-8'}"
                                          class="js-mollie-credit-card-custom-logo
                                      {if $input.customLogoExist === false}hidden{/if}
                                 ">
                                 </div>
                             </div>
                         {/if}
-                        {if $paymentMethod.id === 'voucher'}
+                        {if $paymentMethod.id|escape:'html':'UTF-8' === 'voucher'}
                             <div class="form-group">
                                 <label class="control-label col-lg-3">
                                     {l s='Category' mod='mollie'}
@@ -363,7 +340,7 @@
             {/foreach}
         </ul>
         {foreach $webpack_urls as $webpack_url}
-            <script type="text/javascript" src={$webpack_url}></script>
+            <script type="text/javascript" src={$webpack_url|escape:'html':'UTF-8'}></script>
         {/foreach}
     {elseif $input.type === 'mollie-h1'}
         <br>
@@ -399,9 +376,9 @@
                 <tbody>
                 {foreach $input.carriers as $carrier}
                     <tr>
-                        <td class="left">{$carrier.name}</td>
+                        <td class="left">{$carrier.name|escape:'html':'UTF-8'}</td>
                         <td class="left">
-                            <select name="MOLLIE_CARRIER_URL_SOURCE_{$carrier.id_carrier}">
+                            <select name="MOLLIE_CARRIER_URL_SOURCE_{$carrier.id_carrier|intval}">
                                 <option value="do_not_auto_ship"
                                         {if $carrier.source === "do_not_auto_ship"}selected{/if}>{l s='Do not automatically ship' mod='mollie'}</option>
                                 <option value="no_tracking_info"
@@ -418,8 +395,8 @@
                             <input
                                     type="text"
                                     {if $carrier.source !== "custom_url"}disabled=""{/if}
-                                    name="MOLLIE_CARRIER_CUSTOM_URL_{$carrier.id_carrier}"
-                                    value="{$carrier.custom_url}"
+                                    name="MOLLIE_CARRIER_CUSTOM_URL_{$carrier.id_carrier|intval}"
+                                    value="{$carrier.custom_url|escape:'html':'UTF-8'}"
                             >
                         </td>
                     </tr>
@@ -704,9 +681,9 @@
                 <i class="icon-key"></i>
             </span>
             <input type="password"
-                   id="{if isset($input.id)}{$input.id}{else}{$input.name}{/if}"
-                   name="{$input.name}"
-                   class="{if isset($input.class)}{$input.class}{/if} js-visible-password"
+                   id="{if isset($input.id)}{$input.id|intval}{else}{$input.name|escape:'html':'UTF-8'}{/if}"
+                   name="{$input.name|escape:'html':'UTF-8'}"
+                   class="{if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if} js-visible-password"
                    value="{$fields_value[$input.name]|escape:'html':'UTF-8'}"
                    {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if}
                     {if isset($input.required) && $input.required } required="required" {/if}
@@ -723,13 +700,23 @@
               </button>
         </div>
     {elseif $input.type === 'mollie-button'}
-        <button type="button" class="btn btn-default {if isset($input.class)}{$input.class}{/if}">{$input.text}</button>
+        <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
     {elseif $input.type === 'mollie-payment-empty-alert'}
 
         <div data-tab-id="general_settings">
             <div class="alert alert-info">
                 {l s='You haven\'t enabled any of the Mollie payments.' mod='mollie'}<br>
                 {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
+            </div>
+        </div>
+
+    {elseif $input.type === 'mollie-button-update-order-total-restriction'}
+        <div class="mollie-order-total-restriction-update">
+            <div>
+                <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+            </div>
+            <div>
+                <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
             </div>
         </div>
     {else}
