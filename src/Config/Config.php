@@ -24,6 +24,8 @@ class Config
 {
 	const SEGMENT_KEY = 'GnGf1m503biLVjo3a52nplV1becA0kiv';
 
+	const SENTRY_KEY = 'https://4e43802a3d454d7c8adadfbb29aec8c0@o471790.ingest.sentry.io/5573609';
+
 	/**
 	 * Currency restrictions per payment method.
 	 *

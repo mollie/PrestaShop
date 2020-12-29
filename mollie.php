@@ -334,6 +334,8 @@ class Mollie extends PaymentModule
 		try {
 			$html .= $settingsFormBuilder->buildSettingsForm();
 		} catch (PrestaShopDatabaseException $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->context->controller->errors[] = $this->l('You are missing database tables. Try resetting module.');
 		}
 
@@ -1116,8 +1118,12 @@ class Mollie extends PaymentModule
 		try {
 			$this->api = $apiKeyService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
 		} catch (MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
 			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
 		} catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->warning = $this->l('Payment error:') . $e->getMessage();
 			PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
 		}

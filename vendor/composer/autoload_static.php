@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4
+class ComposerStaticInit6b57a6ab6244064da3c1c8ddc558b453
 {
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
@@ -283,9 +283,9 @@ class ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4
         'MolliePrefix\\APCuIterator' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
         'MolliePrefix\\ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'MolliePrefix\\AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-        'MolliePrefix\\ComposerAutoloaderInitdcd1aca05bb28bd3c3b2f47898924bc4' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'MolliePrefix\\ComposerAutoloaderInit6b57a6ab6244064da3c1c8ddc558b453' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'MolliePrefix\\Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'MolliePrefix\\Composer\\Autoload\\ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4' => __DIR__ . '/..' . '/composer/autoload_static.php',
+        'MolliePrefix\\Composer\\Autoload\\ComposerStaticInit6b57a6ab6244064da3c1c8ddc558b453' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolliePrefix\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'MolliePrefix\\Composer\\Semver\\Comparator' => __DIR__ . '/..' . '/composer/semver/src/Comparator.php',
         'MolliePrefix\\Composer\\Semver\\CompilingMatcher' => __DIR__ . '/..' . '/composer/semver/src/CompilingMatcher.php',
@@ -967,6 +967,28 @@ class ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4
         'MolliePrefix\\Psr\\SimpleCache\\CacheException' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheException.php',
         'MolliePrefix\\Psr\\SimpleCache\\CacheInterface' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheInterface.php',
         'MolliePrefix\\Psr\\SimpleCache\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/simple-cache/src/InvalidArgumentException.php',
+        'MolliePrefix\\Raven_Autoloader' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Autoloader.php',
+        'MolliePrefix\\Raven_Breadcrumbs' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Breadcrumbs.php',
+        'MolliePrefix\\Raven_Breadcrumbs_ErrorHandler' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Breadcrumbs/ErrorHandler.php',
+        'MolliePrefix\\Raven_Breadcrumbs_MonologHandler' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Breadcrumbs/MonologHandler.php',
+        'MolliePrefix\\Raven_Client' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Client.php',
+        'MolliePrefix\\Raven_Compat' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Compat.php',
+        'MolliePrefix\\Raven_Context' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Context.php',
+        'MolliePrefix\\Raven_CurlHandler' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/CurlHandler.php',
+        'MolliePrefix\\Raven_ErrorHandler' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/ErrorHandler.php',
+        'MolliePrefix\\Raven_Exception' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Exception.php',
+        'MolliePrefix\\Raven_Processor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor.php',
+        'MolliePrefix\\Raven_Processor_RemoveCookiesProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor/RemoveCookiesProcessor.php',
+        'MolliePrefix\\Raven_Processor_RemoveHttpBodyProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor/RemoveHttpBodyProcessor.php',
+        'MolliePrefix\\Raven_Processor_SanitizeDataProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor/SanitizeDataProcessor.php',
+        'MolliePrefix\\Raven_Processor_SanitizeHttpHeadersProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor/SanitizeHttpHeadersProcessor.php',
+        'MolliePrefix\\Raven_Processor_SanitizeStacktraceProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Processor/SanitizeStacktraceProcessor.php',
+        'MolliePrefix\\Raven_ReprSerializer' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/ReprSerializer.php',
+        'MolliePrefix\\Raven_SanitizeDataProcessor' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/SanitizeDataProcessor.php',
+        'MolliePrefix\\Raven_Serializer' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Serializer.php',
+        'MolliePrefix\\Raven_Stacktrace' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Stacktrace.php',
+        'MolliePrefix\\Raven_TransactionStack' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/TransactionStack.php',
+        'MolliePrefix\\Raven_Util' => __DIR__ . '/..' . '/sentry/sentry/lib/Raven/Util.php',
         'MolliePrefix\\SebastianBergmann\\CodeCoverage\\CodeCoverage' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/CodeCoverage.php',
         'MolliePrefix\\SebastianBergmann\\CodeCoverage\\CoveredCodeNotExecutedException' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Exception/CoveredCodeNotExecutedException.php',
         'MolliePrefix\\SebastianBergmann\\CodeCoverage\\Driver\\Driver' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Driver/Driver.php',
@@ -1596,6 +1618,7 @@ class ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4
         'Mollie\\Handler\\CartRule\\CartRuleQuantityChangeHandlerInterface' => __DIR__ . '/../..' . '/src/Handler/CartRule/CartRuleQuantityChangeHandlerInterface.php',
         'Mollie\\Handler\\CartRule\\CartRuleQuantityResetHandler' => __DIR__ . '/../..' . '/src/Handler/CartRule/CartRuleQuantityResetHandler.php',
         'Mollie\\Handler\\CartRule\\CartRuleQuantityResetHandlerInterface' => __DIR__ . '/../..' . '/src/Handler/CartRule/CartRuleQuantityResetHandlerInterface.php',
+        'Mollie\\Handler\\ErrorHandler\\ErrorHandler' => __DIR__ . '/../..' . '/src/Handler/ErrorHandler/ErrorHandler.php',
         'Mollie\\Handler\\Exception\\ExceptionHandlerInterface' => __DIR__ . '/../..' . '/src/Handler/Exception/ExceptionHandlerInterface.php',
         'Mollie\\Handler\\Exception\\OrderExceptionHandler' => __DIR__ . '/../..' . '/src/Handler/Exception/OrderExceptionHandler.php',
         'Mollie\\Handler\\OrderTotal\\OrderTotalUpdaterHandler' => __DIR__ . '/../..' . '/src/Handler/OrderTotal/OrderTotalUpdaterHandler.php',
@@ -1767,9 +1790,9 @@ class ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitdcd1aca05bb28bd3c3b2f47898924bc4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6b57a6ab6244064da3c1c8ddc558b453::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6b57a6ab6244064da3c1c8ddc558b453::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6b57a6ab6244064da3c1c8ddc558b453::$classMap;
 
         }, null, ClassLoader::class);
     }

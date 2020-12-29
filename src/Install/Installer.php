@@ -22,6 +22,7 @@ use FeatureValue;
 use Language;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Service\OrderStateImageService;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
@@ -77,6 +78,7 @@ class Installer implements InstallerInterface
 	{
 		$this->segment->setMessage('Mollie installed');
 		$this->segment->track();
+		$errorHandler = ErrorHandler::getInstance();
 
 		foreach (self::getHooks() as $hook) {
 			if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && 'displayPaymentEU' === $hook) {
@@ -89,6 +91,7 @@ class Installer implements InstallerInterface
 		try {
 			$this->createMollieStatuses();
 		} catch (Exception $e) {
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
 
 			return false;
@@ -97,6 +100,7 @@ class Installer implements InstallerInterface
 		try {
 			$this->initConfig();
 		} catch (Exception $e) {
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
 
 			return false;
@@ -104,6 +108,7 @@ class Installer implements InstallerInterface
 		try {
 			$this->setDefaultCarrierStatuses();
 		} catch (Exception $e) {
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
 
 			return false;
@@ -113,6 +118,7 @@ class Installer implements InstallerInterface
 			$this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
 			$this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
 		} catch (Exception $e) {
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
 
 			return false;
@@ -121,6 +127,7 @@ class Installer implements InstallerInterface
 		try {
 			$this->installVoucherFeatures();
 		} catch (Exception $e) {
+			$errorHandler->handle($e, $e->getCode(), false);
 			$this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
 
 			return false;

@@ -13,6 +13,7 @@
 
 use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
@@ -115,6 +116,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		try {
 			$apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
 		} catch (OrderCreationException $e) {
+			$errorHandler = ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+
 			$this->setTemplate('error.tpl');
 
 			if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
@@ -128,6 +132,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 			return;
 		} catch (PrestaShopException $e) {
+			$errorHandler = ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+
 			$this->setTemplate('error.tpl');
 			$this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
 				? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
@@ -325,6 +332,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			try {
 				$orderFeeObj->add();
 			} catch (Exception $e) {
+				$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+				$errorHandler->handle($e, $e->getCode(), false);
 				throw new PrestaShopException('Can\'t save Order fee');
 			}
 			$orderFeeNumber = new Number((string) $orderFeeObj->order_fee);
