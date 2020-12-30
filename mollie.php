@@ -135,11 +135,6 @@ class Mollie extends PaymentModule
 	{
 		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
 			!class_exists('MolliePrefix\Segment')) {
-			/** @var Mollie\Tracker\Segment $segment */
-			$segment = $this->getMollieContainer(Mollie\Tracker\Segment::class);
-
-			$segment->setMessage('Mollie requires an extra refresh');
-			$segment->track();
 
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
