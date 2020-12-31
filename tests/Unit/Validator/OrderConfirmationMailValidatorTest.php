@@ -99,6 +99,13 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
                 'outOfStockOrderState' => 60,
                 'expected' => false,
             ],
+            'sendOrderConfirmation is not defined' => [
+                'orderStateId' => 55,
+                'sendOrderConfirmation' => null,
+                'paidOrderState' => 55,
+                'outOfStockOrderState' => 60,
+                'expected' => false,
+            ],
         ];
     }
 }
