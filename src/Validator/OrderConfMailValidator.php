@@ -13,21 +13,20 @@
 
 namespace Mollie\Validator;
 
-use Configuration;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 
 class OrderConfMailValidator implements MailValidatorInterface
 {
-    /**
-     * @var ConfigurationAdapter
-     */
-    private $configurationAdapter;
+	/**
+	 * @var ConfigurationAdapter
+	 */
+	private $configurationAdapter;
 
-    public function __construct(ConfigurationAdapter $configurationAdapter)
-    {
-        $this->configurationAdapter = $configurationAdapter;
-    }
+	public function __construct(ConfigurationAdapter $configurationAdapter)
+	{
+		$this->configurationAdapter = $configurationAdapter;
+	}
 
 	/**
 	 * @param int $orderStateId
@@ -47,21 +46,21 @@ class OrderConfMailValidator implements MailValidatorInterface
 		}
 	}
 
-    /**
-     * @param int $orderStateId
-     *
-     * @return bool
-     */
-    private function validateOrderState($orderStateId)
-    {
-        if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_PAID) === $orderStateId) {
-            return true;
-        }
+	/**
+	 * @param int $orderStateId
+	 *
+	 * @return bool
+	 */
+	private function validateOrderState($orderStateId)
+	{
+		if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_PAID) === $orderStateId) {
+			return true;
+		}
 
-        if ((int) $this->configurationAdapter->get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderStateId) {
-            return true;
-        }
+		if ((int) $this->configurationAdapter->get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderStateId) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
