@@ -6,7 +6,7 @@ use Mollie\Tests\Unit\Tools\UnitTestCase;
 use Mollie\Validator\NewOrderMailValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class NewOrderMailValidatorTest extends UnitTestCase
+class OrderConfirmationMailValidatorTest extends UnitTestCase
 {
     /**
      * @var ConfigurationAdapter|MockObject
@@ -24,14 +24,14 @@ class NewOrderMailValidatorTest extends UnitTestCase
         ;
     }
 
-    /** @dataProvider getCanNewOrderMailBeSentData */
-    public function testCanNewOrderMailBeSent($orderStateId, $sendNewOrder, $paidOrderState, $outOfStockOrderState, $expected)
+    /** @dataProvider getCanOrderConfirmationMailBeSentData */
+    public function testCanOrderConfirmationMailBeSent($orderStateId, $sendOrderConfirmation, $paidOrderState, $outOfStockOrderState, $expected)
     {
         $this->configurationAdapter
             ->expects($this->any())
             ->method('get')
-            ->with(Config::MOLLIE_SEND_NEW_ORDER)
-            ->willReturn($sendNewOrder)
+            ->with(Config::MOLLIE_SEND_ORDER_CONFIRMATION)
+            ->willReturn($sendOrderConfirmation)
         ;
 
         $this->configurationAdapter
@@ -54,47 +54,47 @@ class NewOrderMailValidatorTest extends UnitTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function getCanNewOrderMailBeSentData()
+    public function getCanOrderConfirmationMailBeSentData()
     {
         return [
             'Send on created' => [
                 'orderStateId' => 17,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
+                'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => true,
             ],
             'Send on paid because orderStateId is same as paidOrderState and send email on paid is enabled' => [
                 'orderStateId' => 55,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => true,
             ],
             'Send on paid because orderStateId is same as outOfStockOrderState and send email on paid is enabled' => [
                 'orderStateId' => 60,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => true,
             ],
             'Do not send on paid because orderStateId is not paid/out of stock' => [
                 'orderStateId' => 5,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
+                'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => false,
             ],
             'Send email is on never' => [
                 'orderStateId' => 55,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
+                'sendOrderConfirmation' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => false,
             ],
             'Given sendNewOrder is not viable to be sent' => [
                 'orderStateId' => 55,
-                'sendNewOrder' => 10,
+                'sendOrderConfirmation' => 10,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => false,

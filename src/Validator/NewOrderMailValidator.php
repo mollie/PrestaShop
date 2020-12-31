@@ -35,7 +35,7 @@ class NewOrderMailValidator implements MailValidatorInterface
 	 */
 	public function validate($orderStateId)
 	{
-		switch ($this->configurationAdapter->get(Config::MOLLIE_SEND_NEW_ORDER)) {
+		switch ((int) $this->configurationAdapter->get(Config::MOLLIE_SEND_NEW_ORDER)) {
 			case Config::NEW_ORDER_MAIL_SEND_ON_CREATION:
 				return true;
 			case Config::NEW_ORDER_MAIL_SEND_ON_PAID:

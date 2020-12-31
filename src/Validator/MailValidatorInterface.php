@@ -16,9 +16,9 @@ namespace Mollie\Validator;
 interface MailValidatorInterface
 {
 	/**
-	 * @param int $orderState
+	 * @param int $orderStateId
 	 *
 	 * @return bool
 	 */
-	public function validate($orderState);
+	public function validate($orderStateId);
 }
