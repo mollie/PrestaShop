@@ -18,17 +18,17 @@ use Mollie\Config\Config;
 
 class NewOrderMailValidator implements MailValidatorInterface
 {
-    /**
-     * @var ConfigurationAdapter
-     */
-    private $configurationAdapter;
+	/**
+	 * @var ConfigurationAdapter
+	 */
+	private $configurationAdapter;
 
-    public function __construct(ConfigurationAdapter $configurationAdapter)
-    {
-        $this->configurationAdapter = $configurationAdapter;
-    }
+	public function __construct(ConfigurationAdapter $configurationAdapter)
+	{
+		$this->configurationAdapter = $configurationAdapter;
+	}
 
-    /**
+	/**
 	 * @param int $orderStateId
 	 *
 	 * @return bool
@@ -53,14 +53,14 @@ class NewOrderMailValidator implements MailValidatorInterface
 	 */
 	private function validateOrderState($orderStateId)
 	{
-	    if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_PAID) === $orderStateId) {
-	        return true;
-        }
+		if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_PAID) === $orderStateId) {
+			return true;
+		}
 
-        if ((int) $this->configurationAdapter->get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderStateId) {
-            return true;
-        }
+		if ((int) $this->configurationAdapter->get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID) === $orderStateId) {
+			return true;
+		}
 
-        return false;
+		return false;
 	}
 }
