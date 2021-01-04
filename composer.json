@@ -17,8 +17,7 @@
     "sentry/sentry": "^1.11.0"
   },
   "require-dev": {
-    "prestashop/php-dev-tools": "^3.0",
-    "phpunit/phpunit": "5.7.12"
+    "prestashop/php-dev-tools": "^3.0"
   },
   "autoload-dev": {
     "psr-4": {
