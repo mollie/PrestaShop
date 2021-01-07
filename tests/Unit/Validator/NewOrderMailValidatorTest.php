@@ -27,26 +27,9 @@ class NewOrderMailValidatorTest extends UnitTestCase
 	/** @dataProvider getCanNewOrderMailBeSentData */
 	public function testCanNewOrderMailBeSent($orderStateId, $sendNewOrder, $paidOrderState, $outOfStockOrderState, $expected)
 	{
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::MOLLIE_SEND_NEW_ORDER)
-			->willReturn($sendNewOrder)
-		;
-
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::MOLLIE_STATUS_PAID)
-			->willReturn($paidOrderState)
-		;
-
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)
-			->willReturn($outOfStockOrderState)
-		;
+	    $this->configurationAdapter->expects($this->any())->method('get')
+            ->withConsecutive([Config::MOLLIE_SEND_NEW_ORDER], [Config::MOLLIE_STATUS_PAID], [Config::STATUS_PS_OS_OUTOFSTOCK_PAID])
+            ->willReturnOnConsecutiveCalls($sendNewOrder, $paidOrderState, $outOfStockOrderState);
 
 		$newOrderMailValidator = new NewOrderMailValidator($this->configurationAdapter);
 		$result = $newOrderMailValidator->validate($orderStateId);
@@ -101,10 +84,10 @@ class NewOrderMailValidatorTest extends UnitTestCase
 			],
 			'sendNewOrder is not defined' => [
 				'orderStateId' => 55,
-				'sendNewOrder' => null,
+				'sendNewOrder' => false,
 				'paidOrderState' => 55,
 				'outOfStockOrderState' => 60,
-				'expected' => false,
+				'expected' => true,
 			],
 		];
 	}
