@@ -13,7 +13,7 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
 	 */
 	private $configurationAdapter;
 
-	protected function setUp(): void
+	protected function setUp()
 	{
 		parent::setUp();
 
@@ -27,26 +27,9 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
 	/** @dataProvider getCanOrderConfirmationMailBeSentData */
 	public function testCanOrderConfirmationMailBeSent($orderStateId, $sendOrderConfirmation, $paidOrderState, $outOfStockOrderState, $expected)
 	{
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::MOLLIE_SEND_ORDER_CONFIRMATION)
-			->willReturn($sendOrderConfirmation)
-		;
-
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::MOLLIE_STATUS_PAID)
-			->willReturn($paidOrderState)
-		;
-
-		$this->configurationAdapter
-			->expects($this->any())
-			->method('get')
-			->with(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)
-			->willReturn($outOfStockOrderState)
-		;
+        $this->configurationAdapter->expects($this->any())->method('get')
+            ->withConsecutive([Config::MOLLIE_SEND_NEW_ORDER], [Config::MOLLIE_STATUS_PAID], [Config::STATUS_PS_OS_OUTOFSTOCK_PAID])
+            ->willReturnOnConsecutiveCalls($sendOrderConfirmation, $paidOrderState, $outOfStockOrderState);
 
 		$newOrderMailValidator = new NewOrderMailValidator($this->configurationAdapter);
 		$result = $newOrderMailValidator->validate($orderStateId);
@@ -104,7 +87,7 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
 				'sendOrderConfirmation' => null,
 				'paidOrderState' => 55,
 				'outOfStockOrderState' => 60,
-				'expected' => false,
+				'expected' => true,
 			],
 		];
 	}
