@@ -4,7 +4,6 @@ namespace Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Repository\AttributeRepository;
