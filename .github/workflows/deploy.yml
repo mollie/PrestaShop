@@ -13,8 +13,6 @@ jobs:
       - name: build
         run: |
           make bvn
-          cat deploy/replace/random.php > vendor/paragonie/random_compat/lib/random.php
-          cat deploy/replace/random_bytes_mcrypt.php > vendor/paragonie/random_compat/lib/random_bytes_mcrypt.php
           rm -rf .git
           rm -rf .github
           rm -rf vendorBuilder
