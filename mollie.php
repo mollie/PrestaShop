@@ -574,7 +574,7 @@ class Mollie extends PaymentModule
 			$iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
 		}
 
-		return $this->display(__FILE__, 'addjsdef.tpl') . $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
+		return $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
 	}
 
 	/**
