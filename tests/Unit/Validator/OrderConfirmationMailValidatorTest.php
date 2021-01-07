@@ -27,9 +27,9 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
 	/** @dataProvider getCanOrderConfirmationMailBeSentData */
 	public function testCanOrderConfirmationMailBeSent($orderStateId, $sendOrderConfirmation, $paidOrderState, $outOfStockOrderState, $expected)
 	{
-        $this->configurationAdapter->expects($this->any())->method('get')
-            ->withConsecutive([Config::MOLLIE_SEND_NEW_ORDER], [Config::MOLLIE_STATUS_PAID], [Config::STATUS_PS_OS_OUTOFSTOCK_PAID])
-            ->willReturnOnConsecutiveCalls($sendOrderConfirmation, $paidOrderState, $outOfStockOrderState);
+		$this->configurationAdapter->expects($this->any())->method('get')
+			->withConsecutive([Config::MOLLIE_SEND_NEW_ORDER], [Config::MOLLIE_STATUS_PAID], [Config::STATUS_PS_OS_OUTOFSTOCK_PAID])
+			->willReturnOnConsecutiveCalls($sendOrderConfirmation, $paidOrderState, $outOfStockOrderState);
 
 		$newOrderMailValidator = new NewOrderMailValidator($this->configurationAdapter);
 		$result = $newOrderMailValidator->validate($orderStateId);
