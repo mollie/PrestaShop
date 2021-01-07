@@ -1,7 +1,6 @@
 <phpunit bootstrap="bootstrap.php"
          stopOnFailure="true"
          colors="true"
-         debug="true"
          verbose="true"
 >
     <php>
