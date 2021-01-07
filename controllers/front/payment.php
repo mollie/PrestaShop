@@ -12,6 +12,8 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\DTO\OrderData;
+use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
@@ -194,8 +196,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-	 * @param $paymentData
-	 * @param $paymentMethodObj
+     * @param PaymentData|OrderData $paymentData
+     * @param MolPaymentMethod $paymentMethodObj
 	 *
 	 * @return false|MollieOrderAlias|MolliePaymentAlias
 	 *
