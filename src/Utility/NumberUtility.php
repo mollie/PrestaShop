@@ -87,19 +87,21 @@ class NumberUtility
 		return (float) $result;
 	}
 
-	/**
-	 * ($a/$b).
-	 *
-	 * @param float $a
-	 * @param float $b
-	 *
-	 * @return float
-	 */
-	public static function divide($a, $b)
+    /**
+     * ($a/$b).
+     *
+     * @param float $a
+     * @param float $b
+     * @param int $precision
+     *
+     * @return float
+     * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
+     */
+	public static function divide($a, $b, $precision = 20)
 	{
 		$firstNumber = self::toObject($a);
 		$secondNumber = self::toObject($b);
-		$result = (string) $firstNumber->dividedBy($secondNumber);
+		$result = (string) $firstNumber->dividedBy($secondNumber, $precision);
 
 		return (float) $result;
 	}
