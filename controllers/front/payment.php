@@ -196,9 +196,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	}
 
     /**
-     * @param PaymentData|OrderData $paymentData
-     * @param MolPaymentMethod $paymentMethodObj
-     * @return MollieOrderAlias|MolliePaymentAlias|void
+     * @param $paymentData
+     * @param $paymentMethodObj
+     * @return false|MollieOrderAlias|MolliePaymentAlias
      * @throws PrestaShopException
      */
 	protected function createMollieOrder($paymentData, $paymentMethodObj)
