@@ -196,8 +196,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 	}
 
 	/**
-     * @param PaymentData|OrderData $paymentData
-     * @param MolPaymentMethod $paymentMethodObj
+	 * @param PaymentData|OrderData $paymentData
+	 * @param MolPaymentMethod $paymentMethodObj
 	 *
 	 * @return false|MollieOrderAlias|MolliePaymentAlias
 	 *
