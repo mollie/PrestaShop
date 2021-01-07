@@ -12,8 +12,6 @@
  */
 
 use Mollie\Config\Config;
-use Mollie\DTO\OrderData;
-use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
@@ -195,12 +193,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		return true;
 	}
 
-    /**
-     * @param $paymentData
-     * @param $paymentMethodObj
-     * @return false|MollieOrderAlias|MolliePaymentAlias
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param $paymentData
+	 * @param $paymentMethodObj
+	 *
+	 * @return false|MollieOrderAlias|MolliePaymentAlias
+	 *
+	 * @throws PrestaShopException
+	 */
 	protected function createMollieOrder($paymentData, $paymentMethodObj)
 	{
 		try {
