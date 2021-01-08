@@ -33,7 +33,6 @@ use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use PrestaShopLogger;
 
 class ApiService
 {

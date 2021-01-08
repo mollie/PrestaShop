@@ -19,17 +19,17 @@ namespace Mollie\Config;
  */
 class Env
 {
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
-    public function get($key)
-    {
-        if (!empty($_ENV[$key])) {
-            return $_ENV[$key];
-        }
+	/**
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+	public function get($key)
+	{
+		if (!empty($_ENV[$key])) {
+			return $_ENV[$key];
+		}
 
-        return constant(Config::class . '::' . $key);
-    }
+		return constant(Config::class . '::' . $key);
+	}
 }
