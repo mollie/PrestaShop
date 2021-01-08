@@ -90,15 +90,15 @@ class Mollie extends PaymentModule
 	{
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
 			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
-            /* @phpstan-ignore-next-line */
-            $dotenv->load();
+			/* @phpstan-ignore-next-line */
+			$dotenv->load();
 
 			return;
 		}
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
 			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
-            /* @phpstan-ignore-next-line */
-            $dotenv->load();
+			/* @phpstan-ignore-next-line */
+			$dotenv->load();
 
 			return;
 		}
