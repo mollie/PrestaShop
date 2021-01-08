@@ -12,3 +12,10 @@ services:
       - '@mollie'
     tags:
       - { name: 'console.command' }
+
+  Mollie\Command\UpdateTranslationsConsoleCommand:
+    class: Mollie\Command\UpdateTranslationsConsoleCommand
+    arguments:
+      - '@mollie'
+    tags:
+      - { name: 'console.command' }
