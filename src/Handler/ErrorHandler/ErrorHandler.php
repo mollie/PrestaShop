@@ -16,6 +16,7 @@ namespace Mollie\Handler\ErrorHandler;
 use Module;
 use Mollie;
 use Mollie\Config\Config;
+use Mollie\Config\Env;
 use MolliePrefix\Raven_Client;
 
 /**
@@ -38,6 +39,9 @@ class ErrorHandler
 		/** @var Mollie */
 		$module = Module::getInstanceByName('mollie');
 
+		/** @var Env $env */
+		$env = $module->getMollieContainer(Env::class);
+
 		$this->client = new Raven_Client(
 			Config::SENTRY_KEY,
 			[
@@ -48,6 +52,7 @@ class ErrorHandler
 					'prestashop_version' => _PS_VERSION_,
 					'mollie_is_enabled' => \Module::isEnabled('mollie'),
 					'mollie_is_installed' => \Module::isInstalled('mollie'),
+                    'env' => $env->get('SENTRY_ENV')
 				],
 			]
 		);
