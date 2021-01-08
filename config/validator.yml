@@ -1,7 +1,13 @@
 services:
   Mollie\Validator\OrderConfMailValidator:
+    class: Mollie\Validator\OrderConfMailValidator
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Validator\NewOrderMailValidator:
+    class: Mollie\Validator\NewOrderMailValidator
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Validator\VoucherValidator:
     arguments:
