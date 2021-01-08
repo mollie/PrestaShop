@@ -86,19 +86,21 @@ class Mollie extends PaymentModule
 		$this->setApiKey();
 	}
 
-    private function loadEnv()
-    {
-        if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
-            $dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
-            $dotenv->load();
-            return;
-        }
-        if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
-            $dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
-            $dotenv->load();
-            return;
-        }
-    }
+	private function loadEnv()
+	{
+		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
+			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
+			$dotenv->load();
+
+			return;
+		}
+		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
+			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
+			$dotenv->load();
+
+			return;
+		}
+	}
 
 	/**
 	 * Installs the Mollie Payments Module.
