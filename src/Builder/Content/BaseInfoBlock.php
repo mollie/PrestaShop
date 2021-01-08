@@ -36,7 +36,6 @@ class BaseInfoBlock implements TemplateBuilderInterface
 			'val_errors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
 			'val_logger' => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),
 			'val_save' => $this->module->l('Save'),
-			'webpack_urls' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
 			'description_message' => $this->module->l('Description cannot be empty'),
 			'Profile_id_message' => $this->module->l('Wrong profile ID'),
 			'link' => Context::getContext()->link,

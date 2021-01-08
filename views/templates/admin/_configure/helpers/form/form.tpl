@@ -339,9 +339,6 @@
                 </li>
             {/foreach}
         </ul>
-        {foreach $webpack_urls as $webpack_url}
-            <script type="text/javascript" src={$webpack_url|escape:'html':'UTF-8'}></script>
-        {/foreach}
     {elseif $input.type === 'mollie-h1'}
         <br>
         <h1>{$input.title|escape:'html':'UTF-8'}</h1>
