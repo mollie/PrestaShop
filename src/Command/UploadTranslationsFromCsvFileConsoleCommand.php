@@ -96,7 +96,15 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 
 		$translatedText = str_replace("'", "\'", $values[$position]);
 
-		$translationLine =
+        $prefix = '"';
+        if (substr($translatedText, 0, strlen($prefix)) == $prefix) {
+            $translatedText = substr($translatedText, strlen($prefix));
+        }
+        if (substr($translatedText, -strlen($prefix)) === $prefix) {
+            $translatedText = substr($translatedText, 0, strlen($translatedText)-strlen($prefix));
+        }
+
+        $translationLine =
 			'$_MODULE[\'' . $values[self::CSV_POSITION_ID] . '\'] = \'' . $translatedText . "';\n";
 
 		file_put_contents($file, $translationLine, FILE_APPEND);
