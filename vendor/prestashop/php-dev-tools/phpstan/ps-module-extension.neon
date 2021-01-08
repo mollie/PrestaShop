@@ -1,0 +1,9 @@
+parameters:
+  bootstrapFiles:
+    - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/bootstrap.php
+  stubFiles:
+    - stubs/Module.stub
+    - stubs/Tab.stub
+  dynamicConstantNames:
+    - _PS_VERSION_
+    - _PS_MODE_DEV_

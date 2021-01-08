@@ -1,0 +1,38 @@
+{
+    "name": "prestashop\/header-stamp",
+    "description": "Rewrite your file headers to add the license or to make them up-to-date",
+    "homepage": "https:\/\/github.com\/PrestaShopCorp\/header-stamp",
+    "license": "AFL-3.0",
+    "authors": [
+        {
+            "name": "PrestaShop SA",
+            "email": "contact@prestashop.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "symfony\/console": "^3.4 || ~4.0 || ~5.0",
+        "symfony\/finder": "^3.4 || ~4.0 || ~5.0",
+        "nikic\/php-parser": "^3.1"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "prepend-autoloader": false,
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "5.6"
+        }
+    },
+    "bin": [
+        "bin\/header-stamp"
+    ],
+    "autoload": {
+        "psr-4": {
+            "MolliePrefix\\PrestaShop\\HeaderStamp\\": "src\/"
+        }
+    },
+    "author": "PrestaShop",
+    "require-dev": {
+        "prestashop\/php-dev-tools": "1.*"
+    }
+}
