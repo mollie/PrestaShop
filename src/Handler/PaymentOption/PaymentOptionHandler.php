@@ -115,7 +115,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 		$isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
 		$isCartesBancairesPaymentMethod = Config::CARTES_BANCAIRES === $paymentMethod->getPaymentMethodName();
 
-		if (!$isCreditCardPaymentMethod || !$isCartesBancairesPaymentMethod) {
+		if (!$isCreditCardPaymentMethod && !$isCartesBancairesPaymentMethod) {
 			return false;
 		}
 
