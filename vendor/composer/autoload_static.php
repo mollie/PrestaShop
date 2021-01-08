@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit71d062e6f63824c72d12776edbc1635e
+class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
 {
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
@@ -239,9 +239,6 @@ class ComposerStaticInit71d062e6f63824c72d12776edbc1635e
     public static $classMap = array (
         'AdminMollieAjaxController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieAjaxController.php',
         'AdminMollieModuleController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieModuleController.php',
-        'ComposerAutoloaderInita41ac671cd2d5e47fac52d5bbddafcf9' => __DIR__ . '/..' . '/composer/autoload_real.php',
-        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'Composer\\Autoload\\ComposerStaticInita41ac671cd2d5e47fac52d5bbddafcf9' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolCarrierInformation' => __DIR__ . '/../..' . '/src/Entity/MolCarrierInformation.php',
         'MolCustomer' => __DIR__ . '/../..' . '/src/Entity/MolCustomer.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
@@ -258,9 +255,9 @@ class ComposerStaticInit71d062e6f63824c72d12776edbc1635e
         'MolliePrefix\\APCuIterator' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
         'MolliePrefix\\ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'MolliePrefix\\AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-        'MolliePrefix\\ComposerAutoloaderInit71d062e6f63824c72d12776edbc1635e' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'MolliePrefix\\ComposerAutoloaderInit7556820241b60b81caa71ba88b2909a7' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'MolliePrefix\\Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'MolliePrefix\\Composer\\Autoload\\ComposerStaticInit71d062e6f63824c72d12776edbc1635e' => __DIR__ . '/..' . '/composer/autoload_static.php',
+        'MolliePrefix\\Composer\\Autoload\\ComposerStaticInit7556820241b60b81caa71ba88b2909a7' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolliePrefix\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'MolliePrefix\\Composer\\Semver\\Comparator' => __DIR__ . '/..' . '/composer/semver/src/Comparator.php',
         'MolliePrefix\\Composer\\Semver\\CompilingMatcher' => __DIR__ . '/..' . '/composer/semver/src/CompilingMatcher.php',
@@ -1101,6 +1098,7 @@ class ComposerStaticInit71d062e6f63824c72d12776edbc1635e
         'Mollie\\Builder\\InvoicePdfTemplateBuilder' => __DIR__ . '/../..' . '/src/Builder/InvoicePdfTemplateBuilder.php',
         'Mollie\\Builder\\TemplateBuilderInterface' => __DIR__ . '/../..' . '/src/Builder/TemplateBuilderInterface.php',
         'Mollie\\Command\\TranslationCsvFileGeneratorConsoleCommand' => __DIR__ . '/../..' . '/src/Command/TranslationCsvFileGeneratorConsoleCommand.php',
+        'Mollie\\Command\\UpdateTranslationsConsoleCommand' => __DIR__ . '/../..' . '/src/Command/UpdateTranslationsConsoleCommand.php',
         'Mollie\\Command\\UploadTranslationsFromCsvFileConsoleCommand' => __DIR__ . '/../..' . '/src/Command/UploadTranslationsFromCsvFileConsoleCommand.php',
         'Mollie\\Config\\Config' => __DIR__ . '/../..' . '/src/Config/Config.php',
         'Mollie\\Controller\\AbstractMollieController' => __DIR__ . '/../..' . '/src/Controller/AbstractMollieController.php',
@@ -1306,9 +1304,9 @@ class ComposerStaticInit71d062e6f63824c72d12776edbc1635e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit71d062e6f63824c72d12776edbc1635e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit71d062e6f63824c72d12776edbc1635e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit71d062e6f63824c72d12776edbc1635e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$classMap;
 
         }, null, ClassLoader::class);
     }

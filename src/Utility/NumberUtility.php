@@ -87,16 +87,17 @@ class NumberUtility
 		return (float) $result;
 	}
 
-    /**
-     * ($a/$b).
-     *
-     * @param float $a
-     * @param float $b
-     * @param int $precision
-     *
-     * @return float
-     * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
-     */
+	/**
+	 * ($a/$b).
+	 *
+	 * @param float $a
+	 * @param float $b
+	 * @param int $precision
+	 *
+	 * @return float
+	 *
+	 * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
+	 */
 	public static function divide($a, $b, $precision = 20)
 	{
 		$firstNumber = self::toObject($a);
