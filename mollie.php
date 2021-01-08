@@ -89,8 +89,14 @@ class Mollie extends PaymentModule
     private function loadEnv()
     {
         if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
-            $dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/');
+            $dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
             $dotenv->load();
+            return;
+        }
+        if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
+            $dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
+            $dotenv->load();
+            return;
         }
     }
 
