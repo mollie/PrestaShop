@@ -42,3 +42,6 @@ services:
 
   mollie.adapter.context:
     class: Mollie\Adapter\LegacyContext
+
+  Mollie\Config\Env:
+    class: Mollie\Config\Env

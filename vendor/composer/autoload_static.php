@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
+class ComposerStaticInit42ec9a97fdea7cb81c67ea8726210086
 {
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
@@ -56,11 +56,13 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
             'MolliePrefix\\PrestaShop\\Decimal\\' => 32,
             'MolliePrefix\\PrestaShop\\CodingStandards\\' => 40,
             'MolliePrefix\\PhpParser\\' => 23,
+            'MolliePrefix\\PhpOption\\' => 23,
             'MolliePrefix\\PhpCsFixer\\' => 24,
             'MolliePrefix\\Mollie\\Api\\' => 24,
             'MolliePrefix\\GuzzleHttp\\Psr7\\' => 29,
             'MolliePrefix\\GuzzleHttp\\Promise\\' => 32,
             'MolliePrefix\\GuzzleHttp\\' => 24,
+            'MolliePrefix\\Dotenv\\' => 20,
             'MolliePrefix\\Doctrine\\Common\\Lexer\\' => 35,
             'MolliePrefix\\Doctrine\\Common\\Annotations\\' => 41,
             'MolliePrefix\\Composer\\XdebugHandler\\' => 36,
@@ -194,6 +196,10 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
+        'MolliePrefix\\PhpOption\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
         'MolliePrefix\\PhpCsFixer\\' => 
         array (
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
@@ -213,6 +219,10 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
         'MolliePrefix\\GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'MolliePrefix\\Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
         'MolliePrefix\\Doctrine\\Common\\Lexer\\' => 
         array (
@@ -239,6 +249,9 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
     public static $classMap = array (
         'AdminMollieAjaxController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieAjaxController.php',
         'AdminMollieModuleController' => __DIR__ . '/../..' . '/controllers/admin/AdminMollieModuleController.php',
+        'ComposerAutoloaderInit42ec9a97fdea7cb81c67ea8726210086' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
+        'Composer\\Autoload\\ComposerStaticInit42ec9a97fdea7cb81c67ea8726210086' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolCarrierInformation' => __DIR__ . '/../..' . '/src/Entity/MolCarrierInformation.php',
         'MolCustomer' => __DIR__ . '/../..' . '/src/Entity/MolCustomer.php',
         'MolOrderFee' => __DIR__ . '/../..' . '/src/Entity/MolOrderFee.php',
@@ -255,9 +268,6 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
         'MolliePrefix\\APCuIterator' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
         'MolliePrefix\\ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'MolliePrefix\\AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-        'MolliePrefix\\ComposerAutoloaderInit7556820241b60b81caa71ba88b2909a7' => __DIR__ . '/..' . '/composer/autoload_real.php',
-        'MolliePrefix\\Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'MolliePrefix\\Composer\\Autoload\\ComposerStaticInit7556820241b60b81caa71ba88b2909a7' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'MolliePrefix\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'MolliePrefix\\Composer\\Semver\\Comparator' => __DIR__ . '/..' . '/composer/semver/src/Comparator.php',
         'MolliePrefix\\Composer\\Semver\\CompilingMatcher' => __DIR__ . '/..' . '/composer/semver/src/CompilingMatcher.php',
@@ -1101,6 +1111,7 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
         'Mollie\\Command\\UpdateTranslationsConsoleCommand' => __DIR__ . '/../..' . '/src/Command/UpdateTranslationsConsoleCommand.php',
         'Mollie\\Command\\UploadTranslationsFromCsvFileConsoleCommand' => __DIR__ . '/../..' . '/src/Command/UploadTranslationsFromCsvFileConsoleCommand.php',
         'Mollie\\Config\\Config' => __DIR__ . '/../..' . '/src/Config/Config.php',
+        'Mollie\\Config\\Env' => __DIR__ . '/../..' . '/src/Config/Env.php',
         'Mollie\\Controller\\AbstractMollieController' => __DIR__ . '/../..' . '/src/Controller/AbstractMollieController.php',
         'Mollie\\Controller\\AdminMollieEmailController' => __DIR__ . '/../..' . '/src/Controller/AdminMollieEmailController.php',
         'Mollie\\DTO\\Line' => __DIR__ . '/../..' . '/src/DTO/Line.php',
@@ -1304,9 +1315,9 @@ class ComposerStaticInit7556820241b60b81caa71ba88b2909a7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit7556820241b60b81caa71ba88b2909a7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit42ec9a97fdea7cb81c67ea8726210086::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit42ec9a97fdea7cb81c67ea8726210086::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit42ec9a97fdea7cb81c67ea8726210086::$classMap;
 
         }, null, ClassLoader::class);
     }
