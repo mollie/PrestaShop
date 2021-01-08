@@ -99,10 +99,6 @@ class ApiService
 				'currency' => $currencyIso,
 			]);
 		} catch (Exception $e) {
-			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-			$errorHandler->handle($e, $e->getCode(), false);
-			PrestaShopLogger::addLog('Mollie returned error on getPaymentMethodOrderTotalRestriction: ' . $e->getMessage());
-
 			return null;
 		}
 
