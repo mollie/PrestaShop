@@ -52,7 +52,7 @@ class ErrorHandler
 					'prestashop_version' => _PS_VERSION_,
 					'mollie_is_enabled' => \Module::isEnabled('mollie'),
 					'mollie_is_installed' => \Module::isInstalled('mollie'),
-                    'env' => $env->get('SENTRY_ENV')
+					'env' => $env->get('SENTRY_ENV'),
 				],
 			]
 		);

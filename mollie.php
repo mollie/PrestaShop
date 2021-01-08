@@ -81,8 +81,8 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-        $this->loadEnv();
-        $this->compile();
+		$this->loadEnv();
+		$this->compile();
 		$this->setApiKey();
 	}
 
