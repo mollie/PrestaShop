@@ -942,6 +942,7 @@ class Mollie extends PaymentModule
         if ('new_order' === $template) {
             return $newOrderMailValidator->validate((int) $order->current_state);
         }
+        return true;
 	}
 
 	public function hookDisplayPDFInvoice($params)
