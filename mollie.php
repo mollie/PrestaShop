@@ -895,14 +895,6 @@ class Mollie extends PaymentModule
 		/** @var string $template */
 		$template = $params['template'];
 
-		if ('order_conf' === $template) {
-			return $orderConfMailValidator->validate((int) $order->current_state);
-		}
-
-		if ('new_order' === $template) {
-			return $newOrderMailValidator->validate((int) $order->current_state);
-		}
-
 		if ('order_conf' === $template ||
 			'account' === $template ||
 			'backoffice_order' === $template ||
@@ -927,7 +919,10 @@ class Mollie extends PaymentModule
 				return true;
 			}
 			try {
-				$orderFee = new MolOrderFee($order->id);
+				/** @var \Mollie\Repository\OrderFeeRepository $orderFeeRepo */
+				$orderFeeRepo = $this->getMollieContainer(\Mollie\Repository\OrderFeeRepository::class);
+				$orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($cart->id);
+				$orderFee = new MolOrderFee($orderFeeId);
 			} catch (Exception $e) {
 				PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
 
@@ -938,6 +933,14 @@ class Mollie extends PaymentModule
 			} else {
 				$params['templateVars']['{payment_fee}'] = Tools::displayPrice(0);
 			}
+		}
+
+		if ('order_conf' === $template) {
+			return $orderConfMailValidator->validate((int) $order->current_state);
+		}
+
+		if ('new_order' === $template) {
+			return $newOrderMailValidator->validate((int) $order->current_state);
 		}
 
 		return true;
