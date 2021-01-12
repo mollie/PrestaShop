@@ -534,7 +534,7 @@ class FormBuilder
 				'query' => [
 					[
 						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
-						'name' => $this->module->l('Accepted', self::FILE_NAME),
+						'name' => $this->module->l('Authorized', self::FILE_NAME),
 					],
 					[
 						'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
