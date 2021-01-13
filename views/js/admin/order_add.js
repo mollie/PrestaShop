@@ -21,7 +21,6 @@ $(document).ready(function () {
     $(document).on('change', $paymentSelector, function () {
         var selectedPayment = $(this).val();
         var isMollie = isMolliePayment(selectedPayment);
-
         toggleOrderStatus(isMollie);
     });
 
