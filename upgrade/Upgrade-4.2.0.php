@@ -67,7 +67,7 @@ function upgrade_module_4_2_0($module)
 	);
 
 	/** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-	$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
+	$orderTotalRestrictionService = $module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
 	try {
 		$orderTotalRestrictionService->handleOrderTotalUpdate();
 	} catch (OrderTotalRestrictionException $e) {
