@@ -11,3 +11,7 @@ var/
 config.xml
 mails/
 views/img/customLogo/*.jpg
+cypress/videos
+cypress/screenshots
+.php_cs.cache
+.env

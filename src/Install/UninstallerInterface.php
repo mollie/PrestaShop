@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2017 PrestaShop
+ * 2007-2017 PrestaShop.
  *
  * NOTICE OF LICENSE
  *
@@ -28,8 +28,8 @@ namespace Mollie\Install;
 
 interface UninstallerInterface
 {
-    /**
-     * @return bool
-     */
-    public function uninstall();
+	/**
+	 * @return bool
+	 */
+	public function uninstall();
 }

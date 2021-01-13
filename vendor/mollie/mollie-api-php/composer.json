@@ -56,7 +56,8 @@
     },
     "require-dev": {
         "eloquent\/liberator": "^2.0",
-        "phpunit\/phpunit": "^5.7 || ^6.5 || ^7.1"
+        "phpunit\/phpunit": "^5.7 || ^6.5 || ^7.1 || ^8.5",
+        "friendsofphp\/php-cs-fixer": "^v2.17"
     },
     "suggest": {
         "mollie\/oauth2-mollie-php": "Use OAuth to authenticate with the Mollie API. This is needed for some endpoints. Visit https:\/\/docs.mollie.com\/ for more information."
@@ -66,16 +67,17 @@
     },
     "autoload": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Mollie\\Api\\": "src\/"
+            "MolliePrefix\\Mollie\\Api\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MolliePrefix\\MolliePrefix\\Tests\\": "tests\/",
-            "MolliePrefix\\MolliePrefix\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
+            "MolliePrefix\\Tests\\": "tests\/",
+            "MolliePrefix\\Tests\\Mollie\\Api\\": "tests\/Mollie\/API\/"
         }
     },
     "scripts": {
-        "test": ".\/vendor\/bin\/phpunit tests"
+        "test": ".\/vendor\/bin\/phpunit tests",
+        "format": ".\/vendor\/bin\/php-cs-fixer fix --allow-risky=yes"
     }
 }

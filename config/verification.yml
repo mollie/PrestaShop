@@ -1,0 +1,25 @@
+services:
+  Mollie\Verification\Shipment\CanSendShipment:
+    class: Mollie\Verification\Shipment\CanSendShipment
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider'
+      - '@Mollie\Handler\Api\OrderEndpointPaymentTypeHandler'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Service\ShipmentService'
+    tags:
+      - { name: 'shipment.information.verification' }
+
+  Mollie\Verification\PaymentType\CanBeRegularPaymentType:
+    class: Mollie\Verification\PaymentType\CanBeRegularPaymentType
+    arguments:
+      - '@Mollie\Adapter\ToolsAdapter'
+      - '@Mollie\Provider\PaymentType\RegularPaymentTypeIdentification'
+    tags:
+      - { name: 'payment.type.verification' }
+
+  Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated:
+    class: Mollie\Verification\OrderTotal\CanOrderTotalBeUpdated
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\CurrencyRepository'

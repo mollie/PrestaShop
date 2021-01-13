@@ -1,10 +1,8 @@
 <?php
 
-use Dotenv\Dotenv;
-
-$rootDirectory = __DIR__ . '/../../../../';
 $projectDir = __DIR__ . '/../../';
-require_once $rootDirectory . 'config/config.inc.php';
 require_once $projectDir . 'vendor/autoload.php';
 
-
+$rootDirectory = __DIR__ . '/../../../../';
+require_once $rootDirectory . 'autoload.php';
+require_once $rootDirectory . 'vendor/autoload.php';

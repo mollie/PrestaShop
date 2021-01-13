@@ -144,4 +144,4 @@ class Symfony_DI_PhpDumper_Test_Legacy_Privates extends \MolliePrefix\Symfony\Co
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Legacy_Privates', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Legacy_Privates', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Legacy_Privates', 'Symfony_DI_PhpDumper_Test_Legacy_Privates', \false);

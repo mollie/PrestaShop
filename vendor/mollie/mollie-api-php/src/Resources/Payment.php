@@ -56,6 +56,13 @@ class Payment extends \MolliePrefix\Mollie\Api\Resources\BaseResource
      */
     public $amountRemaining;
     /**
+     * The total amount that was charged back for this payment. Only available when the
+     * total charged back amount is not zero. This value is expected to be negative.
+     *
+     * @var \stdClass|null
+     */
+    public $amountChargedBack;
+    /**
      * Description of the payment that is shown to the customer during the payment,
      * and possibly on the bank or credit card statement.
      *
@@ -531,7 +538,7 @@ class Payment extends \MolliePrefix\Mollie\Api\Resources\BaseResource
     /**
      * The total amount that is already captured for this payment. Only available
      * when this payment supports captures.
-     * 
+     *
      * @return float
      */
     public function getAmountCaptured()
@@ -556,7 +563,7 @@ class Payment extends \MolliePrefix\Mollie\Api\Resources\BaseResource
     /**
      * The total amount that is already captured for this payment. Only available
      * when this payment supports captures.
-     * 
+     *
      * @return float
      */
     public function getApplicationFeeAmount()

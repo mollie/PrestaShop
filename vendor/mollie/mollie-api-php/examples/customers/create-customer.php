@@ -15,7 +15,7 @@ try {
      *
      * @See https://docs.mollie.com/reference/v2/customers-api/create-customer
      */
-    $customer = $mollie->customers->create(["name" => "Luke Skywalker", "email" => "luke@example.org", "metadata" => ["isJedi" => \TRUE]]);
+    $customer = $mollie->customers->create(["name" => "Luke Skywalker", "email" => "luke@example.org", "metadata" => ["isJedi" => \true]]);
     echo "<p>New customer created " . \htmlspecialchars($customer->id) . " (" . \htmlspecialchars($customer->name) . ").</p>";
 } catch (\MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());

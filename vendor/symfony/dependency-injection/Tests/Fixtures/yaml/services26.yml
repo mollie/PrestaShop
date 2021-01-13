@@ -16,7 +16,7 @@ services:
             - 'foo%bar%baz'
             - '%baz%'
     bar:
-        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Bar
         public: true
         bind:
             $quz: '%env(QUZ)%'

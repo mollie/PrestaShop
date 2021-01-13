@@ -165,4 +165,4 @@ class Symfony_DI_PhpDumper_Test_EnvParameters extends \MolliePrefix\Symfony\Comp
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_EnvParameters', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_EnvParameters', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_EnvParameters', 'Symfony_DI_PhpDumper_Test_EnvParameters', \false);
