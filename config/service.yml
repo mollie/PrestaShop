@@ -12,12 +12,15 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
 
   Mollie\Service\ApiService:
     arguments:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ConfigFieldService:
     arguments:
@@ -33,6 +36,7 @@ services:
   Mollie\Service\RefundService:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ShipService:
     arguments:
@@ -41,18 +45,17 @@ services:
   Mollie\Service\CancelService:
     arguments:
       - '@mollie'
+      - '@Mollie\Service\TransactionService'
 
   Mollie\Service\CarrierService:
 
   Mollie\Service\OrderStatusService:
     arguments:
       - '@Mollie\Service\MailService'
-      - '@Mollie\Validator\OrderConfMailValidator'
-      - '@Mollie\Validator\NewOrderMailValidator'
 
   Mollie\Service\ErrorDisplayService:
 
-  Mollie\Service\ImageService:
+  Mollie\Service\OrderStateImageService:
 
   Mollie\Service\CountryService:
     arguments:
@@ -67,6 +70,7 @@ services:
       - '@Mollie\Service\ApiService'
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
+      - '@Mollie\Service\ApiKeyService'
 
   Mollie\Service\ShipmentService:
     arguments:
@@ -103,6 +107,15 @@ services:
       - '@mollie'
 
   Mollie\Service\CartDuplicationService:
+    class: Mollie\Service\CartDuplicationService
+    arguments:
+      - '@Mollie\Service\CartRuleDuplicationService'
+      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
+
+  Mollie\Service\CartRuleDuplicationService:
+    class: Mollie\Service\CartRuleDuplicationService
+    arguments:
+      - '@Mollie\Repository\CartRuleRepository'
 
   Mollie\Service\OrderCartAssociationService:
     arguments:
@@ -144,10 +157,14 @@ services:
     - '@Mollie\Service\LanguageService'
 
   Mollie\Service\PaymentReturnService:
-    - '@mollie'
-    - '@Mollie\Service\CartDuplicationService'
-    - '@Mollie\Repository\PaymentMethodRepository'
-    - '@Mollie\Service\RepeatOrderLinkFactory'
+    class: Mollie\Service\PaymentReturnService
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\CartDuplicationService'
+      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\RepeatOrderLinkFactory'
+      - '@Mollie\Service\TransactionService'
+      - '@Mollie\Handler\CartRule\CartRuleQuantityChangeHandler'
 
   Mollie\Service\UpgradeNoticeService:
 
@@ -157,3 +174,50 @@ services:
 
   Mollie\Service\ExceptionService:
     - '@mollie'
+
+  Mollie\Service\ApiKeyService:
+
+  Mollie\Handler\CartRule\CartRuleQuantityChangeHandler:
+    class: Mollie\Handler\CartRule\CartRuleQuantityChangeHandler
+    arguments:
+      - '@Mollie\Repository\PendingOrderCartRuleRepository'
+      - '@Mollie\Repository\OrderCartRuleRepository'
+      - '@Mollie\Repository\CartRuleRepository'
+      - '@Mollie\Repository\OrderRepository'
+
+  Mollie\Handler\CartRule\CartRuleQuantityResetHandler:
+    class: Mollie\Handler\CartRule\CartRuleQuantityResetHandler
+    arguments:
+      - '@Mollie\Repository\PendingOrderCartRuleRepository'
+      - '@Mollie\Repository\OrderCartRuleRepository'
+      - '@Mollie\Repository\CartRuleRepository'
+      - '@Mollie\Repository\OrderRepository'
+
+  Mollie\Service\Shipment\ShipmentInformationSender:
+    class: Mollie\Service\Shipment\ShipmentInformationSender
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@Mollie\Service\ShipmentService'
+
+  Mollie\Service\Shipment\ShipmentInformationSenderInterface: '@Mollie\Service\Shipment\ShipmentInformationSender'
+
+  Mollie\Service\Content\SmartyTemplateParser:
+    class: Mollie\Service\Content\SmartyTemplateParser
+
+  Mollie\Service\Content\TemplateParserInterface: '@Mollie\Service\Content\SmartyTemplateParser'
+
+  Mollie\Service\OrderTotal\OrderTotalService:
+    class: Mollie\Service\OrderTotal\OrderTotalService
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\OrderTotalRestrictionProvider'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionService:
+    class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
+    arguments:
+      - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
+
+  Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
+
+  Mollie\Service\EntityManager\ObjectModelManager:
+    class: Mollie\Service\EntityManager\ObjectModelManager

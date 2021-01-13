@@ -12,6 +12,7 @@
  */
 
 use Mollie\Command\TranslationCsvFileGeneratorConsoleCommand;
+use Mollie\Command\UpdateTranslationsConsoleCommand;
 use Mollie\Command\UploadTranslationsFromCsvFileConsoleCommand;
 use Symfony\Component\Console\Application;
 
@@ -22,4 +23,5 @@ $application = new Application();
 $module = Module::getInstanceByName('mollie');
 $application->add(new TranslationCsvFileGeneratorConsoleCommand($module));
 $application->add(new UploadTranslationsFromCsvFileConsoleCommand($module));
+$application->add(new UpdateTranslationsConsoleCommand($module));
 $application->run();

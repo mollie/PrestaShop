@@ -20,8 +20,8 @@ use MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\OrderLineEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\OrderPaymentEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\OrderRefundEndpoint;
-use MolliePrefix\Mollie\Api\Endpoints\PaymentCaptureEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\OrganizationEndpoint;
+use MolliePrefix\Mollie\Api\Endpoints\PaymentCaptureEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\PaymentChargebackEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\PaymentEndpoint;
 use MolliePrefix\Mollie\Api\Endpoints\PaymentRefundEndpoint;
@@ -44,7 +44,7 @@ class MollieApiClient
     /**
      * Version of our client.
      */
-    const CLIENT_VERSION = "2.22.3";
+    const CLIENT_VERSION = "2.27.1";
     /**
      * Endpoint of the remote API.
      */

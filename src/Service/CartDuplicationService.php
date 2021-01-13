@@ -1,35 +1,13 @@
 <?php
 /**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
+ * Mollie       https://www.mollie.nl
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
  *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * @see        https://github.com/mollie/PrestaShop
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  */
 
 namespace Mollie\Service;
@@ -37,36 +15,60 @@ namespace Mollie\Service;
 use Cart;
 use CartRule;
 use Context;
-use Db;
-use Order;
+use Mollie\Config\Config;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandlerInterface;
 
 class CartDuplicationService
 {
-    /**
-     *
-     *
-     * @param int $cartId
-     *
-     * @return int
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function restoreCart($cartId)
-    {
-        $context = Context::getContext();
-        $cart = new Cart($cartId);
-        $duplication = $cart->duplicate();
-        if ($duplication['success']) {
-            /** @var Cart $duplicatedCart */
-            $duplicatedCart = $duplication['cart'];
+	/**
+	 * @var CartRuleDuplicationService
+	 */
+	private $cartRuleDuplicationService;
 
-            $context->cookie->id_cart = $duplicatedCart->id;
-            $context->cart = $duplicatedCart;
-            $context->cookie->write();
+	/**
+	 * @var CartRuleQuantityResetHandlerInterface
+	 */
+	private $cartRuleQuantityResetHandlerInterface;
 
-            return  $duplicatedCart->id;
-        }
+	public function __construct(
+		CartRuleDuplicationService $cartRuleDuplicationService,
+		CartRuleQuantityResetHandlerInterface $cartRuleQuantityResetHandlerInterface
+	) {
+		$this->cartRuleDuplicationService = $cartRuleDuplicationService;
+		$this->cartRuleQuantityResetHandlerInterface = $cartRuleQuantityResetHandlerInterface;
+	}
 
-        return 0;
-    }
+	/**
+	 * @param int $cartId
+	 * @param string $backtraceLocation
+	 *
+	 * @return int
+	 *
+	 * @throws \Exception
+	 */
+	public function restoreCart($cartId, $backtraceLocation)
+	{
+		$context = Context::getContext();
+		$cart = new Cart($cartId);
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+
+		if ($backtraceLocation === Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE) {
+			$this->cartRuleQuantityResetHandlerInterface->handle($cart, $cartRules);
+		}
+		$duplication = $cart->duplicate();
+		if ($duplication['success']) {
+			/** @var Cart $duplicatedCart */
+			$duplicatedCart = $duplication['cart'];
+
+			$context->cookie->__set('id_cart', $duplicatedCart->id);
+			$context->cart = $duplicatedCart;
+			$context->cookie->write();
+			$this->cartRuleDuplicationService->restoreCartRules($cartRules);
+
+			return $duplicatedCart->id;
+		}
+
+		return 0;
+	}
 }

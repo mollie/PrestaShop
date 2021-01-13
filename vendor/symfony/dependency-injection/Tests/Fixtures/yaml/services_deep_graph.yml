@@ -1,7 +1,7 @@
 
 services:
     foo:
-        class: MolliePrefix\MolliePrefix\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph
+        class: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Dumper\FooForDeepGraph
         public: true
         arguments:
             - '@bar'

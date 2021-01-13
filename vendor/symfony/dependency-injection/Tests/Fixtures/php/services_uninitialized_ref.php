@@ -112,4 +112,4 @@ class Symfony_DI_PhpDumper_Test_Uninitialized_Reference extends \MolliePrefix\Sy
  *
  * @final since Symfony 3.3
  */
-\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Uninitialized_Reference', 'MolliePrefix\\Symfony_DI_PhpDumper_Test_Uninitialized_Reference', \false);
+\class_alias('MolliePrefix\\Symfony_DI_PhpDumper_Test_Uninitialized_Reference', 'Symfony_DI_PhpDumper_Test_Uninitialized_Reference', \false);

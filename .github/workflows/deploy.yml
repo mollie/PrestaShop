@@ -13,8 +13,6 @@ jobs:
       - name: build
         run: |
           make bvn
-          cat deploy/replace/random.php > vendor/paragonie/random_compat/lib/random.php
-          cat deploy/replace/random_bytes_mcrypt.php > vendor/paragonie/random_compat/lib/random_bytes_mcrypt.php
           rm -rf .git
           rm -rf .github
           rm -rf vendorBuilder
@@ -22,6 +20,8 @@ jobs:
           rm -rf tests
           rm -rf views/js/node_modules
           rm -rf deploy
+          rm -rf cypress
+          rm -rf .docker
           mkdir mollie
           rsync -Rr ./ ./mollie
           shopt -s extglob

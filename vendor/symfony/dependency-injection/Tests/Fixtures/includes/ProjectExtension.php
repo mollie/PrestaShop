@@ -38,4 +38,4 @@ class ProjectExtension implements \MolliePrefix\Symfony\Component\DependencyInje
     {
     }
 }
-\class_alias('MolliePrefix\\ProjectExtension', 'MolliePrefix\\ProjectExtension', \false);
+\class_alias('MolliePrefix\\ProjectExtension', 'ProjectExtension', \false);

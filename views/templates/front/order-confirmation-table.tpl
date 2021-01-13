@@ -32,7 +32,7 @@
             </span>
             </div>
             <div class="col-sm-4 col-xs-9 details">
-                {if $add_product_link|escape:'html':'UTF-8'}<a href="{$product.url|escape:'html':'UTF-8'}" target="_blank">{/if}
+                {if $add_product_link}<a href="{$product.url|escape:'html':'UTF-8'}" target="_blank">{/if}
                     <span>{$product.name|escape:'html':'UTF-8'}</span>
                     {if $add_product_link}</a>{/if}
                 {if is_array($product.customizations) && $product.customizations|count}
@@ -94,7 +94,7 @@
             {if $subtotal.type !== 'tax' && $subtotal.label !== null}
                 <tr>
                     <td>{$subtotal.label|escape:'html':'UTF-8'}</td>
-                    <td>{if 'discount' == $subtotal.type|escape:'html':'UTF-8'}-&nbsp;{/if}{$subtotal.value|escape:'html':'UTF-8'}</td>
+                    <td>{if 'discount' == $subtotal.type}-&nbsp;{/if}{$subtotal.value|escape:'html':'UTF-8'}</td>
                 </tr>
             {/if}
         {/foreach}

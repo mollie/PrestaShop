@@ -1,5 +1,7 @@
 <phpunit bootstrap="bootstrap.php"
          stopOnFailure="true"
+         colors="true"
+         verbose="true"
 >
     <php>
         <env name="KERNEL_CLASS" value="AppKernel" />

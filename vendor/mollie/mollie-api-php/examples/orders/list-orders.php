@@ -5,7 +5,6 @@ namespace MolliePrefix;
 /*
  * List orders using the Mollie API.
  */
-use MolliePrefix\Mollie\Api\Resources\OrderCollection;
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.

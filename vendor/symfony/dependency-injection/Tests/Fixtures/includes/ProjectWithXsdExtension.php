@@ -17,4 +17,4 @@ class ProjectWithXsdExtension extends \MolliePrefix\ProjectExtension
         return 'projectwithxsd';
     }
 }
-\class_alias('MolliePrefix\\ProjectWithXsdExtension', 'MolliePrefix\\ProjectWithXsdExtension', \false);
+\class_alias('MolliePrefix\\ProjectWithXsdExtension', 'ProjectWithXsdExtension', \false);
