@@ -73,26 +73,26 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 	 */
 	private $paymentFeeProvider;
 
-    /**
-     * @var LanguageService
-     */
-    private $languageService;
+	/**
+	 * @var LanguageService
+	 */
+	private $languageService;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		LegacyContext $context,
 		CreditCardLogoProvider $creditCardLogoProvider,
 		OrderTotalProviderInterface $orderTotalProvider,
 		PaymentFeeProviderInterface $paymentFeeProvider,
-        LanguageService $languageService
-    ) {
+		LanguageService $languageService
+	) {
 		$this->module = $module;
 		$this->context = $context;
 		$this->creditCardLogoProvider = $creditCardLogoProvider;
 		$this->orderTotalProvider = $orderTotalProvider;
 		$this->paymentFeeProvider = $paymentFeeProvider;
-        $this->languageService = $languageService;
-    }
+		$this->languageService = $languageService;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -100,11 +100,11 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 	public function getPaymentOption(MolPaymentMethod $paymentMethod)
 	{
 		$paymentOption = new PaymentOption();
-        $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-                $this->languageService->lang($paymentMethod->method_name)
-        );
-        $paymentOption->setModuleName($this->module->name);
+		$paymentOption->setCallToActionText(
+			$paymentMethod->title ?:
+				$this->languageService->lang($paymentMethod->method_name)
+		);
+		$paymentOption->setModuleName($this->module->name);
 		$paymentOption->setAction($this->context->getLink()->getModuleLink(
 			'mollie',
 			'payScreen',

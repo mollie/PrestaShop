@@ -27,26 +27,24 @@
  * @author     Mollie B.V. <info@mollie.nl>
  * @copyright  Mollie B.V.
  * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
+ *
  * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ *
+ * @see       https://www.mollie.nl
  */
-
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
 /**
  * @param Mollie $module
+ *
  * @return bool
  */
 function upgrade_module_4_1_2($module)
 {
-    $module->registerHook('actionOrderGridQueryBuilderModifier');
-    $module->registerHook('actionOrderGridDefinitionModifier');
+	$module->registerHook('actionOrderGridQueryBuilderModifier');
+	$module->registerHook('actionOrderGridDefinitionModifier');
 
-    return true;
+	return true;
 }

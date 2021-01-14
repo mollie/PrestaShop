@@ -79,19 +79,19 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 	 */
 	private $idealDropdownInfoBlock;
 
-    /**
-     * @var LanguageService
-     */
-    private $languageService;
+	/**
+	 * @var LanguageService
+	 */
+	private $languageService;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		LegacyContext $context,
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentFeeProviderInterface $paymentFeeProvider,
 		TemplateParserInterface $templateParser,
 		IdealDropdownInfoBlock $idealDropdownInfoBlock,
-        LanguageService $languageService
+		LanguageService $languageService
 	) {
 		$this->module = $module;
 		$this->context = $context;
@@ -99,8 +99,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 		$this->paymentFeeProvider = $paymentFeeProvider;
 		$this->templateParser = $templateParser;
 		$this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
-        $this->languageService = $languageService;
-    }
+		$this->languageService = $languageService;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -109,9 +109,9 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 	{
 		$paymentOption = new PaymentOption();
 		$paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-		    $this->languageService->lang($paymentMethod->method_name)
-        );
+			$paymentMethod->title ?:
+			$this->languageService->lang($paymentMethod->method_name)
+		);
 		$paymentOption->setModuleName($this->module->name);
 		$paymentOption->setAction($this->context->getLink()->getModuleLink(
 			'mollie',
