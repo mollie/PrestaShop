@@ -129,11 +129,11 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 		if ($paymentFee) {
 			$paymentOption->setInputs(
 				[
-                    [
-                        'name' => 'issuer',
-                        'type' => 'hidden',
-                        'value' => '',
-                    ],
+					[
+						'name' => 'issuer',
+						'type' => 'hidden',
+						'value' => '',
+					],
 					[
 						'type' => 'hidden',
 						'name' => 'payment-fee-price',
