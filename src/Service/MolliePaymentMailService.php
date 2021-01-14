@@ -86,7 +86,7 @@ class MolliePaymentMailService
 		}
 
 		if ($response['success']) {
-			$this->mailService->sendSecondChanceMail($customer, $response['checkoutUrl'], $payment['method']);
+			$this->mailService->sendSecondChanceMail($customer, $response['checkoutUrl'], $payment['method'], $order->id_shop);
 		}
 
 		return $response;

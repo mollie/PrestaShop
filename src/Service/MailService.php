@@ -54,7 +54,7 @@ class MailService
 		$this->context = Context::getContext();
 	}
 
-	public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName)
+	public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
 	{
 		Mail::send(
 			$customer->id_lang,
@@ -72,7 +72,9 @@ class MailService
 			null,
 			null,
 			null,
-			$this->module->getLocalPath() . 'mails/'
+			$this->module->getLocalPath() . 'mails/',
+            false,
+            $shopId
 		);
 	}
 
