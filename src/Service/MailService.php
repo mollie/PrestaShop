@@ -73,8 +73,8 @@ class MailService
 			null,
 			null,
 			$this->module->getLocalPath() . 'mails/',
-            false,
-            $shopId
+			false,
+			$shopId
 		);
 	}
 
