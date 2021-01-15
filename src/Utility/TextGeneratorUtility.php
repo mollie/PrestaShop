@@ -13,8 +13,10 @@
 
 namespace Mollie\Utility;
 
+use Address;
 use Cart;
 use Configuration;
+use Country;
 use Customer;
 
 class TextGeneratorUtility
@@ -37,12 +39,18 @@ class TextGeneratorUtility
 		} else {
 			$cart = new Cart($cartId);
 		}
-
 		$buyer = null;
 		if ($cart->id_customer) {
 			$buyer = new Customer((int) $cart->id_customer);
 		}
 
+		$countryCode = '';
+        if ($cart->id_address_delivery) {
+            $deliveryAddress = new Address((int) $cart->id_address_delivery);
+            $countryId = $deliveryAddress->id_country;
+            $country = new Country($countryId);
+            $countryCode = $country->iso_code;
+        }
 		$filters = [
 			'%' => $cartId,
 			'{cart.id}' => $cartId,
@@ -52,6 +60,7 @@ class TextGeneratorUtility
 			'{customer.company}' => null == $buyer ? '' : $buyer->company,
 			'{storeName}' => Configuration::get('PS_SHOP_NAME'),
 			'{orderNumber}' => $orderReference,
+			'{countryCode}' => $countryCode,
 		];
 
 		$content = str_ireplace(
