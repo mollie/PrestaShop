@@ -110,12 +110,9 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 
 	/**
 	 * @param string $apiKey
-	 * @param $isTestKey
+	 * @param bool $isTestKey
 	 *
 	 * @return array
-	 *
-	 * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
-	 * @throws \Mollie\Api\Exceptions\ApiException
 	 */
 	public function getApiKeyInfo($apiKey, $isTestKey = true)
 	{
