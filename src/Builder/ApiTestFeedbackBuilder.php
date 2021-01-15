@@ -82,8 +82,8 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 	 */
 	public function buildParams()
 	{
-		$testKeyInfo = $this->getApiKeyInfo($this->testKey);
-		$liveKeyInfo = $this->getApiKeyInfo($this->liveKey);
+		$testKeyInfo = $this->getApiKeyInfo($this->testKey, true);
+		$liveKeyInfo = $this->getApiKeyInfo($this->liveKey, false);
 
 		return [
 			'testKeyInfo' => $testKeyInfo,
@@ -110,10 +110,11 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 
 	/**
 	 * @param string $apiKey
+	 * @param bool $isTestKey
 	 *
 	 * @return array
 	 */
-	public function getApiKeyInfo($apiKey)
+	public function getApiKeyInfo($apiKey, $isTestKey = true)
 	{
 		if (!$apiKey) {
 			return [
@@ -130,9 +131,16 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 		$methods = $api->methods->allAvailable();
 		$methodsAsArray = $methods->getArrayCopy();
 
+		if ($isTestKey) {
+			$keyWarning = 0 !== strpos($apiKey, 'test');
+		} else {
+			$keyWarning = 0 !== strpos($apiKey, 'live');
+		}
+
 		return [
 			'status' => true,
 			'methods' => $this->getPaymentMethodsAsArray($methodsAsArray),
+			'warning' => $keyWarning,
 		];
 	}
 

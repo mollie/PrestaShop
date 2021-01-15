@@ -140,6 +140,7 @@
                                 <p class="help-block">
                                     <b>{l s='{orderNumber}' mod='mollie'}</b>,
                                     <b>{l s='{storeName}' mod='mollie'}</b>,
+                                    <b>{l s='{countryCode}' mod='mollie'}</b>,
                                     <b>{l s='{cart.id}' mod='mollie'}</b>,
                                     <b>{l s='{order.reference}' mod='mollie'}</b>,
                                     <b>{l s='{customer.firstname}' mod='mollie'}</b>,

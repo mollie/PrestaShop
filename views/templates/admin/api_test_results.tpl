@@ -35,6 +35,14 @@
                 </p>
             </div>
         {/if}
+        {if $testKeyInfo.warning}
+            <div>
+                <p>
+                    <i class="icon-remove text-warning"></i>
+                    {l s='Wrong TEST-API key structure! Please check if you are using correct key.' mod='mollie'}
+                </p>
+            </div>
+        {/if}
     </div>
 </div>
 
@@ -64,6 +72,14 @@
                 <p>
                     <i class="icon-remove text-danger"></i>
                     {l s='Live API-key: Failed!' mod='mollie'}
+                </p>
+            </div>
+        {/if}
+        {if $liveKeyInfo.warning}
+            <div>
+                <p>
+                    <i class="icon-remove text-warning"></i>
+                    {l s='Wrong Live-API key structure! Please check if you are using correct key.' mod='mollie'}
                 </p>
             </div>
         {/if}
