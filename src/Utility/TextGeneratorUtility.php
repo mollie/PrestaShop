@@ -45,12 +45,12 @@ class TextGeneratorUtility
 		}
 
 		$countryCode = '';
-        if ($cart->id_address_delivery) {
-            $deliveryAddress = new Address((int) $cart->id_address_delivery);
-            $countryId = $deliveryAddress->id_country;
-            $country = new Country($countryId);
-            $countryCode = $country->iso_code;
-        }
+		if ($cart->id_address_delivery) {
+			$deliveryAddress = new Address((int) $cart->id_address_delivery);
+			$countryId = $deliveryAddress->id_country;
+			$country = new Country($countryId);
+			$countryCode = $country->iso_code;
+		}
 		$filters = [
 			'%' => $cartId,
 			'{cart.id}' => $cartId,

@@ -13,7 +13,6 @@
 
 namespace Mollie\Builder;
 
-use Mollie\Config\Config;
 use Mollie\Service\ApiKeyService;
 use MolliePrefix\Mollie\Api\Resources\BaseCollection;
 use MolliePrefix\Mollie\Api\Resources\MethodCollection;
@@ -109,14 +108,15 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 		];
 	}
 
-    /**
-     * @param string $apiKey
-     *
-     * @param $isTestKey
-     * @return array
-     * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
-     * @throws \Mollie\Api\Exceptions\ApiException
-     */
+	/**
+	 * @param string $apiKey
+	 * @param $isTestKey
+	 *
+	 * @return array
+	 *
+	 * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
+	 * @throws \Mollie\Api\Exceptions\ApiException
+	 */
 	public function getApiKeyInfo($apiKey, $isTestKey = true)
 	{
 		if (!$apiKey) {
@@ -135,15 +135,15 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 		$methodsAsArray = $methods->getArrayCopy();
 
 		if ($isTestKey) {
-		    $keyWarning = 0 !== strpos($apiKey, 'test');
-        } else {
-            $keyWarning = 0 !== strpos($apiKey, 'live');
-        }
+			$keyWarning = 0 !== strpos($apiKey, 'test');
+		} else {
+			$keyWarning = 0 !== strpos($apiKey, 'live');
+		}
 
 		return [
 			'status' => true,
 			'methods' => $this->getPaymentMethodsAsArray($methodsAsArray),
-            'warning' => $keyWarning
+			'warning' => $keyWarning,
 		];
 	}
 
