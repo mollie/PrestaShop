@@ -47,7 +47,11 @@
                     {else}
                         <span class="mollie_margin"> &nbsp;</span>
                     {/if}
-                    {$module->lang($method['method_name'])|escape:'htmlall':'UTF-8'}
+                    {if $method['title']}
+                        {$method['title']|escape:'htmlall':'UTF-8'}
+                    {else}
+                        {$module->lang($method['method_name'])|escape:'htmlall':'UTF-8'}
+                    {/if}
                     {if $method.fee}
                         <span>{l s='Payment Fee:' mod='mollie'}{$method.fee_display|escape:'html':'UTF-8'}</span>
                     {/if}

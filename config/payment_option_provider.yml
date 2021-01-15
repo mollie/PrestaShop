@@ -11,6 +11,7 @@ services:
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'
 
   Mollie\Provider\PaymentOption\IdealPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\IdealPaymentOptionProvider
@@ -21,6 +22,7 @@ services:
       - '@Mollie\Provider\PaymentFeeProvider'
       - '@Mollie\Service\Content\TemplateParserInterface'
       - '@Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock'
+      - '@Mollie\Service\LanguageService'
 
   Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider
@@ -30,3 +32,4 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Provider\OrderTotalProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'
