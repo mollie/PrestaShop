@@ -81,17 +81,16 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-        $this->compile();
+		$this->compile();
 		$this->loadEnv();
 		$this->setApiKey();
 	}
 
 	private function loadEnv()
 	{
-        if (!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
-
-            return;
-        }
+		if (!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+			return;
+		}
 
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
 			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
@@ -159,7 +158,7 @@ class Mollie extends PaymentModule
 	{
 		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
 			!class_exists('MolliePrefix\Segment') ||
-            !class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+			!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
 			// On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
