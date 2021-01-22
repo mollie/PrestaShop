@@ -127,8 +127,14 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 				'status' => false,
 			];
 		}
-		/** @var BaseCollection|MethodCollection $methods */
-		$methods = $api->methods->allAvailable();
+		try {
+            /** @var BaseCollection|MethodCollection $methods */
+            $methods = $api->methods->allAvailable();
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+            ];
+        }
 		$methodsAsArray = $methods->getArrayCopy();
 
 		if ($isTestKey) {
