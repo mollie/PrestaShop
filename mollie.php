@@ -157,7 +157,7 @@ class Mollie extends PaymentModule
 	private function compile()
 	{
 		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
-			!class_exists('MolliePrefix\Segment') ||
+			!(!class_exists('MolliePrefix\Segment') || !class_exists('Segment')) ||
 			!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
