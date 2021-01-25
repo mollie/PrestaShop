@@ -61,7 +61,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 	 */
 	public function verify(Order $order, OrderState $orderState)
 	{
-	    /** todo: doesnt work with no tracking information. Will need to create new validation */
+		/* todo: doesnt work with no tracking information. Will need to create new validation */
 //		if (!$this->hasShipmentInformation($order->reference)) {
 //			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
 //		}
@@ -148,7 +148,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 	private function hasShipmentInformation($orderReference)
 	{
 		try {
-            return !empty($this->shipmentService->getShipmentInformation($orderReference));
+			return !empty($this->shipmentService->getShipmentInformation($orderReference));
 		} catch (Exception $e) {
 			PrestaShopLogger::addLog($e);
 
