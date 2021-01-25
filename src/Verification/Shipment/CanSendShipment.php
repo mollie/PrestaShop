@@ -75,7 +75,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 		}
 
 		if (!$this->isRegularPayment($order->id)) {
-			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::PAYMENT_IS_REGULAR, $order->reference);
+			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
 		}
 
 		return true;
@@ -95,7 +95,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 		}
 		$paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
-		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_REGULAR) {
+		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_ORDER) {
 			return false;
 		}
 
