@@ -181,8 +181,8 @@ class CanSendShipmentTest extends TestCase
 					'transaction_id' => 'test',
 				],
 				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
-                'exception' => [],
-                'expected' => true,
+				'exception' => [],
+				'expected' => true,
 			],
 			'Automatic shipment information sender is disabled' => [
 				'shipmentInformation' => [
