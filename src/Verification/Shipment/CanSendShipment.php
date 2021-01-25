@@ -61,9 +61,10 @@ class CanSendShipment implements ShipmentVerificationInterface
 	 */
 	public function verify(Order $order, OrderState $orderState)
 	{
-		if (!$this->hasShipmentInformation($order->reference)) {
-			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
-		}
+	    /** todo: doesnt work with no tracking information. Will need to create new validation */
+//		if (!$this->hasShipmentInformation($order->reference)) {
+//			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
+//		}
 
 		if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
 			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Automatic shipment sender is not available', ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE, $order->reference);
@@ -73,7 +74,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
 		}
 
-		if ($this->isRegularPayment($order->id)) {
+		if (!$this->isRegularPayment($order->id)) {
 			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::PAYMENT_IS_REGULAR, $order->reference);
 		}
 
@@ -147,7 +148,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 	private function hasShipmentInformation($orderReference)
 	{
 		try {
-			return !empty($this->shipmentService->getShipmentInformation($orderReference));
+            return !empty($this->shipmentService->getShipmentInformation($orderReference));
 		} catch (Exception $e) {
 			PrestaShopLogger::addLog($e);
 
