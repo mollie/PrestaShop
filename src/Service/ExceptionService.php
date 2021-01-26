@@ -52,7 +52,7 @@ class ExceptionService
 				ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION => $this->module->l(
 					'Shipment information cannot be sent. Order reference (%s) has no payment information.'
 				),
-				ShipmentCannotBeSentException::PAYMENT_IS_REGULAR => $this->module->l(
+				ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER => $this->module->l(
 					'Shipment information cannot be sent. Order reference (%s) is a regular payment.'
 				),
 			],
