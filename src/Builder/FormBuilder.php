@@ -224,7 +224,7 @@ class FormBuilder
 				'label' => '',
 				'tab' => $generalSettings,
 				'name' => Config::MOLLIE_API_KEY_TESTING_BUTTON,
-				'text' => $this->module->l('Test ApiKey', self::FILE_NAME),
+				'text' => $this->module->l('Test API Key', self::FILE_NAME),
 				'class' => 'js-test-api-keys',
 				'form_group_class' => 'js-api-key-test',
 			];
