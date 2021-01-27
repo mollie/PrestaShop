@@ -167,7 +167,7 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'transaction_id' => 'test',
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
 				'exception' => [],
 				'expected' => true,
 			],
@@ -180,12 +180,9 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'transaction_id' => 'test',
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
-				'exception' => [
-					'class' => ShipmentCannotBeSentException::class,
-					'code' => ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION,
-				],
-				'expected' => null,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
+				'exception' => [],
+				'expected' => true,
 			],
 			'Automatic shipment information sender is disabled' => [
 				'shipmentInformation' => [
@@ -198,7 +195,7 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'transaction_id' => 'test',
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
 				'exception' => [
 					'class' => ShipmentCannotBeSentException::class,
 					'code' => ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE,
@@ -216,7 +213,7 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'transaction_id' => 'test',
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
 				'exception' => [
 					'class' => ShipmentCannotBeSentException::class,
 					'code' => ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE,
@@ -232,7 +229,7 @@ class CanSendShipmentTest extends TestCase
 				],
 				'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
 				'paymentInformation' => [],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
 				'exception' => [
 					'class' => ShipmentCannotBeSentException::class,
 					'code' => ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION,
@@ -250,14 +247,14 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'test' => 123,
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
 				'exception' => [
 					'class' => ShipmentCannotBeSentException::class,
 					'code' => ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION,
 				],
 				'expected' => null,
 			],
-			'Is regular payment' => [
+			'Is payment api' => [
 				'shipmentInformation' => [
 					'testData' => 'testData',
 				],
@@ -268,10 +265,10 @@ class CanSendShipmentTest extends TestCase
 				'paymentInformation' => [
 					'transaction_id' => 'test',
 				],
-				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_REGULAR,
+				'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_PAYMENT,
 				'exception' => [
 					'class' => ShipmentCannotBeSentException::class,
-					'code' => ShipmentCannotBeSentException::PAYMENT_IS_REGULAR,
+					'code' => ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER,
 				],
 				'expected' => null,
 			],

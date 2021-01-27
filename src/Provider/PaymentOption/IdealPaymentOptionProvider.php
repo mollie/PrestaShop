@@ -79,13 +79,19 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 	 */
 	private $idealDropdownInfoBlock;
 
+	/**
+	 * @var LanguageService
+	 */
+	private $languageService;
+
 	public function __construct(
 		Mollie $module,
 		LegacyContext $context,
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentFeeProviderInterface $paymentFeeProvider,
 		TemplateParserInterface $templateParser,
-		IdealDropdownInfoBlock $idealDropdownInfoBlock
+		IdealDropdownInfoBlock $idealDropdownInfoBlock,
+		LanguageService $languageService
 	) {
 		$this->module = $module;
 		$this->context = $context;
@@ -93,6 +99,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 		$this->paymentFeeProvider = $paymentFeeProvider;
 		$this->templateParser = $templateParser;
 		$this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
+		$this->languageService = $languageService;
 	}
 
 	/**
@@ -101,7 +108,10 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 	public function getPaymentOption(MolPaymentMethod $paymentMethod)
 	{
 		$paymentOption = new PaymentOption();
-		$paymentOption->setCallToActionText($this->module->l($paymentMethod->method_name, LanguageService::FILE_NAME));
+		$paymentOption->setCallToActionText(
+			$paymentMethod->title ?:
+			$this->languageService->lang($paymentMethod->method_name)
+		);
 		$paymentOption->setModuleName($this->module->name);
 		$paymentOption->setAction($this->context->getLink()->getModuleLink(
 			'mollie',
@@ -129,6 +139,11 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 		if ($paymentFee) {
 			$paymentOption->setInputs(
 				[
+					[
+						'name' => 'issuer',
+						'type' => 'hidden',
+						'value' => '',
+					],
 					[
 						'type' => 'hidden',
 						'name' => 'payment-fee-price',

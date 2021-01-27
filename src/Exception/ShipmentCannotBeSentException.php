@@ -12,7 +12,7 @@ class ShipmentCannotBeSentException extends Exception
 
 	const ORDER_HAS_NO_PAYMENT_INFORMATION = 3;
 
-	const PAYMENT_IS_REGULAR = 4;
+	const PAYMENT_IS_NOT_ORDER = 4;
 
 	/**
 	 * @var string

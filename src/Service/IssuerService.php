@@ -41,6 +41,7 @@ class IssuerService
 		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
 		$methodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(PaymentMethod::IDEAL, $environment);
+		$method = new \MolPaymentMethod($methodId);
 		$issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
 		$issuers = json_decode($issuersJson, true);
 		$issuerList[PaymentMethod::IDEAL] = [];
@@ -49,7 +50,7 @@ class IssuerService
 			$issuer['href'] = $context->link->getModuleLink(
 				$this->module->name,
 				'payment',
-				['method' => $methodId, 'issuer' => $issuer['id'], 'rand' => time()],
+				['method' => $method->id_method, 'issuer' => $issuer['id'], 'rand' => time()],
 				true
 			);
 			$issuerList[PaymentMethod::IDEAL][$issuer['id']] = $issuer;

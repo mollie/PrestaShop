@@ -34,7 +34,7 @@ class OrderEndpointPaymentTypeHandlerTest extends TestCase
 		$orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
 		$result = $orderEndpointPaymentTypeHandler->getPaymentTypeFromTransactionId('test');
 
-		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_NOT_FOUND, $result);
+		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_PAYMENT, $result);
 	}
 
 	public function testPaymentTypeRegular()
@@ -48,6 +48,6 @@ class OrderEndpointPaymentTypeHandlerTest extends TestCase
 		$orderEndpointPaymentTypeHandler = new OrderEndpointPaymentTypeHandler($this->canBeRegularPaymentType);
 		$result = $orderEndpointPaymentTypeHandler->getPaymentTypeFromTransactionId('test');
 
-		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_REGULAR, $result);
+		$this->assertEquals(PaymentTypeEnum::PAYMENT_TYPE_ORDER, $result);
 	}
 }
