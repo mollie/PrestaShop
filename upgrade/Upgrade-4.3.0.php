@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_3_0()
 {
-    Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, Config::SHOW_RESENT_LINK);
+	Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, Config::SHOW_RESENT_LINK);
 
-    return true;
+	return true;
 }
