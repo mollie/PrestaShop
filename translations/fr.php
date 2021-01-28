@@ -266,7 +266,6 @@ $_MODULE['<{mollie}prestashop>formbuilder_dd59e3663865f3fab190e496260608e6'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_33af8066d3c83110d4bd897f687cedd2'] = 'Statuts des commandes';
 $_MODULE['<{mollie}prestashop>formbuilder_3ba67aae5d08d0fa90016685407926f1'] = 'Paramètres visuels :';
 $_MODULE['<{mollie}prestashop>formbuilder_fff0d600f8a0b5e19e88bfb821dd1157'] = 'Images';
-$_MODULE['<{mollie}prestashop>formbuilder_f7a97136df639501521efb243047e0cf'] = ' normale of geen logo\'s van betaalmethodes bij het afrekenen.';
 $_MODULE['<{mollie}prestashop>formbuilder_a88f05b6c963e145a45b58c47cd42a41'] = 'cacher';
 $_MODULE['<{mollie}prestashop>formbuilder_fea087517c26fadd409bd4b9dc642555'] = 'normal';
 $_MODULE['<{mollie}prestashop>formbuilder_d861877da56b8b4ceb35c8cbfdf65bb4'] = 'grand';
