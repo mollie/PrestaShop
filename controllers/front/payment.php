@@ -208,8 +208,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		try {
 			$apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
 		} catch (Exception $e) {
-			$paymentData->setDeliveryPhoneNumber(null);
-			$paymentData->setBillingPhoneNumber(null);
+			if ($paymentData instanceof OrderData) {
+				$paymentData->setDeliveryPhoneNumber(null);
+				$paymentData->setBillingPhoneNumber(null);
+			}
 			try {
 				$apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
 			} catch (OrderCreationException $e) {

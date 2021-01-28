@@ -61,9 +61,10 @@ class CanSendShipment implements ShipmentVerificationInterface
 	 */
 	public function verify(Order $order, OrderState $orderState)
 	{
-		if (!$this->hasShipmentInformation($order->reference)) {
-			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
-		}
+		/* todo: doesnt work with no tracking information. Will need to create new validation */
+//		if (!$this->hasShipmentInformation($order->reference)) {
+//			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
+//		}
 
 		if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
 			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Automatic shipment sender is not available', ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE, $order->reference);
@@ -73,8 +74,8 @@ class CanSendShipment implements ShipmentVerificationInterface
 			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
 		}
 
-		if ($this->isRegularPayment($order->id)) {
-			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::PAYMENT_IS_REGULAR, $order->reference);
+		if (!$this->isRegularPayment($order->id)) {
+			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Order has no payment information', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
 		}
 
 		return true;
@@ -94,7 +95,7 @@ class CanSendShipment implements ShipmentVerificationInterface
 		}
 		$paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
-		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_REGULAR) {
+		if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_ORDER) {
 			return false;
 		}
 

@@ -66,7 +66,7 @@ class Mollie extends PaymentModule
 	{
 		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
-		$this->version = '4.2.0';
+		$this->version = '4.2.1';
 		$this->author = 'Mollie B.V.';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -157,7 +157,7 @@ class Mollie extends PaymentModule
 	private function compile()
 	{
 		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
-			!class_exists('MolliePrefix\Segment') ||
+			!(class_exists('MolliePrefix\Segment') || class_exists('Segment')) ||
 			!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
@@ -1006,7 +1006,7 @@ class Mollie extends PaymentModule
 		}
 		if (isset($params['join'])) {
 			$params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference` 
-			AND mol.`cart_id` = o.`id_cart`';
+			AND mol.`cart_id` = a.`id_cart`';
 		}
 		$params['fields']['order_id'] = [
 			'title' => $this->l('Resend payment link'),
