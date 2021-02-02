@@ -76,3 +76,9 @@ services:
     class: Mollie\Provider\OrderTotalProvider
     arguments:
       - '@=service("mollie.adapter.context")'
+
+  Mollie\Validator\OrderCallBackValidator:
+    class: Mollie\Validator\OrderCallBackValidator
+    arguments:
+      - '@mollie.context'
+      - '@mollie'

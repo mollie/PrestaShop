@@ -20,6 +20,7 @@ use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Validator\OrderCallBackValidator;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 
@@ -67,12 +68,21 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 	 */
 	public function initContent()
 	{
-		$customerId = Tools::getValue('customerId');
-		$customerSecureKey = Tools::getValue('key');
+        $idCart = (int) Tools::getValue('cart_id');
+		$key = Tools::getValue('key');
+	    $context = Context::getContext();
+	    $customer = $context->customer;
+
+        /** @var OrderCallBackValidator $orderCallBackValidator */
+        $orderCallBackValidator = $this->module->getMollieContainer(OrderCallBackValidator::class);
+
+        if (!$orderCallBackValidator->validate($key, $idCart)) {
+            Tools::redirectLink('index.php');
+        }
 
 		/** @var CustomerFactory $customerFactory */
 		$customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
-		$this->context = $customerFactory->recreateFromRequest($customerId, $customerSecureKey, $this->context);
+		$this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
 		if (Tools::getValue('ajax')) {
 			$this->processAjax();
 			exit;
@@ -90,7 +100,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
 			// Check if user that's seeing this is the cart-owner
 			$cart = new Cart($idCart);
-			$data['auth'] = (int) $cart->id_customer === $this->context->customer->id;
+			$data['auth'] = (int) $cart->id_customer === $customer->id;
 			if ($data['auth']) {
 				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (string) $idCart);
 			}
@@ -129,8 +139,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 						'ajax' => 1,
 						'action' => 'getStatus',
 						'transaction_id' => $data['mollie_info']['transaction_id'],
-						'key' => $this->context->customer->secure_key,
-						'customerId' => $this->context->customer->id,
+						'key' => $key,
+                        'cart_id' => $idCart
 					],
 					true
 				)
@@ -237,45 +247,29 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
 		/** @var PaymentReturnService $paymentReturnService */
 		$paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
-		$stockManagement = Configuration::get('PS_STOCK_MANAGEMENT');
 		switch ($orderStatus) {
 			case PaymentStatus::STATUS_OPEN:
 			case PaymentStatus::STATUS_PENDING:
-				$response = $paymentReturnService->handlePendingStatus(
+				$response = $paymentReturnService->handleStatus(
 					$order,
 					$transaction,
-					$orderStatus,
-					$paymentMethod,
-					$stockManagement
+                    $paymentReturnService::PENDING
 				);
 				break;
-			case PaymentStatus::STATUS_AUTHORIZED:
-				$response = $paymentReturnService->handleAuthorizedStatus(
+            case PaymentStatus::STATUS_PAID:
+            case PaymentStatus::STATUS_AUTHORIZED:
+				$response = $paymentReturnService->handleStatus(
 					$order,
 					$transaction,
-					$paymentMethod,
-					$stockManagement
-				);
+                    $paymentReturnService::DONE
+                );
 
 				/** @var MemorizeCartService $memorizeCart */
 				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 				$memorizeCart->removeMemorizedCart($order);
 
 				break;
-			case PaymentStatus::STATUS_PAID:
-				$response = $paymentReturnService->handlePaidStatus(
-					$order,
-					$transaction,
-					$paymentMethod,
-					$stockManagement
-				);
-
-				/** @var MemorizeCartService $memorizeCart */
-				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
-				$memorizeCart->removeMemorizedCart($order);
-
-				break;
-			case PaymentStatus::STATUS_EXPIRED:
+            case PaymentStatus::STATUS_EXPIRED:
 			case PaymentStatus::STATUS_CANCELED:
 			case PaymentStatus::STATUS_FAILED:
 				$this->setWarning($notSuccessfulPaymentMessage);
@@ -283,7 +277,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				$restorePendingCart = $this->module->getMollieContainer(RestorePendingCartService::class);
 				$restorePendingCart->restore($order);
 
-				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $orderStatus, $paymentMethod);
+				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $paymentMethod);
 				break;
 			default:
 				exit();

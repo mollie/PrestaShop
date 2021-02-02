@@ -25,6 +25,7 @@ use MolliePrefix\Mollie\Api\MollieApiClient;
 use MolliePrefix\Mollie\Api\Resources\Payment;
 use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 use Order;
+use Tools;
 
 class MolliePaymentMailService
 {
@@ -147,7 +148,10 @@ class MolliePaymentMailService
 
 		$cart = new Cart($paymentApi->metadata->cart_id);
 		$customer = new Customer($cart->id_customer);
-		$paymentData = [
+
+        $key = Tools::hash($customer->secure_key . $customer->id . $this->module->name);
+
+        $paymentData = [
 			'amount' => [
 				'value' => $paymentApi->amount->value,
 				'currency' => $paymentApi->amount->currency,
@@ -159,8 +163,7 @@ class MolliePaymentMailService
 					'cart_id' => $paymentApi->metadata->cart_id,
 					'utm_nooverride' => 1,
 					'rand' => time(),
-					'key' => $customer->secure_key,
-					'customerId' => $customer->id,
+					'key' => $key,
 				],
 				true
 			),
@@ -168,7 +171,7 @@ class MolliePaymentMailService
 			'metadata' => [
 				'cart_id' => $paymentApi->metadata->cart_id,
 				'order_reference' => $paymentApi->metadata->order_reference,
-				'secure_key' => $paymentApi->metadata->secure_key,
+				'secure_key' => $key,
 			],
 		];
 
