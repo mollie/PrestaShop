@@ -862,19 +862,19 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-        $idOrder = $params['id_order'];
-        $order = new Order($idOrder);
-        $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
-        }
-        if (!is_array($checkStatuses)) {
-            $checkStatuses = [];
-        }
-        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
-        ) {
-            return;
-        }
+		$idOrder = $params['id_order'];
+		$order = new Order($idOrder);
+		$checkStatuses = [];
+		if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
+			$checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
+		}
+		if (!is_array($checkStatuses)) {
+			$checkStatuses = [];
+		}
+		if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
+		) {
+			return;
+		}
 
 		/** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
 		$shipmentSenderHandler = $this->getMollieContainer(
@@ -882,10 +882,10 @@ class Mollie extends PaymentModule
 		);
 
 		try {
-            $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
-        } catch (Exception $e) {
-		    //todo: we logg error in handleShipment
-        }
+			$shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+		} catch (Exception $e) {
+			//todo: we logg error in handleShipment
+		}
 	}
 
 	/**
