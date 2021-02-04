@@ -13,10 +13,20 @@
 
 namespace Mollie\Utility;
 
-class SecureKeyUtility
+class HashUtility
 {
-    public static function generateReturnKey($secureKey, $customerId, $cartId, $moduleName)
+    /**
+     * Hash password.
+     *
+     * @param string $passwd String to has
+     *
+     * @return string Hashed password
+     *
+     * @since 1.7.0
+     */
+    public static function hash($passwd)
     {
-        return HashUtility::hash($secureKey . $customerId . $cartId . $moduleName);
+        return md5(_COOKIE_KEY_ . $passwd);
     }
+
 }

@@ -20,6 +20,8 @@ use Exception;
 use Mollie;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\HashUtility;
+use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
 use MolliePrefix\Mollie\Api\MollieApiClient;
 use MolliePrefix\Mollie\Api\Resources\Payment;
@@ -149,7 +151,7 @@ class MolliePaymentMailService
 		$cart = new Cart($paymentApi->metadata->cart_id);
 		$customer = new Customer($cart->id_customer);
 
-        $key = Tools::hash($customer->secure_key . $customer->id . $this->module->name);
+        $key = SecureKeyUtility::generateReturnKey($customer->secure_key, $customer->id, $cart->id, $this->module->name);
 
         $paymentData = [
 			'amount' => [
