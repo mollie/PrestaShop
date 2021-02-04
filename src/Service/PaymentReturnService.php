@@ -20,10 +20,7 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Utility\OrderStatusUtility;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use Order;
-use OrderDetail;
 
 class PaymentReturnService
 {
@@ -83,24 +80,22 @@ class PaymentReturnService
 		$this->cartRuleQuantityChangeHandlerInterface = $cartRuleQuantityChangeHandlerInterface;
 	}
 
-	public function handlePendingStatus(Order $order, $transaction, $orderStatus, $paymentMethod, $stockManagement)
+	public function handleStatus(Order $order, $transaction, $status)
+	{
+		$cart = new Cart($order->id_cart);
+
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
+
+		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
+	}
+
+	public function handlePendingStatus(Order $order, $transaction)
 	{
 		$cart = new Cart($order->id_cart);
 		$status = static::PENDING;
-		$orderDetails = $order->getOrderDetailList();
-		/** @var OrderDetail $detail */
-		foreach ($orderDetails as $detail) {
-			$orderDetail = new OrderDetail($detail['id_order_detail']);
-			if (
-				$stockManagement &&
-				($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-			) {
-				$orderStatus = Config::STATUS_PENDING_ON_BACKORDER;
-				break;
-			}
-		}
 
-		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
@@ -108,29 +103,11 @@ class PaymentReturnService
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
 
-	public function handlePaidStatus(Order $order, $transaction, $paymentMethod, $stockManagement)
+	public function handlePaidStatus(Order $order, $transaction)
 	{
 		$cart = new Cart($order->id_cart);
 		$status = static::DONE;
-		$orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
-		$orderDetails = $order->getOrderDetailList();
-		/** @var OrderDetail $detail */
-		foreach ($orderDetails as $detail) {
-			$orderDetail = new OrderDetail($detail['id_order_detail']);
-			if (
-				$stockManagement &&
-				($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-			) {
-				$orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-				break;
-			}
-		}
 
-		if (!$order->getOrderPayments()) {
-			$this->transactionService->updateOrderTransaction($transaction->id, $order->reference);
-		}
-
-		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
@@ -138,24 +115,11 @@ class PaymentReturnService
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
 
-	public function handleAuthorizedStatus(Order $order, $transaction, $paymentMethod, $stockManagement)
+	public function handleAuthorizedStatus(Order $order, $transaction)
 	{
 		$cart = new Cart($order->id_cart);
 		$status = static::DONE;
-		$orderStatus = OrderStatusUtility::transformPaymentStatusToRefunded($transaction);
-		$orderDetails = $order->getOrderDetailList();
-		/** @var OrderDetail $detail */
-		foreach ($orderDetails as $detail) {
-			$orderDetail = new OrderDetail($detail['id_order_detail']);
-			if (
-				$stockManagement &&
-				($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-			) {
-				$orderStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-				break;
-			}
-		}
-		$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
+
 		/* @phpstan-ignore-next-line */
 		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
@@ -163,7 +127,7 @@ class PaymentReturnService
 		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
 	}
 
-	public function handleFailedStatus(Order $order, $transaction, $orderStatus, $paymentMethod)
+	public function handleFailedStatus(Order $order, $transaction, $paymentMethod)
 	{
 		if (null !== $paymentMethod) {
 			$this->cartDuplicationService->restoreCart($order->id_cart, Config::RESTORE_CART_BACKTRACE_RETURN_CONTROLLER);
@@ -171,8 +135,6 @@ class PaymentReturnService
 			$warning[] = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
 
 			$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($warning));
-
-			$this->updateTransactions($transaction->id, $order->id, $orderStatus, $paymentMethod);
 		}
 
 		$orderLink = $this->orderLinkFactory->getLink();
@@ -208,23 +170,5 @@ class PaymentReturnService
 			'response' => json_encode($transaction),
 			'href' => $successUrl,
 		];
-	}
-
-	private function updateTransactions($transactionId, $orderId, $orderStatus, $paymentMethod)
-	{
-		/** @var OrderStatusService $orderStatusService */
-		$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-
-		$orderStatusId = (int) Mollie\Config\Config::getStatuses()[$orderStatus];
-		$this->paymentMethodRepository->savePaymentStatus($transactionId, $orderStatus, $orderId, $paymentMethod);
-		$isKlarnaOrder = in_array($paymentMethod, Config::KLARNA_PAYMENTS, false);
-		if (OrderStatus::STATUS_COMPLETED === $orderStatus && $isKlarnaOrder) {
-			$orderStatusId = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
-		}
-		$order = new Order($orderId);
-		$order->payment = $paymentMethod;
-		$order->update();
-
-		$orderStatusService->setOrderStatus($orderId, $orderStatusId, null, []);
 	}
 }
