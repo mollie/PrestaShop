@@ -116,9 +116,9 @@ class MailService
 		if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
 			return;
 		}
-        $customer = $order->getCustomer();
+		$customer = $order->getCustomer();
 
-        /** @var \Ps_EmailAlerts $emailAlertsModule */
+		/** @var \Ps_EmailAlerts $emailAlertsModule */
 		$emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
 
 		$emailAlertsModule->hookActionValidateOrder(
@@ -146,7 +146,7 @@ class MailService
 	{
 		$virtual_product = true;
 		$carrier = new Carrier($order->id_carrier);
-        $customer = $order->getCustomer();
+		$customer = $order->getCustomer();
 
 		$product_var_tpl_list = [];
 		foreach ($order->getProducts() as $product) {
