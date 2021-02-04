@@ -16,7 +16,7 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-function upgrade_module_4_3_0()
+function upgrade_module_4_2_2()
 {
 	Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, Config::SHOW_RESENT_LINK);
 
