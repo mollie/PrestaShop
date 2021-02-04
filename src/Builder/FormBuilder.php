@@ -675,6 +675,27 @@ class FormBuilder
 				],
 			],
 			[
+				'type' => 'select',
+				'label' => $this->module->l('Resend payment link', self::FILE_NAME),
+				'tab' => $advancedSettings,
+				'desc' => $this->module->l('Show resent payment link column in order list page', self::FILE_NAME),
+				'name' => Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK,
+				'options' => [
+					'query' => [
+						[
+							'id' => Config::HIDE_RESENT_LINK,
+							'name' => $this->module->l('hide', self::FILE_NAME),
+						],
+						[
+							'id' => Config::SHOW_RESENT_LINK,
+							'name' => $this->module->l('show', self::FILE_NAME),
+						],
+					],
+					'id' => 'id',
+					'name' => 'name',
+				],
+			],
+			[
 				'type' => 'text',
 				'label' => $this->module->l('CSS file', self::FILE_NAME),
 				'tab' => $advancedSettings,

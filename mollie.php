@@ -66,7 +66,7 @@ class Mollie extends PaymentModule
 	{
 		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
-		$this->version = '4.2.1';
+		$this->version = '4.3.0';
 		$this->author = 'Mollie B.V.';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -1001,6 +1001,10 @@ class Mollie extends PaymentModule
 
 	public function hookActionAdminOrdersListingFieldsModifier($params)
 	{
+		if (\Configuration::get(\Mollie\Config\Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK) === \Mollie\Config\Config::HIDE_RESENT_LINK) {
+			return;
+		}
+
 		if (isset($params['select'])) {
 			$params['select'] = rtrim($params['select'], ' ,') . ' ,mol.`transaction_id`';
 		}
