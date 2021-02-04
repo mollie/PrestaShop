@@ -15,8 +15,8 @@ namespace Mollie\Utility;
 
 class SecureKeyUtility
 {
-    public static function generateReturnKey($secureKey, $customerId, $cartId, $moduleName)
-    {
-        return HashUtility::hash($secureKey . $customerId . $cartId . $moduleName);
-    }
+	public static function generateReturnKey($secureKey, $customerId, $cartId, $moduleName)
+	{
+		return HashUtility::hash($secureKey . $customerId . $cartId . $moduleName);
+	}
 }
