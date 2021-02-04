@@ -240,12 +240,12 @@ class PaymentMethodService
 		$value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
 		$amountObj = new Amount($currency, $value);
 
-        $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
-            $secureKey,
-            $customer->id,
-            $cartId,
-            $this->module->name
-        );
+		$key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+			$secureKey,
+			$customer->id,
+			$cartId,
+			$this->module->name
+		);
 		$redirectUrl = ($qrCode
 			? $context->link->getModuleLink(
 				'mollie',
@@ -261,7 +261,7 @@ class PaymentMethodService
 					'utm_nooverride' => 1,
 					'rand' => time(),
 					'key' => $key,
-                    'customerId' => $customer->id,
+					'customerId' => $customer->id,
 				],
 				true
 			)

@@ -17,8 +17,8 @@ use Tools;
 
 class SecureKeyUtility
 {
-    public static function generateReturnKey($secureKey, $customerId, $cartId, $moduleName)
-    {
-        return Tools::hash($secureKey . $customerId . $cartId . $moduleName);
-    }
+	public static function generateReturnKey($secureKey, $customerId, $cartId, $moduleName)
+	{
+		return Tools::hash($secureKey . $customerId . $cartId . $moduleName);
+	}
 }

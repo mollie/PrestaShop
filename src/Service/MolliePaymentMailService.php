@@ -149,9 +149,9 @@ class MolliePaymentMailService
 		$cart = new Cart($paymentApi->metadata->cart_id);
 		$customer = new Customer($cart->id_customer);
 
-        $key = Tools::hash($customer->secure_key . $customer->id . $this->module->name);
+		$key = Tools::hash($customer->secure_key . $customer->id . $this->module->name);
 
-        $paymentData = [
+		$paymentData = [
 			'amount' => [
 				'value' => $paymentApi->amount->value,
 				'currency' => $paymentApi->amount->currency,
