@@ -881,7 +881,11 @@ class Mollie extends PaymentModule
 			Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
 		);
 
-		$shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+		try {
+            $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+        } catch (Exception $e) {
+		    //todo: we logg error in handleShipment
+        }
 	}
 
 	/**
