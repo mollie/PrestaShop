@@ -862,6 +862,20 @@ class Mollie extends PaymentModule
 			return;
 		}
 
+        $idOrder = $params['id_order'];
+        $order = new Order($idOrder);
+        $checkStatuses = [];
+        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
+            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
+        }
+        if (!is_array($checkStatuses)) {
+            $checkStatuses = [];
+        }
+        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
+        ) {
+            return;
+        }
+
 		/** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
 		$shipmentSenderHandler = $this->getMollieContainer(
 			Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
