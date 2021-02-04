@@ -153,7 +153,7 @@ class MolliePaymentMailService
 
         $key = SecureKeyUtility::generateReturnKey($customer->secure_key, $customer->id, $cart->id, $this->module->name);
 
-        $paymentData = [
+		$paymentData = [
 			'amount' => [
 				'value' => $paymentApi->amount->value,
 				'currency' => $paymentApi->amount->currency,

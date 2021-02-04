@@ -37,7 +37,6 @@ use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;
-use Tools;
 
 class TransactionService
 {
@@ -132,11 +131,11 @@ class TransactionService
 		);
 
 		$key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
-            $cart->secure_key,
-            $cart->id_customer,
-            $cart->id,
-            $this->module->name
-        );
+			$cart->secure_key,
+			$cart->id_customer,
+			$cart->id,
+			$this->module->name
+		);
 		switch ($transaction->resource) {
 			case Mollie\Config\Config::MOLLIE_API_STATUS_PAYMENT:
 				if ($apiPayment->metadata->cart_id) {

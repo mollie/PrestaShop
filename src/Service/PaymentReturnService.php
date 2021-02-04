@@ -20,10 +20,7 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Utility\OrderStatusUtility;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
 use Order;
-use OrderDetail;
 
 class PaymentReturnService
 {
@@ -84,15 +81,15 @@ class PaymentReturnService
 	}
 
 	public function handleStatus(Order $order, $transaction, $status)
-    {
-        $cart = new Cart($order->id_cart);
+	{
+		$cart = new Cart($order->id_cart);
 
-        /* @phpstan-ignore-next-line */
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
-        $this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
+		/* @phpstan-ignore-next-line */
+		$cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+		$this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
-        return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
-    }
+		return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
+	}
 
 	public function handlePendingStatus(Order $order, $transaction)
 	{
