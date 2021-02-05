@@ -290,8 +290,8 @@ class MailService
 
 	private function getCartRuleList(Order $order, $orderStateId)
 	{
-        $customer = $order->getCustomer();
-        $order_list = [];
+		$customer = $order->getCustomer();
+		$order_list = [];
 		$cart_rules = $this->context->cart->getCartRules();
 		$order_list[] = $order;
 		$cart_rule_used = [];
