@@ -1,5 +1,6 @@
 <?php
 
+use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
@@ -9,10 +10,14 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
 	/**
 	 * @dataProvider getApplePayPaymentRestrictionValidationDataProvider
 	 */
-	public function testIsValid($context, $configurationAdapter, $expectedResult)
+	public function testIsValid($isApple, $configurationAdapter, $expectedResult)
 	{
+        $_COOKIE['isApplePayMethod'] = $isApple;
+        $contextMock = $this->getMockBuilder(LegacyContext::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 		$applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-			$context,
+            $contextMock,
 			$configurationAdapter
 		);
 
@@ -26,21 +31,21 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
 	{
 		return [
 			'All checks pass' => [
-				'context' => $this->mockContextWithCookie(1),
+				'isApple' => 1,
 				'configurationAdapter' => $this->mockConfigurationAdapter([
 					'PS_SSL_ENABLED_EVERYWHERE' => true,
 				]),
 				'expectedResult' => true,
 			],
 			'SSL is not enabled' => [
-				'context' => $this->mockContextWithCookie(1),
+				'isApple' => 1,
 				'configurationAdapter' => $this->mockConfigurationAdapter([
 					'PS_SSL_ENABLED_EVERYWHERE' => false,
 				]),
 				'expectedResult' => false,
 			],
 			'Cookie has no data if Apple Pay is available' => [
-				'context' => $this->mockContextWithCookie(0),
+				'isApple' => 0,
 				'configurationAdapter' => $this->mockConfigurationAdapter([
 					'PS_SSL_ENABLED_EVERYWHERE' => true,
 				]),
