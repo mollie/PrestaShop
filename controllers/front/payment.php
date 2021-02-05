@@ -387,6 +387,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		$order->total_paid_tax_excl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_excl))->toPrecision(2);
 		$order->total_paid_tax_incl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_incl))->toPrecision(2);
 		$order->total_paid = (float) $totalPrice->toPrecision(2);
+		$order->total_paid_real = (float) $totalPrice->toPrecision(2);
 		$order->reference = $orderReference;
 		$order->update();
 
