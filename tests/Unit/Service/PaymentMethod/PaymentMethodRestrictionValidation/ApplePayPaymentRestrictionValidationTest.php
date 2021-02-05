@@ -12,12 +12,12 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
 	 */
 	public function testIsValid($isApple, $configurationAdapter, $expectedResult)
 	{
-        $_COOKIE['isApplePayMethod'] = $isApple;
-        $contextMock = $this->getMockBuilder(LegacyContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+		$_COOKIE['isApplePayMethod'] = $isApple;
+		$contextMock = $this->getMockBuilder(LegacyContext::class)
+			->disableOriginalConstructor()
+			->getMock();
 		$applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $contextMock,
+			$contextMock,
 			$configurationAdapter
 		);
 
