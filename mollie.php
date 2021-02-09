@@ -302,17 +302,17 @@ class Mollie extends PaymentModule
 		}
 
 		Media::addJsDef([
-			'description_message' => $this->l('Description cannot be empty'),
-			'profile_id_message' => $this->l('Wrong profile ID'),
+			'description_message' => addslashes($this->l('Description cannot be empty')),
+			'profile_id_message' => addslashes($this->l('Wrong profile ID')),
 			'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
-			'payment_api' => Mollie\Config\Config::MOLLIE_PAYMENTS_API,
-			'ajaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+			'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
+			'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
 		]);
 
 		/* Custom logo JS vars*/
 		Media::addJsDef([
-			'image_size_message' => $this->l('Image size must be %s%x%s1%'),
-			'not_valid_file_message' => $this->l('not a valid file: %s%'),
+			'image_size_message' => addslashes($this->l('Image size must be %s%x%s1%')),
+			'not_valid_file_message' => addslashes($this->l('not a valid file: %s%')),
 		]);
 
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
