@@ -14,6 +14,7 @@ namespace Mollie\Service;
 
 class OrderStateImageService
 {
+
     /**
      * @param int $orderStateId
      */
