@@ -15,7 +15,7 @@ namespace Mollie\Service;
 class OrderStateImageService
 {
 	/**
-	 * @var int $orderStateId
+	 * @var int
 	 */
 	public function createOrderStateLogo($orderStateId)
 	{
@@ -25,7 +25,7 @@ class OrderStateImageService
 	}
 
 	/**
-	 * @var int $orderStateId
+	 * @var int
 	 */
 	public function deleteOrderStateLogo($orderStateId)
 	{
@@ -34,7 +34,7 @@ class OrderStateImageService
 	}
 
 	/**
-	 * @var int $orderStateId
+	 * @var int
 	 */
 	public function createTemporaryOrderStateLogo($orderStateId)
 	{
@@ -43,9 +43,9 @@ class OrderStateImageService
 		@copy($source, $destination);
 	}
 
-    /**
-     * @param int $orderStateId
-     */
+	/**
+	 * @param int $orderStateId
+	 */
 	public function deleteTemporaryOrderStateLogo($orderStateId)
 	{
 		$destination = _PS_TMP_IMG_DIR_ . 'order_state_mini_' . $orderStateId . '_1.gif';
