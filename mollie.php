@@ -1044,9 +1044,9 @@ class Mollie extends PaymentModule
 
 	public function hookActionOrderGridDefinitionModifier(array $params)
 	{
-        if (\Configuration::get(\Mollie\Config\Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK) === \Mollie\Config\Config::HIDE_RESENT_LINK) {
-            return;
-        }
+		if (\Configuration::get(\Mollie\Config\Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK) === \Mollie\Config\Config::HIDE_RESENT_LINK) {
+			return;
+		}
 
 		/** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
 		$orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
