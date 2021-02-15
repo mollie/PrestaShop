@@ -56,8 +56,6 @@ class ErrorHandler
 				],
 			]
 		);
-
-		$this->client->install();
 	}
 
 	/**
