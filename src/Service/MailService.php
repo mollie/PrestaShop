@@ -448,6 +448,7 @@ class MailService
 			_PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR . $template_name,
 			_PS_MAIL_DIR_ . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
 			_PS_MAIL_DIR_ . 'en' . DIRECTORY_SEPARATOR . $template_name,
+			_PS_MAIL_DIR_ . '_partials' . DIRECTORY_SEPARATOR . $template_name,
 		];
 
 		foreach ($pathToFindEmail as $path) {
