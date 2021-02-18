@@ -27,35 +27,6 @@ class Config
 	const SENTRY_KEY = 'https://7a3813de240345da84847fc88d63a9cc@o497594.ingest.sentry.io/5573860';
 
 	/**
-	 * Currency restrictions per payment method.
-	 *
-	 * @var array
-	 */
-	public static $methodCurrencies = [
-		'banktransfer' => ['eur'],
-		'belfius' => ['eur'],
-		'bitcoin' => ['eur'],
-		'cartesbancaires' => ['eur'],
-		'creditcard' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd', 'rub'],
-		'directdebit' => ['eur'],
-		'eps' => ['eur'],
-		'giftcard' => ['eur'],
-		'giropay' => ['eur'],
-		'ideal' => ['eur'],
-		'applepay' => ['aud', 'bgn', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'hrk', 'huf', 'ils', 'isk', 'jpy', 'pln', 'ron', 'sek', 'usd'],
-		'inghomepay' => ['eur'],
-		'kbc' => ['eur'],
-		'bancontact' => ['eur'],
-		'paypal' => ['aud', 'brl', 'cad', 'chf', 'czk', 'dkk', 'eur', 'gbp', 'hkd', 'huf', 'ils', 'jpy', 'mxn', 'myr', 'nok', 'nzd', 'php', 'pln', 'rub', 'sek', 'sgd', 'thb', 'twd', 'usd'],
-		'paysafecard' => ['eur'],
-		'sofort' => ['eur'],
-		'klarnapaylater' => ['eur'],
-		'klarnasliceit' => ['eur'],
-		'mybank' => ['eur'],
-		'voucher' => ['eur'],
-	];
-
-	/**
 	 * Default payment method availability.
 	 *
 	 * empty array is global availability

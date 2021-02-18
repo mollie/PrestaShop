@@ -38,7 +38,7 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\OrderTotalProviderInterface;
-use Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProviderInterface;
+use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalServiceInterface;
 use MolPaymentMethod;
 use Tools;
@@ -52,11 +52,6 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	private $context;
 
 	/**
-	 * @var PaymentMethodCurrencyProviderInterface
-	 */
-	private $paymentMethodCurrenciesProvider;
-
-	/**
 	 * @var OrderTotalServiceInterface
 	 */
 	private $orderTotalService;
@@ -66,16 +61,21 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private $orderTotalProvider;
 
+	/**
+	 * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
+	 */
+	private $methodOrderTotalRestrictionRepository;
+
 	public function __construct(
 		LegacyContext $context,
-		PaymentMethodCurrencyProviderInterface $paymentMethodCurrenciesProvider,
 		OrderTotalServiceInterface $orderTotalService,
-		OrderTotalProviderInterface $orderTotalProvider
+		OrderTotalProviderInterface $orderTotalProvider,
+		MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
 	) {
 		$this->context = $context;
-		$this->paymentMethodCurrenciesProvider = $paymentMethodCurrenciesProvider;
 		$this->orderTotalService = $orderTotalService;
 		$this->orderTotalProvider = $orderTotalProvider;
+		$this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
 	}
 
 	/**
@@ -84,10 +84,6 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	public function isValid(MolPaymentMethod $paymentMethod)
 	{
 		if (!$this->isPaymentMethodEnabled($paymentMethod)) {
-			return false;
-		}
-
-		if (!$this->isCurrencyOptionDefinedForPaymentMethod($paymentMethod)) {
 			return false;
 		}
 
@@ -119,16 +115,6 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 *
 	 * @return bool
 	 */
-	private function isCurrencyOptionDefinedForPaymentMethod($paymentMethod)
-	{
-		return !empty($this->paymentMethodCurrenciesProvider->provideAvailableCurrenciesByPaymentMethod($paymentMethod));
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
 	private function isPaymentMethodEnabled($paymentMethod)
 	{
 		return (bool) $paymentMethod->enabled;
@@ -141,13 +127,17 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private function isCurrencySupportedByPaymentMethod($paymentMethod)
 	{
-		$supportedCurrencies = $this->paymentMethodCurrenciesProvider->provideAvailableCurrenciesByPaymentMethod($paymentMethod);
 		$currencyCode = Tools::strtolower($this->context->getCurrencyIsoCode());
 
-		return in_array(
-			strtolower($currencyCode),
-			array_map('strtolower', $supportedCurrencies)
-		);
+		$orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
+			'id_payment_method' => (int) $paymentMethod->id,
+			'currency_iso' => strtoupper($currencyCode),
+		]);
+		if (!$orderRestriction) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
