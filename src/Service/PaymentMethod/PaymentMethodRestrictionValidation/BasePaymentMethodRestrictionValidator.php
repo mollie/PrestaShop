@@ -61,22 +61,22 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 */
 	private $orderTotalProvider;
 
-    /**
-     * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
-     */
-    private $methodOrderTotalRestrictionRepository;
+	/**
+	 * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
+	 */
+	private $methodOrderTotalRestrictionRepository;
 
-    public function __construct(
+	public function __construct(
 		LegacyContext $context,
 		OrderTotalServiceInterface $orderTotalService,
 		OrderTotalProviderInterface $orderTotalProvider,
-        MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
+		MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
 	) {
 		$this->context = $context;
 		$this->orderTotalService = $orderTotalService;
 		$this->orderTotalProvider = $orderTotalProvider;
-        $this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
-    }
+		$this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -129,15 +129,15 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	{
 		$currencyCode = Tools::strtolower($this->context->getCurrencyIsoCode());
 
-        $orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
-            'id_payment_method' => (int) $paymentMethod->id,
-            'currency_iso' => strtoupper($currencyCode),
-        ]);
-        if (!$orderRestriction) {
-            return false;
-        }
+		$orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
+			'id_payment_method' => (int) $paymentMethod->id,
+			'currency_iso' => strtoupper($currencyCode),
+		]);
+		if (!$orderRestriction) {
+			return false;
+		}
 
-        return true;
+		return true;
 	}
 
 	/**
