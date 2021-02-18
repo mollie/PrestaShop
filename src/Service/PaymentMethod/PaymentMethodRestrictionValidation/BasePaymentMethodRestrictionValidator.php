@@ -115,16 +115,6 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
 	 *
 	 * @return bool
 	 */
-	private function isCurrencyOptionDefinedForPaymentMethod($paymentMethod)
-	{
-		return !empty($this->paymentMethodCurrenciesProvider->provideAvailableCurrenciesByPaymentMethod($paymentMethod));
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
 	private function isPaymentMethodEnabled($paymentMethod)
 	{
 		return (bool) $paymentMethod->enabled;
