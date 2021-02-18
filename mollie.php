@@ -628,12 +628,6 @@ class Mollie extends PaymentModule
 		$paymentOptions = [];
 
 		foreach ($methods as $method) {
-			if (!isset(Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
-				continue;
-			}
-			if (!in_array($iso, Mollie\Config\Config::$methodCurrencies[$method['id_method']])) {
-				continue;
-			}
 			$images = json_decode($method['images_json'], true);
 			$paymentOptions[] = [
 				'cta_text' => $this->l($method['method_name'], \Mollie\Service\LanguageService::FILE_NAME),
