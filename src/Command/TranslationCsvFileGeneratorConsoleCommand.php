@@ -79,9 +79,9 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
 			}
 		}
 		foreach ($fields as $field) {
-		    if (!isset($field[0])) {
-		        continue;
-            }
+			if (!isset($field[0])) {
+				continue;
+			}
 			fputcsv($fp, $field, ';', chr(127));
 		}
 
