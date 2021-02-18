@@ -64,11 +64,14 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 
 				while (($line = fgets($handle)) !== false) {
 					$line = preg_replace("/\r|\n/", '', $line);
-					$values = explode(',', $line);
+					$values = explode(';', $line);
 					if ('ID' === $values[self::CSV_POSITION_ID] ||
 						'' === $values[self::CSV_POSITION_ID]
 					) {
 						continue;
+					}
+					if ($values['0'] === '<{mollie}prestashop>smarty_error_9d1fbbe0d150b89f068ba72a20366659') {
+						$a = 1;
 					}
 					$this->updateTranslation($en, $values, self::CSV_POSITION_EN);
 					$this->updateTranslation($nl, $values, self::CSV_POSITION_NL);
@@ -95,14 +98,6 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 		}
 
 		$translatedText = str_replace("'", "\'", $values[$position]);
-
-		$prefix = '"';
-		if (substr($translatedText, 0, strlen($prefix)) == $prefix) {
-			$translatedText = substr($translatedText, strlen($prefix));
-		}
-		if (substr($translatedText, -strlen($prefix)) === $prefix) {
-			$translatedText = substr($translatedText, 0, strlen($translatedText) - strlen($prefix));
-		}
 
 		$translationLine =
 			'$_MODULE[\'' . $values[self::CSV_POSITION_ID] . '\'] = \'' . $translatedText . "';\n";

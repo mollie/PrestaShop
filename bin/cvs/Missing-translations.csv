@@ -1,0 +1,53 @@
+EN;NL;DE;FR
+The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com;De upload dient opnieuw ververst te worden. Upload het ZIP-bestand van de Mollie-module nogmaals. Als je deze foutmelding nog steeds krijgt nadat je een nieuwe upload hebt geprobeerd, neem dan contact op met Mollie-support met dit screenshot en zij zullen je verder helpen: info@mollie.com;Der Modul-Upload erfordert eine zusätzliche Aktualisierung. Bitte laden Sie die ZIP-Datei des Mollie-Moduls erneut hoch. Wenn Sie nach dem Versuch eines weiteren Uploads immer noch diese Fehlermeldung erhalten, wenden Sie sich mit diesem Screenshot an den Mollie-Support. Dieser führt Sie durch die nächsten Schritte: info@mollie.com;Le téléchargement du module nécessite une actualisation supplémentaire. Veuillez télécharger à nouveau le fichier ZIP du module Mollie. Si vous obtenez toujours ce message d'erreur après avoir tenté un autre téléchargement, veuillez contacter le support Mollie avec cette capture d'écran et ils vous guideront à travers les étapes suivantes: info@mollie.com
+Image size must be %s%x%s1%;Bestand grootte moet zijn X;Bildgröße muss x sein;La taille de l'image doit être %s%x%s1%
+not a valid file: %s%;Geen juist bestand;keine gültige Datei;Ficher invalide: %s%x%s1%
+Please select order status for the \Status for Awaiting payments\" field in the \"Advanced settings\" tab;Selecteer de order status voor de \Status for Awaiting payments\" veld in de \"Advanced settings\" tab;Bitte wählen Sie den Bestellstatus für das Feld "Status für wartende Zahlungen" auf der Registerkarte "Erweiterte Einstellungen";Veuillez choisir un statut de commande pour le {Statut en attente de paiement} dans {réglages avancés}
+Refundable;Restitueerbaar;Rückerstattbar;Remboursable
+Voucher info;Tegoedbon informatie;Gutscheininfo;Information du coupon
+Method;Methode;Methode;Méthode
+Remainder method;Resterende methode;Restmethode;Méthode pour le montant restant
+Issuer;Uitgever;Aussteller;Emetteur
+Warning! This order is (partially) paid using a voucher. You can refund a maximum of %1s.;Let op! Deze bestelling is (deels) betaald met gebruik van een tegoedbon. Je kan maximaal X laten terugbetalen;Warnung! Diese Bestellung wird (teilweise) mit einem Gutschein bezahlt. Sie können maximal% 1s zurückerstatten.;Attention ! Cette commande est {partiellement} payée avec un coupon. Vous pouvez rembourser un maximum de %1s.
+When do you want the invoice for Klarna Payments?;Wanneer wil je de factuur voor Klarna Payments?;Wann möchten Sie die Rechnung für Klarna Payments?;Quand souhaitez vous la facture pour des paiements Klarna ?
+On Authorize: Create a full invoice when the order is authorized;Bij Authorizatie: creeer een volledige factuur wanneer de bestelling is geauthorizeerd;Bei Autorisierung: Erstellen Sie eine vollständige Rechnung, wenn die Bestellung autorisiert ist;Authorisation : Créer la facture complète quand la commande est authorisée
+On Shipment: Create a full invoice when the order is shipped;Bij Verzending: creeer een volledige factuur wanneer de bestelling is verzonden;Bei Versand: Erstellen Sie eine vollständige Rechnung, wenn die Bestellung versendet wird;À l'envoie : Créer la facture complète quand la commande est envoyée
+The description to be used for this transaction. These variables are available:;De beschrijving die voor deze transactie moet worden gebruikt. Deze variabelen zijn beschikbaar:;Die Beschreibung, die für diese Transaktion verwendet werden soll. Diese Variablen sind verfügbar:;La description qui sera utilisé pour cette transaction. Les variables sont:
+Translations;Vertalingen;Übersetzungen;Traductions
+The total surcharge fee should have taxes included;De totale toeslag kosten moeten inclusief btw zijn;In der gesamten Zuschlagsgebühr sollten Steuern enthalten sein.;Le montant total des frais supplémentaires doit inclure les taxes.
+Use Custom Logo;Gebruik op maat gemaakte logo;Verwenden Sie das benutzerdefinierte Logo;Utiliser un logo personnalisé
+Yes, Upload custom logo;Ja, upload op maat gemaakte logo;Ja, benutzerdefiniertes Logo hochladen;Oui, télécharger un logo personnalisé
+Add file;Voeg bestand toe;Datei hinzufügen;Ajouter un fichier
+Please use .png/.jpg logo with max size of 256x64.;Gebruiken een .png/.pjg bestand met een maximale grootte van 256x64;Bitte verwenden Sie das .png / .jpg-Logo mit einer maximalen Größe von 256x64;Veuillez utiliser des logos au format png ou jpeg et avec une taille max de 256x64.
+Your custom logo;Your eigen logo;Ihr benutzerdefiniertes Logo;Votre logo personnalisé
+Category;Categorie;Kategorie;Catégorie
+None;Geen;Keiner;Aucun
+meal;Maaltijd;Mahlzeit;repas
+gift;Cadeau;Geschenk;cadeau
+eco;eco;Öko;eco
+The category selected here will be used for all products in your webshop;De hier geselecteerde categorie wordt gebruikt voor alle producten in uw webshop.;Die hier ausgewählte Kategorie wird für alle Produkte in Ihrem Webshop verwendet;La catégorie selectionnée ici sera utilisé pour tous les produits de votre boutique
+You haven't enabled any of the Mollie payments;Je hebt geen van de Mollie-betalingen ingeschakeld.;Sie haben keine der Mollie-Zahlungen aktiviert;Vous n'avez activé aucun des paiements Mollie
+Please enable payments in your Mollie Account Dashboard;Schakel betalingen in je Mollie Account Dashboard in.;Bitte aktivieren Sie Zahlungen in Ihrem Mollie Account Dashboard;Veuillez activer les paiements dans votre tableau de bord mollie
+Click here to configure;Klik hier om te configureren.;Klicken Sie hier zum Konfigurieren;Cliquez ici pour configurer
+Sorry, only JPG, PNG files are allowed.;Sorry, alleen JPG,PNG bestanden zijn toegestaan;Leider sind nur JPG- und PNG-Dateien zulässig.;Désolé, seul les JPG ou PNG sont acceptés
+Sorry, there was an error uploading your logo.;Sorry, er is een fout opgetreden bij het uploaden van uw logo.;Beim Hochladen Ihres Logos ist ein Fehler aufgetreten.;Désolé, il y a eu une erreur lors de l'import de votre logo
+You can find your Profile ID in your [1]Mollie Profile[/1];Je kunt je profiel-ID vinden in je [1] Mollie-profiel [/ 1];Sie finden Ihre Profil-ID in Ihrem [1] Mollie-Profil [/ 1];You pouvez trouver votre Profile ID dans votre compte Mollie
+Read more about [1]Single Click Payments[/1] and how it improves your conversion.;Lees meer over [1] Single Click Payments [/ 1] en hoe het je conversie verbetert.;Lesen Sie mehr über [1] Single Click Payments [/ 1] und wie es Ihre Conversion verbessert.;Découvrez en plus sur le "Single click payments" et comment ameliorer votre conversion.
+Send new order email to merchant;Stuur een nieuwe bestel-e-mail naar de webshop;Senden Sie eine neue Bestell-E-Mail an den Händler;Envoyer un email de nouvelle commande au marchand
+Change when 'new_order' email to merchant is sent (When using PrestaShop Mail Alerts module);Wijzigen wanneer 'new_order' e-mail naar handelaar wordt verzonden (bij gebruik van PrestaShop Mail Alerts-module);Ändern Sie, wann die E-Mail 'new_order' an den Händler gesendet wird (bei Verwendung des PrestaShop Mail Alerts-Moduls).;Changer lorsque l'email de nouvelle commande est envoyé au marchand (Quand le module des alertes mails est utilisé)
+When to create the invoice?;Wanneer moet u de factuur maken?;Wann wird die Rechnung erstellt?;Quand créer une facture ?
+Accepted;Geaccepteerd;Akzeptiert;Accepté
+Shipped;Verzonden;Versand;Livré
+Enabling this feature will automatically send shipment information when an order gets marked status.;Als u deze functie inschakelt, wordt automatisch verzendinformatie verzonden wanneer een bestelling de status heeft gemarkeerd.;Durch Aktivieren dieser Funktion werden automatisch Versandinformationen gesendet, wenn eine Bestellung den Status "Markiert" erhält.;L'activation de cette fonction enverra automatiquement les informations d'expédition lorsqu'une commande obtient le statut indiqué.
+Unable to install new controllers;Kan geen nieuwe controllers installeren;Neue Controller können nicht installiert werden;Impossible d'installer de nouveaux controlleurs
+Unable to install voucher attributes;Kan voucher-attributen niet installeren;Gutscheinattribute können nicht installiert werden;Impossible d'installer les attributs des coupons
+An error occurred while initializing your payment. Please contact our customer support.;Er is een fout opgetreden bij het initialiseren van uw betaling. Neem contact op met onze klantenservice.;Beim Initialisieren Ihrer Zahlung ist ein Fehler aufgetreten. Bitte wenden Sie sich an unseren Kundensupport.;Une erreur s'est produite lors de l'initialisation de votre paiement. Veuillez contacter notre service client.
+It looks like you have entered incorrect phone number format in billing address step. Please change the number and try again.;Het lijkt erop dat je een onjuiste telefoonnummer hebt ingevoerd in de stap van het factuuradres. Wijzig het nummer en probeer het opnieuw.;Es sieht so aus, als hätten Sie im Schritt der Rechnungsadresse ein falsches Telefonnummernformat eingegeben. Bitte ändern Sie die Nummer und versuchen Sie es erneut.;Il semble que vous ayez saisi un format de numéro de téléphone incorrect à l'étape de l'adresse de facturation. Veuillez modifier le numéro et réessayer.
+It looks like you have entered incorrect phone number format in shipping address step. Please change the number and try again.;Het lijkt erop dat je een onjuist telefoonnummer hebt ingevoerd in de stap van het verzendadres. Wijzig het nummer en probeer het opnieuw.;Es sieht so aus, als hätten Sie im Schritt der Lieferadresse ein falsches Telefonnummernformat eingegeben. Bitte ändern Sie die Nummer und versuchen Sie es erneut.;Il semble que vous ayez saisi un format de numéro de téléphone incorrect à l'étape de l'adresse de livraison. Veuillez modifier le numéro et réessayer.
+Unknown exception in Mollie;Onbekende uitzondering in Mollie;Unbekannte Ausnahme in Mollie;Exception inconnue dans Mollie
+No carrier;Geen signaal;Kein Distributeur;Pas de transporteur
+Open;Open;Offen;Ouvert
+Awaiting;In afwachting;Warten;En attente
+Payment Fee;Transactiekosten;Gebühr;Commission sur le paiement
+Shipping;Verzenden;Versand;Livraison
+Gift wrapping;Cadeauverpakking;Geschenkpapier;Emballage cadeau
