@@ -23,14 +23,14 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_3($module)
 {
-    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-    $orderTotalRestrictionService = $module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
+	/** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
+	$orderTotalRestrictionService = $module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
 
-    try {
-        $orderTotalRestrictionService->handleOrderTotalUpdate();
-    } catch (Exception $e) {
-        return false;
-    }
+	try {
+		$orderTotalRestrictionService->handleOrderTotalUpdate();
+	} catch (Exception $e) {
+		return false;
+	}
 
-    return true;
+	return true;
 }
