@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -163,7 +164,7 @@ class Mollie extends PaymentModule
 			// where dependency injection container was without "MolliePrefix".
 			// On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
 			// merchant to try installing again where.
-			$isAdmin = $this->context->controller instanceof AdminController;
+			$isAdmin = $this->context->controller instanceof AdminController && $this->context->controller->isXmlHttpRequest();
 
 			if ($isAdmin) {
 				http_response_code(500);
@@ -1021,7 +1022,7 @@ class Mollie extends PaymentModule
 			$params['select'] = rtrim($params['select'], ' ,') . ' ,mol.`transaction_id`';
 		}
 		if (isset($params['join'])) {
-			$params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference` 
+			$params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference`
 			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
 		}
 		$params['fields']['order_id'] = [
