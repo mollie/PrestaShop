@@ -95,7 +95,7 @@ class ConfigFieldService
 			Config::MOLLIE_KLARNA_INVOICE_ON => Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON),
 		];
 
-		if (Mollie\Utility\EnvironmentUtility::getApiKey()) {
+		if (Mollie\Utility\EnvironmentUtility::getApiKey() && $this->module->api !== null) {
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				$countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
 				if ($countryIds) {

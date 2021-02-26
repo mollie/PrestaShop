@@ -160,7 +160,7 @@ class PaymentMethodService
 	public function getMethodsForCheckout()
 	{
 		$apiKey = EnvironmentUtility::getApiKey();
-		if (!$apiKey) {
+		if (!$apiKey || $this->module->api === null) {
 			return [];
 		}
 		/* @phpstan-ignore-next-line */

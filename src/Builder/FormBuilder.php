@@ -109,7 +109,8 @@ class FormBuilder
 
 	public function buildSettingsForm()
 	{
-		$isApiKeyProvided = EnvironmentUtility::getApiKey();
+		$isApiKeyProvided = (bool) EnvironmentUtility::getApiKey();
+		$isApiKeyProvided = ($isApiKeyProvided && $this->module->api !== null);
 
 		$inputs = $this->getAccountSettingsSection($isApiKeyProvided);
 
