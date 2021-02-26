@@ -37,8 +37,6 @@ class ApiKeyService
 			try {
 				$api->setApiKey($apiKey);
 			} catch (ApiException $e) {
-				$errorHandler = ErrorHandler::getInstance();
-				$errorHandler->handle($e, $e->getCode(), false);
 
 				return null;
 			}

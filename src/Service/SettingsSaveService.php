@@ -123,7 +123,7 @@ class SettingsSaveService
 			);
 		}
 
-		if ($oldEnvironment === $environment && $apiKey) {
+		if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
