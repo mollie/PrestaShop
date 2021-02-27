@@ -23,4 +23,16 @@ $(document).ready(function() {
       $(this).val(index)
     })
   });
+
+  $('.payment-method input') .on('focus', function(e) {
+    if (this.setSelectionRange) {
+      var len = $(this).val().length;
+      this.setSelectionRange(len, len);
+    } else {
+      $(this).val($(this).val());
+    }
+
+    $('.payment-method').attr("draggable", false); }) .on('blur', function(e) {
+      $('.payment-method').attr("draggable", true);
+    });
 })
