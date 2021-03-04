@@ -73,10 +73,10 @@ class CartLinesService
 		$vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
 		$totalPrice = round($amount, $apiRoundingPrecision);
-        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
+		$roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
 		foreach ($cartSummary['discounts'] as $discount) {
 			if ($discount['free_shipping']) {
-                $roundedShippingCost = 0;
+				$roundedShippingCost = 0;
 			}
 		}
 
