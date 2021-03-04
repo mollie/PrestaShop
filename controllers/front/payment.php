@@ -98,21 +98,34 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
-		$paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
-		// Prepare payment
-		do {
-			$orderReference = Order::generateReference();
-		} while (Order::getByReference($orderReference)->count());
-		$paymentData = $paymentMethodService->getPaymentData(
-			$amount,
-			Tools::strtoupper($this->context->currency->iso_code),
-			$method,
-			$issuer,
+        $paymentMethodObj = new MolPaymentMethod((int)$paymentMethodId);
+        // Prepare payment
+        $totalPrice = new Number((string)$originalAmount);
+
+        $this->module->validateOrder(
+            (int)$cart->id,
+            (int)Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+            (float)$totalPrice->toPrecision(2),
+            isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
+            null,
+            [],
+            null,
+            false,
+            $customer->secure_key
+        );
+        $orderId = Order::getOrderByCartId($cart->id);
+        $order = new Order($orderId);
+
+        $paymentData = $paymentMethodService->getPaymentData(
+            $amount,
+            Tools::strtoupper($this->context->currency->iso_code),
+            $method,
+            $issuer,
 			(int) $cart->id,
 			$customer->secure_key,
 			$paymentMethodObj,
 			false,
-			$orderReference,
+            $order->reference,
 			Tools::getValue('cardToken')
 		);
 
@@ -121,7 +134,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			return;
 		}
 
-		$this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
+		$this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $order->reference);
 		$orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
 		$orderId = Order::getOrderByCartId($cart->id);
@@ -295,9 +308,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		parent::setTemplate($template, $params, $locale);
 	}
 
-	private function createOrder($method, $apiPayment, $cartId, $originalAmount, $secureKey, $orderReference)
+	private function createOrder($method, $apiPayment, $cartId, $originalAmount, $orderReference)
 	{
-		$extraVars = [];
 		if (PaymentMethod::BANKTRANSFER === $method) {
 			try {
 				Db::getInstance()->insert(
@@ -325,15 +337,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 				$payments = $apiPayment->payments();
 				$apiPayment = $payments[0];
 			}
-
-			$details = $apiPayment->details->transferReference;
-			$address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
-
-			$extraVars = [
-				'{bankwire_owner}' => 'Stichting Mollie Payments',
-				'{bankwire_details}' => $details,
-				'{bankwire_address}' => $address,
-			];
 		}
 		/** @var PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
@@ -370,25 +373,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			$totalPrice = $orderFeeNumber->plus($totalPrice);
 		}
 
-		$this->module->validateOrder(
-			(int) $cartId,
-			(int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-			(float) $totalPrice->toPrecision(2),
-			isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
-			null,
-			$extraVars,
-			null,
-			false,
-			$secureKey
-		);
-
 		$orderid = Order::getOrderByCartId($cartId);
 		$order = new Order($orderid);
 		$order->total_paid_tax_excl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_excl))->toPrecision(2);
 		$order->total_paid_tax_incl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_incl))->toPrecision(2);
 		$order->total_paid = (float) $totalPrice->toPrecision(2);
 		$order->total_paid_real = (float) $totalPrice->toPrecision(2);
-		$order->reference = $orderReference;
 		$order->update();
 
 		/** @var MemorizeCartService $memorizeCart */
