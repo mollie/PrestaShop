@@ -73,17 +73,17 @@ class CartLinesService
 		$vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
 		$totalPrice = round($amount, $apiRoundingPrecision);
-		$shipping = round($shippingCost, $apiRoundingPrecision);
+        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
 		foreach ($cartSummary['discounts'] as $discount) {
 			if ($discount['free_shipping']) {
-				$shipping = 0;
+                $roundedShippingCost = 0;
 			}
 		}
 
-		$wrapping = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+		$wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
 		$totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
 		$remaining = round(
-			CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $shipping, (float) $wrapping),
+			CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
 			$apiRoundingPrecision
 		);
 
@@ -101,10 +101,10 @@ class CartLinesService
 		$orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
 
 		// Add shipping
-		$orderLines = $this->addShippingLine($shipping, $cartSummary, $apiRoundingPrecision, $orderLines);
+		$orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $orderLines);
 
 		// Add wrapping
-		$orderLines = $this->addWrappingLine($wrapping, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
+		$orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
 
 		// Add fee
 		$orderLines = $this->addPaymentFeeLine($paymentFee, $apiRoundingPrecision, $orderLines);
@@ -153,15 +153,15 @@ class CartLinesService
 
 	/**
 	 * @param array $cartItems
-	 * @param $apiRoundingPrecision
-	 * @param $gift_products
+	 * @param int $apiRoundingPrecision
+	 * @param array $giftProducts
 	 * @param array $orderLines
-	 * @param $selectedVoucherCategory
-	 * @param $remaining
+	 * @param string $selectedVoucherCategory
+	 * @param float $remaining
 	 *
 	 * @return array
 	 */
-	private function createProductLines(array $cartItems, $apiRoundingPrecision, $gift_products, array $orderLines, $selectedVoucherCategory, $remaining)
+	private function createProductLines(array $cartItems, $apiRoundingPrecision, $giftProducts, array $orderLines, $selectedVoucherCategory, $remaining)
 	{
 		foreach ($cartItems as $cartItem) {
 			// Get the rounded total w/ tax
@@ -180,7 +180,7 @@ class CartLinesService
 
 			$productHash = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}";
 
-			foreach ($gift_products as $gift_product) {
+			foreach ($giftProducts as $gift_product) {
 				if ($gift_product['id_product'] === $cartItem['id_product']) {
 					$quantity = NumberUtility::minus($quantity, $gift_product['cart_quantity']);
 
@@ -219,10 +219,10 @@ class CartLinesService
 	}
 
 	/**
-	 * @param $totalDiscounts
-	 * @param $apiRoundingPrecision
-	 * @param $orderLines
-	 * @param $remaining
+	 * @param float $totalDiscounts
+	 * @param int $apiRoundingPrecision
+	 * @param array $orderLines
+	 * @param float $remaining
 	 *
 	 * @return array
 	 */
@@ -247,9 +247,9 @@ class CartLinesService
 	}
 
 	/**
-	 * @param $remaining
-	 * @param $apiRoundingPrecision
-	 * @param $orderLines
+	 * @param float $remaining
+	 * @param int $apiRoundingPrecision
+	 * @param array $orderLines
 	 *
 	 * @return array
 	 */
@@ -289,8 +289,8 @@ class CartLinesService
 
 	/**
 	 * @param array $orderLines
-	 * @param $apiRoundingPrecision
-	 * @param $vatRatePrecision
+	 * @param int $apiRoundingPrecision
+	 * @param int $vatRatePrecision
 	 *
 	 * @return array
 	 *
@@ -346,25 +346,25 @@ class CartLinesService
 	}
 
 	/**
-	 * @param $shipping
-	 * @param $cartSummary
-	 * @param $apiRoundingPrecision
+	 * @param float $roundedShippingCost
+	 * @param array $cartSummary
+	 * @param int $apiRoundingPrecision
 	 * @param array $orderLines
 	 *
 	 * @return array
 	 */
-	private function addShippingLine($shipping, $cartSummary, $apiRoundingPrecision, array $orderLines)
+	private function addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, array $orderLines)
 	{
-		if (round($shipping, 2) > 0) {
+		if (round($roundedShippingCost, 2) > 0) {
 			$shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
 
 			$orderLines['shipping'] = [
 				[
 					'name' => $this->languageService->lang('Shipping'),
 					'quantity' => 1,
-					'unitPrice' => round($shipping, $apiRoundingPrecision),
-					'totalAmount' => round($shipping, $apiRoundingPrecision),
-					'vatAmount' => round($shipping * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
+					'unitPrice' => round($roundedShippingCost, $apiRoundingPrecision),
+					'totalAmount' => round($roundedShippingCost, $apiRoundingPrecision),
+					'vatAmount' => round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
 					'vatRate' => $shippingVatRate,
 				],
 			];
@@ -374,17 +374,17 @@ class CartLinesService
 	}
 
 	/**
-	 * @param $wrapping
+	 * @param float $wrappingPrice
 	 * @param array $cartSummary
-	 * @param $vatRatePrecision
-	 * @param $apiRoundingPrecision
+	 * @param int $vatRatePrecision
+	 * @param int $apiRoundingPrecision
 	 * @param array $orderLines
 	 *
 	 * @return array
 	 */
-	private function addWrappingLine($wrapping, array $cartSummary, $vatRatePrecision, $apiRoundingPrecision, array $orderLines)
+	private function addWrappingLine($wrappingPrice, array $cartSummary, $vatRatePrecision, $apiRoundingPrecision, array $orderLines)
 	{
-		if (round($wrapping, 2) > 0) {
+		if (round($wrappingPrice, 2) > 0) {
 			$wrappingVatRate = round(
 				CalculationUtility::getActualVatRate(
 					$cartSummary['total_wrapping'],
@@ -397,9 +397,9 @@ class CartLinesService
 				[
 					'name' => $this->languageService->lang('Gift wrapping'),
 					'quantity' => 1,
-					'unitPrice' => round($wrapping, $apiRoundingPrecision),
-					'totalAmount' => round($wrapping, $apiRoundingPrecision),
-					'vatAmount' => round($wrapping * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
+					'unitPrice' => round($wrappingPrice, $apiRoundingPrecision),
+					'totalAmount' => round($wrappingPrice, $apiRoundingPrecision),
+					'vatAmount' => round($wrappingPrice * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
 					'vatRate' => $wrappingVatRate,
 				],
 			];
@@ -409,8 +409,8 @@ class CartLinesService
 	}
 
 	/**
-	 * @param $paymentFee
-	 * @param $apiRoundingPrecision
+	 * @param float $paymentFee
+	 * @param int $apiRoundingPrecision
 	 * @param array $orderLines
 	 *
 	 * @return array
