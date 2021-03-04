@@ -169,6 +169,16 @@ class CartLinesServiceTest extends TestCase
 							->setCategory('')
 							->setVatRate('21.00'),
 					1 => (new Line())
+						->setName($productName_2)
+						->setQuantity(1)
+						->setSku('1¤9¤0gift')
+						->setDiscountAmount(null)
+						->setUnitPrice(new Amount($currencyIsoCode, '0.00'))
+						->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
+						->setVatAmount(new Amount($currencyIsoCode, '0.00'))
+						->setCategory('')
+						->setVatRate('0.00'),
+					2 => (new Line())
 							->setName($productName_2)
 							->setQuantity(1)
 							->setSku('1¤9¤0')
@@ -178,16 +188,6 @@ class CartLinesServiceTest extends TestCase
 							->setVatAmount(new Amount($currencyIsoCode, '17.36'))
 							->setCategory('')
 							->setVatRate('21.00'),
-					2 => (new Line())
-							->setName($productName_2)
-							->setQuantity(1)
-							->setSku('1¤9¤0gift')
-							->setDiscountAmount(null)
-							->setUnitPrice(new Amount($currencyIsoCode, '0.00'))
-							->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
-							->setVatAmount(new Amount($currencyIsoCode, '0.00'))
-							->setCategory('')
-							->setVatRate('0.00'),
 					3 => (new Line())
 							->setName($shipping)
 							->setQuantity(1)
