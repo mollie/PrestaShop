@@ -23,5 +23,6 @@ parameters:
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
     - '#Variable \$order in PHPDoc tag \@var does not match assigned variable \$mollieOrder.#'
     - '#PHPDoc tag \@var for variable \$emailAlertsModule contains unknown class Ps_EmailAlerts.#'
+    - '#Parameter \#9 $secure_key of method PaymentModuleCore::validateOrder\(\) expects bool, string given.#'
 
   level: 5
