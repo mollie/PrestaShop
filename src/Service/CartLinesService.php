@@ -452,8 +452,8 @@ class CartLinesService
 
 	/**
 	 * @param array $newItems
-	 * @param $currencyIsoCode
-	 * @param $apiRoundingPrecision
+	 * @param string $currencyIsoCode
+	 * @param int $apiRoundingPrecision
 	 *
 	 * @return array
 	 */
