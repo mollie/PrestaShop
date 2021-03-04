@@ -98,34 +98,34 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
 		$environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 		$paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
-        $paymentMethodObj = new MolPaymentMethod((int)$paymentMethodId);
-        // Prepare payment
-        $totalPrice = new Number((string)$originalAmount);
+		$paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+		// Prepare payment
+		$totalPrice = new Number((string) $originalAmount);
 
-        $this->module->validateOrder(
-            (int)$cart->id,
-            (int)Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float)$totalPrice->toPrecision(2),
-            isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
-            null,
-            [],
-            null,
-            false,
-            $customer->secure_key
-        );
-        $orderId = Order::getOrderByCartId($cart->id);
-        $order = new Order($orderId);
+		$this->module->validateOrder(
+			(int) $cart->id,
+			(int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+			(float) $totalPrice->toPrecision(2),
+			isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
+			null,
+			[],
+			null,
+			false,
+			$customer->secure_key
+		);
+		$orderId = Order::getOrderByCartId($cart->id);
+		$order = new Order($orderId);
 
-        $paymentData = $paymentMethodService->getPaymentData(
-            $amount,
-            Tools::strtoupper($this->context->currency->iso_code),
-            $method,
-            $issuer,
+		$paymentData = $paymentMethodService->getPaymentData(
+			$amount,
+			Tools::strtoupper($this->context->currency->iso_code),
+			$method,
+			$issuer,
 			(int) $cart->id,
 			$customer->secure_key,
 			$paymentMethodObj,
 			false,
-            $order->reference,
+			$order->reference,
 			Tools::getValue('cardToken')
 		);
 
