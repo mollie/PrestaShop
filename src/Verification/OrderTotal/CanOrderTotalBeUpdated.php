@@ -34,10 +34,6 @@ class CanOrderTotalBeUpdated implements OrderTotalVerificationInterface
 	 */
 	public function verify()
 	{
-		if (!$this->hasPaymentMethods()) {
-			throw new OrderTotalRestrictionException('Failed to refresh order total restriction values: None available payment methods were found', OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND);
-		}
-
 		if (!$this->hasCurrencies()) {
 			throw new OrderTotalRestrictionException('Failed to refresh order total restriction values: None available currencies were found', OrderTotalRestrictionException::NO_AVAILABLE_CURRENCIES_FOUND);
 		}
