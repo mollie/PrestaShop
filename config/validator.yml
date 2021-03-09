@@ -18,9 +18,9 @@ services:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator
     arguments:
       - '@=service("mollie.adapter.context")'
-      - '@Mollie\Provider\PaymentMethod\PaymentMethodCurrencyProvider'
       - '@Mollie\Service\OrderTotal\OrderTotalService'
       - '@Mollie\Provider\OrderTotalProvider'
+      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
     tags:
       - { name: mollie.paymentmethodrestriction, priority: 10}
 
@@ -76,3 +76,9 @@ services:
     class: Mollie\Provider\OrderTotalProvider
     arguments:
       - '@=service("mollie.adapter.context")'
+
+  Mollie\Validator\OrderCallBackValidator:
+    class: Mollie\Validator\OrderCallBackValidator
+    arguments:
+      - '@mollie.context'
+      - '@mollie'

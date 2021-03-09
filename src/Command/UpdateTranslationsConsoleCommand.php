@@ -45,14 +45,14 @@ class UpdateTranslationsConsoleCommand extends Command
 		$data = fgetcsv($missingTranslations);
 		$missingTranslationsArray = [];
 
-		while (($missingTranslation = fgetcsv($missingTranslations)) !== false) {
+		while (($missingTranslation = fgetcsv($missingTranslations, 0, ';')) !== false) {
 			$missingTranslationsArray[$missingTranslation[0]] = $missingTranslation;
 		}
 
 		try {
 			$translations = fopen('translation.csv', 'r');
 			$translationsArray = [];
-			while (($translation = fgetcsv($translations)) !== false) {
+			while (($translation = fgetcsv($translations, 0, ';')) !== false) {
 				$translationsArray[$translation[0]] = $translation;
 			}
 		} catch (\Exception $e) {
@@ -73,7 +73,7 @@ class UpdateTranslationsConsoleCommand extends Command
 
 		$translations = fopen('translation.csv', 'w');
 		foreach ($translationsArray as $value) {
-			fputcsv($translations, $value);
+			fputcsv($translations, $value, ';', chr(127));
 		}
 		fclose($translations);
 		$output->writeln('<info>Translation export to CSV finished</info>');

@@ -54,7 +54,7 @@
             {foreach $input.paymentMethods as $paymentMethod}
                 {assign var = 'methodObj' value=$paymentMethod.obj}
                 <li class="payment-method border border-bottom">
-                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]" class="js-payment-option-position">
+                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]" value="{$paymentMethod.obj->position}" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
           <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}"

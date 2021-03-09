@@ -123,7 +123,7 @@ class SettingsSaveService
 			);
 		}
 
-		if ($oldEnvironment === $environment && $apiKey) {
+		if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				try {
@@ -172,6 +172,7 @@ class SettingsSaveService
 		$mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
 		$mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 		$mollieImages = Tools::getValue(Config::MOLLIE_IMAGES);
+		$showResentPayment = Tools::getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
 		$mollieIssuers = Tools::getValue(Config::MOLLIE_ISSUERS);
 		$mollieCss = Tools::getValue(Config::MOLLIE_CSS);
 		if (!isset($mollieCss)) {
@@ -221,6 +222,7 @@ class SettingsSaveService
 			Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
 			Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
 			Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
+			Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
 			Configuration::updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
 			Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
 			Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);

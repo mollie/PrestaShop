@@ -160,7 +160,7 @@ class PaymentMethodService
 	public function getMethodsForCheckout()
 	{
 		$apiKey = EnvironmentUtility::getApiKey();
-		if (!$apiKey) {
+		if (!$apiKey || $this->module->api === null) {
 			return [];
 		}
 		/* @phpstan-ignore-next-line */
@@ -240,6 +240,12 @@ class PaymentMethodService
 		$value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
 		$amountObj = new Amount($currency, $value);
 
+		$key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+			$secureKey,
+			$customer->id,
+			$cartId,
+			$this->module->name
+		);
 		$redirectUrl = ($qrCode
 			? $context->link->getModuleLink(
 				'mollie',
@@ -254,7 +260,7 @@ class PaymentMethodService
 					'cart_id' => $cartId,
 					'utm_nooverride' => 1,
 					'rand' => time(),
-					'key' => $secureKey,
+					'key' => $key,
 					'customerId' => $customer->id,
 				],
 				true
@@ -274,7 +280,7 @@ class PaymentMethodService
 		$metaData = [
 			'cart_id' => $cartId,
 			'order_reference' => $orderReference,
-			'secure_key' => Tools::encrypt($secureKey),
+			'secure_key' => $key,
 		];
 
 		if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {

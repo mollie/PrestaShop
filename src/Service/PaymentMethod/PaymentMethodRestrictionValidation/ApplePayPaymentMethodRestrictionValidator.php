@@ -98,6 +98,6 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
 	 */
 	private function isPaymentMethodInCookie()
 	{
-		return (int) $this->context->getCookieValue('isApplePayMethod') !== 0;
+		return (int) $_COOKIE['isApplePayMethod'] !== 0;
 	}
 }

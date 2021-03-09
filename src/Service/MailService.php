@@ -116,6 +116,8 @@ class MailService
 		if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
 			return;
 		}
+		$customer = $order->getCustomer();
+
 		/** @var \Ps_EmailAlerts $emailAlertsModule */
 		$emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
 
@@ -123,7 +125,7 @@ class MailService
 			[
 				'currency' => $this->context->currency,
 				'order' => $order,
-				'customer' => $this->context->customer,
+				'customer' => $customer,
 				'cart' => $this->context->cart,
 				'orderStatus' => new OrderState($orderStateId),
 			]
@@ -144,6 +146,7 @@ class MailService
 	{
 		$virtual_product = true;
 		$carrier = new Carrier($order->id_carrier);
+		$customer = $order->getCustomer();
 
 		$product_var_tpl_list = [];
 		foreach ($order->getProducts() as $product) {
@@ -232,9 +235,9 @@ class MailService
 		}
 
 		return [
-			'{firstname}' => $this->context->customer->firstname,
-			'{lastname}' => $this->context->customer->lastname,
-			'{email}' => $this->context->customer->email,
+			'{firstname}' => $customer->firstname,
+			'{lastname}' => $customer->lastname,
+			'{email}' => $customer->email,
 			'{delivery_block_txt}' => $this->_getFormatedAddress($delivery, "\n"),
 			'{invoice_block_txt}' => $this->_getFormatedAddress($invoice, "\n"),
 			'{delivery_block_html}' => $this->_getFormatedAddress($delivery, '<br />', [
@@ -287,6 +290,7 @@ class MailService
 
 	private function getCartRuleList(Order $order, $orderStateId)
 	{
+		$customer = $order->getCustomer();
 		$order_list = [];
 		$cart_rules = $this->context->cart->getCartRules();
 		$order_list[] = $order;
@@ -345,7 +349,7 @@ class MailService
 					continue;
 				}
 
-				if ($this->context->customer->isGuest()) {
+				if ($customer->isGuest()) {
 					$voucher->id_customer = 0;
 				} else {
 					$voucher->id_customer = $order->id_customer;
@@ -362,8 +366,8 @@ class MailService
 					$params = [
 						'{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
 						'{voucher_num}' => $voucher->code,
-						'{firstname}' => $this->context->customer->firstname,
-						'{lastname}' => $this->context->customer->lastname,
+						'{firstname}' => $customer->firstname,
+						'{lastname}' => $customer->lastname,
 						'{id_order}' => $order->reference,
 						'{order_name}' => $order->getUniqReference(),
 					];
@@ -375,8 +379,8 @@ class MailService
 							self::FILE_NAME
 						),
 						$params,
-						$this->context->customer->email,
-						$this->context->customer->firstname . ' ' . $this->context->customer->lastname,
+						$customer->email,
+						$customer->firstname . ' ' . $customer->lastname,
 						null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
 					);
 				}
@@ -444,6 +448,7 @@ class MailService
 			_PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR . $template_name,
 			_PS_MAIL_DIR_ . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
 			_PS_MAIL_DIR_ . 'en' . DIRECTORY_SEPARATOR . $template_name,
+			_PS_MAIL_DIR_ . '_partials' . DIRECTORY_SEPARATOR . $template_name,
 		];
 
 		foreach ($pathToFindEmail as $path) {

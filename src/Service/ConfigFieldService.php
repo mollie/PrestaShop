@@ -61,6 +61,7 @@ class ConfigFieldService
 
 			Config::MOLLIE_CSS => Configuration::get(Config::MOLLIE_CSS),
 			Config::MOLLIE_IMAGES => Configuration::get(Config::MOLLIE_IMAGES),
+			Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK => Configuration::get(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK),
 			Config::MOLLIE_ISSUERS => Configuration::get(Config::MOLLIE_ISSUERS),
 
 			Config::MOLLIE_METHOD_COUNTRIES => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES),
@@ -94,7 +95,7 @@ class ConfigFieldService
 			Config::MOLLIE_KLARNA_INVOICE_ON => Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON),
 		];
 
-		if (Mollie\Utility\EnvironmentUtility::getApiKey()) {
+		if (Mollie\Utility\EnvironmentUtility::getApiKey() && $this->module->api !== null) {
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
 				$countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
 				if ($countryIds) {

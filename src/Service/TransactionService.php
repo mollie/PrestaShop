@@ -37,7 +37,6 @@ use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;
-use Tools;
 
 class TransactionService
 {
@@ -131,6 +130,12 @@ class TransactionService
 			'`transaction_id` = \'' . pSQL($transaction->id) . '\''
 		);
 
+		$key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+			$cart->secure_key,
+			$cart->id_customer,
+			$cart->id,
+			$this->module->name
+		);
 		switch ($transaction->resource) {
 			case Mollie\Config\Config::MOLLIE_API_STATUS_PAYMENT:
 				if ($apiPayment->metadata->cart_id) {
@@ -143,7 +148,7 @@ class TransactionService
 							$orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
 						}
 					} elseif (($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
-						&& Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
+						&& $key === $apiPayment->metadata->secure_key
 					) {
 						$paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
@@ -161,7 +166,7 @@ class TransactionService
 				break;
 			case Mollie\Config\Config::MOLLIE_API_STATUS_ORDER:
 				if ($apiPayment->metadata->cart_id) {
-					if (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key
+					if ($key === $apiPayment->metadata->secure_key
 						&& OrderStatus::STATUS_CREATED === $apiPayment->status
 					) {
 						/** @var PaymentCollection|null $orderPayments */
@@ -178,7 +183,7 @@ class TransactionService
 						$orderStatusService->setOrderStatus($orderId, $paymentStatus);
 
 						$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
-					} elseif (Tools::encrypt($cart->secure_key) === $apiPayment->metadata->secure_key) {
+					} elseif ($key === $apiPayment->metadata->secure_key) {
 						$status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
 						$paymentStatus = (int) Config::getStatuses()[$status];
 						$isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);

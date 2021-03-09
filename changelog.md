@@ -1,6 +1,84 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.2.3 ##
++ Fixed translation issues
++ Fixed security issue
++ Fixed return callback issue where order status would get changed again after page refresh
++ Changed currency check to use API calls to see if currency is supported
++ Fixed issue on PS1.7.7 where order emails didn't have product list, because tpl file has changed location
++ Improved module upgrade process
++ Fixed error handle where you would get exception if you api key got expired
++ Improved Mollie order lines rounding and fixed issue where sometimes amount would be different by few cents and that would cause mollie to deny it
++ Fixed issue where order_conf would send wrong order reference
+
+## Changes in release 4.2.2 ##
+Issues fixed:
++ Order of payment methods not saved in payment configuration screen
++ Change credit card configuration logo for PS 1.6 version
++ Total_paid_real line added to the database
++ Customer {firstname} {lastname} and {email} not displayed in order_confirmation email
++ Incorrect shop name displayed in the order_confirmation email for multistore configurations
++ Rows of products not displayed in order_confirmation email
++ Apple Pay not available in checkout for PS 1.6 version
+
+NOTE: ING HomePay as payment method is no longer available since 1st of February 2021. More details [here](https://docs.mollie.com/changelog/v2/changelog)
+
+## Changes in release 4.2.1 ##
+New features:
++ Improved error message for the test API key validation
++ Made the custom payment title visible in the checkout
+
+Issues fixed:
++ Error when upgrading to 4.2.* version
++ Error invalid order ID: An order ID should start with 'ord_' when changing order statuses 
++ Error mol_country table empty - payment methods were not displayed
++ Slow loading of AdminOrders page
++ Components on 1.6. duplicate step for iDeal and Credit Card
++ Auto-shipment feature
+
+## Changes in release 4.2.0 ##
+New features:
++ Created setting for Klarna payment method to configure when the invoice is sent to the consumer
++ Added split transactions ID for vouchers payment method
++ Additional issues monitoring with SENTRY tool
++ Added logic to exclude payment method from checkout if min/max value is not met
++ Added Revolut as new IDEAL issuer
++ Improved translations
++ Added segment tool for analytics
++ Added additional phone number validation
++ Added Belgium to allowed countries for Klarna Pay Later payment method
+
+Issues fixed:
++ Fixed “Test Api” button responds exception error
++ Fixed over refunding for payment methods supporting refunds for an additional €25.00 more than the original payment’s amount
++ Fixed with duplicated on error cart rules
++ Fixed BO errors translations escape
++ Fixed error 500 when submitting order: Unknown offset 0 for collection Order
++ Fixed orders 1 eur on ThirtyBees
++ Fixed “no payment methods” handling
+
+## Changes in release 4.1.3 ##
++ Fixed payment reminder icon in BO orders page
+
+## Changes in release 4.1.2 ##
+Added compatibility with PrestaShop 1.7.7 version.
++ Fixed Mollie container issues causing services not to be retrieved.
++ Fixed Admin orders manual creation page to display checkbox when Mollie payment is chosen.
++ Added order total error messages triggered by passing maximum or not reaching minimum order total amounts.
++ Added handling for phone numbers consisting of only 0s.
++ Fixed "credit card" payment option form submission.
+
+## Changes in release 4.1.1 ##
+Release scope:
++ Restored the Klarna payment module functionalities for Mollie from the order in backoffice.
++ Fixed MYSQL issues with Mollie select query order listing.
++ Fixed the shippingAddress → organizationName and billingAdress → organizationName error.
++ Fixed the Mollie icon visibility after the module reset.
++ Fixed the module payment options positioning.
++ Added Russian Rubles as a credit card payment option.
++ Added additional translations.
+
 ## Changes in release 4.1.0 ##
 + PS1.7 - Credit card components are now indexed with tabbable feature meaning that clicking TAB in keyboard will point to next credit card input option.
 + Fixed Order creation in BO crashed page error.

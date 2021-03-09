@@ -15,7 +15,7 @@ namespace Mollie\Service;
 class OrderStateImageService
 {
 	/**
-	 * @var int
+	 * @param int $orderStateId
 	 */
 	public function createOrderStateLogo($orderStateId)
 	{
@@ -25,7 +25,7 @@ class OrderStateImageService
 	}
 
 	/**
-	 * @var int
+	 * @param int $orderStateId
 	 */
 	public function deleteOrderStateLogo($orderStateId)
 	{
@@ -34,7 +34,7 @@ class OrderStateImageService
 	}
 
 	/**
-	 * @var int
+	 * @param int $orderStateId
 	 */
 	public function createTemporaryOrderStateLogo($orderStateId)
 	{
@@ -44,7 +44,7 @@ class OrderStateImageService
 	}
 
 	/**
-	 * @var int
+	 * @param int $orderStateId
 	 */
 	public function deleteTemporaryOrderStateLogo($orderStateId)
 	{
