@@ -12,16 +12,16 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 	public function testIsValid(
 		$paymentMethod,
 		$context,
-		$paymentMethodCurrencyProvider,
 		$orderTotalService,
 		$orderTotalProvider,
+		$orderTotalRepository,
 		$expectedResult
 	) {
 		$basePaymentRestrictionValidation = new BasePaymentMethodRestrictionValidator(
 			$context,
-			$paymentMethodCurrencyProvider,
 			$orderTotalService,
-			$orderTotalProvider
+			$orderTotalProvider,
+            $orderTotalRepository
 		);
 		$this->assertEquals($expectedResult, $basePaymentRestrictionValidation->isValid($paymentMethod));
 	}
@@ -32,61 +32,49 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			'All checks pass' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
-					'aud', 'bgn', 'eur',
-				]),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
-				'expectedResult' => true,
+                'orderTotalRepository' => $this->mockOrderTotalRepository(true),
+                'expectedResult' => true,
 			],
 			'Payment method is not enabled' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, false),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
-					'aud', 'bgn', 'eur',
-				]),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
-				'expectedResult' => false,
+                'orderTotalRepository' => $this->mockOrderTotalRepository(true),
+                'expectedResult' => false,
 			],
 			'Available currency option list is not defined' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider(
-					null
-				),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
-				'expectedResult' => false,
+                'orderTotalRepository' => $this->mockOrderTotalRepository(false),
+                'expectedResult' => false,
 			],
 			'Currency is not in available currencies' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
-					'bgn', 'eur',
-				]),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
-				'expectedResult' => false,
+                'orderTotalRepository' => $this->mockOrderTotalRepository(false),
+                'expectedResult' => false,
 			],
 			'Order total is lower than minimum' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
-					'aud', 'bgn', 'eur',
-				]),
 				'orderTotalService' => $this->mockOrderTotalService(false, true),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
-				'expectedResult' => false,
+                'orderTotalRepository' => $this->mockOrderTotalRepository(true),
+                'expectedResult' => false,
 			],
 			'Order total is higher than maximum' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'paymentMethodCurrencyProvider' => $this->mockPaymentMethodCurrencyProvider([
-					'aud', 'bgn', 'eur',
-				]),
 				'orderTotalService' => $this->mockOrderTotalService(true, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
+				'orderTotalRepository' => $this->mockOrderTotalRepository(true),
 				'expectedResult' => false,
 			],
 		];

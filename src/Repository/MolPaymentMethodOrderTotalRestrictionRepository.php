@@ -38,7 +38,7 @@ namespace Mollie\Repository;
 
 use MolPaymentMethodOrderTotalRestriction;
 
-final class MolPaymentMethodOrderTotalRestrictionRepository extends AbstractRepository implements MolPaymentMethodOrderTotalRestrictionRepositoryInterface
+class MolPaymentMethodOrderTotalRestrictionRepository extends AbstractRepository implements MolPaymentMethodOrderTotalRestrictionRepositoryInterface
 {
 	public function __construct()
 	{
