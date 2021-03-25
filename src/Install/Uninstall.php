@@ -112,8 +112,8 @@ class Uninstall implements UninstallerInterface
 			Config::MOLLIE_STATUS_ORDER_COMPLETED,
 			Config::MOLLIE_MAIL_WHEN_COMPLETED,
 			Config::MOLLIE_STATUS_AWAITING,
-            Config::MOLLIE_API_KEY_TEST
-        ];
+			Config::MOLLIE_API_KEY_TEST,
+		];
 
 		$this->deleteConfigurations($configurations);
 	}

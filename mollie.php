@@ -383,53 +383,51 @@ class Mollie extends PaymentModule
 	/**
 	 * @throws PrestaShopException
 	 */
-    public function hookActionFrontControllerSetMedia()
-    {
-        /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
-        $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+	public function hookActionFrontControllerSetMedia()
+	{
+		/** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
+		$errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
 
-        $isCartController = $this->context->controller instanceof CartControllerCore;
-        if ($isCartController) {
-            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
-        }
-        $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+		$isCartController = $this->context->controller instanceof CartControllerCore;
+		if ($isCartController) {
+			$errorDisplayService->showCookieError('mollie_payment_canceled_error');
+		}
+		$errorDisplayService->showCookieError('mollie_payment_canceled_error');
 
-        Media::addJsDef([
-            'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
-            'isoCode' => $this->context->language->language_code,
-            'isTestMode' => \Mollie\Config\Config::isTestMode(),
-        ]);
-        if (\Mollie\Config\Config::isVersion17()) {
-            $this->context->controller->registerJavascript(
-                'mollie_iframe_js',
-                'https://js.mollie.com/v1/mollie.js',
-                ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
-            );
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
-        } else {
-            $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
-        }
-        Media::addJsDef([
-            'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-            'isPS17' => \Mollie\Config\Config::isVersion17(),
-        ]);
-        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
-        $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
-        }
-        $this->context->smarty->assign([
-            'custom_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
-        ]);
+		Media::addJsDef([
+			'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
+			'isoCode' => $this->context->language->language_code,
+			'isTestMode' => \Mollie\Config\Config::isTestMode(),
+		]);
+		if (\Mollie\Config\Config::isVersion17()) {
+			$this->context->controller->registerJavascript(
+				'mollie_iframe_js',
+				'https://js.mollie.com/v1/mollie.js',
+				['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
+			);
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+		} else {
+			$this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
+		}
+		Media::addJsDef([
+			'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+			'isPS17' => \Mollie\Config\Config::isVersion17(),
+		]);
+		$this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
+		$this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
+		if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+			$this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+		}
+		$this->context->smarty->assign([
+			'custom_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
+		]);
 
-        $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
+		$this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
 
-        return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
-
-
-    }
+		return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+	}
 
 	/**
 	 * Add custom JS && CSS to admin controllers.

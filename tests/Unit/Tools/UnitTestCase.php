@@ -192,7 +192,7 @@ class UnitTestCase extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 
-        $restrictionsRepositoryMock
+		$restrictionsRepositoryMock
 			->method('findOneBy')
 			->willReturn($result)
 		;
