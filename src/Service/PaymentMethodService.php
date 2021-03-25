@@ -37,6 +37,8 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
@@ -415,37 +417,39 @@ class PaymentMethodService
 	}
 
 	private function removeNotSupportedMethods($methods, $mollieMethods)
-    {
-        foreach ($methods as $key => $method) {
-            $valid = false;
-            foreach ($mollieMethods as $mollieMethod) {
-                if ($method['id_method'] === $mollieMethod->id) {
-                    $valid = true;
-                    continue;
-                }
-            }
-            if (!$valid) {
-                unset($methods[$key]);
-            }
-        }
+	{
+		foreach ($methods as $key => $method) {
+			$valid = false;
+			foreach ($mollieMethods as $mollieMethod) {
+				if ($method['id_method'] === $mollieMethod->id) {
+					$valid = true;
+					continue;
+				}
+			}
+			if (!$valid) {
+				unset($methods[$key]);
+			}
+		}
 
-        return $methods;
-    }
+		return $methods;
+	}
 
 	private function getSupportedMollieMethods()
-    {
-        $addressId = Context::getContext()->cart->id_address_invoice;
-        $address = new Address($addressId);
-        $country = new Country($address->id_country);
-        $country->iso_code;
+	{
+		$addressId = Context::getContext()->cart->id_address_invoice;
+		$address = new Address($addressId);
+		$country = new Country($address->id_country);
 
-        return $this->module->api->methods->allActive(
-            [
-                'resource' => 'orders',
-                'include' => 'issuers',
-                'includeWallets' => 'applepay',
-                'billingCountry' => $country->iso_code
-            ]
-        )->getArrayCopy();
-    }
+		/** @var BaseCollection|MethodCollection $methods */
+		$methods = $this->module->api->methods->allActive(
+			[
+				'resource' => 'orders',
+				'include' => 'issuers',
+				'includeWallets' => 'applepay',
+				'billingCountry' => $country->iso_code,
+			]
+		);
+
+		return $methods->getArrayCopy();
+	}
 }

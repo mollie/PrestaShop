@@ -58,6 +58,8 @@ class CartLinesService
 	 * @param string $selectedVoucherCategory
 	 *
 	 * @return array
+	 *
+	 * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
 	 */
 	public function getCartLines(
 		$amount,
