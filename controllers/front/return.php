@@ -11,6 +11,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
@@ -21,8 +23,6 @@ use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
-use \Mollie\Api\Types\PaymentMethod;
-use \Mollie\Api\Types\PaymentStatus;
 
 if (!defined('_PS_VERSION_')) {
 	exit;

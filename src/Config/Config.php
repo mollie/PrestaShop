@@ -14,11 +14,11 @@
 namespace Mollie\Config;
 
 use Configuration;
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Utility\EnvironmentUtility;
-use \Mollie\Api\Types\OrderStatus;
-use \Mollie\Api\Types\PaymentMethod;
-use \Mollie\Api\Types\PaymentStatus;
-use \Mollie\Api\Types\RefundStatus;
 
 class Config
 {

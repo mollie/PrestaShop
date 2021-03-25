@@ -294,7 +294,7 @@ class CartLinesService
 	 *
 	 * @return array
 	 *
-	 * @throws \\PrestaShop\Decimal\Exception\DivisionByZeroException
+	 * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
 	 */
 	private function fillProductLinesWithRemainingData(array $orderLines, $apiRoundingPrecision, $vatRatePrecision)
 	{

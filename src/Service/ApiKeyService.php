@@ -14,8 +14,8 @@
 namespace Mollie\Service;
 
 use Context;
-use \Mollie\Api\Exceptions\ApiException;
-use \Mollie\Api\MollieApiClient;
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\MollieApiClient;
 use Tools;
 
 class ApiKeyService

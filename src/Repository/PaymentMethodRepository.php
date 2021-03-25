@@ -16,7 +16,7 @@ namespace Mollie\Repository;
 use Db;
 use DbQuery;
 use Exception;
-use \Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\PaymentStatus;
 use MolPaymentMethod;
 use mysqli_result;
 use PDOStatement;

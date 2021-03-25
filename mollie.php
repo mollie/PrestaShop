@@ -217,7 +217,7 @@ class Mollie extends PaymentModule
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
-	 * @throws \\Mollie\Api\Exceptions\ApiException
+	 * @throws \Mollie\Api\Exceptions\ApiException
 	 */
 	public function getContent()
 	{

@@ -16,8 +16,8 @@ namespace Mollie\Service;
 use Configuration;
 use Context;
 use Mollie;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Repository\PaymentMethodRepository;
-use \Mollie\Api\Types\PaymentMethod;
 
 class IssuerService
 {

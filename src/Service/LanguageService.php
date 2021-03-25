@@ -14,10 +14,10 @@
 namespace Mollie\Service;
 
 use Mollie;
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
-use \Mollie\Api\Types\OrderStatus;
-use \Mollie\Api\Types\PaymentStatus;
-use \Mollie\Api\Types\RefundStatus;
 
 class LanguageService
 {

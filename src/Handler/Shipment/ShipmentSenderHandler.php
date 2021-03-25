@@ -2,14 +2,14 @@
 
 namespace Mollie\Handler\Shipment;
 
+use Mollie\Api\MollieApiClient;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
-use \Mollie\Api\MollieApiClient;
-use \Psr\Log\LoggerInterface;
 use Order;
 use OrderState;
+use Psr\Log\LoggerInterface;
 
 class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 {

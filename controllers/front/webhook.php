@@ -11,9 +11,9 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
-use \Mollie\Api\Exceptions\ApiException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;

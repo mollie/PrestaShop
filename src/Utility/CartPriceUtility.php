@@ -15,7 +15,7 @@ namespace Mollie\Utility;
 
 use Configuration;
 use Mollie\Config\Config;
-use \PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\Number;
 
 class CartPriceUtility
 {

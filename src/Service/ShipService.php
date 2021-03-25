@@ -14,8 +14,8 @@
 namespace Mollie\Service;
 
 use Mollie;
-use \Mollie\Api\Exceptions\ApiException;
-use \Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Resources\Order as MollieOrderAlias;
 
 class ShipService
 {

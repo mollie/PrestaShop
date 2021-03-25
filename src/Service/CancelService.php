@@ -14,10 +14,10 @@
 namespace Mollie\Service;
 
 use Mollie;
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Resources\Order;
+use Mollie\Api\Resources\Payment;
 use Mollie\Utility\EnvironmentUtility;
-use \Mollie\Api\Exceptions\ApiException;
-use \Mollie\Api\Resources\Order;
-use \Mollie\Api\Resources\Payment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;

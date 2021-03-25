@@ -2,7 +2,7 @@
 
 namespace Mollie\Handler\Shipment;
 
-use \Mollie\Api\MollieApiClient;
+use Mollie\Api\MollieApiClient;
 use Order;
 use OrderState;
 

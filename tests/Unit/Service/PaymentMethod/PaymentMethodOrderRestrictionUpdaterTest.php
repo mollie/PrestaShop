@@ -2,13 +2,13 @@
 
 namespace Service\PaymentMethod;
 
+use Mollie\Api\Resources\Method;
 use Mollie\Config\Config;
 use Mollie\Exception\OrderTotalRestrictionException;
 use Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider;
 use Mollie\Service\EntityManager\ObjectModelManager;
 use Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
-use \Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 
 class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase

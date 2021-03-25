@@ -16,10 +16,10 @@ namespace Mollie\Service;
 use Cart;
 use MolCustomer;
 use Mollie;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
-use \Mollie\Api\Types\PaymentMethod;
 
 class CustomerService
 {
