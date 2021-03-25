@@ -697,7 +697,9 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
 		$payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
-		if ($payment && MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status']) {
+		$isPaid = MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
+		$isAuthorized = MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
+		if ($payment && ($isPaid || $isAuthorized)) {
 			$this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
 			return $this->display(__FILE__, 'ok.tpl');
