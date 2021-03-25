@@ -6,7 +6,7 @@ use Mollie\Logger\PrestaLogger;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Verification\Shipment\CanSendShipment;
-use MolliePrefix\Mollie\Api\MollieApiClient;
+use \Mollie\Api\MollieApiClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

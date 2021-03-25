@@ -2,7 +2,7 @@
 
 namespace Mollie\Provider\PaymentType;
 
-use MolliePrefix\Mollie\Api\Endpoints\OrderEndpoint;
+use \Mollie\Api\Endpoints\OrderEndpoint;
 
 class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProvider
 {

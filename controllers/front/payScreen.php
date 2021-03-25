@@ -11,7 +11,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use \Mollie\Api\Types\PaymentMethod;
 
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {

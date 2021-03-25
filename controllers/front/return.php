@@ -21,8 +21,8 @@ use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
+use \Mollie\Api\Types\PaymentMethod;
+use \Mollie\Api\Types\PaymentStatus;
 
 if (!defined('_PS_VERSION_')) {
 	exit;

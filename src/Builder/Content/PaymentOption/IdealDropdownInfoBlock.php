@@ -5,7 +5,7 @@ namespace Mollie\Builder\Content\PaymentOption;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 use Mollie\Service\IssuerService;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use \Mollie\Api\Types\PaymentMethod;
 
 class IdealDropdownInfoBlock implements TemplateBuilderInterface
 {

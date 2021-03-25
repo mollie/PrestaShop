@@ -27,8 +27,8 @@ class RefundUtility
 					'id',
 					'quantity',
 				]));
-			$amount = $line['totalAmount'];
-			$refund['amount'] = $amount;
+			$amount = $line['unitPrice']['value'];
+			$refund['amount'] = ['value' => $amount, 'currency' => $line['unitPrice']['currency']];
 			$refunds['lines'][] = $refund;
 		}
 

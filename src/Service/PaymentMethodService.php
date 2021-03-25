@@ -36,7 +36,7 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use \Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;

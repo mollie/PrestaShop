@@ -14,7 +14,7 @@
 namespace Mollie\Utility;
 
 use Mollie\Config\Config;
-use MolliePrefix\PrestaShop\Decimal\Number;
+use \PrestaShop\Decimal\Number;
 use MolPaymentMethod;
 
 class PaymentFeeUtility

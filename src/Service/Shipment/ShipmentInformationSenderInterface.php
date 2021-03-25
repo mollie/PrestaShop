@@ -2,7 +2,7 @@
 
 namespace Mollie\Service\Shipment;
 
-use MolliePrefix\Mollie\Api\MollieApiClient;
+use \Mollie\Api\MollieApiClient;
 use Order;
 
 interface ShipmentInformationSenderInterface

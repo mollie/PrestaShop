@@ -15,9 +15,9 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Config\Config;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\Mollie\Api\Types\RefundStatus;
+use \Mollie\Api\Types\OrderStatus;
+use \Mollie\Api\Types\PaymentStatus;
+use \Mollie\Api\Types\RefundStatus;
 
 class LanguageService
 {

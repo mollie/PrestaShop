@@ -6,8 +6,8 @@ use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
-use MolliePrefix\Mollie\Api\MollieApiClient;
-use MolliePrefix\Psr\Log\LoggerInterface;
+use \Mollie\Api\MollieApiClient;
+use \Psr\Log\LoggerInterface;
 use Order;
 use OrderState;
 

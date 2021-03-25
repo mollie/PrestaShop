@@ -19,7 +19,7 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
+use \Mollie\Api\Types\PaymentMethod;
 
 class CustomerService
 {

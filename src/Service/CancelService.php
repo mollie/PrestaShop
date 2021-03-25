@@ -15,9 +15,9 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Utility\EnvironmentUtility;
-use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use MolliePrefix\Mollie\Api\Resources\Order;
-use MolliePrefix\Mollie\Api\Resources\Payment;
+use \Mollie\Api\Exceptions\ApiException;
+use \Mollie\Api\Resources\Order;
+use \Mollie\Api\Resources\Payment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;

@@ -14,15 +14,6 @@
 if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
-	return;
-}
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
-	return;
-}
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
-	return;
-}
 
 /**
  * Class Mollie.
@@ -40,7 +31,7 @@ class Mollie extends PaymentModule
 
 	const DISABLE_CACHE = true;
 
-	/** @var MolliePrefix\Mollie\Api\MollieApiClient|null */
+	/** @var \Mollie\Api\MollieApiClient|null */
 	public $api = null;
 
 	/** @var string */
@@ -89,19 +80,19 @@ class Mollie extends PaymentModule
 
 	private function loadEnv()
 	{
-		if (!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+		if (!class_exists('\\Dotenv\Dotenv')) {
 			return;
 		}
 
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
-			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
+			$dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
 			/* @phpstan-ignore-next-line */
 			$dotenv->load();
 
 			return;
 		}
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
-			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
+			$dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
 			/* @phpstan-ignore-next-line */
 			$dotenv->load();
 
@@ -157,9 +148,9 @@ class Mollie extends PaymentModule
 
 	private function compile()
 	{
-		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
-			!(class_exists('MolliePrefix\Segment') || class_exists('Segment')) ||
-			!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+		if (!class_exists('\Symfony\Component\DependencyInjection\ContainerBuilder') ||
+			!(class_exists('\Segment') || class_exists('Segment')) ||
+			!class_exists('\\Dotenv\Dotenv')) {
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
 			// On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
@@ -174,9 +165,9 @@ class Mollie extends PaymentModule
 			}
 		}
 
-		$containerBuilder = new MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
-		$locator = new MolliePrefix\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-		$loader = new MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+		$containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+		$locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
+		$loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
 		$loader->load('config.yml');
 		$containerBuilder->compile();
 
@@ -226,7 +217,7 @@ class Mollie extends PaymentModule
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
-	 * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
+	 * @throws \\Mollie\Api\Exceptions\ApiException
 	 */
 	public function getContent()
 	{
@@ -560,7 +551,7 @@ class Mollie extends PaymentModule
 		$apiMethods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
 		foreach ($apiMethods as $apiMethod) {
-			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id_method']) {
+			if (\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id_method']) {
 				$issuerList = $issuerService->getIdealIssuers();
 			}
 		}
@@ -697,8 +688,8 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
 		$payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
-		$isPaid = MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
-		$isAuthorized = MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
+		$isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
+		$isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
 		if ($payment && ($isPaid || $isAuthorized)) {
 			$this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
@@ -724,7 +715,7 @@ class Mollie extends PaymentModule
 		$countryService = $this->getMollieContainer(\Mollie\Service\CountryService::class);
 		try {
 			$methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
-		} catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
+		} catch (\Mollie\Api\Exceptions\ApiException $e) {
 			return [
 				'success' => false,
 				'methods' => null,
@@ -1162,11 +1153,11 @@ class Mollie extends PaymentModule
 
 		try {
 			$this->api = $apiKeyService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
-		} catch (MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+		} catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
 			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
 			$errorHandler->handle($e, $e->getCode(), false);
 			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
-		} catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
+		} catch (\Mollie\Api\Exceptions\ApiException $e) {
 			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
 			$errorHandler->handle($e, $e->getCode(), false);
 			$this->warning = $this->l('Payment error:') . $e->getMessage();

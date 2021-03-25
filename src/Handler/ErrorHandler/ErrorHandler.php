@@ -17,7 +17,7 @@ use Module;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
-use MolliePrefix\Raven_Client;
+use \Raven_Client;
 
 /**
  * Handle Error.

@@ -13,7 +13,7 @@
 
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
-use MolliePrefix\Mollie\Api\Exceptions\ApiException;
+use \Mollie\Api\Exceptions\ApiException;
 
 if (!defined('_PS_VERSION_')) {
 	exit;

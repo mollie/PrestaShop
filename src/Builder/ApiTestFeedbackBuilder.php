@@ -14,8 +14,8 @@
 namespace Mollie\Builder;
 
 use Mollie\Service\ApiKeyService;
-use MolliePrefix\Mollie\Api\Resources\BaseCollection;
-use MolliePrefix\Mollie\Api\Resources\MethodCollection;
+use \Mollie\Api\Resources\BaseCollection;
+use \Mollie\Api\Resources\MethodCollection;
 
 class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 {

@@ -17,10 +17,10 @@ use Mollie;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
-use MolliePrefix\Mollie\Api\Exceptions\ApiException;
-use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\Payment;
-use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
+use \Mollie\Api\Exceptions\ApiException;
+use \Mollie\Api\Resources\Order as MollieOrderAlias;
+use \Mollie\Api\Resources\Payment;
+use \Mollie\Api\Resources\PaymentCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
@@ -133,7 +133,7 @@ class RefundService
 			} else {
 				/** @var PaymentCollection $orderPayments */
 				$orderPayments = $order->payments();
-				/** @var \MolliePrefix\Mollie\Api\Resources\Payment $orderPayment */
+				/** @var \\Mollie\Api\Resources\Payment $orderPayment */
 				foreach ($orderPayments as $orderPayment) {
 					$orderPayment->refund(
 						[

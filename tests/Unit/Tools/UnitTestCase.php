@@ -9,7 +9,7 @@ use Mollie\Provider\OrderTotalRestrictionProvider;
 use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
-use MolliePrefix\Mollie\Api\Resources\Method;
+use \Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
