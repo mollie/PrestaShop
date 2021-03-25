@@ -6,16 +6,11 @@ jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.MOLLIE_ACCESS_TOKEN}}
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-      - name: Run php-cs-fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Apply php-cs-fixer changes
+      - name: Run PHP-CS-Fixer
+        uses: prestashopcorp/github-action-php-cs-fixer@master
 
   test:
     runs-on: ubuntu-latest
