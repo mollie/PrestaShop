@@ -17,6 +17,7 @@ use Address;
 use Cart;
 use Configuration;
 use Context;
+use Country;
 use Currency;
 use Customer;
 use Mollie;
@@ -36,6 +37,8 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
+use MolliePrefix\Mollie\Api\Resources\BaseCollection;
+use MolliePrefix\Mollie\Api\Resources\MethodCollection;
 use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
@@ -169,6 +172,9 @@ class PaymentMethodService
 		}
 		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
+
+		$mollieMethods = $this->getSupportedMollieMethods();
+		$methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
 		foreach ($methods as $index => $method) {
 			/** @var MolPaymentMethod|null $paymentMethod */
@@ -408,5 +414,42 @@ class PaymentMethodService
 		$isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 
 		return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
+	}
+
+	private function removeNotSupportedMethods($methods, $mollieMethods)
+	{
+		foreach ($methods as $key => $method) {
+			$valid = false;
+			foreach ($mollieMethods as $mollieMethod) {
+				if ($method['id_method'] === $mollieMethod->id) {
+					$valid = true;
+					continue;
+				}
+			}
+			if (!$valid) {
+				unset($methods[$key]);
+			}
+		}
+
+		return $methods;
+	}
+
+	private function getSupportedMollieMethods()
+	{
+		$addressId = Context::getContext()->cart->id_address_invoice;
+		$address = new Address($addressId);
+		$country = new Country($address->id_country);
+
+		/** @var BaseCollection|MethodCollection $methods */
+		$methods = $this->module->api->methods->allActive(
+			[
+				'resource' => 'orders',
+				'include' => 'issuers',
+				'includeWallets' => 'applepay',
+				'billingCountry' => $country->iso_code,
+			]
+		);
+
+		return $methods->getArrayCopy();
 	}
 }
