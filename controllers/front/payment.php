@@ -11,6 +11,11 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Resources\PaymentCollection;
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
@@ -22,12 +27,7 @@ use Mollie\Service\ExceptionService;
 use Mollie\Service\MemorizeCartService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\PaymentFeeUtility;
-use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\Number;
 
 if (!defined('_PS_VERSION_')) {
 	return;

@@ -13,6 +13,7 @@ services:
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
+      - '@mollie.country'
 
   Mollie\Service\ApiService:
     arguments:

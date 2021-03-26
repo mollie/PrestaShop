@@ -21,6 +21,9 @@ use Country;
 use Currency;
 use Customer;
 use Mollie;
+use Mollie\Api\Resources\BaseCollection;
+use Mollie\Api\Resources\MethodCollection;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
@@ -37,9 +40,6 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
-use MolliePrefix\Mollie\Api\Resources\BaseCollection;
-use MolliePrefix\Mollie\Api\Resources\MethodCollection;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -94,6 +94,11 @@ class PaymentMethodService
 	 */
 	private $paymentMethodRestrictionValidation;
 
+	/**
+	 * @var \Country
+	 */
+	private $country;
+
 	public function __construct(
 		Mollie $module,
 		PaymentMethodRepository $methodRepository,
@@ -104,7 +109,8 @@ class PaymentMethodService
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
 		PhoneNumberProviderInterface $phoneNumberProvider,
-		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation
+		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
+		Country $country
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -116,6 +122,7 @@ class PaymentMethodService
 		$this->paymentMethodSortProvider = $paymentMethodSortProvider;
 		$this->phoneNumberProvider = $phoneNumberProvider;
 		$this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
+		$this->country = $country;
 	}
 
 	public function savePaymentMethod($method)

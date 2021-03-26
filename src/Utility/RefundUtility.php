@@ -27,8 +27,8 @@ class RefundUtility
 					'id',
 					'quantity',
 				]));
-			$amount = $line['totalAmount'];
-			$refund['amount'] = $amount;
+			$amount = NumberUtility::times($line['unitPrice']['value'], $line['quantity']);
+			$refund['amount'] = ['value' => $amount, 'currency' => $line['unitPrice']['currency']];
 			$refunds['lines'][] = $refund;
 		}
 

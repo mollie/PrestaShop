@@ -36,7 +36,7 @@
 
 namespace Mollie\Provider\PaymentMethod;
 
-use MolliePrefix\Mollie\Api\Resources\Method;
+use Mollie\Api\Resources\Method;
 
 interface PaymentMethodOrderTotalRestrictionProviderInterface
 {
