@@ -38,7 +38,7 @@ class Config
 	public static $defaultMethodAvailability = [
 		'creditcard' => [],
 		'klarnapaylater' => ['nl', 'de', 'at', 'fi', 'be'],
-		'klarnasliceit' => ['de', 'at', 'fi'],
+		'klarnasliceit' => ['de', 'at', 'fi', 'nl'],
 		'ideal' => ['nl'],
 		'bancontact' => ['be'],
 		'paypal' => [],

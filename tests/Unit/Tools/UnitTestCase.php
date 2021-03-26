@@ -7,6 +7,7 @@ use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Resources\Method;
 use Mollie\Provider\OrderTotalProvider;
 use Mollie\Provider\OrderTotalRestrictionProvider;
+use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
@@ -155,6 +156,20 @@ class UnitTestCase extends TestCase
 		;
 
 		return $orderTotalService;
+	}
+
+	public function mockOrderTotalRepository($result)
+	{
+		$restrictionsRepositoryMock = $this->getMockBuilder(MolPaymentMethodOrderTotalRestrictionRepository::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$restrictionsRepositoryMock
+			->method('findOneBy')
+			->willReturn($result)
+		;
+
+		return $restrictionsRepositoryMock;
 	}
 
 	public function mockOrderTotalProvider($orderTotal)
