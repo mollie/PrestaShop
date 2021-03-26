@@ -2,9 +2,9 @@
 
 namespace Mollie\Service\Shipment;
 
+use Mollie\Api\Resources\Order as ApiOrder;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
-use MolliePrefix\Mollie\Api\Resources\Order as ApiOrder;
 use Order;
 
 class ShipmentInformationSender implements ShipmentInformationSenderInterface

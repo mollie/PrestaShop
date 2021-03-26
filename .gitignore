@@ -15,3 +15,4 @@ cypress/videos
 cypress/screenshots
 .php_cs.cache
 .env
+vendor

@@ -11,7 +11,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use MolliePrefix\PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {

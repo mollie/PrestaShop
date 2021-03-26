@@ -13,12 +13,12 @@
 
 namespace Mollie\Utility;
 
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Resources\PaymentCollection;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
-use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\Mollie\Api\Types\RefundStatus;
 
 class OrderStatusUtility
 {
