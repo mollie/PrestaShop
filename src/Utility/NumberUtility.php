@@ -13,7 +13,6 @@
 
 namespace Mollie\Utility;
 
-use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Number;
 
 class NumberUtility
