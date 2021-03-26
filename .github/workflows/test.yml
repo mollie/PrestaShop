@@ -22,12 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
-      - name: Cache vendor folder
-        uses: actions/cache@v1
-        with:
-          path: vendor
-          key: php-${{ hashFiles('composer.lock') }}
-
       - name: Cache composer folder
         uses: actions/cache@v1
         with:
