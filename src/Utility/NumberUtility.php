@@ -150,7 +150,7 @@ class NumberUtility
 	/**
 	 * @param float $number
 	 *
-	 * @return DecimalNumber
+	 * @return Number
 	 */
 	private static function toObject($number)
 	{
