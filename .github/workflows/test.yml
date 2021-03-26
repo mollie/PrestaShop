@@ -28,7 +28,7 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer install
+      - run: composer update
 
       - name: Pull PrestaShop files (Tag 1.7.7.0)
         run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
@@ -58,7 +58,7 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer install
+      - run: composer update
 
       - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
