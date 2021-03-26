@@ -146,6 +146,7 @@ class Mollie extends PaymentModule
 		return parent::uninstall();
 	}
 
+	// todo: check 1.7.2
 	private function compile()
 	{
 		$containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();

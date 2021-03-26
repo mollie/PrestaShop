@@ -30,3 +30,7 @@ services:
   mollie.link:
     class: 'Shop'
     factory: ['Mollie\Factory\ContextFactory', 'getLink']
+
+  mollie.country:
+    class: 'Shop'
+    factory: ['Mollie\Factory\ContextFactory', 'getCountry']

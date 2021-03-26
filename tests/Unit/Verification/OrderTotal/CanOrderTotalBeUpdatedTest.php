@@ -109,15 +109,6 @@ class CanOrderTotalBeUpdatedTest extends UnitTestCase
 				'exception' => [],
 				'expected' => true,
 			],
-			'Has no available payment methods' => [
-				'paymentCount' => 0,
-				'currencyCount' => 10,
-				'exception' => [
-					'class' => OrderTotalRestrictionException::class,
-					'code' => OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND,
-				],
-				'expected' => null,
-			],
 			'Has no available currencies' => [
 				'paymentCount' => 10,
 				'currencyCount' => 0,

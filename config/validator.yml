@@ -32,22 +32,6 @@ services:
     tags:
       - { name: mollie.paymentmethodrestriction }
 
-  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\KlarnaSliceItPaymentMethodRestrictionValidator:
-    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\KlarnaSliceItPaymentMethodRestrictionValidator
-    arguments:
-      - '@=service("mollie.adapter.context")'
-      - '@Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider'
-    tags:
-      - { name: mollie.paymentmethodrestriction }
-
-  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\KlarnaPayLaterPaymentMethodRestrictionValidator:
-    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\KlarnaPayLaterPaymentMethodRestrictionValidator
-    arguments:
-      - '@=service("mollie.adapter.context")'
-      - '@Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider'
-    tags:
-      - { name: mollie.paymentmethodrestriction }
-
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator
     arguments:

@@ -91,6 +91,11 @@ class PaymentMethodService
 	 */
 	private $paymentMethodRestrictionValidation;
 
+	/**
+	 * @var \Country
+	 */
+	private $country;
+
 	public function __construct(
 		Mollie $module,
 		PaymentMethodRepository $methodRepository,
@@ -101,7 +106,8 @@ class PaymentMethodService
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
 		PhoneNumberProviderInterface $phoneNumberProvider,
-		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation
+		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
+		\Country $country
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -113,6 +119,7 @@ class PaymentMethodService
 		$this->paymentMethodSortProvider = $paymentMethodSortProvider;
 		$this->phoneNumberProvider = $phoneNumberProvider;
 		$this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
+		$this->country = $country;
 	}
 
 	public function savePaymentMethod($method)
@@ -169,6 +176,8 @@ class PaymentMethodService
 		}
 		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
+
+		$methods = $this->filterAvailableMethods($methods);
 
 		foreach ($methods as $index => $method) {
 			/** @var MolPaymentMethod|null $paymentMethod */
@@ -408,5 +417,26 @@ class PaymentMethodService
 		$isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 
 		return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
+	}
+
+	private function filterAvailableMethods(array $methods)
+	{
+		$activeMethods = $this->module->api->methods->allActive(['resource' => 'orders', 'billingCountry' => $this->country->iso_code]);
+
+		foreach ($methods as $key => $method) {
+			$isActive = false;
+			/** @var Mollie\Api\Resources\Method $activeMethod */
+			foreach ($activeMethods as $activeMethod) {
+				if ($method['id_method'] === $activeMethod->id) {
+					$isActive = true;
+					break;
+				}
+			}
+			if (!$isActive) {
+				unset($methods[$key]);
+			}
+		}
+
+		return $methods;
 	}
 }
