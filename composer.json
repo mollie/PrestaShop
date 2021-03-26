@@ -30,7 +30,6 @@
       "Mollie\\": "src/"
     },
     "classmap": [
-      "vendor",
       "mollie.php",
       "controllers/",
       "src/"
