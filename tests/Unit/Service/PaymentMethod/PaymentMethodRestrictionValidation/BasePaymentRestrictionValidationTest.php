@@ -12,7 +12,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 	public function testIsValid(
 		$paymentMethod,
 		$context,
-		$restrictionRepository,
 		$orderTotalService,
 		$orderTotalProvider,
 		$orderTotalRepository,
@@ -22,7 +21,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			$context,
 			$orderTotalService,
 			$orderTotalProvider,
-			$restrictionRepository
 			$orderTotalRepository
 		);
 		$this->assertEquals($expectedResult, $basePaymentRestrictionValidation->isValid($paymentMethod));
@@ -34,7 +32,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			'All checks pass' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'restrictionRepository' => $this->mockMolPaymentMethodOrderTotalRestrictionRepository(),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'orderTotalRepository' => $this->mockOrderTotalRepository(true),
@@ -43,7 +40,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			'Payment method is not enabled' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, false),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'restrictionRepository' => $this->mockMolPaymentMethodOrderTotalRestrictionRepository(),
 				'orderTotalService' => $this->mockOrderTotalService(false, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'orderTotalRepository' => $this->mockOrderTotalRepository(true),
@@ -68,7 +64,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			'Order total is lower than minimum' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'restrictionRepository' => $this->mockMolPaymentMethodOrderTotalRestrictionRepository(),
 				'orderTotalService' => $this->mockOrderTotalService(false, true),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'orderTotalRepository' => $this->mockOrderTotalRepository(true),
@@ -77,7 +72,6 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
 			'Order total is higher than maximum' => [
 				'paymentMethod' => $this->mockPaymentMethod(Config::CARTES_BANCAIRES, true),
 				'context' => $this->mockContext('AT', 'AUD'),
-				'restrictionRepository' => $this->mockMolPaymentMethodOrderTotalRestrictionRepository(),
 				'orderTotalService' => $this->mockOrderTotalService(true, false),
 				'orderTotalProvider' => $this->mockOrderTotalProvider(100),
 				'orderTotalRepository' => $this->mockOrderTotalRepository(true),

@@ -21,6 +21,8 @@ use Country;
 use Currency;
 use Customer;
 use Mollie;
+use Mollie\Api\Resources\BaseCollection;
+use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
@@ -38,9 +40,6 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
-use MolliePrefix\Mollie\Api\Resources\BaseCollection;
-use MolliePrefix\Mollie\Api\Resources\MethodCollection;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -111,7 +110,7 @@ class PaymentMethodService
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
 		PhoneNumberProviderInterface $phoneNumberProvider,
 		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-		\Country $country
+		Country $country
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -181,8 +180,6 @@ class PaymentMethodService
 		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
 
-		$methods = $this->filterAvailableMethods($methods);
-    
 		$mollieMethods = $this->getSupportedMollieMethods();
 		$methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
@@ -426,27 +423,6 @@ class PaymentMethodService
 		return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
 	}
 
-	private function filterAvailableMethods(array $methods)
-	{
-		$activeMethods = $this->module->api->methods->allActive(['resource' => 'orders', 'billingCountry' => $this->country->iso_code]);
-
-		foreach ($methods as $key => $method) {
-			$isActive = false;
-			/** @var Mollie\Api\Resources\Method $activeMethod */
-			foreach ($activeMethods as $activeMethod) {
-				if ($method['id_method'] === $activeMethod->id) {
-					$isActive = true;
-					break;
-				}
-			}
-			if (!$isActive) {
-        unset($methods[$key]);
-			}
-		}
-
-		return $methods;
-	}
-  
 	private function removeNotSupportedMethods($methods, $mollieMethods)
 	{
 		foreach ($methods as $key => $method) {

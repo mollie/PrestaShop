@@ -7,7 +7,6 @@ use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Resources\Method;
 use Mollie\Provider\OrderTotalProvider;
 use Mollie\Provider\OrderTotalRestrictionProvider;
-use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
 use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
