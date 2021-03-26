@@ -59,14 +59,8 @@ class CanOrderTotalBeUpdatedTest extends UnitTestCase
 	}
 
 	/** @dataProvider getCanOrderTotalBeUpdatedData */
-	public function testCanOrderTotalBeUpdated($paymentCount, $currencyCount, $exception, $expected)
+	public function testCanOrderTotalBeUpdated($currencyCount, $exception, $expected)
 	{
-		$this->paymentMethodCollection
-			->expects($this->any())
-			->method('count')
-			->willReturn($paymentCount)
-		;
-
 		$this->paymentMethodRepository
 			->expects($this->any())
 			->method('findAll')
@@ -104,22 +98,11 @@ class CanOrderTotalBeUpdatedTest extends UnitTestCase
 	{
 		return [
 			'All checks pass' => [
-				'paymentCount' => 10,
 				'currencyCount' => 10,
 				'exception' => [],
 				'expected' => true,
 			],
-			'Has no available payment methods' => [
-				'paymentCount' => 0,
-				'currencyCount' => 10,
-				'exception' => [
-					'class' => OrderTotalRestrictionException::class,
-					'code' => OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND,
-				],
-				'expected' => null,
-			],
 			'Has no available currencies' => [
-				'paymentCount' => 10,
 				'currencyCount' => 0,
 				'exception' => [
 					'class' => OrderTotalRestrictionException::class,
