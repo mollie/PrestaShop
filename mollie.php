@@ -76,7 +76,6 @@ class Mollie extends PaymentModule
 		$this->compile();
 		$this->loadEnv();
 		$this->setApiKey();
-		$this->registerHook('actionObjectCurrencyUpdateAfter');
 	}
 
 	private function loadEnv()
