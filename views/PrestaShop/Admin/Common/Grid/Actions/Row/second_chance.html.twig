@@ -10,9 +10,10 @@
 {% set route_params = { (action.options.route_param_name) : (record[action.options.route_param_field]) } %}
 
 <div class="mollie-icon-container">
-    <a class="icon-send-mail-mollie"
+    <a class="material-icons"
        href="{{ path(action.options.route, route_params ) }}"
     >
+        credit_card
     </a>
 
     <div style="right: 30px" class="mollie-message-container">{{ action.name }}</div>
