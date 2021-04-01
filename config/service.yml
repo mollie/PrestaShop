@@ -72,6 +72,7 @@ services:
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
       - '@Mollie\Service\ApiKeyService'
+      - '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
 
   Mollie\Service\ShipmentService:
     arguments:

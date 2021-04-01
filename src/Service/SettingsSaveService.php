@@ -22,6 +22,7 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -37,26 +38,32 @@ class SettingsSaveService
 	 * @var Mollie
 	 */
 	private $module;
+
 	/**
 	 * @var CountryRepository
 	 */
 	private $countryRepository;
+
 	/**
 	 * @var PaymentMethodRepository
 	 */
 	private $paymentMethodRepository;
+
 	/**
 	 * @var PaymentMethodService
 	 */
 	private $paymentMethodService;
+
 	/**
 	 * @var ApiKeyService
 	 */
 	private $apiKeyService;
+
 	/**
 	 * @var MolCarrierInformationService
 	 */
 	private $carrierInformationService;
+
 	/**
 	 * @var PaymentMethodPositionHandlerInterface
 	 */
@@ -67,6 +74,11 @@ class SettingsSaveService
 	 */
 	private $apiService;
 
+	/**
+	 * @var OrderTotalUpdaterHandlerInterface
+	 */
+	private $orderTotalRestrictionService;
+
 	public function __construct(
 		Mollie $module,
 		CountryRepository $countryRepository,
@@ -75,7 +87,8 @@ class SettingsSaveService
 		ApiService $apiService,
 		MolCarrierInformationService $carrierInformationService,
 		PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
-		ApiKeyService $apiKeyService
+		ApiKeyService $apiKeyService,
+		OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService
 	) {
 		$this->module = $module;
 		$this->countryRepository = $countryRepository;
@@ -85,6 +98,7 @@ class SettingsSaveService
 		$this->carrierInformationService = $carrierInformationService;
 		$this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
 		$this->apiService = $apiService;
+		$this->orderTotalRestrictionService = $orderTotalRestrictionService;
 	}
 
 	/**
@@ -211,6 +225,13 @@ class SettingsSaveService
 		}
 		$this->handleKlarnaInvoiceStatus();
 
+		try {
+			if (!$this->orderTotalRestrictionService->handleOrderTotalUpdate()) {
+				$resultMessage[] = $this->module->l('Failed to update restrictions for payment methods');
+			}
+		} catch (Mollie\Exception\OrderTotalRestrictionException $e) {
+			$resultMessage[] = $e->getMessage();
+		}
 		if (empty($errors)) {
 			Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
 			Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);

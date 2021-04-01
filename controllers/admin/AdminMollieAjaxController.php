@@ -13,11 +13,8 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
-use Mollie\Exception\OrderTotalRestrictionException;
-use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\ExceptionService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TimeUtility;
 
@@ -44,9 +41,6 @@ class AdminMollieAjaxController extends ModuleAdminController
 				break;
 			case 'validateLogo':
 				$this->validateLogo();
-				break;
-			case 'refreshOrderTotalRestriction':
-				$this->refreshOrderTotalRestriction();
 				break;
 			default:
 				break;
@@ -121,43 +115,6 @@ class AdminMollieAjaxController extends ModuleAdminController
 				'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
 			]
 		));
-	}
-
-	/**
-	 * @throws PrestaShopException
-	 */
-	private function refreshOrderTotalRestriction()
-	{
-		/** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-		$orderTotalRestrictionService = $this->module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
-
-		/** @var ExceptionService $exceptionService */
-		$exceptionService = $this->module->getMollieContainer(ExceptionService::class);
-
-		$this->context->smarty->assign([
-			'refreshOrderTotalInfoStatus' => true,
-			'errorMessage' => '',
-		]);
-
-		try {
-			$orderTotalRestrictionService->handleOrderTotalUpdate();
-		} catch (OrderTotalRestrictionException $orderTotalRestrictionException) {
-			$errorMessage = $exceptionService->getErrorMessageForException(
-				$orderTotalRestrictionException,
-				$exceptionService->getErrorMessages()
-			);
-
-			$this->context->smarty->assign([
-				'refreshOrderTotalInfoStatus' => false,
-				'errorMessage' => $errorMessage,
-			]);
-		}
-
-		$this->ajaxDie(json_encode([
-			'template' => $this->context->smarty->fetch(
-				$this->module->getLocalPath() . 'views/templates/admin/order_total_refresh_results.tpl'
-			),
-		]));
 	}
 
 	private function closeUpgradeNotice()

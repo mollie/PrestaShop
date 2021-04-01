@@ -76,6 +76,7 @@ class Mollie extends PaymentModule
 		$this->compile();
 		$this->loadEnv();
 		$this->setApiKey();
+		$this->registerHook('actionObjectCurrencyUpdateAfter');
 	}
 
 	private function loadEnv()
@@ -297,7 +298,6 @@ class Mollie extends PaymentModule
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_total_restriction_refresh.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
@@ -998,7 +998,7 @@ class Mollie extends PaymentModule
 			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
 		}
 		$params['fields']['order_id'] = [
-            'title' => $this->l('Payment link'),
+			'title' => $this->l('Payment link'),
 			'align' => 'text-center',
 			'class' => 'fixed-width-xs',
 			'orderby' => false,
@@ -1115,6 +1115,19 @@ class Mollie extends PaymentModule
 
 		if ('AdminStatuses' === Tools::getValue('controller') && isset($params['fields']['id_order_return_state'])) {
 			$params['where'] = null;
+		}
+	}
+
+	public function hookActionObjectCurrencyUpdateAfter()
+	{
+		/** @var \Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface $orderTotalHandler */
+		$orderTotalHandler = $this->getMollieContainer(\Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface::class);
+		try {
+			$orderTotalHandler->handleOrderTotalUpdate();
+		} catch (\Mollie\Exception\OrderTotalRestrictionException $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::ERROR);
 		}
 	}
 
