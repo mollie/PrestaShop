@@ -998,7 +998,7 @@ class Mollie extends PaymentModule
 			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
 		}
 		$params['fields']['order_id'] = [
-			'title' => $this->l('Resend payment link'),
+            'title' => $this->l('Payment link'),
 			'align' => 'text-center',
 			'class' => 'fixed-width-xs',
 			'orderby' => false,
