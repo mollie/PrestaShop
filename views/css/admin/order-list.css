@@ -18,10 +18,6 @@
     height: 50px;
 }
 
-.icon-send-mail-mollie::before {
-    background: url("../../../views/img/icon/icon-save-label.svg") no-repeat 0 0;
-}
-
 .mollie-icon-container{
     position:relative;
 }
@@ -47,7 +43,7 @@
     border-radius: 10px;
     padding: 10px;
     color: white;
-    top: -30px;
+    top: -20px;
     z-index:100;
     min-width:200px;
 }
