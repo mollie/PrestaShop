@@ -147,9 +147,7 @@ class TransactionService
 						} else {
 							$orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
 						}
-					} elseif (($apiPayment->isPaid() || $apiPayment->isAuthorized() || $apiPayment->isExpired())
-						&& $key === $apiPayment->metadata->secure_key
-					) {
+					} elseif ($key === $apiPayment->metadata->secure_key) {
 						$paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
 
 						if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
