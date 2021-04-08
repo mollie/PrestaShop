@@ -6,9 +6,6 @@ jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
-
       - name: Run PHP-CS-Fixer
         run: docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest
 
