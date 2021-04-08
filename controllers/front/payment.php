@@ -373,12 +373,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			$totalPrice = $orderFeeNumber->plus($totalPrice);
 		}
 
-		$orderid = Order::getOrderByCartId($cartId);
-		$order = new Order($orderid);
+		$orderId = Order::getOrderByCartId($cartId);
+		$order = new Order($orderId);
 		$order->total_paid_tax_excl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_excl))->toPrecision(2);
 		$order->total_paid_tax_incl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_incl))->toPrecision(2);
 		$order->total_paid = (float) $totalPrice->toPrecision(2);
-		$order->total_paid_real = (float) $totalPrice->toPrecision(2);
 		$order->update();
 
 		/** @var MemorizeCartService $memorizeCart */

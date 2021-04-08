@@ -268,6 +268,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 				$memorizeCart->removeMemorizedCart($order);
 
+				$order->total_paid_real = $transaction->amount->value;
+				$order->update();
 				break;
 			case PaymentStatus::STATUS_EXPIRED:
 			case PaymentStatus::STATUS_CANCELED:
