@@ -9,9 +9,6 @@
  *
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  */
-
-use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
-
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
@@ -23,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_4($module)
 {
-    $module->registerHook('actionObjectCurrencyUpdateAfter');
+	$module->registerHook('actionObjectCurrencyUpdateAfter');
 
 	return true;
 }

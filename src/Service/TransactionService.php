@@ -154,9 +154,9 @@ class TransactionService
 						if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
 							$this->updateTransaction($orderId, $transaction);
 						}
-                        if ($this->isOrderBackOrder($orderId)) {
-                            $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                        }
+						if ($this->isOrderBackOrder($orderId)) {
+							$paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+						}
 						/** @var OrderStatusService $orderStatusService */
 						$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
 						$orderStatusService->setOrderStatus($orderId, $paymentStatus);
@@ -194,9 +194,9 @@ class TransactionService
 						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
 							$this->updateTransaction($orderId, $transaction);
 						}
-                        if ($this->isOrderBackOrder($orderId)) {
-                            $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                        }
+						if ($this->isOrderBackOrder($orderId)) {
+							$paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+						}
 
 						/** @var OrderStatusService $orderStatusService */
 						$orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
@@ -395,20 +395,20 @@ class TransactionService
 	}
 
 	private function isOrderBackOrder($orderId)
-    {
-        $order = new Order($orderId);
-        $orderDetails = $order->getOrderDetailList();
-        /** @var OrderDetail $detail */
-        foreach ($orderDetails as $detail) {
-            $orderDetail = new OrderDetail($detail['id_order_detail']);
-            if (
-                Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-            ) {
-                return true;
-            }
-        }
+	{
+		$order = new Order($orderId);
+		$orderDetails = $order->getOrderDetailList();
+		/** @var OrderDetail $detail */
+		foreach ($orderDetails as $detail) {
+			$orderDetail = new OrderDetail($detail['id_order_detail']);
+			if (
+				Configuration::get('PS_STOCK_MANAGEMENT') &&
+				($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+			) {
+				return true;
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
