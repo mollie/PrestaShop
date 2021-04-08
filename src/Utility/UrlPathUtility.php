@@ -72,7 +72,7 @@ class UrlPathUtility
 		static $manifest = null;
 		if (!$manifest) {
 			$manifest = [];
-			foreach (include (_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
+			foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
 				$manifest[$chunk['name']] = array_map(function ($chunk) {
 					return UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");
 				}, $chunk['files']);
