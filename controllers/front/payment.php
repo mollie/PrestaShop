@@ -102,9 +102,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		// Prepare payment
 		$totalPrice = new Number((string) $originalAmount);
 
+		$orderStatus = $paymentMethodObj->id_method === PaymentMethod::BANKTRANSFER ?
+			Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN)
+			: Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING);
+
 		$this->module->validateOrder(
 			(int) $cart->id,
-			(int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+			(int) $orderStatus,
 			(float) $totalPrice->toPrecision(2),
 			isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
 			null,
