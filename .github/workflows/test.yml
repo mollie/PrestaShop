@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v2.0.0
 
       - name: Run PHP-CS-Fixer
-        uses: docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest
+        run: docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest
 
   test:
     runs-on: ubuntu-latest
