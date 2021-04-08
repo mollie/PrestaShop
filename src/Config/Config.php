@@ -132,6 +132,7 @@ class Config
 	const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
 	const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
 	const MOLLIE_STATUS_ORDER_COMPLETED = 'MOLLIE_STATUS_ORDER_COMPLETED';
+	const MOLLIE_STATUS_DEFAULT = 'MOLLIE_STATUS_DEFAULT';
 	const MOLLIE_STATUS_KLARNA_AUTHORIZED = 'MOLLIE_STATUS_KLARNA_AUTHORIZED';
 	const MOLLIE_STATUS_KLARNA_SHIPPED = 'MOLLIE_STATUS_KLARNA_SHIPPED';
 	const MOLLIE_KLARNA_INVOICE_ON = 'MOLLIE_KLARNA_INVOICE_ON';
@@ -268,11 +269,14 @@ class Config
 
 	public static function getStatuses()
 	{
+		$isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
+
 		return [
 			self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
 			PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
 			OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
-			PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_KLARNA_AUTHORIZED),
+			PaymentStatus::STATUS_AUTHORIZED => $isKlarnaDefault ?
+				Configuration::get(self::MOLLIE_STATUS_PAID) : Configuration::get(self::MOLLIE_STATUS_KLARNA_AUTHORIZED),
 			PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
 			PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
 			RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),

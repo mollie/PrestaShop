@@ -11,7 +11,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
-if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
+if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
 

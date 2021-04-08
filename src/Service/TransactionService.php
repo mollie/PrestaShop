@@ -185,10 +185,11 @@ class TransactionService
 
 						$orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 					} elseif ($key === $apiPayment->metadata->secure_key) {
+						$isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
 						$status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
 						$paymentStatus = (int) Config::getStatuses()[$status];
 						$isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);
-						if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder) {
+						if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder && !$isKlarnaDefault) {
 							$paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
 						}
 						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
