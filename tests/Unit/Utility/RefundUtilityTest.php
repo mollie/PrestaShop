@@ -58,10 +58,6 @@ class RefundUtilityTest extends TestCase
 						0 => [
 							'id' => 'odl_tnw1ay',
 							'quantity' => 1,
-							'amount' => [
-								'value' => '100.00',
-								'currency' => 'EUR',
-							],
 						],
 					],
 				],
@@ -87,10 +83,6 @@ class RefundUtilityTest extends TestCase
 						0 => [
 							'id' => 'odl_tnw1ay',
 							'quantity' => 1,
-							'amount' => [
-								'value' => '100.00',
-								'currency' => 'EUR',
-							],
 						],
 					],
 				],
@@ -120,10 +112,6 @@ class RefundUtilityTest extends TestCase
 						0 => [
 							'id' => 'odl_tnw1ay',
 							'quantity' => 1,
-							'amount' => [
-								'value' => '100.00',
-								'currency' => 'EUR',
-							],
 						],
 					],
 				],
@@ -162,18 +150,10 @@ class RefundUtilityTest extends TestCase
 						0 => [
 							'id' => 'odl_tnw1ay',
 							'quantity' => 1,
-							'amount' => [
-								'value' => '100.00',
-								'currency' => 'EUR',
-							],
 						],
 						1 => [
 							'id' => 'odl_tnw1aa',
 							'quantity' => 1,
-							'amount' => [
-								'value' => '11.00',
-								'currency' => 'EUR',
-							],
 						],
 					],
 				],

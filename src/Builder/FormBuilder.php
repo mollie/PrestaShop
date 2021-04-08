@@ -592,6 +592,7 @@ class FormBuilder
 				PaymentStatus::STATUS_PAID,
 				OrderStatus::STATUS_COMPLETED,
 				PaymentStatus::STATUS_AUTHORIZED,
+				PaymentStatus::STATUS_OPEN,
 				PaymentStatus::STATUS_CANCELED,
 				PaymentStatus::STATUS_EXPIRED,
 				RefundStatus::STATUS_REFUNDED,
