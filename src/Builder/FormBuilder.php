@@ -591,7 +591,6 @@ class FormBuilder
 				PaymentStatus::STATUS_CANCELED,
 				PaymentStatus::STATUS_EXPIRED,
 				RefundStatus::STATUS_REFUNDED,
-				PaymentStatus::STATUS_OPEN,
 				Config::PARTIAL_REFUND_CODE,
 				OrderStatus::STATUS_SHIPPING,
 			]);
