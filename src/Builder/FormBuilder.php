@@ -523,6 +523,10 @@ class FormBuilder
 			'options' => [
 				'query' => [
 					[
+						'id' => Config::MOLLIE_STATUS_DEFAULT,
+						'name' => $this->module->l('Default', self::FILE_NAME),
+					],
+					[
 						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
 						'name' => $this->module->l('Authorized', self::FILE_NAME),
 					],
