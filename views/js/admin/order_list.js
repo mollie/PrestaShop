@@ -71,7 +71,7 @@ $(document).ready(function () {
 
     function replaceIcon(idOrder, iconReplacer)
     {
-        $('.dpd-icon-container[data-id-order="' + idOrder + '"]').html(iconReplacer);
+        $('.mollie-icon-container[data-id-order="' + idOrder + '"]').html(iconReplacer);
     }
 
     $(document).on('click', '#download-selected-labels', function (event) {
@@ -88,7 +88,7 @@ $(document).ready(function () {
             toggleMessageBoxResult(false, noOrdersSelectedMessage);
             return;
         }
-        $.ajax(dpdHookAjaxUrl, {
+        $.ajax(mollieHookAjaxUrl, {
             data: {
                 orders: JSON.stringify(selectedOrderIdArray),
                 action: 'saveMultipleLabelsFromOrderList',
@@ -103,7 +103,7 @@ $(document).ready(function () {
                 });
 
                 if (response.success) {
-                    var labelPrintUrl = dpdHookAjaxUrl +
+                    var labelPrintUrl = mollieHookAjaxUrl +
                         '&action=downloadLabelFromManifests' +
                         '&manifests= ' + JSON.stringify(response.manifests) +
                         '&ajax=1';
