@@ -174,6 +174,7 @@ class Config
 	const STATUS_MOLLIE_AWAITING = 'mollie_awaiting';
 	const STATUS_ON_BACKORDER = 'on_backorder';
 	const MOLLIE_AWAITING_PAYMENT = 'awaiting';
+	const MOLLIE_OPEN_PAYMENT = 'open';
 	const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
 	const APPLEPAY = 'applepay';
 	const MOLLIE_COUNTRIES = 'country_';
@@ -258,8 +259,8 @@ class Config
 		'paypal' => 'PayPal',
 		'paysafecard' => 'Paysafecard',
 		'sofort' => 'Sofort Banking',
-		'klarnapaylater' => 'Pay later.',
-		'klarnasliceit' => 'Slice it.',
+		'klarnapaylater' => 'Pay later',
+		'klarnasliceit' => 'Slice it',
 		'applepay' => 'Apple Pay',
 		'mybank' => 'MyBank',
 		'voucher' => 'Voucher',

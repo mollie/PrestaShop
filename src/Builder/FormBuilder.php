@@ -623,6 +623,8 @@ class FormBuilder
 			}
 
 			$isStatusAwaiting = Config::MOLLIE_AWAITING_PAYMENT === $status['name'];
+			$isStatusOpen = Config::MOLLIE_OPEN_PAYMENT === $status['name'];
+
 			$input[] = [
 				'type' => 'select',
 				'label' => $status['message'],
@@ -630,7 +632,7 @@ class FormBuilder
 				'desc' => $status['description'],
 				'name' => $status['key'],
 				'options' => [
-					'query' => $isStatusAwaiting ? $allStatuses : $allStatusesWithSkipOption,
+					'query' => $isStatusAwaiting || $isStatusOpen ? $allStatuses : $allStatusesWithSkipOption,
 					'id' => 'id_order_state',
 					'name' => 'name',
 				],
