@@ -1,6 +1,18 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.2.4 ##
++ Added optional custom order status for open bank transfer 
++ Added the billing address parameter from Mollie API
++ Added configuration to exclude custom order status creation for Klarna https://github.com/mollie/PrestaShop/issues/296
++ Added general controller for one-page checkout modules https://github.com/mollie/PrestaShop/issues/295
++ Fixed missing currencies in checkout
++ Fixed compatibility with Guzzle v.5 
++ Fixed missing order confirmation page for Klarna payments on PS 1.6
++ Fixed error returned when shop domain is unknown in segment tracker tool
++ Changed “Resend payment link” image and the text in the PS BackOffice
++ Fixed "On backorder (paid)" status when order is paid but out of stock
+
 ## Changes in release 4.2.3 ##
 + Fixed translation issues
 + Fixed security issue
