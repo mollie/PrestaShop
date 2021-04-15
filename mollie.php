@@ -56,7 +56,9 @@ class Mollie extends PaymentModule
 	 */
 	public function __construct()
 	{
-		$this->name = 'mollie';
+        // todo: check locale how its set
+
+        $this->name = 'mollie';
 		$this->tab = 'payments_gateways';
 		$this->version = '4.2.4';
 		$this->author = 'Mollie B.V.';
@@ -1135,6 +1137,13 @@ class Mollie extends PaymentModule
 		if ($this->api) {
 			return;
 		}
+        /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
+        $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
+        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
+        if ($moduleDatabaseVersion < $this->version) {
+            return;
+        }
+
 		/** @var \Mollie\Service\ApiKeyService $apiKeyService */
 		$apiKeyService = $this->getMollieContainer(\Mollie\Service\ApiKeyService::class);
 
@@ -1153,6 +1162,10 @@ class Mollie extends PaymentModule
 			$errorHandler->handle($e, $e->getCode(), false);
 			$this->warning = $this->l('Payment error:') . $e->getMessage();
 			PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
-		}
+		} catch (\Exception $e) {
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+        }
 	}
 }
