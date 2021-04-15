@@ -56,8 +56,6 @@ class Mollie extends PaymentModule
 	 */
 	public function __construct()
 	{
-        // todo: check locale how its set
-
         $this->name = 'mollie';
 		$this->tab = 'payments_gateways';
 		$this->version = '4.2.4';
