@@ -56,7 +56,7 @@ class Mollie extends PaymentModule
 	 */
 	public function __construct()
 	{
-        $this->name = 'mollie';
+		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
 		$this->version = '4.2.4';
 		$this->author = 'Mollie B.V.';
@@ -149,6 +149,24 @@ class Mollie extends PaymentModule
 	// todo: check 1.7.2
 	private function compile()
 	{
+		if (!class_exists('Symfony\Component\DependencyInjection\ContainerBuilder') ||
+			!class_exists('Segment') ||
+			!class_exists('Dotenv\Dotenv') ||
+			!class_exists('\Mollie\Repository\ModuleRepository')) {
+			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
+			// where dependency injection container was without "MolliePrefix".
+			// On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
+			// merchant to try installing again where.
+			$isAdmin = $this->context->controller instanceof AdminController;
+
+			if ($isAdmin) {
+				http_response_code(500);
+				exit(
+				$this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
+				);
+			}
+		}
+
 		$containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
 		$locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
 		$loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
@@ -1135,12 +1153,12 @@ class Mollie extends PaymentModule
 		if ($this->api) {
 			return;
 		}
-        /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
-        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        if ($moduleDatabaseVersion < $this->version) {
-            return;
-        }
+		/** @var \Mollie\Repository\ModuleRepository $moduleRepository */
+		$moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
+		$moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
+		if ($moduleDatabaseVersion < $this->version) {
+			return;
+		}
 
 		/** @var \Mollie\Service\ApiKeyService $apiKeyService */
 		$apiKeyService = $this->getMollieContainer(\Mollie\Service\ApiKeyService::class);
@@ -1161,9 +1179,9 @@ class Mollie extends PaymentModule
 			$this->warning = $this->l('Payment error:') . $e->getMessage();
 			PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
 		} catch (\Exception $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
-        }
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+		}
 	}
 }
