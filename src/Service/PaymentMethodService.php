@@ -17,9 +17,13 @@ use Address;
 use Cart;
 use Configuration;
 use Context;
+use Country;
 use Currency;
 use Customer;
 use Mollie;
+use Mollie\Api\Resources\BaseCollection;
+use Mollie\Api\Resources\MethodCollection;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
@@ -36,7 +40,6 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -91,6 +94,11 @@ class PaymentMethodService
 	 */
 	private $paymentMethodRestrictionValidation;
 
+	/**
+	 * @var \Country
+	 */
+	private $country;
+
 	public function __construct(
 		Mollie $module,
 		PaymentMethodRepository $methodRepository,
@@ -101,7 +109,8 @@ class PaymentMethodService
 		CreditCardLogoProvider $creditCardLogoProvider,
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
 		PhoneNumberProviderInterface $phoneNumberProvider,
-		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation
+		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
+		Country $country
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -113,6 +122,7 @@ class PaymentMethodService
 		$this->paymentMethodSortProvider = $paymentMethodSortProvider;
 		$this->phoneNumberProvider = $phoneNumberProvider;
 		$this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
+		$this->country = $country;
 	}
 
 	public function savePaymentMethod($method)
@@ -169,6 +179,9 @@ class PaymentMethodService
 		}
 		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
 		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
+
+		$mollieMethods = $this->getSupportedMollieMethods();
+		$methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
 		foreach ($methods as $index => $method) {
 			/** @var MolPaymentMethod|null $paymentMethod */
@@ -408,5 +421,42 @@ class PaymentMethodService
 		$isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 
 		return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
+	}
+
+	private function removeNotSupportedMethods($methods, $mollieMethods)
+	{
+		foreach ($methods as $key => $method) {
+			$valid = false;
+			foreach ($mollieMethods as $mollieMethod) {
+				if ($method['id_method'] === $mollieMethod->id) {
+					$valid = true;
+					continue;
+				}
+			}
+			if (!$valid) {
+				unset($methods[$key]);
+			}
+		}
+
+		return $methods;
+	}
+
+	private function getSupportedMollieMethods()
+	{
+		$addressId = Context::getContext()->cart->id_address_invoice;
+		$address = new Address($addressId);
+		$country = new Country($address->id_country);
+
+		/** @var BaseCollection|MethodCollection $methods */
+		$methods = $this->module->api->methods->allActive(
+			[
+				'resource' => 'orders',
+				'include' => 'issuers',
+				'includeWallets' => 'applepay',
+				'billingCountry' => $country->iso_code,
+			]
+		);
+
+		return $methods->getArrayCopy();
 	}
 }

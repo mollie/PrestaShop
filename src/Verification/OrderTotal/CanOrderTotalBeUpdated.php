@@ -44,17 +44,6 @@ class CanOrderTotalBeUpdated implements OrderTotalVerificationInterface
 	/**
 	 * @return bool
 	 */
-	private function hasPaymentMethods()
-	{
-		/** @var PrestaShopCollection $paymentMethods */
-		$paymentMethods = $this->paymentMethodRepository->findAll();
-
-		return (bool) $paymentMethods->count();
-	}
-
-	/**
-	 * @return bool
-	 */
 	private function hasCurrencies()
 	{
 		/** @var PrestaShopCollection $currencies */

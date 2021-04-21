@@ -1,21 +1,16 @@
 name: Tests
 
-on: [pull_request]
+on: [ pull_request ]
 
 jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.MOLLIE_ACCESS_TOKEN}}
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-      - name: Run php-cs-fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Apply php-cs-fixer changes
+      - name: Run PHP-CS-Fixer
+        uses: prestashopcorp/github-action-php-cs-fixer@master
 
   test:
     runs-on: ubuntu-latest
@@ -24,24 +19,46 @@ jobs:
         php-versions: [ '7.1' ]
 
     steps:
-      -   name: Checkout
-          uses: actions/checkout@v2.0.0
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-      -   name: Pull PrestaShop files (Tag 1.7.7.0)
-          run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
 
-      -   name: Run PHPunit
-          run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
+      - run: composer update
+
+      - name: Pull PrestaShop files (Tag 1.7.7.0)
+        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
+
+      - name: Run PHPunit
+        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
 
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ['1.7.6.8', '1.6.1.23', '1.7.7.0']
+        presta-versions: [ '1.7.6.8', '1.6.1.23', '1.7.7.0' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - run: composer update
 
       - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}

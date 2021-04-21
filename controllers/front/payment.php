@@ -11,6 +11,11 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Resources\PaymentCollection;
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
@@ -22,12 +27,7 @@ use Mollie\Service\ExceptionService;
 use Mollie\Service\MemorizeCartService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\PaymentFeeUtility;
-use MolliePrefix\Mollie\Api\Resources\Order as MollieOrderAlias;
-use MolliePrefix\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use MolliePrefix\Mollie\Api\Resources\PaymentCollection;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\Number;
 
 if (!defined('_PS_VERSION_')) {
 	return;
@@ -102,9 +102,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 		// Prepare payment
 		$totalPrice = new Number((string) $originalAmount);
 
+		$orderStatus = $paymentMethodObj->id_method === PaymentMethod::BANKTRANSFER ?
+			Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN)
+			: Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING);
+
 		$this->module->validateOrder(
 			(int) $cart->id,
-			(int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+			(int) $orderStatus,
 			(float) $totalPrice->toPrecision(2),
 			isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
 			null,
@@ -373,12 +377,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 			$totalPrice = $orderFeeNumber->plus($totalPrice);
 		}
 
-		$orderid = Order::getOrderByCartId($cartId);
-		$order = new Order($orderid);
+		$orderId = Order::getOrderByCartId($cartId);
+		$order = new Order($orderId);
 		$order->total_paid_tax_excl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_excl))->toPrecision(2);
 		$order->total_paid_tax_incl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_incl))->toPrecision(2);
 		$order->total_paid = (float) $totalPrice->toPrecision(2);
-		$order->total_paid_real = (float) $totalPrice->toPrecision(2);
 		$order->update();
 
 		/** @var MemorizeCartService $memorizeCart */

@@ -11,6 +11,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
@@ -21,8 +23,6 @@ use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -268,6 +268,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
 				$memorizeCart->removeMemorizedCart($order);
 
+				$order->total_paid_real = $transaction->amount->value;
+				$order->update();
 				break;
 			case PaymentStatus::STATUS_EXPIRED:
 			case PaymentStatus::STATUS_CANCELED:

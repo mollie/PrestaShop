@@ -37,6 +37,7 @@ class OrderListActionBuilder
 				'You will resend email with payment link to the customer',
 				self::FILE_NAME
 			),
+			'orderListIcon' => $this->mollie->getPathUri() . 'views/img/second_chance.png',
 		]);
 
 		return $this->mollie->display(

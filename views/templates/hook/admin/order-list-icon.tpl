@@ -11,6 +11,6 @@
  *}
 
 <div class="mollie-icon-container" data-id-order="{$idOrder|intval}">
-    <i class="icon-send-mail-mollie resend-payment-mail-mollie" data-id-order="{$idOrder|intval}"></i>
+    <img class="resend-payment-mail-mollie" src="{$orderListIcon}" width="26" height="26" data-id-order="{$idOrder|intval}"/>
     <div class="mollie-message-container">{$message|escape:'html':'UTF-8'}</div>
 </div>

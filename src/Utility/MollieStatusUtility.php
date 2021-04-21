@@ -13,9 +13,9 @@
 
 namespace Mollie\Utility;
 
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
 
 class MollieStatusUtility
 {

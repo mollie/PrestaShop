@@ -14,11 +14,11 @@
 namespace Mollie\Config;
 
 use Configuration;
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Utility\EnvironmentUtility;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
-use MolliePrefix\Mollie\Api\Types\PaymentMethod;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\Mollie\Api\Types\RefundStatus;
 
 class Config
 {
@@ -38,7 +38,7 @@ class Config
 	public static $defaultMethodAvailability = [
 		'creditcard' => [],
 		'klarnapaylater' => ['nl', 'de', 'at', 'fi', 'be'],
-		'klarnasliceit' => ['de', 'at', 'fi'],
+		'klarnasliceit' => ['de', 'at', 'fi', 'nl'],
 		'ideal' => ['nl'],
 		'bancontact' => ['be'],
 		'paypal' => [],
@@ -132,6 +132,7 @@ class Config
 	const MOLLIE_STATUS_INITIATED = 'MOLLIE_STATUS_INITIATED';
 	const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
 	const MOLLIE_STATUS_ORDER_COMPLETED = 'MOLLIE_STATUS_ORDER_COMPLETED';
+	const MOLLIE_STATUS_DEFAULT = 'MOLLIE_STATUS_DEFAULT';
 	const MOLLIE_STATUS_KLARNA_AUTHORIZED = 'MOLLIE_STATUS_KLARNA_AUTHORIZED';
 	const MOLLIE_STATUS_KLARNA_SHIPPED = 'MOLLIE_STATUS_KLARNA_SHIPPED';
 	const MOLLIE_KLARNA_INVOICE_ON = 'MOLLIE_KLARNA_INVOICE_ON';
@@ -173,6 +174,7 @@ class Config
 	const STATUS_MOLLIE_AWAITING = 'mollie_awaiting';
 	const STATUS_ON_BACKORDER = 'on_backorder';
 	const MOLLIE_AWAITING_PAYMENT = 'awaiting';
+	const MOLLIE_OPEN_PAYMENT = 'open';
 	const PRICE_DISPLAY_METHOD_NO_TAXES = '1';
 	const APPLEPAY = 'applepay';
 	const MOLLIE_COUNTRIES = 'country_';
@@ -268,11 +270,14 @@ class Config
 
 	public static function getStatuses()
 	{
+		$isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
+
 		return [
 			self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
 			PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
 			OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
-			PaymentStatus::STATUS_AUTHORIZED => Configuration::get(self::MOLLIE_STATUS_KLARNA_AUTHORIZED),
+			PaymentStatus::STATUS_AUTHORIZED => $isKlarnaDefault ?
+				Configuration::get(self::MOLLIE_STATUS_PAID) : Configuration::get(self::MOLLIE_STATUS_KLARNA_AUTHORIZED),
 			PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
 			PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
 			RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),

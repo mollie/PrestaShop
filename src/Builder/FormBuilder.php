@@ -18,6 +18,9 @@ use Configuration;
 use HelperFormCore as HelperForm;
 use ModuleCore as Module;
 use Mollie;
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Repository\CountryRepository;
@@ -28,9 +31,6 @@ use Mollie\Service\MolCarrierInformationService;
 use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
-use MolliePrefix\Mollie\Api\Types\OrderStatus;
-use MolliePrefix\Mollie\Api\Types\PaymentStatus;
-use MolliePrefix\Mollie\Api\Types\RefundStatus;
 use OrderStateCore as OrderState;
 use Smarty;
 use ToolsCore as Tools;
@@ -383,17 +383,6 @@ class FormBuilder
 		);
 
 		$input[] = [
-			'type' => 'mollie-button-update-order-total-restriction',
-			'label' => '',
-			'tab' => $generalSettings,
-			'name' => Config::MOLLIE_BUTTON_ORDER_TOTAL_REFRESH,
-			'text' => $this->module->l('Refresh order total restriction values', self::FILE_NAME),
-			'class' => 'js-refresh-order-total-values',
-			'form_group_class' => 'js-refresh-order-total',
-			'help' => $this->module->l('Will refresh all available payment method order total restriction values by all currencies', self::FILE_NAME),
-		];
-
-		$input[] = [
 			'type' => 'mollie-h2',
 			'tab' => $generalSettings,
 			'name' => '',
@@ -534,6 +523,10 @@ class FormBuilder
 			'options' => [
 				'query' => [
 					[
+						'id' => Config::MOLLIE_STATUS_DEFAULT,
+						'name' => $this->module->l('Default', self::FILE_NAME),
+					],
+					[
 						'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
 						'name' => $this->module->l('Authorized', self::FILE_NAME),
 					],
@@ -599,10 +592,10 @@ class FormBuilder
 				PaymentStatus::STATUS_PAID,
 				OrderStatus::STATUS_COMPLETED,
 				PaymentStatus::STATUS_AUTHORIZED,
+				PaymentStatus::STATUS_OPEN,
 				PaymentStatus::STATUS_CANCELED,
 				PaymentStatus::STATUS_EXPIRED,
 				RefundStatus::STATUS_REFUNDED,
-				PaymentStatus::STATUS_OPEN,
 				Config::PARTIAL_REFUND_CODE,
 				OrderStatus::STATUS_SHIPPING,
 			]);
@@ -630,6 +623,8 @@ class FormBuilder
 			}
 
 			$isStatusAwaiting = Config::MOLLIE_AWAITING_PAYMENT === $status['name'];
+			$isStatusOpen = Config::MOLLIE_OPEN_PAYMENT === $status['name'];
+
 			$input[] = [
 				'type' => 'select',
 				'label' => $status['message'],
@@ -637,7 +632,7 @@ class FormBuilder
 				'desc' => $status['description'],
 				'name' => $status['key'],
 				'options' => [
-					'query' => $isStatusAwaiting ? $allStatuses : $allStatusesWithSkipOption,
+					'query' => $isStatusAwaiting || $isStatusOpen ? $allStatuses : $allStatusesWithSkipOption,
 					'id' => 'id_order_state',
 					'name' => 'name',
 				],

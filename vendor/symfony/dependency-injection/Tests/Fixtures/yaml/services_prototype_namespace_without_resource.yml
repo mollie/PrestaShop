@@ -1,4 +1,0 @@
-services:
-    dir1:
-        namespace: MolliePrefix\Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\OtherDir\
-        tags: [foo]

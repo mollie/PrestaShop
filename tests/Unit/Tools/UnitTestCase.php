@@ -4,12 +4,12 @@ namespace Mollie\Tests\Unit\Tools;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Api\Resources\Method;
 use Mollie\Provider\OrderTotalProvider;
 use Mollie\Provider\OrderTotalRestrictionProvider;
-use Mollie\Provider\PaymentMethod\PaymentMethodCountryProvider;
+use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderTotal\OrderTotalService;
-use MolliePrefix\Mollie\Api\Resources\Method;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -90,34 +90,6 @@ class UnitTestCase extends TestCase
 		return $paymentMethod;
 	}
 
-	public function mockPaymentMethodCountryProvider($availableCountries)
-	{
-		$paymentMethodCountryProvider = $this->getMockBuilder(PaymentMethodCountryProvider::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$paymentMethodCountryProvider
-			->method('provideAvailableCountriesByPaymentMethod')
-			->willReturn($availableCountries)
-		;
-
-		return $paymentMethodCountryProvider;
-	}
-
-	public function mockPaymentMethodCurrencyProvider($availableCurrencies)
-	{
-		$paymentMethodCountryProvider = $this->getMockBuilder(PaymentMethodCurrencyProvider::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$paymentMethodCountryProvider
-			->method('provideAvailableCurrenciesByPaymentMethod')
-			->willReturn($availableCurrencies)
-		;
-
-		return $paymentMethodCountryProvider;
-	}
-
 	public function mockPaymentMethodRepository()
 	{
 		$paymentMethodRepository = $this->getMockBuilder(PaymentMethodRepositoryInterface::class)
@@ -185,6 +157,20 @@ class UnitTestCase extends TestCase
 		return $orderTotalService;
 	}
 
+	public function mockOrderTotalRepository($result)
+	{
+		$restrictionsRepositoryMock = $this->getMockBuilder(MolPaymentMethodOrderTotalRestrictionRepository::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$restrictionsRepositoryMock
+			->method('findOneBy')
+			->willReturn($result)
+		;
+
+		return $restrictionsRepositoryMock;
+	}
+
 	public function mockOrderTotalProvider($orderTotal)
 	{
 		$orderTotalProvider = $this->getMockBuilder(OrderTotalProvider::class)
@@ -197,5 +183,19 @@ class UnitTestCase extends TestCase
 		;
 
 		return $orderTotalProvider;
+	}
+
+	public function mockMolPaymentMethodOrderTotalRestrictionRepository($restrictions = true)
+	{
+		$restrictionRepository = $this->getMockBuilder(MolPaymentMethodOrderTotalRestrictionRepository::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$restrictionRepository
+			->method('findOneBy')
+			->willReturn($restrictions)
+		;
+
+		return $restrictionRepository;
 	}
 }

@@ -58,6 +58,8 @@ class CartLinesService
 	 * @param string $selectedVoucherCategory
 	 *
 	 * @return array
+	 *
+	 * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
 	 */
 	public function getCartLines(
 		$amount,
@@ -294,7 +296,7 @@ class CartLinesService
 	 *
 	 * @return array
 	 *
-	 * @throws \MolliePrefix\PrestaShop\Decimal\Exception\DivisionByZeroException
+	 * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
 	 */
 	private function fillProductLinesWithRemainingData(array $orderLines, $apiRoundingPrecision, $vatRatePrecision)
 	{

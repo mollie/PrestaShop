@@ -27,8 +27,6 @@ class RefundUtility
 					'id',
 					'quantity',
 				]));
-			$amount = $line['totalAmount'];
-			$refund['amount'] = $amount;
 			$refunds['lines'][] = $refund;
 		}
 

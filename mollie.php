@@ -14,15 +14,6 @@
 if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/guzzle/src/functions_include.php')) {
-	return;
-}
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/promises/src/functions_include.php')) {
-	return;
-}
-if (!include_once (dirname(__FILE__) . '/vendor/guzzlehttp/psr7/src/functions_include.php')) {
-	return;
-}
 
 /**
  * Class Mollie.
@@ -40,7 +31,7 @@ class Mollie extends PaymentModule
 
 	const DISABLE_CACHE = true;
 
-	/** @var MolliePrefix\Mollie\Api\MollieApiClient|null */
+	/** @var \Mollie\Api\MollieApiClient|null */
 	public $api = null;
 
 	/** @var string */
@@ -67,7 +58,7 @@ class Mollie extends PaymentModule
 	{
 		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
-		$this->version = '4.2.3';
+		$this->version = '4.2.4';
 		$this->author = 'Mollie B.V.';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -89,19 +80,19 @@ class Mollie extends PaymentModule
 
 	private function loadEnv()
 	{
-		if (!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+		if (!class_exists('\Dotenv\Dotenv')) {
 			return;
 		}
 
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
-			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
+			$dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
 			/* @phpstan-ignore-next-line */
 			$dotenv->load();
 
 			return;
 		}
 		if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
-			$dotenv = \MolliePrefix\Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
+			$dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
 			/* @phpstan-ignore-next-line */
 			$dotenv->load();
 
@@ -155,16 +146,18 @@ class Mollie extends PaymentModule
 		return parent::uninstall();
 	}
 
+	// todo: check 1.7.2
 	private function compile()
 	{
-		if (!class_exists('MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder') ||
-			!(class_exists('MolliePrefix\Segment') || class_exists('Segment')) ||
-			!class_exists('\MolliePrefix\Dotenv\Dotenv')) {
+		if (!class_exists('Symfony\Component\DependencyInjection\ContainerBuilder') ||
+			!class_exists('Segment') ||
+			!class_exists('Dotenv\Dotenv') ||
+			!class_exists('\Mollie\Repository\ModuleRepository')) {
 			// If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
 			// where dependency injection container was without "MolliePrefix".
 			// On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
 			// merchant to try installing again where.
-			$isAdmin = $this->context->controller instanceof AdminController && $this->context->controller->isXmlHttpRequest();
+			$isAdmin = $this->context->controller instanceof AdminController;
 
 			if ($isAdmin) {
 				http_response_code(500);
@@ -174,9 +167,9 @@ class Mollie extends PaymentModule
 			}
 		}
 
-		$containerBuilder = new MolliePrefix\Symfony\Component\DependencyInjection\ContainerBuilder();
-		$locator = new MolliePrefix\Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-		$loader = new MolliePrefix\Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+		$containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+		$locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
+		$loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
 		$loader->load('config.yml');
 		$containerBuilder->compile();
 
@@ -226,7 +219,7 @@ class Mollie extends PaymentModule
 	 * @throws PrestaShopDatabaseException
 	 * @throws PrestaShopException
 	 * @throws SmartyException
-	 * @throws \MolliePrefix\Mollie\Api\Exceptions\ApiException
+	 * @throws \Mollie\Api\Exceptions\ApiException
 	 */
 	public function getContent()
 	{
@@ -322,7 +315,6 @@ class Mollie extends PaymentModule
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_total_restriction_refresh.js');
 		$this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
 		$this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
@@ -388,50 +380,45 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
 		$errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
 
-		$isOrderController = $this->context->controller instanceof OrderControllerCore;
-		$isOPCController = $this->context->controller instanceof OrderOpcControllerCore;
 		$isCartController = $this->context->controller instanceof CartControllerCore;
-		if ($isOrderController || $isOPCController) {
-			$errorDisplayService->showCookieError('mollie_payment_canceled_error');
-
-			Media::addJsDef([
-				'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
-				'isoCode' => $this->context->language->language_code,
-				'isTestMode' => \Mollie\Config\Config::isTestMode(),
-			]);
-			if (\Mollie\Config\Config::isVersion17()) {
-				$this->context->controller->registerJavascript(
-					'mollie_iframe_js',
-					'https://js.mollie.com/v1/mollie.js',
-					['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
-				);
-				$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
-			} else {
-				$this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
-				$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
-				$this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
-			}
-			Media::addJsDef([
-				'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-				'isPS17' => \Mollie\Config\Config::isVersion17(),
-			]);
-			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
-			$this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-			if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-				$this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
-			}
-			$this->context->smarty->assign([
-				'custom_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
-			]);
-
-			$this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
-
-			return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
-		}
-
 		if ($isCartController) {
 			$errorDisplayService->showCookieError('mollie_payment_canceled_error');
 		}
+		$errorDisplayService->showCookieError('mollie_payment_canceled_error');
+
+		Media::addJsDef([
+			'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
+			'isoCode' => $this->context->language->language_code,
+			'isTestMode' => \Mollie\Config\Config::isTestMode(),
+		]);
+		if (\Mollie\Config\Config::isVersion17()) {
+			$this->context->controller->registerJavascript(
+				'mollie_iframe_js',
+				'https://js.mollie.com/v1/mollie.js',
+				['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
+			);
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+		} else {
+			$this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
+			$this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
+		}
+		Media::addJsDef([
+			'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+			'isPS17' => \Mollie\Config\Config::isVersion17(),
+		]);
+		$this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
+		$this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
+		if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+			$this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
+		}
+		$this->context->smarty->assign([
+			'custom_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
+		]);
+
+		$this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
+
+		return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
 	}
 
 	/**
@@ -560,7 +547,7 @@ class Mollie extends PaymentModule
 		$apiMethods = $paymentMethodService->getMethodsForCheckout();
 		$issuerList = [];
 		foreach ($apiMethods as $apiMethod) {
-			if (MolliePrefix\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id_method']) {
+			if (\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id_method']) {
 				$issuerList = $issuerService->getIdealIssuers();
 			}
 		}
@@ -697,7 +684,9 @@ class Mollie extends PaymentModule
 		/** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
 		$paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
 		$payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
-		if ($payment && MolliePrefix\Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status']) {
+		$isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
+		$isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
+		if ($payment && ($isPaid || $isAuthorized)) {
 			$this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
 			return $this->display(__FILE__, 'ok.tpl');
@@ -722,7 +711,7 @@ class Mollie extends PaymentModule
 		$countryService = $this->getMollieContainer(\Mollie\Service\CountryService::class);
 		try {
 			$methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
-		} catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
+		} catch (\Mollie\Api\Exceptions\ApiException $e) {
 			return [
 				'success' => false,
 				'methods' => null,
@@ -1026,7 +1015,7 @@ class Mollie extends PaymentModule
 			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
 		}
 		$params['fields']['order_id'] = [
-			'title' => $this->l('Resend payment link'),
+			'title' => $this->l('Payment link'),
 			'align' => 'text-center',
 			'class' => 'fixed-width-xs',
 			'orderby' => false,
@@ -1146,11 +1135,31 @@ class Mollie extends PaymentModule
 		}
 	}
 
+	public function hookActionObjectCurrencyUpdateAfter()
+	{
+		/** @var \Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface $orderTotalHandler */
+		$orderTotalHandler = $this->getMollieContainer(\Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface::class);
+		try {
+			$orderTotalHandler->handleOrderTotalUpdate();
+		} catch (\Mollie\Exception\OrderTotalRestrictionException $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::ERROR);
+		}
+	}
+
 	private function setApiKey()
 	{
 		if ($this->api) {
 			return;
 		}
+		/** @var \Mollie\Repository\ModuleRepository $moduleRepository */
+		$moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
+		$moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
+		if ($moduleDatabaseVersion < $this->version) {
+			return;
+		}
+
 		/** @var \Mollie\Service\ApiKeyService $apiKeyService */
 		$apiKeyService = $this->getMollieContainer(\Mollie\Service\ApiKeyService::class);
 
@@ -1160,15 +1169,19 @@ class Mollie extends PaymentModule
 
 		try {
 			$this->api = $apiKeyService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
-		} catch (MolliePrefix\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+		} catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
 			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
 			$errorHandler->handle($e, $e->getCode(), false);
 			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
-		} catch (MolliePrefix\Mollie\Api\Exceptions\ApiException $e) {
+		} catch (\Mollie\Api\Exceptions\ApiException $e) {
 			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
 			$errorHandler->handle($e, $e->getCode(), false);
 			$this->warning = $this->l('Payment error:') . $e->getMessage();
 			PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
+		} catch (\Exception $e) {
+			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+			$errorHandler->handle($e, $e->getCode(), false);
+			PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
 		}
 	}
 }

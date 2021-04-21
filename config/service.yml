@@ -13,6 +13,7 @@ services:
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
+      - '@mollie.country'
 
   Mollie\Service\ApiService:
     arguments:
@@ -71,6 +72,7 @@ services:
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
       - '@Mollie\Service\ApiKeyService'
+      - '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
 
   Mollie\Service\ShipmentService:
     arguments:

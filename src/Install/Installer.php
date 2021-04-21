@@ -162,6 +162,7 @@ class Installer implements InstallerInterface
 			'actionValidateOrder',
 			'actionOrderGridDefinitionModifier',
 			'actionOrderGridQueryBuilderModifier',
+			'actionObjectCurrencyUpdateAfter',
 		];
 	}
 
