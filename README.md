@@ -49,12 +49,13 @@ with PrestaShop 1.6 to 1.7.
 * Enter your _API-key_ and save the data.
 
 
-## Maintained by [Invertus](https://www.invertus.eu/). ##
-
 
 # Support-Documentation #
 
 Do you have problems with the installation or do you think the module contains a bug? The fastest way to receive support is by raising an issue in our "issues" tab in GitHub or send us an email at info@mollie.com
 
 Be sure to check our [Wiki](https://github.com/mollie/PrestaShop/wiki) for help as well!
+
+
+## Maintained by [Invertus](https://www.invertus.eu/). ##
 
