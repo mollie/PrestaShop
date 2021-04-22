@@ -11,7 +11,7 @@ Receive payments from European customers with ease. Mollie provides payment meth
 
 Choose the best payment provider available for your online PrestaShop store. Create your merchant account at [Mollie.com](https://www.mollie.com/). 
 
-Mollie supports the following payment methods: iDEAL, Credit card, Bancontact, SOFORT Banking, ING Home’Pay, Bank transfers, PayPal, paysafecard, KBC / CBC Payment Button, Belfius, CartaSi, Cartes Bancaires, EPS, Giropay, Klarna: Pay later, Klarna: Slice it
+Mollie supports the following payment methods: iDEAL, Credit card, Bancontact, SOFORT Banking, ING Home’Pay, Bank transfers, PayPal, KBC / CBC Payment Button, Belfius, CartaSi, Cartes Bancaires, EPS, Giropay, Klarna: Pay later, Klarna: Slice it
 
 
 [![Build Status](https://travis-ci.org/mollie/PrestaShop.svg?branch=master)](https://travis-ci.org/mollie/PrestaShop)
