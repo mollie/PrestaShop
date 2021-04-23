@@ -1,4 +1,4 @@
-name: "Regular midnight test runs"
+name: Regular midnight test runs
 on:
   schedule:
     #- cron:  '*/5 * * * *'
