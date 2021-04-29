@@ -11,6 +11,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
@@ -39,15 +40,15 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 					);
 				}
 
-				$paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
-				$orderTotal = new DecimalNumber((string) $cart->getOrderTotal());
-				$orderTotalWithFee = $orderTotal->plus($paymentFee);
+                $paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
+                $orderTotal = new DecimalNumber((string) $cart->getOrderTotal());
+				$orderTotalWithFee = NumberUtility::plus($paymentFee->toPrecision(2), $orderTotal->toPrecision(2));
 
 				$orderTotalNoTax = new DecimalNumber((string) $cart->getOrderTotal(false));
-				$orderTotalNoTaxWithFee = $orderTotalNoTax->plus($paymentFee);
+				$orderTotalNoTaxWithFee = NumberUtility::plus($paymentFee->toPrecision(2), $orderTotalNoTax->toPrecision(2));
 
-				$total_including_tax = $orderTotalWithFee->toPrecision(2);
-				$total_excluding_tax = $orderTotalNoTaxWithFee->toPrecision(2);
+				$total_including_tax = $orderTotalWithFee;
+				$total_excluding_tax = $orderTotalNoTaxWithFee;
 
 				$taxConfiguration = new TaxConfiguration();
 				$presentedCart = $this->cart_presenter->present($this->context->cart);
