@@ -57,21 +57,23 @@ class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterf
 	}
 
 	/**
-	 * @param Currency $currency
+	 * @param string $currency
 	 * @param MolPaymentMethod $paymentMethod
+     * @param int $shopId
 	 *
 	 * @throws OrderTotalRestrictionException
 	 */
-	public function updateOrderTotalRestrictions(Currency $currency, MolPaymentMethod $paymentMethod)
+	public function updateOrderTotalRestrictions($currencyIsoCode, MolPaymentMethod $paymentMethod, $shopId)
 	{
 		$this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
 			$paymentMethod,
-			$currency->iso_code
+            $currencyIsoCode,
+            $shopId
 		);
 	}
 
-	public function deleteOrderTotalRestrictions()
+	public function deleteOrderTotalRestrictions($shopId)
 	{
-		Db::getInstance()->delete(MolPaymentMethodOrderTotalRestriction::$definition['table'], '1=1');
+		Db::getInstance()->delete(MolPaymentMethodOrderTotalRestriction::$definition['table'], 'id_shop = ' . (int) $shopId);
 	}
 }

@@ -8244,7 +8244,7 @@ CREATE TABLE `ps_mol_carrier_information` (
 DROP TABLE IF EXISTS `ps_mol_country`;
 CREATE TABLE `ps_mol_country` (
   `id_mol_country` int(64) NOT NULL AUTO_INCREMENT,
-  `id_method` varchar(64) DEFAULT NULL,
+  `id_method` int(64) DEFAULT NULL,
   `id_country` int(64) DEFAULT NULL,
   `all_countries` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id_mol_country`)
@@ -8265,7 +8265,7 @@ CREATE TABLE `ps_mol_customer` (
 DROP TABLE IF EXISTS `ps_mol_excluded_country`;
 CREATE TABLE `ps_mol_excluded_country` (
   `id_mol_country` int(64) NOT NULL AUTO_INCREMENT,
-  `id_method` varchar(64) DEFAULT NULL,
+  `id_method` int(64) DEFAULT NULL,
   `id_country` int(64) DEFAULT NULL,
   `all_countries` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id_mol_country`)
@@ -8284,7 +8284,7 @@ CREATE TABLE `ps_mol_order_fee` (
 DROP TABLE IF EXISTS `ps_mol_payment_method`;
 CREATE TABLE `ps_mol_payment_method` (
   `id_payment_method` int(64) NOT NULL AUTO_INCREMENT,
-  `id_method` varchar(64) NOT NULL,
+  `id_method` int(64) NOT NULL,
   `method_name` varchar(64) NOT NULL,
   `enabled` tinyint(1) DEFAULT NULL,
   `title` varchar(64) DEFAULT NULL,

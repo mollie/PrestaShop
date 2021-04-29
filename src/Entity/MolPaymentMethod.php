@@ -90,7 +90,12 @@ class MolPaymentMethod extends ObjectModel
 	/** @var int */
 	public $position;
 
-	/**
+    /**
+     * @var int
+     */
+    public $id_shop;
+
+    /**
 	 * @var array
 	 */
 	public static $definition = [
@@ -113,7 +118,8 @@ class MolPaymentMethod extends ObjectModel
 			'images_json' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
 			'live_environment' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
 			'position' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-		],
+            'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
+        ],
 	];
 
 	public function getPaymentMethodName()

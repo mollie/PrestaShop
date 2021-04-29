@@ -43,12 +43,12 @@ use MolPaymentMethod;
 interface OrderTotalRestrictionServiceInterface
 {
 	/**
-	 * @param Currency $currency
+	 * @param string $currency
 	 * @param MolPaymentMethod $paymentMethod
 	 *
 	 * @throws OrderTotalRestrictionException
 	 */
-	public function updateOrderTotalRestrictions(Currency $currency, MolPaymentMethod $paymentMethod);
+	public function updateOrderTotalRestrictions($currencyIsoCode, MolPaymentMethod $paymentMethod, $shopId);
 
-	public function deleteOrderTotalRestrictions();
+	public function deleteOrderTotalRestrictions($shopId);
 }
