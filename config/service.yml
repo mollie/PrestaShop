@@ -94,7 +94,7 @@ services:
   Mollie\Service\MollieOrderInfoService:
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Service\RefundService'
       - '@Mollie\Service\ShipService'
       - '@Mollie\Service\CancelService'

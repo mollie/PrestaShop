@@ -135,8 +135,9 @@ class PaymentMethodService
 
     public function savePaymentMethod($method)
     {
+        $shopId = \Context::getContext()->shop->id;
         $environment = Tools::getValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-        $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment);
+        $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment, $shopId);
         $paymentMethod = new MolPaymentMethod();
         if ($paymentId) {
             $paymentMethod = new MolPaymentMethod((int)$paymentId);
@@ -156,7 +157,7 @@ class PaymentMethodService
         $paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
-        $paymentMethod->id_shop = \Context::getContext()->shop->id;
+        $paymentMethod->id_shop = $shopId;
 
         $paymentMethod->save();
 

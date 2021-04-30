@@ -242,6 +242,14 @@ class Mollie extends PaymentModule
 			return;
 		}
 
+        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
+
+        if (!$isShopContext) {
+            $this->context->controller->errors[] = $this->l('Please select specific shop context');
+
+            return;
+        }
+
 		/** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
 		$templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
 
@@ -1148,9 +1156,14 @@ class Mollie extends PaymentModule
 		}
 	}
 
-	private function setApiKey()
+	public function updateApiKey($shopId = null)
+    {
+        $this->setApiKey($shopId);
+    }
+
+	private function setApiKey($shopId = null)
 	{
-		if ($this->api) {
+		if ($this->api && $shopId === null) {
 			return;
 		}
 		/** @var \Mollie\Repository\ModuleRepository $moduleRepository */
@@ -1167,8 +1180,10 @@ class Mollie extends PaymentModule
 		$apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
 			Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
 
+		$apiKey = Configuration::get($apiKeyConfig, null, null, $shopId);
+
 		try {
-			$this->api = $apiKeyService->setApiKey(Configuration::get($apiKeyConfig), $this->version);
+			$this->api = $apiKeyService->setApiKey($apiKey, $this->version);
 		} catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
 			$errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
 			$errorHandler->handle($e, $e->getCode(), false);
