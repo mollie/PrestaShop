@@ -61,13 +61,13 @@ class OrderTotalUpdaterHandler implements OrderTotalUpdaterHandlerInterface
 		/** @var PrestaShopCollection $paymentMethods */
 		$paymentMethods = $this->paymentMethodRepository->findAllBy(['id_shop' => $shopId]);
 
-		$currencies = Currency::findAll();
+		$currencies = $this->currencyRepository->findAll();
 
 		/** @var Currency $currency */
 		foreach ($currencies as $currency) {
 			/** @var MolPaymentMethod $paymentMethod */
 			foreach ($paymentMethods as $paymentMethod) {
-				$this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency['iso_code'], $paymentMethod, $shopId);
+				$this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency->iso_code, $paymentMethod, $shopId);
 			}
 		}
 

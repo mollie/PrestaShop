@@ -55,10 +55,10 @@ class MolPaymentMethodOrderTotalRestriction extends ObjectModel
 	 */
 	public $maximum_order_total;
 
-    /**
-     * @var int
-     */
-    public $id_shop;
+	/**
+	 * @var int
+	 */
+	public $id_shop;
 
 	/**
 	 * @var array
@@ -71,7 +71,7 @@ class MolPaymentMethodOrderTotalRestriction extends ObjectModel
 			'currency_iso' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
 			'minimum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
 			'maximum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
-            'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
-        ],
+			'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
+		],
 	];
 }

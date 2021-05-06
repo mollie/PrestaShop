@@ -81,7 +81,7 @@ class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrict
 		$paymentMethodOrderRestriction->currency_iso = strtoupper($currencyIso);
 		$paymentMethodOrderRestriction->minimum_order_total = 0.0;
 		$paymentMethodOrderRestriction->maximum_order_total = 0.0;
-        $paymentMethodOrderRestriction->id_shop = $shopId;
+		$paymentMethodOrderRestriction->id_shop = $shopId;
 
 		if (isset($config->minimumAmount) && isset($config->minimumAmount->value)) {
 			$paymentMethodOrderRestriction->minimum_order_total = (float) $config->minimumAmount->value ?: 0.0;

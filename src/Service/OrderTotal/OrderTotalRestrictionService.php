@@ -36,7 +36,6 @@
 
 namespace Mollie\Service\OrderTotal;
 
-use Currency;
 use Db;
 use Mollie\Exception\OrderTotalRestrictionException;
 use Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdaterInterface;
@@ -57,9 +56,9 @@ class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterf
 	}
 
 	/**
-	 * @param string $currency
+	 * @param string $currencyIsoCode
 	 * @param MolPaymentMethod $paymentMethod
-     * @param int $shopId
+	 * @param int $shopId
 	 *
 	 * @throws OrderTotalRestrictionException
 	 */
@@ -67,8 +66,8 @@ class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterf
 	{
 		$this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
 			$paymentMethod,
-            $currencyIsoCode,
-            $shopId
+			$currencyIsoCode,
+			$shopId
 		);
 	}
 

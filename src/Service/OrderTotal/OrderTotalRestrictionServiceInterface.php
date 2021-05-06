@@ -36,7 +36,6 @@
 
 namespace Mollie\Service\OrderTotal;
 
-use Currency;
 use Mollie\Exception\OrderTotalRestrictionException;
 use MolPaymentMethod;
 

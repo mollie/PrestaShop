@@ -15,7 +15,6 @@ namespace Mollie\Service;
 
 use Exception;
 use Mollie;
-use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Order;
 use PrestaShopLogger;
@@ -23,7 +22,7 @@ use PrestaShopLogger;
 class MollieOrderInfoService
 {
 	/**
-	 * @var PaymentMethodRepository
+	 * @var PaymentMethodRepositoryInterface
 	 */
 	private $paymentMethodRepository;
 	/**
@@ -53,7 +52,7 @@ class MollieOrderInfoService
 
 	public function __construct(
 		Mollie $module,
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
+		PaymentMethodRepositoryInterface $paymentMethodRepository,
 		RefundService $refundService,
 		ShipService $shipService,
 		CancelService $cancelService,
@@ -78,9 +77,9 @@ class MollieOrderInfoService
 	 */
 	public function displayMollieOrderInfo($input)
 	{
-        $transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
-        $order = new Order($transaction['order_id']);
-        $this->module->updateApiKey($order->id_shop);
+		$transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
+		$order = new Order($transaction['order_id']);
+		$this->module->updateApiKey($order->id_shop);
 		try {
 			$mollieData = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
 			if ('payments' === $input['resource']) {

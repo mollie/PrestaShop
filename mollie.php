@@ -242,13 +242,13 @@ class Mollie extends PaymentModule
 			return;
 		}
 
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
+		$isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
 
-        if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Please select the specific shop to configure.');
+		if (!$isShopContext) {
+			$this->context->controller->errors[] = $this->l('Please select the specific shop to configure.');
 
-            return;
-        }
+			return;
+		}
 
 		/** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
 		$templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
@@ -1157,9 +1157,9 @@ class Mollie extends PaymentModule
 	}
 
 	public function updateApiKey($shopId = null)
-    {
-        $this->setApiKey($shopId);
-    }
+	{
+		$this->setApiKey($shopId);
+	}
 
 	private function setApiKey($shopId = null)
 	{

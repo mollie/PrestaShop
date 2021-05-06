@@ -140,7 +140,7 @@ class SettingsSaveService
 		if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
-			    $paymentMethodId = $method['obj']->id;
+				$paymentMethodId = $method['obj']->id;
 				try {
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;

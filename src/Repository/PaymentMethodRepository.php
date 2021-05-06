@@ -84,9 +84,9 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 */
 	public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null)
 	{
-	    if (!$shopId) {
-            $shopId = Context::getContext()->shop->id;
-        }
+		if (!$shopId) {
+			$shopId = Context::getContext()->shop->id;
+		}
 
 		$sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
         WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '" 
