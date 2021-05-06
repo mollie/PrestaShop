@@ -245,7 +245,7 @@ class Mollie extends PaymentModule
         $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
 
         if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Please select specific shop context');
+            $this->context->controller->errors[] = $this->l('Please select the specific shop to configure.');
 
             return;
         }
