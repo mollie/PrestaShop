@@ -118,8 +118,9 @@ class OrderStatusService
 			return false;
 		}
 
-		return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
-			((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID));
+        return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
+            ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)) ||
+            ((int )$statusId === (int) Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED));
 	}
 
 	private function checkIfNewOrderMailNeedsToBeSend($statusId)
@@ -128,7 +129,8 @@ class OrderStatusService
 			return false;
 		}
 
-		return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
-			((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID));
+        return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
+            ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)) ||
+            ((int )$statusId === (int) Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED));
 	}
 }
