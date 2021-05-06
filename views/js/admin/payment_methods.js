@@ -35,4 +35,6 @@ $(document).ready(function() {
     $('.payment-method').attr("draggable", false); }) .on('blur', function(e) {
       $('.payment-method').attr("draggable", true);
     });
+
+  $('input[name="activateModule"]').parent('div').hide();
 })

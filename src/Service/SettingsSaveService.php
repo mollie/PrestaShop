@@ -140,6 +140,7 @@ class SettingsSaveService
 		if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
 			$savedPaymentMethods = [];
 			foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
+				$paymentMethodId = $method['obj']->id;
 				try {
 					$paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
 					$savedPaymentMethods[] = $paymentMethod->id_method;
@@ -168,8 +169,8 @@ class SettingsSaveService
 				$excludedCountries = Tools::getValue(
 					Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
 				);
-				$this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
-				$this->countryRepository->updatePaymentMethodExcludedCountries($method['id'], $excludedCountries);
+				$this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
+				$this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
 			}
 			$this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
 		}

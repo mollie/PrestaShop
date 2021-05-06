@@ -83,7 +83,8 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 
 		$result = $paymentMethodOrderRestrictionUpdated->updatePaymentMethodOrderTotalRestriction(
 			$this->paymentMethod,
-			'EUR'
+			'EUR',
+			1
 		);
 
 		$this->assertEquals($expected, $result);
@@ -113,7 +114,8 @@ class PaymentMethodOrderRestrictionUpdaterTest extends UnitTestCase
 
 		$result = $paymentMethodOrderRestrictionUpdated->updatePaymentMethodOrderTotalRestriction(
 			$this->paymentMethod,
-			'EUR'
+			'EUR',
+			1
 		);
 
 		$this->assertEquals(null, $result);

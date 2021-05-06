@@ -44,6 +44,7 @@ use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Shop;
 use Tools;
 
 class PaymentMethodService
@@ -99,6 +100,11 @@ class PaymentMethodService
 	 */
 	private $country;
 
+	/**
+	 * @var Shop
+	 */
+	private $shop;
+
 	public function __construct(
 		Mollie $module,
 		PaymentMethodRepository $methodRepository,
@@ -110,7 +116,8 @@ class PaymentMethodService
 		PaymentMethodSortProviderInterface $paymentMethodSortProvider,
 		PhoneNumberProviderInterface $phoneNumberProvider,
 		PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-		Country $country
+		Country $country,
+		Shop $shop
 	) {
 		$this->module = $module;
 		$this->methodRepository = $methodRepository;
@@ -123,12 +130,14 @@ class PaymentMethodService
 		$this->phoneNumberProvider = $phoneNumberProvider;
 		$this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
 		$this->country = $country;
+		$this->shop = $shop;
 	}
 
 	public function savePaymentMethod($method)
 	{
+		$shopId = \Context::getContext()->shop->id;
 		$environment = Tools::getValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-		$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment);
+		$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment, $shopId);
 		$paymentMethod = new MolPaymentMethod();
 		if ($paymentId) {
 			$paymentMethod = new MolPaymentMethod((int) $paymentId);
@@ -148,6 +157,7 @@ class PaymentMethodService
 		$paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
 		$paymentMethod->images_json = json_encode($method['image']);
 		$paymentMethod->live_environment = $environment;
+		$paymentMethod->id_shop = $shopId;
 
 		$paymentMethod->save();
 
@@ -178,7 +188,7 @@ class PaymentMethodService
 			return [];
 		}
 		$apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment) ?: [];
+		$methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->id) ?: [];
 
 		$mollieMethods = $this->getSupportedMollieMethods();
 		$methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
