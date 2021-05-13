@@ -1,6 +1,10 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.3.0 ##
++ Fixed custom url for carriers when no tracking number is provided
++ Fixed multishop configuration
+
 ## Changes in release 4.2.4 ##
 + Added optional custom order status for open bank transfer 
 + Added the billing address parameter from Mollie API
