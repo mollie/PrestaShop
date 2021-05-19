@@ -152,7 +152,8 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `id_payment_method` INT(10) NOT NULL,
                 `currency_iso` VARCHAR(64) NOT NULL,
                 `minimum_order_total` decimal(20,6),
-                `maximum_order_total` decimal(20,6)
+                `maximum_order_total` decimal(20,6),
+                `id_shop` INT(64) DEFAULT 1
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 

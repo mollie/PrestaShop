@@ -353,7 +353,7 @@ $_MODULE['<{mollie}prestashop>languageservice_8184c64d6318b4a42428ae21d0fe2311']
 $_MODULE['<{mollie}prestashop>languageservice_31911306551723245e7417ae4520fecb'] = 'Giropay';
 $_MODULE['<{mollie}prestashop>languageservice_ce8e4a184e2e534c09d6bf6ae773ca4a'] = 'eps';
 $_MODULE['<{mollie}prestashop>languageservice_feb1a8ded87483b416427b8457bdc664'] = 'Pay later.';
-$_MODULE['<{mollie}prestashop>languageservice_a388a6fba0d4b58c334cd9416071cdb1'] = 'Slice it.';
+$_MODULE['<{mollie}prestashop>languageservice_a388a6fba0d4b58c334cd9416071cdb1'] = 'Betaal in 3 termijnen met creditcard';
 $_MODULE['<{mollie}prestashop>languageservice_b3c616832a460725551d52f3d222df2c'] = 'MyBank';
 $_MODULE['<{mollie}prestashop>languageservice_386dcc0479b05fd2b1d40dbb8f649287'] = 'Transactiekosten';
 $_MODULE['<{mollie}prestashop>languageservice_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Verzenden';
