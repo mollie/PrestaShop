@@ -139,7 +139,7 @@ export default function OrderLinesTable(): ReactElement<{}> {
   async function _refund(origLines: Array<IMollieOrderLine>): Promise<void> {
     let lines = null;
     const reviewWrapper = document.createElement('DIV');
-    const filteredLines = origLines.filter((line) =>  !parseFloat(line.amountRefunded.value) > 0)
+    const filteredLines = origLines.filter((line) =>  !(parseFloat(line.amountRefunded.value) > 0))
     render(<OrderLinesEditor lineType="refundable" translations={translations} lines={filteredLines} edited={newLines => lines = newLines}/>, reviewWrapper);
     let el: any = reviewWrapper.firstChild;
     const { default: swal }= await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
