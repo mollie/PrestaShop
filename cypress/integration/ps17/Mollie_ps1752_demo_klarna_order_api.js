@@ -3,34 +3,11 @@ context('Klarna [Pay Later, Slice It] Payment PS1752 Order API check', () => {
   beforeEach(() => {
     cy.viewport(1920,1080)
   })
-//    it('Uploading the latest module-artifact to the Prestashop', () => {
-//      cy.login_mollie16_test()
-//      cy.server()
-//      cy.route({
-//        method: 'GET',
-//        url: '**/index.php**',
-//        status: 500,
-//        response: 500
-//})
-//      cy.route({
-//        method: 'POST',
-//        url: '**/index.php**',
-//        status: 500,
-//        response: 500
-//})
-//
-//      cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
-//      cy.get('#subtab-AdminModulesSf > .link').click()
-//      cy.get('#page-header-desc-configuration-add_module').click()
-//      cy.get('.module-import-start').attachFile('fixture.zip', { subjectType: 'drag-n-drop' }).wait(15000)
-//      cy.get('.module-import-success-msg').should('be.visible').as('Module installed!')
-
-//})
 it('Checking the Klarna [Pay Later] Order API method successfully enabling BO', () => {
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
-      cy.get('#MOLLIE_API_KEY_TEST').clear().type('test_pACCABA9KvWGjvW9StKn7QTDNgMvzh',{delay: 0})
-      cy.get('#MOLLIE_PROFILE_ID').clear().type('pfl_jUAQPFDdTR',{delay: 0})
+      cy.get('#MOLLIE_API_KEY_TEST').clear().type((Cypress.env('mollie_test_api_key')),{delay: 0, log: false})
+      cy.get('#MOLLIE_PROFILE_ID').clear().type((Cypress.env('mollie_test_profile_id')),{delay: 0, log: false})
       cy.get('[for="MOLLIE_IFRAME_on"]').click()
       //Checking if saving OK
       cy.get('#module_form_submit_btn').click()
@@ -121,8 +98,8 @@ it('Checking the Email Sending log in Prestashop [Pay Later]', () => {
 it('Setuping the Order API method in BO [Slice it]', () => {
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
-      cy.get('#MOLLIE_API_KEY_TEST').clear().type('test_pACCABA9KvWGjvW9StKn7QTDNgMvzh',{delay: 0})
-      cy.get('#MOLLIE_PROFILE_ID').clear().type('pfl_jUAQPFDdTR',{delay: 0})
+      cy.get('#MOLLIE_API_KEY_TEST').clear().type((Cypress.env('mollie_test_api_key')),{delay: 0, log: false})
+      cy.get('#MOLLIE_PROFILE_ID').clear().type((Cypress.env('mollie_test_profile_id')),{delay: 0, log: false})
       cy.get('[for="MOLLIE_IFRAME_on"]').click()
       //Checking if saving OK
       cy.get('#module_form_submit_btn').click()
