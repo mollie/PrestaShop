@@ -13,6 +13,7 @@
 
 namespace Mollie\Repository;
 
+use Context;
 use Db;
 use DbQuery;
 use Exception;
@@ -81,10 +82,15 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 *
 	 * @return false|string|null
 	 */
-	public function getPaymentMethodIdByMethodId($paymentMethodId, $environment)
+	public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null)
 	{
+		if (!$shopId) {
+			$shopId = Context::getContext()->shop->id;
+		}
+
 		$sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
-        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '"';
+        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '" 
+        AND id_shop = ' . (int) $shopId;
 
 		return Db::getInstance()->getValue($sql);
 	}
@@ -167,12 +173,13 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 	 *
 	 * @throws PrestaShopDatabaseException
 	 */
-	public function getMethodsForCheckout($environment)
+	public function getMethodsForCheckout($environment, $shopId)
 	{
 		$sql = new DbQuery();
 		$sql->select('*');
 		$sql->from('mol_payment_method');
 		$sql->where('live_environment = ' . pSQL($environment));
+		$sql->where('id_shop = ' . (int) $shopId);
 
 		return Db::getInstance()->executeS($sql);
 	}

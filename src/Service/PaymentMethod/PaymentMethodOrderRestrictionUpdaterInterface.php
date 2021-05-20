@@ -49,5 +49,5 @@ interface PaymentMethodOrderRestrictionUpdaterInterface
 	 *
 	 * @throws OrderTotalRestrictionException
 	 */
-	public function updatePaymentMethodOrderTotalRestriction(MolPaymentMethod $paymentMethod, $currencyIso);
+	public function updatePaymentMethodOrderTotalRestriction(MolPaymentMethod $paymentMethod, $currencyIso, $shopId);
 }

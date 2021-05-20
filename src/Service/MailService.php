@@ -300,7 +300,11 @@ class MailService
 		$total_reduction_value_ti = 0;
 		$total_reduction_value_tex = 0;
 		foreach ($cart_rules as $cart_rule) {
-			$package = ['id_carrier' => $order->id_carrier, 'id_address' => $order->id_address_delivery];
+			$package = [
+			    'id_carrier' => $order->id_carrier,
+                'id_address' => $order->id_address_delivery,
+                'products' => $order->getProducts()
+            ];
 			$values = [
 				'tax_incl' => $cart_rule['obj']->getContextualValue(true, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
 				'tax_excl' => $cart_rule['obj']->getContextualValue(false, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),

@@ -14,6 +14,7 @@ services:
       - '@Mollie\Provider\PhoneNumberProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
       - '@mollie.country'
+      - '@mollie.shop'
 
   Mollie\Service\ApiService:
     arguments:
@@ -93,7 +94,7 @@ services:
   Mollie\Service\MollieOrderInfoService:
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Service\RefundService'
       - '@Mollie\Service\ShipService'
       - '@Mollie\Service\CancelService'

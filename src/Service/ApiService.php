@@ -239,7 +239,7 @@ class ApiService
 	private function getMethodsCountriesForConfig(&$methods)
 	{
 		foreach ($methods as $key => $method) {
-			$methods[$key]['countries'] = $this->countryRepository->getMethodCountryIds($key);
+			$methods[$key]['countries'] = $this->countryRepository->getMethodCountryIds($method['obj']->id);
 		}
 
 		return $methods;
@@ -248,7 +248,7 @@ class ApiService
 	private function getExcludedCountriesForConfig(&$methods)
 	{
 		foreach ($methods as $key => $method) {
-			$methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($key);
+			$methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($method['obj']->id);
 		}
 
 		return $methods;
