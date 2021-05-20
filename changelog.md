@@ -5,6 +5,8 @@
 + Fixed custom url for carriers when no tracking number is provided
 + Fixed multishop configuration
 + Fixed order cancel button functionality in BO
++ Fixed duplicated discount rules issue
++ Mail alert fix with Klarna order
 
 ## Changes in release 4.2.4 ##
 + Added optional custom order status for open bank transfer 
