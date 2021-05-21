@@ -2,7 +2,7 @@
 
 # Changelog #
 ## Changes in release 4.3.0 ##
-+ Added PrestaShop multistore compatability 
++ Added PrestaShop multistore compatability - different module configuration settings for multistore. 
 + Added double check for Apple Pay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324
 + Fixed custom url for carriers when no tracking number is provided 
 + Fixed order "Cancel" button functionality in back office  
