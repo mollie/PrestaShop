@@ -8,6 +8,10 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
       cy.mollie_test17_admin()
       cy.login_mollie17_test()
       cy.get('#subtab-AdminMollieModule > .link').click()
+      //switching the multistore
+      cy.get('#header_shop > .dropdown').click()
+      cy.get('#header_shop > .dropdown > .dropdown-menu').click(100,100)
+      //
       cy.get('#MOLLIE_API_KEY_TEST').clear().type((Cypress.env('mollie_test_api_key')),{delay: 0, log: false})
       cy.get('#MOLLIE_PROFILE_ID').clear().type((Cypress.env('mollie_test_profile_id')),{delay: 0, log: false})
       cy.get('[for="MOLLIE_IFRAME_on"]').click()
@@ -98,6 +102,10 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
         cy.mollie_test17_admin()
         cy.login_mollie17_test()
         cy.get('#subtab-AdminMollieModule > .link').click()
+        //switching the multistore
+        cy.get('#header_shop > .dropdown').click()
+        cy.get('#header_shop > .dropdown > .dropdown-menu').click(100,100)
+        //
         cy.get('#MOLLIE_API_KEY_TEST').clear().type((Cypress.env('mollie_test_api_key')),{delay: 0, log: false})
         cy.get('#MOLLIE_PROFILE_ID').clear().type((Cypress.env('mollie_test_profile_id')),{delay: 0, log: false})
         cy.get('[for="MOLLIE_IFRAME_on"]').click()
@@ -189,6 +197,10 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
         cy.mollie_test17_admin()
         cy.login_mollie17_test()
         cy.get('#subtab-AdminMollieModule > .link > span').click()
+        //switching the multistore
+        cy.get('#header_shop > .dropdown').click()
+        cy.get('#header_shop > .dropdown > .dropdown-menu').click(100,100)
+        //
         cy.get('#MOLLIE_ISSUERS').select('On click')
         cy.get('#module_form_submit_btn').click()
         cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
