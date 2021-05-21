@@ -7,6 +7,8 @@
 + Fixed order cancel button functionality in BO 
 + Fixed duplicated discount rules issue - https://github.com/mollie/PrestaShop/issues/305
 + Fixed mail alert fix with Klarna order - https://github.com/mollie/PrestaShop/issues/316
++ Added double check for applePay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324
++ Fixed payment fee calculations in the checkout - https://github.com/mollie/PrestaShop/issues/332
 
 ## Changes in release 4.2.4 ##
 + Added optional custom order status for open bank transfer 
