@@ -2,8 +2,8 @@
 
 # Changelog #
 ## Changes in release 4.3.0 ##
++ Added PrestaShop multistore compatability 
 + Fixed custom url for carriers when no tracking number is provided 
-+ Fixed PrestaShop multishop compatability issues
 + Fixed order cancel button functionality in BO 
 + Fixed duplicated discount rules issue - https://github.com/mollie/PrestaShop/issues/305
 + Fixed mail alert fix with Klarna order - https://github.com/mollie/PrestaShop/issues/316
