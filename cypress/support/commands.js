@@ -31,6 +31,8 @@ import 'cypress-iframe';
    cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
    cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
    cy.get('.row-padding-top > .btn').click().wait(500)
+   cy.get('#header_shop > .dropdown > .dropdown-toggle').click()
+   cy.get('#header_shop > .dropdown > .dropdown-menu > :nth-child(3) > a').click()
    cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminMollieModule')
  })
  Cypress.Commands.add("prestashop_admin_localhost_1771", (url) => {
