@@ -10,6 +10,18 @@ context('PS177 Shipping [Credit Card, iDeal, Klarna Pay Pater, Klarna Slice It]'
       // failing the test
       return false
     })
+    // likely want to do this in a support file
+    // so it's applied to all spec files
+    // cypress/support/index.js
+    Cypress.on('uncaught:exception', (err, runnable) => {
+    // we expect a 3rd party library error with message 'list not defined'
+    // and don't want to fail the test so we return false
+    if (err.message.includes('done not defined')) {
+    return false
+    }
+    // we still want to ensure there are no other unexpected
+    // errors, so we let them fail the test
+    })
     cy.viewport(1920,1080)
     cy.mollie_test17_admin()
     cy.login_mollie17_test()
@@ -19,7 +31,7 @@ context('PS177 Shipping [Credit Card, iDeal, Klarna Pay Pater, Klarna Slice It]'
 it('Credit Card Shipping', () => {
       cy.get('#order_osname').select('Payment accepted')
       cy.get('#order_payment').clear().type('Credit Card',{delay:0})
-      cy.get(':nth-child(12) > .btn').click()
+      cy.get(':nth-child(13) > .btn').click()
       //Orders API order sum
       cy.contains('200.00').click()
       cy.get('.btn-group > [title=""]').click()
@@ -36,7 +48,7 @@ it('Credit Card Shipping', () => {
       it('iDeal Shipping', () => {
         cy.get('#order_osname').select('Payment accepted')
         cy.get('#order_payment').clear().type('iDeal',{delay:0})
-        cy.get(':nth-child(12) > .btn').click()
+        cy.get(':nth-child(13) > .btn').click()
         //Orders API order sum
         cy.contains('200.00').click()
         cy.get('.btn-group > [title=""]').click()
@@ -54,7 +66,7 @@ it('Credit Card Shipping', () => {
       it('Bancontact Shipping', () => {
         cy.get('#order_osname').select('Payment accepted')
         cy.get('#order_payment').clear().type('Bancontact',{delay:0})
-        cy.get(':nth-child(12) > .btn').click()
+        cy.get(':nth-child(13) > .btn').click()
         //Orders API order sum
         cy.contains('200.00').click()
         //if else conditions will be added if needed in future for all payments, just to be sure...
@@ -91,7 +103,7 @@ it('Credit Card Shipping', () => {
       it('Klarna Slice it Shipping', () => {
         cy.get('#order_osname').select('Klarna payment authorized')
         cy.get('#order_payment').clear().type('Slice it',{delay:0})
-        cy.get(':nth-child(12) > .btn').click()
+        cy.get(':nth-child(13) > .btn').click()
         //Orders API order sum
         cy.contains('200.00').click()
         cy.get('.btn-group > [title=""]').click()
@@ -109,7 +121,7 @@ it('Credit Card Shipping', () => {
       it('Klarna Pay later Shipping', () => {
         cy.get('#order_osname').select('Klarna payment authorized')
         cy.get('#order_payment').clear().type('Pay later',{delay:0})
-        cy.get(':nth-child(12) > .btn').click()
+        cy.get(':nth-child(13) > .btn').click()
         //Orders API order sum
         cy.contains('200.00').click()
         cy.get('.btn-group > [title=""]').click()
