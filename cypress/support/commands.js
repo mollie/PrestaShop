@@ -78,8 +78,8 @@ Cypress.Commands.add("mollie_1752_test_login", () => {
   cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
   cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
   cy.get('#submit_login').click().wait(3000)
-  cy.get('.btn > .selected-item').click()
-  cy.get('#shop-list > .dropdown-menu > .items-list > :nth-child(3) > .dropdown-item').click()
+  cy.get('#header_shop > .dropdown > .dropdown-toggle').click()
+  cy.get('.list-dropdown-menu > :nth-child(3)').click()
   cy.get('#subtab-AdminMollieModule > .link').click()
 })
 Cypress.Commands.add("mollie_16124_test_faster_login_DE_Orders_Api", () => {
