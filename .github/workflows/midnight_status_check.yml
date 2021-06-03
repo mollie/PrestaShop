@@ -2,7 +2,7 @@ name: Regular midnight test runs
 on:
   schedule:
     #- cron:  '*/5 * * * *'
-      #- cron:  '0 0 * * 3,4,5'
+     - cron:  '0 0 * * 5'
 jobs:
   cypress-e2e-ps16:
     runs-on: ubuntu-latest
