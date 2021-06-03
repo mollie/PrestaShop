@@ -23,16 +23,11 @@ it('Checking the Klarna [Pay Later] Order API method successfully enabling BO', 
 })
     // Starting purchasing process
 it('Checkouting the item Front-Office [Pay Later]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_1752_test_faster_login_DE_Orders_Api()
       cy.get('.continue').click()
       cy.get('#js-delivery > .continue').click()
@@ -46,15 +41,10 @@ it('Checkouting the item Front-Office [Pay Later]', () => {
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
   })
 it('Checking the Back-Office Order Existance [Pay Later]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
+      cCypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
@@ -79,16 +69,11 @@ it('Checking the Back-Office Order Existance [Pay Later]', () => {
       cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
 })
 it('Checking the Email Sending log in Prestashop [Pay Later]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')
@@ -114,16 +99,11 @@ it('Setuping the Order API method in BO [Slice it]', () => {
       cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
 })
 it('Checkouting the item Front-Office [Slice It]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_1752_test_faster_login_DE_Orders_Api()
       cy.get('.continue').click()
       cy.get('#js-delivery > .continue').click()
@@ -137,15 +117,10 @@ it('Checkouting the item Front-Office [Slice It]', () => {
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Slice it')
 })
     it('Checking the Back-Office Order Existance [Slice it]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
@@ -170,15 +145,10 @@ it('Checkouting the item Front-Office [Slice It]', () => {
       cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
     })
     it('Checking the Email Sending log in Prestashop [Slice it]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()

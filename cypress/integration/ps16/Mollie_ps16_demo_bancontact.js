@@ -5,18 +5,11 @@ context('PS16 Bancontact Payment Orders/Payments API basic checkout', () => {
   })
 
 it('Enabling Bancontact payment [Orders API]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_test16_admin()
       cy.login_mollie16_test()
       cy.get('#maintab-AdminMollieModule > .title').click()
@@ -37,18 +30,11 @@ it('Enabling Bancontact payment [Orders API]', () => {
 })
     // Starting purchasing process
 it('Checkouting the item in FO [Orders API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-          expect(err.message)
-
-          // using mocha's async done callback to finish
-          // this test so we prove that an uncaught exception
-          // was thrown
-          done()
-
-          // return false to prevent the error from
-          // failing this test
-          return false
-        })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_16124_test_faster_login_DE_Orders_Api()
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.cart_navigation > .button > span').click()
@@ -63,18 +49,11 @@ it('Checkouting the item in FO [Orders API]', () => {
       cy.get('#mollie-ok').should('include.text','Thank you')
   })
 it('Checking the Back-Office Order Existance [Bancontact]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders')
@@ -98,18 +77,11 @@ it('Checking the Back-Office Order Existance [Bancontact]', () => {
   cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
 })
 it('Checking the Email Sending log in Prestashop [Bancontact]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminEmails')
@@ -117,18 +89,11 @@ it('Checking the Email Sending log in Prestashop [Bancontact]', () => {
   cy.get('.table > tbody > :nth-child(2) > :nth-child(4)').should('include.text','payment')
 })
 it('Enabling Bancontact payment [Payments API]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
   cy.get('#maintab-AdminMollieModule > .title').click()
@@ -148,18 +113,11 @@ it('Enabling Bancontact payment [Payments API]', () => {
   cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
 })
 it('Checkouting the item in FO [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-          expect(err.message)
-
-          // using mocha's async done callback to finish
-          // this test so we prove that an uncaught exception
-          // was thrown
-          done()
-
-          // return false to prevent the error from
-          // failing this test
-          return false
-        })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_16124_test_faster_login_DE_Payments_Api()
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.cart_navigation > .button > span').click()
@@ -174,18 +132,11 @@ it('Checkouting the item in FO [Payments API]', () => {
       cy.get('#mollie-ok').should('include.text','Thank you')
   })
 it('Checking the Back-Office Order Existance [Bancontact]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
     cy.mollie_test16_admin()
     cy.login_mollie16_test()
     cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders')
@@ -207,18 +158,11 @@ it('Checking the Back-Office Order Existance [Bancontact]', () => {
     cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1,5')
   })
 it('Checking the Email Sending log in Prestashop [Bancontact]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
     cy.mollie_test16_admin()
     cy.login_mollie16_test()
     cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminEmails')

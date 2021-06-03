@@ -24,16 +24,11 @@ it('Checking the iDEAL Payment API method successfully enabling BO', () => {
 })
     // Starting purchasing process
 it('Checkouting the item Front-Office [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/20-testproduct1.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
@@ -70,16 +65,11 @@ it('Checkouting the item Front-Office [Payments API]', () => {
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
   })
 it('Checking the Back-Office Order Existance [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders&token=1f3f51817ce3f9adbf23aede4ad9428e')
@@ -101,16 +91,11 @@ it('Checking the Back-Office Order Existance [Payments API]', () => {
       cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1,5')
 })
 it('Checking the Email Sending log in Prestashop [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')
@@ -135,16 +120,11 @@ it('Setuping the Order API method in BO', () => {
 })
 // Starting purchasing process with Orders API
 it('Checkouting the item Front-Office [Orders API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
-      })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
@@ -181,15 +161,10 @@ it('Checkouting the item Front-Office [Orders API]', () => {
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
 })
     it('Checking the Back-Office Order Existance [Orders API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
@@ -214,15 +189,10 @@ it('Checkouting the item Front-Office [Orders API]', () => {
       cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
     })
     it('Checking the Email Sending log in Prestashop [Orders API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      //using mocha's async done callback to finish
-      //this test so we prove that an uncaught exception
-      //was thrown
-      done()
-      //return false to prevent the error from
-      //failing this test
-      return false
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
@@ -237,15 +207,11 @@ it('Checkouting the item Front-Office [Orders API]', () => {
       cy.get('#module_form_submit_btn').click()
       cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
       cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-      // return false to prevent the error from
-      // failing this test
-      return false
-      })
+        Cypress.on('uncaught:exception', (err, runnable) => {
+          // returning false here prevents Cypress from
+          // failing the test
+          return false
+        })
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/men/1-1-hummingbird-printed-t-shirt.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()

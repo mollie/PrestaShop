@@ -24,18 +24,11 @@ it('Checking the Klarna Pay Later Orders API method successfully enabling BO', (
 })
     // Starting purchasing process
 it('Checkouting the item Front-Office [Klarna Pay Later]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-          expect(err.message)
-
-          // using mocha's async done callback to finish
-          // this test so we prove that an uncaught exception
-          // was thrown
-          done()
-
-          // return false to prevent the error from
-          // failing this test
-          return false
-        })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_16124_test_faster_login_DE_Orders_Api()
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.cart_navigation > .button > span').click()
@@ -99,18 +92,11 @@ it('Checking the Klarna Slice It Orders API method successfully enabling BO', ()
   cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
 })
 it('Checkouting the item Front-Office [Klarna Slice It]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-          expect(err.message)
-
-          // using mocha's async done callback to finish
-          // this test so we prove that an uncaught exception
-          // was thrown
-          done()
-
-          // return false to prevent the error from
-          // failing this test
-          return false
-        })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.mollie_16124_test_faster_login_DE_Orders_Api()
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.cart_navigation > .button > span').click()

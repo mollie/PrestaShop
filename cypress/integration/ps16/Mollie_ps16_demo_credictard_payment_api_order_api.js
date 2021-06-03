@@ -5,18 +5,11 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
   })
     // Checking the Credit Card enabling
     it('Checking the Credit Card Payment API method successfully enabling BO', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-    expect(err.message)
-
-    // using mocha's async done callback to finish
-    // this test so we prove that an uncaught exception
-    // was thrown
-    done()
-
-    // return false to prevent the error from
-    // failing this test
-    return false
-})
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
       cy.mollie_test16_admin()
       cy.login_mollie16_test()
       cy.get('#maintab-AdminMollieModule > .title').click()
@@ -35,18 +28,11 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
 })
     // Starting purchasing process
     it('Checkouting the item Front-Office [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-    expect(err.message)
-
-    // using mocha's async done callback to finish
-    // this test so we prove that an uncaught exception
-    // was thrown
-    done()
-
-    // return false to prevent the error from
-    // failing this test
-    return false
-})
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/9-test1.html')
       cy.get('.exclusive > span').click()
       cy.get('.button-medium > span').click()
@@ -84,18 +70,11 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
 
   })
     it('Checking the Back-Office Order Existance [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-    expect(err.message)
-
-    // using mocha's async done callback to finish
-    // this test so we prove that an uncaught exception
-    // was thrown
-    done()
-
-    // return false to prevent the error from
-    // failing this test
-    return false
-})
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
       cy.mollie_test16_admin()
       cy.login_mollie16_test()
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders&token=2e9e601079755e680c5f058da5aa16d3')
@@ -108,18 +87,6 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
       cy.get('.card-body > :nth-child(6)').should('exist')
       cy.get('.card-body > :nth-child(9)').should('exist')
-      cy.on('uncaught:exception', (err, runnable) => {
-    expect(err.message)
-
-    // using mocha's async done callback to finish
-    // this test so we prove that an uncaught exception
-    // was thrown
-    done()
-
-    // return false to prevent the error from
-    // failing this test
-    return false
-})
       cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
       cy.get('.sc-htpNat > .panel > .card-body').should('exist')
       cy.get('.sc-bxivhb > .panel > .panel-heading').should('exist')
@@ -128,18 +95,11 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1,5')
 })
       it('Checking the Email Sending log in Prestashop [Payments API]', () => {
-        cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-  })
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
       cy.mollie_test16_admin()
       cy.login_mollie16_test()
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')
@@ -147,18 +107,11 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       cy.get('.table > tbody > :nth-child(2) > :nth-child(4)').should('include.text','payment')
 })
       it('Setuping the Order API method in BO', () => {
-        cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-  })
+        Cypress.on('uncaught:exception', (err, runnable) => {
+          // returning false here prevents Cypress from
+          // failing the test
+          return false
+        })
         cy.mollie_test16_admin()
         cy.login_mollie16_test()
         cy.get('#maintab-AdminMollieModule > .title').click()
@@ -177,23 +130,15 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
 })
 // Starting purchasing process with Orders API
 it('Checkouting the item Front-Office [Orders API]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-expect(err.message)
-
-// using mocha's async done callback to finish
-// this test so we prove that an uncaught exception
-// was thrown
-done()
-
-// return false to prevent the error from
-// failing this test
-return false
-})
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/10-test1.html')
   cy.get('.exclusive > span').click()
   cy.get('.button-medium > span').click()
   cy.get('.cart_navigation > .button > span').click()
-
   cy.ps16_random_user()
   cy.get('#submitAddress > span').click()
   cy.get('.cart_navigation > .button > span').click()
@@ -226,18 +171,11 @@ return false
 
 })
 it('Checking the Back-Office Order Existance [Orders API]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-expect(err.message)
-
-// using mocha's async done callback to finish
-// this test so we prove that an uncaught exception
-// was thrown
-done()
-
-// return false to prevent the error from
-// failing this test
-return false
-})
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders&token=2e9e601079755e680c5f058da5aa16d3')
@@ -250,23 +188,9 @@ return false
   cy.get('.btn-group > [title=""]').should('exist')
   cy.get('.btn-group > .btn-primary').should('exist')
   cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-
   cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
   cy.get('.card-body > :nth-child(6)').should('exist')
   cy.get('.card-body > :nth-child(9)').should('exist')
-
-     cy.on('uncaught:exception', (err, runnable) => {
-    expect(err.message)
-
-// using mocha's async done callback to finish
-// this test so we prove that an uncaught exception
-// was thrown
-    done()
-
-// return false to prevent the error from
-// failing this test
-    return false
-  })
   cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
   cy.get('.sc-htpNat > .panel > .card-body').should('exist')
   cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
@@ -274,18 +198,11 @@ return false
   cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
 })
   it('Checking the Email Sending log in Prestashop [Orders API]', () => {
-    cy.on('uncaught:exception', (err, runnable) => {
-  expect(err.message)
-
-  // using mocha's async done callback to finish
-  // this test so we prove that an uncaught exception
-  // was thrown
-  done()
-
-  // return false to prevent the error from
-  // failing this test
-  return false
-})
+    Cypress.on('uncaught:exception', (err, runnable) => {
+      // returning false here prevents Cypress from
+      // failing the test
+      return false
+    })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')

@@ -25,18 +25,11 @@ it('Checking the iDEAL Payment API method successfully enabling BO', () => {
 })
     // Starting purchasing process
 it('Checkouting the item Front-Office [Payments API]', () => {
-      cy.on('uncaught:exception', (err, runnable) => {
-          expect(err.message)
-
-          // using mocha's async done callback to finish
-          // this test so we prove that an uncaught exception
-          // was thrown
-          done()
-
-          // return false to prevent the error from
-          // failing this test
-          return false
-        })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/9-test1.html')
       cy.get('.exclusive > span').click()
       cy.get('.button-medium > span').click()
@@ -102,23 +95,15 @@ it('Setuping the Order API method in BO', () => {
 })
 // Starting purchasing process with Orders API
 it('Checkouting the item Front-Office [Orders API]', () => {
-  cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
-      return false
-    })
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/10-test1.html')
   cy.get('.exclusive > span').click()
   cy.get('.button-medium > span').click()
   cy.get('.cart_navigation > .button > span').click()
-
   cy.ps16_random_user()
   cy.get('#submitAddress > span').click()
   cy.get('.cart_navigation > .button > span').click()
@@ -169,15 +154,9 @@ it('Checking iDEAL issuer popup enabled', () => {
   cy.get('#module_form_submit_btn').click()
   cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
   cy.on('uncaught:exception', (err, runnable) => {
-      expect(err.message)
-
-      // using mocha's async done callback to finish
-      // this test so we prove that an uncaught exception
-      // was thrown
-      done()
-
-      // return false to prevent the error from
-      // failing this test
+    Cypress.on('uncaught:exception', (err, runnable) => {
+      // returning false here prevents Cypress from
+      // failing the test
       return false
     })
   cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/tshirts/1-faded-short-sleeves-tshirt.html')
