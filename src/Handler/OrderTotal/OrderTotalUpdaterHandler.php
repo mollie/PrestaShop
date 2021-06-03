@@ -55,19 +55,19 @@ class OrderTotalUpdaterHandler implements OrderTotalUpdaterHandlerInterface
 		if (!$this->canOrderTotalBeUpdated->verify()) {
 			return false;
 		}
-		$this->orderTotalRestrictionService->deleteOrderTotalRestrictions();
+		$shopId = \Context::getContext()->shop->id;
+		$this->orderTotalRestrictionService->deleteOrderTotalRestrictions($shopId);
 
 		/** @var PrestaShopCollection $paymentMethods */
-		$paymentMethods = $this->paymentMethodRepository->findAll();
+		$paymentMethods = $this->paymentMethodRepository->findAllBy(['id_shop' => $shopId]);
 
-		/** @var PrestaShopCollection $currencies */
 		$currencies = $this->currencyRepository->findAll();
 
 		/** @var Currency $currency */
 		foreach ($currencies as $currency) {
 			/** @var MolPaymentMethod $paymentMethod */
 			foreach ($paymentMethods as $paymentMethod) {
-				$this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency, $paymentMethod);
+				$this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency->iso_code, $paymentMethod, $shopId);
 			}
 		}
 

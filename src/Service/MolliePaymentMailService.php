@@ -71,6 +71,7 @@ class MolliePaymentMailService
 
 		$customer = new Customer($order->id_customer);
 
+		$this->module->updateApiKey($order->id_shop);
 		/** @var MollieApiClient $api */
 		$api = $this->module->api;
 

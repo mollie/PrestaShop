@@ -29,6 +29,7 @@ services:
       - '@Mollie\Service\OrderStateImageService'
       - '@Mollie\Install\DatabaseTableInstaller'
       - '@Mollie\Tracker\Segment'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Install\Uninstall:
     arguments:

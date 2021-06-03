@@ -1,6 +1,15 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.3.0 ##
++ Added PrestaShop multistore compatability - different module configuration settings for each shop configured with multistore. 
++ Added double check for Apple Pay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324
++ Fixed custom url for carriers when no tracking number is provided 
++ Fixed order "Cancel" button functionality in back office  
++ Fixed duplicated discount rules issue - https://github.com/mollie/PrestaShop/issues/305
++ Fixed mail alert fix with Klarna order - https://github.com/mollie/PrestaShop/issues/316
++ Fixed payment fee calculations in the checkout - https://github.com/mollie/PrestaShop/issues/332
+
 ## Changes in release 4.2.4 ##
 + Added optional custom order status for open bank transfer 
 + Added the billing address parameter from Mollie API

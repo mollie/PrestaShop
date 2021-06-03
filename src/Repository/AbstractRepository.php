@@ -57,4 +57,25 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 		/* @phpstan-ignore-next-line */
 		return false === $first ? null : $first;
 	}
+
+	/**
+	 * @param array $keyValueCriteria
+	 *
+	 * @return PrestaShopCollection|null
+	 *
+	 * @throws PrestaShopException
+	 */
+	public function findAllBy(array $keyValueCriteria)
+	{
+		$psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+
+		foreach ($keyValueCriteria as $field => $value) {
+			$psCollection = $psCollection->where($field, '=', $value);
+		}
+
+		$all = $psCollection->getAll();
+
+		/* @phpstan-ignore-next-line */
+		return false === $all ? null : $all;
+	}
 }

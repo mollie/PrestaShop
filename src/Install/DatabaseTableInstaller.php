@@ -86,7 +86,8 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`surcharge_limit` decimal(20,6),
 				`images_json` TEXT,
 				`live_environment` TINYINT(1),
-				`position` INT(10)
+				`position` INT(10),
+			    `id_shop` INT(64) DEFAULT 1
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
 		$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_issuer` (
@@ -152,7 +153,8 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `id_payment_method` INT(10) NOT NULL,
                 `currency_iso` VARCHAR(64) NOT NULL,
                 `minimum_order_total` decimal(20,6),
-                `maximum_order_total` decimal(20,6)
+                `maximum_order_total` decimal(20,6),
+                `id_shop` INT(64) DEFAULT 1
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
