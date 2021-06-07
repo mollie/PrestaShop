@@ -12,6 +12,7 @@ context('PS17 Partial Refunding, Full Refunding [Credit Card, iDeal, Klarna Pay 
     })
     cy.viewport(1920,1080)
     cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/')
+    cy.mollie_1752_test_demo_module_dashboard()
     cy.mollie_1752_test_login()
     cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
   })
