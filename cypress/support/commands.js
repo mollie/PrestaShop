@@ -26,7 +26,7 @@ import 'cypress-iframe';
    cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
    cy.get('#submit_login').click()
    cy.get('#header_shop > .dropdown').click()
-   cy.get('.list-dropdown-menu > :nth-child(3)').click())
+   cy.get('.list-dropdown-menu > :nth-child(3)').click()
  })
  Cypress.Commands.add("login_mollie16_test", () => {
    Cypress.env()
@@ -139,7 +139,7 @@ Cypress.Commands.add("mollie_1752_test_faster_login_DE_Payments_Api", () => {
     cy.get('.add > .btn').click()
     cy.get('.cart-content-btn > .btn-primary').click()
     cy.get('.text-sm-center > .btn').click()
-
+})
 //
 //
 // -- This is a child command --
