@@ -206,7 +206,6 @@ it('Checkouting the item Front-Office [Orders API]', () => {
       cy.get('#MOLLIE_ISSUERS').select('On click')
       cy.get('#module_form_submit_btn').click()
       cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
-      cy.on('uncaught:exception', (err, runnable) => {
         Cypress.on('uncaught:exception', (err, runnable) => {
           // returning false here prevents Cypress from
           // failing the test
