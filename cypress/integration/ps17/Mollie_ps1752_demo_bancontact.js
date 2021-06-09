@@ -46,7 +46,6 @@ it('Checking the Back-Office Order Existance [Bancontact]', () => {
     // failing the test
     return false
   })
-      })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
