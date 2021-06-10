@@ -1,6 +1,10 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.3.1 ##
++ Fixed issue when returning to payment methods status of the backorder (not paid) was changed to backorder (paid) instead of canceled. https://github.com/mollie/PrestaShop/issues/349
+
+# Changelog #
 ## Changes in release 4.3.0 ##
 + Added PrestaShop multistore compatability - different module configuration settings for each shop configured with multistore. 
 + Added double check for Apple Pay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324
