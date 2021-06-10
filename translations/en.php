@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 global $_MODULE;
 $_MODULE = array();
@@ -9,6 +9,7 @@ $_MODULE['<{mollie}prestashop>mollie_7b00a9f51c5ed5221a71379f5022c0b8'] = 'Dear 
 $_MODULE['<{mollie}prestashop>mollie_46e2d06b80d816b2916f1f27492fbabd'] = 'Unable to install module';
 $_MODULE['<{mollie}prestashop>mollie_da72870a79e82cbcbffe83612e5d7968'] = 'The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com';
 $_MODULE['<{mollie}prestashop>mollie_17ab49984d8dd1dff2aa7d542505ab54'] = 'Please upgrade Mollie module.';
+$_MODULE['<{mollie}prestashop>mollie_b44ba42b352146bf2fe51a2c6264cb0c'] = 'Please select the specific shop to configure.';
 $_MODULE['<{mollie}prestashop>mollie_df6afbc66efff37559c2ad3512555fc9'] = 'Please select order status for the \"Status for Awaiting payments\" field in the \"Advanced settings\" tab';
 $_MODULE['<{mollie}prestashop>mollie_ddadb642121242386456853538decbbf'] = 'Description cannot be empty';
 $_MODULE['<{mollie}prestashop>mollie_5c16da68879ccae998265f761701a3be'] = 'Wrong profile ID';
@@ -25,7 +26,7 @@ $_MODULE['<{mollie}prestashop>mollie_ea4788705e6873b424c65e91c2846b19'] = 'Cance
 $_MODULE['<{mollie}prestashop>mollie_3602f6d5ece34fdbd4ffe0a47f1a2ba4'] = 'Thank you. Your payment has been received.';
 $_MODULE['<{mollie}prestashop>mollie_32c86f9a2a28a9fa544b97024393633e'] = 'No payment methods found';
 $_MODULE['<{mollie}prestashop>mollie_a34a6659bceae779f28185e757abfca5'] = 'AJAX';
-$_MODULE['<{mollie}prestashop>mollie_74873b96b26fbcac6af3154c5dea0656'] = 'Resend payment link';
+$_MODULE['<{mollie}prestashop>mollie_f9c43173e5db74a01dd11ce73fbbb237'] = 'Payment link';
 $_MODULE['<{mollie}prestashop>mollie_ab552f085567bbe63872c10a3596cd27'] = 'Payment error:';
 $_MODULE['<{mollie}prestashop>mollie_iframe_16_a4b29064de828b87f9f9b6fa145cb507'] = 'Enter your card information';
 $_MODULE['<{mollie}prestashop>mollie_iframe_16_63171e216532becbb0be4a43aa4252fa'] = 'Card holder';
@@ -135,8 +136,9 @@ $_MODULE['<{mollie}prestashop>api_test_results_168a20d655e73e75f2a4380bc317219a'
 $_MODULE['<{mollie}prestashop>create_new_account_link_936ccdb97115e9f35a11d35e3d5b5cad'] = 'Click here';
 $_MODULE['<{mollie}prestashop>create_new_account_link_1946a645ad247c90c404e8341ca15497'] = 'to create a new account';
 $_MODULE['<{mollie}prestashop>invoice_description_3aca8395fdcfea5a5f5c59fee793391e'] = 'When do you want the invoice for Klarna Payments?';
-$_MODULE['<{mollie}prestashop>invoice_description_24ef4d7a34d429fa1e951e9343e209f0'] = 'On Authorize: Create a full invoice when the order is authorized';
-$_MODULE['<{mollie}prestashop>invoice_description_115370eb756ae254c07469016f4f5be8'] = 'On Shipment: Create a full invoice when the order is shipped';
+$_MODULE['<{mollie}prestashop>invoice_description_f9be23b5389e22cbe6a387409297559b'] = 'Default: Invoice creation is based on order settings > statuses. Custom status is not created.';
+$_MODULE['<{mollie}prestashop>invoice_description_9c3804b2e492a2e757d3738108bcae79'] = 'On Authorize: Create a full invoice when the order is authorized. Custom status is created.';
+$_MODULE['<{mollie}prestashop>invoice_description_fc397a4bb3def49c285df7311261498d'] = 'On Shipment: Create a full invoice when the order is shipped. Custom status is created.';
 $_MODULE['<{mollie}prestashop>order_total_refresh_results_7c25586818f24584279b6cfd869c985a'] = 'Successfully updated order total restriction values';
 $_MODULE['<{mollie}prestashop>invoice_fee_386dcc0479b05fd2b1d40dbb8f649287'] = 'Payment Fee';
 $_MODULE['<{mollie}prestashop>form_26ce015f99bef6d5de2142b2b774525f'] = 'Developed by Invertus';
@@ -240,8 +242,6 @@ $_MODULE['<{mollie}prestashop>formbuilder_85fb708f31f585607247f8b868efafcc'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_27db39558366d2a9001a0dec69eea4d6'] = 'Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.';
 $_MODULE['<{mollie}prestashop>formbuilder_85a692706bc7597b6e32bc1d354c138f'] = 'On click';
 $_MODULE['<{mollie}prestashop>formbuilder_d35acbb07d2841712a937d5748e9bdc2'] = 'Payment page';
-$_MODULE['<{mollie}prestashop>formbuilder_08606545d571bb25944a24d7dd665082'] = 'Refresh order total restriction values';
-$_MODULE['<{mollie}prestashop>formbuilder_c5ed7ec419262dd34820f8ff83f9d1ed'] = 'Will refresh all available payment method order total restriction values by all currencies';
 $_MODULE['<{mollie}prestashop>formbuilder_0da8d9a75492046bea7f314521e07cae'] = 'Payment methods';
 $_MODULE['<{mollie}prestashop>formbuilder_079db0c141e521dccd7e35573692c371'] = 'Click [1]here[/1] to read more about the differences between the Payment and Orders API.';
 $_MODULE['<{mollie}prestashop>formbuilder_02b1a449676f2830e0014858e00f8556'] = 'Push Locale to Payment Screen';
@@ -255,6 +255,7 @@ $_MODULE['<{mollie}prestashop>formbuilder_6e7b34fa59e1bd229b207892956dc41c'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_6ad3c3b27bb2e06bff753ce43fc06232'] = 'Send new order email to merchant';
 $_MODULE['<{mollie}prestashop>formbuilder_e6428cbae67261b4c2122cfe1ead0723'] = 'Change when \'new_order\' email to merchant is sent (When using PrestaShop Mail Alerts module)';
 $_MODULE['<{mollie}prestashop>formbuilder_d31ac66d4079dcf21664c624dda7b596'] = 'When to create the invoice?';
+$_MODULE['<{mollie}prestashop>formbuilder_7a1920d61156abc05a60135aefe8bc67'] = 'Default';
 $_MODULE['<{mollie}prestashop>formbuilder_a206428462686af481cb072b8db11784'] = 'Authorized';
 $_MODULE['<{mollie}prestashop>formbuilder_747cf5c8587184b9e489ff897d97c20d'] = 'Shipped';
 $_MODULE['<{mollie}prestashop>formbuilder_7c4e7ada50c8572336f872fced4d1852'] = 'Status for %s payments';
@@ -343,6 +344,7 @@ $_MODULE['<{mollie}prestashop>settingssaveservice_d0fb18e6788aea02c962decbe15918
 $_MODULE['<{mollie}prestashop>settingssaveservice_652f9bf18cac2aed81f0c2a436b1a4f7'] = 'Something went wrong. Couldn\'t delete old payment methods issuers';
 $_MODULE['<{mollie}prestashop>settingssaveservice_b4023fa46ec83bf49c0ce4a4fb379c2d'] = 'Something went wrong. Couldn\'t save your payment methods issuer';
 $_MODULE['<{mollie}prestashop>settingssaveservice_3edebc882ca3c4ed5346f3daa6c60f45'] = 'Wrong API Key!';
+$_MODULE['<{mollie}prestashop>settingssaveservice_2d1ebc5d9c7ba74f0d021cc6a3f40dd2'] = 'Failed to update restrictions for payment methods';
 $_MODULE['<{mollie}prestashop>settingssaveservice_6ab1adfed768d989b47c908755fe677f'] = 'The configuration has been saved!';
 $_MODULE['<{mollie}prestashop>languageservice_e0010a0a1a3259ab5c06a19bad532851'] = 'Paid';
 $_MODULE['<{mollie}prestashop>languageservice_07ca5050e697392c9ed47e6453f1453f'] = 'Completed';
