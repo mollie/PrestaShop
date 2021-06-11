@@ -4,6 +4,7 @@
 ## Changes in release 4.3.1 ##
 + Fixed issue when returning to payment methods status of the backorder (not paid) was changed to backorder (paid) instead of canceled. https://github.com/mollie/PrestaShop/issues/349
 + Fixed issue with second chance email sending when form multi shop context
++ Fixed issue with payment country restrictions https://github.com/mollie/PrestaShop/issues/350
 
 # Changelog #
 ## Changes in release 4.3.0 ##
