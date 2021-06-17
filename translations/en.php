@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 global $_MODULE;
 $_MODULE = array();
@@ -7,7 +7,7 @@ $_MODULE['<{mollie}prestashop>mollie_7c478959c218087ffc4ad5d96e7f66a6'] = 'Molli
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Mollie Payments';
 $_MODULE['<{mollie}prestashop>mollie_7b00a9f51c5ed5221a71379f5022c0b8'] = 'Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 5.6 and higher versions.';
 $_MODULE['<{mollie}prestashop>mollie_46e2d06b80d816b2916f1f27492fbabd'] = 'Unable to install module';
-$_MODULE['<{mollie}prestashop>mollie_da72870a79e82cbcbffe83612e5d7968'] = 'The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com';
+$_MODULE['<{mollie}prestashop>mollie_da72870a79e82cbcbffe83612e5d7968'] = 'The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next ';
 $_MODULE['<{mollie}prestashop>mollie_17ab49984d8dd1dff2aa7d542505ab54'] = 'Please upgrade Mollie module.';
 $_MODULE['<{mollie}prestashop>mollie_b44ba42b352146bf2fe51a2c6264cb0c'] = 'Please select the specific shop to configure.';
 $_MODULE['<{mollie}prestashop>mollie_df6afbc66efff37559c2ad3512555fc9'] = 'Please select order status for the \"Status for Awaiting payments\" field in the \"Advanced settings\" tab';
