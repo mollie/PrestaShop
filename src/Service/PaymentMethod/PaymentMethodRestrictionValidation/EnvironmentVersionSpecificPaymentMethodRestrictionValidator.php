@@ -101,7 +101,7 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
 		}
 
 		return !$this->methodCountryRepository->checkIfCountryIsExcluded(
-            $paymentMethod->id,
+			$paymentMethod->id,
 			$this->context->getCountryId()
 		);
 	}

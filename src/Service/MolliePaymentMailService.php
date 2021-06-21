@@ -167,8 +167,8 @@ class MolliePaymentMailService
 					'key' => $key,
 				],
 				true,
-                null,
-                $cart->id_shop
+				null,
+				$cart->id_shop
 			),
 			'description' => $paymentApi->description,
 			'metadata' => [
@@ -184,8 +184,8 @@ class MolliePaymentMailService
 				'webhook',
 				[],
 				true,
-                null,
-                $cart->id_shop
+				null,
+				$cart->id_shop
 			);
 		}
 		$newPayment = $api->payments->create($paymentData);

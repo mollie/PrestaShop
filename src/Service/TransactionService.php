@@ -154,9 +154,9 @@ class TransactionService
 						if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
 							$this->updateTransaction($orderId, $transaction);
 
-                            if ($this->isOrderBackOrder($orderId)) {
-                                $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                            }
+							if ($this->isOrderBackOrder($orderId)) {
+								$paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+							}
 						}
 
 						/** @var OrderStatusService $orderStatusService */
@@ -197,9 +197,9 @@ class TransactionService
 						if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
 							$this->updateTransaction($orderId, $transaction);
 
-                            if ($this->isOrderBackOrder($orderId)) {
-                                $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                            }
+							if ($this->isOrderBackOrder($orderId)) {
+								$paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
+							}
 						}
 
 						/** @var OrderStatusService $orderStatusService */
