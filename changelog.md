@@ -5,7 +5,7 @@
 + Fixed issue when returning to payment methods status of the backorder (not paid) was changed to backorder (paid) instead of canceled. https://github.com/mollie/PrestaShop/issues/349
 + Fixed issue with second chance email sending when form multi shop context
 + Fixed issue with payment country restrictions https://github.com/mollie/PrestaShop/issues/350
-+ Fixed issue with mollie order not being created with manual creation in backoffice https://github.com/mollie/PrestaShop/issues/361
++ Fixed issue with mollie order not being created with manual creation in backoffice on PS 1.7.7.* https://github.com/mollie/PrestaShop/issues/361
 
 # Changelog #
 ## Changes in release 4.3.0 ##
