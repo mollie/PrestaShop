@@ -11,7 +11,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
-if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
+if (!include_once(dirname(__FILE__) . '/vendor/autoload.php')) {
 	return;
 }
 
@@ -1061,7 +1061,9 @@ class Mollie extends PaymentModule
 		if ('admin' !== $this->context->controller->controller_type) {
 			return;
 		}
-		if ('AdminOrders' === $this->context->controller->controller_name &&
+
+		//NOTE as mollie-email-send is only in manual order creation in backoffice this should work only when mollie payment is chosen.
+		if (!empty(Tools::getValue('mollie-email-send')) &&
 			$params['order']->module === $this->name
 		) {
 			$cartId = $params['cart']->id;

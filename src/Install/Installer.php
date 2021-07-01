@@ -63,24 +63,24 @@ class Installer implements InstallerInterface
 	 */
 	private $segment;
 
-    /**
-     * @var ConfigurationAdapter
-     */
-    private $configurationAdapter;
+	/**
+	 * @var ConfigurationAdapter
+	 */
+	private $configurationAdapter;
 
-    public function __construct(
+	public function __construct(
 		Mollie $module,
 		OrderStateImageService $imageService,
 		InstallerInterface $databaseTableInstaller,
 		Segment $segment,
-        ConfigurationAdapter $configurationAdapter
+		ConfigurationAdapter $configurationAdapter
 	) {
 		$this->module = $module;
 		$this->imageService = $imageService;
 		$this->databaseTableInstaller = $databaseTableInstaller;
 		$this->segment = $segment;
-        $this->configurationAdapter = $configurationAdapter;
-    }
+		$this->configurationAdapter = $configurationAdapter;
+	}
 
 	public function install()
 	{
