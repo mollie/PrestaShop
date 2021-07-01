@@ -34,15 +34,12 @@ class ErrorHandler
 	 */
 	private static $instance;
 
-	public function __construct()
+	public function __construct($module)
 	{
-		/** @var Mollie */
-		$module = Module::getInstanceByName('mollie');
-
 		/** @var Env $env */
 		$env = $module->getMollieContainer(Env::class);
 
-		$this->client = new Raven_Client(
+		$this->client = new ModuleFilteredRavenClient(
 			Config::SENTRY_KEY,
 			[
 				'level' => 'warning',
@@ -56,6 +53,11 @@ class ErrorHandler
 				],
 			]
 		);
+        // We use realpath to get errors even if module is behind a symbolic link
+        $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . $module->name . '/'));
+        // Useless as it will exclude everything even if specified in the app path
+        //$this->client->setExcludedAppPaths([_PS_ROOT_DIR_]);
+        $this->client->install();
 	}
 
 	/**
@@ -81,8 +83,11 @@ class ErrorHandler
 	 */
 	public static function getInstance()
 	{
+        /** @var Mollie */
+        $module = Module::getInstanceByName('mollie');
+
 		if (self::$instance === null) {
-			self::$instance = new ErrorHandler();
+			self::$instance = new ErrorHandler($module);
 		}
 
 		return self::$instance;
