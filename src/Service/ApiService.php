@@ -199,23 +199,6 @@ class ApiService
 			$methods[$apiMethod['id']]['obj'] = $defaultPaymentMethod;
 		}
 
-		$availableApiMethods = array_column(array_map(function ($apiMethod) {
-			return (array) $apiMethod;
-		}, $apiMethods), 'id');
-		if (in_array('creditcard', $availableApiMethods)) {
-			foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $value => $apiMethod) {
-				$paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($value, $this->environment);
-				if ($paymentId) {
-					$paymentMethod = new MolPaymentMethod((int) $paymentId);
-					$methods[$value]['obj'] = $paymentMethod;
-					continue;
-				}
-				$defaultPaymentMethod->id_method = $value;
-				$defaultPaymentMethod->method_name = $apiMethod;
-				$methods[$value]['obj'] = $defaultPaymentMethod;
-			}
-		}
-
 		return $methods;
 	}
 

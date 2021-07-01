@@ -76,7 +76,9 @@ class Mollie extends PaymentModule
 		$this->compile();
 		$this->loadEnv();
 		$this->setApiKey();
-	}
+
+        new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
+    }
 
 	private function loadEnv()
 	{
@@ -183,7 +185,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getMollieContainer($id = false)
 	{
-		if ($id) {
+        if ($id) {
 			return $this->moduleContainer->get($id);
 		}
 
@@ -223,7 +225,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getContent()
 	{
-		if (Tools::getValue('ajax')) {
+        if (Tools::getValue('ajax')) {
 			header('Content-Type: application/json;charset=UTF-8');
 
 			if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {

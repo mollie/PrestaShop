@@ -43,4 +43,6 @@ services:
 
   Mollie\Handler\ErrorHandler\ErrorHandler:
     class: Mollie\Handler\ErrorHandler\ErrorHandler
+    arguments:
+      - '@mollie'
 

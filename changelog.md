@@ -6,6 +6,8 @@
 + Fixed issue with second chance email sending when form multi shop context
 + Fixed issue with payment country restrictions https://github.com/mollie/PrestaShop/issues/350
 + Fixed issue with mollie order not being created with manual creation in backoffice on PS 1.7.7.* https://github.com/mollie/PrestaShop/issues/361
++ Improved sentry to log all module issues
++ Removed Cartes Bancaires that was never used
 
 # Changelog #
 ## Changes in release 4.3.0 ##
