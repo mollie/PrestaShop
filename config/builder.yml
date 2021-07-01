@@ -1,5 +1,6 @@
 services:
   Mollie\Builder\FormBuilder:
+    class: Mollie\Builder\FormBuilder
     arguments:
       - '@mollie'
       - '@Mollie\Service\ApiService'
@@ -13,11 +14,13 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
 
   Mollie\Builder\ApiTestFeedbackBuilder:
+    class: Mollie\Builder\ApiTestFeedbackBuilder
     arguments:
       - '@=service("mollie.factory.module_factory").getModuleVersion()'
       - '@Mollie\Service\ApiKeyService'
 
   Mollie\Builder\InvoicePdfTemplateBuilder:
+    class: Mollie\Builder\InvoicePdfTemplateBuilder
     arguments:
       - '@Mollie\Repository\OrderFeeRepository'
 

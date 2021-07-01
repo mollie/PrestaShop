@@ -24,6 +24,7 @@ services:
       - 'mollie'
 
   Mollie\Install\Installer:
+    class: Mollie\Install\Installer
     arguments:
       - '@mollie'
       - '@Mollie\Service\OrderStateImageService'
@@ -32,14 +33,17 @@ services:
       - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Install\Uninstall:
+    class: Mollie\Install\Uninstall
     arguments:
       - '@Mollie\Install\DatabaseTableUninstaller'
       - '@Mollie\Repository\OrderStateRepository'
       - '@Mollie\Tracker\Segment'
 
   Mollie\Install\DatabaseTableInstaller:
+    class: Mollie\Install\DatabaseTableInstaller
 
   Mollie\Install\DatabaseTableUninstaller:
+    class: Mollie\Install\DatabaseTableUninstaller
 
   mollie.adapter.context:
     class: Mollie\Adapter\LegacyContext
