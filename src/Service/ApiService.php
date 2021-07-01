@@ -154,24 +154,7 @@ class ApiService
 				'tipEnableSSL' => $tipEnableSSL,
 			];
 		}
-		$availableApiMethods = array_column(array_map(function ($apiMethod) {
-			return (array) $apiMethod;
-		}, $apiMethods), 'id');
-		if (in_array('creditcard', $availableApiMethods)) {
-			foreach ([Config::CARTES_BANCAIRES => 'Cartes Bancaires'] as $id => $name) {
-				$deferredMethods[] = [
-					'id' => $id,
-					'name' => $name,
-					'available' => !in_array($id, $notAvailable),
-					'image' => [
-						'size1x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}_small.png"),
-						'size2x' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.png"),
-						'svg' => UrlPathUtility::getMediaPath("{$path}views/img/{$id}.svg"),
-					],
-					'issuers' => null,
-				];
-			}
-		}
+
 		ksort($methods);
 		$methods = array_values($methods);
 		foreach ($deferredMethods as $deferredMethod) {
