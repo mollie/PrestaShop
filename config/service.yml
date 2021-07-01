@@ -1,7 +1,9 @@
 services:
   Mollie\Service\OrderFeeService:
+    class: Mollie\Service\OrderFeeService
 
   Mollie\Service\PaymentMethodService:
+    class: Mollie\Service\PaymentMethodService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
@@ -17,6 +19,7 @@ services:
       - '@mollie.shop'
 
   Mollie\Service\ApiService:
+    class: Mollie\Service\ApiService
     arguments:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Repository\CountryRepository'
@@ -25,45 +28,56 @@ services:
       - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ConfigFieldService:
+    class: Mollie\Service\ConfigFieldService
     arguments:
       - '@mollie'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
 
   Mollie\Service\IssuerService:
+    class: Mollie\Service\IssuerService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\RefundService:
+    class: Mollie\Service\RefundService
     arguments:
       - '@mollie'
       - '@Mollie\Service\TransactionService'
 
   Mollie\Service\ShipService:
+    class: Mollie\Service\ShipService
     arguments:
       - '@mollie'
 
   Mollie\Service\CancelService:
+    class: Mollie\Service\CancelService
     arguments:
       - '@mollie'
       - '@Mollie\Service\TransactionService'
 
   Mollie\Service\CarrierService:
+    class: Mollie\Service\CarrierService
 
   Mollie\Service\OrderStatusService:
+    class: Mollie\Service\OrderStatusService
     arguments:
       - '@Mollie\Service\MailService'
 
   Mollie\Service\ErrorDisplayService:
+    class: Mollie\Service\ErrorDisplayService
 
   Mollie\Service\OrderStateImageService:
+    class: Mollie\Service\OrderStateImageService
 
   Mollie\Service\CountryService:
+    class: Mollie\Service\CountryService
     arguments:
       - '@mollie'
 
   Mollie\Service\SettingsSaveService:
+    class: Mollie\Service\SettingsSaveService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\CountryRepository'
@@ -76,22 +90,26 @@ services:
       - '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
 
   Mollie\Service\ShipmentService:
+    class: Mollie\Service\ShipmentService
     arguments:
       - '@Mollie\Repository\OrderShipmentRepository'
       - '@Mollie\Repository\MolCarrierInformationRepository'
 
   Mollie\Service\CartLinesService:
+    class: Mollie\Service\CartLinesService
     arguments:
       - '@Mollie\Service\LanguageService'
       - '@Mollie\Service\VoucherService'
       - '@Mollie\Adapter\ToolsAdapter'
 
   Mollie\Service\CustomerService:
+    class: Mollie\Service\CustomerService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\MolCustomerRepository'
 
   Mollie\Service\MollieOrderInfoService:
+    class: Mollie\Service\MollieOrderInfoService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepositoryInterface'
@@ -102,10 +120,12 @@ services:
       - '@Mollie\Service\ApiService'
 
   Mollie\Service\MolCarrierInformationService:
+    class: Mollie\Service\MolCarrierInformationService
     arguments:
       - '@Mollie\Repository\MolCarrierInformationRepository'
 
   Mollie\Service\LanguageService:
+    class: Mollie\Service\LanguageService
     arguments:
       - '@mollie'
 
@@ -121,43 +141,53 @@ services:
       - '@Mollie\Repository\CartRuleRepository'
 
   Mollie\Service\OrderCartAssociationService:
+    class: Mollie\Service\OrderCartAssociationService
     arguments:
       - '@Mollie\Service\CartDuplicationService'
 
   Mollie\Service\MemorizeCartService:
+    class: Mollie\Service\MemorizeCartService
     arguments:
       - '@Mollie\Service\OrderCartAssociationService'
       - '@Mollie\Repository\PendingOrderCartRepository'
 
   Mollie\Service\RepeatOrderLinkFactory:
+    class: Mollie\Service\RepeatOrderLinkFactory
 
   Mollie\Logger\PrestaLogger:
+    class: Mollie\Logger\PrestaLogger
 
   Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'
 
   Mollie\Service\RestorePendingCartService:
+    class: Mollie\Service\RestorePendingCartService
     arguments:
       - '@Mollie\Repository\PendingOrderCartRepository'
 
   Mollie\Service\TransactionService:
+    class: Mollie\Service\TransactionService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\OrderStatusService'
 
   Mollie\Service\MolliePaymentMailService:
+    class: Mollie\Service\MolliePaymentMailService
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\MailService'
 
   Mollie\Service\MailService:
+    class: Mollie\Service\MailService
     arguments:
       - '@mollie'
 
   Mollie\Service\PaymentsTranslationService:
-    - '@mollie'
-    - '@Mollie\Service\LanguageService'
+    class: Mollie\Service\PaymentsTranslationService
+    arguments:
+      - '@mollie'
+      - '@Mollie\Service\LanguageService'
 
   Mollie\Service\PaymentReturnService:
     class: Mollie\Service\PaymentReturnService
@@ -170,15 +200,21 @@ services:
       - '@Mollie\Handler\CartRule\CartRuleQuantityChangeHandler'
 
   Mollie\Service\UpgradeNoticeService:
+    class: Mollie\Service\UpgradeNoticeService
 
   Mollie\Service\VoucherService:
-    - '@Mollie\Repository\AttributeRepository'
-    - '@Mollie\Adapter\ConfigurationAdapter'
+    class: Mollie\Service\VoucherService
+    arguments:
+      - '@Mollie\Repository\AttributeRepository'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Service\ExceptionService:
-    - '@mollie'
+    class: Mollie\Service\ExceptionService
+    arguments:
+      - '@mollie'
 
   Mollie\Service\ApiKeyService:
+    class: Mollie\Service\ApiKeyService
 
   Mollie\Handler\CartRule\CartRuleQuantityChangeHandler:
     class: Mollie\Handler\CartRule\CartRuleQuantityChangeHandler
