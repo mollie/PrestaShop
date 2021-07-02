@@ -53,7 +53,7 @@ services:
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation
     arguments:
-      - !tagged mollie.paymentmethodrestriction
+      - ['@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator', '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator', '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator', '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator']
 
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface: '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
 
