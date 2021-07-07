@@ -1,5 +1,5 @@
-import 'cypress-file-upload';
-import 'cypress-iframe';
+//import 'cypress-file-upload';
+//import 'cypress-iframe';
 
 //const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
 //compareSnapshotCommand({
