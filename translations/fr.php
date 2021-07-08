@@ -7,7 +7,7 @@ $_MODULE['<{mollie}prestashop>mollie_7c478959c218087ffc4ad5d96e7f66a6'] = 'Molli
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Paiements Mollie';
 $_MODULE['<{mollie}prestashop>mollie_7b00a9f51c5ed5221a71379f5022c0b8'] = 'Chère cliente, cher client, votre version PHP est trop ancienne. Veuillez mettre à niveau votre version PHP afin d\'utiliser ce module. Le module Mollie prend en charge les version PHP 5.6 et ultérieures.';
 $_MODULE['<{mollie}prestashop>mollie_46e2d06b80d816b2916f1f27492fbabd'] = 'Impossible d\'installer le module';
-$_MODULE['<{mollie}prestashop>mollie_da72870a79e82cbcbffe83612e5d7968'] = 'Il faudra rafraîchir une fois de plus pour charger le mode. Veuillez charger à nouveau le dossier ZIP du module Mollie. Si vous recevez ce message d\'erreur après avoir essayé de charger une nouvelle fois, nous vous conseillons de prendre contact avec le s';
+$_MODULE['<{mollie}prestashop>mollie_da72870a79e82cbcbffe83612e5d7968'] = 'Il faudra rafraîchir une fois de plus pour charger le mode. Veuillez charger à nouveau le dossier ZIP du module Mollie. Si vous recevez ce message d\'erreur après avoir essayé de charger une nouvelle fois, nous vous conseillons de prendre contact avec le support mollie, accompagné de ce screenshot, afin qu\'ils puissent vous guider dans lees differentes étapes : info@mollie.com';
 $_MODULE['<{mollie}prestashop>mollie_17ab49984d8dd1dff2aa7d542505ab54'] = 'Veuillez mettre à niveau le module Mollie.';
 $_MODULE['<{mollie}prestashop>mollie_b44ba42b352146bf2fe51a2c6264cb0c'] = 'Veuillez sélectionner la boutique exacte à configurer.';
 $_MODULE['<{mollie}prestashop>mollie_df6afbc66efff37559c2ad3512555fc9'] = 'Veuillez sélectionner le statut de la commande pour le champe \»Statut en attente de paiements \" dans l\'onglet \»Paramètres avancés\"';
@@ -397,7 +397,7 @@ $_MODULE['<{mollie}prestashop>languageservice_8184c64d6318b4a42428ae21d0fe2311']
 $_MODULE['<{mollie}prestashop>languageservice_31911306551723245e7417ae4520fecb'] = 'Giropay';
 $_MODULE['<{mollie}prestashop>languageservice_ce8e4a184e2e534c09d6bf6ae773ca4a'] = 'eps';
 $_MODULE['<{mollie}prestashop>languageservice_feb1a8ded87483b416427b8457bdc664'] = 'Pay later.';
-$_MODULE['<{mollie}prestashop>languageservice_a388a6fba0d4b58c334cd9416071cdb1'] = 'Slice it.';
+$_MODULE['<{mollie}prestashop>languageservice_a388a6fba0d4b58c334cd9416071cdb1'] = 'Payer en 3 fois sans frais.';
 $_MODULE['<{mollie}prestashop>languageservice_b3c616832a460725551d52f3d222df2c'] = 'MyBank';
 $_MODULE['<{mollie}prestashop>languageservice_386dcc0479b05fd2b1d40dbb8f649287'] = 'Frais à payer';
 $_MODULE['<{mollie}prestashop>languageservice_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Expédition';
