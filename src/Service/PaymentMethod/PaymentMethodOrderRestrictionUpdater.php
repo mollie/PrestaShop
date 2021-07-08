@@ -45,56 +45,56 @@ use PrestaShopException;
 
 class PaymentMethodOrderRestrictionUpdater implements PaymentMethodOrderRestrictionUpdaterInterface
 {
-	/**
-	 * @var PaymentMethodOrderTotalRestrictionProviderInterface
-	 */
-	private $paymentMethodOrderTotalRestrictionProvider;
+    /**
+     * @var PaymentMethodOrderTotalRestrictionProviderInterface
+     */
+    private $paymentMethodOrderTotalRestrictionProvider;
 
-	/**
-	 * @var EntityManagerInterface
-	 */
-	private $entityManager;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-	public function __construct(
-		PaymentMethodOrderTotalRestrictionProviderInterface $paymentMethodOrderTotalRestrictionProvider,
-		EntityManagerInterface $entityManager
-	) {
-		$this->paymentMethodOrderTotalRestrictionProvider = $paymentMethodOrderTotalRestrictionProvider;
-		$this->entityManager = $entityManager;
-	}
+    public function __construct(
+        PaymentMethodOrderTotalRestrictionProviderInterface $paymentMethodOrderTotalRestrictionProvider,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->paymentMethodOrderTotalRestrictionProvider = $paymentMethodOrderTotalRestrictionProvider;
+        $this->entityManager = $entityManager;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function updatePaymentMethodOrderTotalRestriction(MolPaymentMethod $paymentMethod, $currencyIso, $shopId)
-	{
-		$config = $this->paymentMethodOrderTotalRestrictionProvider->providePaymentMethodOrderTotalRestriction(
-			$paymentMethod->getPaymentMethodName(),
-			$currencyIso
-		);
+    /**
+     * {@inheritDoc}
+     */
+    public function updatePaymentMethodOrderTotalRestriction(MolPaymentMethod $paymentMethod, $currencyIso, $shopId)
+    {
+        $config = $this->paymentMethodOrderTotalRestrictionProvider->providePaymentMethodOrderTotalRestriction(
+            $paymentMethod->getPaymentMethodName(),
+            $currencyIso
+        );
 
-		if (!$config) {
-			return false;
-		}
-		$paymentMethodOrderRestriction = new MolPaymentMethodOrderTotalRestriction();
-		$paymentMethodOrderRestriction->id_payment_method = (int) $paymentMethod->id;
-		$paymentMethodOrderRestriction->currency_iso = strtoupper($currencyIso);
-		$paymentMethodOrderRestriction->minimum_order_total = 0.0;
-		$paymentMethodOrderRestriction->maximum_order_total = 0.0;
-		$paymentMethodOrderRestriction->id_shop = $shopId;
+        if (!$config) {
+            return false;
+        }
+        $paymentMethodOrderRestriction = new MolPaymentMethodOrderTotalRestriction();
+        $paymentMethodOrderRestriction->id_payment_method = (int) $paymentMethod->id;
+        $paymentMethodOrderRestriction->currency_iso = strtoupper($currencyIso);
+        $paymentMethodOrderRestriction->minimum_order_total = 0.0;
+        $paymentMethodOrderRestriction->maximum_order_total = 0.0;
+        $paymentMethodOrderRestriction->id_shop = $shopId;
 
-		if (isset($config->minimumAmount) && isset($config->minimumAmount->value)) {
-			$paymentMethodOrderRestriction->minimum_order_total = (float) $config->minimumAmount->value ?: 0.0;
-		}
+        if (isset($config->minimumAmount) && isset($config->minimumAmount->value)) {
+            $paymentMethodOrderRestriction->minimum_order_total = (float) $config->minimumAmount->value ?: 0.0;
+        }
 
-		if (isset($config->maximumAmount) && isset($config->maximumAmount->value)) {
-			$paymentMethodOrderRestriction->maximum_order_total = (float) $config->maximumAmount->value ?: 0.0;
-		}
+        if (isset($config->maximumAmount) && isset($config->maximumAmount->value)) {
+            $paymentMethodOrderRestriction->maximum_order_total = (float) $config->maximumAmount->value ?: 0.0;
+        }
 
-		try {
-			return $this->entityManager->flush($paymentMethodOrderRestriction);
-		} catch (PrestaShopException $e) {
-			throw new OrderTotalRestrictionException('Failed to save payment method order restriction', OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED);
-		}
-	}
+        try {
+            return $this->entityManager->flush($paymentMethodOrderRestriction);
+        } catch (PrestaShopException $e) {
+            throw new OrderTotalRestrictionException('Failed to save payment method order restriction', OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED);
+        }
+    }
 }

@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -21,32 +20,32 @@ use Order;
 
 class RestorePendingCartService
 {
-	private $repository;
+    private $repository;
 
-	public function __construct(PendingOrderCartRepository $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(PendingOrderCartRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	/**
-	 * @throws \PrestaShopException
-	 */
-	public function restore(Order $order)
-	{
-		/** @var MolPendingOrderCart|null $pendingOrder */
-		$pendingOrder = $this->repository->findOneBy([
-			'order_id' => $order->id,
-		]);
+    /**
+     * @throws \PrestaShopException
+     */
+    public function restore(Order $order)
+    {
+        /** @var MolPendingOrderCart|null $pendingOrder */
+        $pendingOrder = $this->repository->findOneBy([
+            'order_id' => $order->id,
+        ]);
 
-		if (!$pendingOrder) {
-			return;
-		}
+        if (!$pendingOrder) {
+            return;
+        }
 
-		$cart = new Cart($pendingOrder->cart_id);
+        $cart = new Cart($pendingOrder->cart_id);
 
-		$context = Context::getContext();
-		$context->cookie->__set('id_cart', $cart->id);
-		$context->cart = $cart;
-		$context->cookie->write();
-	}
+        $context = Context::getContext();
+        $context->cookie->__set('id_cart', $cart->id);
+        $context->cart = $cart;
+        $context->cookie->write();
+    }
 }

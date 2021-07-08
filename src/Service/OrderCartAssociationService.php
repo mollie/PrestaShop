@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -19,28 +18,28 @@ use Order;
 
 class OrderCartAssociationService
 {
-	private $cartDuplication;
+    private $cartDuplication;
 
-	public function __construct(CartDuplicationService $cartDuplication)
-	{
-		$this->cartDuplication = $cartDuplication;
-	}
+    public function __construct(CartDuplicationService $cartDuplication)
+    {
+        $this->cartDuplication = $cartDuplication;
+    }
 
-	/**
-	 * @return bool
-	 *
-	 * @throws \PrestaShopDatabaseException
-	 * @throws \PrestaShopException
-	 */
-	public function createPendingCart(Order $order)
-	{
-		// globally restores the cart.
-		$newCartId = $this->cartDuplication->restoreCart($order->id_cart, Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE);
+    /**
+     * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function createPendingCart(Order $order)
+    {
+        // globally restores the cart.
+        $newCartId = $this->cartDuplication->restoreCart($order->id_cart, Config::RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE);
 
-		$pendingOrderCart = new MolPendingOrderCart();
-		$pendingOrderCart->cart_id = $newCartId;
-		$pendingOrderCart->order_id = $order->id;
+        $pendingOrderCart = new MolPendingOrderCart();
+        $pendingOrderCart->cart_id = $newCartId;
+        $pendingOrderCart->order_id = $order->id;
 
-		return $pendingOrderCart->add();
-	}
+        return $pendingOrderCart->add();
+    }
 }

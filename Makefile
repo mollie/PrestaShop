@@ -1,6 +1,6 @@
-fl: fix-lint
+# target: fix-lint			- Launch php cs fixer
 fix-lint:
-	docker run --rm -it -w=/app -v ${PWD}:/app oskarstark/php-cs-fixer-ga:latest
+	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
 # All the commands required to build prestashop-17 version locally
 bps17: build-ps-17

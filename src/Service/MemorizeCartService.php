@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -23,40 +22,40 @@ use Order;
  */
 class MemorizeCartService
 {
-	private $orderCartAssociationService;
-	private $pendingOrderCartRepository;
+    private $orderCartAssociationService;
+    private $pendingOrderCartRepository;
 
-	public function __construct(
-		OrderCartAssociationService $orderCartAssociationService,
-		ReadOnlyRepositoryInterface $pendingOrderCartRepository
-	) {
-		$this->orderCartAssociationService = $orderCartAssociationService;
-		$this->pendingOrderCartRepository = $pendingOrderCartRepository;
-	}
+    public function __construct(
+        OrderCartAssociationService $orderCartAssociationService,
+        ReadOnlyRepositoryInterface $pendingOrderCartRepository
+    ) {
+        $this->orderCartAssociationService = $orderCartAssociationService;
+        $this->pendingOrderCartRepository = $pendingOrderCartRepository;
+    }
 
-	public function memorizeCart(Order $toBeProcessedOrder)
-	{
-		// create a pending cart so we can repeat the process once again
-		$this->orderCartAssociationService->createPendingCart($toBeProcessedOrder);
-	}
+    public function memorizeCart(Order $toBeProcessedOrder)
+    {
+        // create a pending cart so we can repeat the process once again
+        $this->orderCartAssociationService->createPendingCart($toBeProcessedOrder);
+    }
 
-	public function removeMemorizedCart(Order $successfulProcessedOrder)
-	{
-		/** @var MolPendingOrderCart|null $pendingOrderCart */
-		$pendingOrderCart = $this->pendingOrderCartRepository->findOneBy([
-			'order_id' => $successfulProcessedOrder->id,
-		]);
+    public function removeMemorizedCart(Order $successfulProcessedOrder)
+    {
+        /** @var MolPendingOrderCart|null $pendingOrderCart */
+        $pendingOrderCart = $this->pendingOrderCartRepository->findOneBy([
+            'order_id' => $successfulProcessedOrder->id,
+        ]);
 
-		if (null === $pendingOrderCart) {
-			return;
-		}
+        if (null === $pendingOrderCart) {
+            return;
+        }
 
-		$cart = new Cart($pendingOrderCart->cart_id);
+        $cart = new Cart($pendingOrderCart->cart_id);
 
-		if (!\Validate::isLoadedObject($cart)) {
-			return;
-		}
+        if (!\Validate::isLoadedObject($cart)) {
+            return;
+        }
 
-		$cart->delete();
-	}
+        $cart->delete();
+    }
 }

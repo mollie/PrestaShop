@@ -44,35 +44,35 @@ use MolPaymentMethodOrderTotalRestriction;
 
 class OrderTotalRestrictionService implements OrderTotalRestrictionServiceInterface
 {
-	/**
-	 * @var PaymentMethodOrderRestrictionUpdaterInterface
-	 */
-	private $paymentMethodOrderRestrictionUpdater;
+    /**
+     * @var PaymentMethodOrderRestrictionUpdaterInterface
+     */
+    private $paymentMethodOrderRestrictionUpdater;
 
-	public function __construct(
-		PaymentMethodOrderRestrictionUpdaterInterface $paymentMethodOrderRestrictionUpdater
-	) {
-		$this->paymentMethodOrderRestrictionUpdater = $paymentMethodOrderRestrictionUpdater;
-	}
+    public function __construct(
+        PaymentMethodOrderRestrictionUpdaterInterface $paymentMethodOrderRestrictionUpdater
+    ) {
+        $this->paymentMethodOrderRestrictionUpdater = $paymentMethodOrderRestrictionUpdater;
+    }
 
-	/**
-	 * @param string $currencyIsoCode
-	 * @param MolPaymentMethod $paymentMethod
-	 * @param int $shopId
-	 *
-	 * @throws OrderTotalRestrictionException
-	 */
-	public function updateOrderTotalRestrictions($currencyIsoCode, MolPaymentMethod $paymentMethod, $shopId)
-	{
-		$this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
-			$paymentMethod,
-			$currencyIsoCode,
-			$shopId
-		);
-	}
+    /**
+     * @param string $currencyIsoCode
+     * @param MolPaymentMethod $paymentMethod
+     * @param int $shopId
+     *
+     * @throws OrderTotalRestrictionException
+     */
+    public function updateOrderTotalRestrictions($currencyIsoCode, MolPaymentMethod $paymentMethod, $shopId)
+    {
+        $this->paymentMethodOrderRestrictionUpdater->updatePaymentMethodOrderTotalRestriction(
+            $paymentMethod,
+            $currencyIsoCode,
+            $shopId
+        );
+    }
 
-	public function deleteOrderTotalRestrictions($shopId)
-	{
-		Db::getInstance()->delete(MolPaymentMethodOrderTotalRestriction::$definition['table'], 'id_shop = ' . (int) $shopId);
-	}
+    public function deleteOrderTotalRestrictions($shopId)
+    {
+        Db::getInstance()->delete(MolPaymentMethodOrderTotalRestriction::$definition['table'], 'id_shop = ' . (int) $shopId);
+    }
 }

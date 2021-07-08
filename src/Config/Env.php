@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -19,17 +18,17 @@ namespace Mollie\Config;
  */
 class Env
 {
-	/**
-	 * @param string $key
-	 *
-	 * @return string
-	 */
-	public function get($key)
-	{
-		if (!empty($_ENV[$key])) {
-			return $_ENV[$key];
-		}
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    public function get($key)
+    {
+        if (!empty($_ENV[$key])) {
+            return $_ENV[$key];
+        }
 
-		return constant(Config::class . '::' . $key);
-	}
+        return constant(Config::class . '::' . $key);
+    }
 }

@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -19,35 +18,35 @@ use Mollie\Service\VoucherService;
 
 class VoucherValidator
 {
-	/**
-	 * @var ConfigurationAdapter
-	 */
-	private $configuration;
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configuration;
 
-	/**
-	 * @var VoucherService
-	 */
-	private $voucherService;
+    /**
+     * @var VoucherService
+     */
+    private $voucherService;
 
-	public function __construct(ConfigurationAdapter $configuration, VoucherService $voucherService)
-	{
-		$this->configuration = $configuration;
-		$this->voucherService = $voucherService;
-	}
+    public function __construct(ConfigurationAdapter $configuration, VoucherService $voucherService)
+    {
+        $this->configuration = $configuration;
+        $this->voucherService = $voucherService;
+    }
 
-	public function validate(array $products)
-	{
-		if (Config::MOLLIE_VOUCHER_CATEGORY_NULL !== $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY)) {
-			return true;
-		}
+    public function validate(array $products)
+    {
+        if (Config::MOLLIE_VOUCHER_CATEGORY_NULL !== $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY)) {
+            return true;
+        }
 
-		foreach ($products as $product) {
-			$voucherCategory = $this->voucherService->getProductCategory($product);
-			if ($voucherCategory) {
-				return true;
-			}
-		}
+        foreach ($products as $product) {
+            $voucherCategory = $this->voucherService->getProductCategory($product);
+            if ($voucherCategory) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 }
