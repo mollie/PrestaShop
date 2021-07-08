@@ -1,6 +1,15 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.3.1 ##
++ Fixed issue when returning to payment methods status of the backorder (not paid) was changed to backorder (paid) instead of canceled. https://github.com/mollie/PrestaShop/issues/349
++ Fixed issue with second chance email sending when form multi shop context
++ Fixed issue with payment country restrictions https://github.com/mollie/PrestaShop/issues/350
++ Fixed issue with mollie order not being created with manual creation in backoffice on PS 1.7.7.* https://github.com/mollie/PrestaShop/issues/361
++ Improved sentry to log all module issues
++ Removed Cartes Bancaires that was never used
+
+# Changelog #
 ## Changes in release 4.3.0 ##
 + Added PrestaShop multistore compatability - different module configuration settings for each shop configured with multistore. 
 + Added double check for Apple Pay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324

@@ -11,9 +11,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
-if (!include_once (dirname(__FILE__) . '/vendor/autoload.php')) {
-	return;
-}
+require_once __DIR__ . '/vendor/autoload.php';
 
 /**
  * Class Mollie.
@@ -58,7 +56,7 @@ class Mollie extends PaymentModule
 	{
 		$this->name = 'mollie';
 		$this->tab = 'payments_gateways';
-		$this->version = '4.3.0';
+		$this->version = '4.3.1';
 		$this->author = 'Mollie B.V.';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -76,7 +74,9 @@ class Mollie extends PaymentModule
 		$this->compile();
 		$this->loadEnv();
 		$this->setApiKey();
-	}
+
+        new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
+    }
 
 	private function loadEnv()
 	{
@@ -183,7 +183,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getMollieContainer($id = false)
 	{
-		if ($id) {
+        if ($id) {
 			return $this->moduleContainer->get($id);
 		}
 
@@ -223,7 +223,7 @@ class Mollie extends PaymentModule
 	 */
 	public function getContent()
 	{
-		if (Tools::getValue('ajax')) {
+        if (Tools::getValue('ajax')) {
 			header('Content-Type: application/json;charset=UTF-8');
 
 			if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
@@ -1061,7 +1061,9 @@ class Mollie extends PaymentModule
 		if ('admin' !== $this->context->controller->controller_type) {
 			return;
 		}
-		if ('AdminOrders' === $this->context->controller->controller_name &&
+
+		//NOTE as mollie-email-send is only in manual order creation in backoffice this should work only when mollie payment is chosen.
+		if (!empty(Tools::getValue('mollie-email-send')) &&
 			$params['order']->module === $this->name
 		) {
 			$cartId = $params['cart']->id;

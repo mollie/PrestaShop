@@ -166,7 +166,9 @@ class MolliePaymentMailService
 					'rand' => time(),
 					'key' => $key,
 				],
-				true
+				true,
+				null,
+				$cart->id_shop
 			),
 			'description' => $paymentApi->description,
 			'metadata' => [
@@ -181,7 +183,9 @@ class MolliePaymentMailService
 				'mollie',
 				'webhook',
 				[],
-				true
+				true,
+				null,
+				$cart->id_shop
 			);
 		}
 		$newPayment = $api->payments->create($paymentData);

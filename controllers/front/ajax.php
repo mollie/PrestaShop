@@ -40,8 +40,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 					);
 				}
 
-                $paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
-                $orderTotal = new DecimalNumber((string) $cart->getOrderTotal());
+				$paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
+				$orderTotal = new DecimalNumber((string) $cart->getOrderTotal());
 				$orderTotalWithFee = NumberUtility::plus($paymentFee->toPrecision(2), $orderTotal->toPrecision(2));
 
 				$orderTotalNoTax = new DecimalNumber((string) $cart->getOrderTotal(false));

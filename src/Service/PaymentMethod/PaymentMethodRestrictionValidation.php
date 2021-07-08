@@ -45,15 +45,15 @@ use Traversable;
 
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
-	/**
-	 * @var Traversable
-	 */
-	private $paymentRestrictionValidators;
+    /**
+     * @var PaymentMethodRestrictionValidatorInterface[]
+     */
+    private $paymentRestrictionValidators;
 
-	public function __construct(Traversable $paymentRestrictionValidators)
-	{
-		$this->paymentRestrictionValidators = $paymentRestrictionValidators;
-	}
+    public function __construct(array $paymentRestrictionValidators)
+    {
+        $this->paymentRestrictionValidators = $paymentRestrictionValidators;
+    }
 
 	/**
 	 * At least one payment restriction validator is present at all times (BasePaymentRestrictionValidation)
