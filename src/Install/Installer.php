@@ -520,7 +520,7 @@ class Installer implements InstallerInterface
     }
 
     private function isStatusCreated($statusName){
-        $status = new OrderState(Configuration::get($statusName));
+        $status = new OrderState((int)Configuration::get($statusName));
         if(Validate::isLoadedObject($status)) {
             return true;
         }
