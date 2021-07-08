@@ -46,121 +46,121 @@ use Tools;
 /** Validator to check all cases for every payment method */
 class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * @var LegacyContext
+     */
+    private $context;
 
-	/**
-	 * @var OrderTotalServiceInterface
-	 */
-	private $orderTotalService;
+    /**
+     * @var OrderTotalServiceInterface
+     */
+    private $orderTotalService;
 
-	/**
-	 * @var OrderTotalProviderInterface
-	 */
-	private $orderTotalProvider;
+    /**
+     * @var OrderTotalProviderInterface
+     */
+    private $orderTotalProvider;
 
-	/**
-	 * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
-	 */
-	private $methodOrderTotalRestrictionRepository;
+    /**
+     * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
+     */
+    private $methodOrderTotalRestrictionRepository;
 
-	public function __construct(
-		LegacyContext $context,
-		OrderTotalServiceInterface $orderTotalService,
-		OrderTotalProviderInterface $orderTotalProvider,
-		MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
-	) {
-		$this->context = $context;
-		$this->orderTotalService = $orderTotalService;
-		$this->orderTotalProvider = $orderTotalProvider;
-		$this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
-	}
+    public function __construct(
+        LegacyContext $context,
+        OrderTotalServiceInterface $orderTotalService,
+        OrderTotalProviderInterface $orderTotalProvider,
+        MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
+    ) {
+        $this->context = $context;
+        $this->orderTotalService = $orderTotalService;
+        $this->orderTotalProvider = $orderTotalProvider;
+        $this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function isValid(MolPaymentMethod $paymentMethod)
-	{
-		if (!$this->isPaymentMethodEnabled($paymentMethod)) {
-			return false;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
+    {
+        if (!$this->isPaymentMethodEnabled($paymentMethod)) {
+            return false;
+        }
 
-		if (!$this->isCurrencySupportedByPaymentMethod($paymentMethod)) {
-			return false;
-		}
+        if (!$this->isCurrencySupportedByPaymentMethod($paymentMethod)) {
+            return false;
+        }
 
-		if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
-			return false;
-		}
+        if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
+            return false;
+        }
 
-		if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
-			return false;
-		}
+        if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function supports(MolPaymentMethod $paymentMethod)
-	{
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
+    {
+        return true;
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isPaymentMethodEnabled($paymentMethod)
-	{
-		return (bool) $paymentMethod->enabled;
-	}
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isPaymentMethodEnabled($paymentMethod)
+    {
+        return (bool) $paymentMethod->enabled;
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isCurrencySupportedByPaymentMethod($paymentMethod)
-	{
-		$currencyCode = Tools::strtolower($this->context->getCurrencyIsoCode());
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isCurrencySupportedByPaymentMethod($paymentMethod)
+    {
+        $currencyCode = Tools::strtolower($this->context->getCurrencyIsoCode());
 
-		$orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
-			'id_payment_method' => (int) $paymentMethod->id,
-			'currency_iso' => strtoupper($currencyCode),
-		]);
-		if (!$orderRestriction) {
-			return false;
-		}
+        $orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
+            'id_payment_method' => (int) $paymentMethod->id,
+            'currency_iso' => strtoupper($currencyCode),
+        ]);
+        if (!$orderRestriction) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
-	{
-		$orderTotal = $this->orderTotalProvider->getOrderTotal();
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
+    {
+        $orderTotal = $this->orderTotalProvider->getOrderTotal();
 
-		return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
-	}
+        return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
-	{
-		$orderTotal = $this->orderTotalProvider->getOrderTotal();
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
+    {
+        $orderTotal = $this->orderTotalProvider->getOrderTotal();
 
-		return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
-	}
+        return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
+    }
 }

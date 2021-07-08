@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,8 +16,8 @@ use Mollie\Config\Config;
 
 class PaymentMethodUtility
 {
-	public static function getPaymentMethodName($method)
-	{
-		return array_key_exists($method, Config::$methods) ? Config::$methods[$method] : $method;
-	}
+    public static function getPaymentMethodName($method)
+    {
+        return array_key_exists($method, Config::$methods) ? Config::$methods[$method] : $method;
+    }
 }

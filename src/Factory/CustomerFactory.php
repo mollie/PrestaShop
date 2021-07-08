@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -18,15 +17,15 @@ use Mollie\Utility\ContextUtility;
 
 class CustomerFactory
 {
-	public function recreateFromRequest($customerId, $customerSecureKey, $context)
-	{
-		if ($customerId) {
-			$customer = new Customer($customerId);
-			if ($customer->secure_key === $customerSecureKey) {
-				return ContextUtility::setCustomerToContext($context, $customer);
-			}
-		}
+    public function recreateFromRequest($customerId, $customerSecureKey, $context)
+    {
+        if ($customerId) {
+            $customer = new Customer($customerId);
+            if ($customer->secure_key === $customerSecureKey) {
+                return ContextUtility::setCustomerToContext($context, $customer);
+            }
+        }
 
-		return $context;
-	}
+        return $context;
+    }
 }

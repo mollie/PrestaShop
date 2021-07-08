@@ -40,8 +40,8 @@ use MolPaymentMethodOrderTotalRestriction;
 
 class MolPaymentMethodOrderTotalRestrictionRepository extends AbstractRepository implements MolPaymentMethodOrderTotalRestrictionRepositoryInterface
 {
-	public function __construct()
-	{
-		parent::__construct(MolPaymentMethodOrderTotalRestriction::class);
-	}
+    public function __construct()
+    {
+        parent::__construct(MolPaymentMethodOrderTotalRestriction::class);
+    }
 }

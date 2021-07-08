@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,10 +16,10 @@ use Db;
 
 class OrderFeeRepository
 {
-	public function getOrderFeeIdByCartId($cartId)
-	{
-		$sql = 'Select id_mol_order_fee FROM `' . _DB_PREFIX_ . 'mol_order_fee` WHERE id_cart = "' . (int) $cartId . '"';
+    public function getOrderFeeIdByCartId($cartId)
+    {
+        $sql = 'Select id_mol_order_fee FROM `' . _DB_PREFIX_ . 'mol_order_fee` WHERE id_cart = "' . (int) $cartId . '"';
 
-		return Db::getInstance()->getValue($sql);
-	}
+        return Db::getInstance()->getValue($sql);
+    }
 }

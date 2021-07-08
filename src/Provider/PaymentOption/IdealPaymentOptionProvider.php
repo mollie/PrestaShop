@@ -49,115 +49,115 @@ use Tools;
 
 class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 {
-	/**
-	 * @var Mollie
-	 */
-	private $module;
+    /**
+     * @var Mollie
+     */
+    private $module;
 
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * @var LegacyContext
+     */
+    private $context;
 
-	/**
-	 * @var CreditCardLogoProvider
-	 */
-	private $creditCardLogoProvider;
+    /**
+     * @var CreditCardLogoProvider
+     */
+    private $creditCardLogoProvider;
 
-	/**
-	 * @var PaymentFeeProviderInterface
-	 */
-	private $paymentFeeProvider;
+    /**
+     * @var PaymentFeeProviderInterface
+     */
+    private $paymentFeeProvider;
 
-	/**
-	 * @var TemplateParserInterface
-	 */
-	private $templateParser;
+    /**
+     * @var TemplateParserInterface
+     */
+    private $templateParser;
 
-	/**
-	 * @var IdealDropdownInfoBlock
-	 */
-	private $idealDropdownInfoBlock;
+    /**
+     * @var IdealDropdownInfoBlock
+     */
+    private $idealDropdownInfoBlock;
 
-	/**
-	 * @var LanguageService
-	 */
-	private $languageService;
+    /**
+     * @var LanguageService
+     */
+    private $languageService;
 
-	public function __construct(
-		Mollie $module,
-		LegacyContext $context,
-		CreditCardLogoProvider $creditCardLogoProvider,
-		PaymentFeeProviderInterface $paymentFeeProvider,
-		TemplateParserInterface $templateParser,
-		IdealDropdownInfoBlock $idealDropdownInfoBlock,
-		LanguageService $languageService
-	) {
-		$this->module = $module;
-		$this->context = $context;
-		$this->creditCardLogoProvider = $creditCardLogoProvider;
-		$this->paymentFeeProvider = $paymentFeeProvider;
-		$this->templateParser = $templateParser;
-		$this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
-		$this->languageService = $languageService;
-	}
+    public function __construct(
+        Mollie $module,
+        LegacyContext $context,
+        CreditCardLogoProvider $creditCardLogoProvider,
+        PaymentFeeProviderInterface $paymentFeeProvider,
+        TemplateParserInterface $templateParser,
+        IdealDropdownInfoBlock $idealDropdownInfoBlock,
+        LanguageService $languageService
+    ) {
+        $this->module = $module;
+        $this->context = $context;
+        $this->creditCardLogoProvider = $creditCardLogoProvider;
+        $this->paymentFeeProvider = $paymentFeeProvider;
+        $this->templateParser = $templateParser;
+        $this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
+        $this->languageService = $languageService;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getPaymentOption(MolPaymentMethod $paymentMethod)
-	{
-		$paymentOption = new PaymentOption();
-		$paymentOption->setCallToActionText(
-			$paymentMethod->title ?:
-			$this->languageService->lang($paymentMethod->method_name)
-		);
-		$paymentOption->setModuleName($this->module->name);
-		$paymentOption->setAction($this->context->getLink()->getModuleLink(
-			'mollie',
-			'payment',
-			['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
-			true
-		));
-		$paymentOption->setInputs([
-			'token' => [
-				'name' => 'issuer',
-				'type' => 'hidden',
-				'value' => '',
-			],
-		]);
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentOption(MolPaymentMethod $paymentMethod)
+    {
+        $paymentOption = new PaymentOption();
+        $paymentOption->setCallToActionText(
+            $paymentMethod->title ?:
+            $this->languageService->lang($paymentMethod->method_name)
+        );
+        $paymentOption->setModuleName($this->module->name);
+        $paymentOption->setAction($this->context->getLink()->getModuleLink(
+            'mollie',
+            'payment',
+            ['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
+            true
+        ));
+        $paymentOption->setInputs([
+            'token' => [
+                'name' => 'issuer',
+                'type' => 'hidden',
+                'value' => '',
+            ],
+        ]);
 
-		$paymentOption->setAdditionalInformation($this->templateParser->parseTemplate(
-			$this->context->getSmarty(),
-			$this->idealDropdownInfoBlock,
-			$this->module->getLocalPath() . 'views/templates/hook/ideal_dropdown.tpl'
-		));
-		$paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
+        $paymentOption->setAdditionalInformation($this->templateParser->parseTemplate(
+            $this->context->getSmarty(),
+            $this->idealDropdownInfoBlock,
+            $this->module->getLocalPath() . 'views/templates/hook/ideal_dropdown.tpl'
+        ));
+        $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
-		$paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
+        $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
-		if ($paymentFee) {
-			$paymentOption->setInputs(
-				[
-					[
-						'name' => 'issuer',
-						'type' => 'hidden',
-						'value' => '',
-					],
-					[
-						'type' => 'hidden',
-						'name' => 'payment-fee-price',
-						'value' => $paymentFee,
-					],
-					[
-						'type' => 'hidden',
-						'name' => 'payment-fee-price-display',
-						'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
-					],
-				]
-			);
-		}
+        if ($paymentFee) {
+            $paymentOption->setInputs(
+                [
+                    [
+                        'name' => 'issuer',
+                        'type' => 'hidden',
+                        'value' => '',
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-fee-price',
+                        'value' => $paymentFee,
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-fee-price-display',
+                        'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
+                    ],
+                ]
+            );
+        }
 
-		return $paymentOption;
-	}
+        return $paymentOption;
+    }
 }

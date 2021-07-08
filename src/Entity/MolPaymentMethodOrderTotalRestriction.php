@@ -35,43 +35,43 @@
  */
 class MolPaymentMethodOrderTotalRestriction extends ObjectModel
 {
-	/**
-	 * @var int
-	 */
-	public $id_payment_method;
+    /**
+     * @var int
+     */
+    public $id_payment_method;
 
-	/**
-	 * @var string
-	 */
-	public $currency_iso;
+    /**
+     * @var string
+     */
+    public $currency_iso;
 
-	/**
-	 * @var float
-	 */
-	public $minimum_order_total;
+    /**
+     * @var float
+     */
+    public $minimum_order_total;
 
-	/**
-	 * @var float
-	 */
-	public $maximum_order_total;
+    /**
+     * @var float
+     */
+    public $maximum_order_total;
 
-	/**
-	 * @var int
-	 */
-	public $id_shop;
+    /**
+     * @var int
+     */
+    public $id_shop;
 
-	/**
-	 * @var array
-	 */
-	public static $definition = [
-		'table' => 'mol_payment_method_order_total_restriction',
-		'primary' => 'id_payment_method_order_total_restriction',
-		'fields' => [
-			'id_payment_method' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-			'currency_iso' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
-			'minimum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
-			'maximum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
-			'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
-		],
-	];
+    /**
+     * @var array
+     */
+    public static $definition = [
+        'table' => 'mol_payment_method_order_total_restriction',
+        'primary' => 'id_payment_method_order_total_restriction',
+        'fields' => [
+            'id_payment_method' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'currency_iso' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'minimum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'maximum_order_total' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
+        ],
+    ];
 }

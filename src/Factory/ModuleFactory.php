@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,18 +16,18 @@ use Module;
 
 class ModuleFactory
 {
-	public function getModuleVersion()
-	{
-		return Module::getInstanceByName('mollie')->version;
-	}
+    public function getModuleVersion()
+    {
+        return Module::getInstanceByName('mollie')->version;
+    }
 
-	public function getLocalPath()
-	{
-		return Module::getInstanceByName('mollie')->getLocalPath();
-	}
+    public function getLocalPath()
+    {
+        return Module::getInstanceByName('mollie')->getLocalPath();
+    }
 
-	public function getPathUri()
-	{
-		return Module::getInstanceByName('mollie')->getPathUri();
-	}
+    public function getPathUri()
+    {
+        return Module::getInstanceByName('mollie')->getPathUri();
+    }
 }

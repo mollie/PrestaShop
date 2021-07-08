@@ -41,35 +41,35 @@ use Mollie\Service\ApiService;
 
 class PaymentMethodOrderTotalRestrictionProvider implements PaymentMethodOrderTotalRestrictionProviderInterface
 {
-	/**
-	 * @var Mollie
-	 */
-	private $mollie;
+    /**
+     * @var Mollie
+     */
+    private $mollie;
 
-	/**
-	 * @var ApiService
-	 */
-	private $apiService;
+    /**
+     * @var ApiService
+     */
+    private $apiService;
 
-	public function __construct(Mollie $mollie, ApiService $apiService)
-	{
-		$this->mollie = $mollie;
-		$this->apiService = $apiService;
-	}
+    public function __construct(Mollie $mollie, ApiService $apiService)
+    {
+        $this->mollie = $mollie;
+        $this->apiService = $apiService;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function providePaymentMethodOrderTotalRestriction($paymentMethodName, $currencyIso)
-	{
-		if (!$this->mollie->api) {
-			return null;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function providePaymentMethodOrderTotalRestriction($paymentMethodName, $currencyIso)
+    {
+        if (!$this->mollie->api) {
+            return null;
+        }
 
-		return $this->apiService->getPaymentMethodOrderTotalRestriction(
-			$this->mollie->api,
-			$paymentMethodName,
-			$currencyIso
-		);
-	}
+        return $this->apiService->getPaymentMethodOrderTotalRestriction(
+            $this->mollie->api,
+            $paymentMethodName,
+            $currencyIso
+        );
+    }
 }

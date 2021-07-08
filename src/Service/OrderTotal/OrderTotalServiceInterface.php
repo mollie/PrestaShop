@@ -40,19 +40,19 @@ use MolPaymentMethod;
 
 interface OrderTotalServiceInterface
 {
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 * @param float $orderTotal
-	 *
-	 * @return bool
-	 */
-	public function isOrderTotalLowerThanMinimumAllowed(MolPaymentMethod $paymentMethod, $orderTotal);
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     * @param float $orderTotal
+     *
+     * @return bool
+     */
+    public function isOrderTotalLowerThanMinimumAllowed(MolPaymentMethod $paymentMethod, $orderTotal);
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 * @param float $orderTotal
-	 *
-	 * @return bool
-	 */
-	public function isOrderTotalHigherThanMaximumAllowed(MolPaymentMethod $paymentMethod, $orderTotal);
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     * @param float $orderTotal
+     *
+     * @return bool
+     */
+    public function isOrderTotalHigherThanMaximumAllowed(MolPaymentMethod $paymentMethod, $orderTotal);
 }

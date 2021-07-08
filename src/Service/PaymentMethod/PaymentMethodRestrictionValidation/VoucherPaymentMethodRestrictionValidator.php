@@ -43,40 +43,40 @@ use MolPaymentMethod;
 
 class VoucherPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * @var LegacyContext
+     */
+    private $context;
 
-	/**
-	 * @var VoucherValidator
-	 */
-	private $voucherValidator;
+    /**
+     * @var VoucherValidator
+     */
+    private $voucherValidator;
 
-	public function __construct(LegacyContext $context, VoucherValidator $voucherValidator)
-	{
-		$this->context = $context;
-		$this->voucherValidator = $voucherValidator;
-	}
+    public function __construct(LegacyContext $context, VoucherValidator $voucherValidator)
+    {
+        $this->context = $context;
+        $this->voucherValidator = $voucherValidator;
+    }
 
-	/**
-	 * TODO extract voucher validator internals into this class + tests.
-	 * {@inheritDoc}
-	 */
-	public function isValid(MolPaymentMethod $paymentMethod)
-	{
-		if (!$this->voucherValidator->validate($this->context->getCart()->getProducts())) {
-			return false;
-		}
+    /**
+     * TODO extract voucher validator internals into this class + tests.
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
+    {
+        if (!$this->voucherValidator->validate($this->context->getCart()->getProducts())) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function supports(MolPaymentMethod $paymentMethod)
-	{
-		return $paymentMethod->getPaymentMethodName() == Config::MOLLIE_VOUCHER_METHOD_ID;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
+    {
+        return $paymentMethod->getPaymentMethodName() == Config::MOLLIE_VOUCHER_METHOD_ID;
+    }
 }
