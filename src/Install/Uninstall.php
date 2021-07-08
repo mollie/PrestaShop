@@ -55,8 +55,6 @@ class Uninstall implements UninstallerInterface
         $this->segment->setMessage('Mollie uninstall');
         $this->segment->track();
 
-        $this->orderStateRepository->deleteStatuses();
-
         $this->deleteConfig();
 
         $this->uninstallTabs();
@@ -85,13 +83,6 @@ class Uninstall implements UninstallerInterface
             Config::MOLLIE_CSS,
             Config::MOLLIE_DEBUG_LOG,
             Config::MOLLIE_DISPLAY_ERRORS,
-            Config::MOLLIE_STATUS_OPEN,
-            Config::MOLLIE_STATUS_PAID,
-            Config::MOLLIE_STATUS_CANCELED,
-            Config::MOLLIE_STATUS_EXPIRED,
-            Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            Config::MOLLIE_STATUS_REFUNDED,
-            Config::MOLLIE_STATUS_SHIPPING,
             Config::MOLLIE_MAIL_WHEN_SHIPPING,
             Config::MOLLIE_MAIL_WHEN_OPEN,
             Config::MOLLIE_MAIL_WHEN_PAID,
@@ -106,11 +97,7 @@ class Uninstall implements UninstallerInterface
             Config::MOLLIE_TRACKING_URLS,
             Config::MOLLIE_METHODS_LAST_CHECK,
             Config::METHODS_CONFIG,
-            Config::MOLLIE_STATUS_PARTIALLY_SHIPPED,
-            Config::MOLLIE_STATUS_COMPLETED,
-            Config::MOLLIE_STATUS_ORDER_COMPLETED,
             Config::MOLLIE_MAIL_WHEN_COMPLETED,
-            Config::MOLLIE_STATUS_AWAITING,
             Config::MOLLIE_API_KEY_TEST,
         ];
 

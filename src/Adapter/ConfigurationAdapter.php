@@ -21,7 +21,7 @@ class ConfigurationAdapter
         return \Configuration::get($id);
     }
 
-    public static function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
+    public function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
     {
         if ($idShop === null) {
             $shops = Shop::getShops(true);
