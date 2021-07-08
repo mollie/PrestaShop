@@ -28,12 +28,10 @@ $(document).ready(function () {
         var $molliePaymentCheckboxGroup = $('#mollie-email-send-group');
         var $orderStatusSelector = $('select[name="cart_summary[order_state]"],select[name="id_order_state"]');
         if (isMolliePayment) {
-            $orderStatusSelector.closest('div.form-group').toggleClass(displayHiddenClass, true);
             $('#send_email_to_customer').toggleClass(displayHiddenClass, true);
             $molliePaymentCheckboxGroup.toggleClass(displayHiddenClass, false);
             $orderStatusSelector.val(molliePendingStatus);
         } else {
-            $orderStatusSelector.closest('div.form-group').toggleClass(displayHiddenClass, false);
             $('#send_email_to_customer').toggleClass(displayHiddenClass, false);
             $molliePaymentCheckboxGroup.toggleClass(displayHiddenClass, true);
         }
