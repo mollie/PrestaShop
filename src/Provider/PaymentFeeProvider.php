@@ -41,18 +41,18 @@ use MolPaymentMethod;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-	/**
-	 * @var OrderTotalProviderInterface
-	 */
-	private $orderTotalProvider;
+    /**
+     * @var OrderTotalProviderInterface
+     */
+    private $orderTotalProvider;
 
-	public function __construct(OrderTotalProviderInterface $orderTotalProvider)
-	{
-		$this->orderTotalProvider = $orderTotalProvider;
-	}
+    public function __construct(OrderTotalProviderInterface $orderTotalProvider)
+    {
+        $this->orderTotalProvider = $orderTotalProvider;
+    }
 
-	public function getPaymentFee(MolPaymentMethod $paymentMethod)
-	{
-		return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
-	}
+    public function getPaymentFee(MolPaymentMethod $paymentMethod)
+    {
+        return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+    }
 }

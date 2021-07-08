@@ -42,65 +42,65 @@ use MolPaymentMethodOrderTotalRestriction;
 
 class OrderTotalRestrictionProvider implements OrderTotalRestrictionProviderInterface
 {
-	/**
-	 * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
-	 */
-	private $methodOrderTotalRestriction;
+    /**
+     * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
+     */
+    private $methodOrderTotalRestriction;
 
-	public function __construct(
-		MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestriction
-	) {
-		$this->methodOrderTotalRestriction = $methodOrderTotalRestriction;
-	}
+    public function __construct(
+        MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestriction
+    ) {
+        $this->methodOrderTotalRestriction = $methodOrderTotalRestriction;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getOrderTotalMinimumRestriction(MolPaymentMethod $paymentMethod, $currencyIso)
-	{
-		$paymentMethodOrderTotalRestriction = $this->getPaymentMethodOrderTotalRestriction(
-			$paymentMethod->id,
-			$currencyIso
-		);
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderTotalMinimumRestriction(MolPaymentMethod $paymentMethod, $currencyIso)
+    {
+        $paymentMethodOrderTotalRestriction = $this->getPaymentMethodOrderTotalRestriction(
+            $paymentMethod->id,
+            $currencyIso
+        );
 
-		if (!$paymentMethodOrderTotalRestriction) {
-			return 0.0;
-		}
+        if (!$paymentMethodOrderTotalRestriction) {
+            return 0.0;
+        }
 
-		return (float) $paymentMethodOrderTotalRestriction->minimum_order_total;
-	}
+        return (float) $paymentMethodOrderTotalRestriction->minimum_order_total;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getOrderTotalMaximumRestriction(MolPaymentMethod $paymentMethod, $currencyIso)
-	{
-		$paymentMethodOrderTotalRestriction = $this->getPaymentMethodOrderTotalRestriction(
-			$paymentMethod->id,
-			$currencyIso
-		);
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderTotalMaximumRestriction(MolPaymentMethod $paymentMethod, $currencyIso)
+    {
+        $paymentMethodOrderTotalRestriction = $this->getPaymentMethodOrderTotalRestriction(
+            $paymentMethod->id,
+            $currencyIso
+        );
 
-		if (!$paymentMethodOrderTotalRestriction) {
-			return 0.0;
-		}
+        if (!$paymentMethodOrderTotalRestriction) {
+            return 0.0;
+        }
 
-		return (float) $paymentMethodOrderTotalRestriction->maximum_order_total;
-	}
+        return (float) $paymentMethodOrderTotalRestriction->maximum_order_total;
+    }
 
-	/**
-	 * @param int $id_payment_method
-	 * @param string $currencyIso
-	 *
-	 * @return MolPaymentMethodOrderTotalRestriction|null
-	 */
-	private function getPaymentMethodOrderTotalRestriction($id_payment_method, $currencyIso)
-	{
-		/** @var MolPaymentMethodOrderTotalRestriction|null $paymentMethodOrderTotalRestriction */
-		$paymentMethodOrderTotalRestriction = $this->methodOrderTotalRestriction->findOneBy([
-			'id_payment_method' => (int) $id_payment_method,
-			'currency_iso' => strtoupper($currencyIso),
-		]);
+    /**
+     * @param int $id_payment_method
+     * @param string $currencyIso
+     *
+     * @return MolPaymentMethodOrderTotalRestriction|null
+     */
+    private function getPaymentMethodOrderTotalRestriction($id_payment_method, $currencyIso)
+    {
+        /** @var MolPaymentMethodOrderTotalRestriction|null $paymentMethodOrderTotalRestriction */
+        $paymentMethodOrderTotalRestriction = $this->methodOrderTotalRestriction->findOneBy([
+            'id_payment_method' => (int) $id_payment_method,
+            'currency_iso' => strtoupper($currencyIso),
+        ]);
 
-		return $paymentMethodOrderTotalRestriction;
-	}
+        return $paymentMethodOrderTotalRestriction;
+    }
 }

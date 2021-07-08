@@ -40,5 +40,5 @@ use MolPaymentMethod;
 
 interface PaymentFeeProviderInterface
 {
-	public function getPaymentFee(MolPaymentMethod $paymentMethod);
+    public function getPaymentFee(MolPaymentMethod $paymentMethod);
 }

@@ -5,7 +5,6 @@
 * @copyright   Mollie B.V.
 * @link        https://github.com/mollie/PrestaShop
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-* @codingStandardsIgnoreStart
 *}
 <div class="form-group col-xl-12 hidden d-none" id="mollie-email-send-group">
     <div class="col-lg-3"></div>

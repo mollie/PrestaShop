@@ -4,13 +4,13 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  */
+
 if (!defined('_PS_VERSION_')) {
-	exit;
+    exit;
 }
 
 /**
@@ -20,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_0_9($module)
 {
-	$module->registerHook('actionAdminStatusesListingFieldsModifier');
+    $module->registerHook('actionAdminStatusesListingFieldsModifier');
 
-	return true;
+    return true;
 }

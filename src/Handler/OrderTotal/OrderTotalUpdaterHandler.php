@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Handler\OrderTotal;
 
@@ -13,64 +23,64 @@ use PrestaShopCollection;
 
 class OrderTotalUpdaterHandler implements OrderTotalUpdaterHandlerInterface
 {
-	/**
-	 * @var OrderTotalVerificationInterface
-	 */
-	private $canOrderTotalBeUpdated;
+    /**
+     * @var OrderTotalVerificationInterface
+     */
+    private $canOrderTotalBeUpdated;
 
-	/**
-	 * @var OrderTotalRestrictionServiceInterface
-	 */
-	private $orderTotalRestrictionService;
+    /**
+     * @var OrderTotalRestrictionServiceInterface
+     */
+    private $orderTotalRestrictionService;
 
-	/**
-	 * @var PaymentMethodRepositoryInterface
-	 */
-	private $paymentMethodRepository;
+    /**
+     * @var PaymentMethodRepositoryInterface
+     */
+    private $paymentMethodRepository;
 
-	/**
-	 * @var CurrencyRepositoryInterface
-	 */
-	private $currencyRepository;
+    /**
+     * @var CurrencyRepositoryInterface
+     */
+    private $currencyRepository;
 
-	public function __construct(
-		OrderTotalVerificationInterface $canOrderTotalBeUpdated,
-		OrderTotalRestrictionServiceInterface $orderTotalRestrictionService,
-		PaymentMethodRepositoryInterface $paymentMethodRepository,
-		CurrencyRepositoryInterface $currencyRepository
-	) {
-		$this->canOrderTotalBeUpdated = $canOrderTotalBeUpdated;
-		$this->orderTotalRestrictionService = $orderTotalRestrictionService;
-		$this->paymentMethodRepository = $paymentMethodRepository;
-		$this->currencyRepository = $currencyRepository;
-	}
+    public function __construct(
+        OrderTotalVerificationInterface $canOrderTotalBeUpdated,
+        OrderTotalRestrictionServiceInterface $orderTotalRestrictionService,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        CurrencyRepositoryInterface $currencyRepository
+    ) {
+        $this->canOrderTotalBeUpdated = $canOrderTotalBeUpdated;
+        $this->orderTotalRestrictionService = $orderTotalRestrictionService;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->currencyRepository = $currencyRepository;
+    }
 
-	/**
-	 * @return bool
-	 *
-	 * @throws OrderTotalRestrictionException
-	 */
-	public function handleOrderTotalUpdate()
-	{
-		if (!$this->canOrderTotalBeUpdated->verify()) {
-			return false;
-		}
-		$shopId = \Context::getContext()->shop->id;
-		$this->orderTotalRestrictionService->deleteOrderTotalRestrictions($shopId);
+    /**
+     * @return bool
+     *
+     * @throws OrderTotalRestrictionException
+     */
+    public function handleOrderTotalUpdate()
+    {
+        if (!$this->canOrderTotalBeUpdated->verify()) {
+            return false;
+        }
+        $shopId = \Context::getContext()->shop->id;
+        $this->orderTotalRestrictionService->deleteOrderTotalRestrictions($shopId);
 
-		/** @var PrestaShopCollection $paymentMethods */
-		$paymentMethods = $this->paymentMethodRepository->findAllBy(['id_shop' => $shopId]);
+        /** @var PrestaShopCollection $paymentMethods */
+        $paymentMethods = $this->paymentMethodRepository->findAllBy(['id_shop' => $shopId]);
 
-		$currencies = $this->currencyRepository->findAll();
+        $currencies = $this->currencyRepository->findAll();
 
-		/** @var Currency $currency */
-		foreach ($currencies as $currency) {
-			/** @var MolPaymentMethod $paymentMethod */
-			foreach ($paymentMethods as $paymentMethod) {
-				$this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency->iso_code, $paymentMethod, $shopId);
-			}
-		}
+        /** @var Currency $currency */
+        foreach ($currencies as $currency) {
+            /** @var MolPaymentMethod $paymentMethod */
+            foreach ($paymentMethods as $paymentMethod) {
+                $this->orderTotalRestrictionService->updateOrderTotalRestrictions($currency->iso_code, $paymentMethod, $shopId);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

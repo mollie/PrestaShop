@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Builder\Content;
 
@@ -10,85 +20,86 @@ use Mollie\Service\UpgradeNoticeService;
 
 class UpdateMessageInfoBlock implements TemplateBuilderInterface
 {
-	/**
-	 * @var Mollie
-	 */
-	private $module;
+    /**
+     * @var Mollie
+     */
+    private $module;
 
-	/**
-	 * @var UpgradeNoticeService
-	 */
-	private $upgradeNoticeService;
+    /**
+     * @var UpgradeNoticeService
+     */
+    private $upgradeNoticeService;
 
-	/**
-	 * @var ConfigurationAdapter
-	 */
-	private $configurationAdapter;
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configurationAdapter;
 
-	/**
-	 * @var mixed
-	 */
-	private $addons;
-	/**
-	 * @var UpdateMessageProviderInterface
-	 */
-	private $updateMessageProvider;
+    /**
+     * @var mixed
+     */
+    private $addons;
 
-	public function __construct(
-		Mollie $module,
-		UpgradeNoticeService $upgradeNoticeService,
-		ConfigurationAdapter $configurationAdapter,
-		UpdateMessageProviderInterface $updateMessageProvider
-	) {
-		$this->module = $module;
-		$this->upgradeNoticeService = $upgradeNoticeService;
-		$this->configurationAdapter = $configurationAdapter;
-		$this->updateMessageProvider = $updateMessageProvider;
-	}
+    /**
+     * @var UpdateMessageProviderInterface
+     */
+    private $updateMessageProvider;
 
-	/**
-	 * @param mixed $addons
-	 *
-	 * @return $this
-	 */
-	public function setAddons($addons)
-	{
-		$this->addons = $addons;
+    public function __construct(
+        Mollie $module,
+        UpgradeNoticeService $upgradeNoticeService,
+        ConfigurationAdapter $configurationAdapter,
+        UpdateMessageProviderInterface $updateMessageProvider
+    ) {
+        $this->module = $module;
+        $this->upgradeNoticeService = $upgradeNoticeService;
+        $this->configurationAdapter = $configurationAdapter;
+        $this->updateMessageProvider = $updateMessageProvider;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $addons
+     *
+     * @return $this
+     */
+    public function setAddons($addons)
+    {
+        $this->addons = $addons;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function buildParams()
-	{
-		$updateMessage = '';
+        return $this;
+    }
 
-		if ($this->canBeUpdatedFromGithub()) {
-			$updateMessage = defined('_TB_VERSION_')
-				? $this->updateMessageProvider->getUpdateMessageFromOutsideUrl('https://github.com/mollie/thirtybees', $this->addons)
-				: $this->updateMessageProvider->getUpdateMessageFromOutsideUrl('https://github.com/mollie/PrestaShop', $this->addons);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function buildParams()
+    {
+        $updateMessage = '';
 
-		return [
-			'updateMessage' => $updateMessage,
-		];
-	}
+        if ($this->canBeUpdatedFromGithub()) {
+            $updateMessage = defined('_TB_VERSION_')
+                ? $this->updateMessageProvider->getUpdateMessageFromOutsideUrl('https://github.com/mollie/thirtybees', $this->addons)
+                : $this->updateMessageProvider->getUpdateMessageFromOutsideUrl('https://github.com/mollie/PrestaShop', $this->addons);
+        }
 
-	private function canBeUpdatedFromGithub()
-	{
-		if ($this->addons) {
-			return false;
-		}
+        return [
+            'updateMessage' => $updateMessage,
+        ];
+    }
 
-		if ($this->upgradeNoticeService->isUpgradeNoticeClosed(
-			Mollie\Utility\TimeUtility::getNowTs(),
-			(int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE)
-		)) {
-			return false;
-		}
+    private function canBeUpdatedFromGithub()
+    {
+        if ($this->addons) {
+            return false;
+        }
 
-		return true;
-	}
+        if ($this->upgradeNoticeService->isUpgradeNoticeClosed(
+            Mollie\Utility\TimeUtility::getNowTs(),
+            (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE)
+        )) {
+            return false;
+        }
+
+        return true;
+    }
 }

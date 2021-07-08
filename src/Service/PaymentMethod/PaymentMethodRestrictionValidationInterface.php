@@ -40,10 +40,10 @@ use MolPaymentMethod;
 
 interface PaymentMethodRestrictionValidationInterface
 {
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	public function isPaymentMethodValid(MolPaymentMethod $paymentMethod);
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod);
 }
