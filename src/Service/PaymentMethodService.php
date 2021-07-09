@@ -439,6 +439,7 @@ class PaymentMethodService
             foreach ($mollieMethods as $mollieMethod) {
                 if ($method['id_method'] === $mollieMethod->id) {
                     $valid = true;
+                    $methods[$key]['method_name'] = $mollieMethod->description;
                     continue;
                 }
             }
