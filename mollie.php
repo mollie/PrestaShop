@@ -1137,19 +1137,6 @@ class Mollie extends PaymentModule
         }
     }
 
-    public function hookActionObjectCurrencyUpdateAfter()
-    {
-        /** @var \Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface $orderTotalHandler */
-        $orderTotalHandler = $this->getMollieContainer(\Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface::class);
-        try {
-            $orderTotalHandler->handleOrderTotalUpdate();
-        } catch (\Mollie\Exception\OrderTotalRestrictionException $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::ERROR);
-        }
-    }
-
     public function updateApiKey($shopId = null)
     {
         $this->setApiKey($shopId);

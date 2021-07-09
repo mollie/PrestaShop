@@ -87,7 +87,6 @@ services:
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
       - '@Mollie\Service\ApiKeyService'
-      - '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
 
   Mollie\Service\ShipmentService:
     class: Mollie\Service\ShipmentService
@@ -244,19 +243,6 @@ services:
     class: Mollie\Service\Content\SmartyTemplateParser
 
   Mollie\Service\Content\TemplateParserInterface: '@Mollie\Service\Content\SmartyTemplateParser'
-
-  Mollie\Service\OrderTotal\OrderTotalService:
-    class: Mollie\Service\OrderTotal\OrderTotalService
-    arguments:
-      - '@=service("mollie.adapter.context")'
-      - '@Mollie\Provider\OrderTotalRestrictionProvider'
-
-  Mollie\Service\OrderTotal\OrderTotalRestrictionService:
-    class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
-    arguments:
-      - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
-
-  Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
 
   Mollie\Service\EntityManager\ObjectModelManager:
     class: Mollie\Service\EntityManager\ObjectModelManager

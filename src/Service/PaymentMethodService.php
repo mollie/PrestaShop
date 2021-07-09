@@ -452,9 +452,14 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods()
     {
-        $addressId = Context::getContext()->cart->id_address_invoice;
+        $context = Context::getContext();
+        $addressId = $context->cart->id_address_invoice;
         $address = new Address($addressId);
         $country = new Country($address->id_country);
+
+        $currency = $context->currency;
+        $language = $context->language;
+        $cartAmount = $context->cart->getOrderTotal();
 
         /** @var BaseCollection|MethodCollection $methods */
         $methods = $this->module->api->methods->allActive(
@@ -462,7 +467,12 @@ class PaymentMethodService
                 'resource' => 'orders',
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
+                'locale' => $language->locale,
                 'billingCountry' => $country->iso_code,
+                'amount' => [
+                    'value' => $cartAmount,
+                    'currency' => $currency->iso_code
+                ]
             ]
         );
 

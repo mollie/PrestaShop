@@ -9,8 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -20,14 +18,11 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_4_2_3($module)
+function upgrade_module_4_3_2()
 {
-    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-    $orderTotalRestrictionService = $module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
+    $query = 'DROP TABLE ' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction';
 
-    try {
-        $orderTotalRestrictionService->handleOrderTotalUpdate();
-    } catch (Exception $e) {
+    if (!Db::getInstance()->execute($query)) {
         return false;
     }
 
