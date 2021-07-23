@@ -406,7 +406,7 @@ class TransactionService
             $orderDetail = new OrderDetail($detail['id_order_detail']);
             if (
                 Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock <= 0)
             ) {
                 return true;
             }
