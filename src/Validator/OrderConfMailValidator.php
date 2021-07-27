@@ -60,6 +60,10 @@ class OrderConfMailValidator implements MailValidatorInterface
             return true;
         }
 
+        if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED) === $orderStateId) {
+            return true;
+        }
+
         return false;
     }
 }
