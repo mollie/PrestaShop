@@ -181,7 +181,7 @@ class Installer implements InstallerInterface
      */
     private function createPartialRefundOrderState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIAL_REFUND)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIAL_REFUND)) {
             return true;
         }
         $orderState = new OrderState();
@@ -209,7 +209,7 @@ class Installer implements InstallerInterface
      */
     public function createPartialShippedOrderState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED)) {
             return true;
         }
         $orderState = new OrderState();
@@ -262,7 +262,7 @@ class Installer implements InstallerInterface
      */
     public function createAwaitingMollieOrderState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_AWAITING)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_AWAITING)) {
             return true;
         }
         $orderState = new OrderState();
@@ -291,7 +291,7 @@ class Installer implements InstallerInterface
      */
     public function createOrderCompletedOrderState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_ORDER_COMPLETED)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_ORDER_COMPLETED)) {
             return true;
         }
         $orderState = new OrderState();
@@ -321,7 +321,7 @@ class Installer implements InstallerInterface
      */
     public function klarnaPaymentAuthorizedState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED)) {
             return true;
         }
         $orderState = new OrderState();
@@ -355,7 +355,7 @@ class Installer implements InstallerInterface
      */
     public function klarnaPaymentShippedState()
     {
-        if($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_SHIPPED)) {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_SHIPPED)) {
             return true;
         }
         $orderState = new OrderState();
@@ -519,9 +519,10 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
     }
 
-    private function isStatusCreated($statusName){
-        $status = new OrderState((int)Configuration::get($statusName));
-        if(Validate::isLoadedObject($status)) {
+    private function isStatusCreated($statusName)
+    {
+        $status = new OrderState((int) Configuration::get($statusName));
+        if (Validate::isLoadedObject($status)) {
             return true;
         }
 

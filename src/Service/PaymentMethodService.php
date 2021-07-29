@@ -468,12 +468,12 @@ class PaymentMethodService
                 'resource' => 'orders',
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
-                'locale' => $language->locale,
+                'locale' => $language->language_code,
                 'billingCountry' => $country->iso_code,
                 'amount' => [
-                    'value' => $cartAmount,
-                    'currency' => $currency->iso_code
-                ]
+                    'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
+                    'currency' => $currency->iso_code,
+                ],
             ]
         );
 

@@ -25,11 +25,5 @@ services:
     arguments:
       - '@mollie'
 
-  Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider:
-    class: Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider
-    arguments:
-      - '@mollie'
-      - '@Mollie\Service\ApiService'
-
   Mollie\Provider\EnvironmentVersionProvider:
     class: Mollie\Provider\EnvironmentVersionProvider

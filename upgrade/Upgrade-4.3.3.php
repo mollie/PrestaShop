@@ -8,7 +8,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -18,7 +17,7 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_4_3_2()
+function upgrade_module_4_3_3()
 {
     $query = 'DROP TABLE ' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction';
 
