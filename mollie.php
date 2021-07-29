@@ -86,8 +86,6 @@ class Mollie extends PaymentModule
             $dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
             /* @phpstan-ignore-next-line */
             $dotenv->load();
-
-            return;
         }
     }
 
