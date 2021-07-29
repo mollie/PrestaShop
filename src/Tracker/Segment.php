@@ -123,6 +123,7 @@ class Segment implements TrackerInterface
             'properties' => array_merge([
                 'module' => 'mollie',
                 'version' => $module->version,
+                'psVersion' => _PS_VERSION_,
             ], $this->options),
         ]);
 
