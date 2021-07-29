@@ -439,6 +439,7 @@ class PaymentMethodService
             foreach ($mollieMethods as $mollieMethod) {
                 if ($method['id_method'] === $mollieMethod->id) {
                     $valid = true;
+                    $methods[$key]['method_name'] = $mollieMethod->description;
                     continue;
                 }
             }
@@ -452,9 +453,14 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods()
     {
-        $addressId = Context::getContext()->cart->id_address_invoice;
+        $context = Context::getContext();
+        $addressId = $context->cart->id_address_invoice;
         $address = new Address($addressId);
         $country = new Country($address->id_country);
+
+        $currency = $context->currency;
+        $language = $context->language;
+        $cartAmount = $context->cart->getOrderTotal();
 
         /** @var BaseCollection|MethodCollection $methods */
         $methods = $this->module->api->methods->allActive(
@@ -462,7 +468,12 @@ class PaymentMethodService
                 'resource' => 'orders',
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
+                'locale' => $language->language_code,
                 'billingCountry' => $country->iso_code,
+                'amount' => [
+                    'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
+                    'currency' => $currency->iso_code,
+                ],
             ]
         );
 

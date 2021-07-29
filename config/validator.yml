@@ -15,16 +15,6 @@ services:
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Service\VoucherService'
 
-  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator:
-    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator
-    arguments:
-      - '@=service("mollie.adapter.context")'
-      - '@Mollie\Service\OrderTotal\OrderTotalService'
-      - '@Mollie\Provider\OrderTotalProvider'
-      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
-    tags:
-      - { name: mollie.paymentmethodrestriction, priority: 10}
-
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator
     arguments:
@@ -50,12 +40,17 @@ services:
     tags:
       - { name: mollie.paymentmethodrestriction, priority: 9}
 
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator
+    tags:
+      - { name: mollie.paymentmethodrestriction, priority: 10}
+
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation
     arguments:
       0:
-        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator'
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator'
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator'
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator'
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator'
 

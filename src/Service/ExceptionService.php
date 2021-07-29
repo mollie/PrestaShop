@@ -14,7 +14,6 @@ namespace Mollie\Service;
 use Exception;
 use Mollie;
 use Mollie\Exception\OrderCreationException;
-use Mollie\Exception\OrderTotalRestrictionException;
 use Mollie\Exception\ShipmentCannotBeSentException;
 
 class ExceptionService
@@ -54,11 +53,6 @@ class ExceptionService
                 ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER => $this->module->l(
                     'Shipment information cannot be sent. Order reference (%s) is a regular payment.'
                 ),
-            ],
-            OrderTotalRestrictionException::class => [
-                OrderTotalRestrictionException::NO_AVAILABLE_PAYMENT_METHODS_FOUND => $this->module->l('Failed to refresh order total restriction values: None available payment methods were found', self::SHORT_CLASS_NAME),
-                OrderTotalRestrictionException::NO_AVAILABLE_CURRENCIES_FOUND => $this->module->l('Failed to refresh order total restriction values: None available currencies were found', self::SHORT_CLASS_NAME),
-                OrderTotalRestrictionException::ORDER_TOTAL_RESTRICTION_SAVE_FAILED => $this->module->l('Failed to save payment method order restriction', self::SHORT_CLASS_NAME),
             ],
         ];
     }

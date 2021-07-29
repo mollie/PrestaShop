@@ -82,27 +82,6 @@ class ApiService
     }
 
     /**
-     * @param MollieApiClient $api
-     * @param string $paymentId
-     * @param string $currencyIso
-     *
-     * @return Method|null
-     */
-    public function getPaymentMethodOrderTotalRestriction(MollieApiClient $api, $paymentId, $currencyIso)
-    {
-        try {
-            /** @var Method $paymentMethodConfig */
-            $paymentMethodConfig = $api->methods->get($paymentId, [
-                'currency' => $currencyIso,
-            ]);
-        } catch (Exception $e) {
-            return null;
-        }
-
-        return $paymentMethodConfig;
-    }
-
-    /**
      * Get payment methods to show on the configuration page.
      *
      * @param MollieApiClient $api

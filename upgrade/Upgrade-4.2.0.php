@@ -10,8 +10,6 @@
  */
 
 use Mollie\Config\Config;
-use Mollie\Exception\OrderTotalRestrictionException;
-use Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface;
 use Mollie\Install\Installer;
 use Mollie\Service\OrderStateImageService;
 
@@ -62,14 +60,6 @@ function upgrade_module_4_2_0($module)
             `minimum_order_total` decimal(20,6),
             `maximum_order_total` decimal(20,6)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;');
-
-    /** @var OrderTotalUpdaterHandlerInterface $orderTotalRestrictionService */
-    $orderTotalRestrictionService = $module->getMollieContainer(OrderTotalUpdaterHandlerInterface::class);
-    try {
-        $orderTotalRestrictionService->handleOrderTotalUpdate();
-    } catch (OrderTotalRestrictionException $e) {
-        //Do nothing as most likely mollie is not configured.
-    }
 
     /**
      * @var OrderStateImageService $imageService

@@ -9,7 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
@@ -48,7 +47,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.3.2';
+        $this->version = '4.3.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -87,8 +86,6 @@ class Mollie extends PaymentModule
             $dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
             /* @phpstan-ignore-next-line */
             $dotenv->load();
-
-            return;
         }
     }
 
@@ -695,109 +692,6 @@ class Mollie extends PaymentModule
         return '';
     }
 
-    //TODO Pretty sure this is not used anywhere
-
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    public function displayAjaxMollieMethodConfig()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
-        /** @var \Mollie\Service\ApiService $apiService */
-        $apiService = $this->getMollieContainer(\Mollie\Service\ApiService::class);
-        /** @var \Mollie\Service\CountryService $countryService */
-        $countryService = $this->getMollieContainer(\Mollie\Service\CountryService::class);
-        try {
-            $methodsForConfig = $apiService->getMethodsForConfig($this->api, $this->getPathUri());
-        } catch (\Mollie\Api\Exceptions\ApiException $e) {
-            return [
-                'success' => false,
-                'methods' => null,
-                'message' => $e->getMessage(),
-            ];
-        } catch (PrestaShopException $e) {
-            return [
-                'success' => false,
-                'methods' => null,
-                'message' => $e->getMessage(),
-            ];
-        }
-        Configuration::updateValue(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK, Mollie\Utility\TimeUtility::getCurrentTimeStamp());
-        if (!is_array($methodsForConfig)) {
-            return [
-                'success' => false,
-                'methods' => null,
-                'message' => $this->l('No payment methods found'),
-            ];
-        }
-
-        $dbMethods = @json_decode(Configuration::get(Mollie\Config\Config::METHODS_CONFIG), true);
-
-        // Auto update images and issuers
-        $shouldSave = false;
-        if (is_array($dbMethods)) {
-            foreach ($dbMethods as $index => &$dbMethod) {
-                $found = false;
-                foreach ($methodsForConfig as $methodForConfig) {
-                    if ($dbMethod['id'] === $methodForConfig['id']) {
-                        $found = true;
-                        foreach (['issuers', 'image', 'name', 'available'] as $prop) {
-                            if (isset($methodForConfig[$prop])) {
-                                $dbMethod[$prop] = $methodForConfig[$prop];
-                                $shouldSave = true;
-                            }
-                        }
-                        break;
-                    }
-                }
-                if (!$found) {
-                    unset($dbMethods[$index]);
-                    $shouldSave = true;
-                }
-            }
-        } else {
-            $shouldSave = true;
-            $dbMethods = [];
-            foreach ($methodsForConfig as $index => $method) {
-                $dbMethods[] = array_merge(
-                    $method,
-                    [
-                        'position' => $index,
-                    ]
-                );
-            }
-        }
-
-        if ($shouldSave && !empty($dbMethods)) {
-            Configuration::updateValue(Mollie\Config\Config::METHODS_CONFIG, json_encode($dbMethods));
-        }
-
-        return [
-            'success' => true,
-            'methods' => $methodsForConfig,
-            'countries' => $countryService->getActiveCountriesList(),
-        ];
-    }
-
-    //TODO Pretty sure this is not used anywhere
-
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    public function displayAjaxMollieCarrierConfig()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
-        /** @var \Mollie\Service\CarrierService $carrierService */
-        $carrierService = $this->getMollieContainer(\Mollie\Service\CarrierService::class);
-        $dbConfig = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_TRACKING_URLS), true);
-
-        return ['success' => true, 'carriers' => $carrierService->carrierConfig($dbConfig)];
-    }
-
     /**
      * @return array
      *
@@ -1134,19 +1028,6 @@ class Mollie extends PaymentModule
 
         if ('AdminStatuses' === Tools::getValue('controller') && isset($params['fields']['id_order_return_state'])) {
             $params['where'] = null;
-        }
-    }
-
-    public function hookActionObjectCurrencyUpdateAfter()
-    {
-        /** @var \Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface $orderTotalHandler */
-        $orderTotalHandler = $this->getMollieContainer(\Mollie\Handler\OrderTotal\OrderTotalUpdaterHandlerInterface::class);
-        try {
-            $orderTotalHandler->handleOrderTotalUpdate();
-        } catch (\Mollie\Exception\OrderTotalRestrictionException $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::ERROR);
         }
     }
 
