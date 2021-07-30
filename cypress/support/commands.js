@@ -18,7 +18,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-<<<<<<< HEAD
 //import 'cypress-file-upload';
 //import 'cypress-iframe';
 
