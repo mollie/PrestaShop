@@ -25,10 +25,6 @@
 //compareSnapshotCommand({
 //  capture: 'fullPage'
 //});
-
-
-=======
->>>>>>> 4.3.3
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -41,10 +37,7 @@
 //
 //
 // -- This is a parent command --
-<<<<<<< HEAD
-=======
 // Cypress.Commands.add("login", (email, password) => { ... })
->>>>>>> 4.3.3
 
  Cypress.Commands.add("login_mollie17_test", () => {
    Cypress.env()
