@@ -36,131 +36,38 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\LegacyContext;
-use Mollie\Provider\OrderTotalProviderInterface;
-use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepositoryInterface;
-use Mollie\Service\OrderTotal\OrderTotalServiceInterface;
 use MolPaymentMethod;
-use Tools;
 
 /** Validator to check all cases for every payment method */
 class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
+    {
+        if (!$this->isPaymentMethodEnabled($paymentMethod)) {
+            return false;
+        }
 
-	/**
-	 * @var OrderTotalServiceInterface
-	 */
-	private $orderTotalService;
+        return true;
+    }
 
-	/**
-	 * @var OrderTotalProviderInterface
-	 */
-	private $orderTotalProvider;
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
+    {
+        return true;
+    }
 
-	/**
-	 * @var MolPaymentMethodOrderTotalRestrictionRepositoryInterface
-	 */
-	private $methodOrderTotalRestrictionRepository;
-
-	public function __construct(
-		LegacyContext $context,
-		OrderTotalServiceInterface $orderTotalService,
-		OrderTotalProviderInterface $orderTotalProvider,
-		MolPaymentMethodOrderTotalRestrictionRepositoryInterface $methodOrderTotalRestrictionRepository
-	) {
-		$this->context = $context;
-		$this->orderTotalService = $orderTotalService;
-		$this->orderTotalProvider = $orderTotalProvider;
-		$this->methodOrderTotalRestrictionRepository = $methodOrderTotalRestrictionRepository;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function isValid(MolPaymentMethod $paymentMethod)
-	{
-		if (!$this->isPaymentMethodEnabled($paymentMethod)) {
-			return false;
-		}
-
-		if (!$this->isCurrencySupportedByPaymentMethod($paymentMethod)) {
-			return false;
-		}
-
-		if ($this->isOrderTotalLowerThanMinimumAllowed($paymentMethod)) {
-			return false;
-		}
-
-		if ($this->isOrderTotalHigherThanMaximumAllowed($paymentMethod)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function supports(MolPaymentMethod $paymentMethod)
-	{
-		return true;
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isPaymentMethodEnabled($paymentMethod)
-	{
-		return (bool) $paymentMethod->enabled;
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isCurrencySupportedByPaymentMethod($paymentMethod)
-	{
-		$currencyCode = Tools::strtolower($this->context->getCurrencyIsoCode());
-
-		$orderRestriction = $this->methodOrderTotalRestrictionRepository->findOneBy([
-			'id_payment_method' => (int) $paymentMethod->id,
-			'currency_iso' => strtoupper($currencyCode),
-		]);
-		if (!$orderRestriction) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isOrderTotalLowerThanMinimumAllowed($paymentMethod)
-	{
-		$orderTotal = $this->orderTotalProvider->getOrderTotal();
-
-		return $this->orderTotalService->isOrderTotalLowerThanMinimumAllowed($paymentMethod, $orderTotal);
-	}
-
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isOrderTotalHigherThanMaximumAllowed($paymentMethod)
-	{
-		$orderTotal = $this->orderTotalProvider->getOrderTotal();
-
-		return $this->orderTotalService->isOrderTotalHigherThanMaximumAllowed($paymentMethod, $orderTotal);
-	}
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isPaymentMethodEnabled($paymentMethod)
+    {
+        return (bool) $paymentMethod->enabled;
+    }
 }

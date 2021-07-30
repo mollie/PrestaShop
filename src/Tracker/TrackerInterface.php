@@ -38,18 +38,18 @@ namespace Mollie\Tracker;
 
 interface TrackerInterface
 {
-	/**
-	 * @return void
-	 */
-	public function track();
+    /**
+     * @return void
+     */
+    public function track();
 
-	/**
-	 * @param string $message
-	 */
-	public function setMessage($message);
+    /**
+     * @param string $message
+     */
+    public function setMessage($message);
 
-	/**
-	 * @param array $options
-	 */
-	public function setOptions($options);
+    /**
+     * @param array $options
+     */
+    public function setOptions($options);
 }

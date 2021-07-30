@@ -44,65 +44,65 @@ use MolPaymentMethod;
 /** Validator to check specific cases by environment version for every payment method */
 class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * @var LegacyContext
+     */
+    private $context;
 
-	/**
-	 * @var EnvironmentVersionProviderInterface
-	 */
-	private $prestashopVersionProvider;
+    /**
+     * @var EnvironmentVersionProviderInterface
+     */
+    private $prestashopVersionProvider;
 
-	/**
-	 * @var MethodCountryRepository
-	 */
-	private $methodCountryRepository;
+    /**
+     * @var MethodCountryRepository
+     */
+    private $methodCountryRepository;
 
-	public function __construct(
-		LegacyContext $context,
-		EnvironmentVersionProviderInterface $prestashopVersionProvider,
-		MethodCountryRepository $methodCountryRepository
-	) {
-		$this->context = $context;
-		$this->prestashopVersionProvider = $prestashopVersionProvider;
-		$this->methodCountryRepository = $methodCountryRepository;
-	}
+    public function __construct(
+        LegacyContext $context,
+        EnvironmentVersionProviderInterface $prestashopVersionProvider,
+        MethodCountryRepository $methodCountryRepository
+    ) {
+        $this->context = $context;
+        $this->prestashopVersionProvider = $prestashopVersionProvider;
+        $this->methodCountryRepository = $methodCountryRepository;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function isValid(MolPaymentMethod $paymentMethod)
-	{
-		if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
-			if (!$this->isCountryAvailable($paymentMethod)) {
-				return false;
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
+    {
+        if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
+            if (!$this->isCountryAvailable($paymentMethod)) {
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function supports(MolPaymentMethod $paymentMethod)
-	{
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
+    {
+        return true;
+    }
 
-	private function isCountryAvailable(MolPaymentMethod $paymentMethod)
-	{
-		if ($paymentMethod->is_countries_applicable) {
-			return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(
-				$paymentMethod->getPaymentMethodName(),
-				$this->context->getCountryId()
-			);
-		}
+    private function isCountryAvailable(MolPaymentMethod $paymentMethod)
+    {
+        if ($paymentMethod->is_countries_applicable) {
+            return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(
+                $paymentMethod->id,
+                $this->context->getCountryId()
+            );
+        }
 
-		return !$this->methodCountryRepository->checkIfCountryIsExcluded(
-			$paymentMethod->getPaymentMethodName(),
-			$this->context->getCountryId()
-		);
-	}
+        return !$this->methodCountryRepository->checkIfCountryIsExcluded(
+            $paymentMethod->id,
+            $this->context->getCountryId()
+        );
+    }
 }

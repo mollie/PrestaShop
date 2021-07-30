@@ -1,4 +1,5 @@
 services:
   Mollie\Presenter\OrderListActionBuilder:
+    class: Mollie\Presenter\OrderListActionBuilder
     arguments:
       - '@mollie'

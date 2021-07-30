@@ -43,61 +43,65 @@ use MolPaymentMethod;
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-	/**
-	 * @var LegacyContext
-	 */
-	private $context;
+    /**
+     * @var LegacyContext
+     */
+    private $context;
 
-	/**
-	 * @var ConfigurationAdapter
-	 */
-	private $configurationAdapter;
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configurationAdapter;
 
-	public function __construct(
-		LegacyContext $context,
-		ConfigurationAdapter $configurationAdapter
-	) {
-		$this->context = $context;
-		$this->configurationAdapter = $configurationAdapter;
-	}
+    public function __construct(
+        LegacyContext $context,
+        ConfigurationAdapter $configurationAdapter
+    ) {
+        $this->context = $context;
+        $this->configurationAdapter = $configurationAdapter;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function isValid(MolPaymentMethod $paymentMethod)
-	{
-		if (!$this->isSslEnabledEverywhere()) {
-			return false;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
+    {
+        if (!$this->isSslEnabledEverywhere()) {
+            return false;
+        }
 
-		if (!$this->isPaymentMethodInCookie()) {
-			return false;
-		}
+        if (!$this->isPaymentMethodInCookie()) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function supports(MolPaymentMethod $paymentMethod)
-	{
-		return $paymentMethod->getPaymentMethodName() == Config::MOLLIE_METHOD_ID_APPLE_PAY;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
+    {
+        return $paymentMethod->getPaymentMethodName() == Config::MOLLIE_METHOD_ID_APPLE_PAY;
+    }
 
-	/**
-	 * @return bool
-	 */
-	private function isSslEnabledEverywhere()
-	{
-		return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
-	}
+    /**
+     * @return bool
+     */
+    private function isSslEnabledEverywhere()
+    {
+        return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
+    }
 
-	/**
-	 * @return bool
-	 */
-	private function isPaymentMethodInCookie()
-	{
-		return (int) $_COOKIE['isApplePayMethod'] !== 0;
-	}
+    /**
+     * @return bool
+     */
+    private function isPaymentMethodInCookie()
+    {
+        if (!isset($_COOKIE['isApplePayMethod'])) {
+            return false;
+        }
+
+        return (int) $_COOKIE['isApplePayMethod'] !== 0;
+    }
 }

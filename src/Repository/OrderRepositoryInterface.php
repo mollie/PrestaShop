@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,12 +16,12 @@ use Order;
 
 interface OrderRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-	/**
-	 * @param int $id_cart
-	 *
-	 * @return Order|null
-	 *
-	 * @throws \PrestaShopException
-	 */
-	public function findOneByCartId($id_cart);
+    /**
+     * @param int $id_cart
+     *
+     * @return Order|null
+     *
+     * @throws \PrestaShopException
+     */
+    public function findOneByCartId($id_cart);
 }

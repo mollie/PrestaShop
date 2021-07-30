@@ -1,12 +1,15 @@
 services:
   Mollie\Provider\CreditCardLogoProvider:
+    class: Mollie\Provider\CreditCardLogoProvider
     arguments:
       - '@=service("mollie.factory.module_factory").getLocalPath()'
       - '@=service("mollie.factory.module_factory").getPathUri()'
 
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
+    class: Mollie\Service\PaymentMethod\PaymentMethodSortProvider
 
   Mollie\Provider\PhoneNumberProvider:
+    class: Mollie\Provider\PhoneNumberProvider
 
   Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider:
     class: Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider
@@ -21,23 +24,6 @@ services:
     class: Mollie\Provider\UpdateMessageProvider
     arguments:
       - '@mollie'
-
-  Mollie\Provider\OrderTotalRestrictionProvider:
-    class: Mollie\Provider\OrderTotalRestrictionProvider
-    arguments:
-      - '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
-
-  Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater:
-    class: Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater
-    arguments:
-      - '@Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider'
-      - '@Mollie\Service\EntityManager\ObjectModelManager'
-
-  Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider:
-    class: Mollie\Provider\PaymentMethod\PaymentMethodOrderTotalRestrictionProvider
-    arguments:
-      - '@mollie'
-      - '@Mollie\Service\ApiService'
 
   Mollie\Provider\EnvironmentVersionProvider:
     class: Mollie\Provider\EnvironmentVersionProvider

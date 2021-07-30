@@ -1,32 +1,43 @@
 services:
 #  @deprecated - dont call repositories directly, use interface instead
   Mollie\Repository\PaymentMethodRepository:
+    class: Mollie\Repository\PaymentMethodRepository
 
   Mollie\Repository\PaymentMethodRepositoryInterface: '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Repository\OrderFeeRepository:
+    class: Mollie\Repository\OrderFeeRepository
 
   Mollie\Repository\CountryRepository:
+    class: Mollie\Repository\CountryRepository
 
   Mollie\Repository\OrderShipmentRepository:
+    class: Mollie\Repository\OrderShipmentRepository
 
   Mollie\Repository\MethodCountryRepository:
+    class: Mollie\Repository\MethodCountryRepository
 
   Mollie\Repository\MolCarrierInformationRepository:
+    class: Mollie\Repository\MolCarrierInformationRepository
 
   Mollie\Repository\ModuleRepository:
+    class: Mollie\Repository\ModuleRepository
 
   Mollie\Repository\PendingOrderCartRepository:
+    class: Mollie\Repository\PendingOrderCartRepository
     arguments:
       - 'MolPendingOrderCart'
 
   Mollie\Repository\MolCustomerRepository:
+    class: Mollie\Repository\MolCustomerRepository
     arguments:
       - 'MolCustomer'
 
   Mollie\Repository\AttributeRepository:
+    class: Mollie\Repository\AttributeRepository
 
   Mollie\Repository\OrderStateRepository:
+    class: Mollie\Repository\OrderStateRepository
 
   Mollie\Repository\OrderRepository:
     class: Mollie\Repository\OrderRepository
@@ -39,11 +50,6 @@ services:
 
   Mollie\Repository\PendingOrderCartRuleRepository:
     class: Mollie\Repository\PendingOrderCartRuleRepository
-
-  Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository:
-    class: Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository
-
-  Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepositoryInterface: '@Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository'
 
   Mollie\Repository\CurrencyRepository:
     class: Mollie\Repository\CurrencyRepository

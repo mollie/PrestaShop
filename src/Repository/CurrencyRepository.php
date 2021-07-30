@@ -40,8 +40,8 @@ use Currency;
 
 class CurrencyRepository extends AbstractRepository implements CurrencyRepositoryInterface
 {
-	public function __construct()
-	{
-		parent::__construct(Currency::class);
-	}
+    public function __construct()
+    {
+        parent::__construct(Currency::class);
+    }
 }

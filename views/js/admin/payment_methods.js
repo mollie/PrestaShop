@@ -1,12 +1,22 @@
-/*
- * NOTICE OF LICENSE
+/**
+ * Mollie       https://www.mollie.nl
  *
- * @author    INVERTUS, UAB www.invertus.eu <support@invertus.eu>
- * @copyright Copyright (c) permanent, INVERTUS, UAB
- * @license   Addons PrestaShop license limitation
- * @see       /LICENSE
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
  *
- *  International Registered Trademark & Property of INVERTUS, UAB
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ */
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  */
 
 $(document).ready(function() {
@@ -35,4 +45,6 @@ $(document).ready(function() {
     $('.payment-method').attr("draggable", false); }) .on('blur', function(e) {
       $('.payment-method').attr("draggable", true);
     });
+
+  $('input[name="activateModule"]').parent('div').hide();
 })
