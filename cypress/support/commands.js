@@ -18,6 +18,18 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+<<<<<<< HEAD
+//import 'cypress-file-upload';
+//import 'cypress-iframe';
+
+//const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+//compareSnapshotCommand({
+//  capture: 'fullPage'
+//});
+
+
+=======
+>>>>>>> 4.3.3
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -30,7 +42,10 @@
 //
 //
 // -- This is a parent command --
+<<<<<<< HEAD
+=======
 // Cypress.Commands.add("login", (email, password) => { ... })
+>>>>>>> 4.3.3
 
  Cypress.Commands.add("login_mollie17_test", () => {
    Cypress.env()
@@ -162,5 +177,5 @@ Cypress.Commands.add("mollie_1752_test_faster_login_DE_Payments_Api", () => {
 // Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
-// -- This will overwrite an existing command --
+// -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })

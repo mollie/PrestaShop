@@ -1,0 +1,85 @@
+name: Regular midnight test runs
+on:
+  schedule:
+    #- cron:  '*/5 * * * *'
+     - cron:  '0 0 * * 5'
+jobs:
+  cypress-e2e-ps16:
+    runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         # Set N number of parallel jobs you want to run tests on.
+#         # Use higher number if you have slow tests to split them on more parallel jobs.
+#         # Remember to update ci_node_index below to 0..N-1
+#         ci_node_total: [7]
+#         # set N-1 indexes for parallel jobs
+#         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+#         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: NPM install
+        run: npm ci
+
+      - name: Run Cypress
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "https://github.com/mollie/PrestaShop/blob/e2e-tests/cypress/integration/ps16/**"
+        #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
+
+      - name: Archive videos and screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos_screenshots
+          retention-days: 1
+          path: |
+            cypress/videos
+            cypress/screenshots
+
+  cypress-e2e-ps17:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: NPM install
+        run: npm ci
+
+      - name: Run Cypress
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "https://github.com/mollie/PrestaShop/blob/e2e-tests/cypress/integration/ps17/**"
+
+      - name: Archive videos and screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos_screenshots
+          retention-days: 1
+          path: |
+            cypress/videos
+            cypress/screenshots
+
+  cypress-e2e-ps177:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: NPM install
+        run: npm ci
+
+      - name: Run Cypress
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "https://github.com/mollie/PrestaShop/blob/e2e-tests/cypress/integration/ps177/**"
+
+      - name: Archive videos and screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos_screenshots
+          retention-days: 1
+          path: |
+            cypress/videos
+            cypress/screenshots
