@@ -253,9 +253,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $transaction,
                     $paymentReturnService::DONE
                 );
-
-                $order->total_paid_real = $transaction->amount->value;
-                $order->update();
                 break;
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:

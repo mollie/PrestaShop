@@ -167,8 +167,8 @@ services:
     class: Mollie\Service\TransactionService
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\OrderStatusService'
+      - '@Mollie\Service\OrderFeeService'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService

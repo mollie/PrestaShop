@@ -35,8 +35,6 @@ class OrderConfMailValidator implements MailValidatorInterface
     public function validate($orderStateId)
     {
         switch ($this->configurationAdapter->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
-            case Config::ORDER_CONF_MAIL_SEND_ON_CREATION:
-                return true;
             case Config::ORDER_CONF_MAIL_SEND_ON_PAID:
                 return $this->validateOrderState($orderStateId);
             case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:

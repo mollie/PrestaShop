@@ -13,7 +13,9 @@
 namespace Mollie\Service;
 
 use Mollie\Utility\PaymentFeeUtility;
+use MolOrderFee;
 use MolPaymentMethod;
+use PrestaShopException;
 use Tools;
 
 class OrderFeeService
@@ -33,5 +35,19 @@ class OrderFeeService
         }
 
         return $methods;
+    }
+
+    public function createOrderFee($cartId, $orderFee)
+    {
+        $orderFeeObj = new MolOrderFee();
+        $orderFeeObj->id_cart = (int) $cartId;
+        $orderFeeObj->order_fee = $orderFee;
+        try {
+            $orderFeeObj->add();
+        } catch (\Exception $e) {
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+            throw new PrestaShopException('Can\'t save Order fee');
+        }
     }
 }

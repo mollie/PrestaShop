@@ -40,13 +40,6 @@ class NewOrderMailValidatorTest extends UnitTestCase
     public function getCanNewOrderMailBeSentData()
     {
         return [
-            'Send on created' => [
-                'orderStateId' => 17,
-                'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
-                'paidOrderState' => 55,
-                'outOfStockOrderState' => 60,
-                'expected' => true,
-            ],
             'Send on paid because orderStateId is same as paidOrderState and send email on paid is enabled' => [
                 'orderStateId' => 55,
                 'sendNewOrder' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,

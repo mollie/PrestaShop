@@ -46,10 +46,24 @@ class TransactionService
      */
     private $module;
 
+    /**
+     * @var OrderStatusService
+     */
+    private $orderStatusService;
+
+    /**
+     * @var OrderFeeService
+     */
+    private $feeService;
+
     public function __construct(
-        Mollie $module
+        Mollie $module,
+        OrderStatusService $orderStatusService,
+        OrderFeeService $feeService
     ) {
         $this->module = $module;
+        $this->orderStatusService = $orderStatusService;
+        $this->feeService = $feeService;
     }
 
     /**
@@ -97,9 +111,6 @@ class TransactionService
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
-        /** @var OrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-
         $cart = new Cart($apiPayment->metadata->cart_id);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
@@ -121,9 +132,9 @@ class TransactionService
                     if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     ) {
-                        $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
+                        $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
                     } else {
-                        $orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
+                        $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
                 } else {
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
@@ -133,20 +144,6 @@ class TransactionService
                         $payment->description = $order->reference;
                         $payment->update();
                     }
-
-                    $paymentStatus = (int) Config::getStatuses()[$apiPayment->status];
-
-                    if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
-                        $this->updateTransaction($orderId, $transaction);
-                        if ($this->isOrderBackOrder($orderId)) {
-                            $paymentStatus = Config::STATUS_PAID_ON_BACKORDER;
-                        }
-                    }
-
-                    /** @var OrderStatusService $orderStatusService */
-                    $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-                    $orderStatusService->setOrderStatus($orderId, $paymentStatus);
-
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
@@ -187,10 +184,7 @@ class TransactionService
                         $paymentStatus = Config::STATUS_PAID_ON_BACKORDER;
                     }
                 }
-
-                /** @var OrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-                $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
+                $this->orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
 
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
@@ -233,20 +227,36 @@ class TransactionService
 
         $this->module->validateOrder(
             (int) $cartId,
-            (int) $orderStatus,
+            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $originalAmount,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
         );
-//        $paymentFee = (new Number($apiPayment->amount->value))->minus((new Number((string)$originalAmount)))->toPrecision(2);
-//        if ($paymentFee === 0) {
-//            return Order::getOrderByCartId((int) $cartId);
-//        }
-//
-//        $order = new Order(Order::getOrderByCartId((int) $cartId));
-//        $order->total_paid_tax_excl = (float) (new Number($order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
-//        $order->total_paid_tax_incl = (float) $apiPayment->amount->value;
-//        $order->total_paid = (float) $apiPayment->amount->value;
-//        $order->update();
+
+        $paymentFee = (new Number($apiPayment->amount->value))->minus((new Number((string)$originalAmount)))->toPrecision(2);
+        $orderId = Order::getOrderByCartId((int) $cartId);
+        if ($paymentFee === 0) {
+            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
+            return $orderId;
+        }
+        $this->updateTransaction($orderId, $apiPayment);
+
+        if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
+            $this->updateTransaction($orderId, $apiPayment);
+            if ($this->isOrderBackOrder($orderId)) {
+                $orderStatus = Config::STATUS_PAID_ON_BACKORDER;
+            }
+        }
+
+        $this->feeService->createOrderFee($cartId, $paymentFee);
+
+        $order = new Order($orderId);
+        $order->total_paid_tax_excl = (float) (new Number($order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number($order->total_paid_tax_incl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid = (float) $apiPayment->amount->value;
+        $order->total_paid_real = (float) $apiPayment->amount->value;
+        $order->update();
+
+        $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
         return Order::getOrderByCartId((int) $cartId);
     }
