@@ -284,6 +284,7 @@ class PaymentMethodService
                     'rand' => time(),
                     'key' => $key,
                     'customerId' => $customer->id,
+                    'order_number' => $orderReference,
                 ],
                 true
             )

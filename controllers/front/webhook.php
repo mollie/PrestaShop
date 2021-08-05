@@ -47,6 +47,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
+
         if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
             PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
         }
@@ -63,17 +64,14 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
      */
     protected function executeWebhook()
     {
-        if (Tools::getValue('testByMollie')) {
-            if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Mollie webhook tester successfully communicated with the shop.', Mollie\Config\Config::NOTICE);
-            }
-
-            return 'OK';
-        }
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getMollieContainer(TransactionService::class);
 
         $transactionId = Tools::getValue('id');
+        if (!$transactionId) {
+            return 'Missing transaction id';
+        }
+
         if (TransactionUtility::isOrderTransaction($transactionId)) {
             $payment = $transactionService->processTransaction($this->module->api->orders->get($transactionId, ['embed' => 'payments']));
         } else {

@@ -12,16 +12,14 @@
 
 namespace Mollie\Service;
 
-use Address;
 use Cart;
 use Configuration;
-use Context;
-use Country;
 use Currency;
 use Db;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
@@ -29,11 +27,14 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\MollieStatusUtility;
+use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;
 use OrderDetail;
 use OrderPayment;
+use PrestaShop\Decimal\Number;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;
@@ -45,30 +46,10 @@ class TransactionService
      */
     private $module;
 
-    /**
-     * @var PaymentMethodRepository
-     */
-    private $paymentMethodRepository;
-
-    /**
-     * @var \Mollie\Service\OrderStatusService
-     */
-    private $orderStatusService;
-
-    /**
-     * @var Country
-     */
-    private $country;
-
     public function __construct(
-        Mollie $module,
-        PaymentMethodRepository $paymentMethodRepository,
-        OrderStatusService $orderStatusService
+        Mollie $module
     ) {
         $this->module = $module;
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->orderStatusService = $orderStatusService;
-        $this->country = Context::getContext()->country;
     }
 
     /**
@@ -87,8 +68,8 @@ class TransactionService
     public function processTransaction($transaction)
     {
         if (empty($transaction)) {
-            if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Mollie\Config\Config::WARNING);
+            if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
             }
 
             return $this->module->l('Transaction failed', 'webhook');
@@ -113,22 +94,13 @@ class TransactionService
             return $this->module->l('Transaction failed', 'webhook');
         }
 
-        $this->setCountryContextIfNotSet($apiPayment);
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+
         /** @var OrderStatusService $orderStatusService */
         $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-        $cart = new Cart($apiPayment->metadata->cart_id);
 
-        Db::getInstance()->update(
-            'mollie_payments',
-            [
-                'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                'bank_status' => pSQL(\Mollie\Config\Config::getStatuses()[$apiPayment->status]),
-                'order_id' => (int) $orderId,
-            ],
-            '`transaction_id` = \'' . pSQL($transaction->id) . '\''
-        );
+        $cart = new Cart($apiPayment->metadata->cart_id);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
             $cart->secure_key,
@@ -136,95 +108,147 @@ class TransactionService
             $cart->id,
             $this->module->name
         );
+
         switch ($transaction->resource) {
-            case Mollie\Config\Config::MOLLIE_API_STATUS_PAYMENT:
-                if ($apiPayment->metadata->cart_id) {
-                    if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                        if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                            && \Mollie\Utility\NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                        ) {
-                            $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
-                        } else {
-                            $orderStatusService->setOrderStatus($orderId, Mollie\Config\Config::PARTIAL_REFUND_CODE);
-                        }
-                    } elseif ($key === $apiPayment->metadata->secure_key) {
-                        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$apiPayment->status];
-
-                        if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
-                            $this->updateTransaction($orderId, $transaction);
-
-                            if ($this->isOrderBackOrder($orderId)) {
-                                $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                            }
-                        }
-
-                        /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-                        $orderStatusService->setOrderStatus($orderId, $paymentStatus);
-
-                        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
-                    }
+            case Config::MOLLIE_API_STATUS_PAYMENT:
+                if ($key !== $apiPayment->metadata->secure_key) {
+                    break;
                 }
-                break;
-            case Mollie\Config\Config::MOLLIE_API_STATUS_ORDER:
-                if ($apiPayment->metadata->cart_id) {
-                    if ($key === $apiPayment->metadata->secure_key
-                        && OrderStatus::STATUS_CREATED === $apiPayment->status
+                if (!$apiPayment->metadata->cart_id) {
+                    break;
+                }
+                if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
+                    if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
+                        && NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     ) {
-                        /** @var PaymentCollection|null $orderPayments */
-                        $orderPayments = $apiPayment->payments();
-
-                        $paymentStatus = OrderStatus::STATUS_CREATED;
-                        foreach ($orderPayments as $orderPayment) {
-                            $paymentStatus = $orderPayment->status;
-                        }
-                        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$paymentStatus];
-
-                        /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-                        $orderStatusService->setOrderStatus($orderId, $paymentStatus);
-
-                        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
-                    } elseif ($key === $apiPayment->metadata->secure_key) {
-                        $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
-                        $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
-                        $paymentStatus = (int) Config::getStatuses()[$status];
-                        $isKlarnaOrder = in_array($transaction->method, Config::KLARNA_PAYMENTS, false);
-                        if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder && !$isKlarnaDefault) {
-                            $paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
-                        }
-                        if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
-                            $this->updateTransaction($orderId, $transaction);
-
-                            if ($this->isOrderBackOrder($orderId)) {
-                                $paymentStatus = Mollie\Config\Config::STATUS_PAID_ON_BACKORDER;
-                            }
-                        }
-
-                        /** @var OrderStatusService $orderStatusService */
-                        $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
-                        $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
-
-                        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+                        $orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
+                    } else {
+                        $orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
+                } else {
+                    if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                        $orderId = $this->createOrder($apiPayment, $cart->id);
+                        $order = new Order($orderId);
+                        $payment = $this->module->api->payments->get($apiPayment->id);
+                        $payment->description = $order->reference;
+                        $payment->update();
+                    }
+
+                    $paymentStatus = (int) Config::getStatuses()[$apiPayment->status];
+
+                    if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
+                        $this->updateTransaction($orderId, $transaction);
+                        if ($this->isOrderBackOrder($orderId)) {
+                            $paymentStatus = Config::STATUS_PAID_ON_BACKORDER;
+                        }
+                    }
+
+                    /** @var OrderStatusService $orderStatusService */
+                    $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
+                    $orderStatusService->setOrderStatus($orderId, $paymentStatus);
+
+                    $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
+            case Config::MOLLIE_API_STATUS_ORDER:
+                if (!$apiPayment->metadata->cart_id) {
+                    break;
+                }
+                if ($key !== $apiPayment->metadata->secure_key) {
+                    break;
+                }
+
+                $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
+                $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
+
+                if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                    $orderId = $this->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
+                    $order = new Order($orderId);
+                    $apiPayment->orderNumber = $order->reference;
+                    $payments = $apiPayment->payments();
+
+                    /** @var Payment $payment */
+                    foreach ($payments as $payment) {
+                        $payment->description = 'Order ' . $order->reference;
+                        $payment->update();
+                    }
+                    $apiPayment->update();
+                }
+
+                $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
+                $paymentStatus = (int) Config::getStatuses()[$status];
+                if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder && !$isKlarnaDefault) {
+                    $paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
+                }
+                if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
+                    $this->updateTransaction($orderId, $transaction);
+
+                    if ($this->isOrderBackOrder($orderId)) {
+                        $paymentStatus = Config::STATUS_PAID_ON_BACKORDER;
+                    }
+                }
+
+                /** @var OrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getMollieContainer(OrderStatusService::class);
+                $orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
+
+                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
         // Store status in database
-
         if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
-            if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG) >= Mollie\Config\Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transaction->id . '". Reason: ' . Db::getInstance()->getMsgError(), Mollie\Config\Config::WARNING);
+            if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transaction->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
             }
         }
 
         // Log successful webhook requests in extended log mode only
-        if (Mollie\Config\Config::DEBUG_LOG_ALL == Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $transaction->id, Mollie\Config\Config::NOTICE);
+        if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
+            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $transaction->id, Config::NOTICE);
         }
 
         return $apiPayment;
+    }
+
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     * @param int $cartId
+     * @param bool $isKlarnaOrder
+     *
+     * @return false|int|null
+     *
+     * @throws PrestaShopException
+     */
+    private function createOrder($apiPayment, $cartId, $isKlarnaOrder = false)
+    {
+        $orderStatus = $isKlarnaOrder ?
+            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
+            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+
+        $cart = new Cart($cartId);
+        $originalAmount = $cart->getOrderTotal(
+            true,
+            Cart::BOTH
+        );
+
+        $this->module->validateOrder(
+            (int) $cartId,
+            (int) $orderStatus,
+            (float) $originalAmount,
+            isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
+        );
+//        $paymentFee = (new Number($apiPayment->amount->value))->minus((new Number((string)$originalAmount)))->toPrecision(2);
+//        if ($paymentFee === 0) {
+//            return Order::getOrderByCartId((int) $cartId);
+//        }
+//
+//        $order = new Order(Order::getOrderByCartId((int) $cartId));
+//        $order->total_paid_tax_excl = (float) (new Number($order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+//        $order->total_paid_tax_incl = (float) $apiPayment->amount->value;
+//        $order->total_paid = (float) $apiPayment->amount->value;
+//        $order->update();
+
+        return Order::getOrderByCartId((int) $cartId);
     }
 
     public function updateOrderTransaction($transactionId, $orderReference)
@@ -279,35 +303,6 @@ class TransactionService
             $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
             $paymentMethodRepo->tryAddOrderReferenceColumn();
             throw $e;
-        }
-    }
-
-    /**
-     * (Re)sets the controller country context.
-     * When Prestashop receives a call from Mollie (without context)
-     * Prestashop always has default context to fall back on, so context->country
-     * is allways Set before executing any controller methods.
-     *
-     * @param MolliePaymentAlias $payment
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    protected function setCountryContextIfNotSet($payment)
-    {
-        if (empty($this->country) || !$this->country->active) {
-            if ($payment->metadata->cart_id) {
-                $cart = new Cart((int) $payment->metadata->cart_id);
-                if (!empty($cart)) {
-                    $address = new Address($cart->id_address_delivery);
-                    if (!empty($address)) {
-                        $country = new Country($address->id_country);
-                        if (!empty($country)) {
-                            $this->country = $country;
-                        }
-                    }
-                }
-            }
         }
     }
 
