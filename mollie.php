@@ -1074,4 +1074,15 @@ class Mollie extends PaymentModule
             PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
         }
     }
+
+    public function runUpgradeModule()
+    {
+        /** @var Mollie\Tracker\Segment $segment */
+        $segment = $this->getMollieContainer(Mollie\Tracker\Segment::class);
+
+        $segment->setMessage('Mollie module upgrade');
+        $segment->track();
+
+        return parent::runUpgradeModule();
+    }
 }
