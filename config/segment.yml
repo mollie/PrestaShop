@@ -3,4 +3,4 @@ services:
     class: 'Mollie\Tracker\Segment'
     arguments:
       - '@mollie.context'
-      - '@mollie'
+      - '@Mollie\Config\Env'

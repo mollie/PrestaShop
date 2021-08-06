@@ -66,15 +66,15 @@ class Segment implements TrackerInterface
      */
 
     /**
-     * @var Mollie
+     * @var Env
      */
-    private $module;
+    private $env;
 
-    public function __construct(Context $context, $module)
+    public function __construct(Context $context, $env)
     {
         $this->context = $context;
         $this->init();
-        $this->module = $module;
+        $this->env = $env;
     }
 
     /**
@@ -110,9 +110,6 @@ class Segment implements TrackerInterface
             $userId = 'MissingUserId';
         }
 
-        /** @var Env $env */
-        $env = $this->module->getMollieContainer(Env::class);
-
         $userAgent = array_key_exists('HTTP_USER_AGENT', $_SERVER) === true ? $_SERVER['HTTP_USER_AGENT'] : '';
         $ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
         $referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
@@ -136,7 +133,7 @@ class Segment implements TrackerInterface
                 'module' => 'mollie',
                 'version' => $module->version,
                 'psVersion' => _PS_VERSION_,
-                'env' => $env->get('SENTRY_ENV'),
+                'env' => $this->env->get('SENTRY_ENV'),
             ], $this->options),
         ]);
 
